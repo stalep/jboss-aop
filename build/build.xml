@@ -244,7 +244,7 @@
   <!-- ================================================================== -->
 
   <!-- Clean up all build output -->
-  <target name="clean" depends="_buildmagic:clean, modules-clean"
+  <target name="clean" depends="createthirdparty,_buildmagic:clean, modules-clean"
 	  description="Cleans up most generated files.">
   </target>
 
