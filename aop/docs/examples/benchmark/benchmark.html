@@ -1,0 +1,26 @@
+<html>
+<body>
+<p>
+<h2>JBoss AOP Benchmark</h2>
+
+</p><p>
+<h4>Overview</h4>
+
+This example benches constructor, method, field execution pointcuts as well as a method caller pointcut.  There are 3 tests for each type.  
+</p><p>
+<ol>
+<li> Unadvised is a non-aoped call.  There is also some numbers in there for raw Java reflection to compare to the overhead of JBoss AOP.  </li>
+<li> Advised means that there are no interceptors attached as part of the test.  JBoss AOP is highly optimized when there are no interceptors.  Remember, you can &lt;prepare&gt; an Java class so that you can hot-deploy interceptors/advices at runtime.</li>
+<li> Intercepted means that there is one simple interceptor that is run as part of the test.</li>
+</ul>
+</p><p>
+<h4>Running</h4>
+
+To compile and run:
+<pre>
+  $ ant
+</pre>
+It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.
+</p>
+</body>
+</html>

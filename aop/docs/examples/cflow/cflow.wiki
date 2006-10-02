@@ -1,0 +1,87 @@
+!!!Control Flow
+
+!Overview
+Control flow is a runtime construct.  It allows you to specify pointcut parameters revolving around the call stack of a Java program.  You can do stuff like, if method A calls method B calls Method C calls Method D from Constructor A, trigger this advice.  The best thing to do is look at an example.  Cflow's are quite expensive in JBoss AOP as they parse Throwable.getStackTrace to determine if the advice should be triggered at runtime.
+
+!CFlow Stack
+A {{<cflow-stack>}} element is used to define method and/or constructor you want to watch for in a call stack.  It is top down, where the first declared element in a {{<cflow-stack>}} is the top of the Java call stack.  Each {{<called>}} element expresses either a method or constructor.  This declaration will try to eat part of the call stack starting from the top.  If it successfully matches a member in the stack, then next {{<called>}} element will be matched from the point in the stack the last call matched.  {{<not-called}} elements do not eat the stack.  Let's look at the example declarations within jboss-aop.xml
+
+{{{
+   <cflow-stack name="ShowOnlyWhen123Before">
+      <called expr="void POJO->method1()"/>
+      <called expr="void POJO->method2()"/>
+      <called expr="void POJO->method3()"/>
+   </cflow-stack>
+}}}
+
+This first cflow-stack declares that method1, method2, and method3 should be in the call stack in that order.  The next
+{{{
+   <cflow-stack name="ShowOnlyWhenConstructorAnd3">
+      <called expr="POJO->new(int)"/>
+      <called expr="void POJO->method3()"/>
+   </cflow-stack>
+}}}
+Says that the POJO constructor with an int parameter and method3 must be in the call stack in that order
+
+!Apply a cflow-stack
+cflow-stacks can only be applied to a binding.  They can be compositional as well.  Let's take a look at the example in jboss-aop.xml.
+
+{{{
+   <bind pointcut="execution(void POJO->method4())" cflow="(ShowOnlyWhen123Before OR ShowOnlyWhenConstructorAnd3)">
+      <interceptor class="SimpleInterceptor"/>
+   </bind>
+}}}
+This says to trigger the SimpleInterceptor on the execution of method4, but only when it is called within the context of method1, method2, and method3 OR contructor and method3.  When you run the driver you will see this in action.  Look at how Driver.java invokes on POJO methods, then example the output of the program.
+
+The next example is for recursive methods.  The example cflow-stack says that two calls to the recursive method must be in the call stack, but no more
+{{{
+   <cflow-stack name="showSecondRecursiveCall">
+      <called expr="void POJO->recursive(int)"/>
+      <called expr="void POJO->recursive(int)"/>
+      <not-called expr="void POJO->recursive(int)"/>
+   </cflow-stack>
+
+   <bind pointcut="execution(void POJO->recursive(int))" cflow="showSecondRecursiveCall">
+      <interceptor class="SimpleInterceptor"/>
+   </bind>
+
+}}}
+
+Combined with the execution binding, the SimpleInterceptor will only be triggered on the second call to the recursive method.
+
+!Run the example
+To compile and run:
+{{{
+  $ ant
+}}}
+It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should read as follows:
+{{{
+run:
+     [java] --- pojo.method4(); ---
+     [java] method4
+     [java] --- pojo.method3(); ---
+     [java] method3
+     [java] method4
+     [java] --- pojo.method2(); ---
+     [java] method2
+     [java] method3
+     [java] method4
+     [java] --- pojo.method1(); ---
+     [java] method1
+     [java] method2
+     [java] method3
+     [java] <<< Entering SimpleInterceptor for: public void POJO.method4()
+     [java] method4
+     [java] >>> Leaving SimpleInterceptor
+     [java] --- pojo.recursive(); ---
+     [java] recursive: 1
+     [java] <<< Entering SimpleInterceptor for: public void POJO.recursive(int)
+     [java] recursive: 2
+     [java] recursive: 3
+     [java] >>> Leaving SimpleInterceptor
+     [java] --- new POJO(int); ---
+     [java] method3
+     [java] <<< Entering SimpleInterceptor for: public void POJO.method4()
+     [java] method4
+     [java] >>> Leaving SimpleInterceptor
+}}}

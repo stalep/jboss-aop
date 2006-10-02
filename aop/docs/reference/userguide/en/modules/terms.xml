@@ -1,0 +1,86 @@
+<chapter id="terms">
+
+   <title>Terms</title>
+
+   <sect1 id="base-terms" revision="1">
+      <title>Overview</title>
+
+      <para>
+            The section defines some basic terms that will be used throughout this guide.
+      </para>
+
+      <para>
+
+         <variablelist spacing="compact">
+            <varlistentry>
+               <term>Joinpoint</term>
+               <listitem>
+                  <para>
+                     A joinpoint is any point in your java program.  The call of a method.  The execution of a constructor
+                     the access of a field.  All these are joinpoints.  You could also think of a joinpoint as a particular
+                     Java event.  Where an event is a method call, constructor call, field access etc...
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term>Invocation</term>
+               <listitem>
+                  <para>
+                     An Invocation is a JBoss AOP class that encapsulates what a joinpiont is at runtime.  It could
+                     contain information like which method is being called, the arguments of the method, etc...
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term>Advice</term>
+               <listitem>
+                  <para>
+                     An advice is a method that is called when a particular joinpoint is executed, i.e., the behavior
+                     that is triggered when a method is called.  It could also be thought of as the code that does the
+                     interception.  Another analogy is that an advice is an "event handler".
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term>Pointcut</term>
+               <listitem>
+                  <para>
+                     Pointcuts are AOP's expression language.  Just as a regular expression matches strings, a pointcut
+                     expression matches a particular joinpoint.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term>Introductions</term>
+               <listitem>
+                  <para>
+                     An introduction modifies the type and structure of a Java class.  It can be used to force
+                     an existing class to implement an interface or to add an annotation to anything.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term>Aspect</term>
+               <listitem>
+                  <para>
+                     An Aspect is a plain Java class that encapsulates any number of advices, pointcut definitions,
+                     mixins, or any other JBoss AOP construct.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term>Interceptor</term>
+               <listitem>
+                  <para>
+                     An interceptor is an Aspect with only one advice named "invoke".  It is a specific interface
+                     that you can implement if you want your code to be checked by forcing your class to implement an interface.
+                     It also will be portable and can be reused in other JBoss environments like EJBs and JMX MBeans.
+                  </para>
+               </listitem>
+            </varlistentry>
+         </variablelist>
+      </para>
+   </sect1>
+
+</chapter>
+

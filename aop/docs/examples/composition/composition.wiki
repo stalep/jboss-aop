@@ -1,0 +1,50 @@
+!!!Compositional and Named Pointcuts
+
+JBossAOP pointcuts are fully compositional.  You can have multiple exeuction, field, and call expressions joined together by boolean operators (AND, OR, !) in one big expression.  You also do not have to always tie a pointcut expression to a binding.  You can declare reusable pointcut expressions and name them and use them in boolean expressions in other pointcuts or bindings.
+
+!Examples
+Let's take a look at jboss-aop.xml.
+
+{{{
+   <pointcut name="allPrivateMethodAndFields" expr="(execution(private * POJO->*(..)) OR field(private * POJO->*)) AND !execution(private void POJO->avoidMethod())"/>
+}}}
+
+This expression matches any private method or field, but not the POJO.avoidMethod().  It is a named pointcut and can be used in other epxressions.
+
+{{{
+   <pointcut name="allPublicConstructors" expr="execution(public POJO->new(..))"/>
+}}}
+This expression matches any public constructor of the POJO class.
+
+{{{
+   <bind pointcut="allPrivateMethodAndFields OR allPublicConstructors">
+       <interceptor class="SimpleInterceptor"/>
+   </bind>
+}}}
+
+The binding references these named pointcuts in a boolean expression.  So the above would mean any private method or field access, but not avoidMethod() or any public constructor.
+
+!Running the example
+Running the example you'll see composition in action
+
+To compile and run:
+{{{
+  $ ant
+}}}
+It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should read as follows:
+{{{
+run:
+     [java] --- new POJO(); ---
+     [java] <<< Entering SimpleInterceptor for: org.jboss.aop.joinpoint.ConstructorInvocation
+     [java] empty constructor
+     [java] <<< Entering SimpleInterceptor for: org.jboss.aop.joinpoint.FieldWriteInvocation
+     [java] >>> Leaving SimpleInterceptor
+     [java] <<< Entering SimpleInterceptor for: org.jboss.aop.joinpoint.MethodInvocation
+     [java] privateMethod
+     [java] >>> Leaving SimpleInterceptor
+     [java] avoidMethod
+     [java] >>> Leaving SimpleInterceptor
+     [java] --- pojo.publicMethod(); ---
+     [java] publicMethod
+}}}
+

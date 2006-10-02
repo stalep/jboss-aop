@@ -1,0 +1,171 @@
+/**
+ *
+ */
+options {
+  MULTI=true;
+  VISITOR=true;
+  NODE_DEFAULT_VOID=false;
+  STATIC=false;
+}
+
+PARSER_BEGIN(AnnotationParser)
+package org.jboss.aop.annotation.ast;
+
+public class AnnotationParser {
+}
+
+PARSER_END(AnnotationParser)
+
+
+SKIP :
+{
+  " "
+| "\t"
+}
+
+TOKEN :
+{
+  < IDENTIFIER: (<LETTER>)+ >
+|
+  < #LETTER: ["$","_","a"-"z","A"-"Z","0"-"9","."] >
+| <  CHARACTER : "'"
+   (   (~["'","\\","\n","\r"])
+   | ("\\" (
+             ["n","t","v","b","r","f","a","\\","?","'","\""]
+            |
+             "0" (["0"-"7"])*
+            |
+             ["1"-"9"] (["0"-"9"])*
+            |
+             ("0x" | "0X") (["0"-"9","a"-"f","A"-"F"])+
+           )
+     )
+   )
+   "'" >
+| <  STRING : "\""
+   ( ( ~["\"","\\","\n","\r"])
+   | ("\\" (
+             ["n","t","v","b","r","f","a","\\","?","'","\""]
+            |
+             "0" (["0"-"7"])*
+            |
+             ["1"-"9"] (["0"-"9"])*
+            |
+             ("0x" | "0X") (["0"-"9","a"-"f","A"-"F"])+
+           )
+     )
+   )*
+   "\"" >
+}
+
+
+ASTStart Start() #Start : {}
+{
+  Annotation() ("\r\n" | "\n" | <EOF>)
+  { return jjtThis; }
+}
+
+void Annotation() :
+{
+  Token tok;
+}
+{
+  "@"
+  tok=<IDENTIFIER>
+  {
+     jjtThis.setIdentifier(tok.image);
+  }
+  [ "(" [ LOOKAHEAD(2) MemberValuePairs() | SingleMemberValue() ] ")" ]
+}
+
+
+void SingleMemberValue() :
+{
+}
+{
+   MemberValue()
+}
+
+void MemberValuePairs() :
+{
+}
+{
+  MemberValuePair()
+  ( ","  MemberValuePair()
+  )*
+}
+
+
+
+void MemberValuePair() :
+{
+  Token specialToken;
+}
+{
+  Identifier() "="  MemberValue()
+}
+
+
+void MemberValue() #void :
+{
+  Token tok;
+}
+{
+  Annotation()
+|
+  MemberValueArrayInitializer()
+|
+  String()
+|
+  Char()
+|
+  Identifier()
+}
+
+
+void MemberValueArrayInitializer() :
+{
+}
+{
+  "{"
+  [ MemberValue() ( LOOKAHEAD(2) "," MemberValue() )* [ "," ] ]
+  "}"
+}
+
+void Identifier() :
+{
+    Token tok;
+}
+{
+    tok=<IDENTIFIER>
+    {
+       jjtThis.setValue(tok.image);
+    }
+}
+
+void String() :
+{
+    Token tok;
+}
+{
+    tok=<STRING>
+    {
+       jjtThis.setValue(tok.image);
+    }
+}
+
+void Char() :
+{
+    Token tok;
+}
+{
+    tok=<CHARACTER>
+    {
+       jjtThis.setValue(tok.image);
+    }
+}
+
+
+
+
+

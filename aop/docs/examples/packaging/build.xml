@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="run" name="JBoss/AOP">
+   <target name="prepare">
+      <property name="jboss.aop.root" value="../../../.."/>
+      <property name="jboss.aop.lib" value="${jboss.aop.root}/lib"/>
+      <property name="jboss.aop.lib50" value="${jboss.aop.root}/lib-50"/>
+ 
+      <path id="jboss.aop.classpath">
+         <fileset dir="${jboss.aop.lib}">
+            <include name="*.jar"/>
+         </fileset>
+      </path>
+
+      <path id="jboss.aop.classpath50">
+         <fileset dir="${jboss.aop.lib50}">
+            <include name="*.jar"/>
+         </fileset>
+      </path>
+
+      <path id="classpath">
+         <path refid="jboss.aop.classpath"/>
+         <pathelement path="."/>
+      </path>
+	  
+      <property name="aop50jar" value="${jboss.aop.lib50}/jboss-aop-jdk50.jar"/>
+
+      <path id="classpath50">
+         <path refid="jboss.aop.classpath50"/>
+         <pathelement path="."/>
+      </path>
+
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
+   </target>
+
+
+
+   <target name="compile" depends="prepare">
+      <mkdir dir="classes"/>
+      <javac srcdir="."
+         destdir="classes"
+         debug="on"
+         deprecation="on"
+         optimize="off"
+         includes="**">
+         <classpath refid="classpath"/>
+      </javac>
+      <aopc compilerclasspathref="classpath" classpathref="classpath" verbose="true">
+         <classpath path="classes"/>
+         <src path="classes"/>
+         <aoppath path="resources/META-INF/jboss-aop.xml"/>
+      </aopc>
+      <jar jarfile="example.jar">
+         <fileset dir="classes">
+            <include name="*.class"/>
+         </fileset>
+         <fileset dir="resources">
+            <include name="META-INF/jboss-aop.xml"/>
+         </fileset>
+      </jar>
+   </target>
+
+   <target name="run" depends="compile">
+      <java fork="yes" failOnError="true" className="Driver">
+         <classpath refid="classpath"/>
+         <classpath path="example.jar"/>
+      </java>
+   </target>
+
+   <target name="compile50standalone" depends="prepare">
+      <mkdir dir="classes"/>
+      <javac srcdir="."
+         destdir="classes"
+         debug="on"
+         deprecation="on"
+         optimize="off"
+         includes="**">
+         <classpath refid="classpath50"/>
+      </javac>
+      <jar jarfile="example.jar">
+         <fileset dir="classes">
+            <include name="*.class"/>
+         </fileset>
+         <fileset dir="resources">
+            <include name="META-INF/jboss-aop.xml"/>
+         </fileset>
+      </jar>
+   </target>
+
+   <target name="run.50.instrumented" depends="compile50standalone">
+      <java fork="yes" failOnError="true" className="Driver">
+         <jvmarg value="-javaagent:${aop50jar}"/>
+         <classpath refid="classpath50"/>
+         <classpath path="example.jar"/>
+      </java>
+   </target>
+
+</project>

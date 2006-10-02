@@ -1,0 +1,82 @@
+!!!Introductions
+
+!Overview
+The principles behind introductions and mixins when using annotations are exactly the same as when using [XML|introductions/introductions.html], all that is different is the way you define it.
+
+!Introductions
+
+You declare the introductions within a class that has been annotated with {{@Aspect}} or {{@InterceptorDef}}. {{MyAspect}} in this example serves no purpose beyond allowing you to define introductions (i.e. it contains no actual advices).
+
+{{{
+   import org.jboss.aop.Introduction;
+
+   @Aspect
+   public class MyAspect
+   {
+      @Introduction (target=POJO.class, interfaces={java.io.Serializable.class})
+      public static Object noInterfacesPOJOIntro;
+   
+      ...
+   }
+
+}}}
+
+Basically, you just annotate any field within the aspect with {{@Introduction}}. The {{target}} attribute takes the class you want to introduce interfaces into, and the {{interfaces}} attribute takes an array of the interfaces you want to add to the class.
+
+
+
+!Mixins
+You declare the mixins in much the same way as you declare introductions. Again, it must be done within a class that has been annotated with {{@Aspect}} or {{@InterceptorDef}}. 
+{{{
+   import org.jboss.aop.Mixin;
+
+   @Aspect
+   public class MyAspect
+   {
+      ...
+
+      @Mixin (target=POJO2.class, interfaces={java.io.Externalizable.class})
+      public static POJO2ExternalizableMixin createExternalizableMixin(POJO2 pojo) {
+         return new POJO2ExternalizableMixin(pojo);
+      }
+   }
+}}}
+You annotate a public static method within the aspect with {{@Mixin}}. The {{target}} attribute takes the class you want to introduce interfaces into, and the {{interfaces}} attribute takes an array of the interfaces you want to add to the class. The method must take a class of the same type as the target as its parameter, and it must contain the logic to create and return an instance of the mixin class.
+
+!Type expressions
+The {{target}} attribute for {{@Introduction}} and {{@Mixin}} takes a fixed class. You can use the {{typeExpression}} attribute in place of {{target}} to make the {{@Introduction}} or {{@Mixin}} apply to a wider range of classes.
+{{{
+   import org.jboss.aop.Mixin;
+
+   @Aspect
+   public class MyAspect
+   {
+      ...
+      
+      @Introduction (typeExpression="class(POJO3) OR class(POJO4)", interfaces={java.io.Serializable.class})
+      public static Object withTypeExpression;
+   }
+}}}
+
+
+!Running the example
+
+{{{
+$ ant
+}}}
+
+The output should be:
+
+{{{
+run:
+     [java] --- POJO ---
+     [java] deserialized pojo.stuff: hello world
+     [java] --- POJO2 ---
+     [java] deserialized pojo2.stuff2: hello world
+     [java] --- POJO3 ---
+     [java] pojo3 introduction expression worked
+     [java] --- POJO4 ---
+     [java] pojo4 introduction expression worked
+}}}
+
+

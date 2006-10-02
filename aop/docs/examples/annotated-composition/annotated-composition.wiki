@@ -1,0 +1,81 @@
+!!!Annotated: Compositional and Named Pointcuts
+
+Just as when defining pointcuts in [XML|../composition/composition.html], you can use named pointcuts when defining the AOP bindings using annotations.
+
+!Examples
+Let's take a look at {{MyAspect.java}}
+
+{{{
+      import org.jboss.aop.Bind;
+      import org.jboss.aop.Aspect;
+      import org.jboss.aop.PointcutDef;
+      import org.jboss.aop.pointcut.Pointcut;
+      import org.jboss.aop.pointcut.Pointcut;
+
+      @Aspect (scope=Scope.PER_VM)
+      public class MyAspect
+      {
+         @PointcutDef("execution(POJO->new(..))")
+         public static Pointcut pojoConstructors;
+
+         @PointcutDef("get(* POJO->*)")
+         public static Pointcut pojoFieldReads;
+
+         @PointcutDef("set(* POJO->*)")
+         public static Pointcut pojoFieldWrites;
+
+         @PointcutDef("execution(* POJO->*(..))")
+         public static Pointcut pojoMethods;
+}}}
+The {{@PointcutDef}} annotations create a named pointcut, so we get:
+
+*one matching exexutions of all constructors on the POJO class.
+*one matching exexutions of all methods on the POJO class.
+*one matching the reads of all fields in the POJ0 class
+*one matching the writes of all fields in the POJ0 class
+
+The name of the annotated field becomes the name of the annotated field and is used when you reference the field. Note that for clarity we use {{org.jboss.aop.pointcut.Pointcut}} as the type of our field, but any type can be used.
+
+Below we use composition to create a pointcut by referencing the two named pointcuts. As mentioned we reference them by the fully qualified names of the fields annotated with @PointcutDef
+{{{
+         @PointcutDef("MyAspect.pojoFieldReads OR MyAspect.pojoFieldWrites")
+         public static Pointcut pojoFields;
+
+         @Bind(pointcut = "MyAspect.pojoFields OR MyAspect.pojoMethods OR MyAspect.pojoConstructors")
+
+         public Object anotherPOJOAdvice(Invocation invocation) throws Throwable
+         {
+            ...
+         }
+
+      }//End - class MyAspect
+}}}
+
+
+!Running the example
+Running the example you'll see composition in action
+
+To compile and run:
+{{{
+  $ ant
+}}}
+It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should read as follows:
+{{{
+run:
+     [java] --- pojo constructor ---
+     [java] <<< MyAspect.anotherPOJOAdvice - calling constructor
+     [java] constructor
+     [java] >>> Leaving MyAspect.anotherPOJOAdvice
+     [java] --- pojo.method(); ---
+     [java] <<< MyAspect.anotherPOJOAdvice - calling method
+     [java] method()
+     [java] >>> Leaving MyAspect.anotherPOJOAdvice
+     [java] --- pojo field write ---
+     [java] <<< MyAspect.anotherPOJOAdvice - writing field
+     [java] >>> Leaving MyAspect.anotherPOJOAdvice
+     [java] --- pojo field read ---
+     [java] <<< MyAspect.anotherPOJOAdvice - reading field
+     [java] >>> Leaving MyAspect.anotherPOJOAdvice
+
+}}}
+

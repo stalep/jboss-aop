@@ -1,0 +1,232 @@
+!!! Declare Error/Warning
+
+JBoss AOP can be used to enforce certain architectural constraints. The sample application in this example consists of a "business layer" (i.e {{Driver.java}}) which can call the "dao layer" (i.e. {{VehicleDAO}} and its subclasses {{MotorbikeDAO}} and {{CarDAO}}). 
+
+{{VehicleDAO}} is an abstract class, and in our architecture for this small application we want to make sure that:
+*All subclasses of {{VehicleDAO}} implement a {{save()}} method.
+*The dao layer classes should not call back to the business layer classes (i.e. {{XXXDAO}} should not call {{Driver}})
+
+JBoss AOP allows you to check for this at instrumentation time, so if you are running precompiled AOP, the checks will be done at the aopc stage. If you are using loadtime AOP the checks will be performed when the class is first loaded. 
+
+Two new XML tags are used for this {{declare-warning}} and {{declare-error}}, the only difference between them is that {{declare-error}} will throw an exception, causing execution to stop, while {{declare-warning}} prints out a warning message and continues as normal. Here is the jboss-aop.xml file used for this example:
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<aop>
+   <declare-warning expr="class($instanceof{VehicleDAO}) AND !has(public void *->save())">
+      All VehicleDAO subclasses must override the save() method.
+   </declare-warning> 
+   <declare-warning expr="call(Driver->new(..)) AND within(*DAO)">
+      DAO classes should not access the Driver class
+   </declare-warning> 
+   <declare-warning expr="call(* Driver->*(..)) AND withincode(* *DAO->*())">
+      DAO classes should not access the Driver class
+   </declare-warning> 
+</aop>
+}}}
+
+*The first {{declare-warning}} tag specifies that {{VehicleDAO}} and its subclasses must implement a void noargs save() method. This condition is broken in our example by the fact that {{MotorbikeDAO}} does not do so.
+*The second {{declare-warning}} tag specifies that none of the DAO classes can call the Driver constructor. This condition is broken in our example by the fact that {{CarDAO.save()}} tries to create a new {{Driver}} class.
+*The third  {{declare-warning}} tag specifies that no method on any of the the DAO classes can call the Driver methods. This condition is broken in our example by the fact that {{CarDAO.save()}} tries to call a method on the {{Driver}} class
+
+For pointcut expressions, only caller side pointcut expressions will work (so you cannot use {{all}}, {{execution}}, {{field}}, {{set}} or {{get}}). 
+
+!Run the example compile-time instrumented
+
+Now if you run the example:
+
+To compile and run:
+{{{
+  $ ant
+}}}
+
+It will generate the following output
+{{{
+$ ant
+Buildfile: build.xml
+
+prepare:
+
+compile40standalone:
+    [javac] Compiling 1 source file to C:\cygwin\home\Kab\cvs\jboss-head\aop\docs\examples\declare
+
+compile:
+     [aopc] WARNING: declare-warning condition
+     [aopc]     'call(Driver->new(..)) AND within(*DAO)'
+     [aopc] was broken for constructor call: CarDAO.save()V calls Driver.new()V
+     [aopc]     DAO classes should not access the Driver class
+
+     [aopc] WARNING: declare-warning condition
+     [aopc]     'call(* Driver->*(..)) AND withincode(* *DAO->save())'
+     [aopc] was broken for method call:CarDAO.save()V calls Driver.method()V
+     [aopc]     DAO classes should not access the Driver class
+
+     [aopc] WARNING: declare-warning condition
+     [aopc]     'class($instanceof{VehicleDAO}) AND !has(public void *->save())'
+     [aopc] was broken for class MotorbikeDAO
+     [aopc]     All VehicleDAO subclasses must override the save() method.
+
+
+
+
+run:
+     [java] ---- Start ----
+     [java] Car DAO save
+
+
+
+BUILD SUCCESSFUL
+}}}
+
+Note that when using compile time instrumentation the warnings are generated during the aopc phase.
+
+!Run the example load-time instrumented
+
+If you are running jdk 1.4 use:
+
+{{{
+  $ ant run.40.instrumented
+}}}
+
+If you are running jdk 1.4 use:
+
+{{{
+  $ ant run.50.instrumented
+}}}
+
+{{{
+Buildfile: build.xml
+
+prepare:
+
+compile40standalone:
+
+run.40.instrumented:
+     [java] ---- Start ----
+     [java] WARNING: declare-warning condition
+     [java]     'call(Driver->new(..)) AND within(*DAO)'
+     [java] was broken for constructor call: CarDAO.save()V calls Driver.new()V
+     [java]     DAO classes should not access the Driver class
+
+     [java] WARNING: declare-warning condition
+     [java]     'call(* Driver->*(..)) AND withincode(* *DAO->save())'
+     [java] was broken for method call:CarDAO.save()V calls Driver.method()V
+     [java]     DAO classes should not access the Driver class
+
+     [java] Car DAO save
+     [java] WARNING: declare-warning condition
+     [java]     'class($instanceof{VehicleDAO}) AND !has(public void *->save())'
+     [java] was broken for class MotorbikeDAO
+     [java]     All VehicleDAO subclasses must override the save() method.
+
+
+
+
+BUILD SUCCESSFUL
+}}}
+Note that now the warnings are displayed when running the application, as the classes are transformed when loaded.
+
+!!declare-error
+If we replace all the {{declare-warning}} occurances with {{declare-error}} in jboss-aop.xml
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<aop>
+   <declare-error expr="class($instanceof{VehicleDAO}) AND !has(public void *->save())">
+      All VehicleDAO subclasses must override the save() method.
+   </declare-error> 
+   <declare-error expr="call(Driver->new(..)) AND within(*DAO)">
+      DAO classes should not access the Driver class
+   </declare-error> 
+   <declare-error expr="call(* Driver->*(..)) AND withincode(* *DAO->save())">
+      DAO classes should not access the Driver class
+   </declare-error> 
+</aop>
+}}}
+
+!!declare-error precompiled
+When running precompiled we get:
+{{{
+Buildfile: build.xml
+
+prepare:
+
+compile40standalone:
+
+compile:
+     [aopc] ERROR: declare-error condition
+     [aopc]     'call(Driver->new(..)) AND within(*DAO)'
+     [aopc] was broken for constructor call: CarDAO.save()V calls Driver.new()V
+     [aopc]     DAO classes should not access the Driver class
+
+     [aopc] java.lang.RuntimeException: ERROR: declare-error condition
+     [aopc]     'call(Driver->new(..)) AND within(*DAO)'
+     [aopc] was broken for constructor call: CarDAO.save()V calls Driver.new()V
+     [aopc]     DAO classes should not access the Driver class
+
+     [aopc]     at org.jboss.aop.instrument.DeclareChecker.checkDeclares(DeclareChecker.java:124)
+     [aopc]     at org.jboss.aop.instrument.DeclareChecker.checkDeclares(DeclareChecker.java:57)
+     [aopc]     at org.jboss.aop.instrument.CallerTransformer$CallerExprEditor.edit(CallerTransformer.java:472)
+     [aopc]     at javassist.expr.ExprEditor.doit(ExprEditor.java:136)
+     [aopc]     at javassist.CtBehavior.instrument(CtBehavior.java:362)
+     [aopc]     at org.jboss.aop.instrument.CallerTransformer.applyCallerPointcuts(CallerTransformer.java:69)
+     [aopc]     at org.jboss.aop.instrument.Instrumentor.applyCallerPointcuts(Instrumentor.java:495)
+     [aopc]     at org.jboss.aop.instrument.Instrumentor.transform(Instrumentor.java:562)
+...
+
+BUILD FAILED
+}}}
+
+See how the compiler stops at the first error and execution stops.
+
+!!declare-error loadtime
+When running with loadtime transformations we get:
+{{{
+$ ant run.40.instrumented
+Buildfile: build.xml
+
+prepare:
+
+compile40standalone:
+
+run.40.instrumented:
+     [java] ---- Start ----
+     [java] ERROR: declare-error condition
+     [java]     'call(Driver->new(..)) AND within(*DAO)'
+     [java] was broken for constructor call: CarDAO.save()V calls Driver.new()V
+     [java]     DAO classes should not access the Driver class
+
+     [java] java.lang.RuntimeException: ERROR: declare-error condition
+     [java]     'call(Driver->new(..)) AND within(*DAO)'
+     [java] was broken for constructor call: CarDAO.save()V calls Driver.new()V
+     [java]     DAO classes should not access the Driver class
+
+     [java]     at org.jboss.aop.instrument.DeclareChecker.checkDeclares(DeclareChecker.java:124)
+     [java]     at org.jboss.aop.instrument.DeclareChecker.checkDeclares(DeclareChecker.java:57)
+     [java]     at org.jboss.aop.instrument.CallerTransformer$CallerExprEditor.edit(CallerTransformer.java:472)
+     [java]     at javassist.expr.ExprEditor.doit(ExprEditor.java:136)
+     [java]     at javassist.CtBehavior.instrument(CtBehavior.java:362)
+     [java]     at org.jboss.aop.instrument.CallerTransformer.applyCallerPointcuts(CallerTransformer.java:69)
+     [java]     at org.jboss.aop.instrument.Instrumentor.applyCallerPointcuts(Instrumentor.java:495)
+     [java]     at org.jboss.aop.instrument.Instrumentor.transform(Instrumentor.java:562)
+     [java]     at org.jboss.aop.AspectManager.translate(AspectManager.java:564)
+     [java]     at org.jboss.aop.AspectManager.transform(AspectManager.java:482)
+     [java]     at sun.reflect.GeneratedMethodAccessor1.invoke(Unknown Source)
+     [java]     at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+     [java]     at java.lang.reflect.Method.invoke(Method.java:585)
+     [java]     at org.jboss.aop.standalone.SystemClassLoader.loadClass(SystemClassLoader.java:174)
+     [java]     at java.lang.ClassLoader.loadClass(ClassLoader.java:251)
+     [java]     at java.lang.ClassLoader.loadClassInternal(ClassLoader.java:319)
+     [java]     at Driver.createVehicles(Driver.java:24)
+     [java]     at Driver.main(Driver.java:19)
+     [java] [error] failed to transform: CarDAO.. Do verbose mode if you want full stack trace.
+     [java] Exception in thread "main" java.lang.Error: Error transforming the class CarDAO: java.lang.RuntimeException: failed to transform: CarDAO
+     [java]     at org.jboss.aop.standalone.SystemClassLoader.loadClass(SystemClassLoader.java:191)
+     [java]     at java.lang.ClassLoader.loadClass(ClassLoader.java:251)
+     [java]     at java.lang.ClassLoader.loadClassInternal(ClassLoader.java:319)
+     [java]     at Driver.createVehicles(Driver.java:24)
+     [java]     at Driver.main(Driver.java:19)
+
+
+
+BUILD FAILED
+}}}
+Again you can see how the first broken condition causes execution to stop.

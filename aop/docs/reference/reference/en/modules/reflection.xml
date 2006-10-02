@@ -1,0 +1,221 @@
+<chapter id="reflection">
+
+   <title>Reflection and AOP</title>
+
+   <!-- *********************************** Intro ******************************** -->
+
+   <para>
+         While AOP works fine for normal access to fields, methods and constructors, there are some
+         problems with using the Reflection API for this using JBoss. The problems are:
+         <itemizedlist>
+            <listitem>
+               Intereptors/aspects bound to execution pointcuts for fields and constructors
+               don't get invoked.
+            </listitem>
+            <listitem>
+               Intereptors/aspects bound to caller pointcuts for methods and constructors
+               don't get invoked.
+            </listitem>
+            <listitem>
+               Reflection Methods such as <literal>Class.getMethods()</literal> and 
+               <literal>Class.getField()</literal> return extra JBoss AOP "plumbing" information.
+            </listitem>
+         </itemizedlist>
+   </para>
+   <!-- *********************************** Aspect ******************************** -->
+
+   <sect1 id="reflection-attach-chains" revision="1">
+      <title>Force interception via reflection</title>
+      <para>
+         To address the issues with interceptors not being invoked when you use reflection,
+         we have provided a reflection aspect. You bind it to a set of caller pointcuts,
+         and it mounts the pre-defined interceptor/aspect chains. The jboss-aop.xml entries 
+         are:
+      </para>
+      <para>
+         <programlisting>
+<![CDATA[    
+   <aspect class="org.jboss.aop.reflection.ReflectionAspect" scope="PER_VM"/>
+
+   <bind pointcut="call(* java.lang.Class->newInstance())">
+      <advice name="interceptNewInstance" \
+         aspect="org.jboss.aop.reflection.ReflectionAspect"/>
+   </bind>
+
+   <bind pointcut="call(* java.lang.reflect.Constructor->newInstance(java.lang.Object[]))">
+      <advice name="interceptNewInstance" \
+         aspect="org.jboss.aop.reflection.ReflectionAspect"/>
+   </bind>
+
+   <bind pointcut="call(* java.lang.reflect.Method->invoke(java.lang.Object, java.lang.Object[]))">
+      <advice name="interceptMethodInvoke" \
+         aspect="org.jboss.aop.reflection.ReflectionAspect"/>
+   </bind>
+
+   <bind pointcut="call(* java.lang.reflect.Field->get*(..))">
+      <advice name="interceptFieldGet" \
+         aspect="org.jboss.aop.reflection.ReflectionAspect"/>
+   </bind>
+
+   <bind pointcut="call(* java.lang.reflect.Field->set*(..))">
+      <advice name="interceptFieldSet" \
+         aspect="org.jboss.aop.reflection.ReflectionAspect"/>
+   </bind>   
+]]>
+         </programlisting>
+      </para>
+      <para>
+         The <literal>ReflectionAspect</literal> class provides a few hooks for you to override from
+         a subclass if you like. These methods described below.
+      </para>
+      <para>
+         <programlisting>
+   protected Object interceptConstructor(
+		Invocation invocation,
+		Constructor constructor,
+		Object[] args)
+		throws Throwable;
+         </programlisting>
+      </para>
+      <para>
+         Calls to <literal>Class.newInstance()</literal> and <literal>Constructor.newInstance()</literal>
+         end up here. The default behavior is to mount any constructor execution or caller interceptor 
+         chains. If you want to override the behaviour, the parameters are:
+         <itemizedlist>
+            <listitem><literal>invocation</literal> - The invocation driving the chain of advices.</listitem>
+            <listitem><literal>constructor</literal> - The constructor being called</listitem>
+            <listitem>
+               <literal>args</literal>
+               - the arguments being passed in to the constructor (in the case of 
+               Class.newInstance(), a zero-length array since it takes no parameters)
+            </listitem>
+         </itemizedlist>
+      </para>
+      <para>
+         <programlisting>
+   protected Object interceptFieldRead(
+      Invocation invocation,
+      Field field,
+      Object instance)
+      throws Throwable;
+         </programlisting>
+      </para>
+      <para>
+         Calls to <literal>Field.getXXX()</literal> end up here. The default behavior is to mount 
+         any field read interceptor chains. If you want to override the behaviour, the parameters are:
+         <itemizedlist>
+            <listitem><literal>invocation</literal> - The invocation driving the chain of advices.</listitem>
+            <listitem><literal>field</literal> - The field being read</listitem>
+            <listitem><literal>instance</literal> - The instance from which we are reading a non-static field.</listitem>
+         </itemizedlist>
+      </para>
+      <para>
+         <programlisting>
+   protected Object interceptFieldWrite(
+      Invocation invocation,
+      Field field,
+      Object instance,
+      Object arg)
+      throws Throwable;
+         </programlisting>
+      </para>
+      <para>
+         Calls to <literal>Field.setXXX()</literal> end up here. The default behavior is to mount 
+         any field write interceptor chains. If you want to override the behaviour, the parameters are:
+         <itemizedlist>
+            <listitem><literal>invocation</literal> - The invocation driving the chain of advices.</listitem>
+            <listitem><literal>field</literal> - The field being written</listitem>
+            <listitem><literal>instance</literal> - The instance on which we are writing a non-static field.</listitem>
+            <listitem>
+               <literal>arg</literal> - The value we are setting the field to
+            </listitem>
+         </itemizedlist>
+      </para>
+      <para>
+         <programlisting>
+   protected Object interceptMethod(
+		Invocation invocation,
+		Method method,
+		Object instance,
+		Object[] args)
+		throws Throwable;
+         </programlisting>
+      </para>
+      <para>
+         Calls to <literal>Method.invoke()</literal> end up here. The default behavior is to mount 
+         any method caller interceptor chains (method execution chains are handled correctly by default).
+         If you want to override the behaviour, the parameters are:
+         <itemizedlist>
+            <listitem><literal>invocation</literal> - The invocation driving the chain of advices.</listitem>
+            <listitem><literal>method</literal> - The method being invoked</listitem>
+            <listitem><literal>instance</literal> - The instance on which we are invoking a non-static method.</listitem>
+            <listitem>
+               <literal>args</literal> - Values for the method arguments.
+            </listitem>
+         </itemizedlist>
+      </para>
+   </sect1>
+   <sect1 id="reflection-cleaning" revision="1">
+      <title>Clean results from reflection info methods</title>
+      <para>
+         The <literal>ReflectionAspect</literal> also helps with getting rid of the JBoss AOP 
+         "plumbing" information. You bind it to a set of caller pointcuts, using the 
+         followingjboss-aop.xml entries :
+      </para>
+      <para>
+         <programlisting>
+<![CDATA[   
+   <bind pointcut="call(* java.lang.Class->getInterfaces())">
+      <advice name="interceptGetInterfaces" \
+         aspect="org.jboss.test.aop.reflection.ReflectionAspectTester"/>
+   </bind>
+
+   <bind pointcut="call(* java.lang.Class->getDeclaredMethods())">
+      <advice name="interceptGetDeclaredMethods" \
+         aspect="org.jboss.test.aop.reflection.ReflectionAspectTester"/>
+   </bind>
+
+   <bind pointcut="call(* java.lang.Class->getDeclaredMethod(..))">
+      <advice name="interceptGetDeclaredMethod" \
+         aspect="org.jboss.test.aop.reflection.ReflectionAspectTester"/>
+   </bind>
+
+   <bind pointcut="call(* java.lang.Class->getMethods())">
+      <advice name="interceptGetMethods" \
+         aspect="org.jboss.test.aop.reflection.ReflectionAspectTester"/>
+   </bind>
+
+   <bind pointcut="call(* java.lang.Class->getMethod(..))">
+      <advice name="interceptGetMethod" \
+         aspect="org.jboss.test.aop.reflection.ReflectionAspectTester"/>
+   </bind>
+
+   <bind pointcut="call(* java.lang.Class->getDeclaredFields())">
+      <advice name="interceptGetDeclaredFields" \
+         aspect="org.jboss.test.aop.reflection.ReflectionAspectTester"/>
+   </bind>
+
+   <bind pointcut="call(* java.lang.Class->getDeclaredClasses())">
+      <advice name="interceptGetDeclaredClasses" \
+         aspect="org.jboss.test.aop.reflection.ReflectionAspectTester"/>
+   </bind>
+
+   <bind pointcut="call(* java.lang.Class->getDeclaredField(..))">
+      <advice name="interceptGetDeclaredField" \
+         aspect="org.jboss.test.aop.reflection.ReflectionAspectTester"/>
+   </bind>
+]]>
+         </programlisting>
+      </para>
+      <para>
+         This way the calls to <literal>Class.getMethods()</literal> etc. only return information
+         that is present in the "raw" class, by filtering out the stuff added to the class by JBoss
+         AOP.
+      </para>
+   </sect1>
+
+</chapter>
+
+
+
+

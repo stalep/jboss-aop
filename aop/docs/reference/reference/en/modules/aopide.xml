@@ -1,0 +1,374 @@
+<chapter id="aopide">
+
+   <title>JBoss AOP IDE</title>
+   <sect1 id="aopide-intro" revision="1">
+      <title>The AOP IDE</title>
+      <para>
+      	JBoss AOP comes with an Eclipse plugin that helps you define interceptors to an eclipse project 
+			via a GUI, and to run the appication from within Eclipse. This is a new project, and expect the
+			feature set to grow quickly!
+      </para>
+   </sect1>
+
+   <sect1 id="aopide-install" revision="1">
+      <title>Installing</title>
+      <para>
+			You install the JBoss AOP IDE in the same way as any other Eclipse plugin.
+         <itemizedlist>
+            <listitem>
+               Make sure you have Eclipse 3.0.x installed, and start it up.
+            </listitem>
+            <listitem>
+            	Select Help > Software Updates > Find and Install in the Eclipse 
+            	workbench.
+            </listitem>
+            <listitem>
+            	In the wizard that opens, click on the "Search for new features to install" radio 
+            	button, and click Next.
+            </listitem>
+            <listitem>
+            	On the next page you will need to add a new update site for JBossIDE. Click the 
+            	"New Remote Site.." button.
+            </listitem>
+            <listitem>
+            	Type in "JBossIDE" for the name, and "http://jboss.sourceforge.net/jbosside/updates" 
+            	for the URL, and click OK.
+            </listitem>
+            <listitem>
+            	You should see a new site in the list now called JBossIDE. click the "+" sign next to 
+            	it to show the platforms available.
+            </listitem>
+            <listitem>
+            	Now, depending if you just want to install the AOP IDE (if you don't know what JBoss-IDE is,
+            	go for this set of options):
+               <itemizedlist>
+                  <listitem>
+                     Check the "JBoss-IDE AOP Standalone" checkbox.
+                  </listitem>
+                  <listitem>
+                     In the feature list you should check the "JBoss-IDE AOP Standalone 1.0" checkbox.               
+                  </listitem>
+               </itemizedlist>
+               <para>
+            	If you have JBoss-IDE installed, or want to use all the other (non-AOP) features of JBoss-IDE:
+               </para>
+               <itemizedlist>
+                  <listitem>
+                  	If you don't have JBossIDE installed, check the "JBoss-IDE 1.4/Eclipse 3.0" checkbox.
+                  </listitem>
+                  <listitem>
+                  	Check the "JBoss-IDE AOP Extension" checkbox.
+                  </listitem>
+                  <listitem>
+                  	In the feature list you should check the "JBoss-IDE AOP Extension 1.0" checkbox, and the JBoss-IDE (1.4.0) checkbox if you don't have JBossIDE installed.
+                  </listitem>
+               </itemizedlist>
+
+            </listitem>
+
+            <listitem>
+            	At this point you should only need to accept the license agreement(s) and wait for the install process to finish.
+            </listitem>
+         </itemizedlist>
+      </para>
+   </sect1>
+
+   <sect1 id="aopide-tutorial" revision="1">
+      <title>Tutorial</title>
+      This tutorial is meant to guide you through creating a new AOP project in eclipse using the AOP extension to JBossIDE. It assumes that you have some working knowledge of AOP, and Java.. and possibly some minimal experience dealing with eclipse as well.
+      <sect2 id="aopide-tutorial-project" revision="1">
+         <title>Create Project</title>
+         <para>
+            <itemizedlist>
+               <listitem>
+               	From eclipse's main menu, you can click on the File Menu, and 
+               	under it, New > Project...
+               </listitem>
+               <listitem>
+               	Double click on JBoss AOP Project under the JBossAOP folder
+               </listitem>
+               <listitem>
+               	In the Project Name text box, let's enter
+                  <literal>HelloAOP</literal>.
+               </listitem>
+               <listitem>
+                  <literal>Use Default</literal> should be fine for the project location.
+               	(If you want to use an external location, make sure there are no spaces in the path.)
+               </listitem>
+               <listitem>
+               	Click
+                  <literal>Finish</literal>
+               </listitem>
+            </itemizedlist>
+         </para>
+         <para>
+            At this point, your eclipse workbench should look something like this:
+         </para>
+         <mediaobject>
+            <imageobject role="fo">
+               <imagedata fileref="images/after-initial-setup.jpg" format="JPG" align="center"/>
+            </imageobject>
+            <imageobject role="html">
+               <imagedata fileref="../shared/images/after-initial-setup.jpg" format="JPG" align="center"/>
+            </imageobject>
+         </mediaobject>
+      </sect2>
+      <sect2 id="aopide-tutorial-class" revision="1">
+         <title>Create Class</title>
+         <para>
+   	      Next step is to create a normal Java class.
+            <itemizedlist>
+               <listitem>
+               	Right click on the "src" directory in the Package Explorer and in the menu, click New > Class.
+               </listitem>
+               <listitem>
+               	The only thing you should need to change is the Name of the class. Enter
+                  <literal>HelloAOP</literal> without
+               	quotes into the Name textbox, and click
+                  <literal>Finish</literal>
+               </listitem>
+            </itemizedlist>
+         </para>
+
+         <para>
+            Modify the code for your class so it loks like
+            <programlisting>
+public class HelloAOP {
+
+	public void callMe ()
+	{
+		System.out.println("AOP!");
+	}
+	
+	public static void main (String args[])
+	{
+		new HelloAOP().callMe();
+	}
+}
+            </programlisting>
+         </para>
+      </sect2>
+      <sect2 id="aopide-tutorial-interceptor" revision="1">
+         <title>Create Interceptor</title>
+         <para>
+	            Next we want to create an interceptor to the class.
+            <itemizedlist>
+               <listitem>
+                     Right click on the "src" directory in the Package Explorer and in the menu, click 
+                     New > Class. In the resulting dialog:
+                  <itemizedlist>
+                     <listitem>
+                           Name the class
+                        <literal>HelloAOPInterceptor</literal>
+                     </listitem>
+                     <listitem>
+                           Add
+                        <literal>org.jboss.aop.advice.Interceptor</literal> to the list of interceptors.
+                     </listitem>
+                  </itemizedlist>
+               </listitem>
+            </itemizedlist>
+               Then modify the class so it looks like:
+            <programlisting>
+   import org.jboss.aop.advice.Interceptor;
+   import org.jboss.aop.joinpoint.Invocation;
+   
+   public class HelloAOPInterceptor implements Interceptor {
+   
+   	public String getName() {
+   		return "HelloAOPInterceptor";
+   	}
+   
+      //We renamed the arg0 parameter to invocation
+   	public Object invoke(Invocation invocation) throws Throwable {
+   		System.out.print("Hello, ");
+         //Here we invoke the next in the chain
+   		return invocation.invokeNext();
+   	}
+   }
+            </programlisting>
+         </para>
+      </sect2>
+      <sect2 id="aopide-tutorial-bind" revision="1">
+         <title>Applying the Interceptor</title>
+         <para>
+            In order to apply your Interceptor to the callMe() method, we'll first need to switch back 
+            to the
+            <literal>HelloAOP.java</literal> editor. Once the editor is active, you should be
+            able to see the callMe() method in the Outline view (If you cannot see the outline view,
+            go to Window > Show View > Outline).
+         </para>
+         <mediaobject>
+            <imageobject role="fo">
+               <imagedata fileref="images/call-me-arrow.jpg" format="JPG" align="center"/>
+            </imageobject>
+            <imageobject role="html">
+               <imagedata fileref="../shared/images/call-me-arrow.jpg" format="JPG" align="center"/>
+            </imageobject>
+         </mediaobject>
+         <para>
+            Right click on this method, and click JBoss AOP > Apply Interceptor(s)... A dialog should open, 
+            with a list of available Interceptors. Click on
+            <literal>HelloAOPInterceptor</literal>, and click
+            <literal>Finish</literal>.
+         </para>
+         <para>
+               You should see in your Package Explorer that the file "jboss-aop.xml" now exists under your project root.
+         </para>
+      </sect2>
+
+
+      <sect2 id="aopide-tutorial-running" revision="1">
+         <title>Running</title>
+         <para>
+            Now all that's left is running the application! Similar to running a normal Java Application from Eclipse, 
+            you must create a Run Configuration for your project.
+            <itemizedlist>
+               <listitem>
+                  From the Run menu of eclipse, and choose "Run..."
+               </listitem>
+               <listitem>
+                  In the dialog that opens, you should see a few choices in a list on the left. Double click on "JBoss AOP Application".
+               </listitem>
+               <listitem>
+                  Once it is finished loading, you should have a new Run Configuration under JBoss AOP Application called "Hello AOP".
+               </listitem>
+               <listitem>
+                  Click the "Run" button
+               </listitem>
+            </itemizedlist>
+            The Eclipse console should now say:
+            <literal>Hello, AOP!</literal>, where
+            the
+            <literal>Hello, </literal> bit has been added by the interceptor.
+         </para>
+         <mediaobject>
+            <imageobject role="fo">
+               <imagedata fileref="images/hello-aop-console.jpg" format="JPG" align="center"/>
+            </imageobject>
+            <imageobject role="html">
+               <imagedata fileref="../shared/images/hello-aop-console.jpg" format="JPG" align="center"/>
+            </imageobject>
+         </mediaobject>
+      </sect2>
+
+      <sect2 id="aopide-tutorial-navigation" revision="1">
+         <title>Navigation</title>
+         <para>
+            In the real world, when developing AOP application across a development team, you can expect it will be hard 
+            to understand when and where aspects are applied in your codebase. JBoss-IDE/AOP has a few different strategies 
+            for notifying developers when an aspect is applied to a certain part of code.
+         </para>
+         <sect3 id="aopide-tutorial-navigation-advised">
+            <title>Advised Markers</title>
+            <para>
+               A marker in eclipse is a small icon that appears on the left side of the editor. Most developers are familiar 
+               with the Java Error and Bookmark markers. The AOP IDE provides markers for methods and fields which are 
+               intercepted. To further facilitate this marking, anytime the developer presses Ctrl + 1 (the default key combination 
+               for the Eclipse Quick Fix functionality)), a list of interceptors and advice will be given for that method or 
+               field. This makes navigation between methods and their interceptors extremeley easy!
+            </para>
+            <mediaobject>
+               <imageobject role="fo">
+                  <imagedata fileref="images/advised-marker-example.jpg" format="JPG" align="center"/>
+               </imageobject>
+               <imageobject role="html">
+                  <imagedata fileref="../shared/images/advised-marker-example.jpg" format="JPG" align="center"/>
+               </imageobject>
+            </mediaobject>
+         </sect3>
+         <sect3 id="aopide-tutorial-navigation-members">
+            <title>The Advised Members View</title>
+            <para>
+               The Advised Members view gives the developer an overview of every single method and field in the current class that is 
+               advised by an Aspect or Interceptor. Let's have a look.
+               <itemizedlist>
+                  <listitem>
+                     From the Eclipse main menu, click on Window > Show View > Other...
+                  </listitem>
+                  <listitem>
+                     In the window that opens, you should see a folder called "JBoss AOP". 
+                     Press the "+" to expand it.
+                  </listitem>
+                  <listitem>
+                     Double click on "Advised Members"
+                  </listitem>
+               </itemizedlist>
+            </para>
+            <para>
+               Once you've done this, you should now make sure you are currently editing the
+               <literal>HelloAOP</literal> class we
+               created in the last tutorial. Once you have that class open in an editor, you should see something similar to this 
+               in the Advised Members view:
+            </para>
+            <mediaobject>
+               <imageobject role="fo">
+                  <imagedata fileref="images/advised-members-view.jpg" format="JPG" align="center"/>
+               </imageobject>
+               <imageobject role="html">
+                  <imagedata fileref="../shared/images/advised-members-view.jpg" format="JPG" align="center"/>
+               </imageobject>
+            </mediaobject>
+            <para>
+                  Here we see that the method "callMe()" is intercepted by the interceptor
+               <literal>HelloInterceptor</literal>.
+                  Double clicking on
+               <literal>HelloInterceptor</literal> will take you straight to it. This view is similar to
+                  the Outline view, except it only shows members in your class which are intercepted.
+            </para>
+         </sect3>
+         <sect3 id="aopide-tutorial-navigation-aspect-manager">
+            <title>The Aspect Manager View</title>
+            <para>
+               The Aspect Manager View is a graphical representation of the AOP descriptor file (jboss-aop.xml). It 
+               allows you to remove an Interceptor or advice from a pointcut, as well as apply new Interceptors and 
+               Advice to existing pointcuts.
+               <itemizedlist>
+                  <listitem>
+                     From the Eclipse main menu, click on Window > Show View > Other...
+                  </listitem>
+                  <listitem>
+                     In the window that opens, you should see a folder called "JBoss AOP". 
+                     Press the "+" to expand it.
+                  </listitem>
+                  <listitem>
+                     Double click on "Aspect Manager"
+                  </listitem>
+               </itemizedlist>
+            </para>
+            <para>
+               Under Bindings, you'll notice that a pointcut is already defined that matches our "callMe()" method, and our
+               <literal>HelloInterceptor</literal> is directly under it. Right Click on
+               <literal>HelloInterceptor</literal>
+               will provide you with this menu:
+            </para>
+            <mediaobject>
+               <imageobject role="fo">
+                  <imagedata fileref="images/aspect-manager-view-interceptor-ctxt-menu.jpg" format="JPG" align="center"/>
+               </imageobject>
+               <imageobject role="html">
+                  <imagedata fileref="../shared/images/aspect-manager-view-interceptor-ctxt-menu.jpg" format="JPG" align="center"/>
+               </imageobject>
+            </mediaobject>
+            <para>
+               You can remove the interceptor, or jump to it directly in code. If you right click on the binding (pointcut) 
+               itself, you'll be able to apply more interceptors and advice just like when right clicking on a field or method 
+               in the outline view. You can also remove the entire binding altogether (which subsequently removes all child 
+               interceptors and advice, be warned)
+            </para>
+            <mediaobject>
+               <imageobject role="fo">
+                  <imagedata fileref="images/aspect-manager-view-pointcut-ctxt-menu.jpg" format="JPG" align="center"/>
+               </imageobject>
+               <imageobject role="html">
+                  <imagedata fileref="../shared/images/aspect-manager-view-pointcut-ctxt-menu.jpg" format="JPG" align="center"/>
+               </imageobject>
+            </mediaobject>
+         </sect3>
+      </sect2>
+   </sect1>
+</chapter>
+
+
+
+

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="main" name="JBoss/AOP">
+   <target name="prepare">
+      <mkdir dir="build"/>
+      <path id="javassist.classpath">
+         <pathelement path="javassist.jar"/>
+      </path>
+
+      <path id="trove.classpath">
+         <pathelement path="trove.jar"/>
+      </path>
+
+      <path id="concurrent.classpath">
+         <pathelement path="concurrent.jar"/>
+      </path>
+
+      <path refid="jboss.common.core.classpath"/>
+      <path refid="jboss.common.logging.spi.classpath"/>
+      <path refid="jboss.common.logging.log4j.classpath"/>
+      <path refid="jboss.common.logging.jdk.classpath"/>
+         <pathelement path="jboss-common.jar"/>
+      </path>
+
+      <path id="jboss.aop.classpath">
+         <pathelement path="jboss-aop.jar"/>
+      </path>
+
+      <path id="qdox.classpath">
+         <pathelement path="qdox.jar"/>
+      </path>
+
+      <path id="junit.classpath">
+         <pathelement path="junit.jar"/>
+      </path>
+
+      <path id="classpath">
+         <path refid="javassist.classpath"/>
+         <path refid="trove.classpath"/>
+         <path refid="jboss.aop.classpath"/>
+      <path refid="jboss.common.core.classpath"/>
+      <path refid="jboss.common.logging.spi.classpath"/>
+      <path refid="jboss.common.logging.log4j.classpath"/>
+      <path refid="jboss.common.logging.jdk.classpath"/>
+         <path refid="concurrent.classpath"/>
+         <path refid="qdox.classpath"/>
+         <path refid="junit.classpath"/>
+         <pathelement path="build"/>
+      </path>
+
+   </target>
+
+
+   <target name="compile-classes" depends="prepare">
+      <javac srcdir="src/main"
+         destdir="build"
+         debug="on"
+         deprecation="on"
+         optimize="off"
+         includes="**"
+         excludes="org/jboss/test/aop/jdk15/**">
+         <classpath refid="classpath"/>
+      </javac>
+   </target>
+   <target name="main" depends="compile-classes">
+      <delete file="jboss-aop.jar"/>
+      <jar jarfile="jboss-aop.jar">
+         <fileset dir="build">
+            <!-- Include everything else -->
+            <include name="org/jboss/aop/**"/>
+         </fileset>
+      </jar>
+   </target>
+
+   <!-- TESTING -->
+
+   <target name="tests" depends="main">
+      <delete dir="build/org/jboss/test"/>
+      <antcall target="precompiled-tests" inheritRefs="true"/>
+      <delete dir="build/org/jboss/test"/>
+      <antcall target="loadtime-tests" inheritRefs="true"/>
+   </target>
+
+   <target name="loadtime-tests" depends="compile-classes">
+      <junit printsummary="yes" fork="no" haltonfailure="yes">
+         <sysproperty key="java.system.class.loader" value="org.jboss.aop.standalone.SystemClassLoader"/>
+         <sysproperty key="jboss.aop.path" value="src/resources/test/basic/jboss-aop.xml"/>
+         <classpath>
+            <path refid="classpath"/>
+         </classpath>
+         <formatter type="plain"/>
+         <test fork="yes" name="org.jboss.test.aop.basic.AOPTester"/>
+      </junit>
+      <junit printsummary="yes" fork="no" haltonfailure="yes">
+         <sysproperty key="java.system.class.loader" value="org.jboss.aop.standalone.SystemClassLoader"/>
+         <sysproperty key="jboss.aop.path" value="src/resources/test/regression/jboss-aop.xml"/>
+         <classpath>
+            <path refid="classpath"/>
+         </classpath>
+         <formatter type="plain"/>
+         <test fork="yes" name="org.jboss.test.aop.regression.annotatedIntroduction.AOPTester"/>
+      </junit>
+   </target>
+
+   <target name="precompiled-tests" depends="compile-classes">
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
+      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
+      <path id="aop.task.classpath">
+         <path refid="classpath"/>
+      </path>
+
+      <aopc compilerclasspathref="aop.task.classpath">
+         <classpath refid="aop.task.classpath"/>
+         <classpath path="build"/>
+         <src path="build"/>
+         <include name="org/jboss/test/aop/basic/**"/>
+         <aoppath path="src/resources/test/basic/jboss-aop.xml"/>
+      </aopc>
+
+      <aopc compilerclasspathref="aop.task.classpath">
+         <classpath refid="aop.task.classpath"/>
+         <classpath path="build"/>
+         <src path="build"/>
+         <include name="org/jboss/test/aop/regression/**"/>
+         <aoppath path="src/resources/test/regression/jboss-aop.xml"/>
+      </aopc>
+
+      <annotationc compilerclasspathref="aop.task.classpath" bytecode="true">
+         <classpath refid="aop.task.classpath"/>
+         <classpath path="build"/>
+         <src path="src/main"/>
+         <include name="org/jboss/test/aop/annotationc/*.java"/>
+      </annotationc>
+
+
+      <junit printsummary="yes" fork="no" haltonfailure="yes">
+         <sysproperty key="jboss.aop.path" value="src/resources/test/basic/jboss-aop.xml"/>
+         <classpath>
+            <path refid="classpath"/>
+         </classpath>
+         <formatter type="plain"/>
+         <test fork="yes" name="org.jboss.test.aop.basic.AOPTester"/>
+      </junit>
+      <junit printsummary="yes" fork="no" haltonfailure="yes">
+         <classpath>
+            <path refid="classpath"/>
+         </classpath>
+         <formatter type="plain"/>
+         <test fork="yes" name="org.jboss.test.aop.regression.annotatedIntroduction.AOPTester"/>
+      </junit>
+      <junit printsummary="yes" fork="no" haltonfailure="yes">
+         <classpath>
+            <path refid="classpath"/>
+         </classpath>
+         <formatter type="plain"/>
+         <test fork="yes" name="org.jboss.test.aop.annotationc.AnnotationTester"/>
+      </junit>
+   </target>
+
+   <target name="compile-jdk15-tests" depends="prepare">
+      <!-- for some reason, jdk15 and Junit do not mix so compile the AOPTester with JDK 1.4 -->
+      <javac destdir="build"
+         source="1.5"
+         debug="on">
+         <src path="src/main"/>
+         <include name="org/jboss/test/aop/jdk15/**"/>
+         <exclude name="org/jboss/test/aop/jdk15/AOPTester*"/>
+      </javac>
+      <javac destdir="build"
+         source="1.4"
+         target="1.4"
+         debug="on">
+         <src path="src/main"/>
+         <include name="org/jboss/test/aop/jdk15/AOPTester*"/>
+      </javac>
+   </target>
+
+   <target name="jdk15-loadtime-tests" depends="compile-jdk15-tests">
+      <junit printsummary="yes" fork="no" haltonfailure="yes">
+         <sysproperty key="java.system.class.loader" value="org.jboss.aop.standalone.SystemClassLoader"/>
+         <sysproperty key="jboss.aop.path" value="src/resources/test/jdk15/jboss-aop.xml"/>
+         <classpath>
+            <path refid="classpath"/>
+            <pathelement location="build"/>
+         </classpath>
+         <formatter type="plain"/>
+         <test fork="yes" name="org.jboss.test.aop.jdk15.AOPTester"/>
+      </junit>
+   </target>
+
+   <target name="jdk15-precompiled-tests" depends="compile-jdk15-tests">
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
+      <path id="aop.task.classpath">
+         <path refid="classpath"/>
+      </path>
+
+      <aopc compilerclasspathref="aop.task.classpath">
+         <classpath refid="aop.task.classpath"/>
+         <classpath path="build"/>
+         <src path="build"/>
+         <include name="org/jboss/test/**"/>
+         <aoppath path="src/resources/test/jdk15/jboss-aop.xml"/>
+      </aopc>
+
+      <junit printsummary="yes" fork="no" haltonfailure="yes">
+         <sysproperty key="jboss.aop.path" value="src/resources/test/jdk15/jboss-aop.xml"/>
+         <classpath>
+            <path refid="classpath"/>
+         </classpath>
+         <formatter type="plain"/>
+         <test fork="yes" name="org.jboss.test.aop.jdk15.AOPTester"/>
+      </junit>
+   </target>
+
+
+</project>

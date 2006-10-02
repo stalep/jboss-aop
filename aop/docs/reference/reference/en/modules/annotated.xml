@@ -1,0 +1,1518 @@
+<chapter id="annotated">
+
+   <title>Annotation Bindings</title>
+
+   <!-- *********************************** Intro ******************************** -->
+
+   <para>
+         JDK 5.0 has introduced a new concept called annotations. Annotations can be 
+         used as an alternative to XML for configuring classes for AOP. For backward compatibility
+         with JDK 1.4.2 JBoss AOP uses an annotation compiler allowing you to create the same annotations
+         in javadoc style comments.
+   </para>
+   <para>
+         The JDK 1.5 form has been used for the declarations of each annotation type shown below. For
+         clarity both types of annotations are shown in the usage examples contained in this chapter.
+         A point worth mentioning is that in JDK 1.5 annotations are part of language and can thus 
+         be imported, so that just the classname can be used. In JDK 1.4.2 the annotations are not
+         part of "Java" so fully qualified classnames are needed. To keep things short and sweet 
+         the listings only import classes that are new for each listing.
+   </para>
+   
+   <!-- *********************************** Aspect ******************************** -->
+
+   <sect1 id="annotated-aspect" revision="1">
+      <title>@Aspect</title>
+      <para>
+         To mark a class as an aspect you annotate it with the
+         <literal>@Aspect</literal> annotation.
+         Remember that a class to be used as an aspect does not need to inherit or implement anything special,
+         but it must have an empty constuctor and contain one or more methods (advices) of the format:
+         <programlisting>public Object &lt;any-method-name&gt;(org.jboss.aop.joinpoint.Invocation)</programlisting>
+      </para>
+      <para>
+         The declaration of
+         <literal>org.jboss.aop.Aspect</literal> is:
+         <programlisting>
+   package org.jboss.aop;
+   
+   import org.jboss.aop.advice.Scope;
+   import java.lang.annotation.ElementType;
+   import java.lang.annotation.Retention;
+   import java.lang.annotation.RetentionPolicy;
+   import java.lang.annotation.Target;
+      
+   
+   @Target({ElementType.TYPE}) @Retention(RetentionPolicy.RUNTIME)
+           public @interface Aspect
+   {
+      Scope scope() default Scope.PER_VM;
+   }
+
+         </programlisting>
+         and Scope is:
+         <programlisting>
+   package org.jboss.aop.advice;
+   
+   public enum Scope
+   {
+      PER_VM, PER_CLASS, PER_INSTANCE, PER_JOINPOINT
+   }
+         </programlisting>
+         See the "XML Bindings" chapter for a description of the various scopes.
+      </para>
+      <para>
+         In JDK 1.5 we use the @Aspect annotation as follows:
+         <programlisting>
+   package com.mypackage;
+   
+   import org.jboss.aop.Aspect;
+   import org.jboss.aop.advice.Scope;
+   import org.jboss.aop.joinpoint.Invocation;
+   
+   @Aspect (scope = Scope.PER_VM)
+   public class MyAspect
+   {
+      public Object myAdvice(Invocation invocation)
+   }
+
+         </programlisting>
+         And in JDK 1.4.2:
+         <programlisting>
+   package com.mypackage;
+   
+   /**
+    * @@Aspect (scope = Scope.PER_VM)
+    */
+   public class MyAspect
+   {
+      public Object myAdvice(Invocation invocation)
+      {
+         return invocation.invokeNext();
+      }
+   }
+         </programlisting>
+      </para>
+      <para>
+         The name of the class (in this case com.mypackage.MyAspect) gets used as the 
+         internal name of the aspect. The equivalent using XML configuration would be:
+         <programlisting>
+            &lt;aop&gt;
+            &lt;aspect class="com.mypackage.MyAspect" scope="PER_VM"/&gt;
+            &lt;/aop&gt;
+         </programlisting>
+      </para>
+   </sect1>
+
+   <!-- *********************************** Interceptor ******************************** -->
+
+   <sect1 id="annotated-interceptor" revision="1">
+      <title>@InterceptorDef</title>
+      <para>
+         To mark a class as an interceptor or an aspect factory you annotate it with the
+         <literal>@InterceptorDef</literal> annotation. The class must either implement
+         the
+         <literal>org.jboss.aop.advice.Interceptor</literal> interface or the
+         <literal>org.jboss.aop.advice.AspectFactory</literal> interface.
+      </para>
+      <para>
+         The declaration of
+         <literal>org.jboss.aop.InterceptorDef</literal> is:
+         <programlisting>
+   package org.jboss.aop;
+   
+   @Target({ElementType.TYPE}) @Retention(RetentionPolicy.RUNTIME)
+           public @interface Aspect
+   {
+      Scope scope() default Scope.PER_VM;
+   }
+
+         </programlisting>
+         The same
+         <literal>Scope</literal> enum is used as for
+         <literal>Aspect</literal>.
+         The following examples use the @Bind annotation, which will be described in more 
+         detail below.
+      </para>
+      <sect2 id="annotated-interceptor-interceptor" revision="1">
+         <title>Interceptor Example</title>
+         <para>
+            In JDK 1.5 we use the
+            <literal>@InterceptorDef</literal> annotation to mark
+            an Interceptor as follows:
+            <programlisting>
+   package com.mypackage;
+   
+   import org.jboss.aop.Bind;
+   import org.jboss.aop.InterceptorDef;
+   import org.jboss.aop.advice.Interceptor;
+   
+   @InterceptorDef (scope = Scope.PER_VM)
+   @Bind (pointcut="execution("* com.blah.Test->test(..)")
+   public class MyInterceptor implements Interceptor
+   {
+      public Object invoke(Invocation invocation)throws Throwable
+      {
+         return invocation.invokeNext();
+      }
+   }
+
+            </programlisting>
+         And in JDK 1.4.2:
+            <programlisting>
+   package com.mypackage;
+   
+   /**
+    * @@org.jboss.aop.InterceptorDef (scope = org.jboss.aop.advice.Scope.PER_VM)
+    * @@org.jboss.aop.Bind (pointcut="execution("* com.blah.Test->test(..)")
+    */
+   public class MyInterceptor implements Interceptor
+   {
+      public Object invoke(Invocation invocation)throws Throwable
+      {
+         return invocation.invokeNext();
+      }
+   }
+            </programlisting>
+         </para>
+         <para>
+         The name of the class (in this case com.mypackage.MyInterceptor) gets used as the 
+         class name of the interceptor. The equivalent using XML configuration would be:
+            <programlisting>
+               &lt;aop&gt;
+               &lt;interceptor class="com.mypackage.MyInterceptor" scope="PER_VM"/&gt;
+               &lt;/aop&gt;
+            </programlisting>
+         </para>
+
+      </sect2>
+      <sect2 id="annotated-interceptor-factory" revision="1">
+         <title>AspectFactory Example</title>
+         <para>
+            In JDK 1.5 the
+            <literal>@InterceptorDef</literal> annotation is used to mark an
+            AspectFactory as follows:
+            <programlisting>
+   package com.mypackage;
+
+   import org.jboss.aop.advice.AspectFactory;
+   
+   @InterceptorDef (scope=org.jboss.aop.advice.Scope.PER_VM)
+   @Bind (pointcut="execution("* com.blah.Test->test2(..)")
+   public class MyInterceptorFactory implements AspectFactory
+   {
+      //Implemented methods left out for brevity
+   }
+            </programlisting>
+         </para>
+         <para>
+            And in JDK 1.4.2:
+            <programlisting>
+   package com.mypackage;
+   
+   /**
+    * @@org.jboss.aop.InterceptorDef (scope=org.jboss.aop.advice.Scope.PER_VM)
+    * @@org.jboss.aop.Bind (pointcut="execution("* com.blah.Test->test2(..)")
+    */
+   public class MyInterceptorFactory implements AspectFactory
+   {
+      //Implemented methods left out for brevity
+   }
+            </programlisting>
+         </para>
+         <para>
+         The name of the class (in this case com.mypackage.MyInterceptorFactory) gets used 
+         as the factory name of the aspect factory. The equivalent using XML configuration 
+         would be:
+            <programlisting>
+               &lt;aop&gt;
+               &lt;interceptor factory="com.mypackage.MyInterceptorFactory" scope="PER_VM"/&gt;
+               &lt;/aop&gt;
+            </programlisting>
+         </para>
+      </sect2>
+   </sect1>
+
+   <!-- *********************************** PointcutDef ******************************** -->
+   <sect1 id="annotated-pointcut" revision="1">
+      <title>@PointcutDef</title>
+      <para>
+         To define a named pointcut you annotate a field within an
+         <literal>@Aspect</literal>
+         or
+         <literal>@InterceptorDef</literal> annotated class with
+         <literal>@PointcutDef</literal>.
+         <literal>@PointcutDef</literal> only applies to fields and is not recognised outside
+         <literal>@Aspect</literal> or
+         <literal>@InterceptorDef</literal> annotated classes.
+      </para>
+      <para>
+         The declaration of
+         <literal>org.jboss.aop.PointcutDef</literal> is:
+         <programlisting>
+package org.jboss.aop;
+
+@Target({ElementType.FIELD}) @Retention(RetentionPolicy.RUNTIME)
+public @interface PointcutDef
+{
+   String value();
+}</programlisting>
+         <literal>@PointcutDef</literal> takes only one value, a valid pointcut expression. 
+         The name of the pointcut used internally and when yo want to reference it is:
+         <programlisting>&lt;name of @Aspect/@InterceptorDef annotated class&gt;.&lt;name of @PointcutDef annotated field&gt;</programlisting>
+      </para>
+      <para>
+         An example of an aspect class containing a named pointcut which it references from 
+         a bindng's pointcut expression in JDK 1.5:
+         <programlisting>
+   package com.mypackage;
+
+   import org.jboss.aop.PointcutDef;
+   import org.jboss.aop.pointcut.Pointcut;
+            
+   @Aspect (scope = Scope.PER_VM)
+   public class MyAspect
+   {
+      @PointcutDef ("(execution(* org.blah.Foo->someMethod()) OR \
+	      execution(* org.blah.Foo->otherMethod()))")
+      public static Pointcut fooMethods;
+      
+      public Object myAdvice(Invocation invocation)
+      {
+         return invocation.invokeNext();
+      }
+   }
+         </programlisting>
+         It is worth noting that named pointcuts can be referenced in pointcut expressions
+         outside the class they are declared in (if the annotated fields are declared 
+         public of course!).
+      </para>
+      <para>
+         The same example in JDK 1.4.2:
+         <programlisting>
+   package com.mypackage;
+
+   import org.jboss.aop.pointcut.Pointcut;
+            
+   /**
+    * @@org.jboss.aop.Aspect (scope = Scope.PER_VM)
+    */
+   public class MyAspect
+   {
+      /**
+       * @@org.jboss.aop.PointcutDef ("(execution(* org.blah.Foo->someMethod()) \ 
+               OR execution(* org.blah.Foo->otherMethod()))")
+       */
+      public static Pointcut fooMethods;
+      
+      public Object myAdvice(Invocation invocation)
+      {
+         return invocation.invokeNext();
+      }
+   }
+         </programlisting>
+      </para>
+      <para>
+         Using XML configuration this would be:
+         <programlisting>
+            &lt;aop&gt;
+            &lt;aspect class="com.mypackage.MyAspect" scope="PER_VM"/&gt;
+            &lt;pointcut
+            name="com.mypackage.MyAspect.fooMethods" 
+            expr="(execution(* org.blah.Foo->someMethod()) OR \
+                  execution(* org.blah.Foo->otherMethod()))"
+      /&gt;
+            &lt;/aop&gt;
+         </programlisting>
+         <literal></literal>
+      </para>
+
+   </sect1>
+
+   <!-- *********************************** Bind ******************************** -->
+
+   <sect1 id="annotated-bind" revision="1">
+      <title>@Bind</title>
+      <para>
+         To create a binding to an advice method from an aspect class, you annotate
+         the advice method with
+         <literal>@Bind</literal>. To create a binding to an
+         Interceptor or AspectFactory, you annotate the class itself with
+         <literal>@Bind</literal>
+         since Interceptors only contain one advice (the
+         <literal>invoke()</literal> method).
+         The @Bind annotation will only be recognised in the situations just mentioned.
+      </para>
+      <para>
+         The declaration of
+         <literal>org.jboss.aop.Bind</literal> is:
+         <programlisting>
+package org.jboss.aop;
+   
+@Target({ElementType.METHOD, ElementType.TYPE}) @Retention(RetentionPolicy.RUNTIME)
+public @interface Bind
+{
+  String pointcut();
+  String cflow() default "";
+}
+         </programlisting>
+         The
+         <literal>@Bind</literal> annotation takes two parameters:
+         <itemizedlist>
+            <listitem>
+               <literal>pointcut</literal>, which is a pointcut expression resolving to the
+               joinpoints you want to bind an aspect/interceptor to
+            </listitem>
+            <listitem>
+               <literal>cflow</literal>, which is optional. If defined it must resolve to 
+               the name of a defined cflow.)
+            </listitem>
+         </itemizedlist>
+         <para>
+         </para>
+         In the case of a binding to an advice in an aspect class, the internal name of 
+         the binding becomes:
+         <programlisting>&lt;name of the aspect class&gt;.&lt;the name of the advice method&gt;</programlisting>
+         In the case of a binding to an
+         <literal>Interceptor</literal> or
+         <literal>AspectFactory</literal>
+         implementation, the internal name of the binding becomes:
+         <programlisting>&lt;name of the Interceptor/AspectFactory implementation class&gt;</programlisting>
+      </para>
+      <para>
+         An example of a binding using an advice method in an aspect class in JDK 1.5:
+         <programlisting>
+   package com.mypackage;
+
+   import org.jboss.aop.Bind;
+            
+   @Aspect (scope = Scope.PER_VM)
+   public class MyAspect
+   {
+      @PointcutDef ("(execution(* org.blah.Foo->someMethod()) \ 
+            OR execution(* org.blah.Foo->otherMethod()))")
+      public static Pointcut fooMethods;
+      
+      @Bind (pointcut="com.mypackage.MyAspect.fooMethods")
+      public Object myAdvice(Invocation invocation)
+      {
+         return invocation.invokeNext();
+      }
+
+      @Bind (pointcut="execution("* org.blah.Bar->someMethod())")
+      public Object myAdvice(Invocation invocation)
+      {
+         return invocation.invokeNext();
+      }
+
+   }
+         </programlisting>
+         <para>
+         </para>
+         And in JDK 1.4.2:
+         <programlisting>
+   package com.mypackage;
+   
+   /**
+    * @@org.jboss.aop.Aspect (scope = Scope.PER_VM)
+    */
+   public class MyAspect
+   {
+      /**
+       * @@org.jboss.aop.PointcutDef ("(execution(* org.blah.Foo->someMethod()) \ 
+             OR execution(* org.blah.Foo->otherMethod()))")
+       */
+      public static Pointcut fooMethods;
+      
+      /**
+       * @@org.jboss.aop.Bind (pointcut="com.mypackage.MyAspect.fooMethods")
+       */
+      public Object myAdvice(Invocation invocation)
+      {
+         return invocation.invokeNext();
+      }
+      
+      /**
+       * @@org.jboss.aop.Bind (pointcut="execution(* org.blah.Bar->someMethod())")
+       */
+      public Object otherAdvice(Invocation invocation)
+      {
+         return invocation.invokeNext();
+      }
+   }
+         </programlisting>
+      </para>
+         The equivalent using XML configuration would be:
+      <programlisting>
+         &lt;aop&gt;
+         &lt;aspect class="com.mypackage.MyAspect" scope="PER_VM"/&gt;
+         &lt;pointcut
+         name="com.mypackage.MyAspect.fooMethods" 
+         expr="(execution("* org.blah.Foo->someMethod()) OR \ 
+               execution("* org.blah.Foo->otherMethod()))"
+      /&gt;
+         &lt;bind pointcut="com.mypackage.MyAspect.fooMethods"&gt;
+         &lt;advice name="myAdvice" aspect="com.mypackage.MyAspect"&gt;
+         &lt;/bind&gt;
+         &lt;bind pointcut="execution("* org.blah.Bar->someMethod())"&gt;
+         &lt;advice name="otherAdvice" aspect="com.mypackage.MyAspect"&gt;
+         &lt;/bind&gt;
+         &lt;/aop&gt;
+      </programlisting>
+      <para>
+         Revisiting the examples above in the @InterceptorDef section, now that
+         we know what @Bind means, the equivalent using XML configuration would be:
+         <programlisting>
+            &lt;aop&gt;
+            &lt;interceptor class="com.mypackage.MyInterceptor" scope="PER_VM"/&gt;
+            &lt;interceptor factory="com.mypackage.MyInterceptorFactory" scope="PER_VM"/&gt;
+
+            &lt;bind pointcut="execution("* com.blah.Test->test2(..)"&gt;
+            &lt;interceptor-ref name="com.mypackage.MyInterceptor"/&gt;
+            &lt;/bind&gt;
+            &lt;bind pointcut="execution("* com.blah.Test->test2(..)"&gt;
+            &lt;interceptor-ref name="com.mypackage.MyInterceptorFactory"/&gt;
+            &lt;/bind&gt;
+            &lt;/aop&gt;
+         </programlisting>
+      </para>
+   </sect1>
+
+   <!-- *********************************** @Introduction ******************************** -->
+   <sect1 id="annotated-introduction" revision="1">
+      <title>@Introduction</title>
+      <para>
+         Interface introductions can be done using the
+         <literal>@Introduction</literal> annotation.
+         Only fields within a class annotated with
+         <literal>@Aspect</literal> or
+         <literal>@InterceptorDef</literal> can be annotated with
+         <literal>@Introduction</literal>.
+      </para>
+      <para>
+         The declaration of
+         <literal>org.jboss.aop.Introduction</literal>:
+         <programlisting>
+   package org.jboss.aop;
+   
+   @Target({ElementType.FIELD}) @Retention(RetentionPolicy.RUNTIME)
+   public @interface Introduction
+   {
+      Class target() default java.lang.Class.class;
+      String typeExpression() default "";
+      Class[] interfaces();
+   }
+         </programlisting>
+         The parameters of
+         <literal>@Introduction</literal> are:
+         <itemizedlist>
+            <listitem>
+               <literal>target</literal>, the name of the class we want to introduce 
+               an interface to.
+            </listitem>
+            <listitem>
+               <literal>typeExpression</literal>, a type expression that should resolve 
+               to one or more classes we want to introduce an interface to.
+            </listitem>
+            <listitem>
+               <literal>interfaces</literal>, an array of the interfaces we want to introduce
+            </listitem>
+         </itemizedlist>
+
+         <literal>target</literal> or
+         <literal>typeExpression</literal> has to be specified,
+         but not both.
+      </para>
+      <para>
+         This is how to use
+         <literal>@Introduction</literal> in JDK 1.5:
+         <programlisting>
+   package com.mypackage;
+
+   import org.jboss.aop.Introduction;
+            
+   @Aspect (scope = Scope.PER_VM)
+   public class IntroAspect
+   {
+      @Introduction (target=com.blah.SomeClass.class, \
+            interfaces={java.io.Serializable.class})
+      public static Object pojoNoInterfacesIntro;
+   }
+         </programlisting>
+         And in JDK 1.4.2:
+         <programlisting>
+   package com.mypackage;
+
+   /*
+    * @@org.jboss.aop.Aspect (scope = Scope.PER_VM)
+    */
+   public class IntroAspect
+   {
+      /*
+       * @org.jboss.aop.Introduction (target=com.blah.SomeClass, \ 
+             interfaces={java.io.Serializable})
+       */
+      public static Object pojoNoInterfacesIntro;
+   }
+         </programlisting>
+         
+         Notice the slight difference in the JDK 1.4.2 annotation, the class values don't have 
+         the ".class" suffix.
+      </para>
+      <para>
+         This means make
+         <literal>com.blah.SomeClass.class</literal> implement the
+         <literal>java.io.Serializable</literal> interface. The equivalent configured
+         via XML would be:
+         <programlisting>
+            &lt;introduction class="com.blah.SomeClass.class"&gt;
+            &lt;interfaces&gt;
+         java.io.Serializable
+            &lt;/interfaces&gt;
+            &lt;/introduction&gt;
+         </programlisting>
+      </para>
+   </sect1>
+
+   <!-- *********************************** @Mixin ******************************** -->
+
+   <sect1 id="annotated-mixin" revision="1">
+      <title>@Mixin</title>
+      <para>
+         Sometimes when we want to introduce/force a new class to implement an interface,
+         that interface introduces new methods to a class. The class needs to implement 
+         these methods to be valid. In these cases a mixin class is used. The mixin class 
+         must implement the methods specified by the interface(s) and the main class can 
+         then implement these methods and delegate to the mixin class.
+      </para>
+      <para>
+         Mixins are created using the @Mixin annotation.  Only methods within a class 
+         annotated with
+         <literal>@Aspect</literal> or
+         <literal>@InterceptorDef</literal>
+         can be annotated with
+         <literal>@Mixin</literal>. The annotated method has
+         <itemizedlist>
+            <listitem>be public</listitem>
+            <listitem>be static</listitem>
+            <listitem>contain the logic to create the mixin class</listitem>
+            <listitem>return an instance of the mixin class</listitem>
+         </itemizedlist>
+         The declaration of
+         <literal>org.jboss.aop.Mixin</literal>:
+         <programlisting>
+   package org.jboss.aop;
+
+   @Target({ElementType.METHOD}) @Retention(RetentionPolicy.RUNTIME)
+   public @interface Mixin
+   {
+      Class target() default java.lang.Class.class;
+      String typeExpression() default "";
+      Class[] interfaces();
+      boolean isTransient() default true;
+   }            
+         </programlisting>
+         The parameters of
+         <literal>@Mixin</literal> are:
+
+         <itemizedlist>
+            <listitem>
+               <literal>target</literal>, the name of the class we want to introduce 
+               an interface to.
+            </listitem>
+            <listitem>
+               <literal>typeExpression</literal>, a type expression that should resolve 
+               to one or more classes we want to introduce an interface to.
+            </listitem>
+            <listitem>
+               <literal>interfaces</literal>, an array of the interfaces we want to introduce, 
+               implemented by the mixin class.
+            </listitem>
+            <listitem>
+               <literal>isTransient</literal>. Internally AOP makes the main class keep a 
+               reference to the mixin class, and this sets if that reference should be 
+               transient or not. The default is true.
+            </listitem>
+         </itemizedlist>
+         <literal>target</literal> or
+         <literal>typeExpression</literal> has to be specified,
+         but not both.
+      </para>
+      <para>
+         An example aspect using
+         <literal>@Mixin</literal> in JDK 1.5:
+         <programlisting>
+   package com.mypackage;
+   
+   import org.jboss.aop.Mixin;
+   import com.mypackage.POJO;
+   
+   @Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
+   public class IntroductionAspect
+   {
+      @Mixin (target=com.mypackage.POJO.class, interfaces={java.io.Externalizable.class})
+      public static ExternalizableMixin createExternalizableMixin(POJO pojo) {
+          return new ExternalizableMixin(pojo);
+      }
+   }
+         </programlisting>
+         Here's the JDK 1.4.2 version:
+         <programlisting>
+   package com.mypackage;
+   
+   import org.jboss.aop.Mixin;
+   import com.mypackage.POJO;
+
+   /**
+    * @@org.jboss.aop.Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
+    */   
+   public class IntroductionAspect
+   {
+      /**
+       * @org.jboss.aop.Mixin (target=com.mypackage.POJO.class, \
+             interfaces={java.io.Externalizable.class})
+       */   
+      public static ExternalizableMixin createExternalizableMixin(POJO pojo) {
+          return new ExternalizableMixin(pojo);
+      }
+   }
+         </programlisting>
+      </para>
+      <para>
+         Since this is slightly more complex than the previous examples we have seen, the
+         <literal>POJO</literal> and
+         <literal>ExternalizableMixin</literal> classes are
+         included here.
+      </para>
+      <programlisting>
+   package com.mypackage;
+   
+   public class POJO
+   {
+      String stuff;
+   }
+      </programlisting>
+      <programlisting>
+   package com.mypackage;
+   
+   import java.io.Externalizable;
+   import java.io.IOException;
+   import java.io.ObjectInput;
+   import java.io.ObjectOutput;
+
+   public class ExternalizableMixin implements Externalizable
+   {
+      POJO pojo;
+      
+      public ExternalizableMixin(POJO pojo)
+      {
+         this.pojo = pojo;
+      }
+   
+      public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
+      {
+         pojo.stuff = in.readUTF();  
+      }
+      
+      public void writeExternal(ObjectOutput out) throws IOException
+      {
+         out.writeUTF(pojo.stuff);
+      }
+   }
+      </programlisting>
+
+      <para>
+         This has the same effect as the following XML configuration:
+         <programlisting>
+            &lt;introduction classs="com.mypackage.POJO"&gt;
+            &lt;mixin transient="true"&gt;
+            &lt;interfaces&gt;
+              java.io.Externalizable
+            &lt;/interfaces&gt;
+            &lt;class&gt;com.mypackage.ExternalizableMixin&lt;/class&gt;
+            &lt;construction&gt;IntroductionAspect.createExternalizableMixin(this)&lt;/construction&gt;
+            &lt;/mixin&gt;
+            &lt;/introduction&gt;
+         </programlisting>
+      </para>
+   </sect1>
+
+   <!-- *********************************** Prepare ******************************** -->
+
+   <sect1 id="annotated-prepare" revision="1">
+      <title>@Prepare</title>
+      <para>
+         To prepare a joinpoint or a set of joinpoints for DynamicAOP annotate a field 
+         with
+         <literal>@Prepare</literal> in a class anotated with
+         <literal>@Aspect</literal>
+         or
+         <literal>@InterceptorDef</literal>.
+      </para>
+      <para>
+         The declaration of
+         <literal>org.jboss.aop.Prepare</literal> is:
+         <programlisting>
+   package org.jboss.aop;
+   
+   @Target({ElementType.FIELD, ElementType.TYPE}) @Retention(RetentionPolicy.RUNTIME)
+         public @interface Prepare {
+       String value() default "";
+   }
+         </programlisting>
+         The single field
+         <literal>value</literal> contains a pointcut expression
+         matching one or more joinpoints.
+      </para>
+      <para>
+         To use
+         <literal>@Prepare</literal> in JDK 1.5:
+         <programlisting>
+   package com.mypackage;
+
+   import org.jboss.aop.Prepare;
+   
+   @InterceptorDef (scope = Scope.PER_VM)
+   @Bind (pointcut="execution("* com.blah.Test->test(..)")
+   public class MyInterceptor2 implements Interceptor
+   {
+      @Prepare ("all(com.blah.DynamicPOJO)")
+      public static Pointcut dynamicPOJO;
+   
+      public Object invoke(Invocation invocation)throws Throwable
+      {
+         return invocation.invokeNext();
+      }
+   }
+
+         </programlisting>
+         And in JDK 1.4.2:
+         <programlisting>
+   package com.mypackage;
+   
+   /**
+    * @@org.jboss.aop.InterceptorDef (scope = org.jboss.aop.advice.Scope.PER_VM)
+    * @@org.jboss.aop.Bind (pointcut="execution("* com.blah.Test->test(..)")
+    */
+   public class MyInterceptor2 implements Interceptor
+   {
+      /**
+       * @@org.jboss.aop.Prepare ("all(com.blah.DynamicPOJO)")
+       */
+      public static Pointcut dynamicPOJO;
+
+      public Object invoke(Invocation invocation)throws Throwable
+      {
+         return invocation.invokeNext();
+      }
+   }
+         </programlisting>
+
+      </para>
+      <para>
+         Using XML configuration instead we would write:
+         <programlisting>
+            &lt;prepare expr="all(com.blah.DynamicPOJO)"/&gt;
+         </programlisting>
+      </para>
+      <para>
+         This simple example used an
+         <literal>@InterceptorDef</literal> class for a bit of
+         variety in the examples, and to reiterate that
+         <literal>@Pointcut</literal>,
+         <literal>@Introduction</literal>,
+         <literal>@Mixin</literal>,
+         <literal>@Prepare</literal>,
+         <literal>@Typedef</literal>,
+         <literal>@CFlow</literal>,
+         <literal>@DynamicCFlow</literal> and
+         <literal>@AnnotationIntroductionDef</literal>
+         can all be used both in
+         <literal>@InterceptorDef</literal> annotated classes AND
+         <literal>@Aspect</literal> annotated classes. Same for
+         <literal>@Bind</literal>,
+         but that is a special case as mentioned above.
+      </para>
+     <sect2 id="annotated-prepare-pojo" revision="1">
+        <title>@Prepare POJO</title>
+        <para>
+           You can also annotate a POJO with @Prepare directly in cases where
+           you are using Dynamic AOP, and the exact bindings are not known at
+           instrumentation time. In this case you annotate the class itself. 
+           Here's how it is done in JDK 1.5:
+           <programlisting>
+   package com.mypackage;
+
+   import org.jboss.aop.Prepare;
+   
+   @Prepare ("all(this)")
+   public class MyDynamicPOJO implements Interceptor
+   {
+      ...
+   }
+           </programlisting>
+           <literal>all(this)</literal> means the same as 
+           <literal>all(com.blah.MyDynamicPOJO)</literal>, but the use of 
+           <literal>all(this)</literal> is recommended.
+        </para>
+        <para>
+           JDK 1.4:
+           <programlisting>
+   package com.mypackage;
+
+   import org.jboss.aop.Prepare;
+   
+   /**
+    * @@org.jboss.aop.Prepare ("all(this)")
+    */
+   public class MyDynamicPOJO implements Interceptor
+   {
+      ...
+   }
+           </programlisting>
+        </para>
+        <para>
+           The examples just given equate to this XML
+           <programlisting>
+            &lt;prepare expr="all(com.blah.MyDynamicPOJO)"/&gt;
+           </programlisting>
+        </para>
+     </sect2>
+     <para>
+        To summarise, when using @Prepare within an @Interceptor or @Aspect 
+        annotated class, you annotate a field within that class. When using 
+        @Prepare with a POJO you annotate the class itself.
+     </para>
+   </sect1>
+
+   <!-- *********************************** Typedef ******************************** -->
+
+   <sect1 id="annotated-typedef" revision="1">
+      <title>@TypeDef</title>
+      <para>
+         To use a typedef, you annotate a field with
+         <literal>@TypeDef</literal>
+         in a class anotated with
+         <literal>@Aspect</literal> or
+         <literal>@InterceptorDef</literal>.
+      </para>
+      <para>
+         The declaration of
+         <literal>org.jboss.aop.TypeDef</literal>:
+         <programlisting>
+package org.jboss.aop;
+
+@Target({ElementType.FIELD}) @Retention(RetentionPolicy.RUNTIME)
+public @interface TypeDef {
+    String value();
+}
+         </programlisting>
+         The single
+         <literal>value</literal> field takes a type expression that
+         resolves to one or more classes. The name of the typedef used for reference
+         and internally is:
+         <programlisting>&lt;name of @Aspect/@InterceptorDef annotated class&gt;.&lt;name of @TypeDef annotated field&gt;</programlisting>
+      </para>
+      <para>
+         Here's how to use it with JDK 1.5:
+         <programlisting>
+   package com.mypackage;
+
+   import org.jboss.aop.TypeDef;
+   import org.jboss.aop.pointcut.Typedef;
+   @Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
+   public class TypedefAspect
+   {
+      @TypeDef ("class(com.blah.POJO)")
+      public static Typedef myTypedef;
+   
+       @Bind (pointcut="execution(* \ 
+             $typedef{com.mypackage.TypedefAspect.myTypedef}->methodWithTypedef())")
+       public Object typedefAdvice(Invocation invocation) throws Throwable
+      {
+         return invocation.invokeNext();
+      }
+   }
+         </programlisting>
+      </para>
+      <para>
+         And with JDK 1.4.2:
+         <programlisting>
+   package com.mypackage;
+
+   import org.jboss.aop.TypeDef;
+   import org.jboss.aop.pointcut.Typedef;
+   
+   /**
+    * @@org.jboss.aop.Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
+    */
+   public class TypedefAspect
+   {
+      /**
+       * @@org.jboss.aop.TypeDef ("class(com.blah.POJO)")
+       */
+      public static Typedef myTypedef;
+   
+      /**
+       * @@org.jboss.aop.Bind (pointcut="execution(* \
+          $typedef{com.mypackage.TypedefAspect.myTypedef}->methodWithTypedef())")
+       */
+      public Object typedefAdvice(Invocation invocation) throws Throwable
+      {
+         return invocation.invokeNext();
+      }
+   }
+         </programlisting>
+      </para>
+      <para>
+         The equivalent using XML configuration would be:
+         <programlisting>
+            &lt;aop&gt;
+            &lt;aspect class="com.mypackage.TypedefAspect" scope="PER&gt;VM"/&gt;
+            &lt;typedef name="com.mypackage.TypedefAspect.myTypedef" expr="class(com.blah.POJO)"/&gt;
+            &lt;bind
+         pointcut="execution(* \
+            $typedef{com.mypackage.TypedefAspect.myTypedef}-&gt;methodWithTypedef())"
+            &gt;
+            &lt;advice name="typedefAdvice" aspect="com.mypackage.TypedefAspect"/&gt;
+            &lt;/bind&gt;
+            &lt;/aop&gt;
+         </programlisting>
+      </para>
+   </sect1>
+
+   <!-- *********************************** CFlow ******************************** -->
+
+   <sect1 id="annotated-cflow" revision="1">
+      <title>@CFlowDef</title>
+      <para>
+         To create a CFlow stack, you annotate a field with
+         <literal>@CFlowDef</literal>
+         in a class anotated with
+         <literal>@Aspect</literal> or
+         <literal>@InterceptorDef</literal>.
+         The declaration of
+         <literal>org.jboss.aop.CFlowStackDef</literal> is:
+         <programlisting>
+   package org.jboss.aop;
+   
+   @Target({ElementType.FIELD}) @Retention(RetentionPolicy.RUNTIME)
+         public @interface CFlowStackDef
+   {
+      CFlowDef[] cflows();
+   }
+         </programlisting>
+         In turn the declaration of 
+         <literal>org.jboss.aop.CFlowDef</literal> is:
+         <programlisting>
+   package org.jboss.aop;
+   
+   public @interface CFlowDef {
+       boolean called();
+       String expr();
+   }
+         </programlisting>
+         The parameters of
+         <literal>@CFlowDef</literal> are:
+         <itemizedlist>
+            <listitem>
+               <literal>called</literal>, whether the corresponding expr should appear 
+               in the stack trace or not.
+            </listitem>
+            <listitem>
+               <literal>expr</literal>, a string matching stack a trace element
+            </listitem>
+         </itemizedlist>
+         The name of the CFlowStackDef used for reference and internally is:
+         <programlisting>&lt;name of @Aspect/@InterceptorDef annotated class&gt;.&lt;name of @CFlowStackDef annotated field&gt;</programlisting>
+      </para>
+      <para>
+         CFlowStackDef is used like this in JDK 1.5:
+         <programlisting>
+   package com.mypackage;
+
+   import org.jboss.aop.CFlowStackDef;   
+   import org.jboss.aop.pointcut.CFlowStack;   
+
+   @Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
+   public class CFlowAspect
+   {
+   
+      @CFlowStackDef (cflows={@CFlowDef(expr= "void com.blah.POJO->cflowMethod1()", \
+            called=false),  @CFlowDef(expr = "void com.blah.POJO->cflowMethod2()", \
+            called=true)})
+      public static CFlowStack cfNot1And2Stack;
+   
+      @Bind (pointcut="execution(void com.blah.POJO*->privMethod())", \ 
+            cflow="com.mypackage.CFlowAspect.cfNot1And2Stack")
+      public Object cflowAdvice(Invocation invocation) throws Throwable
+      {
+         return invocation.invokeNext();
+      }
+   }     
+         </programlisting>
+      </para>
+      <para>
+         And in 1.4.2:
+         <programlisting>
+            
+   package com.mypackage;
+
+   import org.jboss.aop.pointcut.CFlowStack;   
+   /**
+    * @@org.jboss.aop.Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
+    */
+   public class CFlowAspect
+   {
+      
+      /**
+       * @@org.jboss.aop.CFlowStackDef (cflows={@org.jboss.aop.CFlowDef \
+          (expr= "void com.blah.POJO->cflowMethod1()", called=false),  \
+          @org.jboss.aop.CFlowDef (expr = "void com.blah.POJO->cflowMethod2()", \ 
+          called=true)})
+       */
+      public static CFlowStack cfNot1And2Stack;
+   
+      /**
+       * @@org.jboss.aop.Bind (pointcut="execution(void com.blah.POJO*->privMethod())", \
+             cflow="com.mypackage.CFlowAspect.cfNot1And2Stack")
+       */
+      public Object cflowAdvice(Invocation invocation) throws Throwable
+      {
+         return invocation.invokeNext();
+      }
+   }     
+         </programlisting>
+      </para>
+      <para>
+         The above means the same as this XML:
+         <programlisting>
+            &lt;aop&gt;
+            &lt;cflow-stack name="com.mypackage.CFlowAspect.cfNot1And2Stack"&gt;
+            &lt;called expr="void com.blah.POJO-&gt;cflowMethod1()"/&gt;
+            &lt;not-called expr="void com.blah.POJO-&gt;cflowMethod2()"/&gt;
+            &lt;/cflow-stack&gt;
+            &lt;/aop&gt;
+         </programlisting>
+      </para>
+
+   </sect1>
+
+   <!-- *********************************** Dynamic CFlow ******************************** -->
+   <sect1 id="annotated-dynamiccflow" revision="1">
+      <title>@DynamicCFlowDef</title>
+      <para>
+         To create a dynamic CFlow you annotate a class implementing
+         <literal>org.jboss.aop.pointcut.DynamicCFlow</literal> with
+         <literal>@DynamicCFlowDef</literal>. The declaration of
+         <literal>@org.jboss.aop.DynamicCFlowDef</literal> is:
+         <programlisting>
+   package org.jboss.aop;
+   
+   @Target(ElementType.TYPE) @Retention(RetentionPolicy.RUNTIME)
+   public @interface DynamicCFlowDef
+   {
+   }
+         </programlisting>
+      </para>
+      <para>
+         Here is a @DynamicCFlow annotated class in JDK 1.5:
+         <programlisting>
+   package com.mypackage;
+   
+   import org.jboss.aop.DynamicCFlowDef;
+   import org.jboss.aop.pointcut.DynamicCFlow;
+   
+   @DynamicCFlowDef
+   public class MyDynamicCFlow implements DynamicCFlow
+   {
+      public static boolean execute = false;
+   
+      public boolean shouldExecute(Invocation invocation)
+      {
+         return execute;
+      }
+   }
+         </programlisting>
+      </para>
+      <para>
+         And the same in JDK 1.4.2:
+         <programlisting>
+   package com.mypackage;
+   
+   import org.jboss.aop.pointcut.DynamicCFlow;
+   
+   /**   
+    * @org.jboss.aop.DynamicCFlowDef
+    */
+   public class MyDynamicCFlow implements DynamicCFlow
+   {
+      public static boolean execute = false;
+   
+      public boolean shouldExecute(Invocation invocation)
+      {
+         return execute;
+      }
+   }
+         </programlisting>
+         The name of the
+         <literal>@DynamicCFlowDef</literal> annotated class gets used as
+         the name of the cflow for references.
+      </para>
+      <para>
+         To use the dynamic cflow we just defined in JDK 1.5:
+         <programlisting>
+   package com.mypackage;
+
+   @Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
+   public class CFlowAspect
+   {
+      @Bind (pointcut="execution(void com.blah.POJO->someMethod())", \
+            cflow="com.mypackage.MyDynamicCFlow")
+      public Object cflowAdvice(Invocation invocation) throws Throwable
+      {
+         return invocation.invokeNext();
+      }
+   }     
+         </programlisting>
+      </para>
+      <para>
+         To use the dynamic cflow we just defined in JDK 1.5:
+         <programlisting>
+   package com.mypackage;
+   
+   /**
+    * @@org.jboss.aop.Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
+    */
+   public class CFlowAspect
+   {
+      /**
+       * @@org.jboss.aop.Bind (pointcut="execution(void com.blah.POJO->someMethod())", \
+             cflow="com.mypackage.MyDynamicCFlow")
+       */
+      public Object cflowAdvice(Invocation invocation) throws Throwable
+      {
+         return invocation.invokeNext();
+      }
+   }     
+         </programlisting>
+      </para>
+   </sect1>
+   <!-- *********************************** Annotation Intro ******************************** -->
+
+   <sect1 id="annotated-annotationintro" revision="1">
+      <title>@AnnotationIntroductionDef</title>
+      <para>
+         You can introduce annotations by annotating a field with the
+         <literal>@AnnotationIntroductionDef</literal> in a class anotated with
+         <literal>@Aspect</literal> or
+         <literal>@InterceptorDef</literal>.
+         The declaration of
+         <literal>org.jboss.aop.AnnotationIntroductionDef</literal> is:
+         <programlisting>
+   package org.jboss.aop;
+   
+   @Target (ElementType.FIELD) @Retention(RetentionPolicy.RUNTIME)
+         public @interface AnnotationIntroductionDef
+   {
+      String expr();
+      boolean invisible();
+      String annotation();
+   }
+         </programlisting>
+         The parameters of
+         <literal>@AnnotationIntroductionDef</literal> are:
+         <itemizedlist>
+            <listitem>
+               <literal>expr</literal>, pointcut matching the classes/constructors/methods/fields 
+               we want to annotate.
+            </listitem>
+            <listitem>
+               <literal>invisible</literal>, if true: the annotation's retention is RetentionPolicy.CLASS;
+               false: RetentionPolicy.RUNTIME
+            </listitem>
+            <listitem>
+               <literal>annotation</literal>, the annotation we want to introduce.
+            </listitem>
+         </itemizedlist>
+
+      </para>
+      <para>
+         The listings below make use of an annotation called
+         <literal>@com.mypackage.MyAnnotation</literal>:
+         <programlisting>
+   package com.mypackage;
+   public interface MyAnnotation
+   {
+      String string();
+      int integer();
+      boolean bool();
+   }
+         </programlisting>
+         What its parameters mean is not very important for our purpose.
+      </para>
+      <para>
+         The use of
+         <literal>@AnnotationIntroductionDef</literal> in JDK 1.5:
+         <programlisting>
+   package com.mypackage;
+   
+   import org.jboss.aop.AnnotationIntroductionDef:
+   import org.jboss.aop.introduction.AnnotationIntroduction;
+   
+   @.InterceptorDef (scope=org.jboss.aop.advice.Scope.PER_VM)
+   @org.jboss.aop.Bind (pointcut="all(com.blah.SomePOJO)")
+   public class IntroducedAnnotationInterceptor implements Interceptor
+   {
+      @org.jboss.aop.AnnotationIntroductionDef \
+            (expr="method(* com.blah.SomePOJO->annotationIntroductionMethod())", \
+             invisible=false, \
+             annotation="@com.mypackage.MyAnnotation \
+                (string='hello', integer=5, bool=true)")
+      public static AnnotationIntroduction annotationIntroduction;
+      
+      public String getName()
+      {
+         return "IntroducedAnnotationInterceptor";
+      }
+   
+      public Object invoke(Invocation invocation) throws Throwable
+      {
+         return invocation.invokeNext();
+      }
+   }
+         </programlisting>
+         Note that the reference to
+         <literal>@com.mypackage.MyAnnotation</literal> must use the
+         fully qualified class name, and that the value for its string parameter uses single quotes.
+      </para>
+      <para>
+         The use of
+         <literal>@AnnotationIntroductionDef</literal> in JDK 1.4.2:
+         <programlisting>
+   package com.mypackage;
+   
+   import org.jboss.aop.introduction.AnnotationIntroduction;
+   
+   /**
+    * @@org.jboss.aop.InterceptorDef (scope=org.jboss.aop.advice.Scope.PER_VM)
+    * @@org.jboss.aop.Bind (pointcut="all(com.blah.SomePOJO)")
+    */
+   public class IntroducedAnnotationInterceptor implements Interceptor
+   {
+      /**
+       * @@org.jboss.aop.AnnotationIntroductionDef \
+             (expr="method(* com.blah.SomePOJO->annotationIntroductionMethod())", \
+             invisible=false, \
+             annotation="@com.mypackage.MyAnnotation \
+             (string='hello', integer=5, bool=true)")
+       */
+      public static AnnotationIntroduction annotationIntroduction;
+      
+      public String getName()
+      {
+         return "IntroducedAnnotationInterceptor";
+      }
+   
+      public Object invoke(Invocation invocation) throws Throwable
+      {
+         return invocation.invokeNext();
+      }
+   }
+         </programlisting>
+         Note that the reference to only uses one '@', and that the value for its string parameter uses single quotes.
+      </para>
+      <para>
+         The previous listings are the same as this XML configuration:
+         <programlisting>
+            &lt;annotation-introduction
+      expr="method(* com.blah.SomePOJO->annotationIntroductionMethod()) 
+      invisible="false"
+            &gt;
+      @com.mypackage.MyAnnotation (string="hello", integer=5, bool=true)
+            &lt;/annotation-introduction&gt;
+         </programlisting>
+      </para>
+   </sect1>
+
+   <sect1 id="annotated-precedence" revision="1">
+      <title>@Precedence</title>
+      <para>You can declare precedence by annotating a class with <literal>@Precedence</literal>, and then annotate 
+      fields where the types are the various Interfaces/Aspects you want to sort. You annotate fields where the 
+      type is an interceptor with <literal>@PrecedenceInterceptor</literal>. When the type is an
+      aspect class, you annotate the field with <literal>@PrecedenceAdvice</literal>. The definitions
+      of org.jboss.aop.Precedence, org.jboss.aop.PrecedenceInterceptor and 
+      org.jboss.aop.PrecedenceAdvice are
+      </para>
+      <programlisting>
+   package org.jboss.aop;
+   
+   @Target({ElementType.TYPE}) @Retention(RetentionPolicy.RUNTIME)
+   public @interface Precedence
+   {
+   }
+      </programlisting>
+      <programlisting>
+   package org.jboss.aop;
+   
+   @Target({ElementType.FIELD}) @Retention(RetentionPolicy.RUNTIME)
+   public @interface PrecedenceInterceptor
+   {
+   }      
+      </programlisting>
+      <programlisting>
+   package org.jboss.aop;
+
+   @Target({ElementType.FIELD}) @Retention(RetentionPolicy.RUNTIME)
+   public @interface PrecedenceAdvice
+   {
+      String value();
+   }
+      </programlisting>
+      <para>
+         The <literal>value()</literal> attribute of <literal>PrecedenceAdvice</literal> is the name of the
+         advice method to use.
+      </para>
+      <para>
+         The example shown below declares a relative sort order where <literal>org.acme.Interceptor</literal> 
+         must always be invoked before <literal>org.acme.Aspect.advice1()</literal> which must be invoked before
+         <literal>org.acme.Aspect.advice2()</literal>. Here is the JDK 1.5 version:
+      </para>
+      <programlisting>
+   import org.jboss.aop.Precedence;
+   import org.jboss.aop.PrecedenceAdvice;
+         
+   @Precedence
+   public class MyPrecedence
+   {
+      @PrecedenceInterceptor
+      org.acme.Interceptor intercept;
+
+      @PrecedenceAdvice ("advice1")
+      org.acme.Aspect precAdvice1;
+
+      @PrecedenceAdvice ("advice2")
+      org.acme.Aspect precAdvice2;
+   }         
+      </programlisting>
+      <para>
+         And the JDK 1.4 version:
+      </para>
+      <programlisting>
+   /**
+    * @@org.jboss.aop.Precedence
+    */
+   public class MyPrecedence
+   {
+      /**
+       * @@org.jboss.aop.PrecedenceInterceptor
+       */
+      org.acme.Interceptor intercept;
+
+      /**
+       * @@org.jboss.aop.PrecedenceAdvice ("advice1")
+       */
+      org.acme.Aspect precAdvice1;
+
+      /**
+       * @@org.jboss.aop.PrecedenceAdvice ("advice2")
+       */
+      org.acme.Aspect precAdvice2;
+   }         
+      </programlisting>
+      <para>
+         The ordering of interceptors/advices defined via annotations that have no precedence defined, is arbitrary.
+      </para>
+   </sect1>
+
+   <sect1 id="annotated-declare" revision="1">
+      <title>@DeclareError and @DeclareWarning</title>
+      <para>
+         You can declare checks to be enforced at instrumentation time. They take a pointcut and a message. 
+         If the pointcut is matched, the message is printed out. To use this with annotations, annotate fields
+         with <literal>DeclareWarning</literal> or <literal>DeclareError</literal> within a class annotated with
+         <literal>@Aspect</literal> or <literal>@InterceptorDef</literal>. The definitions of 
+         <literal>org.jboss.aop.DeclareError</literal> and <literal>org.jboss.aop.DeclareWarning</literal> are:
+      </para>
+      <programlisting>
+   package org.jboss.aop;
+
+   @Target({ElementType.FIELD}) @Retention(RetentionPolicy.RUNTIME)
+   public @interface DeclareWarning
+   {
+      String expr();
+      String msg();
+   }
+      </programlisting>
+      
+      <programlisting>
+   package org.jboss.aop;
+   
+   @Target({ElementType.FIELD}) @Retention(RetentionPolicy.RUNTIME)
+   public @interface DeclareError
+   {
+      String expr();
+      String msg();
+   }
+      </programlisting>
+      <para>
+         For both: the expr() attribute is a pointcut expression that should not occur, and the msg() attribute is
+         the message to print out if a match is found for the pointcut. If you use 
+         <literal>DeclareWarning</literal> instrumentation/your application will simply continue having printed the 
+         message you supplied. In the case of <literal>DeclareError</literal>, the message is logged and an error is
+         thrown, causing instrumentation/your application to stop. Here is an example in JDK 1.5
+      </para>
+      <programlisting>
+   import org.jboss.aop.Aspect;
+   import org.jboss.aop.pointcut.Pointcut;
+   import org.jboss.aop.DeclareError;
+   import org.jboss.aop.DeclareWarning;
+   
+   @Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
+   public class DeclareAspect
+   {
+      @DeclareWarning (expr="class($instanceof{VehicleDAO}) AND \
+         !has(public void *->save())", \
+         msg="All VehicleDAO subclasses must override the save() method.")
+      Pointcut warning;
+   
+      @DeclareError (expr="call(* org.acme.businesslayer.*->*(..)) \
+         AND within(org.acme.datalayer.*)", \
+         msg="Data layer classes should not call up to the business layer")
+      Pointcut error;
+   }         
+      </programlisting>
+      <para>
+         And in JDK 1.4:
+      </para>
+      <programlisting>
+   import org.jboss.aop.pointcut.Pointcut;
+   
+   /**
+    * @@org.jboss.aop.Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
+    */
+   public class DeclareAspect
+   {
+      /**
+       * @@org.jboss.aop.DeclareWarning (expr="class($instanceof{VehicleDAO}) AND \
+          !has(public void *->save())", \
+          msg="All VehicleDAO subclasses must override the save() method.")
+       */
+      Pointcut warning;
+   
+      /**
+       * @@org.jboss.aop.DeclareError (expr="call(* org.acme.businesslayer.*->*(..)) \
+          AND within(org.acme.datalayer.*)", \
+          msg="Data layer classes should not call up to the business layer")
+       */
+      Pointcut error;
+   }         
+      </programlisting>
+   </sect1>
+      
+
+</chapter>
+
+
+
+

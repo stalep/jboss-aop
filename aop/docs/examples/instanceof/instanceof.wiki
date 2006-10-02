@@ -1,0 +1,26 @@
+!!!Instanceof
+
+You can use $instanceof{} expressions when specify the class of a method, constructor, or field.  This is very useful when you want to specify bindings that are driven off of base classes or interfaces.
+
+{{{
+<aop>
+   <bind pointcut="execution(void $instanceof{SomeInterface}->someMethod())">
+       <interceptor class="SimpleInterceptor"/>
+   </bind>
+</aop>
+}}}
+
+!Running
+To compile and run:
+{{{
+  $ ant
+}}}
+It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should read as follows:
+{{{
+run:
+     [java] --- pojo.someMethod(); ---
+     [java] <<< Entering SimpleInterceptor type: org.jboss.aop.joinpoint.MethodInvocation
+     [java] someMethod
+     [java] >>> Leaving SimpleInterceptor
+}}}
+

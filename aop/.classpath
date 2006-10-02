@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="org/jboss/aop/AnnotationIntroductionDef.java|org/jboss/aop/Aspect.java|org/jboss/aop/Bind.java|org/jboss/aop/CFlowDef.java|org/jboss/aop/CFlowStackDef.java|org/jboss/aop/DeclareError.java|org/jboss/aop/DeclareWarning.java|org/jboss/aop/DynamicCFlowDef.java|org/jboss/aop/InterceptorDef.java|org/jboss/aop/Introduction.java|org/jboss/aop/Mixin.java|org/jboss/aop/PointcutDef.java|org/jboss/aop/Precedence.java|org/jboss/aop/PrecedenceAdvice.java|org/jboss/aop/PrecedenceInterceptor.java|org/jboss/aop/Prepare.java|org/jboss/aop/TypeDef.java|org/jboss/aop/advice/Scope.java|org/jboss/aop/annotation/AnnotationElement.java|org/jboss/aop/hook/JRockitClassPreProcessor.java|org/jboss/aop/hook/JRockitPluggableClassPreProcessor.java|org/jboss/aspects/Threadbased.java" kind="src" path="src/main"/>
+	<classpathentry kind="src" path="src/jdk15"/>
+	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="lib" path="/thirdparty/oswego-concurrent/lib/concurrent.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/dom4j/lib/dom4j.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/trove/lib/trove.jar"/>
+	<classpathentry kind="lib" path="/tools/lib/ant.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/qdox/lib/qdox.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/junit/lib/junit.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="docs"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/profiler/jvmti/lib/jboss-profiler-jvmti.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/common-logging-spi/lib/jboss-logging-spi.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/common-logging-log4j/lib/jboss-logging-log4j.jar"/>
+	<classpathentry sourcepath="/javassist" kind="lib" path="/thirdparty/javassist/lib/javassist.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-container.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/test/lib/jboss-test.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/common-core/lib/jboss-common-core.jar"/>
+	<classpathentry kind="output" path="output/eclipse-classes"/>
+</classpath>

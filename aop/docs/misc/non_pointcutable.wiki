@@ -1,0 +1,23 @@
+!!!Non-pointcutable Classes, Fields, and Methods
+
+The following classes will be ignored for all matching pointcuts:
+
+* org.jboss.aop.*
+* org.jboss.util.*
+* javassist.*
+* All JBoss generated classes
+* All System classes 
+
+The following field types will be ignored as well:
+
+* final
+* Field namess beginning with "_"
+* Field names containing a "$"
+* Fields added by AOP framework to a class 
+
+The following method types are ignored:
+
+* Abstract
+* Native
+* Methods added by AOP framework
+* Methods beginning with "_" 

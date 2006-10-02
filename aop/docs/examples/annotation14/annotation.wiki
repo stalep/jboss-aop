@@ -1,0 +1,109 @@
+!!!JDK 1.5 Annotations with JDK 1.4
+
+!Overview
+JDK 1.5 has a new interesting feature called annotations.  It allows you to specify xdoclet like tags right in the Java language just as you can with C#.  These tags are typesafe and access to them is available at compile time, load-time, and run-time.  See [JSR-175|http://www.jcp.org/en/jsr/detail?id=175] for more detail.  JBossAOP since beta2 does support JDK1.5 annotations
+
+A good way to visualize metadata is to think of classnames, method names, field names, and constructor signatures as nouns, and annotations/metadata as adjectives.  You can declare advice/interceptor bindings like:  All @Remotable objects should register with a dispatcher whenever they are constructed.  Any method marked @transactional begin/commit/rollback a transaction at the start and end of the method.  Or even any field, method, constructor marked @traceable, do tracing.  It kinda lets the application developer give hints to the aspect developer.  If you think about it another way, combining annotations and AOP allows you to plug in new Java keywords.  Kinda like C pre-processor macros on steroids.  Macros that are typesafe and checked by the compiler and unlike Major League Baseball players, it will always be legal for you to use these steroids in your applications.
+
+So, what good are JDK 1.5 annotations if you're using a JDK 1.4 compiler????  Well, JBoss AOP has an annotation compiler for JDK 1.4 that can convert typed annotations from doclet tags and embed them in your class files.  This bytecode manipulation is compatible with JDK 1.5.
+
+!Example code
+The example code declares annotations via doclets within POJO.java.  single.java, trace.java, and complex.java all represent our annotation interfaces.  The TraceInterceptor traces method, field, and constructor calls on POJO and outputs the annotations tagged on those members;
+
+!Implementing annotations
+Open up complex.java.  You'll see that it is a regular interface.  This is our annotation implementation and is the same as JDK 1.5 except ''@interface'' is replaced with a plain interface.
+
+complex.java
+{{{
+public interface complex
+{
+   char ch();
+   String string();
+   float flt();
+   double dbl();
+   short shrt();
+   long lng();
+   int integer();
+   boolean bool();
+   single annotation();
+   String[] array();
+   Class clazz();
+}
+}}}
+
+!Declaring annotations
+Open up POJO.java.  This is the source file for where our annotations will be declared.  The syntax is exactly the same as JDK 1.5 annotations except that they are embedded as doclet tags and you use a double at sign '@@'.  
+__IMPORTANT NOTE__ You must have a space after the tag name otherwise you will get a compilation error.  This is the quirkiness of the QDox doclet compiler.
+
+{{{
+   /**
+    * @@trace 
+    * @@single ("hello world")
+    * @@complex (ch='a', string="hello world", flt=5.5, dbl=6.6, shrt=5, lng=6, integer=7, bool=true, annotation=@single("hello"), array={"hello", "world"}, clazz=java.lang.String)
+    */
+   public void someMethod()
+   {
+      System.out.println("someMethod");
+   }
+}}}
+
+!Compiling annotations
+All class files must be compiled before the annotation compiler runs.  All files must also be available in the annotation compiler's classpath.  Look at build.xml.  It shows how to run the annotation compiler as an ANT task.
+
+{{{
+      <annotationc compilerclasspathref="classpath" classpathref="classpath" bytecode="true">
+         <src path="."/>
+      </annotationc>
+}}}
+
+For the annotation compiler to run, it has two requires:
+# Java source files must be available in path specified by the <src> tag
+# All Java source files must have been previously compiled and available in the the ''classpath''.  Any annotated source files must have their corresponding .class files available for manipulation within a file-system based classpath (i.e. NOT within a jar).
+
+The bytecode manipulations done to annotated classes are compatible with JDK 1.5.  So, if you rewrite your JDk 1.4 annotations interfaces (changing the keyword interface to @interface), the annotated classes can be used with both JDK 1.4 and 1.5.  I was going to ship an implementation of java.lang.annotation.Annotation and force JDK 1.4 annotation interfaces to implement this (and thus be fully binary compatible), but the Java license forbids you to distribute anything under the java.lang package. :(  Oh well.
+
+
+!Annotations in pointcut expressions
+Annotations can be referenced by an '@' sign in pointcut expressions.  They can only be used in the class expressions for a method, field, or constructor for execution and caller pointcuts.  They can also be used in substitute for 'new' in constructor land, and for a method or field name.  Take a look at jboss-aop.xml
+
+{{{
+   <bind pointcut="all(@trace)">
+       <interceptor class="TraceInterceptor"/>
+   </bind>
+}}}
+
+The above states that for any field, constructor, or method tagged as @trace, apply the TraceInterceptor.
+
+!Accessing annotations at runtime
+The org.jboss.aop.annotation.AnnotationElement is an abstraction to obtain annotations at runtime.  It works with both JDK 1.4 and JDK 1.5 so you can write portable code.  The TraceInterceptor shows how to access annotations.
+
+{{{
+         complex c = (complex)AnnotationElement.getAnyAnnotation(((MethodInvocation)invocation).getMethod(), complex.class);
+}}}
+
+!Running
+{{{
+  $ ant
+}}}
+This should be the output:
+{{{
+run:
+     [java] --- new POJO(); ---
+     [java] @single ("hello world")
+     [java] @complex (ch='a', "hello world", flt=5.5, dbl=6.6, ...blah blah blah YOU GET THE IDEA...
+     [java] <<< Trace : executing constructor public POJO()
+     [java] empty constructor
+     [java] >>> Leaving Trace
+     [java] --- pojo.someMethod(); ---
+     [java] @single ("hello world")
+     [java] @complex (ch='a', "hello world", flt=5.5, dbl=6.6, ...blah blah blah YOU GET THE IDEA...
+     [java] <<< Trace : executing method public void POJO.someMethod()
+     [java] someMethod
+     [java] >>> Leaving Trace
+     [java] --- pojo.field = 55;  ---
+     [java] @single ("hello world")
+     [java] @complex (ch='a', "hello world", flt=5.5, dbl=6.6, ...blah blah blah YOU GET THE IDEA...
+     [java] <<< Trace : write field name: public int POJO.field
+     [java] >>> Leaving Trace
+}}}
+

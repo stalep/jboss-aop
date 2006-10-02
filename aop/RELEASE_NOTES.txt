@@ -1,0 +1,169 @@
+JBoss AOP Release Notes
+=======================
+
+--------------
+JBossAOP 1.1
+--------------
+* Added ability to specify typed parameters in advice
+* added PER_CLASS_JOINPOINT.  Creates aspect instance per class, per joinpoint
+* Rewrote ClassProxyFactory so that proxies created don't require RMI remote classloading on creation
+* Wrote a ProxyFactory that can generate optimized AOP proxies based on interfaces only
+* All proxy factories can accept mixins.  (See API)
+* Added getCallingObject to XXXXCalledByMethodInvocation classes.
+* Added concept of a <domain>.  This is a sub AspectManager that has its own set of bindings, etc...
+* Added concept of ClassContainer.  This can be used for Proxy-based AOP and is used by EJB 3.0 container.
+* ClassAdvisors are now keyed based on Class rather than class name.  This should fix numerous hot-deployment bugs
+and allow for classloader scoping when we wire in the <domain> concept.
+* $instanceof{} and $typedef can be used for field types, constructor parameters, and method parameters and return 
+types in pointcut expressions and type expressions
+* $instanceof{} allows the use of wildcards and annotations
+* Basic support for annotating POJOs with Prepare
+* Added switch to aopc compiler to turn off optimizations easily
+* type expressions can now match on throws clauses
+
+
+--------------
+JBossAOP 1.0 Final
+--------------
+* Eclipse IDE integration
+* execution and call pointcuts can now match on throws clauses
+* Fixed bug in that JDK 1.4 annotation compiler couldn't handle class member values of primitives i.e. long.class
+* Added better support for JDK 1.4 load-time transformations.  See doco for more detail
+* joinpoints with underscores are now legal join points
+* introduction expressions now can have typedefs within boolean expression.
+* Fixed bug when ant aopc taskline is too long.
+
+
+--------------
+JBossAOP 1.0 RC2
+--------------
+* Added DTD finally and DTD parsing
+* <annotation> tag has been renamed to <metadata> as we're not defining an annotaton, but rather metadata.
+* <annotation-loader> tag has been renamed to <metadata-loader>
+* Added integration with JDK 5.0 java.lang.instrument.  Very clean classloader integration now.  No need for SystemClassLoader plugin for JDK 5.0.
+* <aspect> can take a factory now
+* <aspect> class can no longer be XmlLoadable
+* <interceptor> can take a scope now <interceptor scope="PER_INSTANCE"/>
+* InterceptorFactory should only be used if you are inserting them directoy within AdviceBinding.  AspectFactory should be used now for all InterceptorFactory's as <interceptor> now supports SCOPE.
+* <mixin>'s can now be declared as non-transient fields by doing:  <mixin transient="false">.  This allows mixins to be serialized.
+* If you don't specify a factory, you can configure your aspects/interceptors as java beans.  See the beanstyleconfig tutorial item.
+* Added annotation replacement for XML.  @Aspect, @Bind, @PointcutDef, etc...  See tutorial/docs for more info.
+* Created full complete reference manual available in PDF and HTML.
+* Fixed debugger bug.  AOPC was overwriting debugger information
+
+
+
+--------------
+JBossAOP 1.0 RC1
+--------------
+* New $typedef feature.  Allows you to define type expressions, name them, then use them in pointcut definitions.  See the typedef example in tutorial.
+* added PER_JOINPOINT scoping for Aspects. An aspect instance is allocated per joinpoint.
+* aop now has a separate build for JDK 1.4 and JDK 1.5
+* AnnotationCompiler AnnotationElement now uses JDK 1.5 functions to obtaining metadata data.
+* add type specific Invocation generation for execution private and protected method, field get/set, and also caller side.  Now there is no more reflection in optimization mode
+* break out of different set/get chains.  There is now a separate interceptor/aspect chain for a field get and field set.  Before they were the say
+* Put versioning info within JAR's manifest
+* Completely removed use of reflection from JBoss AOP.  Performance microbench speedups for all joinpoint types.
+* InterceptorFactory.create now takes a Joinpoint argument so that you can create interceptors based on a Joinpoint.
+* Fixed bug in AspectManager.addClassMetaData
+* Fixed bug in redeploying of precompiled classes in JBoss.
+
+
+
+--------------
+JBossAOP Beta3
+--------------
+* Updated to support JDK 1.5 Beta2 annotations (1.5 beta2 class format changed)
+* Added a reflection aspect library that filters out JBoss AOP class modifications
+* Fixed bug in handling of static and !static pointcut expressions
+* AnnotationCompiler now support JDK 1.5 Beta2
+* AnnotationCompiler now supports enums 
+
+
+--------------
+JBossAOP Beta2
+--------------
+* JSR-175/JDK 1.5 Annotation support
+* Annotation compiler for JDK 1.4.  You can do JDK 1.5 annotation bytecode with JDK 1.4
+* <annotation-introduction> to introduce JDK 1.5 annotations (works with JDK 1.4 annotation compiler too)
+* pluggable pointcut
+* dynamic cflow
+* 30% Performance improvement on public method and constructor interception
+* 30% improvement on Aspect/advice invocations
+* add support for !static !public to grammar
+* distinguish between within (classexpr) and withincode(method | constructor) as it is more readable.
+* move within and withcode outside of call expression
+* has and hasfield. These should state, if joinpoint and joinpoint has method xxx.  
+* add a clone to Invocation so that you can continue on with chain in a separate thread
+* type expressions for introductions
+* Get working with JBoss 3.2
+* fixed thread safety bug in ClassInstanceAdvisor creation
+* encapsulate all fields so that we can override easier.  Wrappers need to work better in this regard too by delegating back to the original invocation object
+* add more metadata to Caller side so that you can traverse back to calling method.
+* Let jboss.aop.path accept directories.
+* No public access on Invocation subclasses anymore
+* Invocation is now refactored into an interface org.jboss.aop.joinpoint.Invocation and a base class InvocationBase 
+
+JBossAOP Beta1
+--------------
+* make aop test work.
+* compiler, add a precompiler so control of ClassLoader is not needed
+    - add sys property for jboss-aop.xml classpath
+    - add -verbose switch
+    - in runtime loader make sure that if CtClass instanceof Advised then do not transform class
+*ant task
+* Create ways of loading XML in standalone mode so that control of the ClassLoader is not needed
+*  constructor expressions so that we can have constructor interceptors
+* method expressions so that we can specify parameter expressions in pointcut
+* metadata definitions with expressions
+* Scope of Aspects
+* aspect concept (class grouping of advices)
+* fine grain "prep" fine grained definition of bytecode manipulation
+* Metadata pointcut
+* Get rid of tail interceptors
+* Add more metadata to CallerInvocation
+* performance tune: add a field to class for each method's MethodInfo to avoid hash lookup.
+* performance tune: add code to static initializer so that ClassAdvisor caller advices get initialized
+* Bug: Need to be able to have caller pointcuts from within a constructor
+* field(..) matches set or get
+* &lt;class-metadata should not add a group to the class, it should only do it for components within
+* move metadata, introduction expressions to same model as pointcut expression language
+* metadata should be divided into class, default, method, field, constructor
+* AspectManagerService should have switch to turn off runtime loader
+  - should be off by default.  Tests should turn it on.
+* Add Tx Exception configuration.  What exceptions cause a rollback, which do not?
+* Add Tx Lock annotations
+* instanceof
+* Control flow
+* performance tune: on InstanceAdvisor don't allocate metadata unless necessary.  Make InstanceAdvisor a MetaDataResolver.
+* get rid of InvocationType
+* Use ast/ClassExpression in Metadata and introduction-pointcut.  Make sure instanceof works there too.
+* Management Console 
+  - metadata
+  - Caller view
+* XDoclet support for annotations
+* call(constructor) needs to be implemented this is hard than it looks as you must figure out of class has constructor interception  or not at reflection time.
+* BUG:  When advised object is serialized, when it comes back, we need to create instanceAdvisor and mixins.
+* clean up introduction bytecode manipulation so that there is no extra _add_m0$ crap methods.
+* Update Tx
+* Update TxLock
+* Update Security
+* Update Management Console
+* Fix TxSynchronized so that it runs off of base-aop.xml
+
+
+
+
+JBoss4.0.0 DR2
+--------------
+1. Added per-method, field, and constructor pointcuts
+2. Added caller pointcut
+3. org.jboss.aop.Invocation is now a base class.  There is a different subclass depending on the invocation type
+   - MethodInvocation
+   - FieldReadInvocation
+   - FieldWriteInvocation
+   - ConstructorInvocation
+   - CallerInvocation (for caller pointcut calls)
+4. There should be a performance improvement of a factor of 6
+5. Web Console was updated for new pointcut types
+6. trove.jar was added to release

@@ -1,0 +1,797 @@
+<chapter id="xml">
+
+   <title>XML Bindings</title>
+
+   <sect1 id="xml-overview" revision="1">
+      <title>Intro</title>
+      <para>
+         In the last sections you saw how to
+         code aspects and how pointcut expressions are formed.  This chapter puts it all together.  There are two
+         forms of bindings for advices, mixins, and introductions.  One is XML which will be the focus of this chapter.
+         The Annotated Bindings chapter discusses how you can replace XML with JDK 5.0 annotations.
+      </para>
+   </sect1>
+   <sect1 id="xml-resolving" revision="1">
+      <title>Resolving XML</title>
+      <para>
+         JBoss AOP resolves pointcut and advice bindings at runtime.  So, bindings are a deployment time thing.  How
+         does JBoss AOP find the XML files it needs at runtime?  There are a couple of ways.
+      </para>
+      <sect2 id="xml-resolving1" revision="1">
+         <title>Standalone XML Resolving</title>
+         <para>
+         When you are running JBoss AOP outside of the application server there are a few ways that the JBoss AOP
+         framework can resolve XML files.
+         </para>
+         <itemizedlist>
+            <listitem>
+               <literal>jboss.aop.path</literal> This is a system property that is a ';' (Windows) or ':' (Unix)
+               delimited list of XML files and/or directories.  If the item in the list is a directory, JBoss AOP
+               will load any xml file in those directories with the filename suffix
+               <literal>-aop.xml</literal>
+            </listitem>
+            <listitem>
+               <literal>META-INF/jboss-aop.xml</literal> Any JAR file in your CLASSPATH that has a
+               <literal>jboss-aop.xml</literal>
+               file in the
+               <literal>META-INF/</literal> will be loaded.  JBoss AOP does a
+               <literal>ClassLoader.getResources("META-INF/jboss-aop.xml")</literal> to obtain all these files.
+            </listitem>
+         </itemizedlist>
+      </sect2>
+      <sect2 id="xml-resolving2" revision="1">
+         <title>Application Server XML Resolving</title>
+         <para>
+         When you are running JBoss AOP outside of the application server there are a few ways that the JBoss AOP
+         framework can resolve XML files.  One is to place an XML file with the suffix
+            <literal>*-aop.xml</literal>
+            in the deploy directory.  The other way is to JAR up your classes and provide a
+            <literal>META-INF/jboss-aop.xml</literal>
+            file in this JAR.  This JAR file must be suffixed with
+            <literal>.aop</literal> and placed within the deploy/
+            directory or embedded as a nested archive.
+         </para>
+      </sect2>
+   </sect1>
+
+   <sect1 id="xml-dtd" revision="1">
+      <title>XML DTD</title>
+      <para>
+         <programlisting><![CDATA[
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<!ELEMENT aop (interceptor|introduction|metadata-loader|metadata|
+               stack|aspect|pointcut|pluggable-pointcut|bind|
+               prepare|cflow-stack|dynamic-cflow|annotation-introduction|typedef)+>
+
+<!ELEMENT interceptor ANY>
+<!ATTLIST interceptor name CDATA #IMPLIED>
+<!ATTLIST interceptor class CDATA #IMPLIED>
+<!ATTLIST interceptor factory CDATA #IMPLIED>
+<!ATTLIST interceptor scope (PER_VM|PER_CLASS|PER_INSTANCE|PER_JOINPOINT) "PER_VM">
+
+<!ELEMENT aspect ANY>
+<!ATTLIST aspect name CDATA #IMPLIED>
+<!ATTLIST aspect class CDATA #IMPLIED>
+<!ATTLIST aspect factory CDATA #IMPLIED>
+<!ATTLIST aspect scope (PER_VM|PER_CLASS|PER_INSTANCE|PER_JOINPOINT) "PER_VM">
+
+<!ELEMENT introduction (mixin*,interfaces)>
+<!ATTLIST introduction class CDATA #IMPLIED>
+<!ATTLIST introduction expr CDATA #IMPLIED>
+<!ELEMENT mixin (interfaces, class, construction?)>
+<!ATTLIST mixin transient (true|false) "true">
+<!ELEMENT interfaces (#PCDATA)>
+<!ELEMENT class (#PCDATA)>
+<!ELEMENT construction (#PCDATA)>
+
+<!ELEMENT metadata-loader EMPTY>
+<!ATTLIST metadata-loader tag CDATA #REQUIRED>
+<!ATTLIST metadata-loader class CDATA #REQUIRED>
+
+<!ELEMENT metadata ANY>
+<!ATTLIST metadata tag CDATA #REQUIRED>
+<!ATTLIST metadata class CDATA #REQUIRED>
+
+<!ELEMENT stack (interceptor|interceptor-ref|stack-ref|advice)+>
+<!ATTLIST stack name CDATA #REQUIRED>
+
+<!ELEMENT interceptor-ref EMPTY>
+<!ATTLIST interceptor-ref name CDATA #REQUIRED>
+
+<!ELEMENT stack-ref EMPTY>
+<!ATTLIST stack-ref name CDATA #REQUIRED>
+
+<!ELEMENT advice EMPTY>
+<!ATTLIST advice name CDATA #REQUIRED>
+<!ATTLIST advice aspect CDATA #REQUIRED>
+
+<!ELEMENT pointcut EMPTY>
+<!ATTLIST pointcut name CDATA #REQUIRED>
+<!ATTLIST pointcut expr CDATA #REQUIRED>
+
+<!ELEMENT prepare EMPTY>
+<!ATTLIST prepare expr CDATA #REQUIRED>
+
+<!ELEMENT pluggable-pointcut ANY>
+<!ATTLIST pluggable-pointcut name CDATA #REQUIRED>
+<!ATTLIST pluggable-pointcut class CDATA #REQUIRED>
+
+<!ELEMENT bind (interceptor|interceptor-ref|stack-ref|advice)+>
+<!ATTLIST bind name CDATA #IMPLIED>
+<!ATTLIST bind pointcut CDATA #REQUIRED>
+<!ATTLIST bind cflow CDATA #IMPLIED>
+
+<!ELEMENT cflow-stack (called|not-called)+>
+<!ATTLIST cflow-stack name CDATA #REQUIRED>
+
+<!ELEMENT called EMPTY>
+<!ATTLIST called expr CDATA #REQUIRED>
+<!ELEMENT not-called EMPTY>
+<!ATTLIST not-called expr CDATA #REQUIRED>
+
+
+<!ELEMENT dynamic-cflow EMPTY>
+<!ATTLIST dynamic-cflow name CDATA #REQUIRED>
+<!ATTLIST dynamic-cflow class CDATA #REQUIRED>
+
+<!ELEMENT annotation-introduction (#PCDATA)>
+<!ATTLIST annotation-introduction expr CDATA #REQUIRED>
+<!ATTLIST annotation-introduction invisible (true|false) #REQUIRED>
+
+<!ELEMENT typedef EMPTY>
+<!ATTLIST typedef name CDATA #REQUIRED>
+<!ATTLIST typedef expr CDATA #REQUIRED>
+            ]]>
+         </programlisting>
+      </para>
+   </sect1>
+
+
+   <sect1 id="xml-aspect" revision="1">
+      <title>aspect</title>
+      <para>
+         The
+         <literal><![CDATA[<aspect>]]></literal> tag specifies to the AOP container to declare an aspect
+         class.  It is also used for configuring aspects as they are created and defining the scope of the
+         aspects instance.
+      </para>
+      <sect2 id="xml-aspect1" revision="1">
+         <title>Basic Definition</title>
+         <programlisting><![CDATA[<aspect class="org.jboss.MyAspect"/>]]></programlisting>
+         <para>
+            In a basic declaration you specify the fully qualified class name of the aspect.  If you want to reference
+            the aspect at runtime through the AspectManager, the name of the aspect is the same name as the class name.
+            The default Scope of this aspect is
+            <literal>PER_VM</literal>.  Another important note is that aspect instances are created on demand and NOT
+            at deployment time.
+         </para>
+      </sect2>
+      <sect2 id="xml-aspect2" revision="1">
+         <title>Scope</title>
+         <programlisting><![CDATA[<aspect class="org.jboss.MyAspect" scope="PER_VM"/>]]></programlisting>
+         <para>
+            The
+            <literal>scope</literal> attribute defines when an instance of the aspect should be created.  An aspect
+            can be created per vm, per class, per instance, or per joinpoint.
+            <table frame="topbot" id="scopetable">
+               <title>
+                 Aspect instance scope
+               </title>
+               <tgroup cols="2" rowsep="1" colsep="1">
+                  <colspec colname="c1" colwidth="1*"/>
+                  <colspec colname="c2" colwidth="2*"/>
+                  <thead>
+                     <row>
+                        <entry align="center">
+                             Name
+                        </entry>
+                        <entry align="center">
+                             Description
+                        </entry>
+                     </row>
+                  </thead>
+                  <tbody>
+                     <row>
+                        <entry>
+                             PER_VM
+                        </entry>
+                        <entry>
+                             One and only instance of the aspect class is allocated for the entire VM.
+                        </entry>
+                     </row>
+                     <row>
+                        <entry>
+                             PER_CLASS
+                        </entry>
+                        <entry>
+                             One and only instance of the aspect class is allocated for a particular class.  This
+                           instance will be created if an advice of that aspect is bound to that particular class.
+                        </entry>
+                     </row>
+                     <row>
+                        <entry>
+                             PER_INSTANCE
+                        </entry>
+                        <entry>
+                             An instance of an aspect will be created per advised object instance.  For instance,
+                             if a method has an advice attached to it, whenever an instance of that advised class
+                             is allocated, there will also be one created for the aspect.
+                        </entry>
+                     </row>
+                     <row>
+                        <entry>
+                             PER_JOINPOINT
+                        </entry>
+                        <entry>
+                             An instance of an aspect will be created per joinpoint advised.  If the joinpoint is a
+                             static member (constructor, static field/method), then there will be one instance of the
+                             aspect created per class, per joinpoint.  If the joinpoint is a regular non-static member,
+                             than an instance of the aspect will be created per object instance, per joinpoint.
+                        </entry>
+                     </row>
+                     <row>
+                        <entry>
+                             PER_CLASS_JOINPOINT
+                        </entry>
+                        <entry>
+                             An instance of an aspect will be created per advised joinpoint. The aspect instance is 
+                             shared between all instances of the class (for that joinpoint).
+                        </entry>
+                     </row>
+                  </tbody>
+               </tgroup>
+            </table>
+
+         </para>
+      </sect2>
+      <sect2 id="xml-aspect3" revision="1">
+         <title>Configuration</title>
+         <programlisting><![CDATA[<aspect class="org.jboss.SomeAspect">
+     <attribute name="SomeIntValue">55</attribute>
+     <advisor-attribute name="MyAdvisor"/>
+     <instance-advisor-attribute name="MyInstanceAdvisor"/>
+     <joinpoint-attribute name="MyJoinpoint"/>
+</aspect>]]></programlisting>
+         <para>
+            Aspects can be configured by default using a Java Beans style convention. The
+            <literal><![CDATA[<attribute>]]></literal>
+            tag will delegate to a setter method and convert the string value to the type of the setter method.
+         </para>
+         <table frame="topbot" id="javabeantypes">
+            <title>
+              Supported Java Bean types
+            </title>
+            <tgroup cols="1" rowsep="1" colsep="1">
+               <colspec colname="c1" colwidth="1*"/>
+               <tbody>
+                  <row>
+                     <entry>primitive types (int, float, String, etc...)</entry>
+                  </row>
+                  <row>
+                     <entry>java.lang.Class</entry>
+                  </row>
+                  <row>
+                     <entry>java.lang.Class[]</entry>
+                  </row>
+                  <row>
+                     <entry>java.lang.String[]</entry>
+                  </row>
+                  <row>
+                     <entry>java.math.BigDecimal</entry>
+                  </row>
+                  <row>
+                     <entry>org.w3c.dom.Document</entry>
+                  </row>
+                  <row>
+                     <entry>java.io.File</entry>
+                  </row>
+                  <row>
+                     <entry>java.net.InetAddress</entry>
+                  </row>
+                  <row>
+                     <entry>java.net.URL</entry>
+                  </row>
+                  <row>
+                     <entry>javax.management.ObjectName (if running in JBoss)</entry>
+                  </row>
+               </tbody>
+            </tgroup>
+         </table>
+         <para>
+            Besides types, you can also inject AOP runtime constructs into the aspect.  These types of attributes
+            are referenced within XML under special tags.  See the table below.
+         </para>
+         <table frame="topbot" id="aop-attributes">
+            <title>
+              Injecting AOP runtime constructs
+            </title>
+            <tgroup cols="2" rowsep="1" colsep="1">
+               <colspec colname="c1" colwidth="1*"/>
+               <colspec colname="c2" colwidth="2*"/>
+               <tbody>
+                  <row>
+                     <entry><![CDATA[<advisor-attribute>]]></entry>
+                     <entry>org.jboss.aop.Advisor</entry>
+                  </row>
+                  <row>
+                     <entry><![CDATA[<instance-advisor-attribute>]]></entry>
+                     <entry>org.jboss.aop.InstanceAdvisor</entry>
+                  </row>
+                  <row>
+                     <entry><![CDATA[<joinpoint-attribute>]]></entry>
+                     <entry>org.jboss.aop.joinpoint.Joinpoint</entry>
+                  </row>
+               </tbody>
+            </tgroup>
+         </table>
+         <sect3 id="xml-config-names" revision="1">
+            <title>Names</title>
+            <para>
+               If there
+         is no
+               <literal>name</literal> attribute defined, the name of the aspect is the same as the
+               <literal>class</literal> or
+               <literal>factory</literal> attribute value.
+            </para>
+         </sect3>
+         <sect3 id="xml-config-example" revision="1">
+            <title>Example configuration</title>
+            <programlisting><![CDATA[<aspect class="org.jboss.SomeAspect">
+        <attribute name="SomeIntValue">55</attribute>
+        <advisor-attribute name="MyAdvisor"/>
+        <instance-advisor-attribute name="MyInstanceAdvisor"/>
+        <joinpoint-attribute name="MyJoinpoint"/>
+</aspect>]]></programlisting>
+            <para>
+               The above example would would need a class implemented as follows:
+            </para>
+            <programlisting><![CDATA[public class SomeAspect {
+   public SomeAspect() {}
+
+   public void setSomeIntValue(int val) {...}
+   public void setMyAdvisor(org.jboss.aop.Advisor advisor) {...}
+   public void setMyInstanceAdvisor(org.jboss.aop.InstanceAdvisor advisor) {...}
+   public void setMyJoinpoint(org.jboss.aop.joinpoint.Joinpoint joinpoin) {...}
+}]]></programlisting>
+
+         </sect3>
+      </sect2>
+      <sect2 id="xml-aspect4" revision="1">
+         <title>Aspect Factories</title>
+         <programlisting><![CDATA[
+<aspect name="MyAspect" factory="org.jboss.AspectConfigFactory" scope="PER_CLASS">
+     <some-arbitrary-xml>value</some-arbitrary-xml>
+</aspect>]]></programlisting>
+         <para>If you do not like the default Java Bean configuration for aspects, or want to delegate aspect
+         creation to some other container, you can plug in your own factory class by specifying the
+            <literal>factory</literal> attribute rather than the
+            <literal>class</literal> attribute.  Any arbitrary
+            XML can be specified in the aspect XML declaration and it will be passed to the factory class.
+            Factories must implement the
+            <literal>org.jboss.aop.advice.AspectFactory</literal> interface.
+         </para>
+      </sect2>
+   </sect1>
+
+   <sect1 id="xml-interceptor" revision="1">
+      <programlisting><![CDATA[
+<interceptor class="org.jboss.MyInterceptor" scope="PER_VM"/>
+<interceptor class="org.jboss.SomeInterceptor">
+     <attribute name="SomeIntValue">55</attribute>
+     <advisor-attribute name="MyAdvisor"/>
+     <instance-advisor-attribute name="MyInstanceAdvisor"/>
+     <joinpoint-attribute name="MyJoinpoint"/>
+</interceptor>
+<interceptor name="MyAspect" factory="org.jboss.InterceptorConfigFactory" scope="PER_CLASS">
+  <some-arbitrary-xml>value</some-arbitrary-xml>
+</interceptor>]]></programlisting>
+      <title>interceptor</title>
+      <para>
+         Interceptors are defined in XML the same exact way as aspects are.  No difference except the tag.  If there
+         is no
+         <literal>name</literal> attribute defined, the name of the interceptor is the same as the
+         <literal>class</literal> or
+         <literal>factory</literal> attribute value.
+      </para>
+   </sect1>
+
+   <sect1 id="xml-bind" revision="1">
+      <title>bind</title>
+      <programlisting><![CDATA[<bind pointcut="execution(void Foo->bar())">
+     <interceptor-ref name="org.jboss.MyInterceptor/>
+     <advice name="trace" aspect="org.jboss.MyAspect"/>
+</bind>]]></programlisting>
+      <para>
+         In the above example, the MyInterceptor interceptor and the trace method of the MyAspect class will be executed
+         when the Foo.bar method is invoked.
+      </para>
+      <variablelist spacing="compact">
+         <varlistentry>
+            <term>bind</term>
+            <listitem>
+               <para>
+                  <literal>bind</literal> tag is used to bind an advice of an aspect, or an interceptor to a specific joinpoint.
+                  The
+                  <literal>pointcut</literal> attribute is required and at least an advice or interceptor-ref definition.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>interceptor-ref</term>
+            <listitem>
+               <para>
+               The
+                  <literal>interceptor-ref</literal> tag must reference an already existing
+                  <literal>interceptor</literal> XML
+          definition.  The name attribute should be the name of the interceptor you are referencing.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>advice</term>
+            <listitem>
+               <para>
+               The
+                  <literal>advice</literal> tag takes a
+                  <literal>name</literal> attribute that should map to a method within
+               the aspect class.  The
+                  <literal>aspect</literal> attribute should be the name of the aspect definition.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+
+   <sect1 id="xml-stack" revision="1">
+      <title>stack</title>
+      <para>
+         Stacks allow you to define a predefined set of advices/interceptors that you want to reference from within
+         a
+         <literal>bind</literal> element.
+      </para>
+      <programlisting><![CDATA[<stack name="stuff">
+      <interceptor class="SimpleInterceptor1" scope="PER_VM"/>
+      <advice name="trace" aspect="org.jboss.TracingAspect"/>
+      <interceptor class="SimpleInterceptor3">
+           <attribute name="size">55</attribute>
+      </interceptor>
+</stack>]]></programlisting>
+      <para>
+         After defining the stack you can then reference it from within a
+         <literal>bind</literal> element.
+      </para>
+      <programlisting><![CDATA[<bind pointcut="execution(* POJO->*(..))">
+       <stack-ref name="stuff"/>
+</bind>]]></programlisting>
+   </sect1>
+
+   <sect1 id="xml-pointcut" revision="1">
+      <title>pointcut</title>
+      <para>
+         The
+         <literal>pointcut</literal> tag allows you to define a pointcut expression, name it and reference it
+         within any binding you want.  It is also useful to publish pointcuts into your applications to that others
+         have a clear set of named integration points.
+      </para>
+      <programlisting><![CDATA[<pointcut name="publicMethods" expr="execution(public * *->*(..))"/>
+<pointcut name="staticMethods" expr="execution(static * *->*(..))"/>]]></programlisting>
+      <para>
+         The above define two different pointcuts.  One that matches all public methods, the other that matches
+         the execution of all static methods.  These two pointcuts can then be referenced within a
+         <literal>bind</literal>
+         element.
+      </para>
+      <programlisting><![CDATA[<bind pointcut="publicMethods AND staticMethods">
+      <interceptor-ref name="tracing"/>
+</bind>
+         ]]></programlisting>
+   </sect1>
+
+   <sect1 id="xml-introduction" revision="1">
+      <title>introduction</title>
+      <sect2 id="xml-introduction1" revisiton="1">
+         <title>Interface introductions</title>
+         <para>
+         The
+            <literal>introduction</literal> tag allows you to force an existing Java class to implement a particular
+         defined interface.
+         </para>
+         <programlisting><![CDATA[<introduction class="org.acme.MyClass">
+    <interfaces>java.io.Serializable</interfaces>
+</introduction>]]></programlisting>
+         <para>
+            The above declaration says that the org.acme.MyClass class will be forced to implement java.io.Serializable.
+            The
+            <literal>class</literal> attribute can take wildcards but not boolean expressions.  If you need more
+            complex type expressions, you can use the
+            <literal>expr</literal> attribute instead.
+         </para>
+         <programlisting><![CDATA[<introduction expr="has(* *->@test(..)) OR class(org.acme.*)">
+    <interfaces>java.io.Serializable</interfaces>
+</introduction>]]></programlisting>
+         <para>
+            The
+            <literal>expr</literal> can be any type expression allowed in a
+            <literal>typedef</literal> expression
+         </para>
+      </sect2>
+      <sect2 id="xml-introduction2" revisiton="1">
+         <title>Mixins</title>
+         <para>
+         When introducing an interface you can also define a mixin class which will provide the implementation
+         of that interface.
+         </para>
+         <programlisting><![CDATA[<introduction class="org.acme.MyClass">
+      <mixin>
+         <interfaces>
+            java.io.Externalizable
+         </interfaces>
+         <class>org.acme.ExternalizableMixin</class>
+         <construction>new org.acme.ExternalizableMixin(this)</construction>
+      </mixin>
+   </introduction>]]></programlisting>
+         <variablelist spacing="compact">
+            <varlistentry>
+               <term>interfaces</term>
+               <listitem>
+                  <para>defines the list of interfaces you are introduction</para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term>class</term>
+               <listitem>
+                  <para>The type of the mixin class.</para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term>construction</term>
+               <listitem>
+                  <para>The construction statement allows you to specify any Java code to create the mixin class.
+            This code will be embedded directly in the class you are introducing to so
+                     <literal>this</literal>
+            works in the construction statement.
+                  </para>
+               </listitem>
+            </varlistentry>
+         </variablelist>
+      </sect2>
+
+   </sect1>
+
+   <sect1 id="xml-annotation-introduction" revision="1">
+      <title>annotation-introduction</title>
+      <para>
+        Annotation introductions allow you to embed an annotation within a the class file of the class.  You can
+        introduce an annotation to a class, method, field, or constructor.
+      </para>
+      <programlisting><![CDATA[<annotation-introduction expr="constructor(POJO->new())">
+      @org.jboss.complex (ch='a', string="hello world", flt=5.5, dbl=6.6, shrt=5, lng=6, integer=7, bool=true, annotation=@single("hello"), array={"hello", "world"}, clazz=java.lang.String)
+</annotation-introduction>]]></programlisting>
+      <para>
+         The
+         <literal>expr</literal> attribute takes method(), constructor(), class(), or field().  Within those you must define
+         a valid expression for that construct.
+
+         The following rules must be followed for the annotation declaration:
+      </para>
+      <itemizedlist>
+         <listitem>Any annotation, Class or Enum referenced, MUST be fully qualified.</listitem>
+      </itemizedlist>
+   </sect1>
+
+   <sect1 id="xml-cflow" revision="1">
+      <title>cflow-stack</title>
+      <para>
+         Control flow is a runtime construct.  It allows you to specify pointcut parameters revolving around the call
+         stack of a Java program.  You can do stuff like, if method A calls method B calls Method C calls Method D from
+         Constructor A, trigger this advice.
+
+         In defining a control flow, you must first paint a picture of what the Java call stack should look like.  This
+         is the responsibility of the cflow-stack.
+      </para>
+      <programlisting><![CDATA[<cflow-stack name="recursive2">
+      <called expr="void POJO->recursive(int)"/>
+      <called expr="void POJO->recursive(int)"/>
+      <not-called expr="void POJO->recursive(int)"/>
+</cflow-stack>]]></programlisting>
+      <para>
+         A
+         <literal>cflow-stack</literal> has a name and a bunch of
+         <literal>called</literal> and
+         <literal>not-called</literal>
+         elements that define individual constructor or method calls with a Java call stack.  The
+         <literal>expr</literal>
+         attribute must be a method or constructor expression.
+         <literal>called</literal> states that the expr must be in the
+         call stack.
+         <literal>not-called</literal> states that there should not be any more of the expression within the stack.
+         In the above example, the
+         <literal>cflow-stack</literal> will be triggered if there are two and only two calls
+         to the
+         <literal>recursive</literal> method within the stack.
+
+         Once the
+         <literal>cflow-stack</literal> has been defined, it can then be referenced within a
+         <literal>bind</literal>
+         element through the
+         <literal>cflow</literal> attribute.  Boolean expressions are allowed here as well.
+      </para>
+      <programlisting><![CDATA[<bind pointcut="execution(void POJO->recursive(int))" cflow="recursive2 AND !cflow2">
+      <interceptor class="SimpleInterceptor"/>
+</bind>]]></programlisting>
+
+   </sect1>
+
+   <sect1 id="xml-typedef" revision="1">
+      <title>typedef</title>
+      <programlisting><![CDATA[
+<typedef name="jmx" expr="class(@org.jboss.jmx.@MBean) OR
+                          has(* *->org.jboss.jmx.@ManagedOperation) OR
+                          has(* *->org.jboss.jmx.@ManagedAttribute)"/>]]></programlisting>
+      <para>
+         <literal>typedef</literal>s allow you to define complex type expressions and then use then pointcut expressions.
+          In the above example, we're defining a class that is tagged as @Mbean, or has a method tagged as @ManagedOperaion
+          or @ManagedAttribute.
+
+          The above typedef could then be used in a pointcut, introduction, or bind element
+      </para>
+      <programlisting><![CDATA[<pointcut name="stuff" expr="execution(* $typedef{jmx}->*(..))"/>
+<introduction expr="class($typedef{jmx})">]]></programlisting>
+   </sect1>
+
+   <sect1 id="xml-dynamic" revision="1">
+      <title>dynamic-cflow</title>
+      <para>
+         <literal>dynamic-cflow</literal> allows you to define code that will be executed that must be resolved true to trigger
+         positive on a cflow test on an advice binding. (See Dynamic CFlow for more information).
+         The test happens dynamically at runtime and when combined with a pointcut expression allows you to
+         do runtime checks on whether a advice binding should run or not.  Create a dynamic cflow class, then you
+         must declare it with XML so that it can be used in bind expressions.
+      </para>
+      <programlisting><![CDATA[<dynamic-cflow name="simple" class="org.jboss.SimpleDynamicCFlow"/>]]></programlisting>
+      <para>
+         You can then use it within a
+         <literal>bind</literal>
+      </para>
+      <programlisting><![CDATA[<bind expr="execution(void Foo->bar())" cflow="simple">]]></programlisting>
+
+   </sect1>
+
+   <sect1 id="xml-prepare" revision="1">
+      <title>prepare</title>
+      <para>
+         The
+         <literal>prepare</literal> tag allows you to define a pointcut expression.  Any joinpoint that matches
+         the expression will be aspectized and bytecode instrumented.  This allows you to hotdeploy and bind
+         aspects at runtime as well as to work with the per instance API that every aspectized class has.
+
+         To prepare something, just define a pointcut expression that matches the joinpoint you want to instrument.
+      </para>
+      <programlisting><![CDATA[<prepare expr="execution(void Foo-bar())"/>]]></programlisting>
+   </sect1>
+
+   <sect1 id="xml-metadata" revision="1">
+      <title>metadata</title>
+      <para>
+         You can attach untyped metadata that is stored in
+         <literal>org.jboss.aop.metadata.SimpleMetaData structures</literal>
+         within the
+         <literal>org.jboss.aop.Advisor</literal> class that manages each aspectized class.  The XML mapping
+         has a section for each type of metadata.  Class, method, constructor, field, and defaults for the whole shabang.
+
+         Here's an example:
+      </para>
+      <programlisting><![CDATA[<metadata tag="testdata" class="org.jboss.test.POJO">
+      <default>
+         <some-data>default value</some-data>
+      </default>
+      <class>
+         <data>class level</data>
+      </class>
+      <constructor expr="POJOConstructorTest()">
+         <some-data>empty</some-data>
+      </constructor>
+      <method expr="void another(int, int)">
+         <other-data>half</other-data>
+      </method>
+      <field name="somefield">
+         <other-data>full</other-data>
+      </field>
+</metadata>]]></programlisting>
+      <para>
+         Any element can be defined under the class, default, method, field, and constructor tags.  The name of these elements
+         are used as attribute names in SimpleMetaData structures.
+
+         The
+         <literal>tag</literal> attribute is the name used to reference the metadata within the Advisor, or Invocation
+         lookup mechanisms.
+      </para>
+   </sect1>
+
+   <sect1 id="xml-metadata-loader" revision="1">
+      <title>metadata-loader</title>
+      <programlisting><![CDATA[<metadata-loader tag="security" class="org.jboss.aspects.security.SecurityClassMetaDataLoader"/>]]></programlisting>
+      <para>
+         If you need more complex XML mappings for untyped metadata, you can write your own metadata binding.  The tag
+         attribute is used to trigger the loader.  The loader class must implement the
+         <literal>org.jboss.aop.metadata.ClassMetaDataLoader</literal>
+         interface.
+      </para>
+      <programlisting>public interface ClassMetaDataLoader
+{
+   public ClassMetaDataBinding importMetaData(Element element, String name,
+                                              String tag, String classExpr) throws Exception;
+
+   public void bind(ClassAdvisor advisor, ClassMetaDataBinding data,
+                    CtMethod[] methods, CtField[] fields, CtConstructor[] constructors) throws Exception;
+
+   public void bind(ClassAdvisor advisor, ClassMetaDataBinding data,
+                    Method[] methods, Field[] fields, Constructor[] constructors) throws Exception;
+}</programlisting>
+      <para>
+          Any arbitrary XML can be in the
+         <literal>metadata</literal> element.  The ClassMetaDataBinding.importMetaData
+          method is responsible for parsing the element and building ClassMetaDataBinding structurs which are
+          used in the precompiler and runtime bind steps.  Look at the SecurityClassMetaDataLoader code shown above
+          for a real concrete example.
+      </para>
+
+   </sect1>
+   
+   <sect1 id="xml-precedence" revision="1">
+      <title>precedence</title>
+      <para>Precedence allows you to impose an overall relative sorting order of your interceptors and advices.</para>
+      <programlisting><![CDATA[         <precedence>
+            <interceptor-ref name="org.acme.Interceptor"/>
+            <advice aspect="org.acme.Aspect" name="advice1"/>
+            <advice aspect="org.acme.Aspect" name="advice2"/>
+         </precedence>]]>         
+      </programlisting>
+      <para>
+         This says that when a joinpoint has both <literal>org.acme.Interceptor</literal> and 
+         <literal>org.acme.Aspect.advice()</literal> bound to it, <literal>org.acme.Interceptor</literal> 
+         must always be invoked before <literal>org.acme.Aspect.advice1()</literal> which must in turn be 
+         invoked before <literal>org.acme.Aspect.advice2()</literal>. The ordering of 
+         interceptors/advices that do not appear in a precedence is defined by their ordering for the 
+         individual bindings or intercerceptor stacks. 
+      </para>
+   </sect1>
+
+   <sect1 id="xml-declare" revision="1">
+      <title>declare</title>
+      <para>
+         You can declare checks to be enforced at instrumentation time. They take a pointcut and a message. 
+         If the pointcut is matched, the message is printed out.
+      </para>
+      <sect2 id="declare-warning" revisiton="1">
+         <title>declare-warning</title>
+         <programlisting><![CDATA[   <declare-warning expr="class($instanceof{VehicleDAO}) \
+            AND !has(public void *->save())">
+         All VehicleDAO subclasses must override the save() method.
+   </declare-warning> ]]></programlisting>
+         <para>
+            The above declaration says that if any subclass of VehicleDAO does not implement a noargs save() method, a 
+            warning with the supplied message should be logged. Your application will continue to be instrumented/run 
+            (since we are using <literal>declare-warning</literal> in this case).
+         </para>
+      </sect2>
+       
+      
+      <sect2 id="declare-error" revisiton="1">
+         <title>declare-error</title>
+         <programlisting><![CDATA[      <declare-error expr="call(* org.acme.businesslayer.*->*(..)) \
+            AND within(org.acme.datalayer.*)">
+      Data layer classes should not call up to the business layer
+   </declare-error> ]]></programlisting>
+         <para>
+            The above declaration says that if any classes in the datalayer call classes in the business layer of your application, 
+            an error should be thrown. Instumentation/execution of your application will stop. 
+         </para>
+      </sect2>
+
+   </sect1>
+
+
+</chapter>
+

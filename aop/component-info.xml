@@ -1,0 +1,30 @@
+<project name="aop-component-info">
+   <!-- ============================================================ -->
+   <!-- AOP                                                          -->
+   <!-- ============================================================ -->
+
+   <component id="aop"
+              module="jboss-aop"
+              version="5.0-SNAPSHOT"
+              specTitle="JBoss AOP Framework"
+              specVersion="jboss-aop-1.3.1"
+              specVendor="JBoss (http://www.jboss.org)"
+              implTitle="JBoss AOP Framework"
+              implURL="http://www.jboss.org"
+              implVersion="jboss-aop-1.3.1"
+              implVendor="JBoss.org"              
+
+              
+   >
+      <artifact id="jboss-aop.jar"/>
+      <artifact id="jdk14-pluggable-instrumentor.jar"/>
+      <artifact id="jboss-aop-jdk50.jar"/>
+      <artifact id="pluggable-instrumentor.jar"/>
+      <export>
+         <include input="jboss-aop.jar"/>
+         <include input="jdk14-pluggable-instrumentor.jar"/>         
+         <include input="jboss-aop-jdk50.jar"/>
+         <include input="pluggable-instrumentor.jar"/>
+      </export>
+   </component>
+</project>

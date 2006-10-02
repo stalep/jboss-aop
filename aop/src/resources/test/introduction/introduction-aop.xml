@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<aop>
+   <introduction class="org.jboss.test.aop.introduction.SerializedPOJO">
+      <mixin transient="false">
+         <interfaces>
+            org.jboss.test.aop.introduction.SerializedIntroduction
+         </interfaces>
+         <class>org.jboss.test.aop.introduction.SerializedMixin</class>
+      </mixin>
+      <mixin>
+         <interfaces>
+            org.jboss.test.aop.introduction.NonSerializedIntroduction
+         </interfaces>
+         <class>org.jboss.test.aop.introduction.NonSerializableMixin</class>
+      </mixin>
+   </introduction>
+   <introduction class="org.jboss.test.aop.introduction.POJO">
+         <interfaces>
+            org.jboss.test.aop.introduction.InterceptorHandledIntroduction
+         </interfaces>
+   </introduction>
+   <interceptor class="org.jboss.test.aop.introduction.HandlerInterceptor"/>
+   <bind pointcut="execution(* $instanceof{org.jboss.test.aop.introduction.InterceptorHandledIntroduction}->handledByIntroduction())">
+      <interceptor-ref name="org.jboss.test.aop.introduction.HandlerInterceptor"/>
+   </bind>
+   <introduction class="org.jboss.test.aop.introduction.SubClass">
+      <mixin>
+         <interfaces>
+            org.jboss.test.aop.introduction.NonSerializedIntroduction
+         </interfaces>
+         <class>org.jboss.test.aop.introduction.NonSerializableMixin</class>
+      </mixin>
+   </introduction>
+</aop>

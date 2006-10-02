@@ -1,0 +1,393 @@
+<?xml version='1.0' encoding="iso-8859-1"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3CR3//EN"
+                      "../../../../../docbook-support/support/docbook-dtd/docbookx.dtd">
+<book lang="en">
+
+   <bookinfo>
+      <title>JBoss AOP - Aspect-Oriented Framework for Java</title>
+      <subtitle>Quick Reference</subtitle>
+      <releaseinfo>1.1</releaseinfo>
+   </bookinfo>
+   <chapter id="quickref-intro">
+      <title>Conventions</title>
+      <para>
+         This document gives a quick overview of how to use the XML and annotation
+         constructs available in JBoss AOP for users who have read through the rest 
+         of the documentation. It uses a somewhat non-standard notation, based on how 
+         you would actually use an xml snippet or annotation in your code, with 
+         optional and alternates marked. The values for attributes
+         and elements have been left out, and for annotations taking only one
+         value, the value should not be specified.
+         <variablelist spacing="compact">
+            <varlistentry>
+               <term><literal>{a}</literal></term>
+               <listitem>
+                  <para>
+                     Item <literal>a</literal> between curly braces is optional.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>[a]</literal></term>
+               <listitem>
+                  <para>
+                     Groups the items between the braces
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>[a | b]</literal></term>
+               <listitem>
+                  <para>
+                     Use <literal>a</literal> or <literal>b</literal>
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>multiplicity</literal></term>
+               <listitem>
+                  <para>
+                     The multiplicity symbols are the same as for a normal DTD
+                     <itemizedlist>
+                        <listitem><literal>none</literal> - item should occur exactly once</listitem>
+                        <listitem><literal>?</literal> - item should not occur, or occur once</listitem>
+                        <listitem><literal>*</literal> - item is optional and can occur several times</listitem>
+                        <listitem><literal>+</literal> - item must occur one or more times</listitem>
+                     </itemizedlist>
+                  </para>
+               </listitem>
+            </varlistentry>
+         </variablelist>
+         The parts outside these markers should just be typed in as is.
+      </para>
+      <para>
+         For the following XML "definition":
+         <programlisting>
+            <![CDATA[  
+   <test {optional} [choiceA | choiceB] compulsory >               
+      [ <subA></subA> | <subA></subA> ]? 
+   </test>               
+         </programlisting>
+         These would be valid XML:
+         <programlisting>
+   <test choiceA="y" compulsory="c" >               
+      <subA>4</subA> 
+   </test>               
+   <test optional="x" choiceB="y" compulsory="c" >               
+      <subB>4</subB> 
+   </test>               
+   <test optional="x" choiceB="y" compulsory="c" />               
+         </programlisting>
+           These would not be valid:
+         <programlisting>
+   <test choiceA="y" choiceB="y" compulsory="c" >               
+      <subA>4</subA> 
+   </test>               
+              
+   <test choiceA="y" >               
+      <subA>4</subA> 
+   </test>               
+              
+   <test choiceA="y" choiceB="y" compulsory="c" >               
+      <subA>4</subA> 
+   </test>               
+              
+   <test choiceA="y" compulsory="c" >               
+      <subA>4</subA> 
+      <subB>4</subB> 
+   </test>               
+            
+            ]]>
+         </programlisting>
+      </para>            
+      <para>
+         For the following annotation "definitions":
+         <programlisting>
+            <![CDATA[    
+   @AnnA ( compulsory, [choiceA | choiceB] {, optional1})         
+   @AnnB (expr)         
+             ]]>         
+         </programlisting>
+         These would be valid uses, bearing in mind that for this example compulsory is a 
+         String, choiceA and choiceB are integers, optional1 is an array of Strings, and
+         expr is a String:
+         <programlisting>
+            <![CDATA[    
+   @AnnA ( compulsory="a", choiceA=3, optional1="a")         
+   @AnnA ( compulsory="a", choiceB=3, optional1="a", "b")         
+   @AnnA ( compulsory="a", choiceA=3)         
+   @AnnB ("a")         
+             ]]>         
+          </programlisting>
+         These would not be valid:
+         <programlisting>
+   @AnnA (choiceA=3, optional1={"a", b=""})         
+   @AnnA ( compulsory="a", choiceB=3, choiceB=3, optional1={"a", "b"})         
+   @AnnB (3)         
+         </programlisting>
+      </para>
+   </chapter>
+   
+   <chapter id="quickref-ref">
+   
+      <title>Quick ref</title>
+   
+      <sect1 id="aspects" revision="1">
+         <title>Aspects</title>
+         <para><emphasis>XML</emphasis></para>
+         <programlisting>       
+<![CDATA[             
+   <aspect {name} [class |factory] scope>
+      [<attribute name></attribute>]*
+      [<advisor-attribute  name ></advisor-attribute>]
+      [<instance-advisor-attribute name ></instance-advisor-attribute>]
+      [<joinpoint-attribute  name ></joinpoint-attribute>]
+      [random xml]
+   </aspect>
+ ]]>         </programlisting>       
+         <para><emphasis>Annotation</emphasis></para>
+         <para><emphasis>Usage:</emphasis> class</para>
+         <programlisting>       
+   @Aspect ([class|factory], scope)
+         </programlisting>       
+      </sect1>
+
+
+      <sect1 id="interceptors" revision="1">
+         <title>Interceptors</title>
+         <para><emphasis>XML</emphasis></para>
+         <programlisting>   
+            <![CDATA[           
+   <interceptor {name} [class|factory] scope />
+   	[<attribute name ></attribute>]*
+   	[<advisor-attribute name ></advisor-attribute>]
+   	[<instance-advisor-attribute name></instance-advisor-attribute>]
+   	[<joinpoint-attribute name ></joinpoint-attribute>]
+   	[random xml]
+   <interceptor>
+             ]]>
+         </programlisting>       
+         <para><emphasis>Annotation</emphasis></para>
+         <para><emphasis>Usage:</emphasis> class</para>
+         <programlisting>       
+   @InterceptorDef ([class|factory], scope)
+         </programlisting>       
+      </sect1>
+
+
+      <sect1 id="bindings" revision="1">
+         <title>Bindings</title>
+         <para><emphasis>XML</emphasis></para>
+         <programlisting>    
+            <![CDATA[          
+   <bind {name} pointcut {cflow} >
+      [ <interceptor-ref name/> |
+        <stack-ref name/> |
+        <advice aspect name/>  ]*
+   </bind>
+             ]]>
+         </programlisting>       
+         <para><emphasis>Annotation</emphasis></para>
+         <para><emphasis>Usage:</emphasis> class (if annotated @InterceptorDef), method (if class annotated @Aspect)</para>
+         <programlisting>       
+   Bind (pointcut {, cflow} )
+         </programlisting>       
+      </sect1>
+
+      <sect1 id="stacks" revision="1">
+         <title>Stacks</title>
+         <para><emphasis>XML</emphasis></para>
+         <programlisting>       
+            <![CDATA[          
+   <stack name>
+      [ <interceptor-ref name /> |
+        <stack-ref name /> |
+        <interceptor [class |factory] scope /> |
+        <advice aspect name />  ]+
+   </stack>
+             ]]>
+         </programlisting>       
+         <para><emphasis>Annotation</emphasis></para>
+         <para><emphasis>Usage:</emphasis> N/A</para>
+      </sect1>
+   
+      <sect1 id="pointcuts" revision="1">
+         <title>Pointcuts</title>
+         <para><emphasis>XML</emphasis></para>
+         <programlisting>     
+           <![CDATA[ 
+   <pointcut name expr /> 
+            ]]>
+         </programlisting>       
+         <para><emphasis>Annotation</emphasis></para>
+         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class</para>
+         <programlisting>       
+   @PointcutDef (expr)
+         </programlisting>       
+      </sect1>
+   
+      <sect1 id="if-introductions" revision="1">
+         <title>Interface Introductions</title>
+         <para><emphasis>XML</emphasis></para>
+         <programlisting>       
+           <![CDATA[ 
+   <introduction [class|expr] >
+   	<interfaces></interfaces>
+   </introduction>
+            ]]>
+         </programlisting>       
+         <para><emphasis>Annotation</emphasis></para>
+         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class</para>
+         <programlisting>       
+   @Introduction ([target|typeExpression], interfaces)
+         </programlisting>       
+      </sect1>
+   
+      <sect1 id="mixins" revision="1">
+         <title>Mixins</title>
+         <para><emphasis>XML</emphasis></para>
+         <programlisting>       
+         <![CDATA[          
+   <introduction [class|expr] >
+      [
+   	<mixin {transient} >
+   	    <interfaces></interfaces>
+   	    <class></class>
+   	    <construction></construction>
+   	</mixin>		
+      ]*
+   </introduction>
+             ]]>
+         </programlisting>       
+         <para><emphasis>Annotation</emphasis></para>
+         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class. The method returns the mixin class type</para> 
+         <programlisting>       
+   @Mixin ([target|typeExpression], interfaces, isTransient)
+         </programlisting>       
+      </sect1>
+
+
+      <sect1 id="ann-intro" revision="1">
+         <title>Annotation Introductions</title>
+         <para><emphasis>XML</emphasis></para>
+         <programlisting>       
+            <![CDATA[    
+   <annotation-introduction expr invisible ></annotation-introduction>
+             ]]>        
+         </programlisting>       
+         <para><emphasis>Annotation</emphasis></para>
+         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class.</para> 
+         <programlisting>    
+   @AnnotationIntroductionDef (expr, invisible, annotation)
+         </programlisting>       
+      </sect1>
+   
+      <sect1 id="cflow-stack" revision="1">
+         <title>CFlow Stack</title>
+         <para><emphasis>XML</emphasis></para>
+         <programlisting> 
+            <![CDATA[    
+   <cflow-stack name>
+      [<called></called> | <not-called></not-called>]*
+   <cflow-stack>      
+             ]]>        
+         </programlisting>       
+         <para><emphasis>Annotation</emphasis></para>
+         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class.</para> 
+         <programlisting>       
+   @CFlowStackDef (cflows)
+         </programlisting>       
+         Where the cflows entries must be of type
+         <programlisting>       
+   @CFlowDef (expr, called)
+         </programlisting>       
+      </sect1>
+   
+      <sect1 id="typedef" revision="1">
+         <title>Typedefs</title>
+         <para><emphasis>XML</emphasis></para>
+         <programlisting> 
+            <![CDATA[    
+   <typedef name expr />
+             ]]>        
+         </programlisting>       
+         <para><emphasis>Annotation</emphasis></para>
+         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class.</para> 
+         <programlisting>       
+   @TypeDef (expr)
+         </programlisting>       
+      </sect1>
+
+      <sect1 id="dyna-cflow" revision="1">
+         <title>Dynamic CFlow</title>
+         <para><emphasis>XML</emphasis></para>
+         <programlisting> 
+            <![CDATA[    
+   <dynamic-cflow name class />
+             ]]>        
+         </programlisting>       
+         <para><emphasis>Annotation</emphasis></para>
+         <para><emphasis>Usage:</emphasis>class.</para> 
+         <programlisting>       
+   @DynamicCFlowDef (expr)
+         </programlisting>       
+      </sect1>
+
+      <sect1 id="prepare" revision="1">
+         <title>Prepare</title>
+         <para><emphasis>XML</emphasis></para>
+         <programlisting> 
+            <![CDATA[    
+   <prepare expr />
+             ]]>        
+         </programlisting>       
+         <para><emphasis>Annotation</emphasis></para>
+         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class.</para> 
+         <programlisting>       
+   @Prepare (expr)
+         </programlisting>       
+      </sect1>
+
+      <sect1 id="metadata" revision="1">
+         <title>Metadata</title>
+         <para><emphasis>XML</emphasis></para>
+         <programlisting> 
+            <![CDATA[    
+   <metadata tag class>
+      [<default>[any xml tags with content]*</default>]*
+      [<class>[any xml tags with content]*</class>]*
+      [<method expr>[any xml tags with content]*</method>]*
+      [<constructor expr>[any xml tags with content]*</constructor>]*
+      [<field expr>[any xml tags with content]*</field>]*   
+   </metadata>
+             ]]>   
+         </programlisting>       
+         <para><emphasis>Annotation</emphasis></para>
+         <para><emphasis>Usage:</emphasis> N/A.</para> 
+      </sect1>
+
+      <sect1 id="metadata-loader" revision="1">
+         <title>Metadata Loaders</title>
+         <para><emphasis>XML</emphasis></para>
+         <programlisting> 
+            <![CDATA[    
+   <metadata-loader tag class>
+      [arbitrary xml]
+   </metadata-loader>
+             ]]>   
+         </programlisting>       
+         <para><emphasis>Annotation</emphasis></para>
+         <para><emphasis>Usage:</emphasis> N/A.</para> 
+      </sect1>
+
+      
+
+
+
+
+
+   </chapter>   
+</book>
+
+
+

@@ -1,0 +1,71 @@
+!!!Annotated interceptors
+
+!!Declaring interceptor class
+You declare an interceptor in exactly the same way as defined in [Method execution|../method-execution/methodexecution.html]. i.e. the interceptor must inherit from {{org.jboss.aop.advice}}
+{{{
+package org.jboss.aop.advice;
+
+import org.jboss.aop.joinpoint.Invocation;
+
+public interface Interceptor
+{
+   public String getName();
+   public Object invoke(Invocation invocation) throws Throwable;
+}
+}}}
+
+!!Binding the interceptor
+Open up {{SimpleInterceptor}}, and you will see that the class itself is normal, but that the class has been annotated as follows:
+{{{
+   import org.jboss.aop.Bind;
+   import org.jboss.aop.InterceptorDef;
+
+   @InterceptorDef
+   @Bind (pointcut = "all(POJO)")
+   public class SimpleInterceptor implements Interceptor
+   {
+      ...
+   }
+}}}
+
+The {{@InterceptorDef}} marks the class as an interceptor so that JBoss AOP knows what to do with it. The @Bind annotation specifies the pointcut the interceptor should be bound to. So in this case {{SimpleInterceptor}} gets bound to all constructor executions, method calls and field accesses on the POJO class. This example uses an [all|../all/all.html] pointcut expression, but you can of course use any pointcut expression you like. {{SimpleInterceptor.java}} contains a few commented out example bindings so you can get rid of and introduce the ones you want. (Note that there can be only one uncommented @Bind at any time)
+
+!! build.xml
+An important difference between defining the AOP bindings as annotations rather than xml, is that you don't have a jboss-aop.xml file. Instead you need to tell the aopc compiler and the java runtime where to find the annotated files by using the aopclasspath property (for the aopc task) or the jboss.aop.class.path system property (for the java runtime) as shown below:
+{{{
+   ...
+   <aopc compilerclasspathref="classpath" classpathref="classpath" verbose="true">
+      <classpath path="."/>
+      <src path="."/>
+      <aopclasspath path="."/>
+   </aopc>
+
+   ...
+
+   <java fork="yes" failOnError="true" className="Driver">
+      <sysproperty key="jboss.aop.class.path" value="."/>
+      <classpath refid="classpath"/>
+   </java>
+   ...
+}}}
+!Running
+To compile and run:
+{{{
+  $ ant
+}}}
+It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should read as follows:
+{{{
+run:
+     [java] <<< Entering SimpleInterceptor for: public POJO()
+     [java] constructor
+     [java] >>> Leaving SimpleInterceptor
+     [java] --- pojo.noop(); ---
+     [java] <<< Entering SimpleInterceptor for: public void POJO.noop()
+     [java] noop()
+     [java] >>> Leaving SimpleInterceptor
+     [java] --- pojo.test1(String param); ---
+     [java] <<< Entering SimpleInterceptor for: public void POJO.test1(java.lang.String)
+     [java] test1(String param): hello world
+     [java] >>> Leaving SimpleInterceptor
+}}}
+

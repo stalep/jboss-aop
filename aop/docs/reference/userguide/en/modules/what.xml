@@ -1,0 +1,185 @@
+<chapter id="what">
+
+   <title>What Is Aspect-Oriented Programming?</title>
+
+   <sect1 id="whatif" revision="1">
+      <title>What is it?</title>
+      <para>
+         An aspect is a common feature that's typically scattered across methods, classes, object hierarchies, or even
+         entire object models.  It is behavior that looks and smells like it should have structure, but you can't find
+         a way to express this structure in code with traditional object-oriented techniques.
+      </para>
+      <para>
+         For example, metrics is one common aspect. To generate useful logs from your application, you have to
+         (often liberally) sprinkle informative messages throughout your code.  However, metrics is something that your
+         class or object model really shouldn't be concerned about. After all, metrics is irrelevant to your actual
+         application: it doesn't represent a customer or an account, and it doesn't realize a business rule.
+         It's simply orthogonal.
+      </para>
+      <para>
+         In AOP, a feature like metrics is called a crosscutting concern, as it's a behavior that "cuts" across multiple
+         points in your object models, yet is distinctly different. As a development methodology, AOP recommends that
+         you abstract and encapsulate crosscutting concerns.
+      </para>
+      <para>
+         For example, let's say you wanted to add code to an application to measure the amount of time it would take to
+         invoke a particular method. In plain Java, the code would look something like the following.
+      </para>
+      <programlisting>public class BankAccountDAO
+{
+  public void withdraw(double amount)
+  {
+    long startTime = System.currentTimeMillis();
+    try
+    {
+      // Actual method body...
+    }
+    finally
+    {
+      long endTime = System.currentTimeMillis() - startTime;
+      System.out.println("withdraw took: " + endTime);
+    }
+  }
+}</programlisting>
+      <para>
+      While this code works, there are a few problems with this approach:
+      </para>
+      <orderedlist>
+         <listitem>
+           It's extremely difficult to turn metrics on and off, as you have to manually add the code in the
+           try>/finally block to each and every method or constructor you want to benchmark.
+         </listitem>
+         <listitem>
+           The profiling code really doesn't belong sprinkled throughout your application code. It makes your code
+           bloated and harder to read, as you have to enclose the timings within a try/finally block.
+         </listitem>
+         <listitem>
+           If you wanted to expand this functionality to include a method or failure count, or even to register these
+           statistics to a more sophisticated reporting mechanism, you'd have to modify a lot of different files (again).
+         </listitem>
+      </orderedlist>
+      <para>
+         This approach to metrics is very difficult to maintain, expand, and extend, because it's dispersed throughout
+         your entire code base. And this is just a tiny example! In many cases, OOP may not always be the best way to
+         add metrics to a class.
+      </para>
+      <para>
+         Aspect-oriented programming gives you a way to encapsulate this type of behavior functionality.  It allows you
+         to add behavior such as metrics "around" your code. For example, AOP provides you with programmatic control to
+         specify that you want calls to BankAccountDAO to go through a metrics aspect before executing the actual body
+         of that code.
+      </para>
+      </sect1>
+      <sect1 id="create" revision="1">
+         <title>Creating Aspects in JBoss AOP</title>
+         <para>
+            In short, all AOP frameworks define two things: a way to implement crosscutting concerns, and a
+            programmatic construct -- a programming language or a set of tags -- to specify how you want to apply those
+            snippets of code.
+         </para>
+         <para>
+            Let's take a look at how JBoss AOP, its cross-cutting concerns, and how you can implement a metrics aspect
+            in JBoss.
+         </para>
+         <para>
+            The first step in creating a metrics aspect in JBoss AOP is to encapsulate the metrics feature in its own
+            Java class. Listing Two extracts the try/finally block in Listing One's BankAccountDAO.withdraw() method
+            into Metrics, an implementation of a JBoss AOP Interceptor class.
+         </para>
+         <para>Listing Two: Implementing metrics in a JBoss AOP Interceptor</para>
+         <programlisting>01. public class Metrics implements org.jboss.aop.advice.Interceptor
+02. {
+03.   public Object invoke(Invocation invocation) throws Throwable
+04.   {
+05.     long startTime = System.currentTimeMillis();
+06.     try
+07.     {
+08.       return invocation.invokeNext();
+09.     }
+10.     finally
+11.     {
+12.       long endTime = System.currentTimeMillis() - startTime;
+13.       java.lang.reflect.Method m = ((MethodInvocation)invocation).method;
+14.       System.out.println("method " + m.toString() + " time: " + endTime + "ms");
+15.     }
+16.   }
+17. }</programlisting>
+          <para>
+             Under JBoss AOP, the Metrics class wraps withdraw(): when calling code invokes withdraw(), the AOP
+             framework breaks the method call into its parts and encapsulates those parts into an Invocation object.
+             The framework then calls any aspects that sit between the calling code and the actual method body.
+          </para>
+          <para>
+             When the AOP framework is done dissecting the method call, it calls Metric's invoke method at line 3.
+             Line 8 wraps and delegates to the actual method and uses an enclosing try/finally block to perform the
+             timings. Line 13 obtains contextual information about the method call from the Invocation object,
+             while line 14 displays the method name and the calculated metrics.
+          </para>
+          <para>
+             Having the metrics code within its own object allows us to easily expand and capture additional
+             measurements later on. Now that metrics are encapsulated into an aspect, let's see how to apply it.
+          </para>
+       </sect1>
+       <sect1 id="apply" revision="1">
+          <title>Applying Aspects in JBoss AOP</title>
+          <para>
+             To apply an aspect, you define when to execute the aspect code. Those points in execution are called
+             pointcuts. An analogy to a pointcut is a regular expression.  Where a regular expression matches strings,
+             a pointcut expression matches events/points within your application.  For example, a valid pointcut
+             definition would be "for all calls to the JDBC method executeQuery(), call the aspect that verifies SQL syntax."
+          </para>
+          <para>
+             An entry point could be a field access, or a method or constructor call. An event could be an exception
+             being thrown. Some AOP implementations use languages akin to queries to specify pointcuts. Others use tags.
+             JBoss AOP uses both.  Listing Three shows how to define a pointcut for the metrics example.
+          </para>
+          <para>Listing Three: Defining a pointcut in JBoss AOP</para>
+          <programlisting><![CDATA[1. <bind pointcut="public void com.mc.BankAccountDAO->withdraw(double amount)">
+2.       <interceptor class="com.mc.Metrics"/>
+3. </bind >
+
+4. <bind pointcut="* com.mc.billing.*->*(..)">
+5.       <interceptor class="com.mc.Metrics"/>
+6. </bind >]]></programlisting>
+          <para>
+             Lines 1-3 define a pointcut that applies the metrics aspect to the specific method BankAccountDAO.withdraw().
+             Lines 4-6 define a general pointcut that applies the metrics aspect to all methods in all classes in the
+             com.mc.billing package.
+          </para>
+          <para>
+             There is also an optional annotation mapping if you do not like XML.  See our Reference Guide for more information.
+          </para>
+          <para>
+             JBoss AOP has a rich set of pointcut expressions that you can use to define various points/events in your
+             Java application so that you can apply your aspects. You can attach your aspects to a specific Java class
+             in your application or you can use more complex compositional pointcuts to specify a wide range of classes
+             within one expression.
+          </para>
+          <para>
+             With AOP, as this example shows, you're able to pull together crosscutting behavior into one object and
+             apply it easily and simply, without polluting and bloating your code with features that ultimately don't
+             belong mingled with business logic. Instead, common crosscutting concerns can be maintained and extended
+             in one place.
+          </para>
+          <para>
+             Notice too that the code within the BankAccountDAO class has no idea that it's being profiled. This is what
+             aspect-oriented programmers deem orthogonal concerns. Profiling is an orthogonal concern. In the OOP code
+             snippet in Listing One, profiling was part of the application code. With AOP, you can remove that code.
+             A modern promise of middleware is transparency, and AOP (pardon the pun) clearly delivers.
+          </para>
+          <para>
+             Just as important, orthogonal behavior could be bolted on after development. In Listing One, monitoring
+             and profiling must be added at development time. With AOP, a developer or an administrator can (easily)
+             add monitoring and metrics as needed without touching the code.  This is a very subtle but significant
+             part of AOP, as this separation (obliviousness, some may say) allows aspects to be layered on top of or
+            below the code that they cut across. A layered design allows features to be added or removed at will.
+            For instance, perhaps you snap on metrics only when you're doing some benchmarks, but remove it for production.
+            With AOP, this can be done without editing, recompiling, or repackaging the code.
+          </para>
+   </sect1>
+
+</chapter>
+
+
+
+

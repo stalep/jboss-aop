@@ -1,0 +1,316 @@
+<chapter id="introductions">
+
+   <title>Mixins and Introductions</title>
+   <para>
+      When people thing of AOP, they usually think of interception, pointcut expressions, aspects, and advices.  AOP
+      isn't just about those things.  Another important feature in JBoss AOP is the ability to introduce an interface
+      to an existing Java class in a transparent way.  You can force a class to implement an interface and even specify
+      an additional class called a mixin that implements that interface.  Very similar to C++'s multiple inheritance.
+      Now, why would you want to use introductions/mixins?  That's what this chapter is all about.
+   </para>
+
+   <sect1 id="intros" revision="1">
+      <title>Introducing Introductions</title>
+      <para>
+         The first thing we'll show here is how to force an existing Java class to implement any interface you want.
+         The JBoss AOP tutorial is a good place to start for an example, so let's grab the code from the introductions
+         tutorial.
+      </para>
+      <para>
+         The first example we'll show is how to take an existing non-serializable class and make it serializable.
+         This use case may be usable if there's a thirdparty library you don't have the source for, or you want
+         to control whether your class is serializable or not based on how you deploy your application.
+      </para>
+      <programlisting>public class POJO
+{
+  private String field;
+}</programlisting>
+      <para>
+         To take this class and make it serializable is very simple.  Just the following XML is required:
+      </para>
+      <programlisting><![CDATA[<introduction class="POJO">
+   <interfaces>java.io.Serializable</interfaces>
+</introduction>
+ ]]></programlisting>
+      <para>
+         The above XML just states that the AOP framework is to apply the
+         <literal>java.io.Serializable</literal> interface
+         to the
+         <literal>POJO</literal> class.  You can have one or more interfaces specified with the
+         <literal>interfaces</literal>
+         element.  These interfaces are comma delimited.
+      </para>
+      <para>
+         If the introduced interfaces have methods not implemented by the class, then the AOP framework with add an
+         implementation of these methods to the class.  The methods will delegate to the AOP framework and must be
+         handled/serviced by an interceptor or advice otherwise a
+         <literal>NullPointerException</literal> will result.
+      </para>
+   </sect1>
+
+   <sect1 id="mixins" revision="1">
+      <title>Mixin It Up</title>
+      <para>
+         Introducing interfaces only is quite limited when the introduced interfaces have methods that the class doesn't
+         implement as you have to write a lot of generically inclined code that handle these types of method calls within
+         an advice or interceptor.  This is where mixins come in.  The AOP framework allows you to define a mixin class
+         that implements the introduced interface(s).  An instance of this mixin class will be allocated the first time
+         you invoke a method of the introduced interface.
+      </para>
+      <para>
+         Again, let's steal from the introductions tutorial.  We'll take an existing class, force it to implement
+         the
+         <literal>java.io.Externalizable</literal> interface and provide a class that implements
+         <literal>Externalizable</literal>
+      </para>
+      <programlisting>public class POJO
+{
+  private String field;
+}</programlisting>
+      <para>
+         To take this class and make it externalizable is very simple. Just the following XML is required:
+      </para>
+      <programlisting><![CDATA[<introduction class="POJO">
+   <mixin>
+      <interfaces>
+         java.io.Externalizable
+      </interfaces>
+      <class>ExternalizableMixin</class>
+      <construction>new ExternalizableMixin(this)</construction>
+   </mixin>
+</introduction>]]></programlisting>
+      <para>
+         The above XML just states that the AOP framework is to apply the
+         <literal>java.io.Externalizable</literal> interface
+         to the
+         <literal>POJO</literal> class.  You can have one or more interfaces specified with the
+         <literal>interfaces</literal>
+         element.  These interfaces are comma delimited.
+      </para>
+      <para>
+         The
+         <literal>class</literal> element defines the mixin class that will implement the externalizable interface
+         and handle serialization of the
+         <literal>POJO</literal> class.
+      </para>
+      <para>
+         The
+         <literal>construction</literal> element allows you to specify Java code that will be used to initialize
+         the mixin class when it is created.  JBoss AOP will create a field within the
+         <literal>POJO</literal>
+         class that will hold the instance of the mixin.  This field will be initialized with the Java code you provide
+         in the
+         <literal>construction</literal> element.  The
+         <literal>this</literal> pointer in the construction above
+         pertains to the
+         <literal>POJO</literal> class instance.
+      </para>
+      <para>
+         Finally, you need to implement the mixin class that will handle externalization.
+      </para>
+      <programlisting>public class ExternalizableMixin implements java.io.Externalizable
+{
+   POJO pojo;
+
+   public ExternalizableMixin(POJO pojo)
+   {
+      this.pojo = pojo;
+   }
+
+   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
+   {
+      pojo.stuff2 = in.readUTF();
+   }
+   public void writeExternal(ObjectOutput out) throws IOException
+   {
+      out.writeUTF(pojo.stuff2);
+   }
+}</programlisting>
+      <sect2 id="multi" revision="1">
+         <title>Multiple Inheritance</title>
+         <para>
+            One thing that should be noted about mixins is that they allow you to do true multiple inheritance within
+            Java.  Yes, it is not explicit multiple inheritance as you must define the inheritance mappings in XML
+            or via an annotation binding, but it does allow you to take advantage of something C++ has had for years.
+            Many thought leaders argue against the use of multiple inheritance, but when used correctly and purely
+            as an abstract mixin, it can be a very useful tool in application design.
+         </para>
+      </sect2>
+   </sect1>
+   <sect1 id="apis" revision="1">
+      <title>Aspects with APIs</title>
+      <para>
+         The serialization and externalization examples show previously in this chapter are kinda lame.  Sure, you
+         can use introductions/mixins for multiple inheritance, or to do nice tricks like forcing an existing class
+         to be serializable.  A more compelling use case is needed to justify this particular feature.  This is what
+         this section is about.
+      </para>
+      <para>
+         The best use cases for introductions/mixins comes when you have an aspect that requires an API for the user
+         to interact with.  Many aspects have runtime APIs so that the application developer can interact with a particular
+         aspect to set configuration or to gain added behavior.  A good example of an aspect with an API is if we expand
+         on the
+         <literal>@Oneway</literal> example in the "Aspect-Oriented Annotations" section of this user guide.
+         <literal>@Oneway</literal> allows you to tag a method as oneway and when you invoke that method it runs in
+         the background.  The problem with this example is that you can only run
+         <literal>void</literal> methods in
+         the background and cannot interact asynchronously with methods that return a value.  You have no way of
+         obtaining the return value of an asynchronous call.  Let's walk through an example of taking the oneway
+         aspect and adding a runtime API for that aspect so that application developers can obtain method return values
+         asynchronously.
+      </para>
+      <para>
+         The end goal of this example is to allow an application developer to tag a method as
+         <literal>@Asynchronous</literal>
+         have the method run in the background, but to provide an API so that the developer can obtain the value of a method
+         return asynchronously.  What we'll use here is an introduction and mixin to provide an API to obtain a
+         <literal>java.util.concurrent.Future</literal> instance (from JDK 5.0 concurrent package) that will allow us to get access to the asynchronous
+         method's return value.
+      </para>
+      <para>Using the
+         <literal>@Asynchronous</literal> annotation
+      </para>
+      <programlisting>public class POJO
+{
+   @Asynchronous int someMethod() { ... }
+}</programlisting>
+      <para>
+         This is the interface we want to introduce to any class that has a method tagged as
+         <literal>@Asynchronous</literal>
+      </para>
+      <programlisting>public interface AsynchronousFacade
+{
+   java.util.concurrent.Future getLastFuture();
+}</programlisting>
+      <para>
+         So, the user would interact with this asynchronous aspect in the following way.
+      </para>
+      <programlisting>{
+   POJO pojo = new POJO();
+   AsynchronousFacade facade = (AsynchronousFacade)pojo;
+...
+   pojo.someMethod(); // invokes in background
+   Future future = facade.getLastFuture();
+... do other work...
+   // go back and get result. block until it returns.
+   int result = (Integer)future.get();
+}</programlisting>
+      <para>
+         The first thing we need to do is define the mixin that will provide
+         <literal>Futures</literal>.  This mixin
+         should also have a private interface so that the asynchronous aspect has a way to set the current invocation's
+         future after it spawns the method invocation to the background.  The mixin will be very very simple.  It
+         will basically expose a
+         <literal>java.lang.ThreadLocal</literal> so that the Future can be set and acquired.
+      </para>
+      <programlisting>public class AsynchMixin implements AsynchronousFacade, FutureProvider
+{
+    private ThreadLocal currentFuture = new ThreadLocal();
+
+    public Future getLastFuture()
+    {
+       return (Future)currentFuture.get();
+    }
+
+    public void setFuture(Future future)
+    {
+       currentFuture.set(future);
+    }
+}</programlisting>
+      <para>
+        The
+         <literal>FutureProvider</literal> is an additional interface introduction that the aspect will use to
+         set the future when after it spawns the task in the background.
+      </para>
+      <programlisting>public interface FutureProvider
+{
+   public void setFuture(Future future);
+}</programlisting>
+      <para>
+         Next, let's look at the aspect that will implement the asynchronous behavior.  The aspect is made up of an
+         advice that will create a
+         <literal>java.util.concurrent.Callable</literal> instance so that the current
+         method invocation will run in the background.
+      </para>
+      <programlisting>public class AsynchAspect
+{
+   ExecutorService executor = Executors.newCachedThreadPool();
+
+   public Object invokeAsynch(MethodInvocation invocation) throws Throwable
+   {
+      final Invocation copy = invocation.copy();
+      Future future = executor.submit( new Callable()
+      {
+         public Object call()
+         {
+            try
+            {
+               return copy.invokeNext();
+            }
+            catch (Throwable throwable)
+            {
+               return throwable;
+            }
+         }
+      });
+      FutureProvider provider = (FutureProvider)invocation.getTargetObject();
+      provider.setFuture(future);
+
+      return nullOrZero(invocation.getMethod().getReturnType());
+   }
+
+   private Object nullOrZero(Class type)
+   {
+      if (type.equals(long.class)) return 0;
+      //... other types ...
+      return null;
+   }
+}</programlisting>
+      <para>
+         The
+         <literal>invokeAsynch</literal> advice first copies the invocation.  A copy copies the entire state
+         of the invocation objec and remembers exactly in the interceptor/advice chain to continue on when the
+         method is spawned off into a separate thread.  The copy allows the current Java call stack to return while allowing
+         the copy to live in a separate thread and continue down the interceptor stack towards the actual method call.
+      </para>
+      <para>
+         After creating a callable and running the method in a separate thread, the advice gets the target object
+         from the invocation, and typecasts it to
+         <literal>FutureProvider</literal> so that it can make the
+         future available to the app developer.
+      </para>
+      <para>
+         So the mixin and aspect are written.  The next thing to do is to define an advice binding so that when a method
+         is tagged as asynchronous, the asynch advice will be triggered, and the method will run in the background.
+      </para>
+      <programlisting>
+         <![CDATA[<aspect class="AsynchAspect" scope="PER_VM"/>
+<bind pointcut="execution(!static * *->@Asynchronous(..))">
+   <advice name="invokeAsynch" aspect="AsynchAspect"/>
+</bind>]]></programlisting>
+      <para>
+         After defining the aspect binding, we then come to the introduction definition itself.  We want the introduction
+         to be added to any class that has any method tagged as
+         <literal>@Asynchronous</literal>.  The JBoss AOP
+         pointcut expression language has a keyword
+         <literal>has</literal> to allow for this type of matching.  Let's
+         look at the introduction binding.
+      </para>
+      <programlisting><![CDATA[<introduction expr="has(!static * *->@Asynchronous(..))">
+   <mixin>
+      <interfaces>AsynchronousFacade, FutureProvider</interfaces>
+      <class>AsynchMixin</class>
+      <construction>new AsynchMixin()</construction>
+   </mixin>
+</introduction>]]></programlisting>
+      <para>
+         The example is now complete.  Introductions/mixins aren't solely limited to pseudo-multiple inheritance and the
+         asynch aspect is a great example of an aspect with a runtime API.
+      </para>
+   </sect1>
+
+</chapter>
+
+
+
+

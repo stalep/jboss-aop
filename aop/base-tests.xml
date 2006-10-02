@@ -1,0 +1,92 @@
+<project name="code-generation" default="help">
+
+   <target name="_base-tests">
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="extender"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="jdk15base"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="stress/simple"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="invoketarget"/>
+      </antcall>
+   	<antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="instanceofintroduced"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="implementz"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="annotatedcflow"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="scope"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="construction"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="constructortarget"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="basic"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="marshalling"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="annotatedparams"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="callerscope"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="reflection"/>
+      </antcall>      
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="regression"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="perjoinpoint"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="beanstyleconfig"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="precedence"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="dotinpointcutname"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="instanceofannotated"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="callerargs"/>
+      </antcall>
+
+      <!-- Tests with special requirements for parameters -->
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="annotated"/>
+         <param name="no.xml" value="true"/>
+         <param name="use.annotations" value="true"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="jdk15annotated"/>
+         <param name="no.xml" value="true"/>
+         <param name="use.annotations" value="true"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="introduction"/>
+         <param name="aop.xml" value="${source.res}/test/introduction/introduction-aop.xml"/>
+      </antcall>
+   </target>
+   
+   <target name="help">
+      <echo message="The project fragment which executes the main tests"/>
+   </target>
+   
+</project>

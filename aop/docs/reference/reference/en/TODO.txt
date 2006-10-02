@@ -1,0 +1,5 @@
+* Pluggable instrumentor
+  * GeneratedAdvisor features
+    * Inherited method overriding of bindings and metadata
+    * Before/After/Throwing + args
+* JBoss Retro vs annotationc

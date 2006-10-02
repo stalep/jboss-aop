@@ -1,0 +1,363 @@
+<chapter id="testing">
+
+   <title>Testing with AOP</title>
+   <para>
+      In the previous sections we talked more about using AOP to build and design applications and services.  This chapter
+      focuses on how you can use AOP to test your applications.
+   </para>
+
+   <sect1 id="exception" revision="1">
+      <title>Testing Exception Handling</title>
+      <para>
+         The sign of a well design application is how gracefully it can handle errors.  To be able to handle errors
+         gracefully in all circumstances though requires lots and lots of testing.  You have to test that your application
+         is catching and handling exceptions carefully.  Sometimes its hard to produce error conditions because your
+         code is interacting with a third party library, or third party service like a database or something.  You can
+         write complex mock objects in these scenarios, but let's see how you can create these error conditions in an
+         easier and more flexible way with JBoss AOP.
+      </para>
+      <para>
+         The example scenario we'll give is an application that needs to be tested on whether or not it handles an
+         Oracle database deadlock exception gracefully.  What we'll do is write an advice that intercepts calls
+         to <literal>java.sql.Statement</literal> execute methods and always throw a SQLException with the appropriate
+         deadlock error code.
+      </para>
+      <programlisting>public class SQLDeadlockExceptionInjector
+{
+   public Object throwDeadlock(Invocation invocation) throws Throwable
+   {
+      throw new SQLException("Oracle Deadlock", "RETRY", ORACLE_DEADLOCK_CODE);
+   }
+}</programlisting>
+      <para>
+         What's great about the JBoss AOP approach to testing exception handling is that you can use it on a live system
+         and change how your tests run by deploying and/or undeploying certain aspects at runtime during your automatic testing
+         phase.  Let's apply this aspect.
+      </para>
+      <programlisting><![CDATA[<aspect class="SQLDeadlockExceptionInjector/>
+<bind pointcut="call(* $instanceof{java.sql.Statement}->execute*(..))">
+   <advice name="throwDeadlock" aspect="SQLDeadlockExceptionInjector"/>
+</bind>]]></programlisting>
+      <para>
+         So, the above binding will throw a deadlock exception every time an execute method of a Statement is invoked.
+         This example is a bit limited though.  Maybe not all code paths can handle deadlock exceptions, or they
+         should not handle deadlock exceptions and just rollback and such.  The pointcut expression language allows
+         you to do more fine grain application of this particular exception aspect.  Let's say that only our
+         BankAccount class is designed to successfully recover from a Oracle deadlock exception.  We can change the
+         pointcut expression to be as follows:
+      </para>
+      <programlisting><![CDATA[<bind pointcut="call(* $instanceof{java.sql.Statement}->execute*(..)) AND /
+                                                           within(BankAccount)">
+   <advice name="throwDeadlock" aspect="SQLDeadlockExceptionInjector"/>
+</bind>]]></programlisting>
+      <para>
+         The difference in this expression is the <literal>within</literal>.  It is saying that any call to execute
+         methods that are within the BankAccount class.  We can even get more fine grained than that.  We can even
+         specify which methods within BankAccount the exception aspect should be applied to.
+      </para>
+      <programlisting><![CDATA[<bind pointcut="call(* $instanceof{java.sql.Statement}->execute*(..)) AND /
+                                                  withincode(void BankAccount->withdraw(double))">
+   <advice name="throwDeadlock" aspect="SQLDeadlockExceptionInjector"/>
+</bind>]]></programlisting>
+      <para>
+         In the above listing the <literal>withincode</literal> keyword specificies to match the calling of any execute
+         method that is invoked within the <literal>BankAccount.withdraw()</literal> method.
+      </para>
+      <para>
+         AOP gives you a lot of flexibilty in testing error conditions, JBoss AOP in particular.  Because JBoss AOP
+         allows you to hotdeploy (deploy/undeploy) aspects at runtime it is very easy to integrate these types of tests
+         into a live system instead of having to go through the pain of writing complex mock objects and running your
+         applications outside of the application server environment.
+      </para>
+
+   </sect1>
+
+   <sect1 id="testing1" revision="1">
+      <title>Injecting Mock Objects</title>
+      <para>
+         This section was taken from Staale Pedersen's article at <literal>http://folk.uio.no/staalep/aop/testing.html</literal>.
+         Thanks Staale for putting together some ideas on how you can use JBoss AOP for use in unit testing.
+      </para>
+      <para>
+         The use of unit testing has increased tremendously lately, and many developers have seen the increase in quality
+         and speed that comes from having a comprehensive unit-test suite.  As the use of unit testing has increased, so
+         have the number of situations where writing test are troublesome or maybe impossible. A common problem with
+         writing tests is that it can require large amount of setup code. Testing code that rely on a remote system or
+         data access from file/db/net can be almost impossible to implement. But with the help of JBoss AOP and mock
+         objects this is no longer any problem.
+      </para>
+      <para>
+         In this example we will examine a common situation where writing unit tests is difficult, but desirable. For
+         simplicity we will use POJO's, but the example can easily be translated for a large J2EE application.
+      </para>
+      <sect2 id="required" revision="1">
+         <title>Required Knowledge</title>
+         <para>
+            This article focuses on unit testing with JUnit using Mock Maker and of course JBoss AOP. Knowledge of JUnit
+            and JBoss AOP is required, Mock Maker is used, but thoroughly knowledge is not required. The example source
+            code is compiled with Ant, env JUNIT_HOME must be set (mock maker and JBoss AOP jars are included in the
+            example source).
+         </para>
+      </sect2>
+      <sect2 id="problem" revision="1">
+         <title>The Problem</title>
+         <para>
+            The situation is common, we have a Bank application that manages Customers  which can have one or more
+            BankAccounts.  The Bank has different business methods to calculate interest, accept loans, etc. (in
+            production code this would be large and complex methods.) We want to write tests for the Bank's business
+            methods to make sure they work as intended and that we don't introduce bugs if we refactor, extend, modify
+            etc. The Bank has three business methods.
+         </para>
+         <programlisting><![CDATA[package bank;
+
+import java.util.ArrayList;
+
+import customer.*;
+
+public class BankBusiness {
+
+  private BankAccountDAO bankAccountDAO;
+
+  public BankBusiness() {
+    try {
+      bankAccountDAO = BankAccountDAOFactory.getBankAccountDAOSerializer();
+    }
+    catch(Exception e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+  public boolean creditCheck(Customer c, double amount) {
+    return (getSumOfAllAccounts(c) < amount * 0.4);
+  }
+
+  public double calculateInterest(BankAccount account) {
+    if(account.getBalance() < 1000)
+      return 0.01;
+    else if(account.getBalance() < 10000)
+      return 0.02;
+    else if(account.getBalance() < 100000)
+      return 0.03;
+    else if(account.getBalance() < 1000000)
+      return 0.05;
+    else
+      return 0.06;
+  }
+
+  public double getSumOfAllAccounts(Customer c) {
+    double sum = 0;
+    if(c.getAccounts().size() < 1)
+      return sum;
+    else {
+      for(int i=0; i < c.getAccounts().size(); i++) {
+        BankAccount a =
+          bankAccountDAO.getBankAccount( ((Long) c.getAccounts().get(i)).longValue());
+        if(a != null)
+          sum += a.getBalance();
+      }
+    }
+    return sum;
+  }
+
+}]]></programlisting>
+         <para>
+            <literal>calculateInterest(BankAccount b)</literal> can easily be tested since it is only dependent on the
+            object it recieves as a parameter.
+         </para>
+         <para>
+            <literal>creditCheck(Customer c, double amount)</literal> and <literal>getSumOfAllAccounts(Customer)</literal>
+            are more complicated since they are data dependent. It uses a DAO layer to fetch all BankAccounts for a
+            specified customer. The test should not be dependent of the DAO implementation since its goal is to check
+            the business logic, not the DAO layer. In this example the DAO implementation is a simple serializer, but it
+            could easily be an Entity beans, Hibernate, etc..
+         </para>
+      </sect2>
+      <sect2 id="mock" revisition="1">
+         <title>Mock Objects</title>
+         <para>
+            Mock objects are objects that implement no logic of their own and are used to replace the parts of the
+            system with which the unit test interacts. In our case it is the DAO layer we would like to mock. We could
+            write our own mock implementation, but mock maker does a very good job of autogenerating the mock for us.
+         </para>
+         <programlisting><![CDATA[package bank;
+/**
+ * @mock
+ */
+public interface BankAccountDAO {
+
+  public void saveBankAccount(BankAccount b) throws Exception;
+
+  public BankAccount getBankAccount(long a);
+
+  public void removeBankAccount(BankAccount b) throws Exception;
+}]]></programlisting>
+         <para>
+            With the <literal>@mock</literal> tag in the header mock maker generates the mock. In the example the ant target
+            <literal>ant generate-mocks</literal> generates the mock implementation of BankAccount.  Now we need to
+            replace the DAO call to return our mock objects instead of the DAO implementation.
+         </para>
+      </sect2>
+      <sect2 id="aop" revision="1">
+         <title>AOP with Mocks</title>
+         <para>
+            - and intercepting a method invocation is just what aop does best. Our jboss-aop.xml file:
+         </para>
+         <programlisting><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<aop>
+   <bind pointcut="execution(public static bank.BankAccountDAO bank.BankAccountDAOFactory->getBankAccountDAO*())">
+       <interceptor class="bank.BankAccountDAOInterceptor"/>
+   </bind>
+</aop>]]></programlisting>
+         <para>
+            The pointcut expression intercepts the factorycall bank.BankAccountDAOFactory.getBankAccountDAO*() and
+            calls the interceptor bank.BankAccountDAOInterceptor.
+         </para>
+         <programlisting><![CDATA[package bank;
+
+import org.jboss.aop.joinpoint.Invocation;
+import org.jboss.aop.joinpoint.MethodInvocation;
+import org.jboss.aop.advice.Interceptor;
+
+import util.MockService;
+
+public class BankAccountDAOInterceptor implements Interceptor {
+
+  public String getName() { return "BankAccountDAOInterceptor"; }
+
+  public Object invoke(Invocation invocation) throws Throwable {
+    try {
+      MockService mockService = MockService.getInstance();
+
+      Object mock = mockService.getMockForInterface( "BankAccountDAO");
+      if(mock == null) {
+        System.out.println("ERROR: BankAccountDAOInterceptor didnt find class!");
+        // this will probably fail, but its the sainest thing to do
+        return  invocation.invokeNext();
+      }
+
+      return mock;
+    }
+    finally {
+    }
+  }
+}]]></programlisting>
+         <para>
+            Instead of returning <literal>invocation.invokeNext()</literal>, we ignore the invocation stack since we want
+            to replace the invocation call with a mock implementation. The interceptor receives the invocation and get
+            an instance of the singleton MockService.  The use of MockService may not be clear, but we want the test to
+            instanciate the mock objects. That way, the test can easily modify the input to the methods we want to test.
+            The test creates an object of the mock and put it into the MockService with the interface name as the key.
+            The Interceptor then tries to get the mock from MockService and return it.
+         </para>
+         <programlisting><![CDATA[package util;
+
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+public class MockService {
+
+    private static MockService instance = new MockService();
+
+    private Map mockReferences = null;
+
+    protected MockService() {
+        mockReferences = new Hashtable();
+    }
+
+    public static MockService getInstance() {
+        return instance;
+    }
+
+    public void addMock(String c, Object mock) {
+        mockReferences.put(c, mock);
+    }
+
+    public Object getMockForInterface(String myKey) {
+      Set keys = mockReferences.keySet();
+
+      for (Iterator iter = keys.iterator(); iter.hasNext();) {
+        String key = (String) iter.next();
+        if(myKey.equals(key)) {
+          return mockReferences.get(key);
+        }
+      }
+      return null;
+    }
+
+}]]></programlisting>
+      </sect2>
+      <para>
+         Everyting is now in place to write the test. Note that much of this setup code is written once and it will be
+        reused by all similar tests.  Then the test: BankBusinessTestCase
+      </para>
+      <programlisting><![CDATA[package bank;
+
+import junit.framework.TestCase;
+
+import customer.Customer;
+import util.MockService;
+
+public class BankBusinessTestCase extends TestCase {
+
+  private MockBankAccountDAO mock;
+  private Customer customer;
+
+  public BankBusinessTestCase(String name) {
+    super( name);
+  }
+
+  public void setUp() {
+    mock = new MockBankAccountDAO();
+
+    BankAccount account = new BankAccount( 10);
+    account.setBalance( 100);
+    BankAccount account2 = new BankAccount( 11);
+    account2.setBalance( 500);
+
+    mock.setupGetBankAccount( account);
+    mock.setupGetBankAccount( account2);
+
+    MockService mockService = MockService.getInstance();
+    mockService.addMock( "BankAccountDAO", mock);
+
+    customer = new Customer("John", "Doe");
+    customer.addAccount( new Long(10));
+    customer.addAccount( new Long(11));
+  }
+
+  public void testSumOfAllAccounts() {
+    BankBusiness business = new BankBusiness();
+    double sum = business.getSumOfAllAccounts( customer);
+    assertEquals((double) 600, sum);
+    System.out.println("SUM: "+sum);
+  }
+}]]></programlisting>
+      <para>
+         To compile and run the test we call ant compile test. Output from the test:
+      </para>
+      <programlisting><![CDATA[test-bankbusiness:
+    [junit] .SUM: 600.0
+    [junit] Time: 0,23
+    [junit] OK (1 test)]]></programlisting>
+      <para>
+         The testresult was exactly what we expected.
+      </para>
+      <para>
+         With the the use of AOP we can test every aspect of our code. This example show the limits of object-oriented
+         programming (OOP) compared to AOP. It must be pointed out that it is possible to write these tests without AOP,
+         but it would require to edit production code just to make the tests pass.
+      </para>
+      <para>
+         The approach in this example can easily be used to mock SessionBeans instead of a DAO layer.
+         Theoretically, we can test all of the business methods in a large J2EE application outside the container.
+         This would greatly increase quality and speed during software development.
+      </para>
+   </sect1>
+
+</chapter>
+
+
+
+

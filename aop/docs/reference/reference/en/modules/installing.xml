@@ -1,0 +1,88 @@
+<chapter id="installing">
+
+   <title>Installing</title>
+
+   <para>
+         This section defines how to install JBoss AOP standalone, within JBoss 4.0 and within JBoss 3.2.6
+   </para>
+
+   <mediaobject>
+      <imageobject role="fo">
+         <imagedata fileref="images/install.svg" format="SVG" align="center"/>
+      </imageobject>
+      <imageobject role="html">
+         <imagedata fileref="../shared/images/install.jpg" format="JPG" align="center"/>
+      </imageobject>
+   </mediaobject>
+
+
+   <sect1 id="installing-standalone" revision="1">
+      <title>Installing Standalone</title>
+
+      <para>
+         There's nothing really to install if you're running outside the JBoss application server.  If you are using
+         JDK 1.4.x, use the libraries under the
+         <literal>lib/</literal> directory to build your JBoss AOP applications.
+         If you're using JDK 5.0, use the libraries under
+         <literal>lib-50/</literal>.
+      </para>
+   </sect1>
+
+   <sect1 id="installing-jboss40" revision="1">
+      <title>Installing with JBoss 4.x Application Server</title>
+
+      <para>
+         To install JBoss AOP in JBoss 4.x Application Server:
+      </para>
+      <orderedlist spacing="compact">
+         <listitem>
+             Delete
+            <literal>jboss-aop.deployer</literal> file or directory from the existing JBoss Application Server distribution
+             under
+            <literal><![CDATA[server/<config-name>/deploy]]></literal>
+         </listitem>
+         <listitem>
+            From the JBoss AOP distribution, from the
+            <literal>jboss-40-install</literal> directory copy
+            <literal>jboss-aop.deployer/</literal>
+            or
+            <literal>jboss-aop-jdk50.deployer</literal> to the JBoss Application Server distribution
+            under
+            <literal><![CDATA[server/<config-name>/deploy]]></literal> depending on which JDK you are running with.
+         </listitem>
+      </orderedlist>
+
+   </sect1>
+
+   <sect1 id="installing-jboss32" revision="1">
+      <title>Installing with JBoss 3.2.6 Application Server</title>
+
+      <para>
+         JBoss AOP only works with JBoss Application Server 3.2.6RC1+ and only with the precompiler.  Load-time AOP is not supported
+         at this time for JBoss 3.2.x application server.  To install JBoss AOP to JBoss Application Server, copy all jars in the
+         <literal>jboss-32-install/</literal> or <literal>jboss-32-install-jdk5</literal> directory to the
+         <literal><![CDATA[server/<config-name>/lib]]></literal> depending on what version of the JDK you use.
+      </para>
+      <orderedlist spacing="compact">
+         <listitem>
+             copy all jars in the
+            <literal>jboss-32-install/</literal> or <literal>jboss-32-install-jdk5</literal> directory to the
+            <literal><![CDATA[server/<config-name>/lib]]></literal>
+         </listitem>
+         <listitem>
+            Copy
+            <literal>etc/base-aop.xml</literal> to the JBoss Application Server distribution
+            under
+            <literal><![CDATA[server/<config-name>/deploy]]></literal>.
+         </listitem>
+         <listitem>
+            Edit
+            <literal><![CDATA[server/<config-name>/conf/jboss-service.xml]]></literal> to add the appropriate
+            configuration defined in section 10.2 "JBoss Application Server".
+         </listitem>
+      </orderedlist>
+
+   </sect1>
+
+</chapter>
+

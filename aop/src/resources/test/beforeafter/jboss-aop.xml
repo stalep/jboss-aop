@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aop>
+   <aspect class="org.jboss.test.aop.beforeafter.SimpleAspect" scope="PER_VM"/>
+   <aspect class="org.jboss.test.aop.beforeafter.ArgsAspect" scope="PER_VM"/>
+   <aspect class="org.jboss.test.aop.beforeafter.GeneralAspect" scope="PER_VM"/>
+
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafter.POJO->method(boolean))">
+      <before name="before" aspect="org.jboss.test.aop.beforeafter.SimpleAspect"/>
+      <advice name="around" aspect="org.jboss.test.aop.beforeafter.SimpleAspect"/>
+      <after name="after" aspect="org.jboss.test.aop.beforeafter.SimpleAspect"/>
+      <throwing name="throwing" aspect="org.jboss.test.aop.beforeafter.SimpleAspect"/>
+   </bind>
+
+   <stack name="argsStack">
+      <before name="before" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+      <after name="after" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+      <throwing name="throwing" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+      <throwing name="throwingzzz" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+   </stack>
+
+   <bind pointcut="execution(org.jboss.test.aop.beforeafter.POJO->new(..)) OR execution(* org.jboss.test.aop.beforeafter.POJO->method(..)) OR field(* org.jboss.test.aop.beforeafter.POJO->*)">
+      <stack-ref name="argsStack"/>
+   </bind>
+   
+   <bind pointcut="execution(org.jboss.test.aop.beforeafter.POJO->new($instanceof{org.jboss.test.aop.beforeafter.SuperValue}, int)) OR execution(* org.jboss.test.aop.beforeafter.POJO->method($instanceof{org.jboss.test.aop.beforeafter.SuperValue}, int))">
+      <before name="before" aspect="org.jboss.test.aop.beforeafter.GeneralAspect"/>
+      <after name="after" aspect="org.jboss.test.aop.beforeafter.GeneralAspect"/>
+   </bind>
+</aop>

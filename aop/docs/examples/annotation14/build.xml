@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="run" name="JBoss/AOP">
+   <target name="prepare">
+      <property name="jboss.aop.root" value="../../../.."/>
+      <property name="jboss.aop.lib" value="${jboss.aop.root}/lib"/>
+      <property name="jboss.aop.lib50" value="${jboss.aop.root}/lib-50"/>
+ 
+      <path id="jboss.aop.classpath">
+         <fileset dir="${jboss.aop.lib}">
+            <include name="*.jar"/>
+         </fileset>
+      </path>
+
+      <path id="jboss.aop.classpath50">
+         <fileset dir="${jboss.aop.lib50}">
+            <include name="*.jar"/>
+         </fileset>
+      </path>
+
+      <path id="classpath">
+         <path refid="jboss.aop.classpath"/>
+         <pathelement path="."/>
+      </path>
+	  
+      <property name="aop50jar" value="${jboss.aop.lib50}/jboss-aop-jdk50.jar"/>
+
+      <path id="classpath50">
+         <path refid="jboss.aop.classpath50"/>
+         <pathelement path="."/>
+      </path>
+
+      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
+   </target>
+
+   <target name="compile" depends="prepare">
+      <javac srcdir="."
+         destdir="."
+         debug="on"
+         deprecation="on"
+         optimize="off"
+         includes="**">
+         <classpath refid="classpath"/>
+      </javac>
+      <annotationc compilerclasspathref="classpath" classpathref="classpath" bytecode="true">
+         <src path="."/>
+      </annotationc>
+      <aopc compilerclasspathref="classpath" classpathref="classpath" verbose="true">
+         <classpath path="."/>
+         <src path="."/>
+         <aoppath>
+            <pathelement path="jboss-aop.xml"/>
+         </aoppath>
+      </aopc>
+   </target>
+
+   <target name="run" depends="compile">
+      <java fork="yes" failOnError="true" className="Driver">
+         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
+         <classpath refid="classpath"/>
+      </java>
+   </target>
+
+</project>

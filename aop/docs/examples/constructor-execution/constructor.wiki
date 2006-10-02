@@ -1,0 +1,41 @@
+!!!Constructor interception
+
+!Overview
+JBoss AOP allows you to insert behavior between the caller of a constructor and the actual constructor being called.
+If you look at {{Driver.java}} you will see that it is allocating a number of POJO objects by invoking different constructors declared in {{POJO.java}}.  JBoss AOP allows you to intercept a constructor execution and transparently insert behavior when the constructor is invoked.
+
+!How do I apply an Interceptor to a constructor execution?
+To bind an interceptor to a constructor, you must create an XML file.  Open up {{jboss-aop.xml}} and take a look.  Let's apply {{ConstructorInterceptor.java}} to the {{public POJO(int i)}} constructor.
+{{{
+<aop>
+   <bind pointcut="execution(POJO->new(int))">
+       <interceptor class="ConstructorInterceptor"/>
+   </bind>
+</aop>
+}}}
+To apply the interceptor you must create a binding and a ''pointcut'' that specifies where in your Java code you want the interceptor applied.  ''execution(constructor expression)'' defines ''whenever the constructor is executed''. A constructor expression requires a class expression followed by '->' followed by 'new' followed by a list of parameters.  You can optionally provide constructor attributes like 'public', 'static', etc. if so desired. You do not have to specify the entire signature of the constructor.  It works in much the same way method expressions work.
+
+!Decomposing the Interceptor class
+When an intercepted constructor is executed, the AOP framework will call each bound interceptor in a chain within the same call stack.  The Invocation object drives the chain.  Interceptors call invocation.invokeNext() to proceed with the constructor invocation.  After the chain is exhausted, Java reflection is called to execute the actual constructor.  Because this is one call stack, you can place try/catch/finally blocks around invocation.invokeNext() to catch any exceptions thrown by the executed constructor if you so desired.
+
+Each type of intercepted execution (method, constructor, field, etc.) has a specific class that extends the base class {{org.jboss.aop.joinpoint.Invocation}}.  If you open up {{ConstructorInterceptor.java}}, you will see that you can typecast the Invocation parameter into a {{org.jboss.aop.joinpoint.ConstructorInvocation}} object.  The {{ConstructorInvocation}} class allows you to obtain additional information about the particular constructor call like the {{java.lang.reflect.Constructor}} object representing the call, the arguments.
+
+
+!Running
+To compile and run:
+{{{
+  $ ant
+}}}
+It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should read as follows:
+{{{
+run:
+     [java] --- new POJO(); ---
+     [java] empty constructor
+     [java] --- new POJO(String); ---
+     [java] String constructor
+     [java] --- new POJO(int); ---
+     [java] <<< Entering ConstructorInterceptor for: public POJO(int)
+     [java] int constructor
+     [java] >>> Leaving ConstructorInterceptor
+}}}
+

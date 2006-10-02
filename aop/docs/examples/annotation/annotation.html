@@ -1,0 +1,90 @@
+<html>
+<body>
+<p>
+<h2>Annotations for JDK 1.5</h2>
+
+</p><p>
+<h4>Overview</h4>
+
+JDK 1.5 has a new interesting feature called annotations.  It allows you to specify xdoclet like tags right in the Java language just as you can with C#.  These tags are typesafe and access to them is available at compile time, load-time, and run-time.  See <a href="http://www.jcp.org/en/jsr/detail?id=175">JSR-175</a> for more detail.  JBossAOP since beta2 does support JDK1.5 annotations
+</p><p>
+A good way to visualize metadata is to think of classnames, method names, field names, and constructor signatures as nouns, and annotations/metadata as adjectives.  You can declare advice/interceptor bindings like:  All @Remotable objects should register with a dispatcher whenever they are constructed.  Any method marked @transactional begin/commit/rollback a transaction at the start and end of the method.  Or even any field, method, constructor marked @traceable, do tracing.  It kinda lets the application developer give hints to the aspect developer.  If you think about it another way, combining annotations and AOP allows you to plug in new Java keywords.  Kinda like C pre-processor macros on steroids.  Macros that are typesafe and checked by the compiler and unlike Major League Baseball players, it will always be legal for you to use these steroids in your applications.
+</p><p>
+<h4>Example code</h4>
+
+The example code applies 2 separate interceptors via tags supplied in a Java source file.  One of the interceptors is a tracing interceptor that is trigger by a @trace annotation, the other is B2B functionality that will bill/charge a user for each access of the api.  This is also triggered by an annotation.
+</p><p>
+<h4>Declaring annotations</h4>
+
+Open up POJO.java.  This is the source file for where our annotations will be declared.
+</p><p>
+<pre>
+   @trace @billable
+   public void someMethod()
+   {
+      System.out.println("someMethod");
+   }
+</pre>
+In the above example, we are declaring someMethod() to be traced and billable.  Don't forget!  At least with JDK 1.5 beta, you must compile your Java source files with 1.5 source to have annotations compile.
+<pre>
+$ javac -source 1.5 MyFile.java
+</pre>
+</p><p>
+</p><p>
+<h4>Annotations in pointcut expressions</h4>
+
+Annotations can be referenced by an '@' sign in pointcut expressions.  They can only be used in the class expressions for a method, field, or constructor for execution and caller pointcuts.  They can also be used in substitute for 'new' in constructor land, and for a method or field name.  Take a look at jboss-aop.xml
+</p><p>
+<pre>
+   &lt;bind pointcut="execution(POJO-&gt;@billable(..))"&gt;
+       &lt;interceptor class="BillingInterceptor"/&gt;
+   &lt;/bind&gt;
+
+   &lt;bind pointcut="execution(* POJO-&gt;@billable(..))"&gt;
+       &lt;interceptor class="BillingInterceptor"/&gt;
+   &lt;/bind&gt;
+
+</pre>
+</p><p>
+The first binding above says that for every constructor tagged as @billable apply the BillingInterceptor.  The second binding states that for any method tagged as @billable apply the BillingInterceptor.  Let's now take a look at applying the tracing advice.
+</p><p>
+<pre>
+   &lt;bind pointcut="all(@trace)"&gt;
+       &lt;interceptor class="TraceInterceptor"/&gt;
+   &lt;/bind&gt;
+</pre>
+</p><p>
+The above states that for any field, constructor, or method tagged as @trace, apply the TraceInterceptor.
+</p><p>
+<h4>Running</h4>
+
+<b>THIS EXAMPLE REQUIRES JDK 1.5!!</b> To compile and run:
+<pre>
+  $ ant
+</pre>
+This should be the output:
+<pre>
+run:
+     [java] --- new POJO(); ---
+     [java] populateMixinMethods*****
+     [java] billing...org.jboss.aop.joinpoint.ConstructorInvocation@1ee4648
+     [java] &lt;&lt;&lt; Trace : executing constructor public POJO()
+     [java] empty constructor
+     [java] &gt;&gt;&gt; Leaving Trace
+     [java] --- new POJO(int); ---
+     [java] &lt;&lt;&lt; Trace : executing constructor public POJO(int)
+     [java] int constructor
+     [java] &gt;&gt;&gt; Leaving Trace
+     [java] --- pojo.someMethod(); ---
+     [java] billing...org.jboss.aop.joinpoint.MethodInvocation@1b383e9
+     [java] &lt;&lt;&lt; Trace : executing method public void POJO.someMethod()
+     [java] someMethod
+     [java] &gt;&gt;&gt; Leaving Trace
+     [java] --- pojo.field = 55;  ---
+     [java] &lt;&lt;&lt; Trace : write field name: public int POJO.field
+     [java] &gt;&gt;&gt; Leaving Trace
+</pre>
+</p><p>
+</p>
+</body>
+</html>

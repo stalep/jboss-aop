@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE aop SYSTEM "jboss-aop_1_0.dtd">
+
+<aop>
+
+   <aspect class="org.jboss.test.aop.construction.Aspect"/>
+
+   <bind pointcut="construction(org.jboss.test.aop.construction.SuperPOJO->new(..))">
+      <advice aspect="org.jboss.test.aop.construction.Aspect" name="construction"/>
+   </bind>
+
+
+   <bind pointcut="construction(org.jboss.test.aop.construction.DefaultSuper->new(..))">
+      <advice aspect="org.jboss.test.aop.construction.Aspect" name="construction2"/>
+   </bind>
+
+</aop>

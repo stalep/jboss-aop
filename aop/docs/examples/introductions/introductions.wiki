@@ -1,0 +1,102 @@
+!!!Introductions
+
+!Overview
+JBossAOP has the ability to force a Java class to implement an interface.  You can even specify a Mixin Class that will be instantiated and attached to an instance of that class.  So, if you force a Java class to implement an interface, it can delegate an introduced methods of that interface to the Mixin class instance.
+
+!Making a non-serializable class Serializable
+Take a look at POJO.java.  You will see that it is non-serializable.  Then take a look jboss-aop.xml:
+{{{
+   <introduction class="POJO">
+      <interfaces>
+         java.io.Serializable
+      </interfaces>
+   </introduction>
+}}}
+
+The first introduction declaration, introduces/forces POJO to implement Serializable.  When the aopc compiler is run, it will transform POJO to implement that interface.  If you used a decompiler to look at POJO.class, you would find that it implements Serializable.  The ''class'' attribute can be any fully qualified class name.  Wildcards are allowed.  You can also insert in ''$instanceof{'' or an annotation expression i.e. ''@myannotation''.
+
+!Externalizable.  Using a Mixin
+The next example forces POJO2 to implement Externalizable.  Now, for this to work, POJO2 must implement the readExternal and writeExternal methods required by the Externalizable interface.  These methods are provided by the POJO2ExternalizableMixin class.  Take a look at the XML binding for this:
+
+{{{
+   <introduction class="POJO2">
+      <mixin>
+         <interfaces>
+            java.io.Externalizable
+         </interfaces>
+         <class>POJO2ExternalizableMixin</class>
+         <construction>new POJO2ExternalizableMixin(this)</construction>
+      </mixin>
+   </introduction>
+}}}
+
+Most of this makes sense, but what is the <construction> element?  Whenever a Mixin is introduced to a class, the AOP framework creates a field within that class that holds the instance of the Mixin.  The <construction> tag allows you to initialize this instance.  You can specify any Java code within the <construction> tag. It must be a one liner and you have to provide the fully qualified name of any class you use.  So, the above <construction> tag allocates a POJO2ExternalizableMixin and passes in a this pointer.  The this pointer is actually the instance of the class that the Mixin is being applied to.  This allows the Mixin class to handle externalization.
+
+!Complex Expressions
+The ''class'' attribute of the introduction can only handle a single class expression.  If you want a boolean expression, you can instead use the ''expr'' XML attribute.  You can have any scoped boolean expression.  The ''class(..)'' keyword will have a class expression within it.  You can also specify a ''has'' or ''hasField'' expression as well.  The example shows how to use the ''expr'' XML attribute.
+
+{{{
+   <metadata tag="test" class="POJO3">
+      <method expr="void method()"/>
+   </metadata>
+
+   <metadata tag="test2" class="POJO4">
+      <class/>
+   </metadata>
+}}}
+
+First we add some metadata to POJO3 and POJO4.  Then we use these tags in our introduction expression:
+
+{{{
+   <introduction expr="has(* *->@test(..)) OR class(@test2)">
+      <interfaces>
+         java.io.Serializable
+      </interfaces>
+   </introduction>
+}}}
+
+The ''expr'' states:  Any class that has a method tagged as ''@test'' or any class that is itself tagged ''@test2''.
+
+!Running the example
+Driver.java drives the test.  It does serializable by using java.rmi.MarshalledObject to create a copy of POJO and POJO2 in memory.  The introductions will allow this code to work.
+
+First, try running the example without JBossAOP:
+{{{
+$ rm *.class
+$ javac *.java
+$ java Driver
+}}}
+
+You should see the following error:
+
+{{{
+C:\jboss\jboss-head\aop\tmp\docs\examples\introductions>java Driver
+--- POJO ---
+Exception in thread "main" java.io.NotSerializableException: POJO
+        at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1054)
+        at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:278)
+        at java.rmi.MarshalledObject.<init>(MarshalledObject.java:92)
+        at Driver.main(Driver.java:8)
+}}}
+
+This is expected because POJO is not serializable.  Now run it with introductions.
+
+{{{
+$ ant
+}}}
+
+The output should be:
+
+{{{
+run:
+     [java] --- POJO ---
+     [java] deserialized pojo.stuff: hello world
+     [java] --- POJO2 ---
+     [java] deserialized pojo2.stuff2: hello world
+     [java] --- POJO3 ---
+     [java] pojo3 introduction expression worked
+     [java] --- POJO4 ---
+     [java] pojo4 introduction expression worked
+}}}
+
+

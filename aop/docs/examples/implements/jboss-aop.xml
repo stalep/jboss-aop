@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aop>
+   <interceptor class="implementz.TestInterceptor"/>
+   <bind pointcut="execution(void $instanceof{implementz.ImplementsInterface}->$implements{implementz.ImplementsInterface}(..))">
+      <interceptor-ref name="implementz.TestInterceptor"/>
+   </bind>
+   <bind pointcut="execution(void $instanceof{implementz.ImplementingInterface}->$implementing{implementz.ImplementingInterface}(..))">
+      <interceptor-ref name="implementz.TestInterceptor"/>
+   </bind>
+</aop>

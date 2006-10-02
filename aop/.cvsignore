@@ -1,0 +1,7 @@
+output
+build.log
+TEST-org.jboss.test.aop.*.txt
+junit*.properties
+comments.txt
+jbossAgent.dll
+jboss-aop-dist.zip

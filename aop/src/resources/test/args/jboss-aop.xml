@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE aop SYSTEM "jboss-aop_1_0.dtd">
+
+<aop>
+   <aspect class="org.jboss.test.aop.args.Aspect" scope="PER_VM"/>
+
+   <bind pointcut="execution(* org.jboss.test.aop.args.POJO->bunchArgs(..))">
+      <advice name="bunchArgs" aspect="org.jboss.test.aop.args.Aspect"/>
+   </bind>
+
+   <bind pointcut="execution(* org.jboss.test.aop.args.POJO->bunchArgsWithInvocation(..))">
+      <advice name="bunchArgsWithInvocation" aspect="org.jboss.test.aop.args.Aspect"/>
+   </bind>
+
+   <bind pointcut="execution(* org.jboss.test.aop.args.POJO->bunchWrapped(..))">
+      <advice name="wrap" aspect="org.jboss.test.aop.args.Aspect"/>
+   </bind>
+
+   <bind pointcut="execution(* org.jboss.test.aop.args.POJO->bunch(..))">
+      <advice name="bunch" aspect="org.jboss.test.aop.args.Aspect"/>
+      <advice name="arg1" aspect="org.jboss.test.aop.args.Aspect"/>
+      <advice name="arg2" aspect="org.jboss.test.aop.args.Aspect"/>
+      <advice name="arg3" aspect="org.jboss.test.aop.args.Aspect"/>
+      <advice name="arg4" aspect="org.jboss.test.aop.args.Aspect"/>
+      <advice name="arg15" aspect="org.jboss.test.aop.args.Aspect"/>
+      <advice name="arg24" aspect="org.jboss.test.aop.args.Aspect"/>
+   </bind>
+   <bind pointcut="execution(java.lang.String org.jboss.test.aop.args.POJO->echo(java.lang.String))">
+      <advice name="echo" aspect="org.jboss.test.aop.args.Aspect"/>
+   </bind>
+</aop>

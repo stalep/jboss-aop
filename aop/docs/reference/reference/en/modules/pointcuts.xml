@@ -1,0 +1,417 @@
+<chapter id="pointcuts">
+
+   <title>Pointcut and Type Expressions</title>
+
+   <sect1 id="pointcuts-wilcards" revision="1">
+      <title>Wildcards</title>
+      <para>
+         There are two types of wildcards you can use within pointcut expressions
+         <itemizedlist>
+            <listitem>
+               <literal>*</literal>  Is a regular wildcard that matches zero or more characters.
+            It can be used within any type expression, field, or method name, but not in an annotation expression
+            </listitem>
+            <listitem>
+               <literal>..</literal>  Is used to specify any number of parameters in an constructor or method
+               expression.
+            </listitem>
+         </itemizedlist>
+      </para>
+   </sect1>
+
+   <sect1 id="pointcuts-types" revision="1">
+      <title>Type Patterns</title>
+      <para>
+         Type patterns are defined by an annotation or by fully qualified class name.  Annotation expressions
+         are not allowed to have wildcards within them, but class expressions are.
+      </para>
+      <itemizedlist>
+         <listitem>
+            <literal>org.acme.SomeClass</literal> matches that class.
+         </listitem>
+         <listitem>
+            <literal>org.acme.*</literal> will match
+            <literal>org.acme.SomeClass</literal> as well as
+            <literal>org.acme.SomeClass.SomeInnerClass</literal>
+         </listitem>
+         <listitem>
+            <literal>@javax.ejb.Entity</literal> will match any class tagged as such.
+         </listitem>
+         <listitem>
+            <literal>String</literal> or
+            <literal>Object</literal> are illegal.  You must specify the fully
+            qualified name of every java class.  Even those under the
+            <literal>java.lang</literal> package.
+         </listitem>
+      </itemizedlist>
+
+      <para>
+          To reference all subtypes of a certain class (or implementors of an interface), the
+         <literal>$instanceof{}</literal> expression can be used.  Wildcards and annotations may also be used 
+         within <literal>$instanceof{}</literal> expressions.
+      </para>
+      <programlisting>
+         $instanceof{org.acme.SomeInterface}
+         $instanceof{@org.acme.SomeAnnotation}
+         $instanceof{org.acme.interfaces.*}
+      </programlisting>
+      <para>are all allowed.</para>
+      <para>
+         For very complex type expressions, the Typedef construct can be used.  To reference a Typedef within a class
+         expression
+         <literal>$typedef{id}</literal> is used.
+      </para>
+   </sect1>
+
+   <sect1 id="pointcuts-method" revision="1">
+      <title>Method Patterns</title>
+      <programlisting>public void org.acme.SomeClass->methodName(java.lang.String)</programlisting>
+      <para>
+        The attributes(
+         <literal>public, static, private</literal>) of the method are optional.  If the attribute
+         is left out then any attribute is assumed.  Attributes accept the
+         <literal>!</literal> modifier for negation.
+      </para>
+      <programlisting>public !static void org.acme.SomeClass->*(..)</programlisting>
+      <para>
+         <literal>$instanceof{}</literal> in the class name.
+      </para>
+      <programlisting>void $instanceof{org.acme.SomeInterface}->methodName(java.lang.String)</programlisting>
+      <para>
+         To only match methods from a given interface you can use the <literal>$implements{}</literal> or 
+         <literal>$implementing{}</literal> keywords in place of the method name. <literal>$implements{}</literal>
+         only matches methods from the exact interface(s) given, while <literal>$implementing{}</literal>
+         matches methods from the interface(s) given AND their super interfaces.
+      </para>
+      <programlisting>void $instanceof{org.acme.IfA}->$implements(org.acme.IfA)</programlisting>
+      <programlisting>void $instanceof{org.acme.IfB}->$implementing(org.acme.IfA, org.acme.IfB)</programlisting>
+      <para>
+         Annotations can be used in place of the class name.  The below example matches any methodName() of a tagged
+         @javax.ejb.Entity class.
+      </para>
+      <programlisting>void @javax.ejb.Entity->methodName(java.lang.String)</programlisting>
+      <para>
+         Annotations can be also be used in place of the method name.  The below examples matches any method tagged as
+         @javax.ejb.Tx.
+      </para>
+      <programlisting>* *->@javax.ejb.Tx(..)</programlisting>
+      <para>
+         In addition you can use typedefs, <literal>$instanceof{}</literal>, annotations and wildcards 
+         for method parameters and return types. The following matches all methods called <literal>loadEntity</literal>
+         that return a class annotated with @javax.ejb.Entity, that takes a class annotated as @org.acme.Ann and any class
+         that matches <literal>java.*.String</literal> (such as java.lang.String).
+      </para>
+      <programlisting>@javax.ejb.Entity *->loadEntity(@org.acme.Ann, java.*.String)</programlisting>
+      You can also include an optional throws clause in the pointcut expression:
+      <programlisting>public void org.acme.SomeClass->methodName(java.lang.String) \
+      throws org.acme.SomeException, java.lang.Exception</programlisting>
+      If any exceptions are present in the pointcut expression they must be present in the throws clause of the
+      methods to be matched. 
+   </sect1>
+
+   <sect1 id="pointcuts-con" revision="1">
+      <title>Constructor Patterns</title>
+      <programlisting>public org.acme.SomeClass->new(java.lang.String)</programlisting>
+      <para>
+        Constructor expressions are made up of the fully qualified classname and the
+         <literal>new</literal> keyword
+        The attributes(
+         <literal>public, static, private</literal>) of the method are optional.  If the attribute
+         is left out then any attribute is assumed.  Attributes accept the
+         <literal>!</literal> modifier for negation.
+      </para>
+      <programlisting>!public org.acme.SomeClass->new(..)</programlisting>
+      <para>
+         <literal>$instanceof{}</literal> can be used in the class name.
+      </para>
+      <programlisting>$instanceof{org.acme.SomeInterface}->new(..)</programlisting>
+      <para>
+         Annotations can be used in place of the class name.  The below example matches any constructor of a tagged
+         @javax.ejb.Entity class.
+      </para>
+      <programlisting>@javax.ejb.Entity->new(..)</programlisting>
+      <para>
+         Annotations can be also be used in place of the
+         <literal>new</literal> keyword.  The below examples matches any constructor tagged as
+         <literal>@javax.ejb.MethodPermission.</literal>
+      </para>
+      <programlisting>*->@javax.ejb.MethodPermission(..)</programlisting>
+
+      <para>
+         In addition, just as for methods you can use typedefs, <literal>$instanceof{}</literal>, 
+         annotations and wildcards for constructor parameters. The following matches all constructors
+         that take a class annotated as @org.acme.Ann and any class 
+         that matches <literal>java.*.String</literal> (such as java.lang.String).
+      </para>
+      <programlisting>*->new(@org.acme.Ann, java.*.String)</programlisting>
+      
+      <para>You can also include an optional throws clause in the pointcut expression:</para>
+      <programlisting>public void org.acme.SomeClass->new(java.lang.String) \
+      throws org.acme.SomeException, java.lang.Exception</programlisting>
+      <para>If any exceptions are present in the pointcut expression they must be present in the throws clause of the
+      constructors to be matched.</para> 
+   </sect1>
+
+   <sect1 id="pointcuts-field" revision="1">
+      <title>Field Patterns</title>
+      <programlisting>public java.lang.String org.acme.SomeClass->fieldname</programlisting>
+      <para>
+        Constructor expressions are made up of the type, the fully qualified classname where the field resides and the
+         field's name.
+        The attributes(
+         <literal>public, static, private</literal>) of the field are optional.  If the attribute
+         is left out then any attribute is assumed.  Attributes accept the
+         <literal>!</literal> modifier for negation.
+      </para>
+      <programlisting>!public java.lang.String org.acme.SomeClass->*</programlisting>
+      <para>
+         <literal>$instanceof{}</literal> can be used in the class name.  The below expression matches any field
+         of any type or subtype of
+         <literal>org.acme.SomeInterface</literal>
+      </para>
+      <programlisting>* $instanceof{org.acme.SomeInterface}->*</programlisting>
+      <para>
+         Annotations can be used in place of the class name.  The below example matches any field where the type class 
+         is tagged with
+         <literal>@javax.ejb.Entity</literal>.
+      </para>
+      <programlisting>* @javax.ejb.Entity->*</programlisting>
+      <para>
+         Annotations can be also be used in place of the field name.  The below examples matches any field tagged as
+         <literal>@org.jboss.Injected.</literal>
+      </para>
+      <programlisting>* *->@org.jboss.Injected</programlisting>
+      <para>
+         In addition, you can use typedefs, <literal>$instanceof{}</literal>, annotations and wildcards for field types. 
+         The following matches all fields where the type class has been tagged with @javax.ejb.Entity.
+      </para>
+      <programlisting>@javax.ejb.Entity *->*</programlisting>
+   </sect1>
+
+   <sect1 id="pointcuts-pointcut" revision="1">
+      <title>Pointcuts</title>
+      <para>
+         Pointcuts use class, field, constructor, and method expressions to specify the actual joinpoint that should
+         be intercepted/watched.
+      </para>
+      <variablelist spacing="compact">
+         <varlistentry>
+            <term>
+               <literal>execution(method or constructor)</literal>
+            </term>
+            <listitem>
+               <programlisting>execution(public void Foo->method()
+execution(public Foo->new())</programlisting>
+               <para>
+                  <literal>execution</literal> is used to specify that you want an interception to happen
+                  whenever a method or constructor is called.  The the first example of matches anytime a method
+                  is called, the second matches a constructor.  System classes cannot be used within
+                  <literal>execution</literal>
+                  expressions because it is impossible to instrument them.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>
+               <literal>construction(constructor)</literal>
+            </term>
+            <listitem>
+               <programlisting>construction(public Foo->new())</programlisting>
+               <para>
+                  <literal>construction</literal> is used to specify that you want aspects to run within the constructor.
+                  The <literal>execution</literal> pointcut requires that any code that calls new() must be instrumented
+                  by the compiler.  With <literal>construction</literal> the aspects are weaved right within the constructor
+                  after all the code in the constructor.  The aspects are appended to the code of the constructor.  
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>
+               <literal>get
+               (field expression)</literal>
+               B
+               b
+               b 
+               b 
+               B 
+               b b               
+               
+               
+            </term>
+            <listitem>
+               <programlisting>get(public int Foo->fieldname)</programlisting>
+               <para>
+                  <literal>get</literal> is used to specify that you want an interception to happen
+                  when a specific field is accessed for a read.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>
+               <literal>set(field expression)</literal>
+            </term>
+            <listitem>
+               <programlisting>get(public int Foo->fieldname)</programlisting>
+               <para>
+                  <literal>set</literal> is used to specify that you want an interception to happen
+                  when a specific field is accessed for a write.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>
+               <literal>field(field expression)</literal>
+            </term>
+            <listitem>
+               <programlisting>field(public int Foo->fieldname)</programlisting>
+               <para>
+                  <literal>field</literal> is used to specify that you want an interception to happen
+                  when a specific field is accessed for a read or a write.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>
+               <literal>all(type expression)</literal>
+            </term>
+            <listitem>
+               <programlisting>all(org.acme.SomeClass)
+all(@org.jboss.security.Permission)</programlisting>
+               <para>
+                  <literal>all</literal> is used to specify any constructor, method or field of a particular class
+                  will be intercepted.  If an annotation is used, it matches the member's annotation, not the class's
+                  annotation.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>
+               <literal>call(method or constructor)</literal>
+            </term>
+            <listitem>
+               <programlisting>call(public void Foo->method()
+call(public Foo->new())</programlisting>
+               <para>
+                  <literal>call</literal> is used to specify any constructor or method that you want intercepted.
+                  It is different than
+                  <literal>execution</literal> in that the interception happens at the caller side
+                  of things and the caller information is available within the Invocation object.
+                  <literal>call</literal>
+                  can be used to intercept System classes because the bytecode weaving happens within the callers bytecode.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>
+               <literal>within(type expression)</literal>
+            </term>
+            <listitem>
+               <programlisting>within(org.acme.SomeClass)
+within(@org.jboss.security.Permission)</programlisting>
+               <para>
+                  <literal>within</literal> matches any joinpoint (method or constructor call) within any code within a
+                  particular call.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>
+               <literal>withincode(method or constructor)</literal>
+            </term>
+            <listitem>
+               <programlisting>withincode(public void Foo->method()
+withincode(public Foo->new())</programlisting>
+               <para>
+                  <literal>withincode</literal> matches any joinpoint (method or constructor call) within a particular
+                  method or constructor.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>
+               <literal>has(method or constructor)</literal>
+            </term>
+            <listitem>
+               <programlisting>has(void *->@org.jboss.security.Permission(..))
+has(*->new(java.lang.String))</programlisting>
+               <para>
+                  <literal>has</literal> is an additional requirement for matching.  If a joinpoint is matched, its
+                  class must also have a constructor or method that matches the
+                  <literal>has</literal> expression.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>
+               <literal>hasfield(field expression)</literal>
+            </term>
+            <listitem>
+               <programlisting>hasfield(* *->@org.jboss.security.Permission)
+hasfield(public java.lang.String *->*)</programlisting>
+               <para>
+                  <literal>has</literal> is an additional requirement for matching.  If a joinpoint is matched, its
+                  class must also have a field that matches the
+                  <literal>hasfield</literal> expression.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+
+   </sect1>
+
+   <sect1 id="pointcuts-composition" revision="1">
+      <title>Pointcut Composition</title>
+      <para>
+         Pointcuts can be composed into boolean expressions.
+         <itemizedlist>
+            <listitem>
+               <literal>!</literal>  logical not.
+            </listitem>
+            <listitem>
+               <literal>AND</literal>  logical and.
+            </listitem>
+            <listitem>
+               <literal>OR</literal>  logical or.
+            </listitem>
+            <listitem>
+               Parathesis can be used for grouping expressions.
+            </listitem>
+         </itemizedlist>
+      </para>
+      <para>
+         Here's some examples.
+      </para>
+      <programlisting>call(void Foo->someMethod()) AND withincode(void Bar->caller())
+execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisting>
+   </sect1>
+
+   <sect1 id="pointcuts-ref" revision="1">
+      <title>Pointcut References</title>
+      <para>
+         Pointcuts can be named in XML or annotation bindings (See in later chapters).  They can be referenced directly
+         within a pointcut expression.
+      </para>
+      <programlisting>some.named.pointcut OR call(void Foo->someMethod())</programlisting>
+   </sect1>
+
+   <sect1 id="pointcuts-typedef" revision="1">
+      <title>Typedef Expressions</title>
+      <para>
+         Sometimes, when writing pointcuts, you want to specify a really complex type they may or may not
+         have boolean logic associated with it.  You can group these complex type definitions into a JBoss AOP
+         <literal>Typedef</literal> either in XML or as an annotation (See later in this document).  Typedef expressions
+         can also be used within
+         <literal>introduction</literal> expressions.
+
+         Typedef expressions can be made up of
+         <literal>has, hasfield, and class</literal> expressions.
+         <literal>class</literal>
+         takes a fully qualified class name, or an
+         <literal>$instanceof{}</literal> expression.
+      </para>
+      <programlisting>class(org.pkg.*) OR has(* *->@Tx(..)) AND !class($instanceof{org.foo.Bar})</programlisting>
+   </sect1>
+
+
+</chapter>
+

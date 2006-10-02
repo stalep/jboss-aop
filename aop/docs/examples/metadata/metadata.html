@@ -1,0 +1,104 @@
+<html>
+<body>
+<p>
+<h2>JBoss Metadata</h2>
+
+</p><p>
+<h4>Overview</h4>
+
+JBoss Metadata is alot like JDK 1.5's annotations(<a href="http://www.jcp.org/en/jsr/detail?id=175">JSR-175</a>) except it is driven and applied through XML.  JBossAOP has the ability to define metadata in XML or as Doclet tags that are then parsed to generate XML when you are not using JDK 1.5 or higher.  You can use the same pointcut annotation expressions to reference JBossAOP XML metadata expressions.  This metadata is different than regular JDK annotations in that they are untyped.  If you've read the <a href="../annotations14/annotation.html">Annotations with JDK 1.4</a>.  You can handcode this XML or have the Annotation compiler generate them from doclet tags using the -xml option.
+</p><p>
+<h4>Example code</h4>
+
+The example code applies 2 separate interceptors via tags supplied in a Java source file.  One of the interceptors is a tracing interceptor that is trigger by a @trace annotation, the other is B2B functionality that will bill/charge a user for each access of the api.  This is also triggered by an annotation.
+</p><p>
+<h4>Declaring annotations</h4>
+
+Open up POJO.java.  This is the source file for where our annotations will be declared.
+<b>IMPORTANT NOTE!</b> You MUST have a space after the annotation tag name otherwise you will get a compiler error.
+<pre>
+   /**
+    * @@billable (amount=0.05)
+    * @@trace
+    */
+   public void someMethod()
+   {
+      System.out.println("someMethod");
+   }
+</pre>
+</p><p>
+JBossAOP tags are defined by a double at symbol '@@' and zero or more name/value pairs.  In the above example, we are declaring someMethod() to be traced and billable to an ammount of $0.05 every time it is accessed.  This Java source file is run through JBossAOP's annotation compiler to generate XML.  You can run this annotation compiler as an ANT taskdef or standalone.  Look at build.xml to see how the taskdef is set up for <tt>annotationc</tt>.
+</p><p>
+The <tt>annotationc</tt> task is very similar to the <tt>javac</tt> taskdef.  You declare <tt>&lt;src&gt;</tt> tags just as you would with <tt>javac</tt>.  Any .java files in your sourcepath will be compiled and an XML file will be generated.
+</p><p>
+When you run the build, metadata-aop.xml is generated.  Take a look at that to see how the doclet tags are mapped to XML.  It is pretty straightforward.
+</p><p>
+<h4>Annotations in pointcut expressions</h4>
+
+Annotations can be referenced by an '@' sign in pointcut expressions.  They can only be used in the class expressions for a method, field, or constructor for execution and caller pointcuts.  They can also be used in substitute for 'new' in constructor land, and for a method or field name.  Take a look at jboss-aop.xml
+</p><p>
+<pre>
+   &lt;bind pointcut="execution(POJO-&gt;@billable(..))"&gt;
+       &lt;interceptor class="BillingInterceptor"/&gt;
+   &lt;/bind&gt;
+
+   &lt;bind pointcut="execution(* POJO-&gt;@billable(..))"&gt;
+       &lt;interceptor class="BillingInterceptor"/&gt;
+   &lt;/bind&gt;
+
+</pre>
+</p><p>
+The first binding above says that for every constructor tagged as @billable apply the BillingInterceptor.  The second binding states that for any method tagged as @billable apply the BillingInterceptor.  Let's now take a look at applying the tracing advice.
+</p><p>
+<pre>
+   &lt;bind pointcut="all(@trace)"&gt;
+       &lt;interceptor class="TraceInterceptor"/&gt;
+   &lt;/bind&gt;
+</pre>
+</p><p>
+The above states that for any field, constructor, or method tagged as @trace, apply the TraceInterceptor.
+</p><p>
+<h4>Accessing metadata at runtime</h4>
+
+You can access metadata through the <tt>org.jboss.aop.Advised</tt> interface through the _getAdvisor() or _getInstanceAdvisor() methods, or you can use the indirection that the Invocation object provides you.  You can use the Invocation object to resolve metadata based on the context of the execution.  <tt>BillingInterceptor.java</tt> gives an example of this.  This interceptor intercepts different kinds of things (methods and constructors), but it doesn't care about the thing it is intercepting, only the metadata.
+</p><p>
+<pre>
+   public Object invoke(Invocation invocation) throws Throwable
+   {
+      System.out.println("billing amount: $" + invocation.getMetaData("billable", "amount"));
+   }
+</pre>
+</p><p>
+<h4>Running</h4>
+
+To compile and run:
+<pre>
+  $ ant
+</pre>
+It will run the annotationc compiler on the source files to generate metadata in metadata-aop.xml, then javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example. Note that there are two XML aop deployment descriptors: metadata-aop.xml and jboss-aop.xml.  The System Property jboss.aop.path can accept a list of files delimited by the platform classpath separator. ';' on windows ':' on unix. Running the example should produce:
+</p><p>
+<pre>
+run:
+     [java] --- new POJO(); ---
+     [java] billing amount: $0.01
+     [java] &lt;&lt;&lt; Trace : executing constructor public POJO()
+     [java] empty constructor
+     [java] &gt;&gt;&gt; Leaving Trace
+     [java] --- new POJO(int); ---
+     [java] billing amount: $0.01
+     [java] &lt;&lt;&lt; Trace : executing constructor public POJO(int)
+     [java] int constructor
+     [java] &gt;&gt;&gt; Leaving Trace
+     [java] --- pojo.someMethod(); ---
+     [java] billing amount: $0.05
+     [java] &lt;&lt;&lt; Trace : executing method public void POJO.someMethod()
+     [java] someMethod
+     [java] &gt;&gt;&gt; Leaving Trace
+     [java] --- pojo.field = 55;  ---
+     [java] &lt;&lt;&lt; Trace : write field name: public int POJO.field
+     [java] &gt;&gt;&gt; Leaving Trace
+</pre>
+</p><p>
+</p>
+</body>
+</html>

@@ -1,0 +1,80 @@
+!!!Annotated Aspects
+
+!Overview
+Just like interceptors you write the code for an aspect class in exactly the same way when you are using annotated bindings as you would if you were using an xml file to declare them.
+To recap: an aspect class is a plain Java class. It does not have to inherit from anything, but it must have an empty constructor.  Each advice must follow this format:
+
+{{{
+  public Object <any-method-name>(<any Invocation type>) Throwable
+}}}
+
+!Declaring and binding the Aspects
+
+Open up {{MyAspect}}, and you will see that the class itself is normal, but that the class has been annotated as follows:
+
+{{{
+   import org.jboss.aop.Bind;
+   import org.jboss.aop.Aspect;
+
+   @Aspect
+   public class MyAspect
+   {
+      @Bind (pointcut="execution(POJO->new())")
+      public Object constructorAdvice(ConstructorInvocation invocation) throws Throwable
+      {
+         ...
+      }
+
+      @Bind (pointcut="execution(void POJO->method())")
+      public Object methodAdvice(MethodInvocation invocation) throws Throwable
+      {
+         ...
+      }
+
+      @Bind (pointcut="set(int POJO->field)")
+      public Object fieldAdvice(FieldReadInvocation invocation) throws Throwable
+      {
+         ...
+      }
+
+      @Bind (pointcut="get(int POJO->field)")
+      public Object fieldAdvice(FieldWriteInvocation invocation) throws Throwable
+      {
+         ...
+      }
+   }
+}}}
+
+The class itself is annotated with {{@Aspect}}, this declares the class as an aspect in JBoss AOP. Next each of the advice methods has been annotated with {{@Bind}}, this binds each method to the specified pointcut. So,
+
+* Executions of POJO's empty constructor get intercepted by {{MyAspect.constructorAdvice()}}
+* Executions of {{POJO.method()}} get intercepted by {{MyAspect.methodAdvice() }}
+* reads of {{POJO.field}} get intercepted by {{MyAspect.fieldAdvice()}} (FieldReadInvocation version)
+* writes to {{POJO.field}} get intercepted by {{MyAspect.fieldAdvice()}} (FieldWriteInvocation version)
+
+
+
+!Running
+To compile and run:
+{{{
+  $ ant
+}}}
+It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should read as follows:
+{{{
+run:
+    [java] --- pojo constructor ---
+    [java] <<< MyAdvice.constructorAdvice accessing: public POJO()
+    [java] constructor
+    [java] >>> Leaving MyAdvice.constructorAdvice
+    [java] --- pojo.method(); ---
+    [java] <<< MyAdvice.methodAdvice accessing: public void POJO.method()
+    [java] method()
+    [java] >>> Leaving MyAdvice.methodAdvice
+    [java] --- pojo field write ---
+    [java] <<< MyAspect.fieldAdvice reading field: field
+    [java] >>> Leaving MyAspect.fieldAdvice
+    [java] --- pojo field read ---
+    [java] <<< MyAspect.fieldAdvice writing to field: field
+    [java] >>> Leaving MyAspect.fieldAdvice
+}}}
+

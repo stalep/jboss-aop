@@ -1,0 +1,303 @@
+<chapter id="implementing">
+
+   <title>Implementing Aspects</title>
+   <sect1 id="impl-overview" revisiion="1">
+      <title>Overview</title>
+      <para>
+         JBoss AOP is a 100% pure Java framework.  All your AOP constructs are defined as pure Java classes and
+         bound to your application code via XML or by annotations.  This sections walks through implementing aspects.
+      </para>
+
+   </sect1>
+   <sect1 id="impl-invocation" revision="1">
+      <title>Invocation Object</title>
+      <para>
+         Invocation objects are the runtime encapsulation of their joinpoint.  They contain runtime information of
+         their joinpoint (args, java.lang.reflect.*, etc..), and they also drive the flow of aspects.
+      </para>
+      <sect2 id="impl-invocation2" revision="1">
+         <table frame="topbot" id="3rdpartylibs">
+            <title>
+              Invocation class types
+            </title>
+            <tgroup cols="2" rowsep="1" colsep="1">
+               <colspec colname="c1" colwidth="1*"/>
+               <colspec colname="c2" colwidth="2*"/>
+               <thead>
+                  <row>
+                     <entry align="center">
+                          Class
+                     </entry>
+                     <entry align="center">
+                          Description
+                     </entry>
+                  </row>
+               </thead>
+               <tbody>
+                  <row>
+                     <entry>
+                          org.jboss.aop.joinpoint.MethodInvocation
+                     </entry>
+                     <entry>
+                          Method execution.  Created and used when a method is intercepted.
+                     </entry>
+                  </row>
+                  <row>
+                     <entry>
+                          org.jboss.aop.joinpoint.ConstructorInvocation
+                     </entry>
+                     <entry>
+                          Constructor execution.  Created and used when a constructor is intercepted.
+                     </entry>
+                  </row>
+                  <row>
+                     <entry>
+                          org.jboss.aop.joinpoint.FieldInvocation
+                     </entry>
+                     <entry>
+                          Field execution.  This is an abstract base class that encapsulates field access.
+                     </entry>
+                  </row>
+                  <row>
+                     <entry>
+                          org.jboss.aop.joinpoint.FieldReadInvocation
+                     </entry>
+                     <entry>
+                          Field read access.  Extends FieldInvocation. Created when a field is read.
+                     </entry>
+                  </row>
+                  <row>
+                     <entry>
+                          org.jboss.aop.joinpoint.FieldWriteInvocation
+                     </entry>
+                     <entry>
+                          Field modification.  Extends FieldInvocation. Created when a field is written to.
+                     </entry>
+                  </row>
+                  <row>
+                     <entry>
+                          org.jboss.aop.joinpoint.MethodCalledByMethod
+                     </entry>
+                     <entry>
+                          Caller pointcuts.  This invocation object is allocated when you are using "call" pointcut
+                          expressions.  This particular class encapsulates a method that is calling another method
+                          so that you can access the caller and callee.
+                     </entry>
+                  </row>
+                  <row>
+                     <entry>
+                          org.jboss.aop.joinpoint.MethodCalledByConstructor
+                     </entry>
+                     <entry>
+                          Caller pointcuts.  This invocation object is allocated when you are using "call" pointcut
+                          expressions.  This particular class encapsulates a constructor that is calling another method
+                          so that you can access the caller and callee.
+                     </entry>
+                  </row>
+                  <row>
+                     <entry>
+                          org.jboss.aop.joinpoint.ConstructorCalledByMethod
+                     </entry>
+                     <entry>
+                          Caller pointcuts.  This invocation object is allocated when you are using "call" pointcut
+                          expressions.  This particular class encapsulates a method that is calling a constructor
+                          so that you can access the caller and callee.
+                     </entry>
+                  </row>
+                  <row>
+                     <entry>
+                          org.jboss.aop.joinpoint.ConstructorCalledByConstructor
+                     </entry>
+                     <entry>
+                          Caller pointcuts.  This invocation object is allocated when you are using "call" pointcut
+                          expressions.  This particular class encapsulates a constructor that is calling a constructor
+                          so that you can access the caller and callee.
+                     </entry>
+                  </row>
+               </tbody>
+            </tgroup>
+         </table>
+      </sect2>
+   </sect1>
+   <sect1 id="impl-aspect" revision="1">
+      <title>Aspect Class</title>
+      <para>
+         The Aspect Class is a plain Java class that can define zero or more advices, pointcuts, and/or mixins.
+      </para>
+      <programlisting><![CDATA[public class Aspect
+ {
+   public Object trace(Invocation invocation) throws Throwable {
+      try {
+         System.out.println("Entering anything");
+         return invocation.invokeNext(); // proceed to next advice or actual call
+      } finally {
+         System.out.println("Leaving anything");
+      }
+   }
+}]]></programlisting>
+      <para>
+         The example above is of an advice
+         <literal>trace</literal> that traces calls to any type of joinpoint.
+         Notice that
+         <literal>invocation.invokeNext()</literal> is used to drive the advice chain.  It either calls
+         the next advice in the chain, or does the actual method or constructor invocation.
+      </para>
+
+
+   </sect1>
+
+   <sect1 id="impl-advice" revision="1">
+      <title>Advice Methods</title>
+      <para>
+           For basic interception, any method that follows the form:
+      </para>
+      <programlisting><![CDATA[Object methodName(Invocation object) throws Throwable]]></programlisting>
+      <para>
+           can be an advice.  The
+         <literal>Invocation.invokeNext()</literal> method must be called by the advice
+           code or no other advice will be called, and the actual method, field, or constructor invocation will not
+           happen.
+      </para>
+      <para>
+         Method names can be overloaded for different invocation types.  For instance, let's
+         say you wanted to have a different trace advice for each invocation type.  You can specify the same method
+         name "trace" and just overload it with the concreate invocation type.
+      </para>
+      <programlisting><![CDATA[public class Aspect
+ {
+   public Object trace(MethodInvocation invocation) throws Throwable {
+      try {
+         System.out.println("Entering method: " + invocation.getMethod()");
+         return invocation.invokeNext(); // proceed to next advice or actual call
+      } finally {
+         System.out.println("Leaving method: " + invocation.getMethod()");
+      }
+   }
+   public Object trace(ConstructorInvocation invocation) throws Throwable {
+      try {
+         System.out.println("Entering constructor: " + invocation.getConstructor()");
+         return invocation.invokeNext(); // proceed to next advice or actual call
+      } finally {
+         System.out.println("Leaving constructor: " + invocation.getConstructor()");
+      }
+   }
+}]]></programlisting>
+   </sect1>
+
+   <sect1 id="impl-invocation3" revision="1">
+      <title>Resolving Annotations</title>
+      <para>
+         JBoss AOP provides an abstraction for resolving JDK 5.0 annotations (and JDK 1.4 annotations if you use our
+         Annotation Compiler).  In future versions of JBoss AOP, there will be a way to override annotation values on a
+         per thread basis, or via XML overrides, or even provide VM and cluster wide defaults for annotation values.
+         Also if you want to write a truly generic advice that takes the base Invocation type, you can still get the
+         annotation value of the method, constructor, or field you're invoking on by calling this method:
+      </para>
+      <programlisting>Object resolveAnnotation(Class annotation);</programlisting>
+      <para>
+         That's just resolving for resolving member annotations.  If your aspect needs to resolve class level annotations
+         then this method should be called:
+      </para>
+      <programlisting>Object resolveClassAnnotation(Class annotation)</programlisting>
+   </sect1>
+
+   <sect1 id="impl-invocation4" revision="1">
+      <title>Metadata</title>
+      <sect2 id="impl-metadata1" revision="1">
+         <title>Resolving XML Metadata</title>
+         <para>
+            Untyped metadata can be defined within XML files and bound to org.jboss.aop.metadata.SimpleMetaData structures.
+            This XML data can be attached per method, field, class, and constructor.
+            To resolve this type of metadata, the Invocation object provides a method to abstract out where the
+            metadata comes from.
+         </para>
+         <programlisting>Object getMetaData(Object group, Object attr)</programlisting>
+         <para>
+            When this method is called, the invocation will look for metadata in this order:
+         </para>
+         <orderedlist spacing="compact">
+            <listitem>
+               <para>
+                   First it looks in the Invocation's metadata (
+                  <literal>SimpleMetaData getMetaData()</literal>)
+               </para>
+            </listitem>
+            <listitem>
+               <para>
+                  Next it looks in
+                  <literal>org.jboss.aop.metadata.ThreadMetaData.instance()</literal>.  ThreadMetaData
+                  allows you to override metadata for the whole thread.  The metadata is managed by a ThreadLocal.
+                  ThreadMetaData is used by every single invocation object at runtime.
+               </para>
+            </listitem>
+            <listitem>
+               <para>
+                  Next it looks in either org.jboss.aop.Advisor.getMethodMetaData(), Advisor.getConstructorMetaData(), or Advisor.getFieldMetaData()
+                  depending on the invocation type.
+               </para>
+            </listitem>
+            <listitem>
+               <para>
+                  Next it looks in either Advisor.getDefaultMetaData().
+               </para>
+            </listitem>
+         </orderedlist>
+      </sect2>
+      <sect2 id="impl-metadata2" revision="1">
+         <title>Attaching Metadata</title>
+         <para>
+         You can attach untyped metadata to the invocation object, or even to the response.  This allows advices
+         to pass contextual data to one another in the incoming invocation or outgoing response for instance if you
+         had advices running on a remote client that wanted to pass contextual data to server-side aspects.  This method
+         on invocation gets you access to a
+            <literal>org.jboss.aop.metadata.SimpleMetaData</literal> instance so that you can attach
+         or read data.
+         </para>
+         <programlisting>SimpleMetaData getMetaData()</programlisting>
+         <para>
+            <literal>SimpleMetaData</literal> has three types of metadata, AS_IS, MARSHALLED, and TRANSIENT.  This allows
+         you to specify whether or not metadata is marshalled across the wire.  TRANSIENT says, attached metadata
+         should not be sent across the wire.  MARSHALLED is for classloader sensitive contextual data.  AS_IS doesn't
+         care about classloaders.  Read the Javadocs for more information.
+         </para>
+         <para>
+         To piggyback and read metadata on the invocation response, two methods are provided.  One to attach data
+         one to read data.
+         </para>
+         <programlisting>Object getResponseAttachment(Object key);
+void addResponseAttachment(Object key, Object value);
+         </programlisting>
+      </sect2>
+   </sect1>
+
+   <sect1 id="impl-mixin" revision="1">
+      <title>Mixin Definition</title>
+      <para>
+         Mixins are a type of introduction in which you can do something like C++ multiple inheritance and force
+         an existing Java class to implement a particular interface and the implementation of that particular interface
+         is encapsulated into a particular class called a mixin.
+      </para>
+      <para>
+         Mixin classes have no restrictions other than they must implement the interfaces that you are introducing.
+      </para>
+   </sect1>
+
+   <sect1 id="impl-dyn-cflow" revision="1">
+      <title>Dynamic CFlow</title>
+      <para>
+         Dynamic CFlows allow you to define code that will be executed that must be resolved true to trigger
+         positive on a cflow test on an advice binding. (See <![CDATA[<cflow-stack>]]> for more information).
+         The test happens dynamically at runtime and when combined with a pointcut expression allows you to
+         do runtime checks on whether a advice binding should run or not.
+
+         To implement a dynamic CFlow you just have to implement the simple org.jboss.aop.pointcut.DynamicCFlow
+         interface.  You can then use it within cflow expressions.  (See XML or Annotations)
+      </para>
+      <programlisting><![CDATA[public interface DynamicCFlow
+{
+   boolean shouldExecute(Invocation invocation);
+}]]></programlisting>
+   </sect1>
+
+</chapter>
+
