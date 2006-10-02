@@ -30,6 +30,8 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AdviceFactory;
 import org.jboss.aop.advice.AdviceStack;
@@ -1269,12 +1271,18 @@ public class AspectXmlLoader implements XmlLoader
       }
    }
 
-   private static Document loadURL(URL configURL) throws Exception
+   public static Document loadURL(URL configURL) throws Exception
    {
       InputStream is = configURL != null ? configURL.openStream() : null;
       if (is == null)
          throw new IOException("Failed to obtain InputStream from url: " + configURL);
 
+      return loadDocument(is);
+   }
+
+   public static Document loadDocument(InputStream is)
+           throws ParserConfigurationException, SAXException, IOException
+   {
       DocumentBuilderFactory docBuilderFactory = null;
       docBuilderFactory = DocumentBuilderFactory.newInstance();
       docBuilderFactory.setValidating(false);
