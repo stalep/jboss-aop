@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+
+<project name="main.build"
+          default="synchronize"
+          basedir=".">
+
+   <!-- Property File definitions -->
+   <property file="local.properties"/>
+   <property file="synchronize.properties"/>
+   <property environment="env"/>
+
+   <!-- Property Definitions -->
+   <property name="generatedLibrariesFiles" value="../thirdparty/libraries.ent"/>
+
+   <!-- Allow jbossbuild.repository to be set from (in order or priority)
+      + Command line -Djbossbuild.repository=...
+      + synchronize.properties jbossbuild.repository setting
+      + JBOSS_REPOSITORY environment variable
+   -->
+   <condition property="jbossbuild.repository" value="${env.JBOSS_REPOSITORY}">
+      <isset property="env.JBOSS_REPOSITORY"/>
+   </condition>
+   <!-- Fall back to default -->
+   <property name="jbossbuild.repository" value="http://repository.jboss.com"/>
+
+   <!-- File Imports -->
+   <import file="../tools/etc/jbossbuild/tasks.xml"/>
+
+
+   <!-- Main Definition of dependencies -->
+   <build id="jbossmc-thirdparty"
+          impltitle="JBossMC"
+          implversion="2.0"
+          implvendor="JBoss Inc."
+          implurl="http://www.jboss.org"
+          description="JBoss Microcontainer"
+          cvsroot="${cvs.prefix}@cvs.forge.jboss.com:/cvsroot/jboss"
+          thirdpartypath="../thirdparty/"
+          location="${jbossbuild.repository}"
+          targetdefs="targets">
+
+      <!--
+        The repository is in CVS under the module repository.jboss.com whose contents
+        are pushed to the http://repository.jboss.com site.
+      -->
+      <componentref name="apache-log4j" version="1.2.8"/>
+      <componentref name="dom4j" version="1.6.1jboss"/>
+      <componentref name="sun-javacc" version="3.2"/>
+      <componentref name="javassist" version="snapshot"/>
+      <componentref name="jboss/common-core" version="2.0.1.GA"/>
+      <componentref name="jboss/common-logging-jdk" version="2.0.1.GA"/>
+      <componentref name="jboss/common-logging-log4j" version="2.0.1.GA"/>
+      <componentref name="jboss/common-logging-spi" version="2.0.1.GA"/>
+      <componentref name="jboss/microcontainer" version="snapshot"/>
+      <componentref name="jboss/microcontainer14" version="snapshot"/>
+      <componentref name="jboss/profiler/jvmti" version="1.0.0.CR5"/>
+      <componentref name="jboss/test" version="snapshot"/>
+      <componentref name="junit" version="3.8.1"/>
+      <componentref name="oswego-concurrent" version="1.3.4"/>
+      <componentref name="qdox" version="1.4"/>
+      <componentref name="trove" version="1.0.2"/>
+      <componentref name="xdoclet" version="1.2b3"/>
+   </build>
+
+   <synchronizeinfo/>
+
+   <!-- Generate the targets -->
+   <generate generate="jbossmc-thirdparty"/>
+
+
+   <target name="generate-lib-file"
+      description="generate libraries.ent and thirdparty license info"
+      depends="synchronize">
+         <gen-lib-file filename="${generatedLibrariesFiles}" />
+      <visit-componentref-graph
+         componentVisitor="org.jboss.ant.util.graph.ComponentRefGraphLicenseVisitor" />
+   </target>
+
+</project>
+

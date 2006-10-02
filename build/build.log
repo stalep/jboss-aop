@@ -1,0 +1,100 @@
+
+configure:
+     [echo] groups:  default
+     [echo] modules: aop
+
+init:
+
+_buildmagic:modules:most:
+
+    ======================================================================
+    ==  Executing 'most' in module 'aop'...
+    ==
+
+_buildmagic:init:
+
+configure:
+
+init:
+
+_buildmagic:build-bypass-checker:
+
+_buildmagic:build-bypass-notice:
+
+_buildmagic:build-bypass-check:
+
+jars:
+
+_buildmagic:init:
+
+init:
+
+compile-classes:
+    [javac] Compiling 418 source files to C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\output\classes
+[execmodules] C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\src\main\org\jboss\aop\ClassAdvisor.java:630: warning: [deprecation] constructorInterceptors in org.jboss.aop.Advisor has been deprecated
+[execmodules]                constructorInterceptors, methodInterceptors);
+[execmodules]                ^
+[execmodules] C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\src\main\org\jboss\aop\ClassAdvisor.java:1986: warning: [deprecation] constructorInterceptors in org.jboss.aop.Advisor has been deprecated
+[execmodules]                constructorInterceptors, methodInterceptors);
+[execmodules]                ^
+[execmodules] C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\src\main\org\jboss\aop\ClassContainer.java:261: warning: [deprecation] populateInterceptorsFromInfos() in org.jboss.aop.Advisor has been deprecated
+[execmodules]       populateInterceptorsFromInfos();
+[execmodules]       ^
+[execmodules] C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\src\main\org\jboss\aop\pointcut\Util.java:499: warning: [deprecation] getAllMethods() in org.jboss.aop.Advisor has been deprecated
+[execmodules]       Method[] methods = advisor.getAllMethods();
+[execmodules]                                 ^
+[execmodules] 4 warnings
+
+compile-classes15:
+    [mkdir] Created dir: C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\output\classes15
+    [javac] Compiling 26 source files to C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\output\classes15
+[execmodules] C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\src\jdk15\org\jboss\aop\standalone\StandaloneClassPoolFactory.java:40: warning: [deprecation] org.jboss.aop.standalone.StandaloneClassPool in org.jboss.aop.standalone has been deprecated
+[execmodules]       return new StandaloneClassPool(cl, src, repository);
+[execmodules]                  ^
+[execmodules] C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\src\jdk15\org\jboss\aop\standalone\StandaloneClassPoolFactory.java:45: warning: [deprecation] org.jboss.aop.standalone.StandaloneClassPool in org.jboss.aop.standalone has been deprecated
+[execmodules]       return new StandaloneClassPool(src, repository);
+[execmodules]                  ^
+[execmodules] Note: C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\src\jdk15\org\jboss\aop\annotation\AnnotationElement.java uses unchecked or unsafe operations.
+[execmodules] Note: Recompile with -Xlint:unchecked for details.
+[execmodules] 2 warnings
+
+compile-etc:
+    [mkdir] Created dir: C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\output\etc
+     [copy] Copying 2 files to C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\output\etc
+
+compile-jrockit-classes:
+
+compile:
+    [mkdir] Created dir: C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\output\lib
+      [jar] Building jar: C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\output\lib\jboss-aop.jar
+      [jar] Building jar: C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\output\lib\jdk14-pluggable-instrumentor.jar
+    [touch] Creating C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\output\build-marker
+
+compile-classes15:
+
+jars15:
+      [jar] Building jar: C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\output\lib\jboss-aop-jdk50.jar
+      [jar] Building jar: C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\output\lib\pluggable-instrumentor.jar
+      [jar] Building jar: C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\aop\output\lib\jboss-aop-jdk50-client.jar
+
+compile-jrockit-classes:
+
+jars-jrockit:
+
+most:
+
+    ==
+    ==  Finished with 'most' in module 'aop'.
+    ======================================================================
+    
+
+modules-most:
+
+install:
+    [mkdir] Created dir: C:\cygwin\home\Kabir\sourcecontrol\jboss-aop\build\output
+
+most:
+
+main:
+
+BUILD SUCCESSFUL
