@@ -21,13 +21,10 @@
   */
 package org.jboss.aop.util;
 
-import org.jboss.util.xml.DOMWriter;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 
