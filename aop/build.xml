@@ -481,8 +481,8 @@
       </fail>
 
       <copy todir="${build.lib}" filtering="no">
-         <fileset dir="${jboss.common.lib}">
-            <include name="jboss-common.jar"/>
+         <fileset dir="${jboss/common.core.lib}">
+            <include name="jboss-common-core.jar"/>
          </fileset>
       </copy>
       <copy todir="${build.lib}" filtering="no">
