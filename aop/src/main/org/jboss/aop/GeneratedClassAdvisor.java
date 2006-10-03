@@ -69,7 +69,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    ArrayList constructionInfos = new ArrayList();
    ArrayList fieldReadInfos = new ArrayList();
    ArrayList fieldWriteInfos = new ArrayList();
-   /** Super class methods that have been overrridden */
+   /** Super class methods that have been overrridden - these need special handling in this weaving mode */
    ArrayList overriddenMethods = new ArrayList(); 
 
    ConcurrentReaderHashMap constructorJoinPoinGenerators = new ConcurrentReaderHashMap();
