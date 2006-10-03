@@ -39,12 +39,6 @@ import java.util.Iterator;
  */
 public class XmlHelper
 {
-   public static void write(Writer out, Document dom)
-      throws Exception
-   {
-      new DOMWriter(out).setPrettyprint(true).print(dom);
-   }
-
    /**
     * Returns an iterator over the children of the given element with
     * the given tag name.
