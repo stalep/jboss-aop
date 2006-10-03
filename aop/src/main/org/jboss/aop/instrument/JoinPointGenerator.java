@@ -1,4 +1,4 @@
-/*
+   /*
   * JBoss, Home of Professional Open Source
   * Copyright 2005, JBoss Inc., and individual contributors as indicated
   * by the @authors tag. See the copyright.txt in the distribution for a
@@ -237,7 +237,7 @@ public abstract class JoinPointGenerator
    CannotCompileException, ClassNotFoundException
    {
       CtClass superClass = pool.get(joinpointFqn);
-      String className = advisor.getClass().getPackage().getName() + "." + joinpointClassName + "_" + getIncrement(); 
+      String className = getJoinpointClassName();
       try
       {
          CtClass clazz = TransformerCommon.makeClass(pool, className);
@@ -273,6 +273,23 @@ public abstract class JoinPointGenerator
          System.err.println("Exception generating " + className + ": " + e.getMessage());
          throw e;
       }
+   }
+
+   private String getJoinpointClassName()
+   {
+      Package pkg = advisor.getClass().getPackage();
+      
+      StringBuffer className = new StringBuffer();
+      if (pkg != null)
+      {
+         className.append(pkg.getName());
+         className.append(".");
+      }
+      className.append(joinpointClassName);
+      className.append("_");
+      className.append(getIncrement());
+      
+      return className.toString();
    }
 
    protected abstract boolean isVoid();
