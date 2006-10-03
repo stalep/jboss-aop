@@ -8,8 +8,6 @@
    <target name="prepare">
       <mkdir dir="build"/>
 
-      <pr
-
       <path id="javassist.classpath">
          <pathelement path="../../lib/javassist.jar"/>
       </path>
@@ -38,8 +36,20 @@
          <pathelement path="../../lib/qdox.jar"/>
       </path>
 
+      <property file="local.properties"/>
+
+      <fail unless="jboss.test.jar">
+         To run the tests you need to set jboss.test.classpath in a local.properties file to point to the location of your jboss-test.jar
+         This can be downloaded from http://sourceforge.net/project/showfiles.php?group_id=22866&amp;package_id=21938
+      </fail>
+
       <path id="junit.classpath">
-         <pathelement path="../../lib/junit.jar"/>
+         <pathelement path="${junit.jar}"/>
+         <pathelement path="${ant.junit.jar}"/>
+      </path>
+
+      <path id="jboss.test.classpath">
+         <pathelement path="${jboss.test.jar}"/>
       </path>
 
       <path id="javac.classpath">
@@ -56,11 +66,15 @@
       <path id="test.classpath">
          <path refid="jboss.aop.classpath"/>
          <path refid="javac.classpath"/>
+         <path refid="junit.classpath"/>
+         <path refid="jboss.test.classpath"/>
       </path>
 
       <path id="test50.classpath">
          <path refid="jboss.aop50.classpath"/>
          <path refid="javac.classpath"/>
+         <path refid="junit.classpath"/>
+         <path refid="jboss.test.classpath"/>
       </path>
    </target>
 
@@ -119,6 +133,7 @@
 
    <target name="compile-tests" depends="main">
       <mkdir dir="build/tests"/>
+      <echo>Hello</echo>
       <javac srcdir="test"
          destdir="build/tests"
          debug="on"
@@ -127,19 +142,29 @@
          deprecation="on"
          optimize="off"
          includes="**"
-         excludes="org/jboss/test/aop/jdk15*/**/*,org/jboss/test/aop/methodhashing/MethodHashingTestCase.java">
+         excludes="org/jboss/test/aop/jdk15*/**/*,org/jboss/test/aop/methodhashing/MethodHashingTestCase.java,org/jboss/test/aop/memoryleaks/*.java,org/jboss/test/aop/methodhashing/*.java">
          <classpath refid="test.classpath"/>
+      </javac>
+      <javac srcdir="test"
+         destdir="build/tests"
+         debug="on"
+         source="1.5"
+         target="1.5"
+         deprecation="on"
+         optimize="off"
+         includes="org/jboss/test/aop/jdk15*">
+         <classpath refid="test50.classpath"/>
       </javac>
    </target>
 
-   <target name="tests" depends="compile-tests">
+   <target name="tests" depends="prepare">
       <delete dir="build/tests"/>
       <antcall target="precompiled-tests" inheritRefs="true"/>
-      <delete dir="build/org/jboss/test"/>
+      <delete dir="build/tests"/>
       <antcall target="loadtime-tests" inheritRefs="true"/>
    </target>
 
-   <target name="loadtime-tests" depends="compile-classes">
+   <target name="loadtime-tests" depends="compile-tests">
       <junit printsummary="yes" fork="no" haltonfailure="yes">
          <sysproperty key="java.system.class.loader" value="org.jboss.aop.standalone.SystemClassLoader"/>
          <sysproperty key="jboss.aop.path" value="src/resources/test/basic/jboss-aop.xml"/>
@@ -160,33 +185,33 @@
       </junit>
    </target>
 
-   <target name="precompiled-tests" depends="compile-classes">
+   <target name="precompiled-tests" depends="compile-tests">
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
       <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
       <path id="aop.task.classpath">
-         <path refid="classpath"/>
+         <path refid="test.classpath"/>
       </path>
 
       <aopc compilerclasspathref="aop.task.classpath">
          <classpath refid="aop.task.classpath"/>
-         <classpath path="build"/>
-         <src path="build"/>
+         <classpath path="build/tests"/>
+         <src path="build/tests"/>
          <include name="org/jboss/test/aop/basic/**"/>
-         <aoppath path="src/resources/test/basic/jboss-aop.xml"/>
+         <aoppath path="resources/test/basic/jboss-aop.xml"/>
       </aopc>
 
       <aopc compilerclasspathref="aop.task.classpath">
          <classpath refid="aop.task.classpath"/>
-         <classpath path="build"/>
-         <src path="build"/>
+         <classpath path="build/tests"/>
+         <src path="build/tests"/>
          <include name="org/jboss/test/aop/regression/**"/>
-         <aoppath path="src/resources/test/regression/jboss-aop.xml"/>
+         <aoppath path="resources/test/regression/jboss-aop.xml"/>
       </aopc>
 
       <annotationc compilerclasspathref="aop.task.classpath" bytecode="true">
          <classpath refid="aop.task.classpath"/>
-         <classpath path="build"/>
-         <src path="src/main"/>
+         <classpath path="build/tests"/>
+         <src path="main"/>
          <include name="org/jboss/test/aop/annotationc/*.java"/>
       </annotationc>
 
@@ -194,21 +219,21 @@
       <junit printsummary="yes" fork="no" haltonfailure="yes">
          <sysproperty key="jboss.aop.path" value="src/resources/test/basic/jboss-aop.xml"/>
          <classpath>
-            <path refid="classpath"/>
+            <path refid="test.classpath"/>
          </classpath>
          <formatter type="plain"/>
          <test fork="yes" name="org.jboss.test.aop.basic.AOPTester"/>
       </junit>
       <junit printsummary="yes" fork="no" haltonfailure="yes">
          <classpath>
-            <path refid="classpath"/>
+            <path refid="test.classpath"/>
          </classpath>
          <formatter type="plain"/>
          <test fork="yes" name="org.jboss.test.aop.regression.annotatedIntroduction.AOPTester"/>
       </junit>
       <junit printsummary="yes" fork="no" haltonfailure="yes">
          <classpath>
-            <path refid="classpath"/>
+            <path refid="test.classpath"/>
          </classpath>
          <formatter type="plain"/>
          <test fork="yes" name="org.jboss.test.aop.annotationc.AnnotationTester"/>
