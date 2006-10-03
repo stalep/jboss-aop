@@ -524,15 +524,21 @@
             <include name="docs/api/**"/>
             <include name="docs/**/*.html"/>
             <include name="docs/**/*.jpg"/>
+            <include name="docs/**/*.pdf"/>
+            <include name="docs/**/*.css"/>
             <include name="docs/examples/**"/>
             <exclude name="docs/**/CVS/**"/>
             <exclude name="docs/**/*.wiki"/>
          </zipfileset>
          <zipfileset dir="." prefix="${aop.version}">
             <include name="RELEASE_NOTES.txt"/>
+            <include name="src/jdk15/**/*.java"/>
             <include name="src/main/**/*.java"/>
             <include name="src/main/**/*.jjt"/>
+            <include name="src/test/**/*.java"/>         	
             <include name="src/resources/test/**/*.xml"/>
+            <include name="src/resources/bin/**/*"/>
+            <include name="src/resources/xdoclet/META-INF/*.xml"/>
             <exclude name="src/**/CVS/**"/>
          </zipfileset>
          <zipfileset file="src/build.xml" prefix="${aop.version}"/>
