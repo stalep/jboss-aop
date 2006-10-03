@@ -1,81 +1,139 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project default="main" name="JBoss/AOP">
+
+<!-- TODO
+   JBAOP-287 - include mc container.jar once it is done and get the main build working
+-->
    <target name="prepare">
       <mkdir dir="build"/>
+
+      <pr
+
       <path id="javassist.classpath">
-         <pathelement path="javassist.jar"/>
+         <pathelement path="../../lib/javassist.jar"/>
       </path>
 
       <path id="trove.classpath">
-         <pathelement path="trove.jar"/>
+         <pathelement path="../../lib/trove.jar"/>
       </path>
 
       <path id="concurrent.classpath">
-         <pathelement path="concurrent.jar"/>
+         <pathelement path="../../lib/concurrent.jar"/>
       </path>
 
-      <path refid="jboss.common.core.classpath"/>
-      <path refid="jboss.common.logging.spi.classpath"/>
-      <path refid="jboss.common.logging.log4j.classpath"/>
-      <path refid="jboss.common.logging.jdk.classpath"/>
-         <pathelement path="jboss-common.jar"/>
+      <path id="jboss.common.classpath">
+         <pathelement path="../../lib/jboss-common.jar"/>
       </path>
 
       <path id="jboss.aop.classpath">
-         <pathelement path="jboss-aop.jar"/>
+         <pathelement path="../../lib/jboss-aop.jar"/>
+      </path>
+
+      <path id="jboss.aop50.classpath">
+         <pathelement path="../../lib/jboss-aop-jdk50.jar"/>
       </path>
 
       <path id="qdox.classpath">
-         <pathelement path="qdox.jar"/>
+         <pathelement path="../../lib/qdox.jar"/>
       </path>
 
       <path id="junit.classpath">
-         <pathelement path="junit.jar"/>
+         <pathelement path="../../lib/junit.jar"/>
       </path>
 
-      <path id="classpath">
+      <path id="javac.classpath">
          <path refid="javassist.classpath"/>
          <path refid="trove.classpath"/>
          <path refid="jboss.aop.classpath"/>
-      <path refid="jboss.common.core.classpath"/>
-      <path refid="jboss.common.logging.spi.classpath"/>
-      <path refid="jboss.common.logging.log4j.classpath"/>
-      <path refid="jboss.common.logging.jdk.classpath"/>
+         <path refid="jboss.common.classpath"/>
          <path refid="concurrent.classpath"/>
          <path refid="qdox.classpath"/>
          <path refid="junit.classpath"/>
-         <pathelement path="build"/>
+         <pathelement path="build/classes"/>
       </path>
 
+      <path id="test.classpath">
+         <path refid="jboss.aop.classpath"/>
+         <path refid="javac.classpath"/>
+      </path>
+
+      <path id="test50.classpath">
+         <path refid="jboss.aop50.classpath"/>
+         <path refid="javac.classpath"/>
+      </path>
    </target>
 
 
    <target name="compile-classes" depends="prepare">
-      <javac srcdir="src/main"
-         destdir="build"
+      <!-- TODO enable building -->
+      <mkdir dir="build/classes"/>
+      <!--<javac srcdir="main"
+         destdir="build/classes"
          debug="on"
+         source="1.4"
+         target="1.4"
          deprecation="on"
          optimize="off"
          includes="**"
-         excludes="org/jboss/test/aop/jdk15/**">
-         <classpath refid="classpath"/>
-      </javac>
+         excludes="org/jboss/aop/util/ClassInfoMethodHashing.java,org/jboss/aop/hook/JRockit*.java">
+         <classpath refid="javac.classpath"/>
+      </javac>-->
+      <mkdir dir="build/classes50"/>
+      <!--<javac srcdir="main"
+         destdir="build/classes50"
+         debug="on"
+         source="1.5"
+         target="1.5"
+         deprecation="on"
+         optimize="off"
+         includes="**"
+         excludes="org/jboss/aop/util/ClassInfoMethodHashing.java,org/jboss/aop/hook/JRockit*.java">
+         <classpath refid="javac.classpath"/>
+      </javac>-->
    </target>
    <target name="main" depends="compile-classes">
-      <delete file="jboss-aop.jar"/>
-      <jar jarfile="jboss-aop.jar">
-         <fileset dir="build">
+      <delete dir="build/lib"/>
+      <mkdir dir="build/lib"/>
+      <delete file="build/lib/jboss-aop.jar"/>
+      <delete file="build/lib/jboss-aop-jdk50.jar"/>
+      <jar jarfile="build/lib/jboss-aop.jar">
+         <fileset dir="build/classes">
+            <!-- Include everything else -->
+            <include name="org/jboss/aop/**"/>
+         </fileset>
+      </jar>
+      <jar jarfile="build/lib/jboss-aop-jdk50.jar">
+         <fileset dir="build/classes50">
             <!-- Include everything else -->
             <include name="org/jboss/aop/**"/>
          </fileset>
       </jar>
    </target>
 
+   <target name="clean" depends="prepare">
+      <delete dir="build"/>
+   </target>
+
    <!-- TESTING -->
 
-   <target name="tests" depends="main">
-      <delete dir="build/org/jboss/test"/>
+   <target name="compile-tests" depends="main">
+      <mkdir dir="build/tests"/>
+      <javac srcdir="test"
+         destdir="build/tests"
+         debug="on"
+         source="1.4"
+         target="1.4"
+         deprecation="on"
+         optimize="off"
+         includes="**"
+         excludes="org/jboss/test/aop/jdk15*/**/*,org/jboss/test/aop/methodhashing/MethodHashingTestCase.java">
+         <classpath refid="test.classpath"/>
+      </javac>
+   </target>
+
+   <target name="tests" depends="compile-tests">
+      <delete dir="build/tests"/>
       <antcall target="precompiled-tests" inheritRefs="true"/>
       <delete dir="build/org/jboss/test"/>
       <antcall target="loadtime-tests" inheritRefs="true"/>
