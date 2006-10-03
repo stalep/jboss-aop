@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jboss.aop.annotation.factory.duplicate.AnnotationCreator;
-import org.jboss.logging.Logger;
 
 import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 import javassist.CtMember;
@@ -44,8 +43,6 @@ import javassist.CtMember;
  */
 public class AnnotationRepository
 {
-   private static final Logger log = Logger.getLogger(AnnotationRepository.class);
-   
    private static final String CLASS_ANNOTATION = "CLASS";
    Map annotations = new ConcurrentReaderHashMap();
    Map classAnnotations = new ConcurrentReaderHashMap();
