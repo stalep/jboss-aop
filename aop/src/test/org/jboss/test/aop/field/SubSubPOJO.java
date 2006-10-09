@@ -21,53 +21,25 @@
   */
 package org.jboss.test.aop.field;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.textui.TestRunner;
-
-import org.jboss.test.aop.AOPTestWithSetup;
-
 /**
  *
  * @author <a href="mailto:stalep@conduct.no">Stale W. Pedersen</a>
  * @version $Revision
  */
-public class FieldTestCase extends AOPTestWithSetup
+public class SubSubPOJO extends SubPOJO
 {
+   public int field;
    
-   public static void main(String[] args)
+   public SubSubPOJO(int i)
    {
-      TestRunner.run(suite());
-   }
-
-   public static Test suite()
-   {
-      TestSuite suite = new TestSuite("FieldTestCase");
-      suite.addTestSuite(FieldTestCase.class);
-      return suite;
-   }
-
-   public FieldTestCase(String name)
-   {
-      super(name);
-   }
-
-   protected void setUp() throws Exception
-   {
-      super.setUp();
+      super(i);
+      field = i * 2;
    }
    
-   public void testField()
+   public int getSubSubPOJOField()
    {
-      System.out.println("*** testField");
-      SubPOJO spojo = new SubPOJO(4);
-      assertEquals("Field is not set correctly", spojo.getPOJOField(), (spojo.getSubPOJOField()/2));  
+      return field;
    }
+   
 
-   public void testField2()
-   {
-      System.out.println("*** testField2");
-      SubSubPOJO spojo = new SubSubPOJO(4);
-      assertEquals("Field is not set correctly", spojo.getSubSubPOJOField()/2, (spojo.getSubPOJOField()));  
-   }
 }

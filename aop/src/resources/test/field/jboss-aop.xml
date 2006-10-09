@@ -3,4 +3,7 @@
   <bind pointcut="field(* org.jboss.test.aop.field.POJO->field)">                
        <interceptor class="org.jboss.test.aop.field.TraceInterceptor"/>
   </bind>
+  <bind pointcut="field(* org.jboss.test.aop.field.SubSubPOJO->field)">                
+       <interceptor class="org.jboss.test.aop.field.TraceInterceptor"/>
+  </bind>
 </aop>
