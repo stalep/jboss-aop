@@ -2,7 +2,7 @@
 
 <!DOCTYPE aop PUBLIC
    "-//JBoss//DTD JBOSS AOP 1.0//EN"
-   "http://www.jboss.org/aop/dtd/jboss-aop_1_0.dtd">
+   "http://labs.jboss.com/portal/jbossaop/dtd/jboss-aop_1_0.dtd">
 
 <aop>
    <prepare expr="all(org.jboss.test.aop.regression.jbaop206inheritadvised.Base)"/>
@@ -13,7 +13,7 @@
 	<bind pointcut="execution(* org.jboss.test.aop.regression.jbaop194_undeploy.POJO->method())">
 	   <interceptor class="org.jboss.test.aop.regression.jbaop194_undeploy.TestInterceptor"/>
 	</bind>
-	
+
 	<bind pointcut="execution(org.jboss.test.aop.regression.jbaop197.Singleton->new())">
 		<interceptor class="org.jboss.test.aop.regression.jbaop197.TestInterceptor"/>
 	</bind>
@@ -44,7 +44,7 @@
    </bind>
 
    <bind pointcut="execution(* org.jboss.test.aop.regression.arraymethodparam.POJO->someMethod(..))">
-      <interceptor class="org.jboss.test.aop.regression.arraymethodparam.MyInterceptor"/>   
+      <interceptor class="org.jboss.test.aop.regression.arraymethodparam.MyInterceptor"/>
    </bind>
    <metadata tag="TEST" class="org.jboss.test.aop.regression.arraymethodparam.POJO">
       <method expr="java.lang.String[] someMethod(java.lang.String[])">
@@ -53,16 +53,16 @@
    </metadata>
 
    <bind pointcut="field(* org.jboss.test.aop.regression.inheritedfield.SubPOJO->x)">
-      <interceptor class="org.jboss.test.aop.regression.inheritedfield.TestInterceptor"/>   
+      <interceptor class="org.jboss.test.aop.regression.inheritedfield.TestInterceptor"/>
    </bind>
 
    <bind pointcut="all(org.jboss.test.aop.regression.ejbthree315.POJO)">
-      <interceptor class="org.jboss.test.aop.regression.ejbthree315.MyInterceptor"/>   
+      <interceptor class="org.jboss.test.aop.regression.ejbthree315.MyInterceptor"/>
    </bind>
 
    <prepare expr="field(* $instanceof{org.jboss.test.aop.regression.jbaop137.Base}->*)"/>
    <prepare expr="execution(* $instanceof{org.jboss.test.aop.regression.jbaop137.Base}->*et*(..))"/>
-   
+
    <aspect class="org.jboss.test.aop.regression.jbaop110.TestAspect"/>
    <bind pointcut="execution(org.jboss.test.aop.regression.jbaop110.POJO->new(org.jboss.test.aop.regression.jbaop110.Type$NormalType, org.jboss.test.aop.regression.jbaop110.Type$StaticType))">
    	<advice aspect="org.jboss.test.aop.regression.jbaop110.TestAspect" name="invoke"/>
@@ -111,12 +111,12 @@
    <bind pointcut="get(org.jboss.test.aop.regression.jbaop110.Type$StaticType org.jboss.test.aop.regression.jbaop110.POJO$NormalClass->*)">
    	<advice aspect="org.jboss.test.aop.regression.jbaop110.TestAspect" name="invoke"/>
    </bind>
-   
+
    <typedef name="POJO" expr="class(org.jboss.test.aop.regression.jbaop217typedefredeploy.POJO)"/>
    <bind pointcut="execution(* $typedef{POJO}->method())">
        <interceptor class="org.jboss.test.aop.regression.jbaop217typedefredeploy.TestInterceptor"/>
    </bind>
-   
+
    <annotation expr="class(org.jboss.test.aop.regression.jbaop248annotationoverride.POJO)">
       @org.jboss.test.aop.regression.jbaop248annotationoverride.Override(value=1)
    </annotation>
@@ -144,7 +144,7 @@
    <bind pointcut="all(org.jboss.test.aop.regression.jbaop248annotationoverride.POJO)">
       <interceptor class="org.jboss.test.aop.regression.jbaop248annotationoverride.TestInterceptor"/>
    </bind>
-   
+
    <aspect class="org.jboss.test.aop.regression.jbaop264underscorefieldname.TestAspect"/>
    <bind pointcut="field(long org.jboss.test.aop.regression.jbaop264underscorefieldname.POJO->*)">
       <advice aspect="org.jboss.test.aop.regression.jbaop264underscorefieldname.TestAspect" name="intercept"/>

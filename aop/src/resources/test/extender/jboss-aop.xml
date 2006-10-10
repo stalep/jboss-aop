@@ -2,7 +2,7 @@
 
 <!DOCTYPE aop PUBLIC
    "-//JBoss//DTD JBOSS AOP 1.0//EN"
-   "http://www.jboss.org/aop/dtd/jboss-aop_1_0.dtd">
+   "http://labs.jboss.com/portal/jbossaop/dtd/jboss-aop_1_0.dtd">
 
 <aop>
 
@@ -12,19 +12,19 @@
    <bind pointcut="execution(* org.jboss.test.aop.extender.ChildBase->updateBase())">
       <interceptor class="org.jboss.test.aop.extender.ExtenderInterceptor"/>
    </bind>
-   
+
    <bind pointcut="execution(* org.jboss.test.aop.extender.Base->setBase(..))">
       <interceptor class="org.jboss.test.aop.extender.ExtenderInterceptor"/>
    </bind>
-   
+
    <bind pointcut="execution(* org.jboss.test.aop.extender.ChildExtender->*(..))">
       <interceptor class="org.jboss.test.aop.extender.ExtenderInterceptor"/>
    </bind>
-   
+
    <bind pointcut="execution(* org.jboss.test.aop.extender.InfantBase->*(..))">
       <interceptor class="org.jboss.test.aop.extender.ExtenderInterceptor"/>
    </bind>
-   
+
    <bind pointcut="execution(* $instanceof{org.jboss.test.aop.extender.Base}->superCall())">
    	<advice aspect="org.jboss.test.aop.extender.SuperCallAspect" name="invoke"/>
    </bind>
