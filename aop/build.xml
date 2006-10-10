@@ -1291,7 +1291,18 @@
          <test fork="yes" todir="${report.dir}" name="org.jboss.test.aop.regression.ejbthree315.UnderscoreMethodTester"/>
          <test fork="yes" todir="${report.dir}" name="org.jboss.test.aop.regression.jbaop137.ExtenderTestCase"/>
       </junit>
-
+      <junit printsummary="yes" fork="yes" haltonfailure="no">
+         <sysproperty key="jboss.aop.path" value="${source.res}/test/field/jboss-aop.xml"/>
+         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
+         <classpath>
+            <path refid="test15.classpath"/>
+            <pathelement location="${build.tests.classes}"/>
+            <pathelement location="docs"/>
+         </classpath>
+         <formatter usefile="true" type="plain" extension="-jdk15-loadtime-tests.txt"/>
+         <formatter usefile="true" type="xml" extension="-jdk15-loadtime-tests.xml"/>
+         <test todir="${report.dir}" name="org.jboss.test.aop.field.FieldTestCase" />
+      </junit>
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${source.res}/test/basic/jboss-aop.xml"/>
          <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
@@ -1340,18 +1351,6 @@
          <formatter usefile="true" type="plain" extension="-jdk15-loadtime-tests.txt"/>
          <formatter usefile="true" type="xml" extension="-jdk15-loadtime-tests.xml"/>
          <test todir="${report.dir}" name="org.jboss.test.aop.jdk15.annotated.declare.AnnotatedDeclareTestCase" />
-      </junit>
-      <junit printsummary="yes" fork="yes" haltonfailure="no">
-         <sysproperty key="jboss.aop.class.path" value="${build.tests.classes}"/>
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
-         <classpath>
-            <path refid="test15.classpath"/>
-            <pathelement location="${build.tests.classes}"/>
-            <pathelement location="docs"/>
-         </classpath>
-         <formatter usefile="true" type="plain" extension="-jdk15-loadtime-tests.txt"/>
-         <formatter usefile="true" type="xml" extension="-jdk15-loadtime-tests.xml"/>
-         <test todir="${report.dir}" name="org.jboss.test.aop.jdk15.annotated.field.AnnotatedFieldTestCase" />
       </junit>
 
       <junit printsummary="yes" fork="yes" haltonfailure="no">
