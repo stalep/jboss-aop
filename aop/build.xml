@@ -628,6 +628,7 @@
          <include name="**/*.java"/>
          <exclude name="org/jboss/test/aop/jdk15*/**/*.java"/>
          <exclude name="org/jboss/test/aop/memoryleaks/**/*.java"/>
+         <exclude name="org/jboss/test/aop/methodoverride/*.java"/>
          <exclude name="**/methodhashing/*"/>
       </javac>
    </target>
@@ -1452,6 +1453,62 @@
          <test todir="${report.dir}" name="org.jboss.test.aop.jdk15.dynamic.prepareFieldSet.HotSwapDisabledTester" />
       </junit>
    </target>
+
+   <target name="methodoverride" depends="jars15">
+
+      <javac destdir="${build.tests.classes}"
+         source="1.5"
+         debug="on">
+         <src path="${source.tests.java}"/>
+         <include name="org/jboss/test/aop/**"/>
+         <!-- just to make the tests compile -->
+         <exclude name="org/jboss/test/aop/methodhashing/*"/>
+         <classpath refid="test15.classpath"/>
+      </javac>
+
+
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
+      <path id="aop.task.classpath">
+         <path refid="test15.classpath"/>
+         <pathelement location="${build.tests.classes}"/>
+         <pathelement location="docs"/>
+      </path>
+
+      <aopc compilerclasspathref="aop.task.classpath">
+         <sysproperty key="jboss.aop.debug.classes" value="true"/>
+         <classpath refid="aop.task.classpath"/>
+         <classpath path="${build.tests.classes}"/>
+         <src path="${build.tests.classes}"/>
+         <include name="org/jboss/test/aop/methodoverride/*"/>
+         <!--
+         <aoppath path="${source.res}/test/methodoverride/jboss-aop.xml"/>
+         -->
+         <aopclasspath path="${build.tests.classes}"/>
+      </aopc>
+      <property name="report.dir" value="${build.reports}"/>
+      <mkdir dir="${report.dir}"/>
+      <junit printsummary="yes" fork="yes" haltonfailure="no">
+         <sysproperty key="jboss.aop.class.path" value="${build.tests.classes}"/>
+
+         <!--
+         <sysproperty key="jboss.aop.path" value="${source.res}/test/methodoverride/jboss-aop.xml"/>
+         <sysproperty key="jboss.aop.verbose" value="true"/>
+         <sysproperty key="jboss.aop.debug.classes" value="false"/>
+         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.GeneratedAdvisorInstrumentor"/>
+         -->
+         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
+         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
+         <classpath>
+            <path refid="test15.classpath"/>
+            <pathelement location="${build.tests.classes}"/>
+            <pathelement location="docs"/>
+         </classpath>
+         <formatter usefile="true" type="plain" extension="-jdk15-loadtime-tests.txt"/>
+         <formatter usefile="true" type="xml" extension="-jdk15-loadtime-tests.xml"/>
+         <test todir="${report.dir}" name="org.jboss.test.aop.methodoverride.MethodOverrideTestCase" />
+      </junit>
+   </target>
+
 
    <target name="jdk15-precompiled-tests" depends="compile-jdk15-tests">
 
