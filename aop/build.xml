@@ -826,20 +826,20 @@
       <property name="bootclasspath" refid="bootclasspath"/>
 
       <!-- Check for jboss-aop.xml override -->
-	   <condition property="jboss.aop.path" value="-Djboss.aop.path=${aop.xml}">
+	   <condition property="jboss.aop.path" value="${aop.xml}">
 	      <isset property="aop.xml"/>
 	   </condition>
 	   <condition property="jboss.aop.path" value="">
 	      <isset property="no.xml"/>
 	   </condition>
-	   <condition property="jboss.aop.path" value="-Djboss.aop.path=${source.res}/test/${test}/jboss-aop.xml">
+	   <condition property="jboss.aop.path" value="${source.res}/test/${test}/jboss-aop.xml">
 	      <not>
 	         <isset property="aop.xml"/>
 	      </not>
 	   </condition>
 
       <!-- Get -Djboss.aop.class.path from passed in parameters -->
-      <condition property="jboss.aop.class.path" value="-Djboss.aop.class.path=${build.tests.classes}">
+      <condition property="jboss.aop.class.path" value="${build.tests.classes}">
          <isset property="use.annotations"/>
       </condition>
       <condition property="jboss.aop.class.path" value="">
@@ -861,8 +861,8 @@
       <mkdir dir="${build.reports}"/>
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <jvmarg value="-Xbootclasspath/p:${bootclasspath}"/>
-         <jvmarg value="${jboss.aop.class.path}"/>
-         <jvmarg value="${jboss.aop.path}"/>
+         <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
+         <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
       	<formatter type="plain" extension="-${caller}.txt"/>
          <formatter type="xml" extension="-${caller}.xml"/>
@@ -1148,20 +1148,20 @@
       </aopc>
 
       <!-- Get -Djboss.aop.path from passed in parameters -->
-      <condition property="jboss.aop.path" value="-Djboss.aop.path=${aop.xml}">
+      <condition property="jboss.aop.path" value="${aop.xml}">
          <isset property="aop.xml"/>
       </condition>
       <condition property="jboss.aop.path" value="">
          <isset property="no.xml"/>
       </condition>
-      <condition property="jboss.aop.path" value="-Djboss.aop.path=${source.res}/test/${test}/jboss-aop.xml">
+      <condition property="jboss.aop.path" value="${source.res}/test/${test}/jboss-aop.xml">
          <not>
             <isset property="aop.xml"/>
          </not>
       </condition>
 
       <!-- Get -Djboss.aop.class.path from passed in parameters -->
-      <condition property="jboss.aop.class.path" value="-Djboss.aop.class.path=${build.tests.classes}">
+      <condition property="jboss.aop.class.path" value="${build.tests.classes}">
          <isset property="use.annotations"/>
       </condition>
       <condition property="jboss.aop.class.path" value="">
@@ -1174,8 +1174,8 @@
       <mkdir dir="${build.reports}"/>
 
       <junit printsummary="yes" fork="yes" haltonfailure="no">
-         <jvmarg value="${jboss.aop.path}"/>
-         <jvmarg value="${jboss.aop.class.path}"/>
+         <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
+         <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <formatter type="plain" extension="-${caller}.txt"/>
          <formatter type="xml" extension="-${caller}.xml"/>
          <classpath>
