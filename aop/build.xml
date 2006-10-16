@@ -87,6 +87,7 @@
          <path refid="junit.junit.classpath"/>
          <path refid="jboss/common.core.classpath"/>
          <path refid="jboss.profiler.jvmti.classpath"/>
+      	<path refid="jboss/common.logging.spi.classpath"/>
          <!--<path refid="jboss.microcontainer.classpath"/>-->
          <path refid="jboss.test.classpath"/>
       </path>
@@ -1137,6 +1138,7 @@
       <!-- aopc -->
       <aopc optimized="${optimized}" compilerclasspathref="aop.task.classpath">
          <classpath refid="aop.task.classpath"/>
+      	<classpath refid="thirdparty.classpath"/>
          <classpath path="${build.tests.classes}"/>
          <aoppath path="${aoppath}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
