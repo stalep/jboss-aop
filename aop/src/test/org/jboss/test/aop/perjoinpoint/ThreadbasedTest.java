@@ -21,6 +21,8 @@
   */
 package org.jboss.test.aop.perjoinpoint;
 
+import org.jboss.aspects.Threadbased;
+
 /**
  * Comment
  *
@@ -29,23 +31,15 @@ package org.jboss.test.aop.perjoinpoint;
  */
 public class ThreadbasedTest
 {
-   /**
-    * @@org.jboss.aspects.Threadbased
-    */
+   @Threadbased
    public static int staticCounter;
 
-   /**
-    * @@org.jboss.aspects.Threadbased
-    */
+   @Threadbased
    public int counter;
 
-   /**
-    * @@org.jboss.aspects.Threadbased
-    */
+   @Threadbased
    public static int staticCounter2;
 
-   /**
-    * @@org.jboss.aspects.Threadbased
-    */
+   @Threadbased
    public int counter2;
 }

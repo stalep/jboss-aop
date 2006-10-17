@@ -21,11 +21,17 @@
   */
 package org.jboss.aop;
 
+import java.lang.annotation.Target;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  *
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
-public interface DynamicCFlowDef
+@Target(ElementType.TYPE) @Retention(RetentionPolicy.RUNTIME)
+public @interface DynamicCFlowDef
 {
 }

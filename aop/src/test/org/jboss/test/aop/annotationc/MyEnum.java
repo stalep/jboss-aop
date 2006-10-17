@@ -27,22 +27,7 @@ package org.jboss.test.aop.annotationc;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public class MyEnum extends org.jboss.lang.Enum
+public enum MyEnum 
 {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 1L;
-   public static final MyEnum ONE = new MyEnum("ONE", 0);
-   public static final MyEnum TWO = new MyEnum("TWO", 1);
-
-   private static MyEnum[] values = {ONE, TWO};
-
-   private MyEnum(String name, int ordinal)
-   {
-      super(name, ordinal);
-   }
-
-   Object readResolve() throws java.io.ObjectStreamException
-   {
-      return values[ordinal];
-   }
+   ONE, TWO;
 }

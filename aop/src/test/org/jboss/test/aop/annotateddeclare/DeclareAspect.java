@@ -31,14 +31,10 @@ import org.jboss.aop.pointcut.Pointcut;
  */
 public class DeclareAspect
 {
-   /**
-    * @@org.jboss.aop.DeclareError (expr="call(* org.jboss.test.aop.annotated.declare.POJO->someMethod()) AND withincode(* org.jboss.test.aop.annotated.declare.POJO->otherMethod())", msg="Should not happen")
-    */
+    @org.jboss.aop.DeclareError (expr="call(* org.jboss.test.aop.annotated.declare.POJO->someMethod()) AND withincode(* org.jboss.test.aop.annotated.declare.POJO->otherMethod())", msg="Should not happen")
    Pointcut error;
 
-   /**
-    * @@org.jboss.aop.DeclareWarning (expr="call(* org.jboss.test.aop.annotated.declare.POJO->otherMethod()) AND withincode(* org.jboss.test.aop.annotated.declare.POJO->someMethod())", msg="Expected annotated warning")
-    */
+   @org.jboss.aop.DeclareWarning (expr="call(* org.jboss.test.aop.annotated.declare.POJO->otherMethod()) AND withincode(* org.jboss.test.aop.annotated.declare.POJO->someMethod())", msg="Expected annotated warning")
    Pointcut warning;
    
 }

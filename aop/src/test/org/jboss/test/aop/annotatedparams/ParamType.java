@@ -25,9 +25,8 @@ package org.jboss.test.aop.annotatedparams;
  *
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
- * 
- * @@org.jboss.test.aop.annotatedparams.Param
  */
+@Param
 public class ParamType
 {
 

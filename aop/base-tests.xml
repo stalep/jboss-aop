@@ -67,13 +67,11 @@
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="callerargs"/>
       </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="field"/>
+      </antcall>
 
       <!-- Tests with special requirements for parameters -->
-      <antcall target="${test-target}" inheritRefs="true">
-         <param name="test" value="annotated"/>
-         <param name="no.xml" value="true"/>
-         <param name="use.annotations" value="true"/>
-      </antcall>
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="jdk15annotated"/>
          <param name="no.xml" value="true"/>

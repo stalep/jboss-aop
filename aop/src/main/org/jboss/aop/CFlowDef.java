@@ -22,12 +22,13 @@
 package org.jboss.aop;
 
 /**
- *
- * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
- * @version $Revision$
+ * Created by IntelliJ IDEA.
+ * User: Kab
+ * Date: 04-Oct-2004
+ * Time: 18:40:22
+ * To change this template use File | Settings | File Templates.
  */
-public interface CFlowDef
-{
-   boolean called();
-   String expr();
+public @interface CFlowDef {
+    boolean called();
+    String expr();
 }

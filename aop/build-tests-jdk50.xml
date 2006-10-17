@@ -78,16 +78,21 @@
       &modules;
       <!-- The combined library classpath -->
       <path id="library.classpath">
+         <path refid="apache.ant.classpath"/>
          <path refid="apache.log4j.classpath"/>
-         <path refid="qdox.classpath"/>
          <path refid="javassist.classpath"/>
+         <path refid="jboss.profiler.jvmti.classpath"/>
+         <path refid="jboss/common.core.classpath"/>
+         <path refid="jboss/common.logging.log4j.classpath"/>
+         <path refid="jboss/common.logging.jdk.classpath"/>
+         <path refid="jboss/common.logging.spi.classpath"/>
+         <!--<path refid="jboss.microcontainer.classpath"/>-->
+         <path refid="jboss.test.classpath"/>
+          <path refid="junit.junit.classpath"/>
+         <path refid="oswego.concurrent.classpath"/>
+         <path refid="qdox.classpath"/>
          <path refid="trove.classpath"/>
          <path refid="xdoclet.xdoclet.classpath"/>
-         <path refid="apache.ant.classpath"/>
-         <path refid="oswego.concurrent.classpath"/>
-         <path refid="junit.junit.classpath"/>
-         <path refid="jboss.profiler.jvmti.classpath"/>
-         <path refid="jboss.microcontainer.classpath"/>
       </path>
 
       <!-- Defines jrockit.home -->
@@ -101,11 +106,6 @@
 
       <!-- The combined dependent module classpath -->
       <path id="dependentmodule.classpath">
-      <path refid="jboss.common.core.classpath"/>
-      <path refid="jboss.common.logging.spi.classpath"/>
-      <path refid="jboss.common.logging.log4j.classpath"/>
-      <path refid="jboss.common.logging.jdk.classpath"/>
-         <path refid="jboss.test.classpath"/>
       </path>
 
       <!-- ===== -->
@@ -211,6 +211,7 @@
          <classpath refid="test.classpath"/>
          <include name="**/*.java"/>
          <exclude name="org/jboss/test/aop/memoryleaks/**/*.java"/>
+         <exclude name="**/methodhashing/*"/>
       </javac>
    </target>
    
@@ -273,7 +274,9 @@
 
       <delete dir="${build.tests.classes}"/>
       <antcall target="non-optimized-precompiled-tests" inheritRefs="true"/>
-
+   </target>
+   
+   <target name="all-tests" depends="tests">
 		<!-- Should move the remaining tests into something similar to _base-tests.xml and run them from the main targets once JBAOP-268 has been done -->      
       <delete dir="${build.tests.classes}/org/jboss/test"/>
       <antcall target="jdk15-loadtime-tests" inheritRefs="true"/>
@@ -284,7 +287,6 @@
       <delete dir="${build.tests.classes}"/>
       <antcall target="jrockit-tests" inheritRefs="true"/>
       <antcall target="jrockit-genadvisor-tests" inheritRefs="true"/>
-
    </target>
 
    <!-- ==================================================================================== -->
@@ -307,6 +309,14 @@
 
    </target>
 
+   <target name="loadtime-test" depends="init">
+      <antcall  target="_run-javaagent-test" inheritRefs="true">
+         <param name="test" value="${test}"/>
+         <param name="caller" value="javaagent-tests"/>
+      </antcall>
+   </target>
+
+
    <!-- ==================================================================================== -->
    <!-- GENERATED ADVISOR JAVAGENT TESTS (JDK 5.0)                                           -->
    <!-- ==================================================================================== -->
@@ -326,36 +336,36 @@
       </antcall>
    </target>
 
+   <target name="loadtime-ga-test" depends="init">
+      <antcall  target="_run-javaagent-test" inheritRefs="true">
+         <param name="test" value="${test}"/>
+         <param name="caller" value="javaagent-genadvisor-tests"/>
+      </antcall>
+   </target>
+
    <!-- ==================================================================================== -->
    <!-- JDK 5.0 JAVAAGENT TEST COMMONS                                                   -->
    <!-- These targets should not be called directly, use bootclasspath-tests or              -->
    <!-- bootclasspath-genadvisor-tests                                                       -->
    <!-- ==================================================================================== -->
 
-   <target name="loadtime-test" depends="init">
-      <antcall  target="_run-javaagent-test" inheritRefs="true">
-         <param name="test" value="${test}"/>
-         <param name="caller" value="javaagent-tests"/>
-      </antcall>
-   </target>
-
    <target name="_run-javaagent-test">
 
       <!-- Check for jboss-aop.xml override -->
-	   <condition property="jboss.aop.path" value="-Djboss.aop.path=${aop.xml}">
+	   <condition property="jboss.aop.path" value="${aop.xml}">
 	      <isset property="aop.xml"/>
 	   </condition>
 	   <condition property="jboss.aop.path" value="">
 	      <isset property="no.xml"/>
 	   </condition>
-	   <condition property="jboss.aop.path" value="-Djboss.aop.path=${source.res}/test/${test}/jboss-aop.xml">
+	   <condition property="jboss.aop.path" value="${source.res}/test/${test}/jboss-aop.xml">
 	      <not>
 	         <isset property="aop.xml"/>
 	      </not>
 	   </condition>
    	
       <!-- Get -Djboss.aop.class.path from passed in parameters -->
-      <condition property="jboss.aop.class.path" value="-Djboss.aop.class.path=${build.tests.classes}">
+      <condition property="jboss.aop.class.path" value="${build.tests.classes}">
          <isset property="use.annotations"/>
       </condition>
       <condition property="jboss.aop.class.path" value="">
@@ -375,20 +385,19 @@
       <echo>Running ${test} with instrumentor ${instrumentor}</echo>
 
       <mkdir dir="${build.reports}"/>
-      <junit printsummary="yes" fork="no" haltonfailure="no">
+      <junit printsummary="yes" fork="yes" haltonfailure="no">
          <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
-         <jvmarg value="${jboss.aop.class.path}"/>
-         <jvmarg value="${jboss.aop.path}"/>
+         <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
+         <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
          <sysproperty key="jboss.aop.debug.classes" value="true"/>
       	<formatter type="plain" extension="-${caller}.txt"/>
       	<classpath refid="test.classpath"/>
-         <formatter type="xml" extension="-${caller}.xml"/>
+         <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-${caller}.xml"/>
          <classpath>
             <pathelement location="${build.tests.classes}"/>
          </classpath>
          <batchtest todir="${build.reports}"
-            haltonerror="false"
             haltonfailure="false"
             fork="true">
             <fileset dir="${build.tests.classes}">
@@ -410,7 +419,6 @@
 
    <target name="precompiled-tests" depends="compile-test-classes">
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
-      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
       <path id="aop.task.classpath">
          <path refid="library.classpath"/>
          <path refid="dependentmodule.classpath"/>
@@ -443,7 +451,6 @@
 
    <target name="non-optimized-precompiled-tests" depends="compile-test-classes">
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
-      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
       <path id="aop.task.classpath">
          <path refid="library.classpath"/>
          <path refid="dependentmodule.classpath"/>
@@ -470,7 +477,6 @@
 
    <target name="precompiled-genadvisor-tests" depends="compile-test-classes">
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
-      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
       <path id="aop.task.classpath">
          <path refid="library.classpath"/>
          <path refid="dependentmodule.classpath"/>
@@ -569,20 +575,20 @@
       </aopc>
 
       <!-- Get -Djboss.aop.path from passed in parameters -->
-      <condition property="jboss.aop.path" value="-Djboss.aop.path=${aop.xml}">
+      <condition property="jboss.aop.path" value="${aop.xml}">
          <isset property="aop.xml"/>
       </condition>
       <condition property="jboss.aop.path" value="">
          <isset property="no.xml"/>
       </condition>
-      <condition property="jboss.aop.path" value="-Djboss.aop.path=${source.res}/test/${test}/jboss-aop.xml">
+      <condition property="jboss.aop.path" value="${source.res}/test/${test}/jboss-aop.xml">
          <not>
             <isset property="aop.xml"/>
          </not>
       </condition>
 
       <!-- Get -Djboss.aop.class.path from passed in parameters -->
-      <condition property="jboss.aop.class.path" value="-Djboss.aop.class.path=${build.tests.classes}">
+      <condition property="jboss.aop.class.path" value="${build.tests.classes}">
          <isset property="use.annotations"/>
       </condition>
       <condition property="jboss.aop.class.path" value="">
@@ -595,10 +601,10 @@
       <mkdir dir="${build.reports}"/>
 
       <junit printsummary="yes" fork="yes" haltonfailure="no">
-         <jvmarg value="${jboss.aop.path}"/>
-         <jvmarg value="${jboss.aop.class.path}"/>
+         <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
+         <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <formatter type="plain" extension="-${caller}-jdk50.txt"/>
-         <formatter type="xml" extension="-${caller}-jdk50.xml"/>
+         <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-${caller}-jdk50.xml"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -630,23 +636,25 @@
       <mkdir dir="${build.reports}"/>
 
       <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
+      <path id="aop.task.classpath">
+         <path refid="test.classpath"/>
+      </path>
       <annotationc compilerclasspathref="aop.task.classpath" bytecode="true">
          <classpath refid="aop.task.classpath"/>
          <classpath path="${build.tests.classes}"/>
-         <src path="${source.tests.java}"/>
-         <include name="org/jboss/test/aop/annotationc/*.java"/>
+         <src path="${source.tests.java}/org/jboss/test/aop/annotationc"/>
       </annotationc>
 
       <echo>org/jboss/test/aop/methodhashing/MethodHashingTestCase will fail until the microcontainer has been updated in the repository</echo>
                	
       <junit printsummary="yes" fork="no" haltonfailure="no" >
          <classpath>
-            <path refid="test.classpath"/>
+            <path refid="javac.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
          <formatter type="plain" extension="-jdk50.txt"/>
-         <formatter type="xml" extension="-jdk50.xml"/>
+         <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-jdk50.xml"/>
 
 		   <batchtest todir="${build.reports}"
 		      haltonerror="false"
@@ -1124,20 +1132,20 @@
    <target name="_run-jrockit-test">
 
       <!-- Check for jboss-aop.xml override -->
-	   <condition property="jboss.aop.path" value="-Djboss.aop.path=${aop.xml}">
+	   <condition property="jboss.aop.path" value="${aop.xml}">
 	      <isset property="aop.xml"/>
 	   </condition>
 	   <condition property="jboss.aop.path" value="">
 	      <isset property="no.xml"/>
 	   </condition>
-	   <condition property="jboss.aop.path" value="-Djboss.aop.path=${source.res}/test/${test}/jboss-aop.xml">
+	   <condition property="jboss.aop.path" value="${source.res}/test/${test}/jboss-aop.xml">
 	      <not>
 	         <isset property="aop.xml"/>
 	      </not>
 	   </condition>
    	
       <!-- Get -Djboss.aop.class.path from passed in parameters -->
-      <condition property="jboss.aop.class.path" value="-Djboss.aop.class.path=${build.tests.classes}">
+      <condition property="jboss.aop.class.path" value="${build.tests.classes}">
          <isset property="use.annotations"/>
       </condition>
       <condition property="jboss.aop.class.path" value="">
@@ -1159,13 +1167,13 @@
       <mkdir dir="${build.reports}"/>
       <junit printsummary="yes" fork="yes" haltonfailure="no" jvm="${jrockit.home}/bin/java">
          <jvmarg value="-Xmanagement:class=org.jboss.aop.hook.JRockitClassPreProcessor"/>
-         <jvmarg value="${jboss.aop.class.path}"/>
-         <jvmarg value="${jboss.aop.path}"/>
+         <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
+         <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
          <sysproperty key="jboss.aop.debug.classes" value="true"/>
       	<formatter type="plain" extension="-${caller}.txt"/>
       	<classpath refid="test.classpath"/>
-         <formatter type="xml" extension="-${caller}.xml"/>
+         <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-${caller}.xml"/>
          <classpath>
             <path refid="test.jrockit.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -1243,8 +1251,9 @@
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
-         <formatter type="plain"/>
-         <test fork="yes" name="org.jboss.test.aop.basic.AOPTester"/>
+         <formatter type="plain" extension="-system-classloader-jdk50.txt"/>
+         <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-system-classloader-jdk50.xml"/>
+         <test fork="yes" name="org.jboss.test.aop.basic.AOPTester" todir="${build.reports}"/>
       </junit>
    </target>
 

@@ -21,33 +21,13 @@
   */
 package org.jboss.aop.advice;
 
-import java.io.ObjectStreamException;
-
 /**
  * Defines the lifecycle of an aspect or interceptor instance
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public class Scope extends org.jboss.lang.Enum
+public enum Scope
 {
-   static final long serialVersionUID = 7873910692644730377L;
-
-   private Scope(String name, int v)
-   {
-      super(name, v);
-   }
-
-   public static final Scope PER_VM = new Scope("PER_VM", 0);
-   public static final Scope PER_CLASS = new Scope("PER_CLASS", 1);
-   public static final Scope PER_INSTANCE = new Scope("PER_INSTANCE", 2);
-   public static final Scope PER_JOINPOINT = new Scope("PER_JOINPOINT", 3);
-   public static final Scope PER_CLASS_JOINPOINT = new Scope("PER_CLASS_JOINPOINT", 4);
-   private static final Scope[] values = {PER_VM, PER_CLASS, PER_INSTANCE, PER_JOINPOINT, PER_CLASS_JOINPOINT};
-
-   Object readResolve() throws ObjectStreamException
-   {
-      return values[ordinal];
-   }
-
+   PER_VM, PER_CLASS, PER_INSTANCE, PER_JOINPOINT, PER_CLASS_JOINPOINT
 }

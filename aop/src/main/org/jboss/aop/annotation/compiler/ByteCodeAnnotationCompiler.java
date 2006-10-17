@@ -80,7 +80,14 @@ public class ByteCodeAnnotationCompiler
          if (args[i].equals("-o")) continue;
          if (args[i].equals("-xml")) continue;
          File f = new File(args[i]).getCanonicalFile();
-         builder.addSource(new FileReader(f));
+         try
+         {
+            builder.addSource(new FileReader(f));
+         }
+         catch (RuntimeException e)
+         {
+            throw new RuntimeException("Error adding source for file " + f, e);
+         }
       }
 
       for (int i = 0; i < builder.getSources().length; i++)
@@ -234,9 +241,9 @@ public class ByteCodeAnnotationCompiler
       }
       
       //if there are inner classes: fetch them and call compileClass recursive.
-      for (int i = 0; i < clazz.getInnerClasses().length; i++)
+      for (int i = 0; i < clazz.getNestedClasses().length; i++)
       {
-         JavaClass innerClass = clazz.getInnerClasses()[i];
+         JavaClass innerClass = clazz.getNestedClasses()[i];
          compileClass(innerClass);
       }
       

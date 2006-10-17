@@ -21,12 +21,18 @@
 */ 
 package org.jboss.test.aop.regression.jbaop248annotationoverride;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
-public interface Override
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR})@Retention(RetentionPolicy.RUNTIME)
+public @interface Override
 {
    int value();
 }

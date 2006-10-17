@@ -26,7 +26,7 @@ package org.jboss.test.aop.annotatedcflow;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
-public interface Annotation
+public @interface Annotation
 {
 
 }

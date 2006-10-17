@@ -40,16 +40,12 @@ public abstract class OptimizedInvocations
 {
    public static void defrostClassIfExists(AOPClassPool pool, String className)
    {
-      try
+      //In some cases we get a class frozen exception. I guess if the invocation class 
+      //existed, method was unwrapped and the wrapped again
+      CtClass existing = pool.getCached(className);
+      if (existing != null)
       {
-         //In some cases we get a class frozen exception. I guess if the invocation class 
-         //existed, method was unwrapped and the wrapped again
-         CtClass existing = pool.get(className);
          existing.defrost();
-      }
-      catch (NotFoundException e)
-      {
-         //Ignore, we are creating the class the first time
       }
    }
 

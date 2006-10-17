@@ -26,8 +26,8 @@ package org.jboss.test.aop.annotatedcflow;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  * 
- * @@org.jboss.test.aop.annotatedcflow.Annotation
  */
+@Annotation
 public class AnnotatedCaller 
 {
    private POJO pojo;

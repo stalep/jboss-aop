@@ -25,8 +25,8 @@ package org.jboss.test.aop.implementz;
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
- * @@org.jboss.test.aop.implementz.Annotated
  */
+@Annotated
 public interface ImplementsInterfaceAnnotated
 {
    void methodAnnotated();

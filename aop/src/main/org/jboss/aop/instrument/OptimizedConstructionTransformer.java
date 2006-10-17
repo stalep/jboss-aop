@@ -43,6 +43,7 @@ public class OptimizedConstructionTransformer extends ConstructionTransformer
    protected void insertInterception(CtConstructor constructor, int index) throws Exception
    {
       CtClass type = constructor.getDeclaringClass();
+      
       OptimizedConstructionInvocations.createOptimizedInvocationClass(instrumentor, type, constructor, index);
       createWrapper(type, constructor,  constructor.getDeclaringClass(), index);
    }

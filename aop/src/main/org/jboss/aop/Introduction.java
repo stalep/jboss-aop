@@ -21,14 +21,21 @@
   */
 package org.jboss.aop;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  *
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
-public interface Introduction
+
+@Target({ElementType.FIELD}) @Retention(RetentionPolicy.RUNTIME)
+public @interface Introduction
 {
-   Class target();
-   String typeExpression();
+   Class target() default java.lang.Class.class;
+   String typeExpression() default "";
    Class[] interfaces();
 }

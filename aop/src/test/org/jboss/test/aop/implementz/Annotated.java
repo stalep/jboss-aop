@@ -20,12 +20,19 @@
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
 package org.jboss.test.aop.implementz;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
-public interface Annotated
+@Target(ElementType.TYPE)@Retention(RetentionPolicy.RUNTIME)
+public @interface Annotated
 {
 
 }

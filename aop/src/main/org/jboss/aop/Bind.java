@@ -21,15 +21,21 @@
   */
 package org.jboss.aop;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
- * Annotation to bind an advice to a pointcut
+ * Comment
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public interface Bind
+@Target({ElementType.METHOD, ElementType.TYPE}) @Retention(RetentionPolicy.RUNTIME)
+        public @interface Bind
 {
    String pointcut();
 
-   String cflow();
+   String cflow() default "";
 }

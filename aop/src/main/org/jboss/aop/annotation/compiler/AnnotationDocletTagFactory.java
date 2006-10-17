@@ -21,6 +21,7 @@
   */
 package org.jboss.aop.annotation.compiler;
 
+import com.thoughtworks.qdox.model.AbstractJavaEntity;
 import com.thoughtworks.qdox.model.DocletTag;
 import com.thoughtworks.qdox.model.DocletTagFactory;
 
@@ -35,13 +36,13 @@ public class AnnotationDocletTagFactory implements DocletTagFactory
 {
    private static final long serialVersionUID = 1L;
 
-   public DocletTag createDocletTag(String s, String s1, int i)
-   {
-      return new AnnotationDocletTag(s, s1, i);
-   }
-
    public DocletTag createDocletTag(String s, String s1)
    {
       return new AnnotationDocletTag(s, s1);
+   }
+
+   public DocletTag createDocletTag(String tag, String text, AbstractJavaEntity arg2, int arg3)
+   {
+      return new AnnotationDocletTag(tag, text);
    }
 }

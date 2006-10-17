@@ -21,13 +21,19 @@
   */
 package org.jboss.aop;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
- * Annotation
+ * Comment
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public interface PointcutDef
+@Target({ElementType.FIELD}) @Retention(RetentionPolicy.RUNTIME)
+        public @interface PointcutDef
 {
    String value();
 }

@@ -27,6 +27,7 @@ package org.jboss.test.aop.instanceofannotated;
  * @version $Revision$
  * @@org.jboss.test.aop.instanceofannotated.InterfaceAnnotation
  */
+@InterfaceAnnotation
 public interface AnnotatedInterface
 {
    public void annotatedMethod();

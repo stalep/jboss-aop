@@ -21,6 +21,12 @@
   */
 package org.jboss.aop;
 
+import java.lang.annotation.Target;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+
 import org.jboss.aop.advice.Scope;
 
 /**
@@ -28,7 +34,8 @@ import org.jboss.aop.advice.Scope;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
-public interface InterceptorDef
+@Target({ElementType.TYPE}) @Retention(RetentionPolicy.RUNTIME)
+public @interface InterceptorDef
 {
-   Scope scope();
+   Scope scope() default Scope.PER_VM;
 }

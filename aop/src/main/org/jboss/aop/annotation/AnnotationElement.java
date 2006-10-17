@@ -21,18 +21,7 @@
   */
 package org.jboss.aop.annotation;
 
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.FieldInfo;
-import javassist.bytecode.MethodInfo;
-import javassist.bytecode.annotation.Annotation;
-
-import org.jboss.aop.annotation.PortableAnnotationElement;
-import org.jboss.aop.util.ReflectToJavassist;
-
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -47,7 +36,6 @@ import java.lang.reflect.Method;
  */
 public class AnnotationElement extends PortableAnnotationElement
 {
-   private final static Object[] EMPTY_OBJECT_ARRAY = new Object[0];
    /**
     * Get a visible annotation for a particle Method.  If this is JDK 1.5
     * then this is a wrapper for Method.getAnnotation
@@ -58,23 +46,7 @@ public class AnnotationElement extends PortableAnnotationElement
     */
    public static Object getVisibleAnnotation(Method method, Class annotation)
    {
-      try
-      {
-         CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
-         if (ctMethod == null)
-         {
-            return null;
-         }
-         MethodInfo mi = ctMethod.getMethodInfo2();
-
-         AnnotationsAttribute visible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.visibleTag);
-         if (visible == null) return null;
-         return create(visible, annotation);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
-      }
+      return method.getAnnotation(annotation);
    }
 
    /**
@@ -87,23 +59,7 @@ public class AnnotationElement extends PortableAnnotationElement
     */
    public static Object getVisibleAnnotation(Constructor con, Class annotation)
    {
-      try
-      {
-         CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
-         if (ctMethod == null)
-         {
-            return null;
-         }
-         MethodInfo mi = ctMethod.getMethodInfo2();
-
-         AnnotationsAttribute visible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.visibleTag);
-         if (visible == null) return null;
-         return create(visible, annotation);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
-      }
+      return con.getAnnotation(annotation);
    }
 
    /**
@@ -116,19 +72,7 @@ public class AnnotationElement extends PortableAnnotationElement
     */
    public static Object getVisibleAnnotation(Field field, Class annotation)
    {
-      try
-      {
-         CtField ctField = ReflectToJavassist.fieldToJavassist(field);
-         FieldInfo mi = ctField.getFieldInfo2();
-
-         AnnotationsAttribute visible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.visibleTag);
-         if (visible == null) return null;
-         return create(visible, annotation);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
-      }
+      return field.getAnnotation(annotation);
    }
 
    /**
@@ -141,114 +85,46 @@ public class AnnotationElement extends PortableAnnotationElement
     */
    public static Object getVisibleAnnotation(Class clazz, Class annotation)
    {
-      try
-      {
-         ClassFile cf = getClassFile(clazz);
-
-         AnnotationsAttribute visible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
-         if (visible == null) return null;
-         return create(visible, annotation);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
-      }
+      return clazz.getAnnotation(annotation);
    }
 
-   public static boolean isVisibleAnnotationPresent(Field field, Class annotation) throws Exception
+   public static boolean isVisibleAnnotationPresent(Class clazz, Class annotation)
    {
-      CtField ctMethod = ReflectToJavassist.fieldToJavassist(field);
-      return isVisibleAnnotationPresent(ctMethod, annotation.getName());
+      return clazz.isAnnotationPresent(annotation);
    }
 
-   public static boolean isVisibleAnnotationPresent(Class clazz, Class annotation) throws Exception
+   public static boolean isVisibleAnnotationPresent(Method m, Class annotation)
    {
-      ClassFile cf = getClassFile(clazz);
-
-      AnnotationsAttribute visible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
-      if (visible == null) return false;
-      return visible.getAnnotation(annotation.getName()) != null;
+      return m.isAnnotationPresent(annotation);
    }
 
-   public static boolean isVisibleAnnotationPresent(Constructor con, Class annotation) throws Exception
+   public static boolean isVisibleAnnotationPresent(Field f, Class annotation)
    {
-      CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
-      return isVisibleAnnotationPresent(ctMethod, annotation.getName());
-
-
+      return f.isAnnotationPresent(annotation);
    }
 
-   public static boolean isVisibleAnnotationPresent(Method method, Class annotation) throws Exception
+   public static boolean isVisibleAnnotationPresent(Constructor con, Class annotation)
    {
-      CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
-      if (ctMethod == null) return false;
-      MethodInfo mi = ctMethod.getMethodInfo2();
-
-
-      AnnotationsAttribute visible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.visibleTag);
-      if (visible == null) return false;
-      return visible.getAnnotation(annotation.getName()) != null;
+      return con.isAnnotationPresent(annotation);
    }
 
    public static Object[] getVisibleAnnotations(Class clazz) throws Exception
    {
-      try
-      {
-         ClassFile cf = getClassFile(clazz);
-
-         AnnotationsAttribute visible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
-         if (visible == null) return EMPTY_OBJECT_ARRAY;
-         return getVisibleAnnotations(visible);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
-      }
+      return clazz.getAnnotations();
    }
 
    public static Object[] getVisibleAnnotations(Method m) throws Exception
    {
-      CtMethod ctMethod = ReflectToJavassist.methodToJavassist(m);
-      if (ctMethod == null) return EMPTY_OBJECT_ARRAY;
-      MethodInfo mi = ctMethod.getMethodInfo2();
-
-      AnnotationsAttribute visible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.visibleTag);
-      if (visible == null) return EMPTY_OBJECT_ARRAY;
-      return getVisibleAnnotations(visible);
+      return m.getAnnotations();
    }
    
    public static Object[] getVisibleAnnotations(Field f) throws Exception
    {
-      CtField ctField = ReflectToJavassist.fieldToJavassist(f);
-      if (ctField == null) return EMPTY_OBJECT_ARRAY;
-      FieldInfo fi = ctField.getFieldInfo2();
-
-      AnnotationsAttribute visible = (AnnotationsAttribute) fi.getAttribute(AnnotationsAttribute.visibleTag);
-      if (visible == null) return EMPTY_OBJECT_ARRAY;
-      return getVisibleAnnotations(visible);
+      return f.getAnnotations();
    }
    
    public static Object[] getVisibleAnnotations(Constructor c) throws Exception
    {
-      CtConstructor ctConstructor = ReflectToJavassist.constructorToJavassist(c);
-      if (ctConstructor == null) return EMPTY_OBJECT_ARRAY;
-      MethodInfo ci = ctConstructor.getMethodInfo2();
-
-      AnnotationsAttribute visible = (AnnotationsAttribute) ci.getAttribute(AnnotationsAttribute.visibleTag);
-      if (visible == null) return EMPTY_OBJECT_ARRAY;
-      return getVisibleAnnotations(visible);
-   }
-   
-   private static Object[] getVisibleAnnotations(AnnotationsAttribute visible) throws Exception
-   {
-      Annotation[] annotations = visible.getAnnotations();
-      Object[] returnedAnnotations = new Object[annotations.length];
-      for (int i = 0 ; i < annotations.length ; i++)
-      {
-         String name = annotations[i].getTypeName();
-         Class annotation = Thread.currentThread().getContextClassLoader().loadClass(name);
-         returnedAnnotations[i] = create(visible, annotation);
-      }
-      return returnedAnnotations;
+      return c.getAnnotations();
    }
 }

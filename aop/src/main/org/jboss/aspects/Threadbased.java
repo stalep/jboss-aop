@@ -21,12 +21,19 @@
   */
 package org.jboss.aspects;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * Annotation for declaring a field that behaves like a ThreadLocal
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public interface Threadbased
+
+@Target({ElementType.FIELD}) @Retention(RetentionPolicy.RUNTIME)
+        public @interface Threadbased
 {
 }

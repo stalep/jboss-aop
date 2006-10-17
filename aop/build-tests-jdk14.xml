@@ -79,18 +79,22 @@
       &modules;
       <!-- The combined library classpath -->
       <path id="library.classpath">
+         <path refid="apache.ant.classpath"/>
          <path refid="apache.log4j.classpath"/>
-         <path refid="qdox.classpath"/>
          <path refid="javassist.classpath"/>
+         <path refid="jboss.profiler.jvmti.classpath"/>
+         <path refid="jboss/common.core.classpath"/>
+         <path refid="jboss/common.logging.log4j.classpath"/>
+         <path refid="jboss/common.logging.jdk.classpath"/>
+         <path refid="jboss/common.logging.spi.classpath"/>
+         <!--<path refid="jboss.microcontainer.classpath"/>-->
+         <path refid="jboss.test14.classpath"/>
+          <path refid="junit.junit.classpath"/>
+         <path refid="oswego.concurrent.classpath"/>
+         <path refid="qdox.classpath"/>
          <path refid="trove.classpath"/>
          <path refid="xdoclet.xdoclet.classpath"/>
-         <path refid="apache.ant.classpath"/>
-         <path refid="oswego.concurrent.classpath"/>
-         <path refid="junit.junit.classpath"/>
-         <path refid="jboss.profiler.jvmti.classpath"/>
-         <path refid="jboss.microcontainer.classpath"/>
-         <pathelement path="../tools/lib/*.jar"/>
-      </path>
+       </path>
 
       <!-- Defines jrockit.home and jdk14.home -->
       <property file="local.properties"/>
@@ -106,11 +110,6 @@
 
       <!-- The combined dependent module classpath -->
       <path id="dependentmodule.classpath">
-      <path refid="jboss.common.core.classpath"/>
-      <path refid="jboss.common.logging.spi.classpath"/>
-      <path refid="jboss.common.logging.log4j.classpath"/>
-      <path refid="jboss.common.logging.jdk.classpath"/>
-         <path refid="jboss.test.classpath"/>
       </path>
 
       <!-- ===== -->
@@ -119,7 +118,6 @@
 
       <!-- Where source files live -->
       <property name="source.tests.java" value="${module.source}/test"/>
-      <property name="source15.java" value="${module.source}/jdk15"/>
       <property name="source.res" value="${module.source}/resources"/>
       <property name="source.stylesheets" value="../testsuite/src/stylesheets"/>
 
@@ -155,6 +153,7 @@
          <pathelement path="${classpath}"/>
          <pathelement path="${local.classpath}"/>
          <path refid="thirdparty.classpath"/>
+         <path refid="jboss.microcontainer.classpath"/>
          <pathelement path="${build.lib}/jboss-aop-jdk50.jar"/>
       </path>
 
@@ -171,7 +170,7 @@
       </path>
 
       <path id="jboss.aop.retro.classpath">
-         <path refid="jboss.aop.classpath"/>
+         <path refid="jboss.aop14.classpath"/>
          <path refid="jbossretrort.classpath"/>
       </path>
 
@@ -179,7 +178,7 @@
       <path id="test.classpath">
          <path refid="thirdparty.classpath"/>
          <path refid="jbossretrort.classpath"/>
-         <pathelement path="${build.lib}/jboss-aop.jar"/>
+         <path refid="jboss.aop14.classpath"/>
       </path>
 
       <!-- Packages to include when generating api documentation -->
@@ -218,7 +217,9 @@
          <include name="**/*.java"/>
          <exclude name="org/jboss/test/aop/memoryleaks/**/*.java"/>
       </javac>
-      
+   </target>
+   
+   <target name="retroweave" depends="compile-test-classes">
       <mkdir dir="${build.tests.retro}"/>
 
       <taskdef name="retro" classname="org.jboss.ant.tasks.retro.Retro" classpathref="jbossretro.classpath"/>
@@ -295,7 +296,7 @@
    <!-- ==================================================================================== -->
    <!-- BOOTCLASSPATH-TESTS (JDK 1.4)                                                        -->
    <!-- ==================================================================================== -->
-   <target name="bootclasspath-tests" depends="compile">
+   <target name="bootclasspath-tests" depends="retroweave">
       <delete dir="${build.bootclasspath}"/>
       <java fork="yes" classname="org.jboss.aop.hook.GenerateInstrumentedClassLoader" jvm="${java14}">
          <classpath>
@@ -321,7 +322,7 @@
    <!-- ==================================================================================== -->
    <!-- GENERATED ADVISOR BOOTCLASSPATH-TESTS (JDK 1.4)                                      -->
    <!-- ==================================================================================== -->
-   <target name="bootclasspath-genadvisor-tests" depends="compile-test-classes">
+   <target name="bootclasspath-genadvisor-tests" depends="retroweave">
       <delete dir="${build.bootclasspath}"/>
       <java fork="yes" classname="org.jboss.aop.hook.GenerateInstrumentedClassLoader" jvm="${java14}">
          <classpath>
@@ -365,20 +366,20 @@
       <property name="bootclasspath" refid="bootclasspath"/>
 
       <!-- Check for jboss-aop.xml override -->
-	   <condition property="jboss.aop.path" value="-Djboss.aop.path=${aop.xml}">
+	   <condition property="jboss.aop.path" value="${aop.xml}">
 	      <isset property="aop.xml"/>
 	   </condition>
 	   <condition property="jboss.aop.path" value="">
 	      <isset property="no.xml"/>
 	   </condition>
-	   <condition property="jboss.aop.path" value="-Djboss.aop.path=${source.res}/test/${test}/jboss-aop.xml">
+	   <condition property="jboss.aop.path" value="${source.res}/test/${test}/jboss-aop.xml">
 	      <not>
 	         <isset property="aop.xml"/>
 	      </not>
 	   </condition>
    	
       <!-- Get -Djboss.aop.class.path from passed in parameters -->
-      <condition property="jboss.aop.class.path" value="-Djboss.aop.class.path=${build.tests.classes}">
+      <condition property="jboss.aop.class.path" value="${build.tests.classes}">
          <isset property="use.annotations"/>
       </condition>
       <condition property="jboss.aop.class.path" value="">
@@ -400,8 +401,8 @@
       <mkdir dir="${build.reports}"/>
       <junit printsummary="yes" fork="yes" haltonfailure="no" jvm="${java14}">
          <jvmarg value="-Xbootclasspath/p:${bootclasspath}"/>
-         <jvmarg value="${jboss.aop.class.path}"/>
-         <jvmarg value="${jboss.aop.path}"/>
+         <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
+         <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
          <sysproperty key="jboss.aop.debug.classes" value="true"/>
       	<formatter type="plain" extension="-${caller}.txt"/>
@@ -430,7 +431,7 @@
    <!-- OPTIMIZED PRECOMPILED TESTS (JDK 1.4)                                                -->
    <!-- ==================================================================================== -->
 
-   <target name="precompiled-tests" depends="compile-test-classes">
+   <target name="precompiled-tests" depends="retroweave">
 
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
    	<antcall target="_base-tests" inheritRefs="true">
@@ -456,7 +457,7 @@
    <!-- NON OPTIMIZED PRECOMPILED TESTS (JDK 1.4)                                            -->
    <!-- ==================================================================================== -->
 
-   <target name="non-optimized-precompiled-tests" depends="compile-test-classes">
+   <target name="non-optimized-precompiled-tests" depends="retroweave">
 
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-tests" inheritRefs="true">
@@ -476,7 +477,7 @@
    <!-- JDK 1.4 GENERATED ADVISOR PRECOMPILED TESTS                                          -->
    <!-- ==================================================================================== -->
 
-   <target name="precompiled-genadvisor-tests" depends="compile-test-classes">
+   <target name="precompiled-genadvisor-tests" depends="retroweave">
 
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-tests" inheritRefs="true">
@@ -575,20 +576,20 @@
       </aopc>
 
       <!-- Get -Djboss.aop.path from passed in parameters -->
-      <condition property="jboss.aop.path" value="-Djboss.aop.path=${aop.xml}">
+      <condition property="jboss.aop.path" value="${aop.xml}">
          <isset property="aop.xml"/>
       </condition>
       <condition property="jboss.aop.path" value="">
          <isset property="no.xml"/>
       </condition>
-      <condition property="jboss.aop.path" value="-Djboss.aop.path=${source.res}/test/${test}/jboss-aop.xml">
+      <condition property="jboss.aop.path" value="${source.res}/test/${test}/jboss-aop.xml">
          <not>
             <isset property="aop.xml"/>
          </not>
       </condition>
 
       <!-- Get -Djboss.aop.class.path from passed in parameters -->
-      <condition property="jboss.aop.class.path" value="-Djboss.aop.class.path=${build.tests.retro}">
+      <condition property="jboss.aop.class.path" value="${build.tests.retro}">
          <isset property="use.annotations"/>
       </condition>
       <condition property="jboss.aop.class.path" value="">
@@ -601,8 +602,8 @@
       <mkdir dir="${build.reports}"/>
 
       <junit printsummary="yes" fork="yes" haltonfailure="no" jvm="${java14}">
-         <jvmarg value="${jboss.aop.path}"/>
-         <jvmarg value="${jboss.aop.class.path}"/>
+         <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
+         <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <formatter type="plain" extension="-${caller}.txt"/>
          <formatter type="xml" extension="-${caller}.xml"/>
          <classpath>
@@ -632,7 +633,7 @@
    <!-- NON-WOVEN TESTS                                                                      -->
    <!-- ==================================================================================== -->
 
-   <target name="not-woven-tests" depends="compile-test-classes">
+   <target name="not-woven-tests" depends="retroweave">
       <mkdir dir="${build.reports}"/>
 
       <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.retro.classpath"/>

@@ -298,6 +298,7 @@ public class AnnotationC extends MatchingTask
       // scan source directories and dest directory to build up
       // compile lists
       String[] list = compileSourcepath.list();
+      
       ArrayList compilingFiles = new ArrayList();
       for (int i = 0; i < list.length; i++)
       {
