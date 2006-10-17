@@ -214,21 +214,38 @@ public class PortableAnnotationElement
 
    public static boolean isAnyAnnotationPresent(CtClass clazz, String annotation) throws Exception
    {
-      if (clazz == CtClass.voidType) return false;
-      ClassFile cf = clazz.getClassFile2();
-      AnnotationsAttribute visible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
-      if (visible != null)
+      try
       {
-         if (visible.getAnnotation(annotation) != null) return true;
-      }
+         if (clazz == CtClass.voidType) return false;
+         
+         CtClass theClass = clazz;
+         while(theClass.isArray())
+         {
+            theClass = theClass.getComponentType();
+         }
+         
+         if (theClass.isPrimitive()) return false;
+         
+         ClassFile cf = theClass.getClassFile2();
+         AnnotationsAttribute visible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
+         if (visible != null)
+         {
+            if (visible.getAnnotation(annotation) != null) return true;
+         }
 
-      AnnotationsAttribute invisible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.invisibleTag);
-      if (invisible != null)
+         AnnotationsAttribute invisible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.invisibleTag);
+         if (invisible != null)
+         {
+            if (invisible.getAnnotation(annotation) != null) return true;
+         }
+
+         return false;
+      }
+      catch (RuntimeException e)
       {
-         if (invisible.getAnnotation(annotation) != null) return true;
+         String name = (clazz != null) ? clazz.getName() : null;
+         throw new RuntimeException("Error looking for " + annotation + " in " + clazz.getName(), e);
       }
-
-      return false;
    }
 
    public static boolean isAnyAnnotationPresent(Class clazz, String annotation) throws Exception

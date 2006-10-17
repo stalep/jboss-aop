@@ -25,8 +25,8 @@ package org.jboss.test.aop.instanceofannotated;
  *
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
- * @@org.jboss.test.aop.instanceofannotated.ClassAnnotation
  */
+@ClassAnnotation
 public class AnnotatedSuperClass
 {
    public int superClassMethod()

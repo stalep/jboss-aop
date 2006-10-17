@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
-@Target({ElementType.TYPE})@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.CONSTRUCTOR}) @Retention(RetentionPolicy.RUNTIME)
 public @interface Introduced
 {
 }

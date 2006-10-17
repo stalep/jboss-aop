@@ -25,8 +25,8 @@ package org.jboss.test.aop.instanceofannotated;
  *
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
- * @@org.jboss.test.aop.instanceofannotated.Annotation
  */
+@Annotation
 public class IntroducedPOJO
 {
    public Type field;
