@@ -3,9 +3,9 @@
 <!-- AOP -->
 <property name="jboss.aop.root" value="${project.root}/aop/output"/>
 <property name="jboss.aop.lib" value="${jboss.aop.root}/lib"/>
-<path id="jboss.aop.classpath">
+<path id="jboss.aop14.classpath">
   <pathelement path="${jboss.aop.lib}/jboss-aop.jar"/>
 </path>
-<path id="jboss.aop50.classpath">
+<path id="jboss.aop.classpath">
   <pathelement path="${jboss.aop.lib}/jboss-aop-jdk50.jar"/>
 </path>
