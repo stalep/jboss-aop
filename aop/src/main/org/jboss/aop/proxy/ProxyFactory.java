@@ -120,7 +120,7 @@ public class ProxyFactory
       Class clazz = TransformerCommon.toClass(proxy, loader);
       Map methodmap = ClassProxyFactory.getMethodMap(clazz);
       Field field = clazz.getDeclaredField("methodMap");
-      setAccessible(field);
+      SecurityActions.setAccessible(field);
       field.set(null, methodmap);
       return clazz;
    }
@@ -230,51 +230,4 @@ public class ProxyFactory
       return proxy;
    }
    
-   interface SetAccessibleAction
-   {
-      void setAccessible(AccessibleObject accessibleObject);
-      
-      SetAccessibleAction PRIVILEGED = new SetAccessibleAction()
-      {
-         public void setAccessible(final AccessibleObject accessibleObject)
-         {
-            try
-            {
-               AccessController.doPrivileged(new PrivilegedExceptionAction()
-               {
-                  public Object run() throws Exception
-                  {
-                     accessibleObject.setAccessible(true);
-                     return null;
-                  }
-               });
-            }
-            catch (PrivilegedActionException e)
-            {
-               throw new RuntimeException("Error setting " + accessibleObject + " as accessible ", e.getException());
-            }
-         }
-      };
-
-      SetAccessibleAction NON_PRIVILEGED = new SetAccessibleAction()
-      {
-         public void setAccessible(AccessibleObject accessibleObject)
-         {
-            accessibleObject.setAccessible(true);
-         }
-      };
-   }
-
-   static void setAccessible(AccessibleObject accessibleObject)
-   {
-      if (System.getSecurityManager() == null)
-      {
-         SetAccessibleAction.NON_PRIVILEGED.setAccessible(accessibleObject);
-      }
-      else
-      {
-         SetAccessibleAction.PRIVILEGED.setAccessible(accessibleObject);
-      }
-   }
-
 }

@@ -310,7 +310,7 @@ public class ClassProxyFactory
       Class proxyClass = TransformerCommon.toClass(proxy);
       Map methodmap = ClassProxyFactory.getMethodMap(proxyClass);
       Field field = proxyClass.getDeclaredField("methodMap");
-      field.setAccessible(true);
+      SecurityActions.setAccessible(field);
       field.set(null, methodmap);
       return proxyClass;
    }
