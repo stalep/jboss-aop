@@ -35,11 +35,7 @@ import org.jboss.aop.util.JavassistMethodHashing;
 import org.jboss.util.collection.WeakValueHashMap;
 import org.jboss.util.id.GUID;
 
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.util.HashSet;
 import java.util.Map;
 
