@@ -391,6 +391,7 @@
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
          <sysproperty key="jboss.aop.debug.classes" value="true"/>
+         <sysproperty key="jboss-junit-configuration" value="${caller}"/>
       	<formatter type="plain" extension="-${caller}.txt"/>
       	<classpath refid="test.classpath"/>
          <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-${caller}.xml"/>
@@ -603,6 +604,7 @@
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
+         <sysproperty key="jboss-junit-configuration" value="${caller}"/>
          <formatter type="plain" extension="-${caller}-jdk50.txt"/>
          <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-${caller}-jdk50.xml"/>
          <classpath>
@@ -653,6 +655,7 @@
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
+         <sysproperty key="jboss-junit-configuration" value="jdk50"/>
          <formatter type="plain" extension="-jdk50.txt"/>
          <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-jdk50.xml"/>
 
@@ -1168,6 +1171,7 @@
       <mkdir dir="${build.reports}"/>
       <junit printsummary="yes" fork="yes" haltonfailure="no" jvm="${jrockit.home}/bin/java">
          <jvmarg value="-Xmanagement:class=org.jboss.aop.hook.JRockitClassPreProcessor"/>
+         <sysproperty key="jboss-junit-configuration" value="${caller}"/>
          <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
@@ -1247,6 +1251,7 @@
          <sysproperty key="java.system.class.loader" value="org.jboss.aop.standalone.SystemClassLoader"/>
          <sysproperty key="jboss.aop.path" value="${source.res}/test/basic/jboss-aop.xml"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
+         <sysproperty key="jboss-junit-configuration" value="${caller}"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
