@@ -77,9 +77,9 @@
 
       &libraries;
       &modules;
-      <!-- The combined library classpath -->
+      <!-- The combined library classpath - we don't want everything included here since some of these tests use the -Xbootclasspath/p: option-->
       <path id="library.classpath">
-         <path refid="apache.ant.classpath"/>
+         <!--path refid="apache.ant.classpath"/-->
          <path refid="apache.log4j.classpath"/>
          <path refid="javassist.classpath"/>
          <path refid="jboss.profiler.jvmti.classpath"/>
@@ -88,8 +88,8 @@
          <path refid="jboss/common.logging.jdk.classpath"/>
          <path refid="jboss/common.logging.spi.classpath"/>
          <!--<path refid="jboss.microcontainer.classpath"/>-->
-         <path refid="jboss.test14.classpath"/>
-          <path refid="junit.junit.classpath"/>
+         <!--path refid="jboss.test14.classpath"/-->
+          <!--path refid="junit.junit.classpath"/-->
          <path refid="oswego.concurrent.classpath"/>
          <path refid="qdox.classpath"/>
          <path refid="trove.classpath"/>
@@ -101,8 +101,10 @@
 
       <available file="${jrockit.home}/jre/lib/managementapi.jar" property="JROCKIT_AVAILABLE"/>
 
-      <fail unless="jdk14.home">Need to set jdk14.home to a jdk 1.4 home in local.properties</fail>
-      <property name="java14" value="${jdk14.home}/bin/java"/>
+      <fail unless="jdk14.executable">Need to set jdk14.executable to a jdk 1.4 executable in local.properties. For example 
+      jdk14.executable=C:/Java/jdk14/bin/java.exe
+      </fail>
+      <property name="java14" value="${jdk14.executable}"/>
 
       <!-- ======= -->
       <!-- Modules -->
@@ -119,11 +121,9 @@
       <!-- Where source files live -->
       <property name="source.tests.java" value="${module.source}/test"/>
       <property name="source.res" value="${module.source}/resources"/>
-      <property name="source.stylesheets" value="../testsuite/src/stylesheets"/>
 
       <!-- Where build generated files will go -->
       <property name="build.reports" value="${module.output}/reports"/>
-      <property name="build.stylesheets" value="${module.output}/stylesheets"/>
       <property name="build.tests.classes" value="${module.output}/tests.classes"/>
       <property name="build.tests.retro" value="${module.output}/tests.retro"/>
       <property name="build.lib" value="${module.output}/lib"/>
@@ -153,8 +153,10 @@
          <pathelement path="${classpath}"/>
          <pathelement path="${local.classpath}"/>
          <path refid="thirdparty.classpath"/>
+         <path refid="jboss.test14.classpath"/>
          <path refid="jboss.microcontainer.classpath"/>
          <pathelement path="${build.lib}/jboss-aop-jdk50.jar"/>
+         <path refid="junit.junit.classpath"/>
       </path>
 
       <path id="jbossretro.classpath">
@@ -163,7 +165,7 @@
          <path refid="jboss.jbossretro.classpath"/>
          <path refid="jboss/backport.concurrent.classpath"/>
       </path>
-      
+
       <path id="jbossretrort.classpath">
          <path refid="jboss/backport.concurrent.classpath"/>
          <pathelement path="${jboss.jbossretro.lib}/jbossretro-rt.jar"/>
@@ -173,6 +175,13 @@
          <path refid="jboss.aop14.classpath"/>
          <path refid="jbossretrort.classpath"/>
       </path>
+
+     <path id="aopc.classpath">
+         <path refid="thirdparty.classpath"/>
+          <path refid="junit.junit.classpath"/>
+         <path refid="jbossretrort.classpath"/>
+         <path refid="jboss.test14.classpath"/>
+     </path>
 
       <!-- run against jdk 14 jar -->
       <path id="test.classpath">
@@ -218,7 +227,7 @@
          <exclude name="org/jboss/test/aop/memoryleaks/**/*.java"/>
       </javac>
    </target>
-   
+
    <target name="retroweave" depends="compile-test-classes">
       <mkdir dir="${build.tests.retro}"/>
 
@@ -230,7 +239,7 @@
             <pathelement path="${build.tests.classes}"/>
          </classpath>
          <src path="${build.tests.classes}"/>
-      </retro>      
+      </retro>
    </target>
 
 
@@ -308,7 +317,7 @@
    	<!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-tests" inheritRefs="true">
          <param name="caller" value="bootclasspath-tests"/>
-         <param name="test-target" value="_run-bootclasspath-test"/>         
+         <param name="test-target" value="_run-bootclasspath-test"/>
       </antcall>
 
       <!-- Tests only applicable for this weaving mode -->
@@ -362,6 +371,10 @@
       <path id="bootclasspath">
          <pathelement location="${build.bootclasspath}"/>
          <path refid="test.classpath"/>
+         <!--
+         <path refid="apache.ant.classpath"/>
+         <pathelement location="${apache.ant.lib}/ant-junit.jar"/>
+         <pathelement location="${apache.ant.lib}/ant-launcher.jar"/>-->
       </path>
       <property name="bootclasspath" refid="bootclasspath"/>
 
@@ -377,7 +390,7 @@
 	         <isset property="aop.xml"/>
 	      </not>
 	   </condition>
-   	
+
       <!-- Get -Djboss.aop.class.path from passed in parameters -->
       <condition property="jboss.aop.class.path" value="${build.tests.classes}">
          <isset property="use.annotations"/>
@@ -401,14 +414,17 @@
       <mkdir dir="${build.reports}"/>
       <junit printsummary="yes" fork="yes" haltonfailure="no" jvm="${java14}">
          <jvmarg value="-Xbootclasspath/p:${bootclasspath}"/>
+         <sysproperty key="jboss-junit-configuration" value="${caller}-jdk14"/>
          <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
          <sysproperty key="jboss.aop.debug.classes" value="true"/>
-      	<formatter type="plain" extension="-${caller}.txt"/>
-         <formatter type="xml" extension="-${caller}.xml"/>
+      	<formatter type="plain" extension="-${caller}-jdk14.txt"/>
+         <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter"
+                    usefile="true" extension="-${caller}-jdk14.xml"/>
          <classpath>
             <pathelement location="${build.tests.retro}"/>
+            <path refid="jboss.test14.classpath"/>
          </classpath>
          <batchtest todir="${build.reports}"
             haltonerror="false"
@@ -524,7 +540,7 @@
       <path id="aop.task.classpath">
          <path refid="library.classpath"/>
          <path refid="dependentmodule.classpath"/>
-         <path refid="jboss.aop.retro.classpath"/>
+         <path refid="aopc.classpath"/>
       </path>
 
 
@@ -602,12 +618,15 @@
       <mkdir dir="${build.reports}"/>
 
       <junit printsummary="yes" fork="yes" haltonfailure="no" jvm="${java14}">
+         <sysproperty key="jboss-junit-configuration" value="${caller}-jdk14"/>
          <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
-         <formatter type="plain" extension="-${caller}.txt"/>
-         <formatter type="xml" extension="-${caller}.xml"/>
+         <formatter type="plain" extension="-${caller}-jdk14.txt"/>
+         <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter"
+                    usefile="true" extension="-${caller}-jdk14.xml"/>
          <classpath>
             <path refid="test.classpath"/>
+            <path refid="aopc.classpath"/>
             <pathelement location="${build.tests.retro}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -642,7 +661,7 @@
          <path refid="dependentmodule.classpath"/>
          <path refid="jboss.aop.retro.classpath"/>
       </path>
-      
+
       <annotationc compilerclasspathref="aop.task.classpath" bytecode="true">
          <classpath refid="aop.task.classpath"/>
          <classpath path="${build.tests.retro}"/>
@@ -651,15 +670,18 @@
       </annotationc>
 
       <echo>org/jboss/test/aop/methodhashing/MethodHashingTestCase will fail until the microcontainer has been updated in the repository</echo>
-               	
+
       <junit printsummary="yes" fork="no" haltonfailure="no" jvm="${java14}">
+         <sysproperty key="jboss-junit-configuration" value="jdk14"/>
          <classpath>
             <path refid="test.classpath"/>
+            <path refid="aopc.classpath"/>
             <pathelement location="${build.tests.retro}"/>
             <pathelement location="docs"/>
          </classpath>
-         <formatter type="plain"/>
-         <formatter type="xml"/>
+         <formatter type="plain" extension="-jdk14.xml"/>
+         <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter"
+                    usefile="true" extension="-jdk14.xml"/>
 
 		   <batchtest todir="${build.reports}"
 		      haltonerror="false"
@@ -671,23 +693,27 @@
       		   <include name="org/jboss/test/aop/annotationc/AnnotationTester.class"/>
 		      </fileset>
 		   </batchtest>
-      	
+
       </junit>
    </target>
 
    <target name="system-classloader-test" depends="compile-test-classes">
       <!-- Even though this is deprecated we should still make sure it works from time to time -->
       <junit printsummary="yes" fork="no" haltonfailure="false" jvm="${java14}">
+         <sysproperty key="jboss-junit-configuration" value="-system-classloader-jdk14.xml"/>
          <sysproperty key="java.system.class.loader" value="org.jboss.aop.standalone.SystemClassLoader"/>
          <sysproperty key="jboss.aop.path" value="${source.res}/test/basic/jboss-aop.xml"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <classpath>
             <path refid="test.classpath"/>
+            <path refid="jboss.test14.classpath"/>
             <pathelement location="${build.tests.retro}"/>
             <pathelement location="docs"/>
          </classpath>
-         <formatter type="plain"/>
-         <test fork="yes" name="org.jboss.test.aop.basic.AOPTester"/>
+         <formatter type="plain" extension="-systemclassloader-jdk14.txt"/>
+         <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter"
+                    usefile="true" extension="-systemclassloader-jdk14.xml"/>
+         <test fork="yes" name="org.jboss.test.aop.basic.AOPTester"  todir="${build.reports}"/>
       </junit>
    </target>
 
@@ -721,28 +747,4 @@
          <test fork="yes" name="org.jboss.test.aop.memoryleaks.MemoryLeakTester"/>
       </junit>
    </target>
-
-   <target name="compile-stylesheets" depends="configure">
-      <mkdir dir="${build.stylesheets}"/>
-      <copy todir="${build.stylesheets}" filtering="yes">
-         <fileset dir="${source.stylesheets}">
-            <include name="**/*"/>
-         </fileset>
-      </copy>
-   </target>
-
-   <target name="tests-report-html" depends="compile-stylesheets">
-      <mkdir dir="${build.reports}/html"/>
-
-      <junitreport todir="${build.reports}">
-         <fileset dir="${build.reports}">
-            <include name="TEST-*.xml"/>
-         </fileset>
-         <report format="frames"
-            todir="${build.reports}/html"
-            styledir="${build.stylesheets}"
-            />
-      </junitreport>
-   </target>
-
 </project>
