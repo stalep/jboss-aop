@@ -116,10 +116,10 @@
       <property name="source.tests.java" value="${module.source}/test"/>
       <property name="source.etc" value="${module.source}/etc"/>
       <property name="source.res" value="${module.source}/resources"/>
-      <property name="source.stylesheets" value="../testsuite/src/stylesheets"/>
+      <property name="source.stylesheets" value="src/stylesheets"/>
 
       <!-- Where build generated files will go -->
-      <property name="build.reports" value="${module.output}/reports"/>
+      <property name="build.reports" value="output/reports"/>
       <property name="build.stylesheets" value="${module.output}/stylesheets"/>
       <property name="build.tests.classes" value="${module.output}/tests.classes"/>
       <property name="build.lib" value="${module.output}/lib"/>
@@ -214,7 +214,7 @@
          <exclude name="**/methodhashing/*"/>
       </javac>
    </target>
-   
+
    <!-- ================================================================== -->
    <!-- Cleaning                                                           -->
    <!-- ================================================================== -->
@@ -275,15 +275,15 @@
       <delete dir="${build.tests.classes}"/>
       <antcall target="non-optimized-precompiled-tests" inheritRefs="true"/>
    </target>
-   
+
    <target name="all-tests" depends="tests">
-		<!-- Should move the remaining tests into something similar to _base-tests.xml and run them from the main targets once JBAOP-268 has been done -->      
+		<!-- Should move the remaining tests into something similar to _base-tests.xml and run them from the main targets once JBAOP-268 has been done -->
       <delete dir="${build.tests.classes}/org/jboss/test"/>
       <antcall target="jdk15-loadtime-tests" inheritRefs="true"/>
 
       <delete dir="${build.tests.classes}/org/jboss/test"/>
       <antcall target="jdk15-precompiled-tests" inheritRefs="true"/>
-      
+
       <delete dir="${build.tests.classes}"/>
       <antcall target="jrockit-tests" inheritRefs="true"/>
       <antcall target="jrockit-genadvisor-tests" inheritRefs="true"/>
@@ -363,7 +363,7 @@
 	         <isset property="aop.xml"/>
 	      </not>
 	   </condition>
-   	
+
       <!-- Get -Djboss.aop.class.path from passed in parameters -->
       <condition property="jboss.aop.class.path" value="${build.tests.classes}">
          <isset property="use.annotations"/>
@@ -648,7 +648,7 @@
       </annotationc>
 
       <echo>org/jboss/test/aop/methodhashing/MethodHashingTestCase will fail until the microcontainer has been updated in the repository</echo>
-               	
+
       <junit printsummary="yes" fork="no" haltonfailure="no" >
          <classpath>
             <path refid="javac.classpath"/>
@@ -670,7 +670,7 @@
       		   <include name="org/jboss/test/aop/methodoverride/MethodOverrideTestCase.class"/>
 		      </fileset>
 		   </batchtest>
-      	
+
       </junit>
    </target>
 
@@ -1147,7 +1147,7 @@
 	         <isset property="aop.xml"/>
 	      </not>
 	   </condition>
-   	
+
       <!-- Get -Djboss.aop.class.path from passed in parameters -->
       <condition property="jboss.aop.class.path" value="${build.tests.classes}">
          <isset property="use.annotations"/>
@@ -1251,7 +1251,7 @@
          <sysproperty key="java.system.class.loader" value="org.jboss.aop.standalone.SystemClassLoader"/>
          <sysproperty key="jboss.aop.path" value="${source.res}/test/basic/jboss-aop.xml"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
-         <sysproperty key="jboss-junit-configuration" value="${caller}"/>
+         <sysproperty key="jboss-junit-configuration" value="-system-classloader-jdk50.xml"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
