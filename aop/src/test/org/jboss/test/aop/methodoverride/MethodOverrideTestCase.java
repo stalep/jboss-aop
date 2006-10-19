@@ -73,5 +73,40 @@ public class MethodOverrideTestCase extends AOPTestWithSetup
       }
      
    }
+   
+   public void testGenericMethod()
+   {
+      try {
+         SuperPOJO superPojo = (SuperPOJO) ClassProxyFactory.newInstance(SubPOJO.class);
+//         java.util.AbstractList aList = new java.util.ArrayList();
+//         superPojo.foo(aList);
+//         SubPOJO subPojo = (SubPOJO) ClassProxyFactory.newInstance(SubPOJO.class);
+//         java.util.ArrayList aList = new java.util.ArrayList();
+//         subPojo.foo(aList);
+         assertTrue("ClassProxy failed to instrument generic class", true);
+      }
+      catch(Exception e)
+      {
+         System.out.println("ERROR: "+e.getMessage());
+         e.printStackTrace();
+         assertTrue("ClassProxy failed to instrument generic class", false);
+         
+      }
+   }
+   
+   public void testMethodOverride14()
+   {
+      try {
+         ClassProxyFactory.newInstance(SubPOJOJDK14.class);
+         assertTrue("ClassProxy failed to instrument jdk14 class", true);
+         }
+         catch(Exception e)
+         {
+            System.out.println("ERROR: "+e.getMessage());
+            e.printStackTrace();
+            assertTrue("ClassProxy failed to instrument jdk14 class", false);
+            
+         }
+   }
 
 }

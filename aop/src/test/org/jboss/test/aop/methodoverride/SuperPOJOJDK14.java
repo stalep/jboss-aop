@@ -26,20 +26,17 @@ package org.jboss.test.aop.methodoverride;
  * @author <a href="mailto:stalep@conduct.no">Stale W. Pedersen</a>
  * @version $Revision
  */
-public class POJO implements POJI
+public class SuperPOJOJDK14
 {
-   private String foo;
+   private Object foo;
    
-   public POJO() { }
-
-   public POJO(String f)
+   public void setFoo(Object arg)
    {
-      foo = f;
+      foo = arg;
    }
- 
-   public String getFoo()
+   
+   public Object getFoo()
    {
       return foo;
    }
-
 }
