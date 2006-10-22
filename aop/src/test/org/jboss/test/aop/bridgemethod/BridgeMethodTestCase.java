@@ -29,11 +29,13 @@ import org.jboss.aop.proxy.ClassProxyFactory;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
+ * Test that we handle bridgemethods created by the java15 compiler correctly
+ * regarding reflection.
  *
  * @author <a href="mailto:stalep@conduct.no">Stale W. Pedersen</a>
  * @version $Revision
  */
-public class MethodOverrideTestCase extends AOPTestWithSetup
+public class BridgeMethodTestCase extends AOPTestWithSetup
 {
    
    public static void main(String[] args)
@@ -43,12 +45,12 @@ public class MethodOverrideTestCase extends AOPTestWithSetup
 
    public static Test suite()
    {
-      TestSuite suite = new TestSuite("MethodOverrideTestCase");
-      suite.addTestSuite(MethodOverrideTestCase.class);
+      TestSuite suite = new TestSuite("BridgeMethodTestCase");
+      suite.addTestSuite(BridgeMethodTestCase.class);
       return suite;
    }
 
-   public MethodOverrideTestCase(String name)
+   public BridgeMethodTestCase(String name)
    {
       super(name);
    }
@@ -61,8 +63,8 @@ public class MethodOverrideTestCase extends AOPTestWithSetup
    public void testMethod()
    {
       try {
-      ClassProxyFactory.newInstance(POJO.class);
-      assertTrue("ClassProxy failed to instrument class", true);
+         ClassProxyFactory.newInstance(POJO.class);
+         assertTrue("ClassProxy failed to instrument class", true);
       }
       catch(Exception e)
       {
@@ -92,16 +94,15 @@ public class MethodOverrideTestCase extends AOPTestWithSetup
    public void testMethodOverride()
    {
       try {
-         ClassProxyFactory.newInstance(SubPOJOJDK2.class);
+         ClassProxyFactory.newInstance(SubPOJO2.class);
          assertTrue("ClassProxy failed to instrument overrided class", true);
-         }
-         catch(Exception e)
-         {
-            System.out.println("ERROR: "+e.getMessage());
-            e.printStackTrace();
-            assertTrue("ClassProxy failed to instrument overrided class", false);
-            
-         }
+      }
+      catch(Exception e)
+      {
+         System.out.println("ERROR: "+e.getMessage());
+         e.printStackTrace();
+         assertTrue("ClassProxy failed to instrument overrided class", false); 
+      }
    }
 
 }

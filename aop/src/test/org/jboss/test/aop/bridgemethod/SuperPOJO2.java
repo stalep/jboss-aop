@@ -26,7 +26,7 @@ package org.jboss.test.aop.bridgemethod;
  * @author <a href="mailto:stalep@conduct.no">Stale W. Pedersen</a>
  * @version $Revision
  */
-public class SuperPOJOJDK2
+public class SuperPOJO2
 {
    private Object foo;
    

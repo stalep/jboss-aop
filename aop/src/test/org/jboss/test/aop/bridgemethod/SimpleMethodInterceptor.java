@@ -21,24 +21,31 @@
   */
 package org.jboss.test.aop.bridgemethod;
 
+import org.jboss.aop.advice.Interceptor;
+import org.jboss.aop.joinpoint.Invocation;
+import org.jboss.aop.joinpoint.MethodInvocation;
+
 /**
  *
  * @author <a href="mailto:stalep@conduct.no">Stale W. Pedersen</a>
  * @version $Revision
  */
-public class SubPOJOJDK2 extends SuperPOJOJDK2
+public class SimpleMethodInterceptor implements Interceptor
 {
-
-   private String bar;
+   public static boolean method;
    
-   public void setFoo(String s)
+   public String getName()
    {
-      bar = s;
+      return "SimpleMethodInterceptor";
    }
-   
-   public String getFoo()
+
+   public Object invoke(Invocation invocation) throws Throwable
    {
-      return bar;
+      if (invocation instanceof MethodInvocation)
+      {
+         method = true;
+      }  
+      return invocation.invokeNext();
    }
 
 }
