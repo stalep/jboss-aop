@@ -19,27 +19,25 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.test.aop.methodoverride;
+package org.jboss.test.aop.bridgemethod;
 
 /**
  *
  * @author <a href="mailto:stalep@conduct.no">Stale W. Pedersen</a>
  * @version $Revision
  */
-public class POJO implements POJI
+public class SubPOJO extends SuperPOJO<java.util.ArrayList>
 {
-   private String foo;
+   private java.util.ArrayList bar;
    
-   public POJO() { }
-
-   public POJO(String f)
+   public void setFoo(java.util.ArrayList a)
    {
-      foo = f;
+      bar = a;
    }
- 
-   public String getFoo()
+   
+   public java.util.ArrayList getFoo()
    {
-      return foo;
+      return bar;
    }
 
 }

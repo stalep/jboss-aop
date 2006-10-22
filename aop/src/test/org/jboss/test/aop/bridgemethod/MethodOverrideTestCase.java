@@ -19,7 +19,7 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.test.aop.methodoverride;
+package org.jboss.test.aop.bridgemethod;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -78,11 +78,6 @@ public class MethodOverrideTestCase extends AOPTestWithSetup
    {
       try {
          SuperPOJO superPojo = (SuperPOJO) ClassProxyFactory.newInstance(SubPOJO.class);
-//         java.util.AbstractList aList = new java.util.ArrayList();
-//         superPojo.foo(aList);
-//         SubPOJO subPojo = (SubPOJO) ClassProxyFactory.newInstance(SubPOJO.class);
-//         java.util.ArrayList aList = new java.util.ArrayList();
-//         subPojo.foo(aList);
          assertTrue("ClassProxy failed to instrument generic class", true);
       }
       catch(Exception e)
@@ -94,17 +89,17 @@ public class MethodOverrideTestCase extends AOPTestWithSetup
       }
    }
    
-   public void testMethodOverride14()
+   public void testMethodOverride()
    {
       try {
-         ClassProxyFactory.newInstance(SubPOJOJDK14.class);
-         assertTrue("ClassProxy failed to instrument jdk14 class", true);
+         ClassProxyFactory.newInstance(SubPOJOJDK2.class);
+         assertTrue("ClassProxy failed to instrument overrided class", true);
          }
          catch(Exception e)
          {
             System.out.println("ERROR: "+e.getMessage());
             e.printStackTrace();
-            assertTrue("ClassProxy failed to instrument jdk14 class", false);
+            assertTrue("ClassProxy failed to instrument overrided class", false);
             
          }
    }

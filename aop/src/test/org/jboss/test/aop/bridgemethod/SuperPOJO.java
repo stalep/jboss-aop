@@ -1,4 +1,4 @@
-package org.jboss.test.aop.methodoverride;
+package org.jboss.test.aop.bridgemethod;
 
 /**
  *

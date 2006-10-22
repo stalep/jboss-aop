@@ -19,24 +19,15 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.test.aop.methodoverride;
+package org.jboss.test.aop.bridgemethod;
 
 /**
  *
  * @author <a href="mailto:stalep@conduct.no">Stale W. Pedersen</a>
  * @version $Revision
  */
-public class SuperPOJOJDK14
+public interface POJI
 {
-   private Object foo;
-   
-   public void setFoo(Object arg)
-   {
-      foo = arg;
-   }
-   
-   public Object getFoo()
-   {
-      return foo;
-   }
+   public Object getFoo();
+
 }
