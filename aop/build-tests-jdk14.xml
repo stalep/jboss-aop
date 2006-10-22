@@ -225,6 +225,7 @@
          <classpath refid="javac.classpath"/>
          <include name="**/*.java"/>
          <exclude name="org/jboss/test/aop/memoryleaks/**/*.java"/>
+         <exclude name="org/jboss/test/aop/bridgemethod/*.java"/>
       </javac>
    </target>
 

@@ -650,6 +650,7 @@
       <echo>org/jboss/test/aop/methodhashing/MethodHashingTestCase will fail until the microcontainer has been updated in the repository</echo>
 
       <junit printsummary="yes" fork="no" haltonfailure="no" >
+         <sysproperty key="jboss.aop.debug.classes" value="false"/>
          <classpath>
             <path refid="javac.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -667,7 +668,7 @@
 		         <include name="org/jboss/test/aop/proxy/ProxyTestCase.class"/>
       		   <include name="org/jboss/test/aop/methodhashing/MethodHashingTestCase.class"/>
       		   <include name="org/jboss/test/aop/annotationc/AnnotationTester.class"/>
-      		   <include name="org/jboss/test/aop/methodoverride/MethodOverrideTestCase.class"/>
+      		   <include name="org/jboss/test/aop/bridgemethod/notwoven/BridgeMethodTestCase.class"/>
 		      </fileset>
 		   </batchtest>
 

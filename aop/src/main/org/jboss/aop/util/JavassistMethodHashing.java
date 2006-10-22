@@ -24,6 +24,7 @@ package org.jboss.aop.util;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtMethod;
+import javassist.Modifier;
 import javassist.NotFoundException;
 
 
@@ -33,7 +34,9 @@ import java.io.IOException;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Create a unique hash for method.  This is the same as
@@ -144,39 +147,53 @@ public class JavassistMethodHashing
       }
    }
    
-   private static void addDeclaredMethods(HashMap advised, CtClass superclass) throws Exception
+   private static void addDeclaredMethods(HashMap advised, List ignoredHash, CtClass superclass) throws Exception
    {
       CtMethod[] declaredMethods = superclass.getDeclaredMethods();
       for (int i = 0; i < declaredMethods.length; i++)
       {
          if (superclass.isInterface() || Advisable.isAdvisable(declaredMethods[i]))
          {
+            //if a method is marked as a "volatile/bridge" method, we need to
+            //ignore it and check that other implementations of that method
+            // (in superclasses) are not added either.
+            if(!Modifier.isVolatile(declaredMethods[i].getModifiers()))
+            {
             long hash = methodHash(declaredMethods[i]);
-            advised.put(new Long(hash), declaredMethods[i]);
+            if(!ignoredHash.contains(new Long(hash)))
+               advised.put(new Long(hash), declaredMethods[i]);
+            }
+            else
+            {
+               long hash = methodHash(declaredMethods[i]);
+               ignoredHash.add(new Long(hash));
+            }
          }
       }
    }
-   private static void populateMethodTables(HashMap advised, CtClass superclass)
+   private static void populateMethodTables(HashMap advised, List ignoredHash, CtClass superclass)
       throws Exception
    {
       if (superclass == null) return;
       if (superclass.getName().equals("java.lang.Object")) return;
 
-      populateMethodTables(advised, superclass.getSuperclass());
-      addDeclaredMethods(advised, superclass);
+      addDeclaredMethods(advised, ignoredHash, superclass);
+      populateMethodTables(advised, ignoredHash, superclass.getSuperclass());
    }
 
    public static HashMap getMethodMap(CtClass clazz) throws Exception
    {
       HashMap map = new HashMap();
-      populateMethodTables(map, clazz);
+      List ignoredHash = new ArrayList();
+      populateMethodTables(map, ignoredHash, clazz);
       return map;
    }
 
    public static HashMap getDeclaredMethodMap(CtClass clazz) throws Exception
    {
       HashMap map = new HashMap();
-      addDeclaredMethods(map, clazz);
+      List ignoredHash = new ArrayList();
+      addDeclaredMethods(map, ignoredHash, clazz);
       return map;
    }
 

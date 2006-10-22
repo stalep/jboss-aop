@@ -24,10 +24,13 @@ package org.jboss.aop.proxy;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassAdvisor;
@@ -140,13 +143,12 @@ public class ClassProxyFactory
 
       CtClass template = pool.get("org.jboss.aop.proxy.ClassProxyTemplate");
       CtClass superclass = pool.get(clazz.getName());
-
+      
       CtField mixinField = template.getField("mixins");
       CtField instanceAdvisor = template.getField("instanceAdvisor");
-
-
+      
       CtClass proxy = TransformerCommon.makeClass(pool, classname, superclass);
-
+      
       mixinField = new CtField(mixinField.getType(), "mixins", proxy);
       mixinField.setModifiers(Modifier.PRIVATE);
       proxy.addField(mixinField);
@@ -308,37 +310,51 @@ public class ClassProxyFactory
    {
       CtClass proxy = createProxyCtClass(mixins, clazz);
       Class proxyClass = TransformerCommon.toClass(proxy);
-      Map methodmap = ClassProxyFactory.getMethodMap(proxyClass);
+      Map methodmap = ClassProxyFactory.getMethodMap(proxyClass); 
       Field field = proxyClass.getDeclaredField("methodMap");
       SecurityActions.setAccessible(field);
       field.set(null, methodmap);
       return proxyClass;
    }
 
-   private static void populateMethodTables(HashMap advised, Class superclass)
+   private static void populateMethodTables(HashMap advised, List ignoredHash, Class superclass)
    throws Exception
    {
       if (superclass == null) return;
       if (superclass.getName().equals("java.lang.Object")) return;
 
-      populateMethodTables(advised, superclass.getSuperclass());
-
       Method[] declaredMethods = superclass.getDeclaredMethods();
       for (int i = 0; i < declaredMethods.length; i++)
       {
-         if (ClassAdvisor.isAdvisable(declaredMethods[i]))
-         {
-            long hash = org.jboss.aop.util.MethodHashing.methodHash(declaredMethods[i]);
-            advised.put(new Long(hash), new MethodPersistentReference(declaredMethods[i], PersistentReference.REFERENCE_SOFT));
+         if (ClassAdvisor.isAdvisable(declaredMethods[i])) 
+         {   
+            //if a method is marked as a "volatile/bridge" method, we need to
+            //ignore it and check that other implementations of that method
+            // (in superclasses) are not added either.
+            if(!java.lang.reflect.Modifier.isVolatile( declaredMethods[i].getModifiers()))
+            {
+               long hash = org.jboss.aop.util.MethodHashing.methodHash(declaredMethods[i]);
+               if(!ignoredHash.contains(new Long(hash)))
+                  advised.put(new Long(hash), new MethodPersistentReference(declaredMethods[i], PersistentReference.REFERENCE_SOFT));
+            }
+            else
+            {
+               long hash = org.jboss.aop.util.MethodHashing.methodHash(declaredMethods[i]);
+               ignoredHash.add(new Long(hash));
+            }
          }
       }
+      
+      populateMethodTables(advised, ignoredHash, superclass.getSuperclass());
+
    }
 
    public static HashMap methodMap(Class clazz)
    throws Exception
    {
       HashMap methods = new HashMap();
-      populateMethodTables(methods, clazz);
+      List ignoredHash = new ArrayList();
+      populateMethodTables(methods, ignoredHash, clazz);
       return methods;
    }
 
