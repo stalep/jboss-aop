@@ -45,7 +45,7 @@
       </antcall>
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="reflection"/>
-      </antcall>      
+      </antcall>
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="regression"/>
       </antcall>
@@ -70,9 +70,6 @@
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="field"/>
       </antcall>
-      <antcall target="${test-target}" inheritRefs="true">
-         <param name="test" value="bridgemethod"/>
-      </antcall>
 
       <!-- Tests with special requirements for parameters -->
       <antcall target="${test-target}" inheritRefs="true">
@@ -85,9 +82,9 @@
          <param name="aop.xml" value="${source.res}/test/introduction/introduction-aop.xml"/>
       </antcall>
    </target>
-   
+
    <target name="help">
       <echo message="The project fragment which executes the main tests"/>
    </target>
-   
+
 </project>

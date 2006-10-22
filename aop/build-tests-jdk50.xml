@@ -289,13 +289,26 @@
       <antcall target="jrockit-genadvisor-tests" inheritRefs="true"/>
    </target>
 
+   <target name="_base-jdk50-tests">
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="bridgemethod"/>
+         <param name="caller" value="${caller}"/>
+         <param name="exclude" value="**/notwoven/BridgeMethodTestCase.class"/>
+      </antcall>
+      <antcall target="_base-tests" inheritRefs="true">
+         <param name="caller" value="${caller}"/>
+         <param name="test-target" value="${test-target}"/>
+      </antcall>
+   </target>
+
+
    <!-- ==================================================================================== -->
    <!-- JAVAAGENT TESTS (JDK 5.0)                                                        -->
    <!-- ==================================================================================== -->
    <target name="javaagent-tests" depends="compile-test-classes">
 
    	<!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-tests" inheritRefs="true">
+      <antcall target="_base-jdk50-tests" inheritRefs="true">
          <param name="caller" value="javaagent-tests"/>
          <param name="test-target" value="_run-javaagent-test"/>
       </antcall>
@@ -323,7 +336,7 @@
    <target name="javaagent-genadvisor-tests" depends="compile-test-classes">
 
 	   <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-tests" inheritRefs="true">
+      <antcall target="_base-jdk50-tests" inheritRefs="true">
          <param name="caller" value="javaagent-genadvisor-tests"/>
          <param name="test-target" value="_run-javaagent-test"/>
       </antcall>
@@ -427,7 +440,7 @@
       </path>
 
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
-   	<antcall target="_base-tests" inheritRefs="true">
+      <antcall target="_base-jdk50-tests" inheritRefs="true">
          <param name="caller" value="precompiled-tests"/>
          <param name="test-target" value="_run-precompiled-test"/>
       </antcall>
@@ -459,7 +472,7 @@
       </path>
 
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-tests" inheritRefs="true">
+      <antcall target="_base-jdk50-tests" inheritRefs="true">
          <param name="caller" value="non-optimized-precompiled-tests"/>
          <param name="test-target" value="_run-precompiled-test"/>
       </antcall>
@@ -485,7 +498,7 @@
       </path>
 
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-tests" inheritRefs="true">
+      <antcall target="_base-jdk50-tests" inheritRefs="true">
          <param name="caller" value="precompiled-genadvisor-tests"/>
          <param name="test-target" value="_run-precompiled-test"/>
       </antcall>
@@ -1100,7 +1113,7 @@
    <target name="jrockit-tests" depends="compile-test-classes" if="JROCKIT_AVAILABLE">
 
    	<!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-tests" inheritRefs="true">
+      <antcall target="_base-jdk50-tests" inheritRefs="true">
          <param name="caller" value="jrockit-tests"/>
          <param name="test-target" value="_run-jrockit-test"/>
       </antcall>
@@ -1120,7 +1133,7 @@
    <target name="jrockit-genadvisor-tests" depends="compile-test-classes" if="JROCKIT_AVAILABLE">
 
 	   <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-tests" inheritRefs="true">
+      <antcall target="_base-jdk50-tests" inheritRefs="true">
          <param name="caller" value="jrockit-genadvisor-tests"/>
          <param name="test-target" value="_run-jrockit-test"/>
       </antcall>

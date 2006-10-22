@@ -101,7 +101,7 @@
 
       <available file="${jrockit.home}/jre/lib/managementapi.jar" property="JROCKIT_AVAILABLE"/>
 
-      <fail unless="jdk14.executable">Need to set jdk14.executable to a jdk 1.4 executable in local.properties. For example 
+      <fail unless="jdk14.executable">Need to set jdk14.executable to a jdk 1.4 executable in local.properties. For example
       jdk14.executable=C:/Java/jdk14/bin/java.exe
       </fail>
       <property name="java14" value="${jdk14.executable}"/>
