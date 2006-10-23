@@ -70,6 +70,9 @@
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="field"/>
       </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="methodoverloading"/>
+      </antcall>
 
       <!-- Tests with special requirements for parameters -->
       <antcall target="${test-target}" inheritRefs="true">
