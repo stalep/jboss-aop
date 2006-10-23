@@ -94,15 +94,7 @@ public class NamedDomainTestCase extends AOPTestWithSetup
    {
       Proxied tgt = new Proxied();//Load the class before we deploy the xml that will cause weaving
       
-      URL url = this.getClass().getProtectionDomain().getCodeSource().getLocation();
-      System.out.println("class url: " + url);
-      String location = url.toString();
-      int index = location.indexOf("/output/");
-      location = location.substring(0, index);
-      
-      location = location + "/src/resources/test/nameddomain/manual-aop.xml";
-      url = new URL(location);
-      System.out.println("xml url:   " + url);
+      URL url = getURLRelativeToProjectRoot("/src/resources/test/nameddomain/manual-aop.xml");
       AspectXmlLoader.deployXML(url);
       
       AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();

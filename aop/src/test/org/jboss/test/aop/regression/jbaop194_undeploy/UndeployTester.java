@@ -55,16 +55,8 @@ public class UndeployTester extends AOPTestWithSetup
       pojo.method();
       assertTrue(TestInterceptor.intercepted);
 
-      URL url = pojo.getClass().getProtectionDomain().getCodeSource().getLocation();
-      System.out.println("class url: " + url);
-      String location = url.toString();
-      int index = location.indexOf("/output/");
-      location = location.substring(0, index);
+      URL url = getURLRelativeToProjectRoot("/src/resources/test/regression/jboss-aop.xml");
       
-      location = location + "/src/resources/test/regression/jboss-aop.xml";
-      url = new URL(location);
-      System.out.println("xml url:   " + url);
-
       System.out.println("Undeploying first time");
       AspectXmlLoader.undeployXML(url);
       TestInterceptor.intercepted = false;

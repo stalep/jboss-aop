@@ -21,6 +21,9 @@
 */ 
 package org.jboss.test.aop;
 
+import java.io.IOException;
+import java.net.URL;
+
 import org.jboss.test.AbstractTestCaseWithSetup;
 import org.jboss.test.AbstractTestDelegate;
 
@@ -48,5 +51,17 @@ public class AOPTestWithSetup extends AbstractTestCaseWithSetup
       AOPTestDelegate delegate = new AOPTestDelegate(clazz);
       delegate.enableSecurity = true;
       return delegate;
+   }
+   
+   protected URL getURLRelativeToProjectRoot(String relativePath) throws IOException
+   {
+      URL url = this.getClass().getProtectionDomain().getCodeSource().getLocation();
+      System.out.println("class url: " + url);
+      String location = url.toString();
+      int index = location.indexOf("/output/");
+      location = location.substring(0, index);
+      
+      location = location + relativePath;
+      return new URL(location);
    }
 }
