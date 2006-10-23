@@ -37,15 +37,15 @@ public class ProxyAdvisorDomain extends GeneratedAdvisorDomain
 {
    protected WeakReference advisor;
 
-   public ProxyAdvisorDomain(AspectManager manager, Class clazz, boolean parentFirst)
+   public ProxyAdvisorDomain(AspectManager manager, String name, Class clazz)
    {
-      this(manager, clazz, parentFirst, false);
+      this(manager, name, clazz, false);
    }
    
-   public ProxyAdvisorDomain(AspectManager manager, Class clazz, boolean parentFirst, boolean instanceDomain)
+   public ProxyAdvisorDomain(AspectManager manager, String name, Class clazz, boolean instanceDomain)
    {
       // FIXME ProxyAdvisorDomain constructor
-      super(manager, clazz, parentFirst, instanceDomain);
+      super(manager, name, clazz, instanceDomain);
       super.setInheritsBindings(true);
       super.setInheritsDeclarations(true);
 

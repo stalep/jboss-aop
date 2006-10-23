@@ -36,7 +36,7 @@ public class DomainDefinition
    public DomainDefinition(String name, AspectManager parent, boolean parentFirst, boolean inheritDefs, boolean inheritBindings)
    {
       this.name = name;
-      Domain domain = new Domain(parent, parentFirst);
+      Domain domain = new Domain(parent, name, parentFirst);
       domain.setInheritsBindings(inheritBindings);
       domain.setInheritsDeclarations(inheritDefs);
       manager = domain;

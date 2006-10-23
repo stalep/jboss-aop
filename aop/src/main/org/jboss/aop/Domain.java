@@ -21,6 +21,8 @@
   */
 package org.jboss.aop;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -37,6 +39,7 @@ import org.jboss.aop.pointcut.Pointcut;
 import org.jboss.aop.pointcut.PointcutStats;
 import org.jboss.aop.pointcut.Typedef;
 import org.jboss.aop.pointcut.ast.ClassExpression;
+import org.jboss.util.id.GUID;
 
 /**
  * Comment
@@ -46,19 +49,54 @@ import org.jboss.aop.pointcut.ast.ClassExpression;
  */
 public class Domain extends AspectManager
 {
+   String name;
    protected AspectManager parent;
    protected boolean parentFirst;
    protected boolean inheritsDeclarations = true;
    protected boolean inheritsBindings = false;
 
 
-   public Domain(AspectManager manager, boolean parentFirst)
+   public Domain(AspectManager manager, String name, boolean parentFirst)
    {
       this.parent = manager;
       this.parentFirst = parentFirst;
+      this.name = name;
+      manager.addSubDomainByName(this);
    }
 
+   public String getDomainName()
+   {
+      return name;
+   }
 
+   public String getManagerFQN()
+   {
+      return parent.getManagerFQN() + name + "/";
+   }
+
+   public static String getDomainName(final Class clazz, final boolean forInstance)
+   {
+      String name = (String)AccessController.doPrivileged(new PrivilegedAction() {
+
+         public Object run()
+         {
+            StringBuffer sb = new StringBuffer();
+            sb.append(clazz.getName());
+            sb.append("_");
+            sb.append(System.identityHashCode(clazz.getClassLoader()));
+            
+            if (forInstance)
+            {
+               GUID guid = new GUID();//Are these guys expensive to create?
+               sb.append("_");
+               sb.append(guid.toString());
+            }
+            return sb.toString();
+         }
+      });
+      return name;
+   }
+   
    /**
     * Inherits interceptor, aspect, advice stack definitions
     *

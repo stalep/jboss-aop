@@ -28,14 +28,14 @@ package org.jboss.aop;
 public class GeneratedAdvisorDomain extends Domain
 {
 
-   public GeneratedAdvisorDomain(AspectManager manager, Class clazz, boolean parentFirst)
+   public GeneratedAdvisorDomain(AspectManager manager, String name, Class clazz)
    {
-      this(manager, clazz, parentFirst, false);
+      this(manager, name, clazz, false);
    }
    
-   public GeneratedAdvisorDomain(AspectManager manager, Class clazz, boolean parentFirst, boolean instanceDomain)
+   public GeneratedAdvisorDomain(AspectManager manager, String name, Class clazz, boolean instanceDomain)
    {
-      super(manager, parentFirst);
+      super(manager, name, false);
       
       if (!instanceDomain)
       {

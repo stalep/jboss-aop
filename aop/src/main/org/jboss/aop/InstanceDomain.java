@@ -33,9 +33,9 @@ public class InstanceDomain extends Domain
 {
    protected Advisor advisor;
 
-   public InstanceDomain(AspectManager manager, boolean parentFirst)
+   public InstanceDomain(AspectManager manager, String name, boolean parentFirst)
    {
-      super(manager, parentFirst);
+      super(manager, name, parentFirst);
       setInheritsBindings(true);
    }
 

@@ -21,8 +21,6 @@
 */ 
 package org.jboss.aop.proxy.container;
 
-import java.util.Arrays;
-
 import org.jboss.aop.Advised;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.instrument.Untransformable;

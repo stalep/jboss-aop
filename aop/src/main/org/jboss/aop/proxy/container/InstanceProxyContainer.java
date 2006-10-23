@@ -58,7 +58,8 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
 
    public static InstanceProxyContainer createInstanceProxyContainer(Advisor classAdvisor, InterfaceIntroduction introduction, /*MetaDataContext*/ Object metaDataContext)
    {
-      ProxyAdvisorDomain domain = new ProxyAdvisorDomain(classAdvisor.getManager(), classAdvisor.getClazz(), false, true);
+      String name = Domain.getDomainName(classAdvisor.getClazz(), true);
+      ProxyAdvisorDomain domain = new ProxyAdvisorDomain(classAdvisor.getManager(), name, classAdvisor.getClazz(), true);
       if (introduction != null)
       {
          domain.addInterfaceIntroduction(introduction);

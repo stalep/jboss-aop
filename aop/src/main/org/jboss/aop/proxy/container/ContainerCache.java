@@ -26,6 +26,7 @@ import java.util.WeakHashMap;
 import org.jboss.aop.Advised;
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
+import org.jboss.aop.Domain;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.metadata.SimpleMetaData;
 //import org.jboss.repository.spi.MetaDataContext;
@@ -162,7 +163,8 @@ public class ContainerCache
    
    private ClassProxyContainer createContainer()
    {
-      ProxyAdvisorDomain domain = new ProxyAdvisorDomain(manager, key.getClazz(), false);
+      String name = Domain.getDomainName(key.getClazz(), false);
+      ProxyAdvisorDomain domain = new ProxyAdvisorDomain(manager, name, key.getClazz(), false);
       String classname = (key.getClazz() != null) ? key.getClazz().getName() : "AOP$Hollow";
       ClassProxyContainer container = new ClassProxyContainer(classname /*+ " ClassProxy" + (counter++)*/, domain);
       domain.setAdvisor(container);

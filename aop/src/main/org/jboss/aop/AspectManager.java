@@ -70,6 +70,7 @@ import org.jboss.aop.pointcut.PointcutInfo;
 import org.jboss.aop.pointcut.PointcutStats;
 import org.jboss.aop.pointcut.Typedef;
 import org.jboss.aop.pointcut.ast.ClassExpression;
+import org.jboss.util.collection.WeakValueHashMap;
 import org.jboss.util.loading.Translatable;
 import org.jboss.util.loading.Translator;
 import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
@@ -103,6 +104,9 @@ public class AspectManager
 
    /** A map of domains by class, maintaned by the top level AspectManager */
    protected final WeakHashMap subDomainsPerClass = new WeakHashMap();
+   
+   /** A map of domains by name */
+   protected final WeakValueHashMap subDomainsByName = new WeakValueHashMap();
 
    /** Each domain may have sub domains interested in changes happening in this manager/domain */
    protected final WeakHashMap subscribedSubDomains = new WeakHashMap();
@@ -531,6 +535,52 @@ public class AspectManager
          if (ref == null) return null;
          return (Advisor) ref.get();
       }
+   }
+   
+   /**
+    * Takes a string of the form /sub1/sub2/sub3 of subdomains by name, where the leading "/" is the main AspectManager.
+    * The main user of the naming of domains is (un)serialization of advisors/containers
+    * 
+    * @param The FQN of the domain
+    * @return the domain referenced by the FQN or null if it does not exist
+    */
+   public AspectManager findManagerByName(String fqn)
+   {
+      String[] nameparts = fqn.split("/");
+      return findManagerByName(nameparts);
+   }
+   
+   private AspectManager findManagerByName(String[] nameparts)
+   {
+      AspectManager found = this;
+      for (int i = 0 ; i < nameparts.length ; i++)
+      {
+         if (nameparts[i].trim().length() == 0)
+         {
+            continue;
+         }
+         found = found.findManagerByNameInternal(nameparts[i]);
+         if (found == null)
+         {
+            break;
+         }
+      }
+      return found;
+   }
+   
+   private AspectManager findManagerByNameInternal(String name)
+   {
+      return (Domain)subDomainsByName.get(name);
+   }
+   
+   protected void addSubDomainByName(Domain domain)
+   {
+      subDomainsByName.put(domain.getDomainName(), domain);
+   }
+   
+   public String getManagerFQN()
+   {
+      return "/";
    }
 
    public ClassAdvisor getAdvisorIfAdvised(Class clazz)

@@ -1,0 +1,6 @@
+<aop>
+   <interceptor class="org.jboss.test.aop.nameddomain.InstanceInterceptor" scope="PER_INSTANCE"/>
+   <bind pointcut="execution(* org.jboss.test.aop.nameddomain.POJO->someMethod())">
+      <interceptor-ref name="org.jboss.test.aop.nameddomain.InstanceInterceptor"/>
+   </bind>
+</aop>

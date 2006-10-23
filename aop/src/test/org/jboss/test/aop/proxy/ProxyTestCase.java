@@ -153,7 +153,7 @@ public class ProxyTestCase extends AOPTestWithSetup
    
    public void testContainerProxy() throws Exception
    {
-      InstanceDomain domain = new InstanceDomain(AspectManager.instance(), false);
+      InstanceDomain domain = new InstanceDomain(AspectManager.instance(), "blah", false);
 
       
       InterfaceIntroduction intro = new InterfaceIntroduction("intro", "*", null);

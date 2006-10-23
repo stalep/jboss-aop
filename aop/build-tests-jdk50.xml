@@ -306,13 +306,6 @@
    <!-- JAVAAGENT TESTS (JDK 5.0)                                                        -->
    <!-- ==================================================================================== -->
    <target name="javaagent-tests" depends="compile-test-classes">
-
-   	<!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-jdk50-tests" inheritRefs="true">
-         <param name="caller" value="javaagent-tests"/>
-         <param name="test-target" value="_run-javaagent-test"/>
-      </antcall>
-
       <!-- Tests only applicable for this weaving mode -->
       <antcall target="_run-javaagent-test" inheritRefs="true">
          <param name="test" value="override"/>
@@ -320,6 +313,11 @@
          <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
       </antcall>
 
+   	<!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
+      <antcall target="_base-jdk50-tests" inheritRefs="true">
+         <param name="caller" value="javaagent-tests"/>
+         <param name="test-target" value="_run-javaagent-test"/>
+      </antcall>
    </target>
 
    <target name="loadtime-test" depends="init">
@@ -334,18 +332,21 @@
    <!-- GENERATED ADVISOR JAVAGENT TESTS (JDK 5.0)                                           -->
    <!-- ==================================================================================== -->
    <target name="javaagent-genadvisor-tests" depends="compile-test-classes">
-
-	   <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-jdk50-tests" inheritRefs="true">
-         <param name="caller" value="javaagent-genadvisor-tests"/>
-         <param name="test-target" value="_run-javaagent-test"/>
-      </antcall>
-
       <!-- Tests only applicable for this weaving mode -->
       <antcall target="_run-javaagent-test" inheritRefs="true">
          <param name="test" value="override"/>
          <param name="caller" value="javaagent-genadvisor-tests"/>
          <param name="exclude" value="**/OverrideTestCase.class"/>
+      </antcall>
+      <antcall target="_run-javaagent-test" inheritRefs="true">
+         <param name="test" value="nameddomain"/>
+         <param name="caller" value="javaagent-genadvisor-tests"/>
+      </antcall>
+
+	   <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
+      <antcall target="_base-jdk50-tests" inheritRefs="true">
+         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="test-target" value="_run-javaagent-test"/>
       </antcall>
    </target>
 
@@ -446,12 +447,10 @@
       </antcall>
 
    	<!-- Tests only applicable for this weaving mode -->
-
       <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="args"/>
          <param name="caller" value="precompiled-tests"/>
       </antcall>
-
 	   <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="override"/>
          <param name="caller" value="precompiled-tests"/>
@@ -497,12 +496,6 @@
          <path refid="jboss.aop.classpath"/>
       </path>
 
-      <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-jdk50-tests" inheritRefs="true">
-         <param name="caller" value="precompiled-genadvisor-tests"/>
-         <param name="test-target" value="_run-precompiled-test"/>
-      </antcall>
-
       <!-- Tests only applicable for this weaving mode -->
       <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="args"/>
@@ -520,6 +513,16 @@
          <param name="test" value="override"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
          <param name="exclude" value="**/OverrideTestCase.class"/>
+      </antcall>
+      <antcall target="_run-javaagent-test" inheritRefs="true">
+         <param name="test" value="nameddomain"/>
+         <param name="caller" value="javaagent-genadvisor-tests"/>
+      </antcall>
+
+      <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
+      <antcall target="_base-jdk50-tests" inheritRefs="true">
+         <param name="caller" value="precompiled-genadvisor-tests"/>
+         <param name="test-target" value="_run-precompiled-test"/>
       </antcall>
    </target>
 

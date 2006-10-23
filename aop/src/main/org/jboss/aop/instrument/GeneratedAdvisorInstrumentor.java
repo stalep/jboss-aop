@@ -384,7 +384,8 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
    {
       String initBody =
          "{" +
-         "   " + DOMAIN + "= new org.jboss.aop.GeneratedAdvisorDomain($1, " + DECLARING_CLASS + ", false); " +
+         "   String domainName = org.jboss.aop.Domain.getDomainName(" + DECLARING_CLASS + ", $2);" + 
+         "   " + DOMAIN + "= new org.jboss.aop.GeneratedAdvisorDomain($1, domainName, " + DECLARING_CLASS + ", false); " +
          "   ((org.jboss.aop.Domain)" + DOMAIN + ").setInheritsBindings(true); " +
          "   " + INITIALISE_METHODS + "();" +
          "   " + INITIALISE_CONSTRUCTORS + "();" +
@@ -399,7 +400,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             Modifier.PROTECTED,
             CtClass.voidType,
             "initialise",
-            new CtClass[]{forName("org.jboss.aop.AspectManager")},
+            new CtClass[]{forName("org.jboss.aop.AspectManager"), CtClass.booleanType},
             EMPTY_EXCEPTIONS,
             initBody,
             genadvisor);
@@ -411,7 +412,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       ctor.setBody(
             "{" +
             "   super(\"" + clazz.getName() + "\"); " +
-            "   initialise(org.jboss.aop.AspectManager.instance(this.getClass().getClassLoader()));" + //Use the CL of the class, since we may be in a scoped loader
+            "   initialise(org.jboss.aop.AspectManager.instance(this.getClass().getClassLoader()), false);" + //Use the CL of the class, since we may be in a scoped loader
             "}");
       genadvisor.addConstructor(ctor);
 
@@ -420,7 +421,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
          "{" +
          "   super(\"" + clazz.getName() + "\"); " +
          "   super.setParentAdvisor($1);" +
-         "   initialise($1.getDomain());" +
+         "   initialise($1.getDomain(), true);" +
          "}";
       CtConstructor ctorWithParentAdvisor = CtNewConstructor.make(new CtClass[]{genadvisor}, EMPTY_EXCEPTIONS, instanceBody, genadvisor);
       genadvisor.addConstructor(ctorWithParentAdvisor);

@@ -154,24 +154,16 @@ public class ClassProxyContainer extends ClassContainer
       }
    }
    
-   public InstanceProxyContainer createInstanceProxyContainer(InterfaceIntroduction introduction, /*MetaDataContext*/ Object metaDataContext)
-   {
-      ProxyAdvisorDomain domain = new ProxyAdvisorDomain(manager, clazz, false);
-      domain.setInheritsBindings(true);
-      domain.setInheritsDeclarations(true);
-      if (introduction != null)
-      {
-         domain.addInterfaceIntroduction(introduction);
-      }
-
-      InstanceProxyContainer ia = new InstanceProxyContainer(super.getName(), domain, this, metaDataContext);
-      
-      return ia;
-   }
-   
    public InstanceProxyContainer createInstanceProxyContainer()
    {
-      return createInstanceProxyContainer(null, null);
+      //This seems to get thrown away with every invocation
+      ProxyAdvisorDomain domain = new ProxyAdvisorDomain(manager, null, clazz, false);
+      domain.setInheritsBindings(true);
+      domain.setInheritsDeclarations(true);
+
+      InstanceProxyContainer ia = new InstanceProxyContainer(super.getName(), domain, this, null);
+      
+      return ia;
    }
 
    public void initialise(Class proxiedClass)
