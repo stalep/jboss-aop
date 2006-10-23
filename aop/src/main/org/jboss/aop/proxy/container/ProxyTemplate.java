@@ -21,7 +21,10 @@
   */
 package org.jboss.aop.proxy.container;
 
+import java.io.IOException;
+
 import org.jboss.aop.Advisor;
+import org.jboss.aop.AspectManager;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.metadata.SimpleMetaData;
 
@@ -36,9 +39,9 @@ public class ProxyTemplate implements Delegate, AspectManaged
    {
    }
 
-   private Advisor classAdvisor;
-   private InstanceAdvisor instanceAdvisor;
-   protected volatile Advisor currentAdvisor;
+   private transient Advisor classAdvisor;
+   private transient InstanceAdvisor instanceAdvisor;
+   protected volatile transient Advisor currentAdvisor;
    
    private Object delegate;
    private Object[] mixins; // Do not remove this
@@ -103,4 +106,26 @@ public class ProxyTemplate implements Delegate, AspectManaged
       return instanceAdvisor;
    }
    
+   private void writeObject(java.io.ObjectOutputStream out) throws IOException
+   {
+      out.writeObject(delegate);
+      out.writeObject(mixins);
+      out.writeObject(metadata);
+      out.writeObject(classAdvisor.getClazz());
+      //TODO add support for the instance advisors
+   }
+   
+   private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+   {
+      delegate = in.readObject();
+      mixins = (Object[])in.readObject();
+      metadata = (SimpleMetaData)in.readObject();
+      
+      Class clazz = (Class)in.readObject();
+      AspectManager manager = AspectManager.getTopLevelAspectManager();
+      classAdvisor = manager.findAdvisor(clazz);
+      currentAdvisor = classAdvisor;
+      //TODO add support for instance advisors
+      
+   }
 }

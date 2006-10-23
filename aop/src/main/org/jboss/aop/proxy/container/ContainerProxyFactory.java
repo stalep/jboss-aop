@@ -21,6 +21,7 @@
   */
 package org.jboss.aop.proxy.container;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ import org.jboss.aop.InstanceAdvised;
 import org.jboss.aop.MethodInfo;
 import org.jboss.aop.instrument.TransformerCommon;
 import org.jboss.aop.introduction.InterfaceIntroduction;
+import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.aop.util.JavassistMethodHashing;
 
 
@@ -232,6 +234,8 @@ public class ContainerProxyFactory
       addMethodFromTemplate(template, "setInstanceAdvisor", instanceAdvisorSetterBody());
       addMethodFromTemplate(template, "getInstanceAdvisor", instanceAdvisorGetterBody());
       
+      addMethodFromTemplate(template, "writeObject", writeObjectBody());
+      addMethodFromTemplate(template, "readObject", readObjectBody(superclass));
       return proxy;
    }
    
@@ -271,6 +275,33 @@ public class ContainerProxyFactory
          "}";
    }
 
+   private String writeObjectBody()
+   {
+      return 
+         "{" +
+         "   $1.writeObject(delegate);" +
+         "   $1.writeObject(mixins);" +
+         "   $1.writeObject(metadata);"+
+         "   $1.writeObject(classAdvisor.getClazz());" +
+         "}";
+//       TODO add support for the instance advisors
+   }
+   
+   private String readObjectBody(CtClass superclass)
+   {
+      return 
+         "{" +
+         "   delegate = (" + superclass.getName() + ")$1.readObject();" +
+         "   mixins = (Object[])$1.readObject();" +
+         "   metadata = (org.jboss.aop.metadata.SimpleMetaData)$1.readObject();" +
+         "   java.lang.Class clazz = (java.lang.Class)$1.readObject();" + 
+         "   org.jboss.aop.AspectManager manager = org.jboss.aop.AspectManager.getTopLevelAspectManager();" +
+         "   classAdvisor = manager.findAdvisor(clazz);" +
+         "   currentAdvisor = classAdvisor;" +
+         "}";
+       //TODO add support for instance advisors
+   }
+
    private CtField addFieldFromTemplate(CtClass template, String name) throws Exception
    {
       return addFieldFromTemplate(template, name, null);
@@ -281,7 +312,7 @@ public class ContainerProxyFactory
       CtField templateField = template.getField(name);
       CtClass fieldType = (type == null) ? templateField.getType() : type;
       CtField field = new CtField(fieldType, name, proxy);
-      field.setModifiers(Modifier.PRIVATE);
+      field.setModifiers(templateField.getModifiers());
       proxy.addField(field);
       return field;
    }

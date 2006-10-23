@@ -56,7 +56,6 @@ public class AOPTestWithSetup extends AbstractTestCaseWithSetup
    protected URL getURLRelativeToProjectRoot(String relativePath) throws IOException
    {
       URL url = this.getClass().getProtectionDomain().getCodeSource().getLocation();
-      System.out.println("class url: " + url);
       String location = url.toString();
       int index = location.indexOf("/output/");
       location = location.substring(0, index);
