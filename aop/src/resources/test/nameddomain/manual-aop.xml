@@ -1,6 +1,5 @@
 <aop>
-   <interceptor class="org.jboss.test.aop.nameddomain.InstanceInterceptor" scope="PER_INSTANCE"/>
    <bind pointcut="execution(* org.jboss.test.aop.nameddomain.Proxied->someMethod())">
-      <interceptor-ref name="org.jboss.test.aop.nameddomain.InstanceInterceptor"/>
+      <interceptor-ref name="org.jboss.test.aop.nameddomain.SimpleInterceptor"/>
    </bind>
 </aop>
