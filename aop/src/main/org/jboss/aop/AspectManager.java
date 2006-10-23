@@ -239,7 +239,7 @@ public class AspectManager
 
    public static synchronized AspectManager getTopLevelAspectManager()
    {
-      if (scopedCLHelper != null)
+      if (scopedCLHelper == null)
       {
          //We are not running in jboss
          return instance();
