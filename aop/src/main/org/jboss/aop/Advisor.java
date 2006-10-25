@@ -33,6 +33,7 @@ import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -914,16 +915,19 @@ public abstract class Advisor
 
    protected void resolveConstructionPointcut(ArrayList newConstructionInfos, AdviceBinding binding)
    {
-      for (int i = 0; i < constructors.length; i++)
+      if (newConstructionInfos.size() > 0)
       {
-         Constructor constructor = constructors[i];
-         if (binding.getPointcut().matchesConstruction(this, constructor))
+         for (Iterator it = newConstructionInfos.iterator() ; it.hasNext() ; )
          {
-            if (AspectManager.verbose) System.err.println(constructor + " matched binding " + binding.getName() + " " + binding.getPointcut().getExpr());
-            adviceBindings.add(binding);
-            binding.addAdvisor(this);
-            ConstructionInfo info = (ConstructionInfo) newConstructionInfos.get(i);
-            pointcutResolved(info, binding, new ConstructorJoinpoint(constructor));
+            ConstructionInfo info = (ConstructionInfo)it.next();
+            Constructor constructor = info.getConstructor();
+            if (binding.getPointcut().matchesConstruction(this, constructor))
+            {
+               if (AspectManager.verbose) System.err.println(constructor + " matched binding " + binding.getName() + " " + binding.getPointcut().getExpr());
+               adviceBindings.add(binding);
+               binding.addAdvisor(this);
+               pointcutResolved(info, binding, new ConstructorJoinpoint(constructor));
+            }
          }
       }
    }

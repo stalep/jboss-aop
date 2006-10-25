@@ -83,4 +83,13 @@ public class ExtenderTestCase extends AOPTestWithSetup
       assertEquals(Base.class, SuperCallAspect.methodClasses.get(1));
       assertEquals(Base.class, SuperCallAspect.methodClasses.get(2));
    }
+   
+   public void testConstruction() throws Exception
+   {
+      ConstructionInterceptor.interceptions.clear();
+      SubBase child = new SubBase();
+      assertEquals(2, ConstructionInterceptor.interceptions.size());
+      assertEquals(Base.class, ConstructionInterceptor.interceptions.get(0));
+      assertEquals(SubBase.class, ConstructionInterceptor.interceptions.get(1));
+   }
 }

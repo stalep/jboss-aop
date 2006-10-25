@@ -7,6 +7,7 @@
 <aop>
 
 	<aspect class="org.jboss.test.aop.extender.SuperCallAspect"/>
+	<interceptor class="org.jboss.test.aop.extender.ConstructionInterceptor"/>
    <prepare expr="all(org.jboss.test.aop.extender.Base)"/>
    <prepare expr="all(org.jboss.test.aop.extender.Extender)"/>
    <bind pointcut="execution(* org.jboss.test.aop.extender.ChildBase->updateBase())">
@@ -30,5 +31,11 @@
    </bind>
    <bind pointcut="execution(* org.jboss.test.aop.extender.Base->superCall())">
    	<advice aspect="org.jboss.test.aop.extender.SuperCallAspect" name="invoke"/>
+   </bind>
+   <bind pointcut="construction(org.jboss.test.aop.extender.Base->new())">
+   	<interceptor-ref name="org.jboss.test.aop.extender.ConstructionInterceptor"/>
+   </bind>
+   <bind pointcut="construction(org.jboss.test.aop.extender.SubBase->new())">
+   	<interceptor-ref name="org.jboss.test.aop.extender.ConstructionInterceptor"/>
    </bind>
 </aop>
