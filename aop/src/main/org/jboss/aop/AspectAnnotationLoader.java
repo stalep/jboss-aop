@@ -36,6 +36,7 @@ import org.jboss.aop.advice.AdviceFactory;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.AspectFactory;
 import org.jboss.aop.advice.AspectFactoryDelegator;
+import org.jboss.aop.advice.AspectFactoryWithClassLoader;
 import org.jboss.aop.advice.DynamicCFlowDefinition;
 import org.jboss.aop.advice.GenericAspectFactory;
 import org.jboss.aop.advice.Interceptor;
@@ -78,10 +79,25 @@ public class AspectAnnotationLoader
    //TODO: We need something to undeploy everything...
 
    protected AspectManager manager;
+   private ClassLoader cl; 
 
    public AspectAnnotationLoader(AspectManager manager)
    {
       this.manager = manager;
+   }
+
+   public void setClassLoader(ClassLoader cl)
+   {
+      this.cl = cl;
+   }
+   
+   public ClassLoader getClassLoader()
+   {
+      if (cl == null)
+      {
+         return Thread.currentThread().getContextClassLoader();
+      }
+      return cl;
    }
 
    public void deployInputStreamIterator(Iterator it) throws Exception
@@ -208,10 +224,12 @@ public class AspectAnnotationLoader
          if (isFactory)
          {
             factory = new AspectFactoryDelegator(cf.getName(), null);
+            ((AspectFactoryWithClassLoader)factory).setClassLoader(cl);
          }
          else
          {
             factory = new GenericAspectFactory(cf.getName(), null);
+            ((AspectFactoryWithClassLoader)factory).setClassLoader(cl);
          }
          AspectDefinition def = new AspectDefinition(cf.getName(), scope, factory);
          manager.addAspectDefinition(def);
@@ -267,10 +285,12 @@ public class AspectAnnotationLoader
          if (isFactory)
          {
             aspectFactory = new AspectFactoryDelegator(cf.getName(), null);
+            ((AspectFactoryWithClassLoader)aspectFactory).setClassLoader(cl);
          }
          else
          {
             aspectFactory = new GenericAspectFactory(cf.getName(), null);
+            ((AspectFactoryWithClassLoader)aspectFactory).setClassLoader(cl);
          }
 
          AspectDefinition def = new AspectDefinition(cf.getName(), scope, aspectFactory);
