@@ -161,69 +161,15 @@ public class AspectManager
    protected PrecedenceDefEntry[] sortedPrecedenceDefEntries;
    protected WeavingStrategy weavingStrategy;
 
-   protected final ConcurrentReaderHashMap convertableReference = new ConcurrentReaderHashMap();
-   protected final ConcurrentReaderHashMap hasFieldInterception = new ConcurrentReaderHashMap();
-   protected final ConcurrentReaderHashMap hasConstructorInterception = new ConcurrentReaderHashMap();
-
-   protected final ConcurrentReaderHashMap skipConvertableReference = new ConcurrentReaderHashMap();
-   protected final ConcurrentReaderHashMap skipFieldInterception = new ConcurrentReaderHashMap();
-   protected final ConcurrentReaderHashMap skipConstructorInterception = new ConcurrentReaderHashMap();
-
    protected DynamicAOPStrategy dynamicStrategy = new LoadInterceptedClassesStrategy();
    // indicates that the transformation process has begun
    protected boolean transformationStarted = false;
 
    //This will be set by the AspectManagerService if running in JBoss
    public static AOPScopedClassLoaderHelper scopedCLHelper;
-
-   public void addConstructionInterceptionMarker(String classname)
-   {
-      skipConstructorInterception.remove(classname);
-      skipConvertableReference.remove(classname);
-      hasConstructorInterception.put(classname, classname);
-      convertableReference.put(classname, classname);
-   }
-
-   public void addFieldInterceptionMarker(String classname)
-   {
-      skipFieldInterception.remove(classname);
-      skipConvertableReference.remove(classname);
-      hasFieldInterception.put(classname, classname);
-      convertableReference.put(classname, classname);
-   }
-
-   public void skipReference(String classname)
-   {
-      skipConvertableReference.put(classname, classname);
-   }
-
-   public boolean shouldSkipConstruction(String classname)
-   {
-      return !(hasConstructorInterception.containsKey(classname) || !skipConstructorInterception.containsKey(classname));
-      //return false;
-   }
-
-   public boolean shouldSkipFieldAccess(String classname)
-   {
-      return !(hasFieldInterception.containsKey(classname) || !skipFieldInterception.containsKey(classname));
-      //return false;
-   }
-
-   public void skipConstruction(String classname)
-   {
-      skipConstructorInterception.put(classname, classname);
-   }
-
-   public void skipFieldAccess(String classname)
-   {
-      skipFieldInterception.put(classname, classname);
-   }
-
-   public boolean convertReference(String classname)
-   {
-      return !skipConvertableReference.containsKey(classname) || convertableReference.containsKey(classname);
-      //return true;
-   }
+   
+   //Keeps track of if we need to convert references etc for a given class. Domains for scoped classloaders will have their own version of this
+   protected static InterceptionMarkers interceptionMarkers = new InterceptionMarkers();
 
    // Static -------------------------------------------------------
 
@@ -366,6 +312,10 @@ public class AspectManager
       return manager;
    }
 
+   public InterceptionMarkers getInterceptionMarkers()
+   {
+      return interceptionMarkers;
+   }
 
    public LinkedHashMap getPointcuts()
    {

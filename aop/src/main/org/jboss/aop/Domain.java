@@ -710,7 +710,13 @@ public class Domain extends AspectManager
    
    //////////////////////////////////////////////////////////////////////////
    //Methods that should delegate to the top AspectManager
-   
+
+   public InterceptionMarkers getInterceptionMarkers()
+   {
+      return parent.getInterceptionMarkers();
+   }
+
+
    /** Managed by the top-level aspect manager */
    protected Map getScopedClassLoaderDomains()
    {
@@ -721,46 +727,6 @@ public class Domain extends AspectManager
    protected Map getSubDomainsPerClass()
    {
       return parent.getSubDomainsPerClass();
-   }
-
-   public void addConstructionInterceptionMarker(String classname)
-   {
-      parent.addConstructionInterceptionMarker(classname);
-   }
-
-   public void addFieldInterceptionMarker(String classname)
-   {
-      parent.addFieldInterceptionMarker(classname);
-   }
-
-   public void skipReference(String classname)
-   {
-      parent.skipReference(classname);
-   }
-
-   public boolean shouldSkipConstruction(String classname)
-   {
-      return parent.shouldSkipConstruction(classname);
-   }
-
-   public boolean shouldSkipFieldAccess(String classname)
-   {
-      return parent.shouldSkipFieldAccess(classname);
-   }
-
-   public void skipConstruction(String classname)
-   {
-      parent.skipConstruction(classname);
-   }
-
-   public void skipFieldAccess(String classname)
-   {
-      parent.skipFieldAccess(classname);
-   }
-
-   public boolean convertReference(String classname)
-   {
-      return parent.convertReference(classname);
    }
 
    /** Only set on a per vm basis */

@@ -102,11 +102,11 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
       
       if (skipFieldInterception)
       {
-         advisor.getManager().skipFieldAccess(clazz.getName());
+         advisor.getManager().getInterceptionMarkers().skipFieldAccess(clazz.getName());
       }
       else
       {
-         advisor.getManager().addFieldInterceptionMarker(clazz.getName());
+         advisor.getManager().getInterceptionMarkers().addFieldInterceptionMarker(clazz.getName());
       }
          
    }

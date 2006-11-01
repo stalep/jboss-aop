@@ -536,7 +536,7 @@ public abstract class Instrumentor
          for (ReferenceClassIterator it = new ReferenceClassIterator(clazz.getRefClasses()) ; it.hasNext() ; )
          {
             ref = it.next();
-            if (!manager.convertReference(ref)
+            if (!manager.getInterceptionMarkers().convertReference(ref)
                 || manager.isNonAdvisableClassName(ref)
                 || ref.startsWith("java.")
                 || ref.startsWith("javax.")
@@ -570,35 +570,35 @@ public abstract class Instrumentor
             ClassAdvisor advisor = manager.getTempClassAdvisor(ctRef);
             
             
-            if (!manager.shouldSkipFieldAccess(ref) && !ref.equals(clazz.getName()))
+            if (!manager.getInterceptionMarkers().shouldSkipFieldAccess(ref) && !ref.equals(clazz.getName()))
             {
                List fields = getAdvisableFields(ctRef);
                if (fieldAccessTransformer.replaceFieldAccess(fields, ctRef, advisor))
                {
-                  manager.addFieldInterceptionMarker(ref);
+                  manager.getInterceptionMarkers().addFieldInterceptionMarker(ref);
                   converted = true;
                }
                else
                {
-                  manager.skipFieldAccess(ref);
+                  manager.getInterceptionMarkers().skipFieldAccess(ref);
                }
             }
-            if (!manager.shouldSkipConstruction(ref))
+            if (!manager.getInterceptionMarkers().shouldSkipConstruction(ref))
             {
                if (constructorExecutionTransformer.replaceConstructorAccess(advisor, ctRef))
                {
-                  manager.addConstructionInterceptionMarker(ref);
+                  manager.getInterceptionMarkers().addConstructionInterceptionMarker(ref);
                   converted = true;
                }
                else
                {
-                  manager.skipConstruction(ref);
+                  manager.getInterceptionMarkers().skipConstruction(ref);
                }
             }
 
             if (!converted)
             {
-               manager.skipReference(ref);
+               manager.getInterceptionMarkers().skipReference(ref);
             }
             ref = null;
          }
@@ -651,11 +651,11 @@ public abstract class Instrumentor
          String classname = clazz.getName();
          if (constructorAccessConverted)
          {
-            manager.addConstructionInterceptionMarker(classname);
+            manager.getInterceptionMarkers().addConstructionInterceptionMarker(classname);
          }
          else
          {
-            manager.skipConstruction(classname);
+            manager.getInterceptionMarkers().skipConstruction(classname);
          }
          converted = converted || constructorAccessConverted;
 
@@ -679,9 +679,9 @@ public abstract class Instrumentor
          }
          else
          {
-            if (manager.shouldSkipFieldAccess(classname))
+            if (manager.getInterceptionMarkers().shouldSkipFieldAccess(classname))
             {
-               manager.skipReference(classname);
+               manager.getInterceptionMarkers().skipReference(classname);
             }
          }
 
