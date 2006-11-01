@@ -29,6 +29,8 @@ package org.jboss.test.aop.field;
 public class SubPOJO extends POJO
 {
    private int field;
+   int subpojoInherited;
+
    public SubPOJO() { }
    
    public SubPOJO(int i)

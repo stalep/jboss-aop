@@ -21,6 +21,8 @@
   */
 package org.jboss.test.aop.field;
 
+import java.lang.reflect.Method;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
@@ -70,4 +72,24 @@ public class FieldTestCase extends AOPTestWithSetup
       SubSubPOJO spojo = new SubSubPOJO(4);
       assertEquals("Field is not set correctly", spojo.getSubSubPOJOField()/2, (spojo.getSubPOJOField()));  
    }
+   
+   public void testFieldInheritance()
+   {
+      System.out.println("*** testFieldInheritance");
+      SubSubPOJO pojo = new SubSubPOJO(4);
+
+      TraceInterceptor.intercepted = false;
+      pojo.mine = 5;
+      assertTrue(TraceInterceptor.intercepted);
+
+
+      TraceInterceptor.intercepted = false;
+      pojo.pojoInherited = 5;
+      assertTrue(TraceInterceptor.intercepted);
+
+      TraceInterceptor.intercepted = false;
+      pojo.subpojoInherited = 5;
+      assertTrue(TraceInterceptor.intercepted);
+   }
+   
 }

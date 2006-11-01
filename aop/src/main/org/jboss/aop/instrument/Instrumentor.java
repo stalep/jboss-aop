@@ -22,6 +22,7 @@
 package org.jboss.aop.instrument;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -518,7 +519,7 @@ public abstract class Instrumentor
    {
       return callerTransformer.applyCallerPointcuts(clazz, advisor);
    }
-
+   
    /**
     * Find all classes that this class references.  If any of those classes are advised and have field and/or constructor
     * interception, do instrumentation on this class so that those fields and constructors are instrumented
@@ -531,21 +532,18 @@ public abstract class Instrumentor
       {
          AOPClassPool pool = AOPClassPool.createAOPClassPool(clazz.getClassPool(), AOPClassPoolRepository.getInstance());
          
-//         if (clazz.getName().startsWith("org.jboss.test.aop.scopedextender."))
-//         {
-//            //Debug
-//            System.out.println("========> Converting references for " + clazz.getName() + " in " + clazz.getClassPool());
-//            System.out.println("---> Created temp pool " + pool);
-//         }
-         Iterator it = clazz.getRefClasses().iterator();
-         while (it.hasNext())
+         //Class.getRefClasses() only gets classes explicitly referenced in the class. We need to check the super classes and do some extra handling
+         for (ReferenceClassIterator it = new ReferenceClassIterator(clazz.getRefClasses()) ; it.hasNext() ; )
          {
-            ref = (String) it.next();
+            ref = it.next();
             if (!manager.convertReference(ref)
                 || manager.isNonAdvisableClassName(ref)
                 || ref.startsWith("java.")
                 || ref.startsWith("javax.")
-                || ref.startsWith("[")) continue;
+                || ref.startsWith("["))
+            {
+               continue;
+            }
             // Only need a temporary advisor for resolving metadata
             CtClass ctRef = null;
             try
@@ -566,22 +564,17 @@ public abstract class Instrumentor
                }
             }
             if (!isTransformable(ctRef)) continue;
-
+            
+            it.addSuperClass(ctRef);
+            
             ClassAdvisor advisor = manager.getTempClassAdvisor(ctRef);
             
-//            if (clazz.getName().startsWith("org.jboss.test.aop.scopedextender."))
-//            {
-//               //Debug
-//               System.out.println("---> Found class " + ctRef.getName() + " in " + ctRef.getClassPool());
-//               System.out.println("---> Using manager " + manager + " should convert fields " + !manager.shouldSkipFieldAccess(ref));
-//            }
             
             if (!manager.shouldSkipFieldAccess(ref) && !ref.equals(clazz.getName()))
             {
                List fields = getAdvisableFields(ctRef);
                if (fieldAccessTransformer.replaceFieldAccess(fields, ctRef, advisor))
                {
-//                  System.out.println("---> !!!Replaced field access!!!");
                   manager.addFieldInterceptionMarker(ref);
                   converted = true;
                }
@@ -1037,4 +1030,58 @@ public abstract class Instrumentor
    protected abstract CtMethod createMixinInvokeMethod(CtClass clazz, CtClass mixinClass, String initializer, CtMethod method, long hash)
            throws CannotCompileException, NotFoundException, Exception;
 
+   private static class ReferenceClassIterator
+   {
+      int size;
+      int current;
+      ArrayList classes;
+      HashSet handledClasses;
+      String currentEntry;
+      
+      public ReferenceClassIterator(Collection refClasses)
+      {
+         size = refClasses.size();
+         classes = new ArrayList(refClasses.size());
+         classes.addAll(refClasses);
+         handledClasses = new HashSet(refClasses.size());
+      }
+
+      boolean hasNext()
+      {
+         while (current < size)
+         {
+            String s = (String) classes.get(current++);
+            if (!handledClasses.contains(s))
+            {
+               handledClasses.add(s);
+               currentEntry = s;
+               return true;
+            }
+         }
+         return false;
+      }
+
+      String next()
+      {
+         return currentEntry;
+      }
+      
+      void addSuperClass(CtClass clazz)throws NotFoundException
+      {
+         if (clazz != null)
+         {
+            CtClass superClass = clazz.getSuperclass();
+            if (superClass != null)
+            {
+               String name = superClass.getName();
+               if (!handledClasses.contains(name))
+               {
+                  classes.add(name);
+                  size++;
+               }
+            }
+         }
+      }
+   }
+   
 }

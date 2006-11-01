@@ -29,6 +29,7 @@ package org.jboss.test.aop.field;
 public class POJO
 {
    int field;
+   int pojoInherited;
    
    public POJO() {}
    

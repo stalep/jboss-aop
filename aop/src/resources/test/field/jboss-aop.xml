@@ -6,4 +6,13 @@
   <bind pointcut="field(* org.jboss.test.aop.field.SubSubPOJO->field)">                
        <interceptor class="org.jboss.test.aop.field.TraceInterceptor"/>
   </bind>
+  <bind pointcut="field(* org.jboss.test.aop.field.POJO->pojoInherited)">                
+       <interceptor class="org.jboss.test.aop.field.TraceInterceptor"/>
+  </bind>
+  <bind pointcut="field(* org.jboss.test.aop.field.SubPOJO->subpojoInherited)">                
+       <interceptor class="org.jboss.test.aop.field.TraceInterceptor"/>
+  </bind>
+  <bind pointcut="field(* org.jboss.test.aop.field.SubSubPOJO->mine)">                
+       <interceptor class="org.jboss.test.aop.field.TraceInterceptor"/>
+  </bind>
 </aop>

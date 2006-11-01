@@ -23,6 +23,7 @@ package org.jboss.test.aop.field;
 
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.FieldReadInvocation;
+import org.jboss.aop.joinpoint.FieldWriteInvocation;
 import org.jboss.aop.joinpoint.Invocation;
 
 /**
@@ -32,7 +33,7 @@ import org.jboss.aop.joinpoint.Invocation;
  */
 public class TraceInterceptor implements Interceptor
 {
-
+   public static boolean intercepted;
    public String getName()
    {
       return "TraceInterceptor";
@@ -40,10 +41,15 @@ public class TraceInterceptor implements Interceptor
 
    public Object invoke(Invocation invocation) throws Throwable
    {
+      intercepted = true;
       String msg = null;
       if (invocation instanceof FieldReadInvocation)
       {
          msg = "read field name: " + ((FieldReadInvocation)invocation).getField();
+      }
+      else if (invocation instanceof FieldWriteInvocation)
+      {
+         msg = "write field name: " + ((FieldWriteInvocation)invocation).getField();
       }
 
       try
