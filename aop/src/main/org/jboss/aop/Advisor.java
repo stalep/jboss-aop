@@ -691,8 +691,7 @@ public abstract class Advisor
                   throw new RuntimeException(e);
                }
                */
-               System.err.println("method matched binding " + binding.getPointcut().getExpr() + " " + method.toString());
-
+               System.err.println("[debug] method matched binding: " + method.toString());
             }
             binding.addAdvisor(this);
             MethodMatchInfo info = newMethodInterceptors.getMatchInfo(keys[i]);
@@ -904,7 +903,7 @@ public abstract class Advisor
          Constructor constructor = constructors[i];
          if (binding.getPointcut().matchesExecution(this, constructor))
          {
-            if (AspectManager.verbose) System.err.println(constructor + " matched binding " + binding.getName() + " " + binding.getPointcut().getExpr());
+            if (AspectManager.verbose) System.err.println("[debug] constructor matched binding: " + constructor);
             adviceBindings.add(binding);
             binding.addAdvisor(this);
             ConstructorInfo info = (ConstructorInfo)newConstructorInfos.get(i);
@@ -923,7 +922,7 @@ public abstract class Advisor
             Constructor constructor = info.getConstructor();
             if (binding.getPointcut().matchesConstruction(this, constructor))
             {
-               if (AspectManager.verbose) System.err.println(constructor + " matched binding " + binding.getName() + " " + binding.getPointcut().getExpr());
+               if (AspectManager.verbose) System.err.println("[debug] construction matched binding: " + constructor);
                adviceBindings.add(binding);
                binding.addAdvisor(this);
                pointcutResolved(info, binding, new ConstructorJoinpoint(constructor));

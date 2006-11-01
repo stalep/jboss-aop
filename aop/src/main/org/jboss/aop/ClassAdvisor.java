@@ -431,7 +431,7 @@ public class ClassAdvisor extends Advisor
          if ((!write && binding.getPointcut().matchesGet(this, field))
          || (write && binding.getPointcut().matchesSet(this, field)))
          {
-            if (AspectManager.verbose) System.err.println("field matched binding " + binding.getName());
+            if (AspectManager.verbose) System.err.println("[debug] field matched " + ((write) ? "write" : "read") + " binding: " + field);
             adviceBindings.add(binding);
             binding.addAdvisor(this);
             FieldInfo info = (FieldInfo)newFieldInfos.get(i);
@@ -590,6 +590,7 @@ public class ClassAdvisor extends Advisor
 
    private void createInterceptorChains() throws Exception
    {
+      if (AspectManager.verbose) System.out.println("[debug] Creating chains for " + clazz + " " + ((clazz != null) ? clazz.getClassLoader() : null ));
       MethodInterceptors newMethodInfos = initializeMethodChain();
       ArrayList newFieldReadInfos = initializeFieldReadChain();
       ArrayList newFieldWriteInfos = initializeFieldWriteChain();
@@ -602,7 +603,7 @@ public class ClassAdvisor extends Advisor
          while (it.hasNext())
          {
             AdviceBinding binding = (AdviceBinding) it.next();
-            if (AspectManager.verbose) System.out.println("iterate binding " + binding.getName() + " " + binding.getPointcut().getExpr());
+            if (AspectManager.verbose) System.out.println("[debug] iterate binding " + binding.getName() + " " + binding.getPointcut().getExpr());
             resolveMethodPointcut(newMethodInfos, binding);
             resolveFieldPointcut(newFieldReadInfos, binding, false);
             resolveFieldPointcut(newFieldWriteInfos, binding, true);
