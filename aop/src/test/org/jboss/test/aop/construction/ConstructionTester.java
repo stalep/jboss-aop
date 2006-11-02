@@ -63,5 +63,14 @@ public class ConstructionTester extends AOPTestWithSetup
       POJO pojo = new POJO();
       DefaultPOJO d = new DefaultPOJO();
    }
+   
+   public void testPerInstance()
+   {
+      PerInstanceAspect.construction = false;
+      PerInstanceAspect.invocation = false;
+      PerInstancePOJO pojo = new PerInstancePOJO();
+      assertTrue(PerInstanceAspect.construction);
+      assertTrue(PerInstanceAspect.invocation);
+   }
 }
 

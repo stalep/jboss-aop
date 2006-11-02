@@ -22,6 +22,7 @@
 package org.jboss.aop.advice;
 
 import org.jboss.aop.instrument.Untransformable;
+import org.jboss.aop.joinpoint.ConstructionInvocation;
 import org.jboss.aop.joinpoint.ConstructorCalledByConstructorInvocation;
 import org.jboss.aop.joinpoint.ConstructorCalledByMethodInvocation;
 import org.jboss.aop.joinpoint.ConstructorInvocation;
@@ -46,6 +47,7 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
    private static final Class[] INVOCATION_SIGNATURE = {Invocation.class};
    private static final Class[] METHOD_SIGNATURE = {MethodInvocation.class};
    private static final Class[] CONSTRUCTOR_SIGNATURE = {ConstructorInvocation.class};
+   private static final Class[] CONSTRUCTION_SIGNATURE = {ConstructionInvocation.class};
    private static final Class[] FIELD_SIGNATURE = {FieldInvocation.class};
    private static final Class[] FIELD_READ_SIGNATURE = {FieldReadInvocation.class};
    private static final Class[] FIELD_WRITE_SIGNATURE = {FieldWriteInvocation.class};
@@ -56,6 +58,7 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
    protected Method invocationAdvice;
    protected Method methodAdvice;
    protected Method constructorAdvice;
+   protected Method constructionAdvice;
    protected Method fieldAdvice;
    protected Method fieldReadAdvice;
    protected Method fieldWriteAdvice;
@@ -75,6 +78,7 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       {
          methodAdvice = findByMethodInvocation(adviceName, aspectClass);
          constructorAdvice = findByConstructorInvocation(adviceName, aspectClass);
+         constructionAdvice = findByConstructionInvocation(adviceName, aspectClass);
          fieldAdvice = findByFieldInvocation(adviceName, aspectClass);
          if (fieldAdvice == null)
          {
@@ -158,6 +162,19 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       try
       {
          return clazz.getMethod(adviceName, CONSTRUCTOR_SIGNATURE);
+      }
+      catch (NoSuchMethodException e)
+      {
+         // complete
+      }
+      return null;
+   }
+
+   protected static Method findByConstructionInvocation(String adviceName, Class clazz)
+   {
+      try
+      {
+         return clazz.getMethod(adviceName, CONSTRUCTION_SIGNATURE);
       }
       catch (NoSuchMethodException e)
       {
@@ -254,6 +271,14 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
          if (constructorAdvice == null)
          {
             throw new IllegalStateException("Unable to resolve ConstructorInvocation advice " + getName());
+         }
+         return constructorAdvice;
+      }
+      if (invocation instanceof ConstructionInvocation)
+      {
+         if (constructorAdvice == null)
+         {
+            throw new IllegalStateException("Unable to resolve ConstructionInvocation advice " + getName());
          }
          return constructorAdvice;
       }
