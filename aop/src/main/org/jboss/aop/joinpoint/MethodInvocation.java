@@ -182,7 +182,7 @@ public class MethodInvocation extends InvocationBase implements java.io.External
 
       if (getAdvisor() != null)
       {
-         val = getAdvisor().resolveAnnotation(getMethod(), annotation);
+         val = getAdvisor().resolveAnnotation(getMethodHash(), getMethod(), annotation);
          if (val != null) return val;
       }
 

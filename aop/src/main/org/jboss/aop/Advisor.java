@@ -55,7 +55,6 @@ import org.jboss.aop.annotation.AnnotationElement;
 import org.jboss.aop.annotation.AnnotationRepository;
 import org.jboss.aop.instrument.ConstructionTransformer;
 import org.jboss.aop.instrument.ConstructorExecutionTransformer;
-import org.jboss.aop.instrument.FieldAccessTransformer;
 import org.jboss.aop.introduction.AnnotationIntroduction;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.joinpoint.ConstructorJoinpoint;
@@ -63,13 +62,13 @@ import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.InvocationResponse;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodInvocation;
-import org.jboss.aop.joinpoint.MethodJoinpoint;
 import org.jboss.aop.metadata.ClassMetaDataBinding;
 import org.jboss.aop.metadata.ConstructorMetaData;
 import org.jboss.aop.metadata.FieldMetaData;
 import org.jboss.aop.metadata.MethodMetaData;
 import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
+import org.jboss.aop.util.MethodHashing;
 import org.jboss.repository.spi.MetaDataContext;
 import org.jboss.util.NestedRuntimeException;
 
@@ -355,10 +354,42 @@ public abstract class Advisor
 
    public boolean hasAnnotation(Class tgt, String annotation)
    {
-      if (metadataContext != null)
+      return hasAnnotation(tgt, annotation, null);
+   }
+   
+   public boolean hasAnnotation(Class tgt, Class annotation)
+   {
+      return hasAnnotation(tgt, null, annotation);
+   }
+   
+   private boolean hasAnnotation(Class tgt, String annotation, Class annotationClass)
+   {
+      if (annotation == null && annotationClass == null)
       {
-         if (metadataContext.hasAnnotation(annotation)) return true;
+         throw new RuntimeException("annotation or annotationClass must be passed in");
       }
+      
+      try
+      {
+         if (metadataContext != null)
+         {
+            if (annotationClass == null)
+            {
+               annotationClass = Thread.currentThread().getContextClassLoader().loadClass(annotation);
+            }
+            if (metadataContext.hasAnnotation(annotationClass)) return true;
+         }
+      }
+      catch (ClassNotFoundException e)
+      {
+         throw new RuntimeException(e);
+      }
+      
+      if (annotation == null)
+      {
+         annotation = annotationClass.getName();
+      }
+      
       if (annotations.hasClassAnnotation(annotation)) return true;
       if (tgt == null) return false;
       try
@@ -373,9 +404,18 @@ public abstract class Advisor
 
    public Object resolveAnnotation(Method m, Class annotation)
    {
+      return resolveAnnotation(0, m, annotation);
+   }
+   
+   public Object resolveAnnotation(long hash, Method m, Class annotation)
+   {
       if (metadataContext != null)
       {
-         Object val = metadataContext.getAnnotation(m, annotation);
+         if (hash == 0)
+         {
+            hash = MethodHashing.calculateHash(m);            
+         }
+         Object val = metadataContext.getAnnotationForMethod(hash, annotation);
          if (val != null) return val;
       }
       
@@ -418,9 +458,45 @@ public abstract class Advisor
 
    public boolean hasAnnotation(Method m, String annotation)
    {
-      if (metadataContext != null)
+      return hasAnnotation(0, m, annotation, null);
+   }
+   
+   public boolean hasAnnotation(Method m, Class annotation)
+   {
+      return hasAnnotation(0, m, null, annotation);
+   }
+   
+   private boolean hasAnnotation(long hash, Method m, String annotation, Class annotationClass)
+   {
+      if (annotation == null && annotationClass == null)
       {
-         if (metadataContext.hasAnnotation(m, annotation)) return true;
+         throw new RuntimeException("annotation or annotationClass must be passed in");
+      }
+
+      try
+      {
+         if (metadataContext != null)
+         {
+            if (hash == 0)
+            {
+               hash = MethodHashing.methodHash(m);
+            }
+            if (annotationClass == null)
+            {
+               annotationClass = Thread.currentThread().getContextClassLoader().loadClass(annotation);
+            }
+            if (metadataContext.hasAnnotationForMethod(hash, annotationClass))
+               return true;
+         }
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }      
+      
+      if (annotation == null)
+      {
+         annotation = annotationClass.getName();
       }
       
       if (annotations.hasAnnotation(m, annotation)) return true;
