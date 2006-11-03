@@ -276,11 +276,11 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       }
       if (invocation instanceof ConstructionInvocation)
       {
-         if (constructorAdvice == null)
+         if (constructionAdvice == null)
          {
             throw new IllegalStateException("Unable to resolve ConstructionInvocation advice " + getName());
          }
-         return constructorAdvice;
+         return constructionAdvice;
       }
       if (invocation instanceof MethodCalledByMethodInvocation)
       {
