@@ -85,7 +85,7 @@ public abstract class Advisor
    {
       return (MethodInfo)methodInterceptors.get(hash);
    }
-   
+
    private class AdviceInterceptorKey
    {
       private String adviceName;
@@ -150,12 +150,12 @@ public abstract class Advisor
    /** @deprecated Use constructorInfos instead */
    protected Interceptor[][] constructorInterceptors;
    protected ConstructorInfo[] constructorInfos; //This should replace constructorInterceptors
-   
+
    /** @deprecated Use constructorInfos instead */
    protected Interceptor[][] constructionInterceptors;
    protected ConstructionInfo[] constructionInfos;
-   
-   
+
+
    //FIXME - make metaDataContext a MetaDataContext once MC 2.0 is released
    MetaDataContext metadataContext;
 
@@ -206,7 +206,7 @@ public abstract class Advisor
    {
       return manager;
    }
-   
+
    /**
     * For use by generated advisors. They will explicitly set the manager
     * @param name
@@ -236,7 +236,7 @@ public abstract class Advisor
    {
       return methodMetaData;
    }
-   
+
    public FieldMetaData getFieldMetaData()
    {
       return fieldMetaData;
@@ -262,7 +262,7 @@ public abstract class Advisor
          }
       }
    }
-   
+
    public void deployAnnotationOverride(AnnotationIntroduction introduction)
    {
       if (System.getSecurityManager() == null)
@@ -307,7 +307,7 @@ public abstract class Advisor
    {
       manager.applyInterfaceIntroductions(this, theClass);
    }
-   
+
    protected void deployMethodAnnotationOverrides(Class theClass, AnnotationIntroduction introduction)
    {
       if (theClass.getSuperclass() != null)
@@ -337,10 +337,10 @@ public abstract class Advisor
          Object value = metadataContext.getAnnotation(annotation);
          if (value != null) return value;
       }
-      
+
       if (annotations.isDisabled(annotation))
          return null;
-      
+
       Object value = annotations.resolveClassAnnotation(annotation);
       if (clazz == null) return null;
       if (value == null) value = AnnotationElement.getVisibleAnnotation(clazz, annotation);
@@ -356,19 +356,19 @@ public abstract class Advisor
    {
       return hasAnnotation(tgt, annotation, null);
    }
-   
+
    public boolean hasAnnotation(Class tgt, Class annotation)
    {
       return hasAnnotation(tgt, null, annotation);
    }
-   
+
    private boolean hasAnnotation(Class tgt, String annotation, Class annotationClass)
    {
       if (annotation == null && annotationClass == null)
       {
          throw new RuntimeException("annotation or annotationClass must be passed in");
       }
-      
+
       try
       {
          if (metadataContext != null)
@@ -382,14 +382,14 @@ public abstract class Advisor
       }
       catch (ClassNotFoundException e)
       {
-         throw new RuntimeException(e);
+         //The "annotation" is probably aop metadata for which there will be no corresponding class
       }
-      
+
       if (annotation == null)
       {
          annotation = annotationClass.getName();
       }
-      
+
       if (annotations.hasClassAnnotation(annotation)) return true;
       if (tgt == null) return false;
       try
@@ -406,27 +406,27 @@ public abstract class Advisor
    {
       return resolveAnnotation(0, m, annotation);
    }
-   
+
    public Object resolveAnnotation(long hash, Method m, Class annotation)
    {
       if (metadataContext != null)
       {
          if (hash == 0)
          {
-            hash = MethodHashing.calculateHash(m);            
+            hash = MethodHashing.calculateHash(m);
          }
          Object val = metadataContext.getAnnotationForMethod(hash, annotation);
          if (val != null) return val;
       }
-      
+
       if (annotations.isDisabled(m,annotation))
          return null;
-      
+
       Object value = annotations.resolveAnnotation(m, annotation);
       if (value == null) value = AnnotationElement.getVisibleAnnotation(m, annotation);
       return value;
    }
-   
+
    public Object resolveAnnotation(Method m, Class[] annotationChoices)
    {
       Object value = null;
@@ -434,7 +434,7 @@ public abstract class Advisor
       while (value == null && i < annotationChoices.length){
          value = annotations.resolveAnnotation(m, annotationChoices[i++]);
       }
-      
+
       i = 0;
       while (value == null && i < annotationChoices.length){
          value = AnnotationElement.getVisibleAnnotation(m, annotationChoices[i++]);
@@ -460,12 +460,12 @@ public abstract class Advisor
    {
       return hasAnnotation(0, m, annotation, null);
    }
-   
+
    public boolean hasAnnotation(Method m, Class annotation)
    {
       return hasAnnotation(0, m, null, annotation);
    }
-   
+
    private boolean hasAnnotation(long hash, Method m, String annotation, Class annotationClass)
    {
       if (annotation == null && annotationClass == null)
@@ -489,16 +489,20 @@ public abstract class Advisor
                return true;
          }
       }
-      catch (Exception e)
+      catch (ClassNotFoundException e)
+      {
+         //The "annotation" is probably aop metadata for which there will be no corresponding class
+      }
+      catch(Exception e)
       {
          throw new RuntimeException(e);
-      }      
-      
+      }
+
       if (annotation == null)
       {
          annotation = annotationClass.getName();
       }
-      
+
       if (annotations.hasAnnotation(m, annotation)) return true;
       try
       {
@@ -569,7 +573,7 @@ public abstract class Advisor
       if (annotations.hasAnnotation(member, annotation)) return true;
       return AnnotationElement.isAnyAnnotationPresent(member, annotation);
    }
-   
+
    public MetaDataContext getMetadataContext()
    {
       return metadataContext;
@@ -589,7 +593,7 @@ public abstract class Advisor
    {
       return doesHaveAspects;
    }
-   
+
    public synchronized void removeAdviceBinding(AdviceBinding binding)
    {
       adviceBindings.remove(binding);
@@ -667,7 +671,7 @@ public abstract class Advisor
       }
       joinpoints.add(joinpoint);
    }
-  
+
    public void removePerInstanceJoinpointAspect(AspectDefinition def)
    {
       perInstanceJoinpointAspectDefinitions.remove(def);
@@ -750,7 +754,7 @@ public abstract class Advisor
       {
          Method method = (Method) advisedMethods.get(keys[i]);
          PointcutMethodMatch match = binding.getPointcut().matchesExecution(this, method);
-         
+
          if (match != null && match.isMatch())
          {
             adviceBindings.add(binding);
@@ -775,11 +779,11 @@ public abstract class Advisor
          }
       }
    }
-   
+
    protected void finalizeMethodChain(MethodInterceptors newMethodInterceptors)
    {
       TLongObjectHashMap newMethodInfos = new TLongObjectHashMap();
-      
+
       long[] keys = newMethodInterceptors.keys();
       for (int i = 0; i < keys.length; i++)
       {
@@ -788,7 +792,7 @@ public abstract class Advisor
 
          MethodInfo info = matchInfo.getInfo();
          newMethodInfos.put(keys[i], info);
-         
+
          ArrayList list = info.getInterceptorChain();
          Interceptor[] interceptors = null;
          if (list.size() > 0)
@@ -847,17 +851,17 @@ public abstract class Advisor
       {
          return name;
       }
-      
+
       return name.substring(lastIndex + 1);
    }
-   
+
    protected ArrayList initializeConstructorChain()
    {
       if (clazz != null && constructors == null)
       {
           constructors = clazz.getDeclaredConstructors();
       }
-      
+
       ArrayList newInfos = new ArrayList(constructors.length);
       for (int i = 0; i < constructors.length; i++)
       {
@@ -886,7 +890,7 @@ public abstract class Advisor
 
          info.setAdvisor(this);
          newInfos.add(info);
-         
+
          try
          {
             final String name = ConstructorExecutionTransformer.getConstructorInfoFieldName(getSimpleName(clazz), i);
@@ -908,7 +912,7 @@ public abstract class Advisor
                throw new NestedRuntimeException(e);
          }
       }
-      
+
       return newInfos;
    }
 
@@ -922,7 +926,7 @@ public abstract class Advisor
          info.setIndex(i);
          info.setAdvisor(this);
          newInfos.add(info);
-         
+
          try
          {
             Field infoField = clazz.getDeclaredField(ConstructionTransformer.getConstructionInfoFieldName(getSimpleName(clazz), i));
@@ -937,7 +941,7 @@ public abstract class Advisor
          {
             throw new RuntimeException(e);
          }
-         
+
       }
       return newInfos;
    }
@@ -1016,7 +1020,7 @@ public abstract class Advisor
          constructorInterceptors[i] = constructorInfos[i].getInterceptors();
       }
    }
- 
+
    /**
     * Default implementation adds interceptorChain directly to the info.
     * GeneratedClassAdvisor overrides this
@@ -1036,12 +1040,12 @@ public abstract class Advisor
          createInterceptorChain(binding.getInterceptorFactories(), curr, joinpoint);
       }
    }
-  
+
    Interceptor[] applyPrecedence(Interceptor[] interceptors)
    {
       return PrecedenceSorter.applyPrecedence(interceptors, manager);
    }
-   
+
    /**
     * Whether the type of advisor supports matching on pointcut expression, where the method is defined in a superclass only,
     * while the pointcut expression class matches the subclass. This is currently only supported for generated advisors, due to
@@ -1050,7 +1054,7 @@ public abstract class Advisor
     * public class Super {<BR/>
     * &nbsp;&nbsp;void method(){}<BR/>
     * }<BR/>
-    * <BR/>    
+    * <BR/>
     * public class Sub etxends Super {<BR/>
     * }<BR/>
     * </code>
@@ -1065,17 +1069,17 @@ public abstract class Advisor
     * </code><BR/>
     * Super.method() will be intercepted by A only<BR/>
     * Sub.method() will be intercepted by A and B
-    *  
+    *
     */
    public boolean chainOverridingForInheritedMethods()
    {
       return false;
    }
-   
+
    interface DeployAnnotationOverrideAction
    {
       void deploy(Advisor advisor, AnnotationIntroduction introduction);
-      
+
       DeployAnnotationOverrideAction PRIVILEGED = new DeployAnnotationOverrideAction()
       {
          public void deploy(final Advisor advisor, final AnnotationIntroduction introduction)
@@ -1094,8 +1098,8 @@ public abstract class Advisor
             catch (PrivilegedActionException e)
             {
                Exception ex = e.getException();
-               if (ex instanceof RuntimeException) 
-               { 
+               if (ex instanceof RuntimeException)
+               {
                   throw (RuntimeException)ex;
                }
                throw new RuntimeException(ex);
