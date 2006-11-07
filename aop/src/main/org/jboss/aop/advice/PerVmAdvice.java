@@ -59,7 +59,7 @@ public class PerVmAdvice
       ClassLoader cl = aspect.getClass().getClassLoader();
       String name = "org.jboss.aop.advice." + aspect.getClass().getName() + "_z_" + adviceName + "_" + System.identityHashCode(cl);
       Class iclass = null;
-      
+
       if (cl == null)
       {
          //The classloader will be null if loader by the booststrap classloader
@@ -67,7 +67,7 @@ public class PerVmAdvice
       }
       synchronized (PerVmAdvice.class)
       {
-         try 
+         try
          {
             iclass = cl.loadClass(name);
          }
@@ -88,13 +88,27 @@ public class PerVmAdvice
 
          if (iclass == null)
          {
+            //Aspects deployed in the lib folder, such as the AOP/MC integration aspects like the JMXIntroduction
+            //will be deployed in the root classloader, but created in a pool for a child ucl due to the nature of AspectManager.findClassPool()
+            try
+            {
+               ClassLoader pcl = pool.getClassLoader();
+               iclass = pcl.loadClass(name);
+            }
+            catch(Exception e)
+            {
+            }
+         }
+
+         if (iclass == null)
+         {
             Method[] methods = aspect.getClass().getMethods();
             ArrayList matches = new ArrayList();
             for (int i = 0; i < methods.length; i++)
             {
                if (methods[i].getName().equals(adviceName)) matches.add(methods[i]);
             }
-      
+
             // todo: Need to have checks on whether the advice is overloaded and it is an argument type interception
             if (matches.size() == 1)
             {
@@ -107,15 +121,15 @@ public class PerVmAdvice
                   }
                }
             }
-      
+
 //            ClassPool pool = AspectManager.instance().findClassPool(cl);
             CtClass clazz = TransformerCommon.makeClass(pool, name);
-            
+
             // We need to know whether this Interceptor is actually advice.
             CtClass interceptorInterface = pool.get("org.jboss.aop.advice.Interceptor");
             CtClass abstractAdviceClass = pool.get("org.jboss.aop.advice.AbstractAdvice");
             clazz.setSuperclass(abstractAdviceClass);
-      
+
             // aspect field
             CtClass aspectClass = pool.get(aspect.getClass().getName());
             CtField field = new CtField(aspectClass, "aspectField", clazz);
@@ -130,7 +144,7 @@ public class PerVmAdvice
             CtMethod getName = CtNewMethod.make(getNameTemplate.getReturnType(), "getName", getNameTemplate.getParameterTypes(), getNameTemplate.getExceptionTypes(), getNameBody, clazz);
             getName.setModifiers(javassist.Modifier.PUBLIC);
             clazz.addMethod(getName);
-      
+
             // invoke
             CtMethod invokeTemplate = interceptorInterface.getDeclaredMethod("invoke");
             StringBuffer invokeBody = new StringBuffer();
@@ -155,7 +169,7 @@ public class PerVmAdvice
             CtMethod invoke = CtNewMethod.make(invokeTemplate.getReturnType(), "invoke", invokeTemplate.getParameterTypes(), invokeTemplate.getExceptionTypes(), invokeBody.toString(), clazz);
             invoke.setModifiers(javassist.Modifier.PUBLIC);
             clazz.addMethod(invoke);
-         
+
             iclass = TransformerCommon.toClass(clazz, cl);
          }
       }
