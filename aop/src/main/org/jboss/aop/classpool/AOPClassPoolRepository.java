@@ -65,10 +65,35 @@ public class AOPClassPoolRepository implements ScopedClassPoolRepository
    private AOPClassPoolRepository()
    {
       this.delegate = ScopedClassPoolRepositoryImpl.getInstance();
+      //This was needed when jboss-aop-jdk50.jar was deployed in the jboss/lib directory since the AspectManager bean had no chance to initialise it
       delegate.setClassPoolFactory(new AOPClassPoolFactory());
+//      if (!setJBossSpecificStartupVariables())
+//      {
+//         delegate.setClassPoolFactory(new AOPClassPoolFactory());
+//      }
    }
 
-
+//   private boolean setJBossSpecificStartupVariables()
+//   {
+//      //We are running within JBoss 5, let's default to the JBossClassPoolFactory and set the ScopedClassPoolHelper
+//      //so that we get correct behaviour before the AspectManager service has been deployed
+//      try
+//      {
+//         Class jbcpf = Class.forName("org.jboss.aop.deployment.JBossClassPoolFactory");
+//         ScopedClassPoolFactory factory = (ScopedClassPoolFactory)jbcpf.newInstance();
+//         
+//         Class hlpr = Class.forName("org.jboss.aop.deployment.JBossScopedClassLoaderHelper");
+//         AOPScopedClassLoaderHelper helper = (AOPScopedClassLoaderHelper)hlpr.newInstance();
+//         delegate.setClassPoolFactory(factory);
+//         AspectManager.scopedCLHelper = helper;
+//         return true;
+//      }
+//      catch (Exception e)
+//      {
+//      }
+//      return false;//Not running in JBoss probably
+//   }
+   
    public void setClassPoolFactory(ScopedClassPoolFactory factory)
    {
       delegate.setClassPoolFactory(factory);
