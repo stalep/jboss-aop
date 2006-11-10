@@ -307,7 +307,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
          "{" +
          "   if (" + infoName + " == null && " + generatorName + " != null)" +
          "   {" +
-         "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "();" +
+         "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
          "   }" +
          "   if (" + infoName + " == null)" +
          "   { " +
@@ -330,7 +330,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
          "{" +
          "   if (" + infoName + " == null && " + generatorName + " != null)" +
          "   {" +
-         "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "();" +
+         "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
          "   }" +
          "   if (" + infoName + " == null)" +
          "   { " +

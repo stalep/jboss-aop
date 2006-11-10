@@ -145,15 +145,15 @@ public abstract class JoinPointGenerator
    /**
     * Called by the joinpoint if a interceptors were regenereated
     */
-   public synchronized void generateJoinPointClass()
+   public synchronized void generateJoinPointClass(ClassLoader classloader)
    {
       if (System.getSecurityManager() == null)
       {
-         GenerateJoinPointClassAction.NON_PRIVILEGED.generateJoinPointClass(this);
+         GenerateJoinPointClassAction.NON_PRIVILEGED.generateJoinPointClass(classloader, this);
       }
       else
       {
-         GenerateJoinPointClassAction.PRIVILEGED.generateJoinPointClass(this);
+         GenerateJoinPointClassAction.PRIVILEGED.generateJoinPointClass(classloader, this);
       }
    }
     
@@ -161,7 +161,7 @@ public abstract class JoinPointGenerator
     * Does the work for generateJoinPointClass()
     * @see JoinPointGenerator#generateJoinPointClass()
     */
-   private void doGenerateJoinPointClass()
+   private void doGenerateJoinPointClass(ClassLoader classloader)
    {
       try
       {
@@ -171,7 +171,8 @@ public abstract class JoinPointGenerator
             return;
          }
          AspectManager manager = AspectManager.instance();
-         ClassPool pool = manager.findClassPool(Thread.currentThread().getContextClassLoader());
+         //ClassPool pool = manager.findClassPool(Thread.currentThread().getContextClassLoader());
+         ClassPool pool = manager.findClassPool(classloader);
          GeneratedClassInfo generatedClass = generateJoinpointClass(pool, info);
          
          Class clazz = toClass(pool, generatedClass.getGenerated());
@@ -199,19 +200,15 @@ public abstract class JoinPointGenerator
       try
       {
          obj = ctor.newInstance(new Object[] {info});
+         
+         System.out.println("============================");
+         System.out.println(debugClass(new StringBuffer(), clazz));
+         System.out.println("============================");
       }
       catch (Exception e)
       {
          StringBuffer sb = new StringBuffer();
-         sb.append("\n\t\t" + Modifier.toString(clazz.getModifiers()) + " " + clazz.getName() + " " + clazz.getClassLoader() + "\n\t\t\textends\n");
-         clazz = clazz.getSuperclass();
-         sb.append("\t\t" + Modifier.toString(clazz.getModifiers()) + " " + clazz.getName() + " " + clazz.getClassLoader() + "\n");
-         Field[] fields = clazz.getDeclaredFields();
-         for (int i = 0 ; i < fields.length ; i++)
-         {
-            sb.append("\n\t\t\t" + Modifier.toString(fields[i].getModifiers()) + " " + fields[i].getType().getName() + " " + fields[i].getName() + " " + fields[i].getType().getClassLoader());
-         }
-         throw new RuntimeException(sb.toString(), e);
+         throw new RuntimeException(debugClass(sb, clazz).toString());
       }
       
       for (int i = 0 ; i < aroundSetups.length ; i++)
@@ -226,6 +223,25 @@ public abstract class JoinPointGenerator
       return obj;
    }
     
+   private StringBuffer debugClass(StringBuffer sb, Class clazz)
+   {
+      sb.append("\n\t\t" + Modifier.toString(clazz.getModifiers()) + " " + clazz.getName() + " " + clazz.getClassLoader()); 
+      Field[] fields = clazz.getDeclaredFields();
+      for (int i = 0 ; i < fields.length ; i++)
+      {
+         sb.append("\n\t\t\t" + Modifier.toString(fields[i].getModifiers()) + " " + fields[i].getType().getName() + " " + fields[i].getName() + " " + fields[i].getType().getClassLoader());
+      }
+     
+     Class superClass = clazz.getSuperclass();
+     if (superClass != null && superClass != Object.class)
+     {
+        sb.append("\n\t\t\textends\n");
+        debugClass(sb, superClass);
+     }
+     return sb;
+   }
+   
+   
    private static synchronized int getIncrement()
    {
       return ++increment;
@@ -1483,11 +1499,11 @@ public abstract class JoinPointGenerator
 
    private interface GenerateJoinPointClassAction
    {
-      void generateJoinPointClass(JoinPointGenerator joinPointGenerator);
+      void generateJoinPointClass(ClassLoader classloader, JoinPointGenerator joinPointGenerator);
       
       GenerateJoinPointClassAction PRIVILEGED = new GenerateJoinPointClassAction()
       {
-         public void generateJoinPointClass(final JoinPointGenerator joinPointGenerator) 
+         public void generateJoinPointClass(final ClassLoader classloader, final JoinPointGenerator joinPointGenerator) 
          {
             try
             {
@@ -1495,7 +1511,7 @@ public abstract class JoinPointGenerator
                {
                   public Object run() throws Exception
                   {
-                     joinPointGenerator.doGenerateJoinPointClass();
+                     joinPointGenerator.doGenerateJoinPointClass(classloader);
                      return null;
                   }
                });
@@ -1514,9 +1530,9 @@ public abstract class JoinPointGenerator
 
       GenerateJoinPointClassAction NON_PRIVILEGED = new GenerateJoinPointClassAction()
       {
-         public void generateJoinPointClass(JoinPointGenerator joinPointGenerator)
+         public void generateJoinPointClass(ClassLoader classloader, JoinPointGenerator joinPointGenerator)
          {
-            joinPointGenerator.doGenerateJoinPointClass();
+            joinPointGenerator.doGenerateJoinPointClass(classloader);
          }
       };
    }

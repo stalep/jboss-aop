@@ -137,7 +137,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
                "{" +
                "   if (" + infoName + " == null && " + generatorName + " != null)" +
                "   {" +
-               "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "();" +
+               "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
                "   }" +
                "   if (" + infoName + " == null)" +
                "   { " +
@@ -239,7 +239,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
                "{" +
                "   if (" + infoName + " == null && " + generatorName + " != null)" +
                "   {" +
-               "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "();" +
+               "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
                "   }" +
                "   if (" + infoName + " == null)" +
                "   { " +
@@ -331,7 +331,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          code.append("{");
          code.append("   if (" + infoName + " == null && " + generatorName + " != null)");
          code.append("   {");
-         code.append("   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "();");
+         code.append("   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());");
          code.append("   }");
          code.append("   if (" + infoName + " == null)");
          code.append("   { ");
@@ -406,7 +406,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
                "{" +
                "   if (" + infoName + " == null && " + generatorName + " != null)" +
                "   {" +
-               "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "();" +
+               "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
                "   }" +
                "   if (" + infoName + " == null)" +
                "   { " +

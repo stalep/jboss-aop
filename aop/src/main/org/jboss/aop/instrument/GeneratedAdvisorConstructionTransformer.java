@@ -147,7 +147,7 @@ public class GeneratedAdvisorConstructionTransformer extends ConstructionTransfo
          "{" +
          "   if (" + infoName + " == null && " + generatorName + " != null)" +
          "   {" +
-         "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "();" +
+         "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
          "   }" +
          "   if (" + infoName + " != null)" +
          "   { " +
