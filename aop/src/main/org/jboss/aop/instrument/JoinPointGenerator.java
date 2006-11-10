@@ -200,10 +200,6 @@ public abstract class JoinPointGenerator
       try
       {
          obj = ctor.newInstance(new Object[] {info});
-         
-         System.out.println("============================");
-         System.out.println(debugClass(new StringBuffer(), clazz));
-         System.out.println("============================");
       }
       catch (Exception e)
       {
