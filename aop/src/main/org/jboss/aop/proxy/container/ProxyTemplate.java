@@ -42,6 +42,7 @@ public class ProxyTemplate implements Delegate, AspectManaged
    private transient Advisor classAdvisor;
    private transient InstanceAdvisor instanceAdvisor;
    protected volatile transient Advisor currentAdvisor;
+   protected boolean _proxy_initialised;
    
    private Object delegate;
    private Object[] mixins; // Do not remove this

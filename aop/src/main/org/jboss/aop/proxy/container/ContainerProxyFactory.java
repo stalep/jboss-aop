@@ -50,7 +50,6 @@ import org.jboss.aop.InstanceAdvised;
 import org.jboss.aop.MethodInfo;
 import org.jboss.aop.instrument.TransformerCommon;
 import org.jboss.aop.introduction.InterfaceIntroduction;
-import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.aop.util.JavassistMethodHashing;
 
 
@@ -209,6 +208,7 @@ public class ContainerProxyFactory
          proxy.addInterface(interfaze);
       }
       
+      addFieldFromTemplate(template, "_proxy_initialised");
       ensureDefaultConstructor(superclass, proxy);
       addFieldFromTemplate(template, "mixins");
 
@@ -358,28 +358,42 @@ public class ContainerProxyFactory
                superCall.append(", ");
             }
             
-            if (!params[i].isPrimitive())
-            {
-               superCall.append("null");
-            }
-            else
-            {
-               if (params[i].equals(CtClass.booleanType)) superCall.append("false");
-               else if (params[i].equals(CtClass.charType)) superCall.append("'0'");
-               else if (params[i].equals(CtClass.byteType)) superCall.append("0");
-               else if (params[i].equals(CtClass.shortType)) superCall.append("0");
-               else if (params[i].equals(CtClass.intType)) superCall.append("0");
-               else if (params[i].equals(CtClass.longType)) superCall.append("0L");
-               else if (params[i].equals(CtClass.floatType)) superCall.append("0f");
-               else if (params[i].equals(CtClass.doubleType)) superCall.append("0d");               
-            }
+            superCall.append(getNullType(params[i]));
          }
          
          superCall.append(");");
+         superCall.append("_proxy_initialised = true;");
          
          CtConstructor ctor = CtNewConstructor.make(EMPTY_CTCLASS_ARRAY, EMPTY_CTCLASS_ARRAY, "{" + superCall.toString() + "}", proxy);
          proxy.addConstructor(ctor);
       }
+      else
+      {
+         CtConstructor ctor = CtNewConstructor.defaultConstructor(proxy);
+         ctor.setBody("{_proxy_initialised = true;}");
+         proxy.addConstructor(ctor);
+      }
+   }
+
+   private String getNullType(CtClass clazz)
+   {
+      if (!clazz.isPrimitive())
+      {
+         return "null";
+      }
+      else
+      {
+         if (clazz.equals(CtClass.booleanType)) return "false";
+         else if (clazz.equals(CtClass.charType)) return "'0'";
+         else if (clazz.equals(CtClass.byteType)) return "0";
+         else if (clazz.equals(CtClass.shortType)) return "0";
+         else if (clazz.equals(CtClass.intType)) return "0";
+         else if (clazz.equals(CtClass.longType)) return "0L";
+         else if (clazz.equals(CtClass.floatType)) return "0f";
+         else if (clazz.equals(CtClass.doubleType)) return "0d";
+         else return "";//void
+      }
+      
    }
    
    private void addMethodsAndMixins()throws Exception
@@ -550,6 +564,9 @@ public class ContainerProxyFactory
          
          if (m.getParameterTypes().length > 0) args = "$args";
          String code = "{   " +
+                       "    if (_proxy_initialised == false) {" +
+                       "       return " + getNullType(m.getReturnType()) + ";" +
+                       "    }" +
                        "    try{" +
                        "       org.jboss.aop.MethodInfo mi = currentAdvisor.getMethodInfo(" + hash.longValue() + "L); " +
                        "       if (mi == null) " +
