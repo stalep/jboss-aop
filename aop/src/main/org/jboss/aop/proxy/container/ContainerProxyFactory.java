@@ -92,6 +92,8 @@ public class ContainerProxyFactory
    /** True if we are proxying a class already woven by jboss aop, false otherwise */
    private boolean isAdvised;
    
+   private CtConstructor defaultCtor;
+   
    public static Class getProxyClass(Class clazz, AspectManager manager) throws Exception
    {
       ContainerProxyCacheKey key = new ContainerProxyCacheKey(clazz);
@@ -364,14 +366,14 @@ public class ContainerProxyFactory
          superCall.append(");");
          superCall.append("_proxy_initialised = true;");
          
-         CtConstructor ctor = CtNewConstructor.make(EMPTY_CTCLASS_ARRAY, EMPTY_CTCLASS_ARRAY, "{" + superCall.toString() + "}", proxy);
-         proxy.addConstructor(ctor);
+         defaultCtor = CtNewConstructor.make(EMPTY_CTCLASS_ARRAY, EMPTY_CTCLASS_ARRAY, "{" + superCall.toString() + "}", proxy);
+         proxy.addConstructor(defaultCtor);
       }
       else
       {
-         CtConstructor ctor = CtNewConstructor.defaultConstructor(proxy);
-         ctor.setBody("{_proxy_initialised = true;}");
-         proxy.addConstructor(ctor);
+         defaultCtor = CtNewConstructor.defaultConstructor(proxy);
+         defaultCtor.setBody("{_proxy_initialised = true;}");
+         proxy.addConstructor(defaultCtor);
       }
    }
 
@@ -421,8 +423,7 @@ public class ContainerProxyFactory
          }
          if (mixes.size() > 0)
          {
-            CtConstructor con = CtNewConstructor.defaultConstructor(proxy);
-            con.insertAfter("mixins = new Object[" + mixes.size() + "];");
+            defaultCtor.insertAfter("mixins = new Object[" + mixes.size() + "];");
             for (int i = 0; i < mixes.size(); i++)
             {
                //If using a constructor and passing "this" as the parameters, the proxy gets used. The delegate (instance wrapped by proxy) is not 
@@ -430,11 +431,10 @@ public class ContainerProxyFactory
                InterfaceIntroduction.Mixin mixin = (InterfaceIntroduction.Mixin) mixes.get(i);
                String initializer = (mixin.getConstruction() == null) ? ("new " + mixin.getClassName() + "()") : mixin.getConstruction();
                String code = "mixins[" + i + "] = " + initializer + ";";
-               con.insertAfter(code);
+               defaultCtor.insertAfter(code);
                setDelegateMethod.insertAfter("{if (org.jboss.aop.proxy.container.Delegate.class.isAssignableFrom(mixins[" + i + "].getClass())) " +
                      "((org.jboss.aop.proxy.container.Delegate)mixins[" + i + "]).setDelegate($1);}");
             }
-            proxy.addConstructor(con);
          }
          
          createMixins(addedMethods, mixes, addedInterfaces, implementedInterfaces);
@@ -453,14 +453,6 @@ public class ContainerProxyFactory
     */
    private void getIntroductionInterfaces(InterfaceIntroduction intro, HashMap intfs, HashMap mixins, ArrayList mixes, int idx)
    {
-      if (intro.getInterfaces() != null)
-      {
-         for (int i = 0; i < intro.getInterfaces().length; i++)
-         {
-            if (intfs.containsKey(intro.getInterfaces()[i]) || mixins.containsKey(intro.getInterfaces()[i])) throw new RuntimeException("cannot have an IntroductionInterface that introduces same interfaces");
-            intfs.put(intro.getInterfaces()[i], new Integer(idx));
-         }
-      }
       Iterator it = intro.getMixins().iterator();
       while (it.hasNext())
       {
@@ -468,8 +460,30 @@ public class ContainerProxyFactory
          mixes.add(mixin);
          for (int i = 0; i < mixin.getInterfaces().length; i++)
          {
-            if (intfs.containsKey(mixin.getInterfaces()[i]) || mixins.containsKey(mixin.getInterfaces()[i])) throw new RuntimeException("cannot have an IntroductionInterface that introduces same interfaces");
+            if (intfs.containsKey(mixin.getInterfaces()[i]))
+            {
+               intfs.remove(mixin.getInterfaces()[i]);
+               
+            }
+            if (mixins.containsKey(mixin.getInterfaces()[i]))
+            {
+               throw new RuntimeException("cannot have an IntroductionInterface that introduces several mixins with the same interfaces " + mixin.getInterfaces()[i]);
+            }
             mixins.put(mixin.getInterfaces()[i], new Integer(idx));
+         }
+      }
+      if (intro.getInterfaces() != null)
+      {
+         for (int i = 0; i < intro.getInterfaces().length; i++)
+         {
+            if (intfs.containsKey(intro.getInterfaces()[i]) || mixins.containsKey(intro.getInterfaces()[i])) 
+            {
+               //Do nothing
+            }
+            else
+            {
+               intfs.put(intro.getInterfaces()[i], new Integer(idx));
+            }
          }
       }
    }
