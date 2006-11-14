@@ -21,7 +21,6 @@
   */
 package org.jboss.aop.proxy.container;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -210,8 +210,7 @@ public class ContainerProxyFactory
          proxy.addInterface(interfaze);
       }
       
-      addFieldFromTemplate(template, "_proxy_initialised");
-      ensureDefaultConstructor(superclass, proxy);
+      copyConstructors(superclass, proxy);
       addFieldFromTemplate(template, "mixins");
 
       //Add methods/fields needed for Delegate interface
@@ -328,53 +327,63 @@ public class ContainerProxyFactory
       return method;
    }
    
-   private void ensureDefaultConstructor(CtClass superclass, CtClass proxy) throws Exception
+   private void copyConstructors(CtClass superclass, CtClass proxy) throws Exception
    {
-      
       CtConstructor[] ctors = superclass.getConstructors();
       int minParameters = Integer.MAX_VALUE;
       CtConstructor bestCtor = null;
       for (int i = 0 ; i < ctors.length ; i++)
       {
          CtClass[] params = ctors[i].getParameterTypes(); 
+         
+         CtConstructor ctor = CtNewConstructor.make(
+            ctors[i].getParameterTypes(),
+            ctors[i].getExceptionTypes(),
+            CtNewConstructor.PASS_PARAMS,
+            null,
+            null,
+            proxy);
+         ctor.setModifiers(ctors[i].getModifiers());
+         proxy.addConstructor(ctor);
+
          if (params.length < minParameters)
          {
-            bestCtor = ctors[i];
+            bestCtor = ctor;
             minParameters = params.length;
+         }
+         if (params.length == 0)
+         {
+            defaultCtor = ctor;
          }
       }
       
       if (minParameters > 0)
       {
          //We don't have a default constructor, we need to create one passing in null to the super ctor
-
-         //TODO We will get problems if the super class does some validation of the parameters, resulting in exceptions thrown
-         CtClass params[] = bestCtor.getParameterTypes();
-         
-         StringBuffer superCall = new StringBuffer("super(");
-         
-         for (int i = 0 ; i < params.length ; i++)
+         createDefaultConstructor(bestCtor);
+      }
+   }
+   
+   private void createDefaultConstructor(CtConstructor bestCtor) throws NotFoundException, CannotCompileException
+   {
+      CtClass params[] = bestCtor.getParameterTypes();
+      
+      StringBuffer superCall = new StringBuffer("super(");
+      
+      for (int i = 0 ; i < params.length ; i++)
+      {
+         if (i > 0)
          {
-            if (i > 0)
-            {
-               superCall.append(", ");
-            }
-            
-            superCall.append(getNullType(params[i]));
+            superCall.append(", ");
          }
          
-         superCall.append(");");
-         superCall.append("_proxy_initialised = true;");
-         
-         defaultCtor = CtNewConstructor.make(EMPTY_CTCLASS_ARRAY, EMPTY_CTCLASS_ARRAY, "{" + superCall.toString() + "}", proxy);
-         proxy.addConstructor(defaultCtor);
+         superCall.append(getNullType(params[i]));
       }
-      else
-      {
-         defaultCtor = CtNewConstructor.defaultConstructor(proxy);
-         defaultCtor.setBody("{_proxy_initialised = true;}");
-         proxy.addConstructor(defaultCtor);
-      }
+      
+      superCall.append(");");
+      
+      defaultCtor = CtNewConstructor.make(EMPTY_CTCLASS_ARRAY, EMPTY_CTCLASS_ARRAY, "{" + superCall.toString() + "}", proxy);
+      proxy.addConstructor(defaultCtor);
    }
 
    private String getNullType(CtClass clazz)
@@ -578,7 +587,7 @@ public class ContainerProxyFactory
          
          if (m.getParameterTypes().length > 0) args = "$args";
          String code = "{   " +
-                       "    if (_proxy_initialised == false) {" +
+                       "    if (currentAdvisor == null) {" +
                        "       return " + getNullType(m.getReturnType()) + ";" +
                        "    }" +
                        "    try{" +

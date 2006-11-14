@@ -21,6 +21,8 @@
 */ 
 package org.jboss.aop.proxy.container;
 
+import java.lang.reflect.Constructor;
+
 import org.jboss.aop.metadata.SimpleMetaData;
 //import org.jboss.repository.spi.MetaDataContext;
 
@@ -41,6 +43,7 @@ public class AOPProxyFactoryParameters
    private boolean objectAsSuperClass;
    private SimpleMetaData simpleMetaData;
    private ContainerCache containerCache;
+   private Ctor ctor;
    
    public AOPProxyFactoryParameters()
    {
@@ -54,7 +57,9 @@ public class AOPProxyFactoryParameters
          Object context, 
          boolean objectAsSuperClass,
          SimpleMetaData simpleMetaData,
-         ContainerCache containerCache)
+         ContainerCache containerCache,
+         Class[] ctorSignature,
+         Object[] ctorArguments)
    {
       this.interfaces = interfaces;
       this.metaDataContext = context;
@@ -63,6 +68,7 @@ public class AOPProxyFactoryParameters
       this.target = target;
       this.simpleMetaData = simpleMetaData;
       this.containerCache = containerCache;
+      setCtor(ctorSignature, ctorArguments);
    }
 
    public Class[] getInterfaces()
@@ -144,6 +150,50 @@ public class AOPProxyFactoryParameters
    {
       this.containerCache = containerCache;
    }
+
+   public Ctor getCtor()
+   {
+      return ctor;
+   }
+
+   public void setCtor(Class[] ctorSignature, Object[] ctorArguments)
+   {
+      boolean haveSig = (ctorSignature != null && ctorSignature.length > 0);
+      boolean haveArgs = (ctorArguments != null && ctorArguments.length > 0);
+      
+      if (haveSig && haveArgs)
+      {
+         ctor = new Ctor(ctorSignature, ctorArguments);
+      }
+      else if (!haveSig && !haveArgs)
+      {
+         ctor = null;
+      }
+      else
+      {
+         throw new RuntimeException("If specifying either constructor arguments or signature, you must specify the other");
+      }
+   }
    
-   
+   public static class Ctor
+   {
+      Class[] signature;
+      Object[] arguments;
+      
+      public Ctor(Class[] signature, Object[] arguments)
+      {
+         this.signature = signature;
+         this.arguments = arguments;
+      }
+
+      public Object[] getArguments()
+      {
+         return arguments;
+      }
+
+      public Class[] getSignature()
+      {
+         return signature;
+      }
+   }
 }
