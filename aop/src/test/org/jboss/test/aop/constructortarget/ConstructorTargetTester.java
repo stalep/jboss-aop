@@ -30,7 +30,7 @@ import junit.textui.TestRunner;
 /** 
  * 
  * 
- * @author st�le w. pedersen(stalep@conduct.no)
+ * @author stale w. pedersen(stalep@conduct.no)
  * @version 
  */
 public class ConstructorTargetTester extends AOPTestWithSetup

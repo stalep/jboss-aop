@@ -26,7 +26,7 @@ import org.jboss.aop.joinpoint.ConstructorInvocation;
 /** 
  * 
  * 
- * @author st�le w. pedersen(stalep@conduct.no)
+ * @author stale w. pedersen(stalep@conduct.no)
  * @version 
  */
 public class AspectTarget
