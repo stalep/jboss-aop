@@ -964,7 +964,7 @@ public abstract class Instrumentor
          CtField field = (CtField) iterator.next();
          codeConverter.replaceFieldRead(field, clazz, fieldAccessTransformer.fieldRead(field.getName()));
       }
-      for (Iterator iterator = fieldReads.iterator(); iterator.hasNext(); )
+      for (Iterator iterator = fieldWrites.iterator(); iterator.hasNext(); )
       {
          CtField field = (CtField) iterator.next();
          codeConverter.replaceFieldWrite(field, clazz, fieldAccessTransformer.fieldWrite(field.getName()));
