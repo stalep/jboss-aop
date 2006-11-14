@@ -684,7 +684,7 @@
 		         <include name="org/jboss/test/aop/proxy/ProxyTestCase.class"/>
       		   <include name="org/jboss/test/aop/methodhashing/MethodHashingTestCase.class"/>
       		   <include name="org/jboss/test/aop/annotationc/AnnotationTester.class"/>
-      		   <include name="org/jboss/test/aop/bridgemethod/notwoven/BridgeMethodTestCase.class"/>
+      		   <include name="org/jboss/test/aop/bridgemethodnotwoven/BridgeMethodTestCase.class"/>
 		      </fileset>
 		   </batchtest>
 
