@@ -587,30 +587,32 @@ public class ContainerProxyFactory
          
          if (m.getParameterTypes().length > 0) args = "$args";
          String code = "{   " +
-                       "    if (currentAdvisor == null) {" +
-                       "       return " + getNullType(m.getReturnType()) + ";" +
-                       "    }" +
+                       "    boolean handled = false;" +
                        "    try{" +
-                       "       org.jboss.aop.MethodInfo mi = currentAdvisor.getMethodInfo(" + hash.longValue() + "L); " +
-                       "       if (mi == null) " +
-                       "          throw new java.lang.NoSuchMethodError(\"" + m.getName() + m.getSignature() + "\");" +
-                       "       org.jboss.aop.advice.Interceptor[] interceptors = mi.getInterceptors(); " +
-                       "       if (interceptors != (Object[])null && interceptors.length > 0) { " +
-                       "          org.jboss.aop.proxy.container.ContainerProxyMethodInvocation invocation = new org.jboss.aop.proxy.container.ContainerProxyMethodInvocation(mi, interceptors, this); " +
-                       "          invocation.setArguments(" + args + "); " +
-                       "          invocation.setTargetObject(delegate); " +
-                       "          invocation.setMetaData(metadata);" +
-                       "          " + aopReturnStr + " invocation.invokeNext(); " +
-                       "       } else { " +
+                       "       if (currentAdvisor != null) {" +
+                       "          org.jboss.aop.MethodInfo mi = currentAdvisor.getMethodInfo(" + hash.longValue() + "L); " +
+                       "          if (mi == null) " +
+                       "             throw new java.lang.NoSuchMethodError(\"" + m.getName() + m.getSignature() + "\");" +
+                       "          org.jboss.aop.advice.Interceptor[] interceptors = mi.getInterceptors(); " +
+                       "          if (interceptors != (Object[])null && interceptors.length > 0) { " +
+                       "             handled = true;" + 
+                       "             org.jboss.aop.proxy.container.ContainerProxyMethodInvocation invocation = new org.jboss.aop.proxy.container.ContainerProxyMethodInvocation(mi, interceptors, this); " +
+                       "             invocation.setArguments(" + args + "); " +
+                       "             invocation.setTargetObject(delegate); " +
+                       "             invocation.setMetaData(metadata);" +
+                       "             " + aopReturnStr + " invocation.invokeNext(); " +
+                       "          }" +
+                       "       }" +
+                       "       if (!handled && delegate != null){ " +
                        "          " + returnStr + " delegate." + name + "($$); " +
                        "       }" +
+                       "       return " + getNullType(m.getReturnType()) + ";" +
                        "    }finally{" +
                        "    }" +
                        "}";
          CtMethod newMethod = CtNewMethod.make(m.getReturnType(), m.getName(), m.getParameterTypes(), m.getExceptionTypes(), code, proxy);
          newMethod.setModifiers(Modifier.PUBLIC);
          proxy.addMethod(newMethod);
-         //System.out.println("=====> Created proxy method " + m.getName());         
       }
    }
    
