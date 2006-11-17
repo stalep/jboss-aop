@@ -21,12 +21,13 @@
   */
 package org.jboss.test.aop.callerscope;
 
-import org.jboss.aop.advice.Scope;
-import org.jboss.test.aop.AOPTestWithSetup;
-import org.jboss.util.collection.WeakIdentityHashMap;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
+
+import org.jboss.aop.advice.Scope;
+import org.jboss.test.aop.AOPTestWithSetup;
+import org.jboss.util.collection.WeakIdentityHashMap;
 
 /**
  *
@@ -71,11 +72,12 @@ public class CallerScopeTestCase extends AOPTestWithSetup
       // a==b
       // b==c
       // c==d
-
       String a = new String("a");
       String b = new String("a");
-      String c = new String("a");
-      String d = new String("a");
+      Flag cCollected = new Flag();
+      Object c = new GCTarget(cCollected);
+      Flag dCollected = new Flag();
+      Object d = new GCTarget(dCollected);
       Long l1 = new Long(1);
       Long l2 = new Long(2);
       Long l3 = new Long(3);
@@ -98,7 +100,25 @@ public class CallerScopeTestCase extends AOPTestWithSetup
       
       c = null;
       d = null;
+      
       System.gc();
+      // try to garbage collect c and d 31 times at most
+      for (int j = 0; j < 30 && !(cCollected.value && dCollected.value); j++) {
+          for (int i = 0; i < 10000; i++)
+          {
+             String string = new String("any string to fill memory space...");
+          }
+          System.gc();
+          try
+          {
+             Thread.sleep(10000);         
+          }
+          catch (InterruptedException e)
+          {
+             throw new RuntimeException("Unexpected exception, e");
+          }
+       }
+      
       assertEquals(2, map.size());
 
       assertEquals(l1, map.get(a));
@@ -239,4 +259,33 @@ public class CallerScopeTestCase extends AOPTestWithSetup
       assertEquals("Wrong intercepted value for PerClassJoinpointInterceptor", perClassJoinpointInterceptor, PerClassJoinpointInterceptor.intercepted);
    }
    
+}
+
+
+/**
+ * Target of a garbage collection (used in weak has map test).
+ * 
+ * @author Flavia Rainone
+ */
+class GCTarget
+{
+    Flag collected;
+    public GCTarget(Flag collected)
+    {
+        this.collected = collected;
+    }
+    
+    protected void finalize() throws Throwable
+    {
+        this.collected.value = true;
+    }
+}
+
+/**
+ * Helper class that stores a boolean value.
+ * @author Flavia Rainone
+ */
+class Flag
+{
+    boolean value = false;
 }
