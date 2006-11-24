@@ -24,10 +24,10 @@ package org.jboss.test.aop.beforeafter;
 import org.jboss.aop.ConstructorInfo;
 import org.jboss.aop.FieldInfo;
 import org.jboss.aop.MethodInfo;
-import org.jboss.aop.advice.Arg;
-import org.jboss.aop.advice.JoinPoint;
-import org.jboss.aop.advice.Return;
-import org.jboss.aop.advice.Thrown;
+import org.jboss.aop.advice.annotation.Arg;
+import org.jboss.aop.advice.annotation.JoinPoint;
+import org.jboss.aop.advice.annotation.Return;
+import org.jboss.aop.advice.annotation.Thrown;
 
 /**
  * 

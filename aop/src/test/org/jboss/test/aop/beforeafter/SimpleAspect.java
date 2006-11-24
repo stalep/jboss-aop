@@ -21,8 +21,8 @@
 */ 
 package org.jboss.test.aop.beforeafter;
 
-import org.jboss.aop.advice.Return;
-import org.jboss.aop.advice.Thrown;
+import org.jboss.aop.advice.annotation.Return;
+import org.jboss.aop.advice.annotation.Thrown;
 import org.jboss.aop.joinpoint.Invocation;
 
 /**

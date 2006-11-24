@@ -21,8 +21,8 @@
   */
 package org.jboss.test.aop.args;
 
-import org.jboss.aop.advice.Arg;
-import org.jboss.aop.advice.Invocation;
+import org.jboss.aop.advice.annotation.Arg;
+import org.jboss.aop.advice.annotation.Invocation;
 import org.jboss.aop.joinpoint.CurrentInvocation;
 import org.jboss.aop.joinpoint.MethodInvocation;
 

@@ -22,9 +22,9 @@
 package org.jboss.test.aop.beforeafter;
 
 import org.jboss.aop.JoinPointInfo;
-import org.jboss.aop.advice.Arg;
-import org.jboss.aop.advice.JoinPoint;
-import org.jboss.aop.advice.Return;
+import org.jboss.aop.advice.annotation.Arg;
+import org.jboss.aop.advice.annotation.JoinPoint;
+import org.jboss.aop.advice.annotation.Return;
 
 /**
  * 
