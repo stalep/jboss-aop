@@ -23,9 +23,11 @@ package org.jboss.test.aop.beforeafter;
 
 import org.jboss.aop.ConstructorInfo;
 import org.jboss.aop.FieldInfo;
-import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.MethodInfo;
-import org.jboss.test.aop.construction.SuperPOJO;
+import org.jboss.aop.advice.Arg;
+import org.jboss.aop.advice.JoinPoint;
+import org.jboss.aop.advice.Return;
+import org.jboss.aop.advice.Thrown;
 
 /**
  * 
@@ -47,62 +49,63 @@ public class ArgsAspect
       throwing = null;
    }
    
-   public void before(boolean b, int i)
+   public void before(@Arg boolean b, @Arg int i)
    {
       before = "before1";
    }
    
-   public void before(MethodInfo mjp, int i)
+   public void before(@JoinPoint MethodInfo mjp, @Arg int i)
    {
       before = "before2";
    }
    
-   public void before(FieldInfo fjp, int i)
+   public void before(@JoinPoint FieldInfo fjp, @Arg int i)
    {
       before = "before3";
    }
    
-   public void before(FieldInfo fjp)
+   public void before(@JoinPoint FieldInfo fjp)
    {
       before = "before4";
    }
    
-   public void before(FieldInfo fjp, SubValue val)
+   public void before(@JoinPoint FieldInfo fjp, @Arg SubValue val)
    {
       before = "before5";
    }
    
-   public void before(SubValue sup, SubValue sub)
+   public void before(@Arg SubValue sup, @Arg SubValue sub)
    {
       before = "before6";
    }
    
-   public void before(SuperValue sup, SubValue sub)
+   public void before(@Arg SuperValue sup, @Arg SubValue sub)
    {
       before = "before7";
    }
    
-   public POJO after(MethodInfo mjp, POJO ret, int i, long l)
+   public POJO after(@JoinPoint MethodInfo mjp, @Return POJO ret, @Arg int i,
+         @Arg long l)
    {
       after = "after1";
       return ret;
    }
    
-   public POJO after(ConstructorInfo cjp, POJO ret)
+   public POJO after(@JoinPoint ConstructorInfo cjp, @Return POJO ret)
    {
       after = "after2";
       return ret;
    }
    
    //This should be able to handle both reads and writes
-   public int after(FieldInfo fp, int i)
+   public int after(@JoinPoint FieldInfo fp, @Arg @Return int i)
    {
       after = "after3";
       return i;
    }
    
    //This should be able to handle both reads and writes
-   public SubValue after(FieldInfo fp, SubValue ret)
+   public SubValue after(@JoinPoint FieldInfo fp, @Return @Arg SubValue ret)
    {
       after = "after4";
       ret.doubleValue();
@@ -110,43 +113,43 @@ public class ArgsAspect
    }
       
    //This should be able to handle both reads and writes
-   public SuperValue after(SuperValue ret)
+   public SuperValue after(@Return @Arg SuperValue ret)
    {
       after = "after5";
       ret.doubleValue();
       return ret;
    }
 
-   public SubValue after(SuperValue ret, SuperValue sup, SuperValue sup2)
+   public SubValue after(@Return SuperValue ret, @Arg SuperValue sup, @Arg SuperValue sup2)
    {
       throw new RuntimeException("Should not be called");
    }
    
-   public SuperValue after(SuperValue ret, SubValue sup, SuperValue sub)
+   public SuperValue after(@Return SuperValue ret, @Arg SubValue sup, @Arg SuperValue sub)
    {
       after = "after6";
       ret.doubleValue();
       return new SubValue(ret.getValue());
    }
    
-   public void after(SuperValue sup, SuperValue sup2)
+   public void after(@Arg SuperValue sup, @Arg SuperValue sup2)
    {
       after = "after7";
    }
    
-   public Throwable throwing(Throwable t, int i)
+   public Throwable throwing(@Thrown Throwable t, @Arg int i)
    {
       throwing = "throwing1";
       return t;
    }
    
-   public Throwable throwing(MethodInfo mjp, Throwable t)
+   public Throwable throwing(@JoinPoint MethodInfo mjp, @Thrown Throwable t)
    {
       throwing = "throwing2";
       return t;
    }
    
-   public Throwable throwing(MethodInfo mjp, Throwable t, int i)
+   public Throwable throwing(@JoinPoint MethodInfo mjp, @Thrown Throwable t, @Arg int i)
    {
       throwing = "throwing3";
       return t;

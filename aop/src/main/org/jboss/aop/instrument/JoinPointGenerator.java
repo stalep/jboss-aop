@@ -1097,9 +1097,9 @@ public abstract class JoinPointGenerator
 
    public void appendAroundCallString(StringBuffer invokeNextBody, String returnStr, AdviceSetup setup, AdviceMethodProperties properties)
    {
-      Integer[] args = properties.getArgs();
+      int[] args = properties.getArgs();
       
-      final boolean firstParamIsInvocation = (args.length >= 1 && args[0].equals(AdviceMethodProperties.INVOCATION_ARG));
+      final boolean firstParamIsInvocation = (args.length >= 1 && args[0] == AdviceMethodProperties.INVOCATION_ARG);
 
       if (!firstParamIsInvocation)
       {
@@ -1121,30 +1121,27 @@ public abstract class JoinPointGenerator
 
    private void appendAdviceCallParameters(StringBuffer invokeNextBody, AdviceMethodProperties properties, boolean isAround) 
    {
-      final Integer[] args = properties.getArgs(); 
+      final int[] args = properties.getArgs(); 
       final Class[] adviceParams = properties.getAdviceMethod().getParameterTypes();
       for (int i = 0 ; i < args.length ; i++)
       {
          if (i > 0) invokeNextBody.append(", ");
-         
-         if (args[i].equals(AdviceMethodProperties.INVOCATION_ARG))
+
+         switch(args[i])
          {
+         case AdviceMethodProperties.INVOCATION_ARG:
             invokeNextBody.append(castToAdviceProperties(i, adviceParams) + "this");
-         }
-         else if (args[i].equals(AdviceMethodProperties.JOINPOINT_ARG))
-         {
+            break;
+         case AdviceMethodProperties.JOINPOINT_ARG:
             invokeNextBody.append(castToAdviceProperties(i, adviceParams) + INFO_FIELD);
-         }
-         else if (args[i].equals(AdviceMethodProperties.RETURN_ARG))
-         {
+            break;
+         case AdviceMethodProperties.RETURN_ARG:
             invokeNextBody.append(castToAdviceProperties(i, adviceParams) + RETURN_VALUE);
-         }
-         else if (args[i].equals(AdviceMethodProperties.THROWABLE_ARG))
-         {
+            break;
+         case AdviceMethodProperties.THROWABLE_ARG:
             invokeNextBody.append(castToAdviceProperties(i, adviceParams) + THROWABLE);
-         }
-         else
-         {
+            break;
+         default:
             if (isAround)
             {
                invokeNextBody.append(castToAdviceProperties(i, adviceParams) + "this.arg" + args[i]);
@@ -1155,7 +1152,7 @@ public abstract class JoinPointGenerator
                int offset = 1;
                if (hasTargetObject()) offset++;
                if (hasCallingObject()) offset++;
-               invokeNextBody.append(castToAdviceProperties(i, adviceParams) + "$" + (args[i].intValue() + offset));
+               invokeNextBody.append(castToAdviceProperties(i, adviceParams) + "$" + (args[i] + offset));
             }
          }
       }
@@ -1419,7 +1416,6 @@ public abstract class JoinPointGenerator
                   beforeAspects.add(setups[i]);
                   continue;
                }
-
             }
             else if (setups[i].isAfter())
             {
@@ -1459,6 +1455,7 @@ public abstract class JoinPointGenerator
             {
                System.out.println("[warn] No matching advice called '" + setups[i].getAdviceName() + 
                      "' could be found in " + setups[i].getAspectClass().getName() + " for joinpoint " + info);
+               System.out.println(AdviceMethodFactory.getAdviceMatchingMessage());
             }
          }
          beforeSetups = (beforeAspects == null) ? null : (AdviceSetup[])beforeAspects.toArray(new AdviceSetup[beforeAspects.size()]);

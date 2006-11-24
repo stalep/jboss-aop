@@ -22,6 +22,9 @@
 package org.jboss.test.aop.beforeafter;
 
 import org.jboss.aop.JoinPointInfo;
+import org.jboss.aop.advice.Arg;
+import org.jboss.aop.advice.JoinPoint;
+import org.jboss.aop.advice.Return;
 
 /**
  * 
@@ -40,15 +43,17 @@ public class GeneralAspect
    }
    
 
-   public void before(JoinPointInfo jp, SuperValue superValue, int i)
+   public void before(@JoinPoint JoinPointInfo jp, @Arg SuperValue superValue, @Arg int i)
    {
       before = "before";
    }
    
-   public Object after(JoinPointInfo jp, Object ret, SuperValue superValue, int i)
+   //TODO talk to Kabir about Object vs POJO
+   public POJO after(@JoinPoint JoinPointInfo jp, @Return Object ret,
+         @Arg SuperValue superValue, @Arg int i)
    {
       after = "after";
-      return ret;
+      return (POJO) ret;
    }
 
 

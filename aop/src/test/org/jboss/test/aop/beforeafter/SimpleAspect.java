@@ -21,6 +21,8 @@
 */ 
 package org.jboss.test.aop.beforeafter;
 
+import org.jboss.aop.advice.Return;
+import org.jboss.aop.advice.Thrown;
 import org.jboss.aop.joinpoint.Invocation;
 
 /**
@@ -57,14 +59,14 @@ public class SimpleAspect
    }
 
    //Do we have to return the same exception as the target joinpoint?
-   public int after(int i)
+   public int after(@Return int i)
    {
       System.out.println("SimpleAspect.after");
       after = true;
       return i;
    }
 
-   public void throwing(Throwable t)
+   public void throwing(@Thrown Throwable t)
    {
       System.out.println("SimpleAspect.throwing");
       throwing = true;

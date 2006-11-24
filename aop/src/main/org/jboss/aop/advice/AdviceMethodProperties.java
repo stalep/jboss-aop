@@ -36,10 +36,15 @@ import javassist.NotFoundException;
  */
 public class AdviceMethodProperties
 {
-   public static final Integer JOINPOINT_ARG = new Integer(-1);
-   public static final Integer INVOCATION_ARG = new Integer(-2);
-   public static final Integer RETURN_ARG = new Integer(-3);
-   public static final Integer THROWABLE_ARG = new Integer(-4);
+   public static final int JOINPOINT_ARG = -1;
+   public static final int INVOCATION_ARG = -2;
+   public static final int TARGET_ARG = -3;
+   public static final int RETURN_ARG = -4;
+   public static final int THROWABLE_ARG = -5;
+   public static final int ARGS_ARG = -6;
+   public static final int CALLEE_ARG = -7;
+   public static final int CALLER_ARG = -8;
+   public static final int ARG_ARG = -9;
    
    public static final CtClass[] EMPTY_PARAMETERS = {};
    
@@ -54,7 +59,7 @@ public class AdviceMethodProperties
 
    //found properties
    private Method adviceMethod;
-   private Integer[] args;
+   private int[] args;
 
    public AdviceMethodProperties(
          Class aspectClass, 
@@ -74,10 +79,16 @@ public class AdviceMethodProperties
       this.joinpointExceptions = joinpointExceptions;
    }
 
-   public void setFoundProperties(Method adviceMethod, ArrayList args)
+   /*public void setFoundProperties(Method adviceMethod, ArrayList args)
    {
       this.adviceMethod = adviceMethod;
-      this.args = (Integer[])args.toArray(new Integer[args.size()]);
+      this.args = (Integer[])args.toArray(new int[args.size()]);
+   }*/
+   
+   public void setFoundProperties(Method adviceMethod, int[] args)
+   {
+      this.adviceMethod = adviceMethod;
+      this.args = args;
    }
 
    public String getAdviceName()
@@ -116,7 +127,7 @@ public class AdviceMethodProperties
    }
 
 
-   public Class getJoinpointReturnType()
+   public Class<?> getJoinpointReturnType()
    {
       return joinpointReturnType;
    }
@@ -131,7 +142,7 @@ public class AdviceMethodProperties
       return adviceMethod;
    }
 
-   public Integer[] getArgs()
+   public int[] getArgs()
    {
       return args;
    }
