@@ -84,16 +84,7 @@ public class AOPClassPool extends ScopedClassPool
       {
          boolean isLocal = false; 
 
-         //FIXME - Once Javassist > 3.3.0 is out use getClassLoader0() and get rid of try/catch
-         ClassLoader cl = null;
-         try
-         {
-            cl =  getClassLoader();
-         }
-         catch (RuntimeException e)
-         {
-            //Ignore, the ScopedClassPoll throws an exception if pool is not associated with a cl
-         }
+         ClassLoader cl = getClassLoader0();
 
          if (cl != null)
          {
