@@ -144,6 +144,15 @@ public abstract class JoinPointGenerator
       
    /**
     * Called by the joinpoint if a interceptors were regenereated
+    * Here for backwards compatiblity with AOP 1.5.0
+    */
+   public void generateJoinPointClass()
+   {
+      generateJoinPointClass(null);
+   }
+   
+   /**
+    * Called by the joinpoint if a interceptors were regenereated
     */
    public synchronized void generateJoinPointClass(ClassLoader classloader)
    {
@@ -165,11 +174,11 @@ public abstract class JoinPointGenerator
    {
       try
       {
-         if (joinpointField.get(advisor) != null)
+         if (classloader  == null)
          {
-            //someone beat us to generating the class
-            return;
+            classloader = Thread.currentThread().getContextClassLoader();
          }
+
          AspectManager manager = AspectManager.instance();
          //ClassPool pool = manager.findClassPool(Thread.currentThread().getContextClassLoader());
          ClassPool pool = manager.findClassPool(classloader);
