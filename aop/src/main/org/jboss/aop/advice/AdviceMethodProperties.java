@@ -22,10 +22,8 @@
 package org.jboss.aop.advice;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 
 import javassist.CtClass;
-import javassist.CtMethod;
 import javassist.NotFoundException;
 
 /** Contains the properties of an advice method that we want to find.

@@ -19,18 +19,17 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.aop.advice;
+package org.jboss.aop.advice.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
- * Annotate with <code>@Thrown</code> the <i>throwing</i> advice parameter that receives
- * the thrown exception.
  * 
  * @author Flavia Rainone
  */
 @Target (ElementType.PARAMETER) @Retention (RetentionPolicy.RUNTIME)
-public @interface Thrown {}
+public @interface Caller {}

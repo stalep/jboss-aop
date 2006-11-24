@@ -19,15 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.aop.advice;
+package org.jboss.aop.advice.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import org.jboss.aop.JoinPointInfo;
 
 /**
- *
+ * Use this annotation on the advice parameter that receives {@link JoinPointInfo} or
+ * one of its subtypes.
+ * 
  * @author Flavia Rainone
  */
-@java.lang.annotation.Target( { ElementType.PARAMETER }) @Retention(RetentionPolicy.RUNTIME)
-public @interface Target {}
+@Target( { ElementType.PARAMETER }) @Retention(RetentionPolicy.RUNTIME)
+public @interface JoinPoint {}

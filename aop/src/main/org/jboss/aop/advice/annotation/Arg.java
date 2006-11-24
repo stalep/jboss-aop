@@ -19,20 +19,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.aop.advice;
+package org.jboss.aop.advice.annotation;
 
+import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
- * Annotate the advice parameter with <code>@Return</code> if it receives the return
- * type of the join point execution.
- * <p>
- * Can only be used in <i>after</i>/<i>around</i> advices. 
+ * Use this annotation on advice parameters that should contain values of 
+ * advised joinpoint arguments.
  * 
  * @author Flavia Rainone
  */
-@Target (ElementType.PARAMETER) @Retention (RetentionPolicy.RUNTIME)
-public @interface Return {}
+@Target (ElementType.PARAMETER) @Retention(RetentionPolicy.RUNTIME)
+public @interface Arg {}

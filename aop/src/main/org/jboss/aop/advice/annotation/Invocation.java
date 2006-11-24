@@ -19,22 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.aop.advice;
-
+package org.jboss.aop.advice.annotation;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Use this annotation on the advice parameter that receives the complete list of
- * joinpoint argument values.
- * The annotated parameter must be of type <code>Object[]</code> and there
- * should not be any other advice parameter annotated either with {@link Arg} or
- * with <code>Args</code> itself.
+ * Use this annotation on the advice method parameter that receives an
+ * {@link org.jboss.aop.joinpoint.Invocation} or one of its subtypes.
+ * <p>
+ * For optimization, always prefer to use {@link JoinPoint} instead of <code>Invocation
+ * </code>.
  * 
  * @author Flavia Rainone
  */
 @Target (ElementType.PARAMETER) @Retention (RetentionPolicy.RUNTIME)
-public @interface Args {}
+public @interface Invocation {}
