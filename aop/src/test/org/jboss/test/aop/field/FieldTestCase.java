@@ -21,12 +21,19 @@
   */
 package org.jboss.test.aop.field;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
+import org.jboss.aop.Advised;
+import org.jboss.aop.AspectManager;
+import org.jboss.aop.ClassAdvisor;
+import org.jboss.aop.InstanceAdvisor;
+import org.jboss.aop.advice.AspectDefinition;
+import org.jboss.aop.joinpoint.FieldJoinpoint;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
@@ -91,5 +98,54 @@ public class FieldTestCase extends AOPTestWithSetup
       pojo.subpojoInherited = 5;
       assertTrue(TraceInterceptor.intercepted);
    }
-   
+
+   public void testPerJoinpoint() throws Exception
+   {
+      SubSubPOJO pojo1 = new SubSubPOJO(5);
+      SubSubPOJO pojo2 = new SubSubPOJO(5);
+
+      FieldPerJoinpointInterceptor.last = null;
+      pojo1.mine = 10;
+      assertNotNull(FieldPerJoinpointInterceptor.last);
+      FieldPerJoinpointInterceptor mineWrite1 = FieldPerJoinpointInterceptor.last;
+
+      FieldPerJoinpointInterceptor.last = null;
+      int x = pojo1.mine;
+      assertNotNull(FieldPerJoinpointInterceptor.last);
+      FieldPerJoinpointInterceptor mineRead1 = FieldPerJoinpointInterceptor.last;
+      
+      assertSame(mineRead1, mineWrite1);
+      
+      FieldPerJoinpointInterceptor.last = null;
+      pojo2.mine = 10;
+      assertNotNull(FieldPerJoinpointInterceptor.last);
+      FieldPerJoinpointInterceptor mineWrite2 = FieldPerJoinpointInterceptor.last;
+
+      assertNotSame(mineRead1, mineWrite2);
+      
+      FieldPerJoinpointInterceptor.last = null;
+      pojo1.pojoInherited = 10;
+      assertNotNull(FieldPerJoinpointInterceptor.last);
+      FieldPerJoinpointInterceptor inheritedWrite1 = FieldPerJoinpointInterceptor.last;
+      
+      assertNotSame(inheritedWrite1, mineWrite1);
+
+      Field mine = pojo1.getClass().getField("mine"); 
+      Field pojoInherited = pojo1.getClass().getSuperclass().getSuperclass().getField("pojoInherited");
+      
+      AspectDefinition def = AspectManager.instance().getAspectDefinition("org.jboss.test.aop.field.FieldPerJoinpointInterceptor");
+      assertNotNull(def);
+      InstanceAdvisor ia1 = ((Advised)pojo1)._getInstanceAdvisor();
+      InstanceAdvisor ia2 = ((Advised)pojo2)._getInstanceAdvisor();
+      FieldPerJoinpointInterceptor ia1Mine = (FieldPerJoinpointInterceptor)ia1.getPerInstanceJoinpointAspect(new FieldJoinpoint(mine), def);
+      assertNotNull(ia1Mine);
+      FieldPerJoinpointInterceptor ia2Mine = (FieldPerJoinpointInterceptor)ia2.getPerInstanceJoinpointAspect(new FieldJoinpoint(mine), def);
+      assertNotNull(ia2Mine);
+      FieldPerJoinpointInterceptor ia1Inherited = (FieldPerJoinpointInterceptor)ia1.getPerInstanceJoinpointAspect(new FieldJoinpoint(pojoInherited), def); 
+      assertNotNull(ia1Inherited);
+      
+      assertSame(mineRead1, ia1Mine);
+      assertSame(mineWrite2, ia2Mine);
+      assertSame(inheritedWrite1, ia1Inherited);
+   }
 }
