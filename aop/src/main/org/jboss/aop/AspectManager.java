@@ -847,13 +847,16 @@ public class AspectManager
 
    /**
     * This is to be backward compatible with JBoss 3.2.3 Translator interface
-    *
+    * TODO: stalep, added a synchronized block for the entire method to prevent
+    *  a deadlock. its not optimal and should be further reviewed. 
+    *  (commented out sync block inside the method)
+    * 
     * @param className
     * @param loader
     * @return
     * @throws Exception
     */
-   public byte[] translate(String className, ClassLoader loader, byte[] classfileBuffer) throws Exception
+   public synchronized byte[] translate(String className, ClassLoader loader, byte[] classfileBuffer) throws Exception
    {
       try
       {
@@ -863,8 +866,8 @@ public class AspectManager
          }
          if (weavingStrategy == null)
          {
-           synchronized (this)
-            {
+//           synchronized (this)
+//            {
                if (TransformerCommon.isCompileTime() || classicOrder)
                {
                   weavingStrategy = new ClassicWeavingStrategy();
@@ -878,7 +881,7 @@ public class AspectManager
                {
                   weavingStrategy = new ClassicWeavingStrategy();
                }
-            }
+//            }
          }
 
          return weavingStrategy.translate(this, className, loader, classfileBuffer);
