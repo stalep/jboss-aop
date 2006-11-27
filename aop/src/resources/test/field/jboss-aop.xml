@@ -15,4 +15,9 @@
   <bind pointcut="field(* org.jboss.test.aop.field.SubSubPOJO->mine)">                
        <interceptor class="org.jboss.test.aop.field.TraceInterceptor"/>
   </bind>
+
+  <interceptor class="org.jboss.test.aop.field.FieldPerJoinpointInterceptor" scope="PER_JOINPOINT"/>
+  <bind pointcut="field(* $instanceof{org.jboss.test.aop.field.POJO}->*)">                
+       <interceptor-ref name="org.jboss.test.aop.field.FieldPerJoinpointInterceptor"/>
+  </bind>
 </aop>
