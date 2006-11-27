@@ -101,51 +101,67 @@ public class FieldTestCase extends AOPTestWithSetup
 
    public void testPerJoinpoint() throws Exception
    {
-      SubSubPOJO pojo1 = new SubSubPOJO(5);
-      SubSubPOJO pojo2 = new SubSubPOJO(5);
+      ScopedPojo pojo1 = new ScopedPojo();
+      ScopedPojo pojo2 = new ScopedPojo();
 
       FieldPerJoinpointInterceptor.last = null;
-      pojo1.mine = 10;
+      pojo1.field1 = 10;
       assertNotNull(FieldPerJoinpointInterceptor.last);
-      FieldPerJoinpointInterceptor mineWrite1 = FieldPerJoinpointInterceptor.last;
+      FieldPerJoinpointInterceptor fieldWrite1 = FieldPerJoinpointInterceptor.last;
 
       FieldPerJoinpointInterceptor.last = null;
-      int x = pojo1.mine;
+      int x = pojo1.field1;
       assertNotNull(FieldPerJoinpointInterceptor.last);
-      FieldPerJoinpointInterceptor mineRead1 = FieldPerJoinpointInterceptor.last;
+      FieldPerJoinpointInterceptor fieldRead1 = FieldPerJoinpointInterceptor.last;
       
-      assertSame(mineRead1, mineWrite1);
+      assertSame(fieldRead1, fieldWrite1);
       
       FieldPerJoinpointInterceptor.last = null;
-      pojo2.mine = 10;
+      pojo2.field1 = 10;
       assertNotNull(FieldPerJoinpointInterceptor.last);
-      FieldPerJoinpointInterceptor mineWrite2 = FieldPerJoinpointInterceptor.last;
+      FieldPerJoinpointInterceptor fieldWrite2 = FieldPerJoinpointInterceptor.last;
 
-      assertNotSame(mineRead1, mineWrite2);
+      assertNotSame(fieldRead1, fieldWrite2);
       
       FieldPerJoinpointInterceptor.last = null;
-      pojo1.pojoInherited = 10;
+      pojo1.field2 = 10;
       assertNotNull(FieldPerJoinpointInterceptor.last);
-      FieldPerJoinpointInterceptor inheritedWrite1 = FieldPerJoinpointInterceptor.last;
+      FieldPerJoinpointInterceptor field2Write1 = FieldPerJoinpointInterceptor.last;
       
-      assertNotSame(inheritedWrite1, mineWrite1);
+      assertNotSame(field2Write1, fieldRead1);
+      
+      FieldPerJoinpointInterceptor.last = null;
+      ScopedPojo.staticField = 10;
+      assertNotNull(FieldPerJoinpointInterceptor.last);
+      FieldPerJoinpointInterceptor staticWrite = FieldPerJoinpointInterceptor.last;
+      FieldPerJoinpointInterceptor.last = null;
+      x = ScopedPojo.staticField;
+      assertEquals(staticWrite, FieldPerJoinpointInterceptor.last);
+      
 
-      Field mine = pojo1.getClass().getField("mine"); 
-      Field pojoInherited = pojo1.getClass().getSuperclass().getSuperclass().getField("pojoInherited");
+      Field field1 = pojo1.getClass().getField("field1"); 
+      Field field2 = pojo1.getClass().getField("field2");
+      Field staticField = pojo1.getClass().getField("staticField");
       
-      AspectDefinition def = AspectManager.instance().getAspectDefinition("org.jboss.test.aop.field.FieldPerJoinpointInterceptor");
+      AspectDefinition def = AspectManager.instance().getAspectDefinition("field");
       assertNotNull(def);
       InstanceAdvisor ia1 = ((Advised)pojo1)._getInstanceAdvisor();
       InstanceAdvisor ia2 = ((Advised)pojo2)._getInstanceAdvisor();
-      FieldPerJoinpointInterceptor ia1Mine = (FieldPerJoinpointInterceptor)ia1.getPerInstanceJoinpointAspect(new FieldJoinpoint(mine), def);
-      assertNotNull(ia1Mine);
-      FieldPerJoinpointInterceptor ia2Mine = (FieldPerJoinpointInterceptor)ia2.getPerInstanceJoinpointAspect(new FieldJoinpoint(mine), def);
-      assertNotNull(ia2Mine);
-      FieldPerJoinpointInterceptor ia1Inherited = (FieldPerJoinpointInterceptor)ia1.getPerInstanceJoinpointAspect(new FieldJoinpoint(pojoInherited), def); 
-      assertNotNull(ia1Inherited);
+      FieldPerJoinpointInterceptor ia1Field1 = (FieldPerJoinpointInterceptor)ia1.getPerInstanceJoinpointAspect(new FieldJoinpoint(field1), def);
+      assertNotNull(ia1Field1);
+      FieldPerJoinpointInterceptor ia2Field1 = (FieldPerJoinpointInterceptor)ia2.getPerInstanceJoinpointAspect(new FieldJoinpoint(field1), def);
+      assertNotNull(ia2Field1);
+      FieldPerJoinpointInterceptor ia1Field2 = (FieldPerJoinpointInterceptor)ia1.getPerInstanceJoinpointAspect(new FieldJoinpoint(field2), def); 
+      assertNotNull(ia1Field2);
       
-      assertSame(mineRead1, ia1Mine);
-      assertSame(mineWrite2, ia2Mine);
-      assertSame(inheritedWrite1, ia1Inherited);
+      assertSame(fieldRead1, ia1Field1);
+      assertSame(fieldWrite2, ia2Field1);
+      assertSame(field2Write1, ia1Field2);
+      
+      AspectDefinition statDef = AspectManager.instance().getAspectDefinition("staticField");
+      assertNotNull(statDef);
+      FieldPerJoinpointInterceptor advStatic = (FieldPerJoinpointInterceptor)((ClassAdvisor)((Advised)pojo1)._getAdvisor()).getFieldAspect(new FieldJoinpoint(staticField), statDef);
+      assertSame(advStatic, staticWrite);
+      
    }
 }
