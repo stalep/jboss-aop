@@ -132,7 +132,7 @@ public class AdviceMethodProperties
    
    public boolean isAdviceVoid() throws NotFoundException
    {
-      return adviceMethod.getReturnType().equals(CtClass.voidType);
+      return adviceMethod.getReturnType().equals(void.class);
    }
 
    public Method getAdviceMethod()

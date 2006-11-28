@@ -1462,8 +1462,9 @@ public abstract class JoinPointGenerator
             
             if (AspectManager.verbose)
             {
-               System.out.println("[warn] No matching advice called '" + setups[i].getAdviceName() + 
-                     "' could be found in " + setups[i].getAspectClass().getName() + " for joinpoint " + info);
+               System.out.print("[warn] No matching advice called '" + setups[i].getAdviceName() + 
+                     "' could be found in " + setups[i].getAspectClass().getName() +
+                     " for joinpoint " + info + ":");
                System.out.println(AdviceMethodFactory.getAdviceMatchingMessage());
             }
          }

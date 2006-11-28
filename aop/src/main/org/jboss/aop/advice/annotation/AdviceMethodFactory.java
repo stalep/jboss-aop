@@ -23,6 +23,7 @@ package org.jboss.aop.advice.annotation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -44,26 +45,31 @@ import org.jboss.aop.util.ReflectUtils;
 public class AdviceMethodFactory
 {
    /**
+    * Rule to be applied for advice return types
+    */
+   enum ReturnType {VOID, ANY, NOT_VOID};
+   
+   /**
     * Factory that selects advice methods for <i>before</i> interception.
     */
    public static final AdviceMethodFactory BEFORE = new AdviceMethodFactory (null,
          new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT,
          ParameterAnnotationRule.ARGS, ParameterAnnotationRule.ARG},
-         new int[][]{{1,2}}, false);
+         new int[][]{{1,2}}, ReturnType.VOID);
    /**
     * Factory that selects advice methods for <i>after</i> interception.
     */
    public static final       AdviceMethodFactory AFTER = new AdviceMethodFactory (null,
          new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT,
          ParameterAnnotationRule.RETURN, ParameterAnnotationRule.ARGS,
-         ParameterAnnotationRule.ARG}, new int[][]{{2, 3}}, true);
+         ParameterAnnotationRule.ARG}, new int[][]{{2, 3}}, ReturnType.ANY);
    /**
     * Factory that selects advice methods for <i>throwing</i> interception.
     */
    public static final AdviceMethodFactory THROWING = new AdviceMethodFactory (null,
          new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT,
          ParameterAnnotationRule.THROWABLE, ParameterAnnotationRule.ARGS,
-         ParameterAnnotationRule.ARG}, new int[][]{{2, 3}}, false);
+         ParameterAnnotationRule.ARG}, new int[][]{{2, 3}}, ReturnType.VOID);
    /**
     * Factory that selects advice methods for <i>aroung</i> interception.
     */
@@ -83,8 +89,8 @@ public class AdviceMethodFactory
                // not annotated
                for (Annotation annotation: annotations[0])
                {
-                  if (annotation.annotationType().getClass().getPackage() == 
-                     AdviceMethodProperties.class.getPackage())
+                  if (annotation.annotationType().getPackage() == 
+                     AdviceMethodFactory.class.getPackage())
                   {
                      return false;
                   }
@@ -96,13 +102,27 @@ public class AdviceMethodFactory
                   {
                      adviceMatchingMessage.append("\n[warn] - method ");
                      adviceMatchingMessage.append(method);
-                     adviceMatchingMessage.append(" doesn't match default around signature because it returns ");
+                     adviceMatchingMessage.append(" does not match default around signature because it returns ");
                      adviceMatchingMessage.append(method.getReturnType());
                      adviceMatchingMessage.append(" intead of java.lang.Object");
                   }
                   return false;
                }
-               return true;
+               // throws Throwable
+               for (Class exceptionType: method.getExceptionTypes())
+               {
+                  if (exceptionType == Throwable.class)
+                  {
+                     return true;
+                  }
+               }
+               if (AspectManager.verbose)
+               {
+                  adviceMatchingMessage.append("\n[warn] - method ");
+                  adviceMatchingMessage.append(method);
+                  adviceMatchingMessage.append(" does not match default around signature because it does not throw Throwable");
+               }
+               return false;
             }
             
             public AdviceInfo getAdviceInfo(Method method)
@@ -111,7 +131,7 @@ public class AdviceMethodFactory
                return new AdviceInfo(method, 500)
                {
                   public boolean validate(AdviceMethodProperties properties,
-                        int[][] mutuallyExclusive, boolean mustReturn)
+                        int[][] mutuallyExclusive, ReturnType adviceReturn)
                   {
                      if(parameterTypes[0].isAssignableFrom(properties.getInvocationType()))
                      {
@@ -121,13 +141,13 @@ public class AdviceMethodFactory
                      {
                         adviceMatchingMessage.append("\n[warn] - argument 0 of method ");
                         adviceMatchingMessage.append(method);
-                        adviceMatchingMessage.append(" isn't assignable from ");
+                        adviceMatchingMessage.append(" is not assignable from ");
                         adviceMatchingMessage.append(properties.getInvocationType());
                      }
                      return false;
                   }
 
-                  public int getAssignabilityDegree(int typeIndex,
+                  public short getAssignabilityDegree(int typeIndex,
                         AdviceMethodProperties properties)
                   {
                      return matchClass(parameterTypes[0], properties.getInvocationType());
@@ -143,10 +163,12 @@ public class AdviceMethodFactory
          },         
          new ParameterAnnotationRule[]{ParameterAnnotationRule.INVOCATION,
          ParameterAnnotationRule.ARGS, ParameterAnnotationRule.ARG},
-         new int[][]{{1, 2}}, true);
+         new int[][]{{1, 2}}, ReturnType.NOT_VOID);
          
 
-   static StringBuffer adviceMatchingMessage = new StringBuffer();
+   static StringBuffer adviceMatchingMessage;
+   static final short NOT_ASSIGNABLE_DEGREE = Short.MAX_VALUE;
+   static final short MAX_ASSIGNABLE_DEGREE = NOT_ASSIGNABLE_DEGREE - 1;
    
    /**
     * Method that returns log information about the last matching process executed.
@@ -157,11 +179,10 @@ public class AdviceMethodFactory
    public final static String getAdviceMatchingMessage()
    {
       String message = adviceMatchingMessage.toString();
-      adviceMatchingMessage = new StringBuffer();
       return message;
    }
    
-   private boolean canReturn;
+   private ReturnType adviceReturn;
    private AdviceSignatureRule adviceSignatureRule;
    private ParameterAnnotationRule[] rules;
    private int[][] mutuallyExclusive;
@@ -180,12 +201,12 @@ public class AdviceMethodFactory
     */
    private AdviceMethodFactory(AdviceSignatureRule adviceSignatureRule,
          ParameterAnnotationRule[] rules, int[][] mutuallyExclusive,
-         boolean canReturn)
+         ReturnType adviceReturn)
    {
       this.adviceSignatureRule = adviceSignatureRule;
       this.rules = rules;
       this.mutuallyExclusive = mutuallyExclusive;
-      this.canReturn = canReturn;
+      this.adviceReturn = adviceReturn;
    }
    
    /**
@@ -197,6 +218,10 @@ public class AdviceMethodFactory
     */
    public final AdviceMethodProperties findAdviceMethod(AdviceMethodProperties properties)
    {
+      if (AspectManager.verbose)
+      {
+         adviceMatchingMessage = new StringBuffer();
+      }
       Method[] methods = ReflectUtils.getMethodsWithName(
             properties.getAspectClass(), properties.getAdviceName());
     
@@ -208,7 +233,7 @@ public class AdviceMethodFactory
             adviceMatchingMessage.append(properties.getAspectClass());
             adviceMatchingMessage.append(".");
             adviceMatchingMessage.append(properties.getAdviceName());
-            adviceMatchingMessage.append("not found");
+            adviceMatchingMessage.append(" not found");
          }
          return null;
       }
@@ -272,7 +297,7 @@ public class AdviceMethodFactory
       while (iterator.hasNext())
       {
          AdviceInfo advice = iterator.next();
-         if (advice.validate(properties, mutuallyExclusive, canReturn))
+         if (advice.validate(properties, mutuallyExclusive, adviceReturn))
          {
             bestAdvice = advice;
             break;
@@ -298,7 +323,7 @@ public class AdviceMethodFactory
          AdviceInfo advice = iterator.next();
          if (advice.getRank() == bestAdvice.getRank())
          {
-            if (!advice.validate(properties, mutuallyExclusive, canReturn))
+            if (!advice.validate(properties, mutuallyExclusive, adviceReturn))
             {
                iterator.remove();
             }
@@ -337,8 +362,9 @@ public class AdviceMethodFactory
    AdviceInfo bestMatch(Collection<AdviceInfo> greatestRank,
          AdviceMethodProperties properties)
    {
-      int bestDegree = -1;
+      short bestDegree = NOT_ASSIGNABLE_DEGREE;
       AdviceInfo bestAdvice = null;
+      Collection<AdviceInfo> removeList = new ArrayList<AdviceInfo>();
       // rule i is more important than rule i + 1
       for (int i = 0; i < rules.length; i++)
       {
@@ -346,7 +372,22 @@ public class AdviceMethodFactory
                iterator.hasNext();)
          {
             AdviceInfo currentAdvice = iterator.next();
-            int currentDegree = currentAdvice.getAssignabilityDegree(i, properties);
+            short currentDegree = currentAdvice.getAssignabilityDegree(i, properties);
+            if (currentDegree < bestDegree)
+            {
+               if (bestAdvice != null)
+               {
+                  removeList.add(bestAdvice);
+               }
+               bestAdvice = currentAdvice;
+               bestDegree = currentDegree;
+            }
+            else if (currentDegree > bestDegree)
+            {
+               iterator.remove();
+            }
+         }
+            /*
             // advice has no annotation of type i
             if (currentDegree == -1)
             {
@@ -377,18 +418,28 @@ public class AdviceMethodFactory
             {
                greatestRank.remove(currentAdvice);
             }
-         }
+         }*/
          // found the best
-         if (greatestRank.size() == 1)
+         if (greatestRank.size() - removeList.size() == 1)
          {
-            return greatestRank.iterator().next();
+            return bestAdvice;
          }
+         greatestRank.removeAll(removeList);
          // reset values
+         removeList.clear();
          bestAdvice = null;
-         bestDegree = -1;
+         bestDegree = NOT_ASSIGNABLE_DEGREE;
       }
-      // two or more advices with the same match degree, pick any one of them
-      return greatestRank.iterator().next();
+      for (AdviceInfo currentAdvice: greatestRank)
+      {
+         int currentDegree =  currentAdvice.getReturnAssignabilityDegree(properties);
+         if (currentDegree < bestDegree)
+         {
+            bestAdvice = currentAdvice;
+         }
+      }
+      // in case of two or more advices with the same match degree, pick any one of them
+      return bestAdvice;
    }
    
    /**

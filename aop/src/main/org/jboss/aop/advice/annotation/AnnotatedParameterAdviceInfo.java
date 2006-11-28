@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.advice.annotation.AdviceMethodFactory.ReturnType;
 
 /**
  * Information about an advice method whose parameters should annotated according to
@@ -123,7 +124,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
    }
    
    public boolean validate(AdviceMethodProperties properties,
-         int[][] mutuallyExclusive, boolean canReturn)
+         int[][] mutuallyExclusive, ReturnType returnType)
    {
       for (ParameterAnnotationType paramType: paramTypes)
       {
@@ -132,18 +133,28 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             return false;
          }
       }
-      if (canReturn && properties.getJoinpointReturnType() != void.class &&
-            !properties.getJoinpointReturnType().
-            isAssignableFrom(method.getReturnType()))
+      switch (returnType)
       {
-         if (AspectManager.verbose)
-         {
-            AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - return value of ");
-            AdviceMethodFactory.adviceMatchingMessage.append(method);
-            AdviceMethodFactory.adviceMatchingMessage.append(" can not be assigned to type ");
-            AdviceMethodFactory.adviceMatchingMessage.append(properties.getJoinpointReturnType());
-         }
-         return false;
+         case ANY:
+            if (method.getReturnType() == void.class)
+            {
+               break;
+            }
+         case NOT_VOID:
+            if (properties.getJoinpointReturnType() != void.class &&
+                  method.getReturnType() != Object.class &&
+                  !properties.getJoinpointReturnType().
+                  isAssignableFrom(method.getReturnType()))
+            {
+               if (AspectManager.verbose)
+               {
+                  AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - return value of ");
+                  AdviceMethodFactory.adviceMatchingMessage.append(method);
+                  AdviceMethodFactory.adviceMatchingMessage.append(" can not be assigned to type ");
+                  AdviceMethodFactory.adviceMatchingMessage.append(properties.getJoinpointReturnType());
+               }
+               return false;
+            }
       }
       
       for (int i = 0; i < mutuallyExclusive.length; i++)
@@ -173,7 +184,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       return true;
    }
    
-   public int getAssignabilityDegree(int annotationIndex,
+   public short getAssignabilityDegree(int annotationIndex,
          AdviceMethodProperties properties)
    {
       return paramTypes[annotationIndex].getAssignabilityDegree(properties);
@@ -434,7 +445,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
        * @return                 the assignability degree if this parameter type on the
        *                         advice method
        */
-      public abstract int getAssignabilityDegree(AdviceMethodProperties properties);
+      public abstract short getAssignabilityDegree(AdviceMethodProperties properties);
       
       /**
        * Assigns information regarding all occurences of this parameter type on the
@@ -499,7 +510,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          return  true;
       }
 
-      public final int getAssignabilityDegree(AdviceMethodProperties properties)
+      public final short getAssignabilityDegree(AdviceMethodProperties properties)
       {
          if (this.index == -1)
          {
@@ -602,7 +613,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          return true;
       }
       
-      public int getAssignabilityDegree(AdviceMethodProperties properties)
+      public short getAssignabilityDegree(AdviceMethodProperties properties)
       {
          if (indexesLength == 0)
          {
@@ -610,7 +621,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          }
          Class[] expectedTypes = (Class[]) rule.getAssignableFrom(properties);
          Class[] paramTypes = method.getParameterTypes();
-         int level = 0;
+         short level = 0;
          for (int i = 0; i < indexesLength; i++)
          {
             level += matchClass(method.getParameterTypes()[this.indexes[i][0]],

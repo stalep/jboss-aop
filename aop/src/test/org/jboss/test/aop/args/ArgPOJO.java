@@ -22,15 +22,35 @@
 package org.jboss.test.aop.args;
 
 /**
- * Comment
- *
+ * Plain old java object used on @Arg parameter tests.
+ * 
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public interface PojoInterface
+public class ArgPOJO implements ArgPOJOInterface
 {
-   String echo(String echo);
+   public String echo(String echo)
+   {
+      return echo;
+   }
 
-   int bunch(int x, double y, float z, String str, int q);
+   public int bunch(int x, double y, float z, String str, int q)
+   {
+      return x + (int) y + (int) z + q;
+   }
 
+   public int bunchArgs(int x, double y, float z, String str, int q)
+   {
+      return x + (int) y + (int) z + q;
+   }
+
+   public int bunchArgsWithInvocation(int x, double y, float z, String str, int q)
+   {
+      return x + (int) y + (int) z + q;
+   }
+
+   public int bunchWrapped(int x, double y, float z, String str, int q)
+   {
+      return x + (int) y + (int) z + q;
+   }
 }

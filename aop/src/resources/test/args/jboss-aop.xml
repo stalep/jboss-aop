@@ -2,30 +2,198 @@
 <!DOCTYPE aop SYSTEM "jboss-aop_1_0.dtd">
 
 <aop>
-   <aspect class="org.jboss.test.aop.args.Aspect" scope="PER_VM"/>
-
-   <bind pointcut="execution(* org.jboss.test.aop.args.POJO->bunchArgs(..))">
-      <advice name="bunchArgs" aspect="org.jboss.test.aop.args.Aspect"/>
+   <!-- @Invocation test -->
+	<aspect class="org.jboss.test.aop.args.InvocationAspect" scope="PER_VM"/>
+	
+	<bind pointcut="execution(* org.jboss.test.aop.args.InvocationPOJO->method1(..))">
+    	<before name="before" aspect="org.jboss.test.aop.args.InvocationAspect"/>
+		<advice name="aroundMethodExecution1" aspect="org.jboss.test.aop.args.InvocationAspect"/>
+		<after name="after" aspect="org.jboss.test.aop.args.InvocationAspect"/>
+		<throwing name="throwing" aspect="org.jboss.test.aop.args.InvocationAspect"/>
    </bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.args.POJO->bunchArgsWithInvocation(..))">
-      <advice name="bunchArgsWithInvocation" aspect="org.jboss.test.aop.args.Aspect"/>
+	<bind pointcut="execution(* org.jboss.test.aop.args.InvocationPOJO->method2(..))">
+		<advice name="aroundMethodExecution2" aspect="org.jboss.test.aop.args.InvocationAspect"/>
+   </bind>
+	
+	<bind pointcut="get(* org.jboss.test.aop.args.InvocationPOJO->number)">
+		<advice name="aroundFieldRead" aspect="org.jboss.test.aop.args.InvocationAspect"/>
    </bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.args.POJO->bunchWrapped(..))">
-      <advice name="wrap" aspect="org.jboss.test.aop.args.Aspect"/>
+	<bind pointcut="set(* org.jboss.test.aop.args.InvocationPOJO->number)">
+		<advice name="aroundFieldWrite" aspect="org.jboss.test.aop.args.InvocationAspect"/>
+   </bind>
+   
+   <bind pointcut="call(* org.jboss.test.aop.args.InvocationPOJO->calleeMethod(..)) AND
+      withincode(* org.jboss.test.aop.args.InvocationPOJO->callerMethod(..))">
+		<advice name="aroundMethodCalledByMethod" aspect="org.jboss.test.aop.args.InvocationAspect"/>
    </bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.args.POJO->bunch(..))">
-      <advice name="bunch" aspect="org.jboss.test.aop.args.Aspect"/>
-      <advice name="arg1" aspect="org.jboss.test.aop.args.Aspect"/>
-      <advice name="arg2" aspect="org.jboss.test.aop.args.Aspect"/>
-      <advice name="arg3" aspect="org.jboss.test.aop.args.Aspect"/>
-      <advice name="arg4" aspect="org.jboss.test.aop.args.Aspect"/>
-      <advice name="arg15" aspect="org.jboss.test.aop.args.Aspect"/>
-      <advice name="arg24" aspect="org.jboss.test.aop.args.Aspect"/>
+   <!-- @JoinPoint test -->
+	<aspect class="org.jboss.test.aop.args.JoinPointAspect" scope="PER_VM"/>
+
+	<bind pointcut="field(* org.jboss.test.aop.args.JoinPointPOJO->number)">
+		<before name="before1" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
+		<after name="after1" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
    </bind>
-   <bind pointcut="execution(java.lang.String org.jboss.test.aop.args.POJO->echo(java.lang.String))">
-      <advice name="echo" aspect="org.jboss.test.aop.args.Aspect"/>
+
+	<bind pointcut="set(* org.jboss.test.aop.args.JoinPointPOJO->text)">
+		<before name="before2" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
+		<after name="after2" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
+   </bind>
+
+	<bind pointcut="get(* org.jboss.test.aop.args.JoinPointPOJO->text)">
+		<before name="before5" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
+		<after name="after5" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
+   </bind>
+	
+	<bind pointcut="execution(* org.jboss.test.aop.args.JoinPointPOJO->method1(..))">
+    	<before name="before3" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
+		<after name="after3" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
+   </bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.JoinPointPOJO->method2(..))">
+    	<before name="before4" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
+		<after name="after4" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
+   	<throwing name="throwing1" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
+   </bind>
+   
+	<bind pointcut="execution(* org.jboss.test.aop.args.JoinPointPOJO->method3(..))">
+   	<throwing name="throwing2" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
+   </bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.JoinPointPOJO->method4(..))">
+   	<throwing name="throwing3" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
+   </bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.JoinPointPOJO->method5(..))">
+   	<throwing name="throwing4" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
+   </bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.JoinPointPOJO->method6(..))">
+   	<throwing name="throwing5" aspect="org.jboss.test.aop.args.JoinPointAspect"/>
+   </bind>
+
+   <!-- Return type and @Return test -->
+	<aspect class="org.jboss.test.aop.args.ReturnAspect" scope="PER_VM"/>
+	
+	<bind pointcut="execution(* org.jboss.test.aop.args.ReturnPOJO->method1(..))">
+		<before name="before" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+		<advice name="around1" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+		<after name="after1" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+	</bind>
+	
+	<bind pointcut="execution(* org.jboss.test.aop.args.ReturnPOJO->method2(..))">
+		<advice name="around2" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+      <after name="after2" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+	</bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.ReturnPOJO->method3(..))">
+		<before name="before" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+		<advice name="around3" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+      <after name="after3" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+	</bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.ReturnPOJO->method4(..))">
+		<advice name="around4" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+		<after name="after4" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+	</bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.ReturnPOJO->method5(..))">
+		<advice name="around5" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+		<after name="after5" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+	</bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.ReturnPOJO->method6(..))">
+		<advice name="around6" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+		<after name="after6" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+	</bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.ReturnPOJO->method7(..))">
+		<advice name="around7" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+		<after name="after7" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+	</bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.ReturnPOJO->method8(..))">
+		<before name="before" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+		<advice name="around8" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+		<after name="after8" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+	</bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.ReturnPOJO->method9(..))">
+		<advice name="around9" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+		<after name="after9" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+	</bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.ReturnPOJO->method10(..))">
+		<before name="before" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+		<advice name="around10" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+		<after name="after10" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+	</bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.ReturnPOJO->method11(..))">
+		<advice name="around11" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+		<after name="after11" aspect="org.jboss.test.aop.args.ReturnAspect"/>
+	</bind>
+
+   <!-- @Thrown test -->
+	<aspect class="org.jboss.test.aop.args.ThrownAspect" scope="PER_VM"/>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.ThrownPOJO->method1(..))">
+		<throwing name="throwing1" aspect="org.jboss.test.aop.args.ThrownAspect"/>
+	</bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.args.ThrownPOJO->method2(..))">
+		<throwing name="throwing2" aspect="org.jboss.test.aop.args.ThrownAspect"/>
+	</bind>
+	
+	<bind pointcut="execution(* org.jboss.test.aop.args.ThrownPOJO->method3(..))">
+		<throwing name="throwing3" aspect="org.jboss.test.aop.args.ThrownAspect"/>
+	</bind>
+	
+	<bind pointcut="execution(* org.jboss.test.aop.args.ThrownPOJO->method4(..))">
+		<throwing name="throwing4" aspect="org.jboss.test.aop.args.ThrownAspect"/>
+	</bind>
+	
+	<bind pointcut="execution(* org.jboss.test.aop.args.ThrownPOJO->method5(..))">
+		<throwing name="throwing5" aspect="org.jboss.test.aop.args.ThrownAspect"/>
+	</bind>
+	
+	<bind pointcut="execution(* org.jboss.test.aop.args.ThrownPOJO->method6(..))">
+		<throwing name="throwing6" aspect="org.jboss.test.aop.args.ThrownAspect"/>
+		<throwing name="throwing7" aspect="org.jboss.test.aop.args.ThrownAspect"/>
+	</bind>
+
+   <!-- @Arg test -->
+   <aspect class="org.jboss.test.aop.args.ArgAspect" scope="PER_VM"/>
+
+   <bind pointcut="execution(* org.jboss.test.aop.args.ArgPOJO->bunchArgs(..))">
+      <advice name="bunchArgs" aspect="org.jboss.test.aop.args.ArgAspect"/>
+   </bind>
+
+   <bind pointcut="execution(* org.jboss.test.aop.args.ArgPOJO->bunchArgsWithInvocation(..))">
+      <advice name="bunchArgsWithInvocation" aspect="org.jboss.test.aop.args.ArgAspect"/>
+   </bind>
+
+   <bind pointcut="execution(* org.jboss.test.aop.args.ArgPOJO->bunchWrapped(..))">
+      <advice name="wrap" aspect="org.jboss.test.aop.args.ArgAspect"/>
+   </bind>
+
+   <bind pointcut="execution(* org.jboss.test.aop.args.ArgPOJO->bunch(..))">
+      <advice name="bunch" aspect="org.jboss.test.aop.args.ArgAspect"/>
+		<advice name="bunch1" aspect="org.jboss.test.aop.args.ArgAspect"/>
+      <advice name="bunch2" aspect="org.jboss.test.aop.args.ArgAspect"/>
+      <advice name="bunch3" aspect="org.jboss.test.aop.args.ArgAspect"/>
+      <advice name="bunch4" aspect="org.jboss.test.aop.args.ArgAspect"/>
+      <advice name="arg1" aspect="org.jboss.test.aop.args.ArgAspect"/>
+      <advice name="arg2" aspect="org.jboss.test.aop.args.ArgAspect"/>
+      <advice name="arg3" aspect="org.jboss.test.aop.args.ArgAspect"/>
+      <advice name="arg4" aspect="org.jboss.test.aop.args.ArgAspect"/>
+      <advice name="arg15" aspect="org.jboss.test.aop.args.ArgAspect"/>
+      <advice name="arg24" aspect="org.jboss.test.aop.args.ArgAspect"/>
+      <advice name="emptyArg" aspect="org.jboss.test.aop.args.ArgAspect"/>
+   </bind>
+   <bind pointcut="execution(java.lang.String org.jboss.test.aop.args.ArgPOJO->echo(java.lang.String))">
+      <advice name="echo" aspect="org.jboss.test.aop.args.ArgAspect"/>
    </bind>
 </aop>

@@ -3,6 +3,7 @@ package org.jboss.aop.advice.annotation;
 import java.lang.reflect.Method;
 
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.advice.annotation.AdviceMethodFactory.ReturnType;
 
 /**
  * Contains information about an advice method and its matching process.
@@ -38,13 +39,14 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
     * 
     * @param clazz      the type of an annotated parameter
     * @param lookingFor the expected type of the parameter
-    * @return -1 if a value of type <code>lookingFor</code> can't be assigned to
-    *         a parameter of type <code>class</code>; the distance between <code>class
-    *         </code> and <code>lookingFor</code> otherwise.
+    * @return {@link AdviceMethodFactory#NOT_ASSIGNABLE_DEGREE if a value of type <code>
+    *         lookingFor</code> can't be assigned to a parameter of type <code>class
+    *         </code>; the distance between <code>class </code> and <code>lookingFor
+    *         </code> otherwise.
     */
-   protected int matchClass(Class clazz, Class lookingFor)
+   protected short matchClass(Class clazz, Class lookingFor)
    {
-      return matchClass(clazz, lookingFor, 0);
+      return matchClass(clazz, lookingFor, (short) 0);
    }
    
    /**
@@ -58,11 +60,11 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
     *         a parameter of type <code>class</code>; the distance between <code>class
     *         </code> and <code>lookingFor</code> otherwise.
     */
-   private int matchClass(Class wanted, Class candidate, int matchDegree)
+   private short matchClass(Class wanted, Class candidate, short matchDegree)
    {
       if (candidate == null)
       {
-         return -1;
+         return AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE;
       }
       if (candidate.equals(wanted))
       {
@@ -84,9 +86,37 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
       {
          return matchDegree;
       }
-      return -1;
+      return AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE;
    }
 
+   /**
+    * Returns the distance in hierarchy between the annotated parameter identified by
+    * <code>annotationIndex</code>, and the expected type of this parameter.
+    * 
+    * @param annotationIndex  identifies a parameter annotation rule
+    * @param properties       contains information about the queried advice method
+    * @return                 the assignability degree if there is a parameter with the
+    *                         annotation identified by <code>typeIndex</code>;
+    *                         {@link AdviceMethodFactory#NOT_ASSIGNABLE_DEGREE} otherwise.
+    */
+   public short getReturnAssignabilityDegree(AdviceMethodProperties properties)
+   {
+      Class returnType = this.method.getReturnType();
+      if (returnType == void.class)
+      {
+         return AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE;
+      }
+      short degree = this.matchClass(properties.getJoinpointReturnType(), returnType);
+      if (degree == AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE)
+      {
+         // return type is Object.class and join point return type is not
+         // Object is worse than join point return type, but better than -1
+         return AdviceMethodFactory.MAX_ASSIGNABLE_DEGREE;
+      }
+      return degree;
+   }
+
+   
    /**
     * Returns the rank of this advice.
     * @return the rank value
@@ -116,11 +146,11 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
     * 
     * @param properties        contains information about the queried method
     * @param mutuallyExclusive a list of mutually exclusive rules
-    * @param canReturn        indicates whether the advice method should return a value
+    * @param returnType        the expected return type
     * @return                  <code>true</code> only if this advice is valid
     */
    public abstract boolean validate(AdviceMethodProperties properties,
-         int[][] mutuallyExclusive, boolean canReturn);
+         int[][] mutuallyExclusive, ReturnType returnType);
 
    /**
     * Returns the distance in hierarchy between the annotated parameter identified by
@@ -129,9 +159,10 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
     * @param annotationIndex  identifies a parameter annotation rule
     * @param properties       contains information about the queried advice method
     * @return                 the assignability degree if there is a parameter with the
-    *                         annotation identified by <code>typeIndex</code>; -1 otherwise.
+    *                         annotation identified by <code>typeIndex</code>;
+    *                         {@link AdviceMethodFactory#NOT_ASSIGNABLE_DEGREE} otherwise.
     */
-   public abstract int getAssignabilityDegree(int annotationIndex,
+   public abstract short getAssignabilityDegree(int annotationIndex,
          AdviceMethodProperties properties);
    
    /**
@@ -140,5 +171,4 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
     * @param properties contains information about the queried advice method.
     */
    public abstract void assignAdviceInfo(AdviceMethodProperties properties);
-   
 }

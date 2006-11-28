@@ -19,39 +19,20 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.test.aop.beforeafter;
-
-import org.jboss.aop.JoinPointInfo;
-import org.jboss.aop.advice.annotation.Arg;
-import org.jboss.aop.advice.annotation.JoinPoint;
-import org.jboss.aop.advice.annotation.Return;
+package org.jboss.test.aop.args;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
- * @version $Revision$
+ * @version $Revision: 39449 $
  */
-public class GeneralAspect
+public class SubValue extends SuperValue
 {
-   public static String before;
-   public static String after;
 
-   public static void clear()
+   public SubValue(int i)
    {
-      before = null;
-      after = null;
+      // FIXME SubValue constructor
+      super(i);
    }
-   
 
-   public void before(@JoinPoint JoinPointInfo jp, @Arg SuperValue superValue, @Arg int i)
-   {
-      before = "before";
-   }
-   
-   public Object after(@JoinPoint JoinPointInfo jp, @Return Object ret,
-         @Arg SuperValue superValue, @Arg int i)
-   {
-      after = "after";
-      return ret;
-   }
 }

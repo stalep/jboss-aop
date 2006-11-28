@@ -29,11 +29,14 @@ import junit.textui.TestRunner;
 
 
 /**
+ * Tests the use of @Arg parameters.
+ * 
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public class ArgsTestCase extends AOPTestWithSetup
+public class ArgTestCase extends AOPTestWithSetup
 {
+   ArgPOJO pojo;
 
    public static void main(String[] args)
    {
@@ -42,20 +45,25 @@ public class ArgsTestCase extends AOPTestWithSetup
 
    public static Test suite()
    {
-      TestSuite suite = new TestSuite("AnnotatedTester");
-      suite.addTestSuite(ArgsTestCase.class);
+      TestSuite suite = new TestSuite("ArgTestCase");
+      suite.addTestSuite(ArgTestCase.class);
       return suite;
    }
 
-   public ArgsTestCase(String name)
+   public ArgTestCase(String name)
    {
       super(name);
    }
 
+   public void setUp() throws Exception
+   {
+      super.setUp();
+      pojo = new ArgPOJO();
+      ArgAspect.clear();
+   }
+   
    public void testBench()
    {
-      POJO pojo = new POJO();
-
       {
          long start = System.currentTimeMillis();
          for (int i = 0; i < 1000000; i++)
@@ -85,41 +93,28 @@ public class ArgsTestCase extends AOPTestWithSetup
          long end = System.currentTimeMillis() - start;
          System.out.println("bunchArgsWithInvocation: " + end);
       }
-
-      assertTrue(Aspect.argsWithInvocation);
-      assertTrue(Aspect.args);
-      assertTrue(Aspect.wrapped);
-
+      assertTrue(ArgAspect.argsWithInvocation);
+      assertTrue(ArgAspect.args);
+      assertTrue(ArgAspect.wrapped);
    }
 
    public void testEcho()
    {
-      POJO pojo = new POJO();
-
-      Aspect.echoCalled = false;
       pojo.echo("hello");
-      assertTrue(Aspect.echoCalled);
+      assertTrue(ArgAspect.echoCalled);
    }
 
    public void testBunch()
    {
-      POJO pojo = new POJO();
-
-      Aspect.bunchCalled = false;
-      Aspect.arg1Called = false;
-      Aspect.arg2Called = false;
-      Aspect.arg3Called = false;
-      Aspect.arg4Called = false;
-      Aspect.arg15Called = false;
-      Aspect.arg24Called = false;
       pojo.bunch(1, 2.2, 3.3F, "four", 5);
-      assertTrue(Aspect.bunchCalled);
-      assertTrue(Aspect.arg1Called);
-      assertTrue(Aspect.arg2Called);
-      assertTrue(Aspect.arg3Called);
-      assertTrue(Aspect.arg4Called);
-      assertTrue(Aspect.arg15Called);
-      assertTrue(Aspect.arg24Called);
+      assertTrue(ArgAspect.bunchCalled);
+      assertTrue(ArgAspect.bunch2Called);
+      assertTrue(ArgAspect.arg1Called);
+      assertTrue(ArgAspect.arg2Called);
+      assertTrue(ArgAspect.arg3Called);
+      assertTrue(ArgAspect.arg4Called);
+      assertTrue(ArgAspect.arg15Called);
+      assertTrue(ArgAspect.arg24Called);
+      assertTrue(ArgAspect.emptyArgCalled);
    }
-
 }

@@ -97,23 +97,23 @@ public class ArgsAspect
       return ret;
    }
    
-   //This should be able to handle both reads and writes
-   public int after(@JoinPoint FieldInfo fp, @Arg @Return int i)
+   //This should be able to handle writes
+   public int after(@JoinPoint FieldInfo fp, @Arg int i)
    {
       after = "after3";
       return i;
    }
    
-   //This should be able to handle both reads and writes
-   public SubValue after(@JoinPoint FieldInfo fp, @Return @Arg SubValue ret)
+   //This should be able to handle reads
+   public SubValue after(@JoinPoint FieldInfo fp, @Return SubValue ret)
    {
       after = "after4";
       ret.doubleValue();
       return ret;
    }
       
-   //This should be able to handle both reads and writes
-   public SuperValue after(@Return @Arg SuperValue ret)
+   //This should be able to handle reads
+   public SuperValue after(@Return SuperValue ret)
    {
       after = "after5";
       ret.doubleValue();

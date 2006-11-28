@@ -205,7 +205,7 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       int i = pojo.i;
       assertEquals("before4", ArgsAspect.before);
       assertNull(ArgsAspect.throwing);
-      assertEquals("after3", ArgsAspect.after);
+      assertEquals(null, ArgsAspect.after);
    }  
       
    public void testFieldsWithInheritance() throws Exception
@@ -218,7 +218,7 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       pojo.superValue = new SuperValue(5);
       assertEquals("before4", ArgsAspect.before);
       assertNull(ArgsAspect.throwing);
-      assertEquals("after5", ArgsAspect.after);
+      assertEquals(null, ArgsAspect.after);
 
       ArgsAspect.clear();
       System.out.println("* Reading superValue");
@@ -226,7 +226,7 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       assertEquals("before4", ArgsAspect.before);
       assertNull(ArgsAspect.throwing);
       assertEquals("after5", ArgsAspect.after);
-      assertEquals(20, superVal.getValue()); //The after4 and after5 methods double the value
+      assertEquals(10, superVal.getValue()); //The after4 and after5 methods double the value
       
       
       ArgsAspect.clear();
@@ -234,7 +234,7 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       pojo.subValue = new SubValue(5);
       assertEquals("before5", ArgsAspect.before);
       assertNull(ArgsAspect.throwing);
-      assertEquals("after4", ArgsAspect.after);
+      assertEquals(null, ArgsAspect.after);
       
       ArgsAspect.clear();
       System.out.println("* Writing subValue");
@@ -242,7 +242,7 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       assertEquals("before4", ArgsAspect.before);
       assertNull(ArgsAspect.throwing);
       assertEquals("after4", ArgsAspect.after);
-      assertEquals(20, subVal.getValue());//The after4 methods double the value
+      assertEquals(10, subVal.getValue());//The after4 methods double the value
    }
    
    public void testMethodsWithInheritance()
@@ -270,18 +270,14 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       subValue = pojo.method(subValue, 5);
       assertEquals("before", GeneralAspect.before);
       assertNull(ArgsAspect.throwing);
-      // TODO talk to Kabir about this
-      assertEquals(null, GeneralAspect.after);
-      //assertEquals("after", GeneralAspect.after);
+      assertEquals("after", GeneralAspect.after);
       
       GeneralAspect.clear();
       System.out.println(" * Testing method(SuperValue, int)");
       superValue = pojo.method(superValue, 10);
       assertEquals("before", GeneralAspect.before);
       assertNull(ArgsAspect.throwing);
-      // TODO idem
-      assertEquals(null, GeneralAspect.after);
-      //assertEquals("after", GeneralAspect.after);
+      assertEquals("after", GeneralAspect.after);
      
       ArgsAspect.clear();
       System.out.println(" * Testing method(SubValue, SubValue)");

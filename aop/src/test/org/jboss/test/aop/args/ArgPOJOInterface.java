@@ -27,31 +27,10 @@ package org.jboss.test.aop.args;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public class POJO implements PojoInterface
+public interface ArgPOJOInterface
 {
-   public String echo(String echo)
-   {
-      return echo;
-   }
+   String echo(String echo);
 
-   public int bunch(int x, double y, float z, String str, int q)
-   {
-      return x + (int) y + (int) z + q;
-   }
-
-   public int bunchArgs(int x, double y, float z, String str, int q)
-   {
-      return x + (int) y + (int) z + q;
-   }
-
-   public int bunchArgsWithInvocation(int x, double y, float z, String str, int q)
-   {
-      return x + (int) y + (int) z + q;
-   }
-
-   public int bunchWrapped(int x, double y, float z, String str, int q)
-   {
-      return x + (int) y + (int) z + q;
-   }
+   int bunch(int x, double y, float z, String str, int q);
 
 }
