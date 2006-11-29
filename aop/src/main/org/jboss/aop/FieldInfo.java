@@ -51,6 +51,12 @@ public class FieldInfo extends JoinPointInfo
       
    }
    
+   public FieldInfo(Advisor advisor, boolean read)
+   {
+      super(advisor, null);
+      this.read = read;
+   }
+   
    public FieldInfo(Class clazz, int index, String fieldName, long wrapperHash, Advisor advisor, boolean read)
    {
       super(advisor, clazz);

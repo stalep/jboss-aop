@@ -24,4 +24,11 @@
   <bind pointcut="field(* org.jboss.test.aop.field.ScopedPojo->staticField)">                
        <interceptor-ref name="staticField"/>
   </bind>
+  
+  <bind pointcut="set(* org.jboss.test.aop.field.SetOrGetOnlyPOJO->setOnly)">                
+       <interceptor class="org.jboss.test.aop.field.TraceInterceptor"/>
+  </bind>
+  <bind pointcut="get(* org.jboss.test.aop.field.SetOrGetOnlyPOJO->getOnly)">                
+       <interceptor class="org.jboss.test.aop.field.TraceInterceptor"/>
+  </bind>
 </aop>

@@ -164,4 +164,28 @@ public class FieldTestCase extends AOPTestWithSetup
       assertSame(advStatic, staticWrite);
       
    }
+   
+   public void testSetOnly() throws Exception
+   {
+      SetOrGetOnlyPOJO pojo = new SetOrGetOnlyPOJO();
+      TraceInterceptor.intercepted = false;
+      pojo.setOnly = 10;
+      assertTrue(TraceInterceptor.intercepted);
+      
+      TraceInterceptor.intercepted = false;
+      assertEquals(10, pojo.setOnly);
+      assertFalse(TraceInterceptor.intercepted);
+   }
+   
+   public void testGetOnly() throws Exception
+   {
+      SetOrGetOnlyPOJO pojo = new SetOrGetOnlyPOJO();
+      TraceInterceptor.intercepted = false;
+      pojo.getOnly = 10;
+      assertFalse(TraceInterceptor.intercepted);
+      
+      TraceInterceptor.intercepted = false;
+      assertEquals(10, pojo.getOnly);
+      assertTrue(TraceInterceptor.intercepted);
+   }
 }

@@ -41,6 +41,7 @@ import org.jboss.aop.instrument.JoinPointGenerator;
 import org.jboss.aop.instrument.MethodByConJoinPointGenerator;
 import org.jboss.aop.instrument.MethodByMethodJoinPointGenerator;
 import org.jboss.aop.instrument.MethodJoinPointGenerator;
+import org.jboss.aop.joinpoint.FieldJoinpoint;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodJoinpoint;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
@@ -229,7 +230,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    protected ArrayList initializeFieldReadChain()
    {
-      return mergeFieldInfos(fieldReadInfos);
+      return mergeFieldInfos(fieldReadInfos, true);
    }
 
    protected void addFieldWriteInfo(FieldInfo fi)
@@ -241,13 +242,13 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    protected ArrayList initializeFieldWriteChain()
    {
-      return mergeFieldInfos(fieldWriteInfos);
+      return mergeFieldInfos(fieldWriteInfos, false);
    }
 
    /* Creates a full list of field infos for all fields, using the ones added by
     * generated advisor for advised fields.
     */
-   private ArrayList mergeFieldInfos(ArrayList advisedInfos)
+   private ArrayList mergeFieldInfos(ArrayList advisedInfos, boolean read)
    {
       ArrayList newInfos = new ArrayList(advisedFields.length);
 
@@ -279,9 +280,8 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          }
          else
          {
-            FieldInfo info = new FieldInfo();
+            FieldInfo info = new FieldInfo(this, read);
             info.setAdvisedField(advisedFields[i]);
-            info.setAdvisor(this);
             info.setIndex(i);
             newInfos.add(info);
          }
@@ -668,4 +668,18 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       return true;
    }
+
+   @Override
+   public Object getFieldAspect(FieldJoinpoint joinpoint, AspectDefinition def)
+   {
+      Object instance = getPerClassJoinpointAspect(def, joinpoint);
+      if (instance == null)
+      {
+         addPerClassJoinpointAspect(def, joinpoint);
+         instance = getPerClassJoinpointAspect(def, joinpoint);
+      }
+      return instance;
+   }
+   
+   
 }
