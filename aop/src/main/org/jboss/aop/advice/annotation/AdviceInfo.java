@@ -34,59 +34,160 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
    }
    
    /**
-    * Indicates the distance between <code>class</code> and <code>lookingFor</code>
-    * in the class hierarchy.
+    * Returns the assignability degree from <code>fromType</code> to </code>toType</code>. 
+    * <p>
+    * The assignability degree is the distance in class and interface hierarchy between
+    * <code>fromType</code> and </code>toType</code>. If <code>toType</code> is an
+    * interface implemented by <code>fromType</code>, then the degree is 1. Otherwise,
+    * the degree is exactly the number of hierarchical levels between <code>fromType
+    * </code> and <code>toType</code>.
     * 
-    * @param clazz      the type of an annotated parameter
-    * @param lookingFor the expected type of the parameter
-    * @return {@link AdviceMethodFactory#NOT_ASSIGNABLE_DEGREE if a value of type <code>
-    *         lookingFor</code> can't be assigned to a parameter of type <code>class
-    *         </code>; the distance between <code>class </code> and <code>lookingFor
-    *         </code> otherwise.
+    * @param fromType the type from which <code>toType</code> is supposedly assignable.
+    * @param toType   the type to which <code>fromType</code> can be converted without
+    *                 type casting.
+    * @return {@link AdviceMethodFactory#NOT_ASSIGNABLE_DEGREE if <code>toType</code> is
+    *         not assignable from <code>fromType</code>; the hierarchical distance between
+    *         <code>fromType</code> and <code>toType</code> otherwise.
+    *         
+    * @see java.lang.Class#isAssignableFrom(Class)
     */
-   protected short matchClass(Class clazz, Class lookingFor)
+   protected short getAssignabilityDegree(Class<?> fromType, Class<?> toType)
    {
-      return matchClass(clazz, lookingFor, (short) 0);
+      // they're the same
+      if (fromType == toType)
+      {
+         return 0;
+      }
+      if (toType.isInterface())
+      {
+         if (fromType.isInterface())
+         {
+            // assignability degree on interface inheritance
+            return getInterfaceInheritanceAD(fromType, toType, (short) 0);
+         }
+         else
+         {
+            // assignability degree on interface implementation
+            return getImplementationAD(fromType, toType);
+         }
+      }
+      if (fromType.isInterface())
+      {
+         // you can't get to a class from an interface
+         return AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE;
+      }
+      // assignability degree on class inheritance
+      return getClassInheritanceAD(fromType.getSuperclass(), toType, (short) 1);
    }
    
    /**
-    * Recursive method that return the distance between <code>wanted</code> and <code>
-    * candidate</code> in the class hierarchy.
+    * Returns the assignability degree between <code>fromClassType</code> and <code>
+    * toInterfaceType</code>.
     * 
-    * @param wanted      the expected type of the parameter
-    * @param candidate   the current type being matched
-    * @param matchDegree the current matchDegree
-    * @return -1 if a value of type <code>lookingFor</code> can't be assigned to
-    *         a parameter of type <code>class</code>; the distance between <code>class
-    *         </code> and <code>lookingFor</code> otherwise.
+    * @param fromClassType   a class type that supposedly implements <code>
+    *                        toInterfaceType</code>
+    * @param toInterfaceType an interface type that is supposedly implemented by <code>
+    *                        fromClassType</code>
+    * @return {@link AdviceMethodFactory#NOT_ASSIGNABLE_DEGREE} if <code>fromClassType
+    *         </code> does not implement <code>toInterfaceType</code>; otherwise, if
+    *         <code>fromType</code> implements a subinterface of <code>toInterfaceType
+    *         </code>, returns 1 + the assignability degree between this subinterface and
+    *         <code>toType</code>; otherwhise, returns 1.
+    *         
     */
-   private short matchClass(Class wanted, Class candidate, short matchDegree)
+   private short getImplementationAD(Class<?> fromClassType, Class<?> toInterfaceType)
    {
-      if (candidate == null)
+      if (fromClassType == null)
       {
          return AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE;
       }
-      if (candidate.equals(wanted))
-      {
-         return matchDegree;
-      }
-
-      matchDegree++;
       
-      Class[] interfaces = candidate.getInterfaces();
+      Class[] interfaces = fromClassType.getInterfaces();
       for (int i = 0 ; i < interfaces.length ; i++)
       {
-         if (matchClass(wanted, interfaces[i], matchDegree) > 0)
+         if(interfaces[i] == toInterfaceType)
          {
-            return matchDegree;
+            return 1;
          }
       }
-      
-      if (matchClass(wanted, candidate.getSuperclass(), matchDegree) > 0)
+      short currentDegree = AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE;
+      for (int i = 0 ; i < interfaces.length ; i++)
       {
-         return matchDegree;
+         currentDegree = (short) Math.min(getInterfaceInheritanceAD(interfaces[i],
+               toInterfaceType, (short) 1), currentDegree);
       }
-      return AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE;
+      if (currentDegree == AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE)
+      {
+         return getImplementationAD(fromClassType.getSuperclass(), toInterfaceType);
+      }
+      return currentDegree;
+   }
+   
+   /**
+    * Recursive method that returns the assignability degree on an interface inheritance.
+    * 
+    * @param fromInterfaceType  the interface that supposedly inherits (directly or
+    *                           indirectly <code>toInterfaceType</code>.
+    * @param toInterfaceType    the interface which is supposedly assignable from <code>
+    *                           fromInterfaceType</code>. The type <code>
+    *                           toInterfaceType</code> is not the same as <code>
+    *                           fromInterfaceType</code>.
+    * @param currentDegree      the current assignability degree
+    * @return                   {@link AdviceMethodFactory#NOT_ASSIGNABLE_DEGREE} if
+    *                           <code>toInterfaceType</code> is not assignable from <code>
+    *                           fromInterfaceType</code>; <code>currentDegree + </code>
+    *                           the assignability degree from <code>fromInterfaceType
+    *                           </code> to <code>toInterfaceType</code>.
+    */
+   public short getInterfaceInheritanceAD(Class<?> fromInterfaceType,
+         Class<?> toInterfaceType, short currentDegree)
+   {
+      Class[] interfaces = fromInterfaceType.getInterfaces();
+      currentDegree ++;
+      for (int i = 0; i < interfaces.length; i++)
+      {
+         if(interfaces[i] == toInterfaceType)
+         {
+            return currentDegree;
+         }
+      }
+      short bestDegree = AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE;
+      for (int i = 0; i < interfaces.length; i++)
+      {
+         bestDegree = (short) Math.min(getInterfaceInheritanceAD(interfaces[i],
+               toInterfaceType, currentDegree), bestDegree);
+      }
+      return bestDegree;
+   }
+   
+   /**
+    * Recursive method that returns the assignability degree on an class inheritance.
+    * 
+    * @param fromClassType  the class that supposedly inherits (directly or
+    *                       indirectly <code>toClassType</code>.
+    * @param toClassType    the class which is supposedly assignable from <code>
+    *                       fromInterfaceType</code>. The type <code>toClassType</code> is
+    *                       not the same as <code>fromClassType</code>.
+    * @param currentDegree  the current assignability degree
+    * @return               {@link AdviceMethodFactory#NOT_ASSIGNABLE_DEGREE} if <code>
+    *                       toClassType</code> is not assignable from <code>fromClassType
+    *                       </code>; <code>currentDegree + </code> the assignability
+    *                       degree from <code>fromClassType</code> to <code>toClassType
+    *                       </code>.
+    */
+   private short getClassInheritanceAD(Class<?> fromClassType, Class<?> toClassType,
+         short currentDegree)
+   {
+      if (fromClassType == null)
+      {
+         return AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE;
+      }
+      if (fromClassType == toClassType)
+      {
+         return currentDegree;
+      }
+      return getClassInheritanceAD(fromClassType.getSuperclass(), toClassType,
+            ++currentDegree);
    }
 
    /**
@@ -106,17 +207,17 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
       {
          return AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE;
       }
-      short degree = this.matchClass(properties.getJoinpointReturnType(), returnType);
+      short degree = this.getAssignabilityDegree(returnType,
+            properties.getJoinpointReturnType());
       if (degree == AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE)
       {
          // return type is Object.class and join point return type is not
          // Object is worse than join point return type, but better than -1
-         return AdviceMethodFactory.MAX_ASSIGNABLE_DEGREE;
+         return AdviceMethodFactory.MAX_DEGREE;
       }
       return degree;
    }
 
-   
    /**
     * Returns the rank of this advice.
     * @return the rank value

@@ -59,7 +59,7 @@ public class AdviceMethodFactory
    /**
     * Factory that selects advice methods for <i>after</i> interception.
     */
-   public static final       AdviceMethodFactory AFTER = new AdviceMethodFactory (null,
+   public static final AdviceMethodFactory AFTER = new AdviceMethodFactory (null,
          new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT,
          ParameterAnnotationRule.RETURN, ParameterAnnotationRule.ARGS,
          ParameterAnnotationRule.ARG}, new int[][]{{2, 3}}, ReturnType.ANY);
@@ -150,7 +150,7 @@ public class AdviceMethodFactory
                   public short getAssignabilityDegree(int typeIndex,
                         AdviceMethodProperties properties)
                   {
-                     return matchClass(parameterTypes[0], properties.getInvocationType());
+                     return getAssignabilityDegree(parameterTypes[0], properties.getInvocationType());
                   }
                   
                   public void assignAdviceInfo(AdviceMethodProperties properties)
@@ -168,7 +168,7 @@ public class AdviceMethodFactory
 
    static StringBuffer adviceMatchingMessage;
    static final short NOT_ASSIGNABLE_DEGREE = Short.MAX_VALUE;
-   static final short MAX_ASSIGNABLE_DEGREE = NOT_ASSIGNABLE_DEGREE - 1;
+   static final short MAX_DEGREE = NOT_ASSIGNABLE_DEGREE - 1;
    
    /**
     * Method that returns log information about the last matching process executed.
@@ -182,7 +182,7 @@ public class AdviceMethodFactory
       return message;
    }
    
-   private ReturnType adviceReturn;
+   private ReturnType returnType;
    private AdviceSignatureRule adviceSignatureRule;
    private ParameterAnnotationRule[] rules;
    private int[][] mutuallyExclusive;
@@ -196,17 +196,17 @@ public class AdviceMethodFactory
     * @param rules               the parameter annotation rules that can be used by
     *                            this factory on the advice method matching.
     * @param mutuallyExclusive   collection of the rules that are mutually exclusive
-    * @param canReturn          indicates whether the queried advice methods can return
+    * @param returnType          indicates whether the queried advice methods can return
     *                            a value to overwrite the join point execution result.
     */
    private AdviceMethodFactory(AdviceSignatureRule adviceSignatureRule,
          ParameterAnnotationRule[] rules, int[][] mutuallyExclusive,
-         ReturnType adviceReturn)
+         ReturnType returnType)
    {
       this.adviceSignatureRule = adviceSignatureRule;
       this.rules = rules;
       this.mutuallyExclusive = mutuallyExclusive;
-      this.adviceReturn = adviceReturn;
+      this.returnType = returnType;
    }
    
    /**
@@ -297,7 +297,7 @@ public class AdviceMethodFactory
       while (iterator.hasNext())
       {
          AdviceInfo advice = iterator.next();
-         if (advice.validate(properties, mutuallyExclusive, adviceReturn))
+         if (advice.validate(properties, mutuallyExclusive, returnType))
          {
             bestAdvice = advice;
             break;
@@ -323,7 +323,7 @@ public class AdviceMethodFactory
          AdviceInfo advice = iterator.next();
          if (advice.getRank() == bestAdvice.getRank())
          {
-            if (!advice.validate(properties, mutuallyExclusive, adviceReturn))
+            if (!advice.validate(properties, mutuallyExclusive, returnType))
             {
                iterator.remove();
             }
@@ -387,38 +387,6 @@ public class AdviceMethodFactory
                iterator.remove();
             }
          }
-            /*
-            // advice has no annotation of type i
-            if (currentDegree == -1)
-            {
-               if (bestDegree != -1)
-               {
-                  // this advice is worst than the best current match
-                  greatestRank.remove(currentAdvice);
-               }
-               else if (bestAdvice == null)
-               {
-                  // current best advice has no parameter with this annotation
-                  bestAdvice = currentAdvice;
-               }
-            }
-            // this advice is better than current best match
-            else if (bestDegree == -1 || currentDegree < bestDegree)
-            {
-               if (bestAdvice != null)
-               {
-                  // the old best advice is gone
-                  greatestRank.remove(bestAdvice);
-               }
-               bestDegree = currentDegree;
-               bestAdvice = currentAdvice;
-            }
-            // this advice is not as good as current best match
-            else if (currentDegree > bestDegree)
-            {
-               greatestRank.remove(currentAdvice);
-            }
-         }*/
          // found the best
          if (greatestRank.size() - removeList.size() == 1)
          {
@@ -430,16 +398,21 @@ public class AdviceMethodFactory
          bestAdvice = null;
          bestDegree = NOT_ASSIGNABLE_DEGREE;
       }
-      for (AdviceInfo currentAdvice: greatestRank)
+      if (returnType == ReturnType.ANY || returnType == ReturnType.NOT_VOID)
       {
-         int currentDegree =  currentAdvice.getReturnAssignabilityDegree(properties);
-         if (currentDegree < bestDegree)
+         for (AdviceInfo currentAdvice: greatestRank)
          {
-            bestAdvice = currentAdvice;
+            int currentDegree =  currentAdvice.getReturnAssignabilityDegree(properties);
+            if (currentDegree < bestDegree)
+            {
+               bestAdvice = currentAdvice;
+            }
          }
+         //in case of two or more advices with the same match degree, pick any one of them
+         return bestAdvice;
       }
-      // in case of two or more advices with the same match degree, pick any one of them
-      return bestAdvice;
+      // we have more than one best advice; return any one of them
+      return greatestRank.iterator().next();
    }
    
    /**

@@ -268,7 +268,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
    {
       if (AspectManager.verbose)
       {
-         throw new ParameterAnnotationRuleException("[warn] -parameter " + i  +
+         throw new ParameterAnnotationRuleException("\n[warn] -parameter " + i  +
                " of method " + method +  " is not annotated");
       }
       else
@@ -290,7 +290,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
     *                              processed before a multi-annotated parameter was found
     * @throws MultipleAdviceInfoException
     */
-   private void throwMAIException(Annotation[][] paramAnnotations,
+   private final void throwMAIException(Annotation[][] paramAnnotations,
       int[] singleAnnotations, int singleAnnotationsSize)
       throws MultipleAdviceInfoException
    {
@@ -476,7 +476,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          {
             if (AspectManager.verbose)
             {
-               throw new ParameterAnnotationRuleException("[warn] - found more than "
+               throw new ParameterAnnotationRuleException("\n[warn] - found more than "
                      + "one occurence of " + rule.getAnnotation().getName() +
                      " on parameters of advice" + method);  
             }
@@ -516,8 +516,9 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          {
             return -1;
          }
-         return matchClass(method.getParameterTypes()[this.index],
-               (Class) rule.getAssignableFrom(properties));
+         return AnnotatedParameterAdviceInfo.this.getAssignabilityDegree(
+               (Class) rule.getAssignableFrom(properties),
+               method.getParameterTypes()[this.index]);
       }
       
       public final void assignParameterInfo(int[] args)
@@ -624,8 +625,9 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          short level = 0;
          for (int i = 0; i < indexesLength; i++)
          {
-            level += matchClass(method.getParameterTypes()[this.indexes[i][0]],
-                  expectedTypes[this.indexes[i][1]]);
+            level += AnnotatedParameterAdviceInfo.this.getAssignabilityDegree(
+                  expectedTypes[this.indexes[i][1]],
+                  method.getParameterTypes()[this.indexes[i][0]]);
          }
          return level; 
       }
