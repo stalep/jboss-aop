@@ -193,7 +193,41 @@
       <advice name="arg24" aspect="org.jboss.test.aop.args.ArgAspect"/>
       <advice name="emptyArg" aspect="org.jboss.test.aop.args.ArgAspect"/>
    </bind>
+   
    <bind pointcut="execution(java.lang.String org.jboss.test.aop.args.ArgPOJO->echo(java.lang.String))">
       <advice name="echo" aspect="org.jboss.test.aop.args.ArgAspect"/>
    </bind>
+   
+   <!-- overloaded advices test -->
+   <aspect class="org.jboss.test.aop.args.OverloadedAdviceAspect" scope="PER_VM"/>
+
+  	<bind pointcut="field(* org.jboss.test.aop.args.OverloadedAdvicePOJO->text)">
+   	<before name="before1" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+      <before name="before2" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<before name="before3" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<before name="before4" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<before name="before5" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<before name="before6" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<before name="before7" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<before name="before8" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<before name="before9" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<before name="before10" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<before name="before11" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<before name="before12" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+  	</bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.args.OverloadedAdvicePOJO->method(int,long))">
+   	<advice name="around1" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+      <advice name="around2" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<advice name="around3" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<advice name="around4" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<advice name="around5" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<advice name="around6" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<advice name="around7" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<advice name="around8" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<advice name="around9" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<advice name="around10" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<advice name="around11" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+   	<advice name="around12" aspect="org.jboss.test.aop.args.OverloadedAdviceAspect"/>
+  	</bind>  	
 </aop>
