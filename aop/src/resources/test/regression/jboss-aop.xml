@@ -153,4 +153,6 @@
    <bind pointcut="execution(* org.jboss.test.aop.regression.jbaop279native.POJO->nativeMethod())">
       <interceptor class="org.jboss.test.aop.regression.jbaop279native.ReturningInterceptor"/>
    </bind>
+   
+   <prepare expr="all(org.jboss.test.aop.regression.jbaop316annotationsinwrapperonly.POJO)"/>
 </aop>

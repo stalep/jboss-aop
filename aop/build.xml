@@ -364,7 +364,7 @@
          </fileset>
          <fileset file="docs/jboss-aop_1_0.dtd"/>
       </jar>
-      <jar jarfile="${build.lib}/pluggable-instrumentor.jar"
+     <jar jarfile="${build.lib}/pluggable-instrumentor.jar"
          manifest="${build.etc}/pluggable-instrumentor.mf">
          <fileset dir="${build.classes}">
             <!-- Include everything else -->
@@ -592,4 +592,13 @@
          </fileset>
       </copy>
    </target>
+	<target name="array-agent" depends="init">
+      <jar jarfile="${build.lib}/jboss-arraytestagent.jar"
+         manifest="${source.res}/test/array/MANIFEST.MF">
+         <fileset dir="C:/cygwin/home/Kabir/sourcecontrol/jboss-aop/aop/output/eclipse-classes">
+            <include name="org/jboss/test/aop/array/Agent.class"/>
+            <include name="org/jboss/test/aop/array/AOPTransformer.class"/>
+         </fileset>
+      </jar>
+	</target>
 </project>

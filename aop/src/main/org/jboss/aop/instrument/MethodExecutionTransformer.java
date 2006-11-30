@@ -235,7 +235,7 @@ public abstract class MethodExecutionTransformer
       }
    }
 
-   protected void copyAnnotations(CtMethod src, CtMethod dest)
+   protected void moveAnnotations(CtMethod src, CtMethod dest)
    {
       MethodInfo mi = src.getMethodInfo2();
       MethodInfo wmi = dest.getMethodInfo2();
@@ -249,7 +249,10 @@ public abstract class MethodExecutionTransformer
       {
          wmi.addAttribute(visible.copy(wmi.getConstPool(), new HashMap()));
       }
+      mi.addAttribute(new AnnotationsAttribute(mi.getConstPool(), AnnotationsAttribute.invisibleTag));
+      mi.addAttribute(new AnnotationsAttribute(mi.getConstPool(), AnnotationsAttribute.visibleTag));
    }
+   
 
    protected static String getAopReturnStr(CtMethod method)throws NotFoundException
    {
