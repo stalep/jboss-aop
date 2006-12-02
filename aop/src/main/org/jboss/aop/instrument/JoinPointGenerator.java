@@ -1463,7 +1463,7 @@ public abstract class JoinPointGenerator
                System.out.print("[warn] No matching advice called '" + setups[i].getAdviceName() + 
                      "' could be found in " + setups[i].getAspectClass().getName() +
                      " for joinpoint " + info + ":");
-//               System.out.println(AdviceMethodFactory.getAdviceMatchingMessage());
+               System.out.println(AdviceMethodFactory.getAdviceMatchingMessage());
             }
          }
          beforeSetups = (beforeAspects == null) ? null : (AdviceSetup[])beforeAspects.toArray(new AdviceSetup[beforeAspects.size()]);
