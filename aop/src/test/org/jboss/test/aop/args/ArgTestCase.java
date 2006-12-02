@@ -36,7 +36,7 @@ import junit.textui.TestRunner;
  */
 public class ArgTestCase extends AOPTestWithSetup
 {
-   ArgPOJO pojo;
+   POJO pojo;
 
    public static void main(String[] args)
    {
@@ -58,7 +58,7 @@ public class ArgTestCase extends AOPTestWithSetup
    public void setUp() throws Exception
    {
       super.setUp();
-      pojo = new ArgPOJO();
+      pojo = new POJO();
       ArgAspect.clear();
    }
    

@@ -21,14 +21,17 @@
   */
 package org.jboss.test.aop.args;
 
+
 /**
- * Plain old java object used on @Arg parameter tests.
+ * Plain old java object used on the tests
  * 
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public class ArgPOJO implements ArgPOJOInterface
+public class POJO implements ArgPOJOInterface
 {
+   /* ArgTestCase */
+   
    public String echo(String echo)
    {
       return echo;
@@ -53,4 +56,32 @@ public class ArgPOJO implements ArgPOJOInterface
    {
       return x + (int) y + (int) z + q;
    }
+   
+   /* InvocationTestCase */
+   
+   public int number;
+
+   public int callerMethod(int i)
+   {
+      return calleeMethod(i);
+   }
+   
+   private int calleeMethod(int i)
+   {
+      return i*2;
+   }
+   
+   public String method1()
+   {
+      return "method";
+   }
+   
+   public int method2()
+   {
+      return 2;
+   }
+   
+   /* OverloadedTestCase */
+   
+   public void method3(int arg1, long arg2) {}
 }
