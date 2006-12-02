@@ -151,12 +151,23 @@ public class PerVmAdvice
             invokeBody.append("{  ");
             if (matches.size() > 1)
             {
+               boolean noArg = false;
                for (int i = 0; i < matches.size(); i++)
                {
                   Method advice = (Method) matches.get(i);
-                  String param = advice.getParameterTypes()[0].getName();
-                  invokeBody.append("   if ($1 instanceof " + param + ") return aspectField." + adviceName + "((" + param + ")$1); ");
+                  if (advice.getParameterTypes().length > 0)
+                  {
+                     String param = advice.getParameterTypes()[0].getName();
+                     invokeBody.append("   if ($1 instanceof " + param + ") return aspectField." + adviceName + "((" + param + ")$1); ");
+                  }
+                  else
+                  {
+                     noArg = true;
+                     invokeBody.append("   return aspectField." + adviceName + "(); ");
+                     break;
+                  }
                }
+               if (!noArg)
                invokeBody.append("   return (org.jboss.aop.joinpoint.Invocation)null; ");
             }
             else
@@ -209,7 +220,8 @@ public class PerVmAdvice
 
       // invoke
       String invokeBody = null;
-      if (Invocation.class.isAssignableFrom(advice.getParameterTypes()[0]))
+      if (advice.getParameterTypes().length > 0 &&
+         Invocation.class.isAssignableFrom(advice.getParameterTypes()[0]))
       {
          invokeBody = getInvocationBody(optimized, advice, method);
       }
@@ -242,7 +254,8 @@ public class PerVmAdvice
       boolean first = true;
       if (adviceParams.length > 0)
       {
-         int adviceParam = 0;
+      // TODO review this with Kabir
+         /*int adviceParam = 0;
          for (int i = 0; i < params.length && adviceParam < adviceParams.length; i++)
          {
             if (adviceParams[adviceParam].equals(params[i]))
@@ -258,6 +271,35 @@ public class PerVmAdvice
                }
                invokeBody += "optimized.arg" + i;
             }
+         }*/
+         boolean[] assignedParams = new boolean[params.length];
+         for (int i = 0; i < adviceParams.length; i++)
+         {
+            int j;
+            for (j = 0; j < params.length; j++)
+            {
+               if (adviceParams[i].equals(params[j]) && !assignedParams[j])
+               {
+                  break;
+               }
+            }
+            if (j == params.length)
+            {
+               for (j = 0; j < params.length; j++)
+               {
+                  if (adviceParams[i].isAssignableFrom(params[j]) && !assignedParams[j])
+                     break;
+               }
+               if (j == params.length)
+                  throw new RuntimeException();
+            }
+            assignedParams[j] = true;
+            if (i != 0)
+            {
+               invokeBody += ", ";
+            }
+            invokeBody += "optimized.arg" + j;
+            
          }
       }
       invokeBody += "); ";
