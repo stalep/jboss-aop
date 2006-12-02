@@ -200,7 +200,7 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
     *                         annotation identified by <code>typeIndex</code>;
     *                         {@link AdviceMethodFactory#NOT_ASSIGNABLE_DEGREE} otherwise.
     */
-   public short getReturnAssignabilityDegree(AdviceMethodProperties properties)
+   public final short getReturnAssignabilityDegree(AdviceMethodProperties properties)
    {
       Class returnType = this.method.getReturnType();
       if (returnType == void.class)
@@ -212,7 +212,7 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
       if (degree == AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE)
       {
          // return type is Object.class and join point return type is not
-         // Object is worse than join point return type, but better than -1
+         // Object is worse than join point return type, but better than NOT_ASSIGNABLE
          return AdviceMethodFactory.MAX_DEGREE;
       }
       return degree;

@@ -45,7 +45,7 @@ import org.jboss.aop.util.ReflectUtils;
 public class AdviceMethodFactory
 {
    /**
-    * Rule to be applied for advice return types
+    * Rule to be applied on advice return types
     */
    enum ReturnType {VOID, ANY, NOT_VOID};
    
@@ -402,10 +402,11 @@ public class AdviceMethodFactory
       {
          for (AdviceInfo currentAdvice: greatestRank)
          {
-            int currentDegree =  currentAdvice.getReturnAssignabilityDegree(properties);
+            short currentDegree =  currentAdvice.getReturnAssignabilityDegree(properties);
             if (currentDegree < bestDegree)
             {
                bestAdvice = currentAdvice;
+               bestDegree = currentDegree;
             }
          }
          //in case of two or more advices with the same match degree, pick any one of them
