@@ -506,6 +506,10 @@
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
       <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="beforeafterArgs"/>
+         <param name="caller" value="precompiled-genadvisor-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="dynamicgenadvisor"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
