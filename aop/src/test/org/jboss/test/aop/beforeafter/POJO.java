@@ -28,6 +28,7 @@ package org.jboss.test.aop.beforeafter;
  */
 public class POJO
 {
+   static boolean joinPointRun = false;
    int i;
    
    SubValue subValue;
@@ -35,21 +36,23 @@ public class POJO
    
    public POJO()
    {
-      
+      joinPointRun = true;
    }
    
    public POJO(boolean error, int i, long l, String s) throws TestException
    {
+      joinPointRun = true;
       if (error) throw new TestException();
    }
    
    public POJO(SuperValue superValue, int i)
    {
-      
+      joinPointRun = true;
    }
 
    public int method(boolean error)throws TestException
    {
+      joinPointRun = true;
       if (error) throw new TestException();
       
       return 1;
@@ -57,6 +60,7 @@ public class POJO
    
    public int method(boolean error, int i, long l, String s) throws TestException
    {
+      joinPointRun = true;
       if (error) throw new TestException();
       
       return i;
@@ -64,6 +68,7 @@ public class POJO
    
    public POJO method(boolean error, int i, long l, String s, int i2) throws TestException
    {
+      joinPointRun = true;
       if (error) throw new TestException();
       
       return this;
@@ -71,26 +76,29 @@ public class POJO
    
    public void method()
    {
-      
+      joinPointRun = true;   
    }
 
    public SuperValue method(SubValue sup, SubValue sub)
    {
+      joinPointRun = true;
       return sub;
    }
    
    public void method(SuperValue sup, SubValue sub)
    {
-      
+      joinPointRun = true;
    }
    
    public SubValue method(SubValue subValue, int i)
    {
+      joinPointRun = true;
       return subValue;
    }
    
    public SuperValue method(SuperValue superValue, int i)
    {
+      joinPointRun = true;
       return superValue;
    }
 }

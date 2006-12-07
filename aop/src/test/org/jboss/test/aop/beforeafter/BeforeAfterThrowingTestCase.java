@@ -59,7 +59,7 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       }
       catch(TestException e) 
       {
-         
+         assertSame(e, SimpleAspect.exception);
       }
       
       assertTrue(SimpleAspect.before);
@@ -86,6 +86,7 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
           assertEquals("before1", ArgsAspect.before);
           assertNull(ArgsAspect.after);
           assertEquals("throwing1", ArgsAspect.throwing);
+          assertSame(e, ArgsAspect.exception);
       }
       
       System.out.println("* Testing ctor(boolean, int, long, String)");
@@ -119,6 +120,8 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       }
       catch (TestException e)
       {
+         assertSame(e, ArgsAspect.exception);
+         assertSame(e, SimpleAspect.exception);
       }
       assertNull(ArgsAspect.before);
       assertNull(ArgsAspect.after);
@@ -151,6 +154,7 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       }
       catch (TestException e)
       {
+         assertSame(e, ArgsAspect.exception);
       }
 
       System.out.println("* Testing method(boolean, int, long, String)");
@@ -167,6 +171,7 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       }
       catch (TestException e)
       {
+         assertSame(e, ArgsAspect.exception);
       }
       
       assertEquals("before2", ArgsAspect.before);

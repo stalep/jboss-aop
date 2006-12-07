@@ -21,6 +21,8 @@
 */ 
 package org.jboss.test.aop.beforeafter;
 
+import junit.framework.Assert;
+
 import org.jboss.aop.advice.annotation.Return;
 import org.jboss.aop.advice.annotation.Thrown;
 import org.jboss.aop.joinpoint.Invocation;
@@ -36,6 +38,7 @@ public class SimpleAspect
    public static boolean around;
    public static boolean after;
    public static boolean throwing;
+   public static Throwable exception;
    
    public static void clear()
    {
@@ -43,19 +46,24 @@ public class SimpleAspect
       around = false;
       after = false;
       throwing = false;
+      POJO.joinPointRun = false;
    }
    
    public void before()
    {
       System.out.println("SimpleAspect.before");
       before = true;
+      Assert.assertFalse(POJO.joinPointRun);
    }
 
    public Object around(Invocation invocation) throws Throwable
    {
       System.out.println("SimpleAspect.around");
       around = true;
-      return invocation.invokeNext();
+      Assert.assertFalse(POJO.joinPointRun);
+      Object result = invocation.invokeNext();
+      Assert.assertTrue(POJO.joinPointRun);
+      return result;
    }
 
    //Do we have to return the same exception as the target joinpoint?
@@ -63,13 +71,14 @@ public class SimpleAspect
    {
       System.out.println("SimpleAspect.after");
       after = true;
+      Assert.assertTrue(POJO.joinPointRun);
       return i;
    }
 
    public void throwing(@Thrown Throwable t)
    {
       System.out.println("SimpleAspect.throwing");
+      exception = t;
       throwing = true;
    }
-
 }
