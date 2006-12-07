@@ -2,7 +2,6 @@ package org.jboss.aop.advice.annotation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -21,10 +20,6 @@ import org.jboss.aop.advice.annotation.AdviceMethodFactory.ReturnType;
  */
 class AnnotatedParameterAdviceInfo extends AdviceInfo
 {
-   // list that may contain temporary information regarding parameters with more than one
-   // valid annotation. Field is static to avoid the cost of constantly creating a list
-   private static List<Integer> extraAnnotations = new ArrayList<Integer>();
-   
    // the annotated parameter types
    private ParameterAnnotationType paramTypes[];
    
@@ -36,12 +31,9 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
     * 
     * @throws ParameterAnnotationRuleException thrown when the advice method does not
     *         comply with a parameter annotation rule.
-    * @throws MultipleAdviceInfoException thrown when one parameter contains more than one
-    *         valid annotation. Indicates that there must be multiple advice infos to
-    *         represent <code>method</code>.
     */
    public AnnotatedParameterAdviceInfo(Method method, ParameterAnnotationRule[] rules)
-      throws ParameterAnnotationRuleException, MultipleAdviceInfoException
+      throws ParameterAnnotationRuleException
    {
       this(rules, method);
       this.applyRules();
@@ -205,57 +197,69 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
     * 
     * @throws ParameterAnnotationRuleException thrown when the advice method does not
     *         comply with a parameter annotation rule.
-    * @throws MultipleAdviceInfoException thrown when one or more parameters is annotated
-    *         with more than one valid annotation
     */
-   private void applyRules() throws ParameterAnnotationRuleException,
-      MultipleAdviceInfoException
+   private void applyRules() throws ParameterAnnotationRuleException
    {
       Annotation[][] paramAnnotations = method.getParameterAnnotations();
-      int[] annotated = new int[paramAnnotations.length];
+      boolean annotated;
       for (int i = 0; i < paramAnnotations.length; i++)
       {
-         annotated[i] = -1;
-         extraAnnotations.clear();
+         annotated = false;
          for (Annotation annotation: paramAnnotations[i])
          {
             // no valid annotation found for parameter i yet
-            if (annotated[i] == -1)
+            if (!annotated)
             for (int j = 0; j < paramTypes.length; j++)
             {
                // found
                 if (paramTypes[j].applies(annotation, i))
                 {
-                   annotated[i] = j;
+                   annotated = true;
                    break;
                 }
             }
             else
             {
                // look for an extra annotation
-               extraAnnotations.add(annotated[i]);
                for (int j = 0; j < paramTypes.length; j++)
                {
                   if (paramTypes[j].applies(annotation))
                   {
-                     extraAnnotations.add(j);
+                     throwMultiAnnotationFoundException(i);
                   }
                }
             }
          }
-         if (annotated[i] == -1)
+         if (!annotated)
          {
             throwAnnotationNotFoundException(i);
-            
-         }
-         else if(extraAnnotations.size() > 1)
-         {
-            throwMAIException(paramAnnotations, annotated, i);
          }
       }
       
    }
 
+   /**
+    * Throws an exception indicating the ith parameter of this advice contains
+    * multiple valid annotations.
+    * 
+    * @param i the index of the not annotated parameter.
+    * 
+    * @throws ParameterAnnotationRuleException
+    */
+   private final void throwMultiAnnotationFoundException(int i)
+      throws ParameterAnnotationRuleException
+   {
+      if (AspectManager.verbose)
+      {
+         throw new ParameterAnnotationRuleException("\n[warn] -parameter " + i  +
+               " of method " + method +  " contains more than one valid annotation");
+      }
+      else
+      {
+         throw new ParameterAnnotationRuleException(null);
+      }
+   }
+   
    /**
     * Throws an exception indicating the ith parameter of this advice is not annotated.
     * 
@@ -275,76 +279,6 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       {
          throw new ParameterAnnotationRuleException(null);
       }
-   }
-
-   /**
-    * Throws an exception indicating this advice contains one ore more parameters with
-    * more than one valid annotation.
-    * The exception thrown contains all information about the advice method parameter
-    * annotations.
-    * 
-    * @param paramAnnotations      the list of parameter annotations of this advice method
-    * @param singleAnnotations     the list of previous parameters whose single annotation
-    *                              has been processed
-    * @param singleAnnotationsSize the number parameteres whose single annotation has been
-    *                              processed before a multi-annotated parameter was found
-    * @throws MultipleAdviceInfoException
-    */
-   private final void throwMAIException(Annotation[][] paramAnnotations,
-      int[] singleAnnotations, int singleAnnotationsSize)
-      throws MultipleAdviceInfoException
-   {
-      int[][] allAnnotations = new int[paramAnnotations.length][];
-      int i = singleAnnotationsSize;
-      // record single annotation information
-      for (int j = 0; j < i; j++)
-      {
-         allAnnotations[j] = new int[1];
-         allAnnotations[j][0] = singleAnnotations[j];
-      }
-      // fill multi-annotations information
-      int totalCombinations = fillAllAnnotations(allAnnotations, i);
-      
-      while (++i < paramAnnotations.length)
-      {
-         extraAnnotations.clear();
-         for (Annotation annotation: paramAnnotations[i])
-         {
-            for (int j = 0; j < paramTypes.length; j++)
-            {
-               if (paramTypes[j].applies(annotation))
-               {
-                  extraAnnotations.add(j);
-               }
-            }
-         }
-         if (extraAnnotations.isEmpty())
-         {
-            throw new RuntimeException("Parameter " + singleAnnotationsSize  + " of method " +
-                  method +  " is not annotated");
-         }
-         totalCombinations *= fillAllAnnotations(allAnnotations, i);
-      }
-      throw new MultipleAdviceInfoException(totalCombinations, allAnnotations);
-   }
-   
-   /**
-    * Helper method that fills <code>allAnnotations[i]</code> with all annotations found
-    * on the ith advice parameter.
-    * @param allAnnotations the list of all annotations found on this advice method
-    * @param i              the index of the parameter whose annotations must be filled in
-    *                       <code>allAnnotations</code>.
-    * @return the total number of annotations found on the ith parameter
-    */
-   private int fillAllAnnotations(int[][] allAnnotations, int i)
-   {
-      allAnnotations[i] = new int[extraAnnotations.size()];
-      Iterator<Integer> iterator = extraAnnotations.iterator();
-      for (int k = 0; k < allAnnotations[i].length; k++)
-      {
-         allAnnotations[i][k] = iterator.next();
-      }
-      return allAnnotations[i].length;
    }
    
    /**
@@ -621,7 +555,6 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             return -1;
          }
          Class[] expectedTypes = (Class[]) rule.getAssignableFrom(properties);
-         Class[] paramTypes = method.getParameterTypes();
          short level = 0;
          for (int i = 0; i < indexesLength; i++)
          {

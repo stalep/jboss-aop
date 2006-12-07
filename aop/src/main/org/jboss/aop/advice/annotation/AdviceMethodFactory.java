@@ -256,11 +256,6 @@ public class AdviceMethodFactory
             }catch (ParameterAnnotationRuleException pare)
             {
                // no need to print messages -> exception prints automatically on verbose
-            } catch (MultipleAdviceInfoException maie)
-            {
-               // parameters with more than one annotation
-               rankedAdvices.addAll(AnnotatedParameterAdviceInfo.createAllAdviceInfo(
-                     methods[i], rules, maie.totalInstances, maie.annotations));
             }
          }
       }
