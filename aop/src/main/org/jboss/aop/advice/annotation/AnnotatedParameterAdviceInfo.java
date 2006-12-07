@@ -406,7 +406,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             {
                AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - mandatory parameter annotation ");
                AdviceMethodFactory.adviceMatchingMessage.append(rule.getAnnotation());
-               AdviceMethodFactory.adviceMatchingMessage.append("not found on method ");
+               AdviceMethodFactory.adviceMatchingMessage.append(" not found on method ");
                AdviceMethodFactory.adviceMatchingMessage.append(method);
             }
             return false;
