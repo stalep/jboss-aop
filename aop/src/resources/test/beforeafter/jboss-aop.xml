@@ -18,7 +18,7 @@
       <throwing name="throwingzzz" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
    </stack>
 
-   <bind pointcut="execution(org.jboss.test.aop.beforeafter.POJO->new(..)) OR execution(* org.jboss.test.aop.beforeafter.POJO->method(..)) OR field(* org.jboss.test.aop.beforeafter.POJO->*)">
+   <bind pointcut="execution(org.jboss.test.aop.beforeafter.POJO->new(..)) OR execution(* org.jboss.test.aop.beforeafter.POJO->method(..)) OR field(!static * org.jboss.test.aop.beforeafter.POJO->*)">
       <stack-ref name="argsStack"/>
    </bind>
    
