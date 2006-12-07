@@ -75,6 +75,10 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       assertEquals("String", OverloadedBeforeAspect.before10);
       assertEquals("Object", OverloadedBeforeAspect.before11);
       assertEquals("", OverloadedBeforeAspect.before12);
+      assertEquals("FieldInfo,String", OverloadedBeforeAspect.before13);
+      String myText = pojo.text;
+      assertEquals("FieldInfo", OverloadedBeforeAspect.before13);
+      
    }
    
    public void test2()

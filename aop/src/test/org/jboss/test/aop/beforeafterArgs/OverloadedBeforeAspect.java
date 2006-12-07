@@ -48,6 +48,7 @@ public class OverloadedBeforeAspect
    static String before10 = null;
    static String before11 = null;
    static String before12 = null;
+   static String before13 = null;
    
    public static void clear()
    {
@@ -63,6 +64,7 @@ public class OverloadedBeforeAspect
       before10 = null;
       before11 = null;
       before12 = null;
+      before13 = null;
    }
    
    /* BEFORE1 ADVICE */
@@ -552,5 +554,15 @@ public class OverloadedBeforeAspect
    public void before12(@Arg SuperValue text)
    {
       Assert.fail("This advice should never be executed");
+   }
+   
+   public void before13(@JoinPoint FieldInfo fieldInfo, @Arg String text)
+   {
+      before13 = "FieldInfo,String";
+   }
+   
+   public void before13(@JoinPoint FieldInfo fieldInfo)
+   {
+      before13 = "FieldInfo";
    }
 }

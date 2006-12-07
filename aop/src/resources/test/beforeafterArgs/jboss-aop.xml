@@ -156,6 +156,10 @@
    	<before name="before12" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeAspect"/>
   	</bind>
   	
+  	<bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.OverloadedAdvicePOJO->text)">
+  	   <before name="before13" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeAspect"/>
+  	</bind>
+  	
    <aspect class="org.jboss.test.aop.beforeafterArgs.OverloadedAroundAspect" scope="PER_VM"/>
   	   
   	<bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.OverloadedAdvicePOJO->method1(int,long))">
