@@ -22,8 +22,8 @@
 package org.jboss.test.aop.beforeafterArgs;
 
 /**
- * Plain old java object used both on @Return parameter tests, and on advice return type
- * tests.
+ * Plain old java object used both on @Return parameter tests, and on advice return
+ * type tests.
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */

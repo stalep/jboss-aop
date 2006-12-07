@@ -21,7 +21,10 @@
  */
 package org.jboss.test.aop.beforeafterArgs;
 
+/**
+ * Class used on before/after/throwing annotated parameter tests.
+ * 
+ * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
+ */
 public class SuperClass
-{
-
-}
+{}

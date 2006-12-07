@@ -162,4 +162,14 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       assertEquals("void,SuperValue", OverloadedAfterAspect.after54);
       assertEquals("void", OverloadedAfterAspect.after55);
    }
+   
+   public void test4()
+   {
+      try
+      {
+         pojo.method3();
+      } catch (POJOException pe) {}
+      assertEquals("JoinPointInfo,Throwable,SubInterface,Implementor",
+            OverloadedThrowingAspect.throwing1);
+   }
 }

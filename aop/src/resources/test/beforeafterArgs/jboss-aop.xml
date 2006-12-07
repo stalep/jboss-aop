@@ -232,4 +232,10 @@
       <after name="after54" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAfterAspect"/>
       <after name="after55" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAfterAspect"/>
   	</bind>
+  	
+  	<aspect class="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect" scope="PER_VM"/>
+   
+  	<bind pointcut="call(* org.jboss.test.aop.beforeafterArgs.OverloadedAdvicePOJO->method4(..))">
+   	<throwing name="throwing1" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+  	</bind>
 </aop>
