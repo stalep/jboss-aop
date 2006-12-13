@@ -36,7 +36,7 @@ public class AOPProxyFactoryParameters
    private Class proxiedClass;
    private Object target;
    //FIXME convert back to MetaDataContext once the mc 2.0 has been released 
-   //private MetaDataContext metaDataContext;
+   //private MetaData metaDataContext;
    private Object metaDataContext;
    private Class[] interfaces;
    private AOPProxyFactoryMixin[] mixins; 

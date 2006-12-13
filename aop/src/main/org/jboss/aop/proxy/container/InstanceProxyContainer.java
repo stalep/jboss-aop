@@ -45,12 +45,12 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
    Advisor classAdvisor;
    InstanceAdvisorDelegate delegate;
    
-   public InstanceProxyContainer(String name, ProxyAdvisorDomain instanceDomain, Advisor classAdvisor, /*MetaDataContext*/ Object metaDataContext)
+   public InstanceProxyContainer(String name, ProxyAdvisorDomain instanceDomain, Advisor classAdvisor, /*MetaData*/ Object metaData)
    {
       super(name, instanceDomain);
       this.classAdvisor = classAdvisor;
       instanceDomain.setAdvisor(this);
-      setMetadataContext(metaDataContext);
+      setMetadata(metaData);
       delegate = new InstanceAdvisorDelegate(classAdvisor, this);
       delegate.initialize();
       initialise(classAdvisor.getClazz());

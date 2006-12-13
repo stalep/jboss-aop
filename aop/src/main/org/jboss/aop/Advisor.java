@@ -43,7 +43,6 @@ import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
 
-import org.jboss.aop.ClassAdvisor.RebuildInterceptorsAction;
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.CFlowInterceptor;
@@ -68,9 +67,11 @@ import org.jboss.aop.metadata.FieldMetaData;
 import org.jboss.aop.metadata.MethodMetaData;
 import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
-import org.jboss.aop.util.MethodHashing;
+import org.jboss.metadata.spi.MetaData;
+import org.jboss.metadata.spi.signature.MethodSignature;
 import org.jboss.repository.spi.MetaDataContext;
 import org.jboss.util.NestedRuntimeException;
+import org.jboss.util.NotImplementedException;
 
 import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 import EDU.oswego.cs.dl.util.concurrent.CopyOnWriteArraySet;
@@ -156,8 +157,8 @@ public abstract class Advisor
    protected ConstructionInfo[] constructionInfos;
 
 
-   //FIXME - make metaDataContext a MetaDataContext once MC 2.0 is released
-   MetaDataContext metadataContext;
+   /** The meta data */
+   private MetaData metadata;
 
    public Advisor(String name, AspectManager manager)
    {
@@ -332,9 +333,11 @@ public abstract class Advisor
 
    public Object resolveAnnotation(Class annotation)
    {
-      if (metadataContext != null)
+      if (metadata != null)
       {
-         Object value = metadataContext.getAnnotation(annotation);
+         Object value = metadata.getAnnotation(annotation);
+         // FIXME The metadata should already include the class annotations
+         //       so we should just return this result
          if (value != null) return value;
       }
 
@@ -371,13 +374,15 @@ public abstract class Advisor
 
       try
       {
-         if (metadataContext != null)
+         if (metadata != null)
          {
             if (annotationClass == null)
             {
                annotationClass = Thread.currentThread().getContextClassLoader().loadClass(annotation);
             }
-            if (metadataContext.hasAnnotation(annotationClass)) return true;
+            // FIXME The metadata should already include the class annotations
+            //       so we should just return this result
+            if (metadata.isAnnotationPresent(annotationClass)) return true;
          }
       }
       catch (ClassNotFoundException e)
@@ -409,14 +414,17 @@ public abstract class Advisor
 
    public Object resolveAnnotation(long hash, Method m, Class annotation)
    {
-      if (metadataContext != null)
+      if (metadata != null)
       {
-         if (hash == 0)
+         MethodSignature signature = new MethodSignature(m.getName(), m.getParameterTypes());
+         MetaData methodMD = metadata.getComponentMetaData(signature);
+         if (methodMD != null)
          {
-            hash = MethodHashing.calculateHash(m);
+            // FIXME The metadata should already include the class annotations
+            //       so we should just return this result
+            Object val = methodMD.getAnnotation(annotation);
+            if (val != null) return val;
          }
-         Object val = metadataContext.getAnnotationForMethod(hash, annotation);
-         if (val != null) return val;
       }
 
       if (annotations.isDisabled(m,annotation))
@@ -475,18 +483,19 @@ public abstract class Advisor
 
       try
       {
-         if (metadataContext != null)
+         if (metadata != null)
          {
-            if (hash == 0)
-            {
-               hash = MethodHashing.methodHash(m);
-            }
             if (annotationClass == null)
-            {
                annotationClass = Thread.currentThread().getContextClassLoader().loadClass(annotation);
+            // FIXME The metadata should already include the class annotations
+            //       so we should just return this result
+            MethodSignature signature = new MethodSignature(m.getName(), m.getParameterTypes());
+            MetaData methodMD = metadata.getComponentMetaData(signature);
+            if (methodMD != null)
+            {
+               if (methodMD.isAnnotationPresent(annotationClass))
+                  return true;
             }
-            if (metadataContext.hasAnnotationForMethod(hash, annotationClass))
-               return true;
          }
       }
       catch (ClassNotFoundException e)
@@ -574,14 +583,37 @@ public abstract class Advisor
       return AnnotationElement.isAnyAnnotationPresent(member, annotation);
    }
 
+   @Deprecated // use getMetaData
    public MetaDataContext getMetadataContext()
    {
-      return metadataContext;
+      throw new NotImplementedException("getMetaDataContext");
    }
 
+   @Deprecated // use setMetaData
    public void setMetadataContext(/*MetaDataContext*/ Object metadataContext)
    {
-      this.metadataContext = (MetaDataContext)metadataContext;
+      throw new NotImplementedException("setMetaDataContext");
+   }
+
+   /**
+    * Get the metadata
+    * 
+    * @return the metadata
+    */
+   public MetaData getMetadata()
+   {
+      return metadata;
+   }
+
+   /**
+    * Set the metadata
+    * 
+    * FIXME why does this have java.lang.Object signature?
+    * @param metadata the metadata
+    */
+   public void setMetadata(/*MetaData*/ Object metadata)
+   {
+      this.metadata = (MetaData) metadata;
    }
 
    public String getName()
