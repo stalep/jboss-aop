@@ -731,9 +731,10 @@ public class AspectManager
    {
       ArrayList ignore = getIgnore();
       if (ignore == null) return false;
-      for (int i = 0; i < ignoreExpressions.length; i++)
+      ClassExpression[] ignoreExprs = getIgnoreExpressions();
+      for (int i = 0; i < ignoreExprs.length; i++)
       {
-         if(ignoreExpressions[i].matches(classname)) return true;
+         if(ignoreExprs[i].matches(classname)) return true;
       }
       return false;
    }

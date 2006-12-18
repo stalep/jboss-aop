@@ -55,7 +55,6 @@ public class Domain extends AspectManager
    protected boolean inheritsDeclarations = true;
    protected boolean inheritsBindings = false;
 
-
    public Domain(AspectManager manager, String name, boolean parentFirst)
    {
       this.parent = manager;
@@ -750,7 +749,7 @@ public class Domain extends AspectManager
    /** Only set on a per vm basis */
    public ClassExpression[] getIgnoreExpressions()
    {
-      return super.getIgnoreExpressions();
+      return parent.getIgnoreExpressions();
    }
    
    public DynamicAOPStrategy getDynamicAOPStrategy()
