@@ -29,7 +29,7 @@ package org.jboss.test.aop.regression.jbaop316annotationsinwrapperonly;
 public class POJO
 {
    @TestAnnotation
-   public void method()
+   public void method(int i, @TestAnnotation String s)
    {
       
    }

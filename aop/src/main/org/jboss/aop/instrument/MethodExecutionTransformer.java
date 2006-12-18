@@ -37,6 +37,8 @@ import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.MethodInfo;
+import javassist.bytecode.ParameterAnnotationsAttribute;
+import javassist.bytecode.annotation.Annotation;
 
 /**
  * Comment
@@ -235,24 +237,44 @@ public abstract class MethodExecutionTransformer
       }
    }
 
-   protected void moveAnnotations(CtMethod src, CtMethod dest)
+   protected void moveAnnotations(CtMethod src, CtMethod dest) throws NotFoundException
    {
       MethodInfo mi = src.getMethodInfo2();
       MethodInfo wmi = dest.getMethodInfo2();
-      AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
-      if (invisible != null)
+
+      moveAnnotations(mi, wmi, AnnotationsAttribute.invisibleTag);
+      moveAnnotations(mi, wmi, AnnotationsAttribute.visibleTag);
+      int numParams = src.getParameterTypes().length;
+      moveParameterAnnotations(numParams, mi, wmi, ParameterAnnotationsAttribute.visibleTag);
+      moveParameterAnnotations(numParams, mi, wmi, ParameterAnnotationsAttribute.invisibleTag);
+   }
+
+   private void moveAnnotations(MethodInfo src, MethodInfo dest, String annotationTag)
+   {
+      AnnotationsAttribute attribute = (AnnotationsAttribute) src.getAttribute(annotationTag);
+      if (attribute != null)
       {
-         wmi.addAttribute(invisible.copy(wmi.getConstPool(), new HashMap()));
+         dest.addAttribute(attribute.copy(dest.getConstPool(), new HashMap()));
+         src.addAttribute(new AnnotationsAttribute(src.getConstPool(), annotationTag));
       }
-      AnnotationsAttribute visible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.visibleTag);
-      if (visible != null)
-      {
-         wmi.addAttribute(visible.copy(wmi.getConstPool(), new HashMap()));
-      }
-      mi.addAttribute(new AnnotationsAttribute(mi.getConstPool(), AnnotationsAttribute.invisibleTag));
-      mi.addAttribute(new AnnotationsAttribute(mi.getConstPool(), AnnotationsAttribute.visibleTag));
    }
    
+   private void moveParameterAnnotations(int numParams, MethodInfo src, MethodInfo dest, String paramsTag)
+   {
+      ParameterAnnotationsAttribute params = (ParameterAnnotationsAttribute)src.getAttribute(paramsTag);
+      if (params != null)
+      {
+         dest.addAttribute(params.copy(dest.getConstPool(), new HashMap()));
+         ParameterAnnotationsAttribute srcParams = new ParameterAnnotationsAttribute(src.getConstPool(), paramsTag);
+         Annotation[][] emptyParamAnnotations = new Annotation[numParams][];
+         for (int i = 0 ; i < numParams ; i++)
+         {
+            emptyParamAnnotations[i] = new Annotation[0];
+         }
+         srcParams.setAnnotations(emptyParamAnnotations);
+         src.addAttribute(srcParams);
+      }
+   }
 
    protected static String getAopReturnStr(CtMethod method)throws NotFoundException
    {
