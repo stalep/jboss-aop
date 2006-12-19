@@ -21,13 +21,11 @@
 */
 package org.jboss.aop;
 
-import java.util.Map;
 
 import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.aop.instrument.Instrumentor;
 import org.jboss.aop.instrument.InstrumentorFactory;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 import javassist.ByteArrayClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
