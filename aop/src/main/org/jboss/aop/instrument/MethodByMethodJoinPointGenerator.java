@@ -61,9 +61,26 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
 
    public MethodByMethodJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
-      super(advisor, info);
+      super(advisor, info, getParameters((MethodByMethodInfo) info));
    }
 
+   private static JoinPointParameters getParameters(MethodByMethodInfo info)
+   {
+      if (Modifier.isStatic(info.getCallingMethod().getModifiers()))
+      {
+         if (Modifier.isStatic(info.getMethod().getModifiers()))
+         {
+            return JoinPointParameters.ONLY_ARGS;
+         }
+         return JoinPointParameters.TARGET_ARGS;
+      }
+      if (Modifier.isStatic(info.getMethod().getModifiers()))
+      {
+         return JoinPointParameters.CALLER_ARGS;
+      }
+      return JoinPointParameters.TARGET_CALLER_ARGS;
+   }
+   
    protected void initialiseJoinPointNames()
    {
       joinpointClassName = getInfoClassName(

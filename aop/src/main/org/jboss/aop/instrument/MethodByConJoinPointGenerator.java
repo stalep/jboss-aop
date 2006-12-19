@@ -61,7 +61,16 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
 
    public MethodByConJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
-      super(advisor, info);
+      super(advisor, info, getParameters((MethodByConInfo) info));
+   }
+   
+   private static JoinPointParameters getParameters(MethodByConInfo info)
+   {
+      if (Modifier.isStatic(info.getMethod().getModifiers()))
+      {
+         return JoinPointParameters.ONLY_ARGS;
+      }
+      return JoinPointParameters.TARGET_ARGS;
    }
 
    protected void initialiseJoinPointNames()
@@ -337,8 +346,6 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
        */
       private CtMethod addInvokeJoinpointMethod() throws CannotCompileException, NotFoundException
       {
-         CtClass[] invokeParams = null;
-
          invokeJoinpointMethod  = CtNewMethod.make(
                targetMethod.getReturnType(),
                INVOKE_JOINPOINT,

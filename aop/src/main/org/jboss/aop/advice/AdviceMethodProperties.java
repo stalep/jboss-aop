@@ -77,12 +77,6 @@ public class AdviceMethodProperties
       this.joinpointExceptions = joinpointExceptions;
    }
 
-   /*public void setFoundProperties(Method adviceMethod, ArrayList args)
-   {
-      this.adviceMethod = adviceMethod;
-      this.args = (Integer[])args.toArray(new int[args.size()]);
-   }*/
-   
    public void setFoundProperties(Method adviceMethod, int[] args)
    {
       this.adviceMethod = adviceMethod;

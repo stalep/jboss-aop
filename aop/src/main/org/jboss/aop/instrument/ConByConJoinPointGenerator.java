@@ -67,7 +67,7 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
 
    public ConByConJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
-      super(advisor, info);
+      super(advisor, info, JoinPointParameters.ONLY_ARGS);
    }
 
    protected void initialiseJoinPointNames()

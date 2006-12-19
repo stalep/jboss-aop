@@ -67,7 +67,7 @@ public class ConstructionJoinPointGenerator extends JoinPointGenerator
 
    public ConstructionJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
-      super(advisor, info);
+      super(advisor, info, JoinPointParameters.TARGET_ARGS);
    }
 
 

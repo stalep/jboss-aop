@@ -74,9 +74,18 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
 
    public FieldJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
-      super(advisor, info);
+      super(advisor, info, getParameters((FieldInfo) info));
    }
 
+   private static JoinPointParameters getParameters(FieldInfo info)
+   {
+      if (Modifier.isStatic(info.getAdvisedField().getModifiers()))
+      {
+         return JoinPointParameters.ONLY_ARGS;
+      }
+      return JoinPointParameters.TARGET_ARGS;
+   }
+   
    protected void initialiseJoinPointNames()
    {
       joinpointClassName =
@@ -575,8 +584,8 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
                      advisedClass.getName() + "." + advisedField.getName() + " = " +  value) +
 
             ((hasTargetObject) ?
-                  "return "  + TARGET_FIELD + "." + advisedField.getName() + ";" :
-                     "return " + advisedClass.getName() + "." + advisedField.getName() + ";") +
+                  "; return "  + TARGET_FIELD + "." + advisedField.getName() + ";" :
+                     "; return " + advisedClass.getName() + "." + advisedField.getName() + ";") +
             "}";
       }
 

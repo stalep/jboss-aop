@@ -62,7 +62,16 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
 
    public MethodJoinPointGenerator(GeneratedClassAdvisor advisor, MethodInfo info)
    {
-      super(advisor, info);
+      super(advisor, info, getParameters((MethodInfo) info));
+   }
+   
+   private static JoinPointParameters getParameters(MethodInfo info)
+   {
+      if (Modifier.isStatic(info.getAdvisedMethod().getModifiers()))
+      {
+         return JoinPointParameters.ONLY_ARGS;
+      }
+      return JoinPointParameters.TARGET_ARGS;
    }
 
    protected void initialiseJoinPointNames()

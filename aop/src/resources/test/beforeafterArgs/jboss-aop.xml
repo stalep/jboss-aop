@@ -2,6 +2,65 @@
 <!DOCTYPE aop SYSTEM "jboss-aop_1_0.dtd">
 
 <aop>
+   <!-- @Args test -->
+	<aspect class="org.jboss.test.aop.beforeafterArgs.ArgsAspect" scope="PER_VM"/>
+
+	<bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->field1)">
+		<before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+		<before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+		<before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+		<before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="set(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->field2)">
+      <before name="before6" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
+      <after name="after6" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
+   </bind>
+
+	<bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->field3)">
+		<after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+		<after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+		<after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+		<after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+   </bind>
+
+	<bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->field4)">
+		<before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+		<before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+		<before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+		<before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+		<after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+		<after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+		<after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+		<after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+   </bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->method1(..))">
+	   <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
+	   <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
+	</bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->method2(..))">
+	   <before name="before7" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
+	   <advice name="around1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
+	   <after name="after7" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
+	</bind>
+
+	<bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->method3(..))">
+	   <throwing name="throwing" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
+	</bind>
+	
+	<bind pointcut="call(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->method3(..)) AND withincode(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->method4(..))">
+      <before name="before8" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
+      <advice name="around2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
+      <after name="after8" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
+	   <throwing name="throwing" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
+	</bind>
+	
    <!-- @JoinPoint test -->
 	<aspect class="org.jboss.test.aop.beforeafterArgs.JoinPointAspect" scope="PER_VM"/>
 
