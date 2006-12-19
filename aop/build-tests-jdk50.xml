@@ -86,9 +86,9 @@
          <path refid="jboss/common.logging.log4j.classpath"/>
          <path refid="jboss/common.logging.jdk.classpath"/>
          <path refid="jboss/common.logging.spi.classpath"/>
-         <!--<path refid="jboss.microcontainer.classpath"/>-->
+         <path refid="jboss.microcontainer.classpath"/>
          <path refid="jboss.test.classpath"/>
-          <path refid="junit.junit.classpath"/>
+         <path refid="junit.junit.classpath"/>
          <path refid="oswego.concurrent.classpath"/>
          <path refid="qdox.classpath"/>
          <path refid="trove.classpath"/>
@@ -211,7 +211,6 @@
          <classpath refid="test.classpath"/>
          <include name="**/*.java"/>
          <exclude name="org/jboss/test/aop/memoryleaks/**/*.java"/>
-         <exclude name="**/methodhashing/*"/>
       </javac>
    </target>
 
@@ -405,6 +404,7 @@
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
          <sysproperty key="jboss.aop.debug.classes" value="true"/>
+         <!--sysproperty key="jboss.aop.verbose" value="true"/-->
          <sysproperty key="jboss-junit-configuration" value="${caller}"/>
       	<formatter type="plain" extension="-${caller}.txt"/>
       	<classpath refid="test.classpath"/>
@@ -666,8 +666,6 @@
          <classpath path="${build.tests.classes}"/>
          <src path="${source.tests.java}/org/jboss/test/aop/annotationc"/>
       </annotationc>
-
-      <echo>org/jboss/test/aop/methodhashing/MethodHashingTestCase will fail until the microcontainer has been updated in the repository</echo>
 
       <junit printsummary="yes" fork="no" haltonfailure="no" >
          <sysproperty key="jboss.aop.debug.classes" value="false"/>
