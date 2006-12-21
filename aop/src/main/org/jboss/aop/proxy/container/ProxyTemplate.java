@@ -106,6 +106,34 @@ public class ProxyTemplate implements Delegate, AspectManaged
       return instanceAdvisor;
    }
    
+   public boolean equals(Object obj)
+   {
+      if (delegate != null)
+      {
+         if (obj != null && obj instanceof Delegate)
+            obj = ((Delegate) obj).getDelegate();
+         return delegate.equals(obj);
+      }
+      else
+         return super.equals(obj);
+   }
+   
+   public int hashCode()
+   {
+      if (delegate != null)
+         return delegate.hashCode();
+      else
+         return super.hashCode();
+   }
+   
+   public String toString()
+   {
+      if (delegate != null)
+         return delegate.toString();
+      else
+         return super.toString();
+   }
+   
    private void writeObject(java.io.ObjectOutputStream out) throws IOException
    {
       out.writeObject(delegate);

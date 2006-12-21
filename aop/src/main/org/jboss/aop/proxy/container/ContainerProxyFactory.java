@@ -237,6 +237,14 @@ public class ContainerProxyFactory
       
       addMethodFromTemplate(template, "writeObject", writeObjectBody());
       addMethodFromTemplate(template, "readObject", readObjectBody(superclass));
+      
+      if (objectAsSuper)
+      {
+         addMethodFromTemplate(template, "equals", equalsBody());
+         addMethodFromTemplate(template, "hashCode", hashCodeBody());
+         addMethodFromTemplate(template, "toString", toStringBody());
+      }
+      
       return proxy;
    }
    
@@ -301,6 +309,43 @@ public class ContainerProxyFactory
          "   currentAdvisor = classAdvisor;" +
          "}";
        //TODO add support for instance advisors
+   }
+   
+   private String equalsBody()
+   {
+      return 
+         "{" +
+         "   if (delegate != null)" +
+         "   {" +
+         "      if ($1 != null && $1 instanceof org.jboss.aop.proxy.container.Delegate)" +
+         "         $1 = ((org.jboss.aop.proxy.container.Delegate) $1).getDelegate();" +
+         "      return delegate.equals($1);" +
+         "   }" +
+         "   else" +
+         "      return super.equals($1);" +
+         "}";
+   }
+   
+   private String hashCodeBody()
+   {
+      return 
+         "{" +
+         "   if (delegate != null)" +
+         "      return delegate.hashCode();" +
+         "   else" +
+         "      return super.hashCode();" +
+         "}";
+   }
+   
+   private String toStringBody()
+   {
+      return 
+         "{" +
+         "   if (delegate != null)" +
+         "      return delegate.toString();" +
+         "   else" +
+         "      return super.toString();" +
+         "}";
    }
 
    private CtField addFieldFromTemplate(CtClass template, String name) throws Exception
