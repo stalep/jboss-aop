@@ -37,6 +37,7 @@ import org.jboss.aop.ConByConInfo;
 import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.advice.AdviceMethodProperties.Context;
 import org.jboss.aop.joinpoint.ConstructorCalledByConstructorInvocation;
 import org.jboss.aop.util.ReflectToJavassist;
 
@@ -120,7 +121,9 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
             INVOCATION_TYPE,
             ctor.getDeclaringClass(),
             ctor.getParameterTypes(),
-            ctor.getExceptionTypes());
+            ctor.getExceptionTypes(),
+            null,
+            Context.CALLER_AVAILABLE);
    }
 
    protected boolean isCaller()

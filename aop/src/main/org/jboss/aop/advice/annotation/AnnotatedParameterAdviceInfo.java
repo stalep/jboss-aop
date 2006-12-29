@@ -2,11 +2,6 @@ package org.jboss.aop.advice.annotation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.AdviceMethodProperties;
@@ -22,101 +17,35 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
 {
    // the annotated parameter types
    private ParameterAnnotationType paramTypes[];
+   // the context dependent annotated parameter types
+   private ParameterAnnotationType contextParamTypes[];
+   // muttually exclusive context parameter rules
+   private int[][] mutuallyExclusive;
    
    /**
     * Creates an annotated parameter advice info.
     * 
-    * @param method the advice method
-    * @param rules  the annnotated parameter rules this method should comply with
+    * @param method            the advice method
+    * @param rules             the annnotated parameter rules this method should
+    *                          comply with
+    * @param contextRules      second priority rules this method should comply with
+    * @param mutuallyExclusive a list of mutually exclusive context parameter rules
     * 
     * @throws ParameterAnnotationRuleException thrown when the advice method does not
     *         comply with a parameter annotation rule.
     */
-   public AnnotatedParameterAdviceInfo(Method method, ParameterAnnotationRule[] rules)
+   public AnnotatedParameterAdviceInfo(Method method, ParameterAnnotationRule[] rules,
+         ParameterAnnotationRule[] contextRules, int[][] mutuallyExclusive)
       throws ParameterAnnotationRuleException
    {
-      this(rules, method);
+      super(method, 0);
+      this.paramTypes = createParameterAnnotationTypes(rules);
+      this.contextParamTypes = createParameterAnnotationTypes(contextRules);
+      this.mutuallyExclusive = mutuallyExclusive;
       this.applyRules();
    }
-   
-   /**
-    * Private constructor. Called only internally, does not apply the parameter annotation
-    * rules to the advice method parameters.
-    * 
-    * @param rules  the parameter annotation rules this method should comply with
-    * @param method the advice method 
-    */
-   private AnnotatedParameterAdviceInfo(ParameterAnnotationRule[] rules, Method method)
-   {
-      super(method, 0);
-      this.paramTypes = new ParameterAnnotationType[rules.length];
-      // create appropriate annotated parameter types for each AP rule
-      for (int i = 0; i < rules.length; i++)
-      {
-         if (rules[i].isSingleEnforced())
-         {
-            this.paramTypes[i] = new SingleParameterType(rules[i]);
-         }
-         else
-         {
-            this.paramTypes[i] = new MultipleParameterType(rules[i],
-                  method.getParameterTypes().length);
-         }
-      }
-   }
-   
-   /**
-    * Creates all advice info instances necessary for representing the multi-annotated
-    * parameters of <code>method</code>.
-    * <p>Should be invoked when the constructor of <code>AnnotatedParamereAdviceInfo
-    * </code> throws a <code>MultipleAdviceInfoException</code>.
-    * 
-    * @param method          the method that contains parameters with more than one
-    *                        valid annotations
-    * @param rules           the parameter annotation rules
-    * @param totalInstances  the total number of instances that must be created
-    * @param annotations     the list of annotated parameter indexes
-    * @return  all advice info instances representing <code>method</code>.
-    */
-   public static List<AnnotatedParameterAdviceInfo> createAllAdviceInfo(
-         Method method, ParameterAnnotationRule[] rules, int totalInstances,
-         int[][]annotations)
-   {
-      List<AnnotatedParameterAdviceInfo> allAdvices =
-         new LinkedList<AnnotatedParameterAdviceInfo>();
-      Set<AnnotatedParameterAdviceInfo> removeAdvices =
-         new HashSet<AnnotatedParameterAdviceInfo>();
-      // create instances
-      for (int i = 0; i < totalInstances; i++)
-      {
-         allAdvices.add(new AnnotatedParameterAdviceInfo(rules, method));
-      }
-      // set all the possible combinations of parameter annotations to the instances
-      for (int i = 0; i < annotations.length; i++)
-      {
-         for (Iterator<AnnotatedParameterAdviceInfo> iterator = allAdvices.iterator();
-         iterator.hasNext();)
-         {
-            for (int j = 0; j < annotations[i].length; j++)
-            {
-               AnnotatedParameterAdviceInfo adviceInfo = iterator.next();
-               try
-               {
-                  adviceInfo.paramTypes[annotations[i][j]].setIndex(i);
-               } catch (ParameterAnnotationRuleException maoe)
-               {
-                  removeAdvices.add(adviceInfo);
-               }
-            }
-         }
-      }
-      // remove all combinations that resulted in multiple annotation exception
-      allAdvices.removeAll(removeAdvices);
-      return allAdvices;
-   }
-   
-   public boolean validate(AdviceMethodProperties properties,
-         int[][] mutuallyExclusive, ReturnType returnType)
+      
+   public boolean validate(AdviceMethodProperties properties, ReturnType returnType)
    {
       for (ParameterAnnotationType paramType: paramTypes)
       {
@@ -125,6 +54,15 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             return false;
          }
       }
+      
+      for (ParameterAnnotationType paramType: contextParamTypes)
+      {
+         if (!paramType.validate(properties))
+         {
+            return false;
+         }
+      }
+      
       switch (returnType)
       {
          case ANY:
@@ -155,16 +93,16 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          int found = -1;
          for (int j = 0; j < exclusiveParamTypes.length; j++)
          {
-            if (paramTypes[exclusiveParamTypes[j]].isSet())
+            if (contextParamTypes[exclusiveParamTypes[j]].isSet())
             {
                if (found != -1)
                {
                   if (AspectManager.verbose)
                   {
                      AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - the use of parameter annotations ");
-                     AdviceMethodFactory.adviceMatchingMessage.append(paramTypes[exclusiveParamTypes[found]].rule.getAnnotation());
+                     AdviceMethodFactory.adviceMatchingMessage.append(contextParamTypes[exclusiveParamTypes[found]].rule.getAnnotation());
                      AdviceMethodFactory.adviceMatchingMessage.append(" and ");
-                     AdviceMethodFactory.adviceMatchingMessage.append(paramTypes[exclusiveParamTypes[j]].rule.getAnnotation());
+                     AdviceMethodFactory.adviceMatchingMessage.append(contextParamTypes[exclusiveParamTypes[j]].rule.getAnnotation());
                      AdviceMethodFactory.adviceMatchingMessage.append(" is mutually exclusive");
                   }
                   return false;
@@ -176,9 +114,13 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       return true;
    }
    
-   public short getAssignabilityDegree(int annotationIndex,
+   public short getAssignabilityDegree(int annotationIndex, boolean isContextRule,
          AdviceMethodProperties properties)
    {
+      if (isContextRule)
+      {
+         return contextParamTypes[annotationIndex].getAssignabilityDegree(properties);
+      }
       return paramTypes[annotationIndex].getAssignabilityDegree(properties);
    }
    
@@ -189,9 +131,41 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       {
          paramTypes[i].assignParameterInfo(args);
       }
+      for (int i = 0; i < contextParamTypes.length; i++)
+      {
+         contextParamTypes[i].assignParameterInfo(args);
+      }
       properties.setFoundProperties(this.method, args);
    }
 
+   /**
+    * Creates a parameter annotation type array correpondent to the parameter
+    * annotation rules contained in <code>rules</code>.
+    * 
+    * @param rules the parameter annotation rules
+    * 
+    * @return a parameter annotation type array correspondent to <code>rules</code>
+    */
+   private final ParameterAnnotationType[] createParameterAnnotationTypes(
+         ParameterAnnotationRule[] rules)
+   {
+      ParameterAnnotationType[] types = new ParameterAnnotationType[rules.length];
+      // create appropriate annotated parameter types for each AP rule
+      for (int i = 0; i < rules.length; i++)
+      {
+         if (rules[i].isSingleEnforced())
+         {
+            types[i] = new SingleParameterType(rules[i]);
+         }
+         else
+         {
+            types[i] = new MultipleParameterType(rules[i],
+                  method.getParameterTypes().length);
+         }
+      }
+      return types;
+   }
+   
    /**
     * Applies all parameter annotation rules to the advice method parameters.
     * 
@@ -201,86 +175,102 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
    private void applyRules() throws ParameterAnnotationRuleException
    {
       Annotation[][] paramAnnotations = method.getParameterAnnotations();
-      boolean annotated;
+      boolean ruleFound;
       for (int i = 0; i < paramAnnotations.length; i++)
       {
-         annotated = false;
+         ruleFound = false;
          for (Annotation annotation: paramAnnotations[i])
          {
             // no valid annotation found for parameter i yet
-            if (!annotated)
-            for (int j = 0; j < paramTypes.length; j++)
+            if (!ruleFound)
             {
-               // found
-                if (paramTypes[j].applies(annotation, i))
-                {
-                   annotated = true;
-                   break;
-                }
+               ruleFound = findAnnotationRule(annotation, i);
             }
             else
             {
-               // look for an extra annotation
-               for (int j = 0; j < paramTypes.length; j++)
+               if (findAnnotationRule(annotation, i))
                {
-                  if (paramTypes[j].applies(annotation))
+                  if (AspectManager.verbose)
                   {
-                     throwMultiAnnotationFoundException(i);
+                     throw new ParameterAnnotationRuleException("\n[warn] -parameter " + i  +
+                           " of method " + method +  " contains more than one valid annotation");
+                  }
+                  else
+                  {
+                     throw new ParameterAnnotationRuleException(null);
                   }
                }
             }
          }
-         if (!annotated)
+         if (!ruleFound)
          {
-            throwAnnotationNotFoundException(i);
+            if (AspectManager.verbose)
+            {
+               if (paramAnnotations[i].length == 0)
+               {
+                  throw new ParameterAnnotationRuleException("\n[warn] -parameter "
+                        + i  + " of method " + method +  " is not annotated");
+               }
+               throw new ParameterAnnotationRuleException("\n[warn] -parameter "
+                     + i  + " of method " + method +  " is not annotated correctly" +
+                     "\n[warn]  Expecting one of: " + getDescription(paramTypes) +
+                     getDescription(contextParamTypes));
+            }
+            // no need to say the reason a rule's been broken
+            throw new ParameterAnnotationRuleException(null);
          }
+      }      
+   }
+   
+   private String getDescription(ParameterAnnotationType[] types)
+   {
+      StringBuffer buffer = new StringBuffer();
+      for (int i = 1; i < types.length; i++)
+      {
+         buffer.append("\n          ");
+         buffer.append(types[i]);
       }
-      
+      return buffer.toString();
    }
 
    /**
-    * Throws an exception indicating the ith parameter of this advice contains
-    * multiple valid annotations.
+    * Searches for an annotation <code>Annotation</code> on parameter annotation
+    * rules.
     * 
-    * @param i the index of the not annotated parameter.
+    * @param annotation the parameter annotation to be searched on the parameter
+    *                   annotation rules
+    * @param i          the number of the advice parameter that is annotated with
+    *                   <code>annotation</code>
     * 
-    * @throws ParameterAnnotationRuleException
+    * @return           <code>true</code> if there is a rule correspondent to
+    *                   <code>annotation</code>
+    * 
+    * @throws ParameterAnnotationRuleException if a parameter annotation is found
+    *         more than once and the annotation rule forbides multiple occurences
     */
-   private final void throwMultiAnnotationFoundException(int i)
+   private final boolean findAnnotationRule(Annotation annotation, int i)
       throws ParameterAnnotationRuleException
    {
-      if (AspectManager.verbose)
+      
+      for (int j = 0; j < paramTypes.length; j++)
       {
-         throw new ParameterAnnotationRuleException("\n[warn] -parameter " + i  +
-               " of method " + method +  " contains more than one valid annotation");
+         // found
+         if (paramTypes[j].applies(annotation, i))
+         {
+            return true;
+         }
       }
-      else
+      for (int j = 0; j < contextParamTypes.length; j++)
       {
-         throw new ParameterAnnotationRuleException(null);
+         // found
+         if (contextParamTypes[j].applies(annotation, i))
+         {
+            return true;
+         }
       }
+      return false;
    }
-   
-   /**
-    * Throws an exception indicating the ith parameter of this advice is not annotated.
-    * 
-    * @param i the index of the not annotated parameter.
-    * 
-    * @throws ParameterAnnotationRuleException
-    */
-   private final void throwAnnotationNotFoundException(int i)
-      throws ParameterAnnotationRuleException
-   {
-      if (AspectManager.verbose)
-      {
-         throw new ParameterAnnotationRuleException("\n[warn] -parameter " + i  +
-               " of method " + method +  " is not annotated");
-      }
-      else
-      {
-         throw new ParameterAnnotationRuleException(null);
-      }
-   }
-   
+      
    /**
     * Contains validation data concerning a parameter annotation rule.
     */
@@ -348,6 +338,10 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          return internalValidate(properties);
       }
 
+      public String toString()
+      {
+         return rule.getAnnotation().toString();
+      }
       
       /**
        * Records that the parameter identified by <code>paramterIndex</code> is of this

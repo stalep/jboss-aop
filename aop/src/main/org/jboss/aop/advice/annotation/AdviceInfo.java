@@ -246,25 +246,29 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
     * contained in <code>properties</code>.
     * 
     * @param properties        contains information about the queried method
-    * @param mutuallyExclusive a list of mutually exclusive rules
     * @param returnType        the expected return type
     * @return                  <code>true</code> only if this advice is valid
     */
    public abstract boolean validate(AdviceMethodProperties properties,
-         int[][] mutuallyExclusive, ReturnType returnType);
+         ReturnType returnType);
 
    /**
     * Returns the distance in hierarchy between the annotated parameter identified by
     * <code>annotationIndex</code>, and the expected type of this parameter.
     * 
     * @param annotationIndex  identifies a parameter annotation rule
+    * @param isContextRule    is <code>true</code>, <code>annotationIndex</code>
+    *                         refers to a context rule, instead of a factory rule
+    *                         (context rules include target, caller, arg, etc;
+    *                         factory rule are dependent on the advice factory,
+    *                         and include join point, throwable, return and others)
     * @param properties       contains information about the queried advice method
     * @return                 the assignability degree if there is a parameter with the
     *                         annotation identified by <code>typeIndex</code>;
     *                         {@link AdviceMethodFactory#NOT_ASSIGNABLE_DEGREE} otherwise.
     */
    public abstract short getAssignabilityDegree(int annotationIndex,
-         AdviceMethodProperties properties);
+         boolean isContextRule, AdviceMethodProperties properties);
    
    /**
     * Assign information of this advice to <code>properties</code>.

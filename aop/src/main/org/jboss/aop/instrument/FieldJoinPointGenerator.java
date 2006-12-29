@@ -37,6 +37,7 @@ import org.jboss.aop.FieldInfo;
 import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.advice.AdviceMethodProperties.Context;
 import org.jboss.aop.joinpoint.FieldReadInvocation;
 import org.jboss.aop.joinpoint.FieldWriteInvocation;
 import org.jboss.aop.util.JavassistToReflect;
@@ -122,6 +123,19 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
    protected AdviceMethodProperties getAdviceMethodProperties(AdviceSetup setup)
    {
       Field field = ((FieldInfo)info).getAdvisedField();
+      if (hasTargetObject())
+      {
+         return new AdviceMethodProperties(
+               setup.getAspectClass(),
+               setup.getAdviceName(),
+               info.getClass(),
+               (read()) ? READ_INVOCATION_TYPE : WRITE_INVOCATION_TYPE,
+               (read()) ? getReturnType() : Void.TYPE,
+               (read()) ? new Class[] {} : new Class[] {field.getType()},
+               null,
+               field.getDeclaringClass(),
+               Context.TARGET_AVAILABLE);
+      }
       return new AdviceMethodProperties(
             setup.getAspectClass(),
             setup.getAdviceName(),
@@ -129,7 +143,9 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
             (read()) ? READ_INVOCATION_TYPE : WRITE_INVOCATION_TYPE,
             (read()) ? getReturnType() : Void.TYPE,
             (read()) ? new Class[] {} : new Class[] {field.getType()},
-            null);
+            null,
+            null,
+            Context.STATIC);
    }
 
    protected CtClass[] getJoinpointParameters() throws NotFoundException

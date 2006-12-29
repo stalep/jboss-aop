@@ -37,6 +37,7 @@ import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.MethodByConInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.advice.AdviceMethodProperties.Context;
 import org.jboss.aop.joinpoint.MethodCalledByConstructorInvocation;
 import org.jboss.aop.util.ReflectToJavassist;
 
@@ -116,6 +117,19 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
    protected AdviceMethodProperties getAdviceMethodProperties(AdviceSetup setup)
    {
       Method method = ((MethodByConInfo)info).getMethod();
+      if (hasTargetObject())
+      {
+         return new AdviceMethodProperties(
+               setup.getAspectClass(),
+               setup.getAdviceName(),
+               info.getClass(),
+               INVOCATION_TYPE,
+               method.getReturnType(),
+               method.getParameterTypes(),
+               method.getExceptionTypes(),
+               method.getDeclaringClass(),
+               Context.TARGET_AVAILABLE);
+      }
       return new AdviceMethodProperties(
             setup.getAspectClass(),
             setup.getAdviceName(),
@@ -123,7 +137,9 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
             INVOCATION_TYPE,
             method.getReturnType(),
             method.getParameterTypes(),
-            method.getExceptionTypes());
+            method.getExceptionTypes(),
+            null,
+            Context.STATIC);
    }
 
    protected boolean isCaller()

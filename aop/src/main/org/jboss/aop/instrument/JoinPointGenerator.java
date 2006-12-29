@@ -64,13 +64,7 @@ public abstract class JoinPointGenerator
 {
    // TODO replace by enum
    protected static class JoinPointParameters {
-      public static final JoinPointParameters ONLY_ARGS = new JoinPointParameters(false, -1, false, -1, 0, "")
-      {
-         /*public String declareArgsArray(int argsSize)
-         {
-            return "Object[] " + ARGUMENTS + " = new Object[]{$$};";
-         }*/
-      };
+      public static final JoinPointParameters ONLY_ARGS = new JoinPointParameters(false, -1, false, -1, 0, "");
       public static final JoinPointParameters TARGET_ARGS = new JoinPointParameters(true, 1, false, -1, 1, "$1");
       public static final JoinPointParameters CALLER_ARGS = new JoinPointParameters(false, -1, true, 1, 1, "$1");
       public static final JoinPointParameters TARGET_CALLER_ARGS = new JoinPointParameters(true, 1, true, 2, 2, "$1, $2");
@@ -1674,15 +1668,7 @@ public abstract class JoinPointGenerator
          code.append(");");
          return argsFound;
       }
-      /**
-       * @param code
-       * @param isAround
-       * @param args
-       * @param adviceParams
-       * @param argsFound
-       * @param i
-       * @return
-       */
+      
       private final boolean appendParameters(StringBuffer code, final int arg,
             final Class adviceParam, boolean isAround, JoinPointGenerator generator)
       {
@@ -1704,6 +1690,16 @@ public abstract class JoinPointGenerator
          case AdviceMethodProperties.THROWABLE_ARG:
             code.append(THROWABLE);
             break;
+         case AdviceMethodProperties.TARGET_ARG:
+            if (isAround)
+            {
+               code.append(TARGET_FIELD);
+            }
+            else
+            {
+               code.append("$1");
+            }
+            return true;
          case AdviceMethodProperties.ARGS_ARG:
             code.append(ARGUMENTS);
             return true;

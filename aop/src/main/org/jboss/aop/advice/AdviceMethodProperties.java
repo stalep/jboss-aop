@@ -46,15 +46,20 @@ public class AdviceMethodProperties
    
    public static final CtClass[] EMPTY_PARAMETERS = {};
    
+   public static enum Context {STATIC, TARGET_AVAILABLE, CALLER_AVAILABLE,
+      TARGET_CALLER_AVAILABLE}
+   
    //find properties
    private Class aspectClass;
    private String adviceName;
    private Class infoType;
    private Class invocationType;
+   private Class target;
    private Class joinpointReturnType;
    private Class[] joinpointParameters;
    private Class[] joinpointExceptions;
-
+   private Context context;
+   
    //found properties
    private Method adviceMethod;
    private int[] args;
@@ -66,7 +71,9 @@ public class AdviceMethodProperties
          Class invocationType,
          Class joinpointReturnType,
          Class[] joinpointParameters,
-         Class[] joinpointExceptions)
+         Class[] joinpointExceptions,
+         Class target,
+         Context context)
    {
       this.aspectClass = aspectClass;
       this.adviceName = adviceName;
@@ -75,6 +82,8 @@ public class AdviceMethodProperties
       this.joinpointReturnType = joinpointReturnType;
       this.joinpointParameters = joinpointParameters;
       this.joinpointExceptions = joinpointExceptions;
+      this.target = target;
+      this.context = context;
    }
 
    public void setFoundProperties(Method adviceMethod, int[] args)
@@ -139,4 +148,13 @@ public class AdviceMethodProperties
       return args;
    }
    
+   public Class getTargetType()
+   {
+      return this.target;
+   }
+   
+   public Context getContext()
+   {
+      return this.context;
+   }
 }

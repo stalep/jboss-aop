@@ -56,24 +56,30 @@ enum ParameterAnnotationRule
          return properties.getJoinpointReturnType();
       }
    },
-   
-   /**
-    * Rule for parameter annotation {@link Callee}.
-    */
-   CALLEE (
-        Callee.class, null, AdviceMethodProperties.CALLEE_ARG, 45, false, true),
-   
+      
    /**
     * Rule for parameter annotation {@link Caller}.
     */
    CALLER (
-         Caller.class, null, AdviceMethodProperties.CALLER_ARG, 45, false, true),
+         Caller.class, null, AdviceMethodProperties.CALLER_ARG, 45, false, true)
+   {
+      public Object getAssignableFrom(AdviceMethodProperties properties)
+      {
+         return null; // TODO caller
+      }
+   },
    
    /**
     * Rule for parameter annotation {@link Target}.
     */
    TARGET (
-         Target.class, null, AdviceMethodProperties.TARGET_ARG, 90, false, true),
+         Target.class, null, AdviceMethodProperties.TARGET_ARG, 90, false, true)
+   {
+      public Object getAssignableFrom(AdviceMethodProperties properties)
+      {
+         return properties.getTargetType();
+      }
+   },
    
    /**
     * Rule for parameter annotation {@link Arg}.

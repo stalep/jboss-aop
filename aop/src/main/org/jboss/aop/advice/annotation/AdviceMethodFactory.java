@@ -36,7 +36,7 @@ import org.jboss.aop.advice.AdviceMethodProperties;
 import org.jboss.aop.util.ReflectUtils;
 
 /**
- * Utility class to figure out which advice method to use for a given joinpoint
+ * Utility class to select an advice method for a given joinpoint.
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @author Flavia Rainone
@@ -53,23 +53,20 @@ public class AdviceMethodFactory
     * Factory that selects advice methods for <i>before</i> interception.
     */
    public static final AdviceMethodFactory BEFORE = new AdviceMethodFactory (null,
-         new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT,
-         ParameterAnnotationRule.ARGS, ParameterAnnotationRule.ARG},
-         new int[][]{{1,2}}, ReturnType.VOID);
+         new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT},
+         ReturnType.VOID);
    /**
     * Factory that selects advice methods for <i>after</i> interception.
     */
    public static final AdviceMethodFactory AFTER = new AdviceMethodFactory (null,
          new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT,
-         ParameterAnnotationRule.RETURN, ParameterAnnotationRule.ARGS,
-         ParameterAnnotationRule.ARG}, new int[][]{{2, 3}}, ReturnType.ANY);
+         ParameterAnnotationRule.RETURN}, ReturnType.ANY);
    /**
     * Factory that selects advice methods for <i>throwing</i> interception.
     */
    public static final AdviceMethodFactory THROWING = new AdviceMethodFactory (null,
          new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT,
-         ParameterAnnotationRule.THROWABLE, ParameterAnnotationRule.ARGS,
-         ParameterAnnotationRule.ARG}, new int[][]{{2, 3}}, ReturnType.VOID);
+         ParameterAnnotationRule.THROWABLE}, ReturnType.VOID);
    /**
     * Factory that selects advice methods for <i>aroung</i> interception.
     */
@@ -131,7 +128,7 @@ public class AdviceMethodFactory
                return new AdviceInfo(method, 500)
                {
                   public boolean validate(AdviceMethodProperties properties,
-                        int[][] mutuallyExclusive, ReturnType adviceReturn)
+                        ReturnType adviceReturn)
                   {
                      if(parameterTypes[0].isAssignableFrom(properties.getInvocationType()))
                      {
@@ -148,7 +145,7 @@ public class AdviceMethodFactory
                   }
 
                   public short getAssignabilityDegree(int typeIndex,
-                        AdviceMethodProperties properties)
+                        boolean isContextRule, AdviceMethodProperties properties)
                   {
                      return getAssignabilityDegree(parameterTypes[0], properties.getInvocationType());
                   }
@@ -161,14 +158,35 @@ public class AdviceMethodFactory
                };
             }
          },         
-         new ParameterAnnotationRule[]{ParameterAnnotationRule.INVOCATION,
-         ParameterAnnotationRule.ARGS, ParameterAnnotationRule.ARG},
-         new int[][]{{1, 2}}, ReturnType.NOT_VOID);
+         new ParameterAnnotationRule[]{ParameterAnnotationRule.INVOCATION},
+         ReturnType.NOT_VOID);
          
 
-   static StringBuffer adviceMatchingMessage;
    static final short NOT_ASSIGNABLE_DEGREE = Short.MAX_VALUE;
    static final short MAX_DEGREE = NOT_ASSIGNABLE_DEGREE - 1;
+   static final ParameterAnnotationRule[] FULLY_STATIC =
+      new ParameterAnnotationRule[] {ParameterAnnotationRule.ARGS,
+      ParameterAnnotationRule.ARG};
+   static final int[][] FS_INCOMPATIBILITY = new int[][]{{0, 1}};
+   
+   static final ParameterAnnotationRule[] CALLER_AVAILABLE =
+      new ParameterAnnotationRule[] {ParameterAnnotationRule.CALLER,
+      ParameterAnnotationRule.ARGS, ParameterAnnotationRule.ARG};
+   static final int[][] CA_INCOMPATIBILITY = new int[][]{{1, 2}};
+   
+   static final ParameterAnnotationRule[] TARGET_AVAILABLE =
+      new ParameterAnnotationRule[] {ParameterAnnotationRule.TARGET,
+      ParameterAnnotationRule.ARGS, ParameterAnnotationRule.ARG};
+   static final int[][] TA_INCOMPATIBILITY = CA_INCOMPATIBILITY;
+   
+   static final ParameterAnnotationRule[] TARGET_CALLER_AVAILABLE =
+      new ParameterAnnotationRule[] {ParameterAnnotationRule.TARGET,
+      ParameterAnnotationRule.CALLER,
+      ParameterAnnotationRule.ARGS, ParameterAnnotationRule.ARG};
+   static final int[][] TCA_INCOMPATIBILITY = new int[][]{{2, 3}};
+   
+   /** Stores advice matching failure messages on verbose mode. */
+   static StringBuffer adviceMatchingMessage;
    
    /**
     * Method that returns log information about the last matching process executed.
@@ -185,8 +203,7 @@ public class AdviceMethodFactory
    private ReturnType returnType;
    private AdviceSignatureRule adviceSignatureRule;
    private ParameterAnnotationRule[] rules;
-   private int[][] mutuallyExclusive;
-
+   
    
    /**
     * Creates an advice method factory.
@@ -200,12 +217,12 @@ public class AdviceMethodFactory
     *                            a value to overwrite the join point execution result.
     */
    private AdviceMethodFactory(AdviceSignatureRule adviceSignatureRule,
-         ParameterAnnotationRule[] rules, int[][] mutuallyExclusive,
+         ParameterAnnotationRule[] rules,/*, int[][] mutuallyExclusive,*/
          ReturnType returnType)
    {
       this.adviceSignatureRule = adviceSignatureRule;
       this.rules = rules;
-      this.mutuallyExclusive = mutuallyExclusive;
+      //this.mutuallyExclusive = mutuallyExclusive;
       this.returnType = returnType;
    }
    
@@ -238,6 +255,32 @@ public class AdviceMethodFactory
          return null;
       }
       
+      ParameterAnnotationRule[] contextRules = null;
+      int[][] mutuallyExclusive = null;
+      switch(properties.getContext())
+      {
+         case STATIC:
+            contextRules = FULLY_STATIC;
+            mutuallyExclusive = FS_INCOMPATIBILITY;
+            break;
+         case TARGET_AVAILABLE:
+            contextRules = TARGET_AVAILABLE;
+            mutuallyExclusive = TA_INCOMPATIBILITY;
+            break;
+         case CALLER_AVAILABLE:
+            contextRules = CALLER_AVAILABLE;
+            mutuallyExclusive = CA_INCOMPATIBILITY;
+            break;
+         case TARGET_CALLER_AVAILABLE:
+            contextRules = TARGET_CALLER_AVAILABLE;
+            mutuallyExclusive = TCA_INCOMPATIBILITY;
+            break;
+         default:
+            throw new RuntimeException("Unexpected Context Type " +
+                  properties.getContext());
+      }
+      
+      
       LinkedList<AdviceInfo> rankedAdvices = new LinkedList<AdviceInfo>();
       for (int i = 0; i < methods.length; i++)
       {
@@ -252,7 +295,8 @@ public class AdviceMethodFactory
             try
             {
                // advice applies to annotated parameter rules
-               rankedAdvices.add(new AnnotatedParameterAdviceInfo(methods[i], rules));
+               rankedAdvices.add(new AnnotatedParameterAdviceInfo(methods[i], rules,
+                     contextRules, mutuallyExclusive));
             }catch (ParameterAnnotationRuleException pare)
             {
                // no need to print messages -> exception prints automatically on verbose
@@ -267,7 +311,8 @@ public class AdviceMethodFactory
       // sort according to rank
       Collections.sort(rankedAdvices);
       // validate and retrive best match
-      AdviceInfo bestAdvice = bestValidAdvice(rankedAdvices, properties);
+      AdviceInfo bestAdvice = bestValidAdvice(rankedAdvices, properties,
+            contextRules);
       if (bestAdvice == null)
       {
          return null;
@@ -282,17 +327,19 @@ public class AdviceMethodFactory
     * 
     * @param rankedAdvices a sorted collection of advice infos
     * @param properties    contains information about the queried advice method
+    * @param contextRules  the parameter annotation rules that are dependent on the
+    *                      join point context
     * @return              information about the best advice method match
     */
    private AdviceInfo bestValidAdvice(LinkedList<AdviceInfo> rankedAdvices,
-         AdviceMethodProperties properties)
+         AdviceMethodProperties properties, ParameterAnnotationRule[] contextRules)
    {
       AdviceInfo bestAdvice = null;
       ListIterator<AdviceInfo> iterator = rankedAdvices.listIterator();
       while (iterator.hasNext())
       {
          AdviceInfo advice = iterator.next();
-         if (advice.validate(properties, mutuallyExclusive, returnType))
+         if (advice.validate(properties, returnType))
          {
             bestAdvice = advice;
             break;
@@ -318,7 +365,7 @@ public class AdviceMethodFactory
          AdviceInfo advice = iterator.next();
          if (advice.getRank() == bestAdvice.getRank())
          {
-            if (!advice.validate(properties, mutuallyExclusive, returnType))
+            if (!advice.validate(properties, returnType))
             {
                iterator.remove();
             }
@@ -338,13 +385,12 @@ public class AdviceMethodFactory
       // if not, retrive the list of all valid advices with the highest rank
       List<AdviceInfo> bestAdvices =
          rankedAdvices.subList(0, iterator.nextIndex());
-      Class returnType = properties.getJoinpointReturnType();
       // deep process these advices to find the best match
-      return bestMatch(bestAdvices, properties);
+      return bestMatch(bestAdvices, properties, contextRules);
    }
    
    /**
-    * Return the best advice method among the advices contained in <code>greatestRank
+    * Returns the best advice method among the advices contained in <code>greatestRank
     * </code>. The criteria used is the specificness of annotated parameters type,
     * i.e., the more specific type <code>MethodInvocation</code> is better than
     * <code>Invocation</code>.
@@ -352,22 +398,79 @@ public class AdviceMethodFactory
     * @param greatestRank contains information about all valid advice methods with the
     *                     highest rank
     * @param properties   information about the queried advice method
+    * @param contextRules the context annotation rules (depend on the join point
+    *                     context)
     * @return             information about the best advice method match
     */
    AdviceInfo bestMatch(Collection<AdviceInfo> greatestRank,
-         AdviceMethodProperties properties)
+         AdviceMethodProperties properties, ParameterAnnotationRule[] contextRules)
+   {
+      
+      // select the closest match according to assignability degree of parameters
+      // like Invocation, JoinPoint, Return, etc
+      AdviceInfo bestAdvice = selectBestRuleMatch(greatestRank, properties,
+            rules.length, false);
+      if (bestAdvice != null)
+      {
+         return bestAdvice;
+      }
+      // context rules are second priority
+      bestAdvice = selectBestRuleMatch(greatestRank, properties, contextRules.length,
+            true);
+      if (bestAdvice != null)
+      {
+         return bestAdvice;
+      }
+      short bestDegree = NOT_ASSIGNABLE_DEGREE;
+      if (returnType == ReturnType.ANY || returnType == ReturnType.NOT_VOID)
+      {
+         for (AdviceInfo currentAdvice: greatestRank)
+         {
+            short currentDegree =  currentAdvice.getReturnAssignabilityDegree(properties);
+            if (currentDegree < bestDegree)
+            {
+               bestAdvice = currentAdvice;
+               bestDegree = currentDegree;
+            }
+         }
+         //in case of two or more advices with the same match degree, pick any one of them
+         return bestAdvice;
+      }
+      // we have more than one best advice; return any one of them
+      return greatestRank.iterator().next();
+   }
+   
+   /**
+    * Returns the best advice method among the advices contained in <code>greatestRank
+    * </code>. The criteria used in the assignability degree of parameters
+    * that follow a set of rules (defined by <code>useContextRules</code>).
+    * 
+    * @param greatestRank    contains information about all valid advice methods with
+    *                        the highest rank
+    * @param properties      information about the queried advice method
+    * @param totalRules      the total number of rules that will be used on matching
+    * @param useContextRules if <code>true</code>, context rules are used instead
+    *                        of factory rules
+    * @return                the best match. If there is more than one match, returns
+    *                        <code>null</code>
+    */
+   private AdviceInfo selectBestRuleMatch(Collection<AdviceInfo> greatestRank,
+         AdviceMethodProperties properties, int totalRules,
+         boolean isContextRule)
    {
       short bestDegree = NOT_ASSIGNABLE_DEGREE;
       AdviceInfo bestAdvice = null;
       Collection<AdviceInfo> removeList = new ArrayList<AdviceInfo>();
+      
       // rule i is more important than rule i + 1
-      for (int i = 0; i < rules.length; i++)
+      for (int i = 0; i < totalRules; i++)
       {
          for (Iterator<AdviceInfo> iterator = greatestRank.iterator();
                iterator.hasNext();)
          {
             AdviceInfo currentAdvice = iterator.next();
-            short currentDegree = currentAdvice.getAssignabilityDegree(i, properties);
+            short currentDegree = currentAdvice.getAssignabilityDegree(i,
+                  isContextRule, properties);
             if (currentDegree < bestDegree)
             {
                if (bestAdvice != null)
@@ -393,22 +496,7 @@ public class AdviceMethodFactory
          bestAdvice = null;
          bestDegree = NOT_ASSIGNABLE_DEGREE;
       }
-      if (returnType == ReturnType.ANY || returnType == ReturnType.NOT_VOID)
-      {
-         for (AdviceInfo currentAdvice: greatestRank)
-         {
-            short currentDegree =  currentAdvice.getReturnAssignabilityDegree(properties);
-            if (currentDegree < bestDegree)
-            {
-               bestAdvice = currentAdvice;
-               bestDegree = currentDegree;
-            }
-         }
-         //in case of two or more advices with the same match degree, pick any one of them
-         return bestAdvice;
-      }
-      // we have more than one best advice; return any one of them
-      return greatestRank.iterator().next();
+      return null;
    }
    
    /**
