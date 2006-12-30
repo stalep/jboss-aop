@@ -60,7 +60,7 @@
       <after name="after8" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
 	   <throwing name="throwing" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
 	</bind>
-	
+
    <!-- @JoinPoint test -->
 	<aspect class="org.jboss.test.aop.beforeafterArgs.JoinPointAspect" scope="PER_VM"/>
 
@@ -167,6 +167,15 @@
 		<advice name="around11" aspect="org.jboss.test.aop.beforeafterArgs.ReturnAspect"/>
 		<after name="after11" aspect="org.jboss.test.aop.beforeafterArgs.ReturnAspect"/>
 	</bind>
+
+   <!-- @Target test -->
+	<aspect class="org.jboss.test.aop.beforeafterArgs.TargetAspect" scope="PER_VM"/>
+
+	<bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetPOJO->method1(..))">
+		<before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+
 
    <!-- @Thrown test -->
 	<aspect class="org.jboss.test.aop.beforeafterArgs.ThrownAspect" scope="PER_VM"/>
