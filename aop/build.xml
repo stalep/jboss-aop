@@ -306,14 +306,14 @@
       | Build all jar files.
     -->
    <target name="jars" description="Builds all jar files."
-      depends="_buildmagic:build-bypass-check"
+      depends="_buildmagic:build-bypass-check, source-jar"
       unless="build-bypass.on">
 
       <call target="compile"/>
 
       <mkdir dir="${build.lib}"/>
 
-      <!-- Build the jnpserver.jar -->
+      <!-- Build the jboss-aop.jar -->
       <jar jarfile="${build.lib}/jboss-aop.jar"
          manifest="${build.etc}/default.mf">
          <fileset dir="${build.classes.retro}">
@@ -352,7 +352,7 @@
    </target>
 
    <target name="jars15" description="Builds all jar files."
-      depends="compile-classes">
+      depends="compile-classes, source-jar">
 
       <mkdir dir="${build.lib}"/>
 
@@ -414,6 +414,14 @@
          </fileset>
       </jar>
    </target>
+
+	<target name="source-jar">
+      <jar destfile="${build.lib}/jboss-aop-src.zip"
+         manifest="${build.etc}/default.mf">
+      	<fileset dir="${source.java}">
+      	</fileset>
+     	</jar>
+	</target>
 
    <!-- ================================================================== -->
    <!-- Install & Release                                                  -->
@@ -580,6 +588,7 @@
          <fileset dir="output/lib">
             <include name="jboss-aop-jdk50-client.jar"/>
             <include name="jboss-aop-jdk50.jar"/>
+            <include name="jboss-aop-src.zip"/>
             <include name="jrockit-pluggable-instrumentor.jar"/>
             <include name="pluggable-instrumentor.jar"/>
          </fileset>
