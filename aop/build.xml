@@ -415,7 +415,8 @@
       </jar>
    </target>
 
-	<target name="source-jar">
+	<target name="source-jar" depends="compile-etc">
+      <mkdir dir="${build.lib}"/>
       <jar destfile="${build.lib}/jboss-aop-src.zip"
          manifest="${build.etc}/default.mf">
       	<fileset dir="${source.java}">
