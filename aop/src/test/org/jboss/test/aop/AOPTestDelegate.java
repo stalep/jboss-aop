@@ -21,8 +21,11 @@
 */ 
 package org.jboss.test.aop;
 
+import java.net.URL;
 import java.util.Properties;
 
+import org.jboss.aop.AspectXmlLoader;
+import org.jboss.aop.eclipsesupport.EclipseTestTransformer;
 import org.jboss.test.AbstractTestDelegate;
 
 /**
@@ -33,6 +36,7 @@ import org.jboss.test.AbstractTestDelegate;
 public class AOPTestDelegate extends AbstractTestDelegate
 {
    Properties systemProps;
+   
    public AOPTestDelegate(Class clazz)
    {
       // FIXME AOPTestDelegate constructor
@@ -44,4 +48,20 @@ public class AOPTestDelegate extends AbstractTestDelegate
    {
       return systemProps;
    }
+   
+    /**
+     * Undeployment any test specific aop descriptor deployed in setUp.
+     */
+    public void tearDown() throws Exception
+    {
+       //TODO Figure out cause of security exception when making this call
+//       super.tearDown();
+       String deployedByClassLoader = (String)systemProps.get(EclipseTestTransformer.CLASSLOADER_DEPLOYED_XML); 
+       if (deployedByClassLoader != null)
+       {
+          URL url = Thread.currentThread().getContextClassLoader().getResource(deployedByClassLoader);
+          AspectXmlLoader.undeployXML(url);
+       }
+    }
+    
 }
