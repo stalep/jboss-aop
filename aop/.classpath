@@ -18,6 +18,6 @@
 	<classpathentry kind="lib" path="/thirdparty/jboss/test/lib/jboss-test.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/common-core/lib/jboss-common-core.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/apache-log4j/lib/log4j.jar"/>
-	<classpathentry kind="lib" path="src/resources/test"/>
+	<classpathentry kind="lib" path="src/resources"/>
 	<classpathentry kind="output" path="output/eclipse-classes"/>
 </classpath>

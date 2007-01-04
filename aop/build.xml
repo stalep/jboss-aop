@@ -611,4 +611,11 @@
          </fileset>
       </jar>
 	</target>
+	
+   <target name="create-eclipse-test-agent" depends="compile-etc">
+      <jar jarfile="${build.lib}/eclipse-agent.jar"
+         manifest="${build.etc}/eclipsesupport.mf">
+      </jar>
+   </target>
+	
 </project>
