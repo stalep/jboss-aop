@@ -22,6 +22,7 @@
 package org.jboss.test.aop.beforeafterArgs;
 
 import org.jboss.aop.advice.annotation.Target;
+import org.jboss.aop.joinpoint.CurrentInvocation;
 
 /**
  * Aspect used on @Args parameter tests.
@@ -32,14 +33,26 @@ public class TargetAspect
 {
    static boolean before1 = false;
    static boolean before2 = false;
+   static boolean around1 = false;
+   static boolean around2 = false;
+   static boolean after1 = false;
+   static boolean after2 = false;
  
    static Object before2Target = null;
+   static Object around2Target = null;
+   static Object after2Target = null;
    
    public static void clear()
    {
       before1 = false;
       before2 = false;
+      around1 = false;
+      around2 = false;
+      after1 = false;
+      after2 = false;
       before2Target = null;
+      around2Target = null;
+      after2Target = null;
    }
    
    public void before1()
@@ -51,5 +64,29 @@ public class TargetAspect
    {
       before2 = true;
       before2Target = target;
+   }
+   
+   public Object around1() throws Throwable
+   {
+      around1 = true;
+      return CurrentInvocation.proceed();
+   }
+   
+   public Object around2(@Target Object target) throws Throwable
+   {
+      around2 = true;
+      around2Target = target;
+      return CurrentInvocation.proceed();
+   }
+   
+   public void after1()
+   {
+      after1 = true;
+   }
+   
+   public void after2(@Target Object target)
+   {
+      after2 = true;
+      after2Target = target;
    }
 }

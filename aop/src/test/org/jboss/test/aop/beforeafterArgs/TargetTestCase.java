@@ -59,12 +59,112 @@ public class TargetTestCase extends AOPTestWithSetup
       TargetAspect.clear();
       this.pojo = new TargetPOJO();
    }
-   
+
    public void test1()
    {
+      new TargetPOJO(1);
+      assertStaticAdvices();
+   }
+
+   
+   public void test2()
+   {
+      pojo.field1 = 0;
+      assertAllAdvices();
+      assertSame(pojo, TargetAspect.before2Target);
+   }
+   
+   public void test3()
+   {
+      int test = pojo.field1;
+      assertAllAdvices();
+      assertSame(pojo, TargetAspect.before2Target);
+   }
+   
+   public void test4()
+   {
+      TargetPOJO.field2 = 5;
+      assertStaticAdvices();
+   }
+   
+   public void test5()
+   {
+      int test = TargetPOJO.field2;
+      assertStaticAdvices();
+   }
+   
+   public void test6()
+   {
       pojo.method1();
+      assertAllAdvices();
+      assertSame(pojo, TargetAspect.before2Target);
+   }
+   
+   public void test7()
+   {
+      TargetPOJO.method2();
+      assertStaticAdvices();
+   }
+   
+   public void test8()
+   {
+      pojo.method3();
+      assertStaticAdvices();
+   }
+   
+   public void test9()
+   {
+      pojo.method4();
+      assertAllAdvices();
+   }
+   
+   public void test10()
+   {
+      pojo.method5();
+      assertStaticAdvices();
+   }
+   
+   public void test11()
+   {
+      TargetPOJO.method6();
+      assertStaticAdvices();
+   }
+   
+   public void test12()
+   {
+      TargetPOJO.method7();
+      assertAllAdvices();
+   }
+   
+   public void test13()
+   {
+      TargetPOJO.method8();
+      assertStaticAdvices();
+   }
+   
+   private void assertAllAdvices()
+   {
       assertTrue(TargetAspect.before1);
       assertTrue(TargetAspect.before2);
-      assertSame(pojo, TargetAspect.before2Target);
+      assertTrue(TargetAspect.around1);
+      assertTrue(TargetAspect.around2);
+      assertTrue(TargetAspect.after1);
+      assertTrue(TargetAspect.after2);
+      assertNotNull(TargetAspect.before2Target);
+      assertSame(TargetAspect.before2Target, TargetAspect.around2Target);
+      assertSame(TargetAspect.around2Target, TargetAspect.after2Target);
+   }
+   
+   private void assertStaticAdvices()
+   {
+      assertTrue(TargetAspect.before1);
+      assertFalse(TargetAspect.before2);
+      assertTrue(TargetAspect.around1);
+      assertFalse(TargetAspect.around2);
+      assertTrue(TargetAspect.after1);
+      assertFalse(TargetAspect.after2);
+      assertNull(TargetAspect.before2Target);
+      assertNull(TargetAspect.around2Target);
+      assertNull(TargetAspect.after2Target);
    }
 }

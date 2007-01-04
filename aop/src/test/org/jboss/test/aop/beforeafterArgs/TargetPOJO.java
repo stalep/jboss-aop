@@ -29,5 +29,50 @@ package org.jboss.test.aop.beforeafterArgs;
  */
 public class TargetPOJO
 {
+   public TargetPOJO(){}
+   public TargetPOJO(int x){}
+   
+   public int field1;
+   public static int field2;
+   
    public void method1(){}
+   public static void method2(){}
+   
+   public void method3(){
+      new TargetPOJO2(3);
+   }
+   
+   public void method4()
+   {
+      TargetPOJO2 pojo2 = new TargetPOJO2();
+      pojo2.method1();
+   }
+   
+   public void method5()
+   {
+      TargetPOJO2.method2();
+   }
+   
+   public static void method6(){
+      new TargetPOJO2(3);
+   }
+   
+   public static void method7()
+   {
+      TargetPOJO2 pojo2 = new TargetPOJO2();
+      pojo2.method1();
+   }
+   
+   public static void method8()
+   {
+      TargetPOJO2.method2();
+   }
+}
+
+class TargetPOJO2
+{
+   public TargetPOJO2(){}
+   public TargetPOJO2(int x){}
+   public void method1(){}
+   public static void method2(){}
 }
