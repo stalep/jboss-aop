@@ -53,6 +53,10 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
     */
    protected short getAssignabilityDegree(Class<?> fromType, Class<?> toType)
    {
+      if (fromType == null || toType == null)
+      {
+         return AdviceMethodFactory.MAX_DEGREE;
+      }
       // they're the same
       if (fromType == toType)
       {
@@ -139,7 +143,7 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
     *                           the assignability degree from <code>fromInterfaceType
     *                           </code> to <code>toInterfaceType</code>.
     */
-   public short getInterfaceInheritanceAD(Class<?> fromInterfaceType,
+   private short getInterfaceInheritanceAD(Class<?> fromInterfaceType,
          Class<?> toInterfaceType, short currentDegree)
    {
       Class[] interfaces = fromInterfaceType.getInterfaces();

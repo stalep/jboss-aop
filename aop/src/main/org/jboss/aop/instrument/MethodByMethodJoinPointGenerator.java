@@ -148,7 +148,9 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
             method.getParameterTypes(),
             method.getExceptionTypes(),
             null,
-            hasCallingObject()? Context.CALLER_AVAILABLE: Context.STATIC);
+            hasCallingObject()?
+                  Context.TARGET_CALLER_AVAILABLE:
+                  Context.TARGET_AVAILABLE);
    }
 
    protected boolean isCaller()

@@ -1656,12 +1656,12 @@ public abstract class JoinPointGenerator
          {
             final Class[] adviceParams = properties.getAdviceMethod().getParameterTypes();
             argsFound = appendParameters(code, args[0], adviceParams[0],
-                  isAround, generator);
+                  isAround, properties, generator);
             for (int i = 1 ; i < args.length ; i++)
             {
                code.append(", ");
                argsFound = appendParameters(code, args[i], adviceParams[i],
-                     isAround, generator) || argsFound;
+                     isAround, properties, generator) || argsFound;
             }
          }
          
@@ -1670,7 +1670,8 @@ public abstract class JoinPointGenerator
       }
       
       private final boolean appendParameters(StringBuffer code, final int arg,
-            final Class adviceParam, boolean isAround, JoinPointGenerator generator)
+            final Class adviceParam, boolean isAround,
+            AdviceMethodProperties properties, JoinPointGenerator generator)
       {
          code.append("(");
          // In case of overloaded methods javassist sometimes seems to pick up the wrong method - use explicit casts to get hold of the parameters
@@ -1691,7 +1692,11 @@ public abstract class JoinPointGenerator
             code.append(THROWABLE);
             break;
          case AdviceMethodProperties.TARGET_ARG:
-            if (isAround)
+            if (properties.getTargetType() == null)
+            {
+               code.append("null");
+            }
+            else if (isAround)
             {
                code.append(TARGET_FIELD);
             }
@@ -1812,7 +1817,8 @@ public abstract class JoinPointGenerator
          invokeNextBody.append("   ");
          invokeNextBody.append(returnStr);
          invokeNextBody.append(" ");
-         boolean result = super.appendAdviceCall(setup, invokeNextBody, true, generator);
+         boolean result = super.appendAdviceCall(setup, invokeNextBody, true,
+               generator);
          
          if (!firstParamIsInvocation)
          {

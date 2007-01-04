@@ -145,7 +145,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
             (read()) ? new Class[] {} : new Class[] {field.getType()},
             null,
             null,
-            Context.STATIC);
+            Context.TARGET_AVAILABLE);
    }
 
    protected CtClass[] getJoinpointParameters() throws NotFoundException

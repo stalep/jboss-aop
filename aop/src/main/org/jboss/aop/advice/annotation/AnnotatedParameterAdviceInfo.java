@@ -25,6 +25,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
    /**
     * Creates an annotated parameter advice info.
     * 
+    * @param properties        the properties to which <code>method</code> must
+    *                          comply with
     * @param method            the advice method
     * @param rules             the annnotated parameter rules this method should
     *                          comply with
@@ -34,7 +36,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
     * @throws ParameterAnnotationRuleException thrown when the advice method does not
     *         comply with a parameter annotation rule.
     */
-   public AnnotatedParameterAdviceInfo(Method method, ParameterAnnotationRule[] rules,
+   public AnnotatedParameterAdviceInfo(AdviceMethodProperties properties,
+         Method method, ParameterAnnotationRule[] rules,
          ParameterAnnotationRule[] contextRules, int[][] mutuallyExclusive)
       throws ParameterAnnotationRuleException
    {
@@ -42,7 +45,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       this.paramTypes = createParameterAnnotationTypes(rules);
       this.contextParamTypes = createParameterAnnotationTypes(contextRules);
       this.mutuallyExclusive = mutuallyExclusive;
-      this.applyRules();
+      this.applyRules(properties);
    }
       
    public boolean validate(AdviceMethodProperties properties, ReturnType returnType)
@@ -169,26 +172,30 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
    /**
     * Applies all parameter annotation rules to the advice method parameters.
     * 
+    * @param properties the properties which the searched advice method must comply
+    *                   with
+    * 
     * @throws ParameterAnnotationRuleException thrown when the advice method does not
     *         comply with a parameter annotation rule.
     */
-   private void applyRules() throws ParameterAnnotationRuleException
+   private void applyRules(AdviceMethodProperties properties) throws ParameterAnnotationRuleException
    {
       Annotation[][] paramAnnotations = method.getParameterAnnotations();
-      boolean ruleFound;
+      ParameterAnnotationType typeFound;
+      boolean nullifyRank = false;
       for (int i = 0; i < paramAnnotations.length; i++)
       {
-         ruleFound = false;
+         typeFound = null;
          for (Annotation annotation: paramAnnotations[i])
          {
             // no valid annotation found for parameter i yet
-            if (!ruleFound)
+            if (typeFound == null)
             {
-               ruleFound = findAnnotationRule(annotation, i);
+               typeFound = findAnnotationType(annotation, i);
             }
             else
             {
-               if (findAnnotationRule(annotation, i))
+               if (findAnnotationType(annotation, i) != null)
                {
                   if (AspectManager.verbose)
                   {
@@ -202,7 +209,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
                }
             }
          }
-         if (!ruleFound)
+         if (typeFound == null)
          {
             if (AspectManager.verbose)
             {
@@ -219,7 +226,15 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             // no need to say the reason a rule's been broken
             throw new ParameterAnnotationRuleException(null);
          }
-      }      
+         // this happens when target or caller are nulls
+         // in this case, this advice should have the smallest rank, since
+         // any other advice is preferable (in case of overloaded advices)
+         nullifyRank = nullifyRank || (typeFound.rule.getAssignableFrom(properties) == null);
+      }
+      if (nullifyRank)
+      {
+         rank = 0;
+      }
    }
    
    private String getDescription(ParameterAnnotationType[] types)
@@ -242,14 +257,14 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
     * @param i          the number of the advice parameter that is annotated with
     *                   <code>annotation</code>
     * 
-    * @return           <code>true</code> if there is a rule correspondent to
-    *                   <code>annotation</code>
+    * @return           the parameter type if there is a rule correspondent to
+    *                   <code>annotation</code>; <code>null</code> otherwise
     * 
     * @throws ParameterAnnotationRuleException if a parameter annotation is found
     *         more than once and the annotation rule forbides multiple occurences
     */
-   private final boolean findAnnotationRule(Annotation annotation, int i)
-      throws ParameterAnnotationRuleException
+   private final ParameterAnnotationType findAnnotationType(Annotation annotation,
+         int i) throws ParameterAnnotationRuleException
    {
       
       for (int j = 0; j < paramTypes.length; j++)
@@ -257,7 +272,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          // found
          if (paramTypes[j].applies(annotation, i))
          {
-            return true;
+            return paramTypes[j];
          }
       }
       for (int j = 0; j < contextParamTypes.length; j++)
@@ -265,10 +280,10 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          // found
          if (contextParamTypes[j].applies(annotation, i))
          {
-            return true;
+            return contextParamTypes[j];
          }
       }
-      return false;
+      return null;
    }
       
    /**
@@ -421,8 +436,13 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       
       public final boolean internalValidate(AdviceMethodProperties properties)
       {
+         Class assignableFrom = (Class) rule.getAssignableFrom(properties);
+         if (assignableFrom == null) // targets and callers can be null
+         {
+            return true;
+         }
          if (index != -1 && !method.getParameterTypes()[index].isAssignableFrom(
-               (Class) rule.getAssignableFrom(properties)))
+               assignableFrom))
          {
             if (AspectManager.verbose)
             {

@@ -295,8 +295,8 @@ public class AdviceMethodFactory
             try
             {
                // advice applies to annotated parameter rules
-               rankedAdvices.add(new AnnotatedParameterAdviceInfo(methods[i], rules,
-                     contextRules, mutuallyExclusive));
+               rankedAdvices.add(new AnnotatedParameterAdviceInfo(properties,
+                     methods[i], rules, contextRules, mutuallyExclusive));
             }catch (ParameterAnnotationRuleException pare)
             {
                // no need to print messages -> exception prints automatically on verbose

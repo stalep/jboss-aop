@@ -71,39 +71,42 @@ public class TargetTestCase extends AOPTestWithSetup
    {
       pojo.field1 = 0;
       assertAllAdvices();
-      assertSame(pojo, TargetAspect.before2Target);
+      assertTarget(pojo);
    }
    
    public void test3()
    {
       int test = pojo.field1;
       assertAllAdvices();
-      assertSame(pojo, TargetAspect.before2Target);
+      assertTarget(pojo);
    }
    
    public void test4()
    {
       TargetPOJO.field2 = 5;
-      assertStaticAdvices();
+      assertAllAdvices();
+      assertTarget(null);
    }
    
    public void test5()
    {
       int test = TargetPOJO.field2;
-      assertStaticAdvices();
+      assertAllAdvices();
+      assertTarget(null);
    }
    
    public void test6()
    {
       pojo.method1();
       assertAllAdvices();
-      assertSame(pojo, TargetAspect.before2Target);
+      assertTarget(pojo);
    }
    
    public void test7()
    {
       TargetPOJO.method2();
-      assertStaticAdvices();
+      assertAllAdvices();
+      assertTarget(null);
    }
    
    public void test8()
@@ -116,12 +119,14 @@ public class TargetTestCase extends AOPTestWithSetup
    {
       pojo.method4();
       assertAllAdvices();
+      assertTarget();
    }
    
    public void test10()
    {
       pojo.method5();
-      assertStaticAdvices();
+      assertAllAdvices();
+      assertTarget(null);
    }
    
    public void test11()
@@ -134,12 +139,14 @@ public class TargetTestCase extends AOPTestWithSetup
    {
       TargetPOJO.method7();
       assertAllAdvices();
+      assertTarget();
    }
    
    public void test13()
    {
       TargetPOJO.method8();
-      assertStaticAdvices();
+      assertAllAdvices();
+      assertTarget(null);
    }
    
    private void assertAllAdvices()
@@ -150,7 +157,18 @@ public class TargetTestCase extends AOPTestWithSetup
       assertTrue(TargetAspect.around2);
       assertTrue(TargetAspect.after1);
       assertTrue(TargetAspect.after2);
+   }
+   
+   private void assertTarget()
+   {
       assertNotNull(TargetAspect.before2Target);
+      assertSame(TargetAspect.before2Target, TargetAspect.around2Target);
+      assertSame(TargetAspect.around2Target, TargetAspect.after2Target);
+   }
+   
+   private void assertTarget(Object target)
+   {
+      assertSame(target, TargetAspect.before2Target);
       assertSame(TargetAspect.before2Target, TargetAspect.around2Target);
       assertSame(TargetAspect.around2Target, TargetAspect.after2Target);
    }

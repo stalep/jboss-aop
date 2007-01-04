@@ -139,7 +139,7 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
             method.getParameterTypes(),
             method.getExceptionTypes(),
             null,
-            Context.STATIC);
+            Context.TARGET_AVAILABLE);
    }
 
    protected boolean isCaller()
