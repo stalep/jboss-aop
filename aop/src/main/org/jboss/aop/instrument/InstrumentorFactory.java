@@ -78,11 +78,11 @@ public class InstrumentorFactory
       }
       else
       {
+         instrumentor = InstrumentorEnum.GENERATED_ADVISOR;
          if (AspectManager.verbose)
          {
-            System.out.println("[debug] Defaulting instrumentor to: " + ClassicInstrumentor.class.getName());
+            System.out.println("[debug] Defaulting instrumentor to: " + instrumentor.getClass().getName());
          }
-         instrumentor = InstrumentorEnum.GENERATED_ADVISOR;
       }
    }
    
