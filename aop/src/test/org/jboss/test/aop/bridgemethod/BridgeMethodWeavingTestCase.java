@@ -27,6 +27,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
+import org.jboss.test.aop.AOPTestDelegate;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
@@ -69,7 +70,8 @@ public class BridgeMethodWeavingTestCase extends AOPTestWithSetup
    public void testGenericMethod()
    {
       //doesnt work with jbossretro atm..
-      if(System.getProperty("java.vm.version").startsWith("1.5"))
+      String version = (String)((AOPTestDelegate)getDelegate()).getSystemProperties().get("java.vm.version"); 
+      if(version.startsWith("1.5"))
       {
          SimpleMethodInterceptor.method = false;
          SubPOJO spojo = new SubPOJO();
