@@ -257,27 +257,27 @@ public class AdviceMethodFactory
       
       ParameterAnnotationRule[] contextRules = null;
       int[][] mutuallyExclusive = null;
-      switch(properties.getContext())
+      switch(properties.getOptionalParameters())
       {
-         case STATIC:
+         case NONE:
             contextRules = FULLY_STATIC;
             mutuallyExclusive = FS_INCOMPATIBILITY;
             break;
-         case TARGET_AVAILABLE:
+         case TARGET:
             contextRules = TARGET_AVAILABLE;
             mutuallyExclusive = TA_INCOMPATIBILITY;
             break;
-         case CALLER_AVAILABLE:
+         case CALLER:
             contextRules = CALLER_AVAILABLE;
             mutuallyExclusive = CA_INCOMPATIBILITY;
             break;
-         case TARGET_CALLER_AVAILABLE:
+         case TARGET_CALLER:
             contextRules = TARGET_CALLER_AVAILABLE;
             mutuallyExclusive = TCA_INCOMPATIBILITY;
             break;
          default:
-            throw new RuntimeException("Unexpected Context Type " +
-                  properties.getContext());
+            throw new RuntimeException("Unexpected Optional Parameters Option" +
+                  properties.getOptionalParameters());
       }
       
       

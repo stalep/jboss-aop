@@ -229,7 +229,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          // this happens when target or caller are nulls
          // in this case, this advice should have the smallest rank, since
          // any other advice is preferable (in case of overloaded advices)
-         nullifyRank = nullifyRank || (typeFound.rule.getAssignableFrom(properties) == null);
+         nullifyRank = nullifyRank || (typeFound.rule.lowerRankGrade(properties));
       }
       if (nullifyRank)
       {
@@ -436,13 +436,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       
       public final boolean internalValidate(AdviceMethodProperties properties)
       {
-         Class assignableFrom = (Class) rule.getAssignableFrom(properties);
-         if (assignableFrom == null) // targets and callers can be null
-         {
-            return true;
-         }
          if (index != -1 && !method.getParameterTypes()[index].isAssignableFrom(
-               assignableFrom))
+               (Class)rule.getAssignableFrom(properties)))
          {
             if (AspectManager.verbose)
             {

@@ -38,7 +38,6 @@ import org.jboss.aop.ConstructionInfo;
 import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
-import org.jboss.aop.advice.AdviceMethodProperties.Context;
 import org.jboss.aop.joinpoint.ConstructionInvocation;
 import org.jboss.aop.util.ReflectToJavassist;
 
@@ -116,7 +115,7 @@ public class ConstructionJoinPointGenerator extends JoinPointGenerator
             ctor.getParameterTypes(),
             ctor.getExceptionTypes(),
             ctor.getDeclaringClass(),
-            Context.TARGET_AVAILABLE);
+            true);
    }
 
    protected boolean hasTargetObject()

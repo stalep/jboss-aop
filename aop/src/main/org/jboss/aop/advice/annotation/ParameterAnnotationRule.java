@@ -65,7 +65,12 @@ enum ParameterAnnotationRule
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
-         return null; // TODO caller
+         return properties.getCallerType();
+      }
+      
+      public boolean lowerRankGrade(AdviceMethodProperties properties)
+      {
+         return !properties.isCallerAvailable();
       }
    },
    
@@ -78,6 +83,11 @@ enum ParameterAnnotationRule
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
          return properties.getTargetType();
+      }
+      
+      public boolean lowerRankGrade(AdviceMethodProperties properties)
+      {
+         return !properties.isTargetAvailable();
       }
    },
    
@@ -156,6 +166,7 @@ enum ParameterAnnotationRule
    
    /**
     * Returns the property identifying the annotated parameter type.
+    * 
     * @return one of the constant values defined in {@link AdviceMethodProperties}
     */
    public final int getProperty()
@@ -164,15 +175,29 @@ enum ParameterAnnotationRule
    }
 
    /**
-    * Returns the rank grade an annotaed parameter is worth for an instance of <code>
-    * AdviceInfo</code>.
+    * Returns the rank grade an annotated parameter is worth for an instance of
+    * <code>AdviceInfo</code>.
     * 
     * @return the rank grade
     */
    public final int getRankGrade()
    {
       return rankGrade;
-   }   
+   }
+   
+   /**
+    * Returns <code>true</code> if, in the context especified by <code>properties
+    * </code>, an advice method should have a lower grade when he attends to this
+    * rule.
+    * 
+    * @param properties describes the queried advice method
+    * @return <code>true</code> if an advice compliant with this rule should have
+    *         a lower rank grade
+    */
+   public boolean lowerRankGrade(AdviceMethodProperties properties)
+   {
+      return false;
+   }
    
    /**
     * Indicates whether this annotation is mandatory.

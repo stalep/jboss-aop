@@ -34,7 +34,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  */
 public class TargetTestCase extends AOPTestWithSetup
 {
-   private TargetPOJO pojo;
+   private TargetCallerPOJO pojo;
    
    public static void main(String[] args)
    {
@@ -57,12 +57,12 @@ public class TargetTestCase extends AOPTestWithSetup
    {
       super.setUp();
       TargetAspect.clear();
-      this.pojo = new TargetPOJO();
+      this.pojo = new TargetCallerPOJO();
    }
 
    public void test1()
    {
-      new TargetPOJO(1);
+      new TargetCallerPOJO(1);
       assertStaticAdvices();
    }
 
@@ -83,14 +83,14 @@ public class TargetTestCase extends AOPTestWithSetup
    
    public void test4()
    {
-      TargetPOJO.field2 = 5;
+      TargetCallerPOJO.field2 = 5;
       assertAllAdvices();
       assertTarget(null);
    }
    
    public void test5()
    {
-      int test = TargetPOJO.field2;
+      int test = TargetCallerPOJO.field2;
       assertAllAdvices();
       assertTarget(null);
    }
@@ -104,7 +104,7 @@ public class TargetTestCase extends AOPTestWithSetup
    
    public void test7()
    {
-      TargetPOJO.method2();
+      TargetCallerPOJO.method2();
       assertAllAdvices();
       assertTarget(null);
    }
@@ -131,20 +131,20 @@ public class TargetTestCase extends AOPTestWithSetup
    
    public void test11()
    {
-      TargetPOJO.method6();
+      TargetCallerPOJO.method6();
       assertStaticAdvices();
    }
    
    public void test12()
    {
-      TargetPOJO.method7();
+      TargetCallerPOJO.method7();
       assertAllAdvices();
       assertTarget();
    }
    
    public void test13()
    {
-      TargetPOJO.method8();
+      TargetCallerPOJO.method8();
       assertAllAdvices();
       assertTarget(null);
    }

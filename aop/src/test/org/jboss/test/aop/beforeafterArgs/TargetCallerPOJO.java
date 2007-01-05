@@ -23,14 +23,14 @@ package org.jboss.test.aop.beforeafterArgs;
 
 
 /**
- * Plain old java object used on @Target parameter tests.
+ * Plain old java object used on both @Target and @Caller parameter tests.
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-public class TargetPOJO
+public class TargetCallerPOJO
 {
-   public TargetPOJO(){}
-   public TargetPOJO(int x){}
+   public TargetCallerPOJO(){}
+   public TargetCallerPOJO(int x){}
    
    public int field1;
    public static int field2;
@@ -39,40 +39,40 @@ public class TargetPOJO
    public static void method2(){}
    
    public void method3(){
-      new TargetPOJO2(3);
+      new TargetCallerPOJO2(3);
    }
    
    public void method4()
    {
-      TargetPOJO2 pojo2 = new TargetPOJO2();
+      TargetCallerPOJO2 pojo2 = new TargetCallerPOJO2();
       pojo2.method1();
    }
    
    public void method5()
    {
-      TargetPOJO2.method2();
+      TargetCallerPOJO2.method2();
    }
    
    public static void method6(){
-      new TargetPOJO2(3);
+      new TargetCallerPOJO2(3);
    }
    
    public static void method7()
    {
-      TargetPOJO2 pojo2 = new TargetPOJO2();
+      TargetCallerPOJO2 pojo2 = new TargetCallerPOJO2();
       pojo2.method1();
    }
    
    public static void method8()
    {
-      TargetPOJO2.method2();
+      TargetCallerPOJO2.method2();
    }
 }
 
-class TargetPOJO2
+class TargetCallerPOJO2
 {
-   public TargetPOJO2(){}
-   public TargetPOJO2(int x){}
+   public TargetCallerPOJO2(){}
+   public TargetCallerPOJO2(int x){}
    public void method1(){}
    public static void method2(){}
 }

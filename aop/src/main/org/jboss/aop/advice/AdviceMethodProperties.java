@@ -40,14 +40,12 @@ public class AdviceMethodProperties
    public static final int RETURN_ARG = -4;
    public static final int THROWABLE_ARG = -5;
    public static final int ARGS_ARG = -6;
-   public static final int CALLEE_ARG = -7;
-   public static final int CALLER_ARG = -8;
-   public static final int ARG_ARG = -9;
+   public static final int CALLER_ARG = -7;
+   public static final int ARG_ARG = -8;
    
    public static final CtClass[] EMPTY_PARAMETERS = {};
    
-   public static enum Context {STATIC, TARGET_AVAILABLE, CALLER_AVAILABLE,
-      TARGET_CALLER_AVAILABLE}
+   public static enum OptionalParameters {NONE, TARGET, CALLER, TARGET_CALLER}
    
    //find properties
    private Class aspectClass;
@@ -55,10 +53,13 @@ public class AdviceMethodProperties
    private Class infoType;
    private Class invocationType;
    private Class target;
+   private Class caller;
    private Class joinpointReturnType;
    private Class[] joinpointParameters;
    private Class[] joinpointExceptions;
-   private Context context;
+   private OptionalParameters optionalParameters;
+   private boolean targetAvailable;
+   private boolean callerAvailable;
    
    //found properties
    private Method adviceMethod;
@@ -71,9 +72,7 @@ public class AdviceMethodProperties
          Class invocationType,
          Class joinpointReturnType,
          Class[] joinpointParameters,
-         Class[] joinpointExceptions,
-         Class target,
-         Context context)
+         Class[] joinpointExceptions)
    {
       this.aspectClass = aspectClass;
       this.adviceName = adviceName;
@@ -82,8 +81,45 @@ public class AdviceMethodProperties
       this.joinpointReturnType = joinpointReturnType;
       this.joinpointParameters = joinpointParameters;
       this.joinpointExceptions = joinpointExceptions;
+      this.optionalParameters = OptionalParameters.NONE;
+   }
+   
+   public AdviceMethodProperties(
+         Class aspectClass, 
+         String adviceName, 
+         Class infoType,
+         Class invocationType,
+         Class joinpointReturnType,
+         Class[] joinpointParameters,
+         Class[] joinpointExceptions,
+         Class target,
+         boolean targetAvailable)
+   {
+      this(aspectClass, adviceName, infoType, invocationType, joinpointReturnType,
+            joinpointParameters, joinpointExceptions);
       this.target = target;
-      this.context = context;
+      this.targetAvailable = targetAvailable;
+      this.optionalParameters = OptionalParameters.TARGET;
+   }
+   
+   public AdviceMethodProperties(
+         Class aspectClass, 
+         String adviceName, 
+         Class infoType,
+         Class invocationType,
+         Class joinpointReturnType,
+         Class[] joinpointParameters,
+         Class[] joinpointExceptions,
+         Class target,
+         boolean targetAvailable,
+         Class caller,
+         boolean callerAvailable)
+   {
+      this (aspectClass, adviceName, infoType, invocationType, joinpointReturnType,
+      joinpointParameters, joinpointExceptions, target, targetAvailable);
+      this.caller = caller;
+      this.callerAvailable = callerAvailable;
+      this.optionalParameters = OptionalParameters.TARGET_CALLER;
    }
 
    public void setFoundProperties(Method adviceMethod, int[] args)
@@ -152,9 +188,29 @@ public class AdviceMethodProperties
    {
       return this.target;
    }
-   
-   public Context getContext()
+
+   public boolean isTargetAvailable()
    {
-      return this.context;
+      return this.targetAvailable;
+   }
+   
+   public Class getCallerType()
+   {
+      return this.caller;
+   }
+   
+   public boolean isCallerAvailable()
+   {
+      return this.callerAvailable;
+   }
+   
+   public OptionalParameters getOptionalParameters()
+   {
+      return this.optionalParameters;
+   }
+   
+   public void setOptionalParameters(OptionalParameters optionalParameters)
+   {
+      this.optionalParameters = optionalParameters;
    }
 }

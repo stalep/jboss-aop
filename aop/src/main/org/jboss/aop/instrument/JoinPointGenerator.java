@@ -87,32 +87,32 @@ public abstract class JoinPointGenerator
          this.listPrefix = listPrefix;
       }
       
-      public boolean hasTarget()
+      public final boolean hasTarget()
       {
          return target;
       }
       
-      public int getTargetIndex()
+      public final int getTargetIndex()
       {
          return targetIndex;
       }
       
-      public boolean hasCaller()
+      public final boolean hasCaller()
       {
          return caller;
       }
       
-      public int getCallerIndex()
+      public final int getCallerIndex()
       {
          return callerIndex;
       }
       
-      public int getFirstArgIndex()
+      public final int getFirstArgIndex()
       {
          return firstArgIndex;
       }
       
-      public String declareArgsArray(int totalParameters)
+      public final String declareArgsArray(int totalParameters)
       {
          if (++totalParameters == firstArgIndex)
          {
@@ -131,7 +131,7 @@ public abstract class JoinPointGenerator
          return buffer.toString();
       }
       
-      public void appendParameterListWithArgs(StringBuffer code, CtClass[] parameterTypes, boolean beginWithComma)
+      public final void appendParameterListWithArgs(StringBuffer code, CtClass[] parameterTypes, boolean beginWithComma)
       {
 
          int j = firstArgIndex - 1;
@@ -266,6 +266,7 @@ public abstract class JoinPointGenerator
    public static final String INVOKE_TARGET = "invokeTarget";
    public static final String DISPATCH = "dispatch";
    protected static final String TARGET_FIELD = "tgt";
+   protected static final String CALLER_FIELD = "callingObject";
    protected static final String GENERATED_CLASS_ADVISOR = GeneratedClassAdvisor.class.getName();
    public static final String GENERATE_JOINPOINT_CLASS = "generateJoinPointClass";
    private static final String CURRENT_ADVICE = "super.currentInterceptor";
@@ -1692,7 +1693,7 @@ public abstract class JoinPointGenerator
             code.append(THROWABLE);
             break;
          case AdviceMethodProperties.TARGET_ARG:
-            if (properties.getTargetType() == null)
+            if (!generator.parameters.hasTarget())
             {
                code.append("null");
             }
@@ -1702,11 +1703,28 @@ public abstract class JoinPointGenerator
             }
             else
             {
-               code.append("$1");
+               code.append('$');
+               code.append(generator.parameters.getTargetIndex());
             }
-            return true;
+            break;
+         case AdviceMethodProperties.CALLER_ARG:
+            if (!generator.parameters.hasCaller())
+            {
+               code.append("null");
+            }
+            else if (isAround)
+            {
+               code.append(CALLER_FIELD);
+            }
+            else
+            {
+               code.append('$');
+               code.append(generator.parameters.getCallerIndex());
+            }
+            break;
          case AdviceMethodProperties.ARGS_ARG:
             code.append(ARGUMENTS);
+            // return true when args has been found; false otherwise
             return true;
          default:
             if (isAround)

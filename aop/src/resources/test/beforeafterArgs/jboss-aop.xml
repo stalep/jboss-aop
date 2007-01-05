@@ -61,6 +61,31 @@
       <after name="after8" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
 	   <throwing name="throwing" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
 	</bind>
+	
+   <!-- @Caller test -->
+	<aspect class="org.jboss.test.aop.beforeafterArgs.CallerAspect" scope="PER_VM"/>
+
+   <stack name="CallerAdvices">
+      <before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.CallerAspect"/>
+      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.CallerAspect"/>
+      <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.CallerAspect"/>
+      <before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.CallerAspect"/>
+      <advice name="around1" aspect="org.jboss.test.aop.beforeafterArgs.CallerAspect"/>
+      <advice name="around2" aspect="org.jboss.test.aop.beforeafterArgs.CallerAspect"/>
+      <advice name="around3" aspect="org.jboss.test.aop.beforeafterArgs.CallerAspect"/>
+      <advice name="around4" aspect="org.jboss.test.aop.beforeafterArgs.CallerAspect"/>
+      <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.CallerAspect"/>
+      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.CallerAspect"/>
+      <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.CallerAspect"/>
+	</stack>
+	
+   <bind pointcut="call(org.jboss.test.aop.beforeafterArgs.TargetCallerPOJO2->new(int))">
+		<stack-ref name="CallerAdvices"/>
+   </bind>
+   
+   <bind pointcut="call(void org.jboss.test.aop.beforeafterArgs.TargetCallerPOJO2->*())">
+		<stack-ref name="CallerAdvices"/>
+   </bind>
 
    <!-- @JoinPoint test -->
 	<aspect class="org.jboss.test.aop.beforeafterArgs.JoinPointAspect" scope="PER_VM"/>
@@ -172,58 +197,37 @@
    <!-- @Target test -->
 	<aspect class="org.jboss.test.aop.beforeafterArgs.TargetAspect" scope="PER_VM"/>
 
-   <bind pointcut="execution(org.jboss.test.aop.beforeafterArgs.TargetPOJO->new(int))">
-		<before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   <stack name="TargetAdvices">
+      <before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
       <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
       <advice name="around1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
       <advice name="around2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
       <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
       <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+	</stack>
+	
+   <bind pointcut="execution(org.jboss.test.aop.beforeafterArgs.TargetCallerPOJO->new(int))">
+		<stack-ref name="TargetAdvices"/>
    </bind>
 
-   <bind pointcut="field(int org.jboss.test.aop.beforeafterArgs.TargetPOJO->*)">
-		<before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <advice name="around1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <advice name="around2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   <bind pointcut="field(int org.jboss.test.aop.beforeafterArgs.TargetCallerPOJO->*)">
+		<stack-ref name="TargetAdvices"/>
    </bind>
 	
-	<bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetPOJO->method1(..))">
-		<before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <advice name="around1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <advice name="around2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+	<bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerPOJO->method1(..))">
+		<stack-ref name="TargetAdvices"/>
    </bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetPOJO->method2(..))">
-		<before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <advice name="around1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <advice name="around2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerPOJO->method2(..))">
+		<stack-ref name="TargetAdvices"/>
    </bind>
 
-   <bind pointcut="call(org.jboss.test.aop.beforeafterArgs.TargetPOJO2->new(int))">
-		<before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <advice name="around1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <advice name="around2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   <bind pointcut="call(org.jboss.test.aop.beforeafterArgs.TargetCallerPOJO2->new(int))">
+		<stack-ref name="TargetAdvices"/>
    </bind>
    
-   <bind pointcut="call(void org.jboss.test.aop.beforeafterArgs.TargetPOJO2->*())">
-		<before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <advice name="around1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <advice name="around2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
-      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   <bind pointcut="call(void org.jboss.test.aop.beforeafterArgs.TargetCallerPOJO2->*())">
+		<stack-ref name="TargetAdvices"/>
    </bind>
 
    <!-- @Thrown test -->
