@@ -42,6 +42,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -962,7 +966,10 @@ public class ReflectionAspect
 
          if (advisor == null)
          {
-            foundMethods = clazz.getDeclaredMethods();
+//            foundMethods = GETclazz.getDeclaredMethods();
+            foundMethods = System.getSecurityManager() == null ? 
+                  GetDeclaredMethodsAction.NON_PRIVILEGED.getDeclaredMethods(clazz) :
+                     GetDeclaredMethodsAction.PRIVILEGED.getDeclaredMethods(clazz);
          }
          else
          {
@@ -1463,4 +1470,32 @@ public class ReflectionAspect
          return false;
       }
    }
+   
+   private interface GetDeclaredMethodsAction
+   {
+      Method[] getDeclaredMethods(Class clazz);
+
+      GetDeclaredMethodsAction NON_PRIVILEGED = new GetDeclaredMethodsAction()
+      {
+         public Method[] getDeclaredMethods(Class clazz)
+         {
+            return clazz.getDeclaredMethods();
+         }
+      };
+      
+
+      GetDeclaredMethodsAction PRIVILEGED = new GetDeclaredMethodsAction()
+      {
+         public Method[] getDeclaredMethods(final Class clazz)
+         {
+            return (Method[])AccessController.doPrivileged(new PrivilegedAction(){
+               public Object run()
+               {
+                  return clazz.getDeclaredMethods();
+               }
+            });
+         }
+      };
+   }
+   
 }

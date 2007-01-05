@@ -21,11 +21,14 @@
   */
 package org.jboss.test.aop.bridgemethodnotwoven;
 
+import java.util.Properties;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 import org.jboss.aop.proxy.ClassProxyFactory;
+import org.jboss.test.aop.AOPTestDelegate;
 import org.jboss.test.aop.AOPTestWithSetup;
 import org.jboss.test.aop.bridgemethod.POJO;
 import org.jboss.test.aop.bridgemethod.SubPOJO;
@@ -83,7 +86,9 @@ public class BridgeMethodTestCase extends AOPTestWithSetup
    public void testGenericMethod()
    {
       //doesnt work with jbossretro atm...
-      if(System.getProperty("java.vm.version").startsWith("1.5"))
+      AOPTestDelegate delegate = (AOPTestDelegate)getDelegate();
+      Properties properties = delegate.getSystemProperties();
+      if(((String)properties.get("java.vm.version")).startsWith("1.5"))
       {
          try {
             SuperPOJO superPojo = (SuperPOJO) ClassProxyFactory.newInstance(SubPOJO.class);

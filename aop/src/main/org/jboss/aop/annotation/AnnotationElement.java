@@ -21,10 +21,13 @@
   */
 package org.jboss.aop.annotation;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 
 /**
  * Bridge/portability class for resolving annotations in JDK 1.4 and JDK1.5
@@ -46,7 +49,14 @@ public class AnnotationElement extends PortableAnnotationElement
     */
    public static Object getVisibleAnnotation(Method method, Class annotation)
    {
-      return method.getAnnotation(annotation);
+      if (System.getSecurityManager() == null)
+      {
+         return AnnotationElementAction.NON_PRIVILEGED.getVisibleAnnotation(method, annotation);
+      }
+      else
+      {
+         return AnnotationElementAction.PRIVILEGED.getVisibleAnnotation(method, annotation);
+      }
    }
 
    /**
@@ -59,7 +69,14 @@ public class AnnotationElement extends PortableAnnotationElement
     */
    public static Object getVisibleAnnotation(Constructor con, Class annotation)
    {
-      return con.getAnnotation(annotation);
+      if (System.getSecurityManager() == null)
+      {
+         return AnnotationElementAction.NON_PRIVILEGED.getVisibleAnnotation(con, annotation);
+      }
+      else
+      {
+         return AnnotationElementAction.PRIVILEGED.getVisibleAnnotation(con, annotation);
+      }
    }
 
    /**
@@ -72,7 +89,14 @@ public class AnnotationElement extends PortableAnnotationElement
     */
    public static Object getVisibleAnnotation(Field field, Class annotation)
    {
-      return field.getAnnotation(annotation);
+      if (System.getSecurityManager() == null)
+      {
+         return AnnotationElementAction.NON_PRIVILEGED.getVisibleAnnotation(field, annotation);
+      }
+      else
+      {
+         return AnnotationElementAction.PRIVILEGED.getVisibleAnnotation(field, annotation);
+      }
    }
 
    /**
@@ -85,46 +109,359 @@ public class AnnotationElement extends PortableAnnotationElement
     */
    public static Object getVisibleAnnotation(Class clazz, Class annotation)
    {
-      return clazz.getAnnotation(annotation);
+      if (System.getSecurityManager() == null)
+      {
+         return AnnotationElementAction.NON_PRIVILEGED.getVisibleAnnotation(clazz, annotation);
+      }
+      else
+      {
+         return AnnotationElementAction.PRIVILEGED.getVisibleAnnotation(clazz, annotation);
+      }
    }
 
    public static boolean isVisibleAnnotationPresent(Class clazz, Class annotation)
    {
-      return clazz.isAnnotationPresent(annotation);
+      if (System.getSecurityManager() == null)
+      {
+         return AnnotationElementAction.NON_PRIVILEGED.isVisibleAnnotationPresent(clazz, annotation);
+      }
+      else
+      {
+         return AnnotationElementAction.PRIVILEGED.isVisibleAnnotationPresent(clazz, annotation);
+      }
    }
 
    public static boolean isVisibleAnnotationPresent(Method m, Class annotation)
    {
-      return m.isAnnotationPresent(annotation);
+      if (System.getSecurityManager() == null)
+      {
+         return AnnotationElementAction.NON_PRIVILEGED.isVisibleAnnotationPresent(m, annotation);
+      }
+      else
+      {
+         return AnnotationElementAction.PRIVILEGED.isVisibleAnnotationPresent(m, annotation);
+      }
    }
 
    public static boolean isVisibleAnnotationPresent(Field f, Class annotation)
    {
-      return f.isAnnotationPresent(annotation);
+      if (System.getSecurityManager() == null)
+      {
+         return AnnotationElementAction.NON_PRIVILEGED.isVisibleAnnotationPresent(f, annotation);
+      }
+      else
+      {
+         return AnnotationElementAction.PRIVILEGED.isVisibleAnnotationPresent(f, annotation);
+      }
    }
 
    public static boolean isVisibleAnnotationPresent(Constructor con, Class annotation)
    {
-      return con.isAnnotationPresent(annotation);
+      if (System.getSecurityManager() == null)
+      {
+         return AnnotationElementAction.NON_PRIVILEGED.isVisibleAnnotationPresent(con, annotation);
+      }
+      else
+      {
+         return AnnotationElementAction.PRIVILEGED.isVisibleAnnotationPresent(con, annotation);
+      }
    }
 
    public static Object[] getVisibleAnnotations(Class clazz) throws Exception
    {
-      return clazz.getAnnotations();
+      if (System.getSecurityManager() == null)
+      {
+         return AnnotationElementAction.NON_PRIVILEGED.getVisibleAnnotations(clazz);
+      }
+      else
+      {
+         return AnnotationElementAction.PRIVILEGED.getVisibleAnnotations(clazz);
+      }
    }
 
    public static Object[] getVisibleAnnotations(Method m) throws Exception
    {
-      return m.getAnnotations();
+      if (System.getSecurityManager() == null)
+      {
+         return AnnotationElementAction.NON_PRIVILEGED.getVisibleAnnotations(m);
+      }
+      else
+      {
+         return AnnotationElementAction.PRIVILEGED.getVisibleAnnotations(m);
+      }
    }
    
    public static Object[] getVisibleAnnotations(Field f) throws Exception
    {
-      return f.getAnnotations();
+      if (System.getSecurityManager() == null)
+      {
+         return AnnotationElementAction.NON_PRIVILEGED.getVisibleAnnotations(f);
+      }
+      else
+      {
+         return AnnotationElementAction.PRIVILEGED.getVisibleAnnotations(f);
+      }
    }
    
    public static Object[] getVisibleAnnotations(Constructor c) throws Exception
    {
-      return c.getAnnotations();
+      if (System.getSecurityManager() == null)
+      {
+         return AnnotationElementAction.NON_PRIVILEGED.getVisibleAnnotations(c);
+      }
+      else
+      {
+         return AnnotationElementAction.PRIVILEGED.getVisibleAnnotations(c);
+      }
+   }
+   
+   
+   private interface AnnotationElementAction
+   {
+      Object getVisibleAnnotation(Method method, Class annotation);
+
+      Object getVisibleAnnotation(Constructor con, Class annotation);
+
+      Object getVisibleAnnotation(Field field, Class annotation);
+
+      Object getVisibleAnnotation(Class clazz, Class annotation);
+
+      boolean isVisibleAnnotationPresent(Class clazz, Class annotation);
+
+      boolean isVisibleAnnotationPresent(Method m, Class annotation);
+
+      boolean isVisibleAnnotationPresent(Field f, Class annotation);
+
+      boolean isVisibleAnnotationPresent(Constructor con, Class annotation);
+
+      Object[] getVisibleAnnotations(Class clazz) throws Exception;
+
+      Object[] getVisibleAnnotations(Method m) throws Exception;
+      
+      Object[] getVisibleAnnotations(Field f) throws Exception;
+      
+      Object[] getVisibleAnnotations(Constructor c) throws Exception;
+      
+      AnnotationElementAction NON_PRIVILEGED = new AnnotationElementAction()
+      {
+         public Object getVisibleAnnotation(Method method, Class annotation)
+         {
+            return method.getAnnotation(annotation);
+         }
+
+         public Object getVisibleAnnotation(Constructor con, Class annotation)
+         {
+            return con.getAnnotation(annotation);
+         }
+
+         public Object getVisibleAnnotation(Field field, Class annotation)
+         {
+            return field.getAnnotation(annotation);
+         }
+
+         public Object getVisibleAnnotation(Class clazz, Class annotation)
+         {
+            return clazz.getAnnotation(annotation);
+         }
+
+         public boolean isVisibleAnnotationPresent(Class clazz, Class annotation)
+         {
+            return clazz.isAnnotationPresent(annotation);
+         }
+
+         public boolean isVisibleAnnotationPresent(Method m, Class annotation)
+         {
+            return m.isAnnotationPresent(annotation);
+         }
+
+         public boolean isVisibleAnnotationPresent(Field f, Class annotation)
+         {
+            return f.isAnnotationPresent(annotation);
+         }
+
+         public boolean isVisibleAnnotationPresent(Constructor con, Class annotation)
+         {
+            return con.isAnnotationPresent(annotation);
+         }
+
+         public Object[] getVisibleAnnotations(Class clazz) throws Exception
+         {
+            return clazz.getAnnotations();
+         }
+
+         public Object[] getVisibleAnnotations(Method m) throws Exception
+         {
+            return m.getAnnotations();
+         }
+         
+         public Object[] getVisibleAnnotations(Field f) throws Exception
+         {
+            return f.getAnnotations();
+         }
+         
+         public Object[] getVisibleAnnotations(Constructor c) throws Exception
+         {
+            return c.getAnnotations();
+         }
+      };
+      
+
+      AnnotationElementAction PRIVILEGED = new AnnotationElementAction()
+      {
+         public Object getVisibleAnnotation(final Method method, final Class annotation)
+         {
+            return AccessController.doPrivileged(new PrivilegedAction(){
+               public Object run()
+               {
+                  return method.getAnnotation(annotation);
+               }
+            });
+         }
+
+         public Object getVisibleAnnotation(final Constructor con, final Class annotation)
+         {
+            return AccessController.doPrivileged(new PrivilegedAction(){
+               public Object run()
+               {
+                  return con.getAnnotation(annotation);
+               }
+            });
+         }
+
+         public Object getVisibleAnnotation(final Field field, final Class annotation)
+         {
+            return AccessController.doPrivileged(new PrivilegedAction(){
+               public Object run()
+               {
+                  return field.getAnnotation(annotation);
+               }
+            });
+         }
+
+         public Object getVisibleAnnotation(final Class clazz, final Class annotation)
+         {
+            return AccessController.doPrivileged(new PrivilegedAction(){
+               public Object run()
+               {
+                  return clazz.getAnnotation(annotation);
+               }
+            });
+         }
+
+         public boolean isVisibleAnnotationPresent(final Class clazz, final Class annotation)
+         {
+            Boolean present = (Boolean)AccessController.doPrivileged(new PrivilegedAction(){
+               public Object run()
+               {
+                  return clazz.isAnnotationPresent(annotation) ? Boolean.TRUE : Boolean.FALSE;
+               }
+            });
+            
+            return present.booleanValue();
+         }
+
+         public boolean isVisibleAnnotationPresent(final Method m, final Class annotation)
+         {
+            Boolean present = (Boolean)AccessController.doPrivileged(new PrivilegedAction(){
+               public Object run()
+               {
+                  return m.isAnnotationPresent(annotation) ? Boolean.TRUE : Boolean.FALSE;
+               }
+            });
+            
+            return present.booleanValue();
+         }
+
+         public boolean isVisibleAnnotationPresent(final Field f, final Class annotation)
+         {
+            Boolean present = (Boolean)AccessController.doPrivileged(new PrivilegedAction(){
+               public Object run()
+               {
+                  return f.isAnnotationPresent(annotation) ? Boolean.TRUE : Boolean.FALSE;
+               }
+            });
+            return present;
+         }
+
+         public boolean isVisibleAnnotationPresent(final Constructor con, final Class annotation)
+         {
+            Boolean present = (Boolean)AccessController.doPrivileged(new PrivilegedAction(){
+               public Object run()
+               {
+                  return con.isAnnotationPresent(annotation) ? Boolean.TRUE : Boolean.FALSE;
+               }
+            });
+            return present;
+         }
+
+         public Object[] getVisibleAnnotations(final Class clazz) throws Exception 
+         {
+            try
+            {
+               return (Object[])AccessController.doPrivileged(new PrivilegedExceptionAction()
+               {
+                  public Object run() throws Exception
+                  {
+                     return clazz.getAnnotations();
+                  }
+               });
+            }
+            catch (PrivilegedActionException e)
+            {
+               throw e.getException();
+            }
+         }
+
+         public Object[] getVisibleAnnotations(final Method m) throws Exception 
+         {
+            try
+            {
+               return (Object[])AccessController.doPrivileged(new PrivilegedExceptionAction(){
+                  public Object run() throws Exception
+                  {
+                     return m.getAnnotations();
+                  }
+               });
+            }
+            catch (PrivilegedActionException e)
+            {
+               throw e.getException();
+            }
+         }
+         
+         public Object[] getVisibleAnnotations(final Field f) throws Exception
+         {
+            try
+            {
+               return (Object[])AccessController.doPrivileged(new PrivilegedExceptionAction(){
+                  public Object run() throws Exception
+                  {
+                     return f.getAnnotations();
+                  }
+               });
+            }
+            catch (PrivilegedActionException e)
+            {
+               throw e.getException();
+            }
+         }
+         
+         public Object[] getVisibleAnnotations(final Constructor c) throws Exception
+         {
+            try
+            {
+               return (Object[])AccessController.doPrivileged(new PrivilegedExceptionAction(){
+                  public Object run() throws Exception
+                  {
+                     return c.getAnnotations();
+                  }
+               });
+            }
+            catch (PrivilegedActionException e)
+            {
+               throw e.getException();
+            }
+         }
+      };
    }
 }
