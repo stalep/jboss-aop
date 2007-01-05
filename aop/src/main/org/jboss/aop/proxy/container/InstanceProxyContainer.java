@@ -33,6 +33,7 @@ import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.metadata.SimpleMetaData;
 //import org.jboss.repository.spi.MetaDataContext;
+import org.jboss.metadata.spi.MetaData;
 
 /**
  * The InstanceAdvisor returned by ClassProxyContainer
@@ -45,7 +46,7 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
    Advisor classAdvisor;
    InstanceAdvisorDelegate delegate;
    
-   public InstanceProxyContainer(String name, ProxyAdvisorDomain instanceDomain, Advisor classAdvisor, /*MetaData*/ Object metaData)
+   public InstanceProxyContainer(String name, ProxyAdvisorDomain instanceDomain, Advisor classAdvisor, MetaData metaData)
    {
       super(name, instanceDomain);
       this.classAdvisor = classAdvisor;
@@ -56,7 +57,7 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
       initialise(classAdvisor.getClazz());
    }
 
-   public static InstanceProxyContainer createInstanceProxyContainer(Advisor classAdvisor, InterfaceIntroduction introduction, /*MetaDataContext*/ Object metaDataContext)
+   public static InstanceProxyContainer createInstanceProxyContainer(Advisor classAdvisor, InterfaceIntroduction introduction, MetaData metaData)
    {
       String name = Domain.getDomainName(classAdvisor.getClazz(), true);
       ProxyAdvisorDomain domain = new ProxyAdvisorDomain(classAdvisor.getManager(), name, classAdvisor.getClazz(), true);
@@ -65,7 +66,7 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
          domain.addInterfaceIntroduction(introduction);
       }
 
-      InstanceProxyContainer ia = new InstanceProxyContainer(classAdvisor.getName(), domain, classAdvisor, metaDataContext);
+      InstanceProxyContainer ia = new InstanceProxyContainer(classAdvisor.getName(), domain, classAdvisor, metaData);
       
       return ia;
    }

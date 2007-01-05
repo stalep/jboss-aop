@@ -30,6 +30,7 @@ import org.jboss.aop.Domain;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.metadata.SimpleMetaData;
 //import org.jboss.repository.spi.MetaDataContext;
+import org.jboss.metadata.spi.MetaData;
 
 /**
  * 
@@ -51,30 +52,41 @@ public class ContainerCache
    Class[] interfaces;
    AOPProxyFactoryMixin[] mixins;
 
-   //FIXME - make metaDataContext a MetaDataContext once MC 2.0 is released
-   //MetaDataContext metaDataContext;
-   Object metaDataContext;
+   MetaData metaData;
+   boolean metaDataHasInstanceLevelData;
    SimpleMetaData simpleMetaData;
 
-   private ContainerCache(AspectManager manager, Class proxiedClass, Class[] interfaces, AOPProxyFactoryMixin[] mixins, /*MetaDataContext*/ Object metaDataContext, SimpleMetaData simpleMetaData)
+   private ContainerCache(AspectManager manager, Class proxiedClass, Class[] interfaces, AOPProxyFactoryMixin[] mixins, MetaData metaData, boolean metaDataHasInstanceLevelData, SimpleMetaData simpleMetaData)
    {
       this.manager = manager;
       this.interfaces = interfaces;
       this.mixins = mixins;
-      this.metaDataContext = metaDataContext;
+      this.metaData = metaData;
       this.simpleMetaData = simpleMetaData;
-      key = new ContainerProxyCacheKey(proxiedClass, interfaces, mixins, metaDataContext);
+      this.metaDataHasInstanceLevelData = metaDataHasInstanceLevelData;
+      key = new ContainerProxyCacheKey(proxiedClass, interfaces, mixins, metaData);
    }
    
-   public static ContainerCache initialise(AspectManager manager, Class proxiedClass, /*MetaDataContext*/ Object metaDataContext)
+   public static ContainerCache initialise(AspectManager manager, Class proxiedClass, MetaData metaData, boolean metaDataHasInstanceLevelData)
    {
-      return initialise(manager, proxiedClass, null, null, metaDataContext, null);
+      return initialise(manager, proxiedClass, null, null, metaData, metaDataHasInstanceLevelData, null);
+   }
+
+   public static ContainerCache initialise(AspectManager manager, AOPProxyFactoryParameters params)
+   {
+      return initialise(
+            manager,
+            params.getProxiedClass(),
+            params.getInterfaces(),
+            params.getMixins(),
+            params.getMetaData(),
+            params.getMetaDataHasInstanceLevelData(),
+            params.getSimpleMetaData());
    }
    
-   //FIXME - make metaDataContext a MetaDataContext once MC 2.0 is released
-   public static ContainerCache initialise(AspectManager manager, Class proxiedClass, Class[] interfaces, AOPProxyFactoryMixin[] mixins, /*MetaDataContext*/ Object metaDataContext, SimpleMetaData simpleMetaData)
+   private static ContainerCache initialise(AspectManager manager, Class proxiedClass, Class[] interfaces, AOPProxyFactoryMixin[] mixins, MetaData metaData, boolean metaDataHasInstanceLevelData, SimpleMetaData simpleMetaData)
    {
-      ContainerCache factory = new ContainerCache(manager, proxiedClass, interfaces, mixins, metaDataContext, simpleMetaData);
+      ContainerCache factory = new ContainerCache(manager, proxiedClass, interfaces, mixins, metaData, metaDataHasInstanceLevelData, simpleMetaData);
       synchronized (mapLock)
       {
          factory.initClassContainer();
@@ -115,7 +127,7 @@ public class ContainerCache
    
    public boolean requiresInstanceAdvisor()
    {
-      return hasInterfaceIntroductions() || hasMixins() || metaDataContext != null || simpleMetaData != null;
+      return hasInterfaceIntroductions() || hasMixins() || (metaData!= null && metaDataHasInstanceLevelData) || simpleMetaData != null;
    }
    
    public boolean isAdvised()
@@ -248,7 +260,7 @@ public class ContainerCache
             introduction = getInterfaceIntroduction();
          }
 
-         instanceContainer = InstanceProxyContainer.createInstanceProxyContainer(classAdvisor, introduction, metaDataContext);
+         instanceContainer = InstanceProxyContainer.createInstanceProxyContainer(classAdvisor, introduction, metaData);
       }
    }
 }

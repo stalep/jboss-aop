@@ -611,9 +611,9 @@ public abstract class Advisor
     * FIXME why does this have java.lang.Object signature?
     * @param metadata the metadata
     */
-   public void setMetadata(/*MetaData*/ Object metadata)
+   public void setMetadata(MetaData metadata)
    {
-      this.metadata = (MetaData) metadata;
+      this.metadata = metadata;
    }
 
    public String getName()

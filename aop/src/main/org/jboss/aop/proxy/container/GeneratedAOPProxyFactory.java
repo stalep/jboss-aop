@@ -38,23 +38,6 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
 {
    public Object createAdvisedProxy(AOPProxyFactoryParameters params)
    {
-//      return createAdvisedProxy(
-//            params.isObjectAsSuperClass(), 
-//            params.getProxiedClass(), 
-//            params.getInterfaces(), 
-//            params.getMixins(),
-//            params.getSimpleMetaData(), 
-//            params.getTarget(),
-//            params.getMetaDataContext(),
-//            params.getContainerCache(),
-//            params.getCtor(),
-//            params.getCtorArguments());
-//   }
-//   
-//   //FIXME - make metaDataContext a MetaDataContext once MC 2.0 is released
-//   private Object createAdvisedProxy(boolean objectAsSuper, Class proxiedClass, Class[] interfaces, 
-//         AOPProxyFactoryMixin[] mixins, SimpleMetaData simpleMetaData, Object target, /*MetaDataContext*/Object metaDataContext, ContainerCache containerCache, Constructor ctor, Object[] ctorArguments)
-//   {
       if (params.getTarget() != null)
       {
          if (params.getProxiedClass() != null)
@@ -74,13 +57,9 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
          params.setProxiedClass(Object.class);
       }
       
-//      return getProxy(objectAsSuper, manager, proxiedClass, interfaces, mixins, simpleMetaData, target, metaDataContext, containerCache, ctor, ctorArguments);
       return getProxy(params);
    }
 
-   //FIXME - make metaDataContext a MetaDataContext once MC 2.0 is released
-//   private Object getProxy(boolean objectAsSuper, AspectManager manager, Class proxiedClass,  
-//         Class[] interfaces, AOPProxyFactoryMixin[] mixins, SimpleMetaData simpleMetaData, Object target, /*MetaDataContext*/ Object metaDataContext, ContainerCache containerCache, Constructor ctor, Object[] ctorArguments)
    private Object getProxy(AOPProxyFactoryParameters params)
    {
       try
@@ -89,7 +68,7 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
          
          boolean isAdvised = Advised.class.isAssignableFrom(params.getProxiedClass());
          
-         if (params.getTarget() instanceof Untransformable || (isAdvised && params.getInterfaces() == null && params.getMixins() == null && params.getMetaDataContext() == null && params.getSimpleMetaData() == null))
+         if (params.getTarget() instanceof Untransformable || (isAdvised && params.getInterfaces() == null && params.getMixins() == null && (params.getMetaData() == null || !params.getMetaDataHasInstanceLevelData()) && params.getSimpleMetaData() == null))
          {
             return params.getTarget();
          }
@@ -100,13 +79,7 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
             if (params.getContainerCache() == null)
             {
                params.setContainerCache(
-                     ContainerCache.initialise(
-                     AspectManager.instance(), 
-                     params.getProxiedClass(), 
-                     params.getInterfaces(), 
-                     params.getMixins(), 
-                     params.getMetaDataContext(), 
-                     params.getSimpleMetaData()));
+                     ContainerCache.initialise(AspectManager.instance(), params));
             }
             
             if (!params.getContainerCache().hasAspects() && !params.getContainerCache().requiresInstanceAdvisor())

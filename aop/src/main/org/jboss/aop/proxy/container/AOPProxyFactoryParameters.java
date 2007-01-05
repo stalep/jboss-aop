@@ -21,10 +21,8 @@
 */ 
 package org.jboss.aop.proxy.container;
 
-import java.lang.reflect.Constructor;
-
 import org.jboss.aop.metadata.SimpleMetaData;
-//import org.jboss.repository.spi.MetaDataContext;
+import org.jboss.metadata.spi.MetaData;
 
 /**
  * 
@@ -35,9 +33,8 @@ public class AOPProxyFactoryParameters
 {
    private Class proxiedClass;
    private Object target;
-   //FIXME convert back to MetaDataContext once the mc 2.0 has been released 
-   //private MetaData metaDataContext;
-   private Object metaDataContext;
+   private MetaData metaData;
+   private boolean metaDataHasInstanceLevelData;
    private Class[] interfaces;
    private AOPProxyFactoryMixin[] mixins; 
    private boolean objectAsSuperClass;
@@ -54,21 +51,24 @@ public class AOPProxyFactoryParameters
          Object target, 
          Class[] interfaces,
          AOPProxyFactoryMixin[] mixins,
-         Object context, 
+         MetaData metaData, 
+         boolean metaDataHasInstanceLevelData,
          boolean objectAsSuperClass,
          SimpleMetaData simpleMetaData,
          ContainerCache containerCache,
          Class[] ctorSignature,
          Object[] ctorArguments)
    {
-      this.interfaces = interfaces;
-      this.metaDataContext = context;
-      this.objectAsSuperClass = objectAsSuperClass;
       this.proxiedClass = proxiedClass;
       this.target = target;
+      this.interfaces = interfaces;
+      this.mixins = mixins;
+      this.metaData = metaData;
+      this.metaDataHasInstanceLevelData = metaDataHasInstanceLevelData;
+      this.objectAsSuperClass = objectAsSuperClass;
       this.simpleMetaData = simpleMetaData;
       this.containerCache = containerCache;
-      setCtor(ctorSignature, ctorArguments);
+      setCtor(ctorSignature, ctorArguments);      
    }
 
    public Class[] getInterfaces()
@@ -81,14 +81,14 @@ public class AOPProxyFactoryParameters
       this.interfaces = interfaces;
    }
 
-   public Object getMetaDataContext()
+   public MetaData getMetaData()
    {
-      return metaDataContext;
+      return metaData;
    }
 
-   public void setMetaDataContext(Object metaDataContext)
+   public void setMetaData(MetaData metaData)
    {
-      this.metaDataContext = metaDataContext;
+      this.metaData = metaData;
    }
 
    public boolean isObjectAsSuperClass()
@@ -154,6 +154,16 @@ public class AOPProxyFactoryParameters
    public Ctor getCtor()
    {
       return ctor;
+   }
+
+   public boolean getMetaDataHasInstanceLevelData()
+   {
+      return metaDataHasInstanceLevelData;
+   }
+
+   public void setMetaDataHasInstanceLevelData(boolean metaDataHasInstanceLevelData)
+   {
+      this.metaDataHasInstanceLevelData = metaDataHasInstanceLevelData;
    }
 
    public void setCtor(Class[] ctorSignature, Object[] ctorArguments)

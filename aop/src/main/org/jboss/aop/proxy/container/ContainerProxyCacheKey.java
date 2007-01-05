@@ -26,6 +26,8 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.jboss.metadata.spi.MetaData;
+
 //import org.jboss.repository.spi.MetaDataContext;
 
 /**
@@ -42,9 +44,7 @@ public class ContainerProxyCacheKey implements Serializable
    private WeakReference clazzRef;
    private WeakReference[] addedInterfaces = EMTPY_WR_ARRAY;
    
-   //FIXME convert back to MetaDataContext once the mc 2.0 has been released 
-   //private MetaDataContext metaDataContext;
-   private Object metaDataContext;
+   private MetaData metaData;
    
    private AOPProxyFactoryMixin[] addedMixins = EMPTY_MIXIN_ARRAY;
    private int hashcode = 0;
@@ -54,17 +54,16 @@ public class ContainerProxyCacheKey implements Serializable
       this.clazzRef = new WeakReference(clazz); 
    }
    
-   //public ContainerProxyCacheKey(Class clazz, Class[] addedInterfaces, MetaDataContext metaDataContext)
-   public ContainerProxyCacheKey(Class clazz, Class[] addedInterfaces, Object metaDataContext)
+   public ContainerProxyCacheKey(Class clazz, Class[] addedInterfaces, MetaData metaData)
    {
       this(clazz); 
       this.addedInterfaces = ContainerCacheUtil.getSortedWeakReferenceForInterfaces(addedInterfaces);
-      this.metaDataContext = metaDataContext; 
+      this.metaData = metaData; 
    }
 
-   public ContainerProxyCacheKey(Class clazz, Class[] addedInterfaces, AOPProxyFactoryMixin[] addedMixins, Object metaDataContext)
+   public ContainerProxyCacheKey(Class clazz, Class[] addedInterfaces, AOPProxyFactoryMixin[] addedMixins, MetaData metaData)
    {
-      this(clazz, addedInterfaces, metaDataContext);
+      this(clazz, addedInterfaces, metaData);
       
       if (addedMixins != null)
       {
@@ -141,9 +140,9 @@ public class ContainerProxyCacheKey implements Serializable
          
          hashcode = sb.toString().hashCode(); 
          
-         if (metaDataContext != null)
+         if (metaData != null)
          {
-            hashcode += metaDataContext.hashCode();
+            hashcode += metaData.hashCode();
          }
       }
       
@@ -177,12 +176,12 @@ public class ContainerProxyCacheKey implements Serializable
    
    private boolean compareMetadataContext(ContainerProxyCacheKey other)
    {
-      if (this.metaDataContext == null && other.metaDataContext == null)
+      if (this.metaData == null && other.metaData == null)
       {
       }
-      else if ((this.metaDataContext != null && other.metaDataContext != null))
+      else if ((this.metaData != null && other.metaData != null))
       {
-         if (!this.metaDataContext.equals(other.metaDataContext))
+         if (!this.metaData.equals(other.metaData))
          {
             return false;
          }

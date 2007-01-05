@@ -103,7 +103,7 @@ public class ClassInfoMethodHashing
    static String getTypeString(TypeInfo cl)
       throws Exception
    {
-      if (cl instanceof PrimitiveInfo)
+      if (cl.getClass().equals(PrimitiveInfo.class))
       {
          if (cl.equals(PrimitiveInfo.BYTE))
          {
