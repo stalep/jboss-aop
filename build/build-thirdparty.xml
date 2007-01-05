@@ -52,7 +52,7 @@
       <componentref name="jboss/common-logging-log4j" version="2.0.1.GA"/>
       <componentref name="jboss/common-logging-spi" version="2.0.1.GA"/>
       <componentref name="jboss/jbossretro" version="1.0.4.GA"/>
-      <componentref name="jboss/microcontainer" version="snapshot-metadata"/>
+      <componentref name="jboss/microcontainer" version="snapshot"/>
       <componentref name="jboss/microcontainer14" version="snapshot"/>
       <componentref name="jboss/profiler/jvmti" version="1.0.0.CR5"/>
       <componentref name="jboss/test" version="snapshot"/>
