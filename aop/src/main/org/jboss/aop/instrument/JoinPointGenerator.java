@@ -1737,7 +1737,13 @@ public abstract class JoinPointGenerator
       
       public static final AroundAdviceCallStrategy getInstance()
       {
-         return INSTANCE.get();
+         AroundAdviceCallStrategy strategy = INSTANCE.get();
+         if (strategy == null)
+         {
+            strategy = new AroundAdviceCallStrategy();
+            INSTANCE.set(strategy);
+         }
+         return strategy;
       }
       
       private AroundAdviceCallStrategy() {}
