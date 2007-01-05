@@ -592,6 +592,7 @@
             <include name="jboss-aop-src.zip"/>
             <include name="jrockit-pluggable-instrumentor.jar"/>
             <include name="pluggable-instrumentor.jar"/>
+            <include name="jboss-aop-src.zip"/>
          </fileset>
       </copy>
       <copy todir="${aop14.dir}">
@@ -599,18 +600,10 @@
             <include name="jboss-aop.jar"/>
             <include name="jdk14-pluggable-instrumentor.jar"/>
             <include name="jrockit-pluggable-instrumentor.jar"/>
+            <include name="jboss-aop-src.zip"/>
          </fileset>
       </copy>
    </target>
-	<target name="array-agent" depends="init">
-      <jar jarfile="${build.lib}/jboss-arraytestagent.jar"
-         manifest="${source.res}/test/array/MANIFEST.MF">
-         <fileset dir="C:/cygwin/home/Kabir/sourcecontrol/jboss-aop/aop/output/eclipse-classes">
-            <include name="org/jboss/test/aop/array/Agent.class"/>
-            <include name="org/jboss/test/aop/array/AOPTransformer.class"/>
-         </fileset>
-      </jar>
-	</target>
 	
    <target name="create-eclipse-test-agent" depends="compile-etc">
       <jar jarfile="${build.lib}/eclipse-agent.jar"
