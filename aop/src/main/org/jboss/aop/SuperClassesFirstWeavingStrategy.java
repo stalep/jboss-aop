@@ -68,7 +68,7 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 				pool.lockInCache(info.getClazz());
             if (AspectManager.debugClasses)
             {
-               info.getClazz().debugWriteFile();
+               SecurityActions.debugWriteFile(info.getClazz());
             }
 				byte[] rtn = info.getClazz().toBytecode();
 				if (AspectManager.getPrune()) info.getClazz().prune();
@@ -89,7 +89,6 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 				else
 					System.err.println("[error] " + ex.getMessage() +
                                        ".. Do verbose mode if you want full stack trace.");
-
 			}
 			throw ex;
 		}

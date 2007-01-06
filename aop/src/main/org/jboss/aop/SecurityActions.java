@@ -27,6 +27,8 @@ import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
+import javassist.CtClass;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
@@ -78,6 +80,53 @@ class SecurityActions
       else
       {
          SetAccessibleAction.PRIVILEGED.setAccessible(accessibleObject);
+      }
+   }
+
+   interface CtClassDebugWriteFileAction
+   {
+      void debugWriteFile(CtClass ctClass);
+      
+      CtClassDebugWriteFileAction PRIVILEGED = new CtClassDebugWriteFileAction()
+      {
+         public void debugWriteFile(final CtClass ctClass)
+         {
+            try
+            {
+               AccessController.doPrivileged(new PrivilegedExceptionAction()
+               {
+                  public Object run() throws Exception
+                  {
+                     ctClass.debugWriteFile();
+                     return null;
+                  }
+               });
+            }
+            catch (PrivilegedActionException e)
+            {
+               //Not really a problem if we're not able to write the debug class file
+            }
+         }
+      };
+
+      CtClassDebugWriteFileAction NON_PRIVILEGED = new CtClassDebugWriteFileAction()
+      {
+         public void debugWriteFile(CtClass ctClass)
+         {
+            ctClass.debugWriteFile();
+         }
+      };
+   }
+
+   static void debugWriteFile(CtClass ctClass)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         CtClassDebugWriteFileAction.NON_PRIVILEGED.debugWriteFile(ctClass);
+      }
+      else
+      {
+         CtClassDebugWriteFileAction.PRIVILEGED.debugWriteFile(ctClass);
       }
    }
 

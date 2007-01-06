@@ -110,7 +110,7 @@ public class ClassicWeavingStrategy extends WeavingStrategySupport
              pool.lockInCache(clazz);
              if (AspectManager.debugClasses)
              {
-                clazz.debugWriteFile();
+                SecurityActions.debugWriteFile(clazz);
              }
 
              byte[] rtn = clazz.toBytecode();
