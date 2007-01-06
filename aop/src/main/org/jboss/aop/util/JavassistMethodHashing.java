@@ -159,9 +159,11 @@ public class JavassistMethodHashing
             // (in superclasses) are not added either.
             if(!Modifier.isVolatile(declaredMethods[i].getModifiers()))
             {
-            long hash = methodHash(declaredMethods[i]);
-            if(!ignoredHash.contains(new Long(hash)))
-               advised.put(new Long(hash), declaredMethods[i]);
+               long hash = methodHash(declaredMethods[i]);
+               if(!ignoredHash.contains(new Long(hash)))
+               {
+                  advised.put(new Long(hash), declaredMethods[i]);
+               }
             }
             else
             {
@@ -177,8 +179,8 @@ public class JavassistMethodHashing
       if (superclass == null) return;
       if (superclass.getName().equals("java.lang.Object")) return;
 
-      addDeclaredMethods(advised, ignoredHash, superclass);
       populateMethodTables(advised, ignoredHash, superclass.getSuperclass());
+      addDeclaredMethods(advised, ignoredHash, superclass);
    }
 
    public static HashMap getMethodMap(CtClass clazz) throws Exception
