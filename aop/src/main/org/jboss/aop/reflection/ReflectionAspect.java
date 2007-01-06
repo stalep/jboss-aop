@@ -31,7 +31,6 @@ import org.jboss.aop.ConstructorInfo;
 import org.jboss.aop.FieldInfo;
 import org.jboss.aop.MethodByConInfo;
 import org.jboss.aop.MethodByMethodInfo;
-import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.instrument.Untransformable;
 import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.MethodCalledByConstructorInvocation;
@@ -864,7 +863,7 @@ public class ReflectionAspect
 
       if (advisor == null)
       {
-         return clazz.getDeclaredMethods();
+         return getDeclaredMethods(clazz);
       }
       else
       {
@@ -889,7 +888,7 @@ public class ReflectionAspect
    {
 
       ClassAdvisor advisor = AspectManager.instance().getAdvisorIfAdvised(clazz);
-      Method method = clazz.getDeclaredMethod((String) args[0], (Class[]) args[1]);
+      Method method = getDeclaredMethod(clazz, (String) args[0], (Class[]) args[1]);
 
       if (advisor == null)
       {
@@ -966,10 +965,7 @@ public class ReflectionAspect
 
          if (advisor == null)
          {
-//            foundMethods = GETclazz.getDeclaredMethods();
-            foundMethods = System.getSecurityManager() == null ? 
-                  GetDeclaredMethodsAction.NON_PRIVILEGED.getDeclaredMethods(clazz) :
-                     GetDeclaredMethodsAction.PRIVILEGED.getDeclaredMethods(clazz);
+            foundMethods = getDeclaredMethods(clazz);
          }
          else
          {
@@ -1040,7 +1036,7 @@ public class ReflectionAspect
 
       if (advisor == null)
       {
-         return clazz.getDeclaredFields();
+         return getDeclaredFields(clazz);
       }
       else
       {
@@ -1074,7 +1070,7 @@ public class ReflectionAspect
    
    private Class[] interceptGetDeclaredClasses(Class clazz) throws Throwable
    {
-      Class[] classes = clazz.getDeclaredClasses();
+      Class[] classes = getDeclaredClasses(clazz);
       return cleanClasses(classes);
    }
    
@@ -1134,7 +1130,7 @@ public class ReflectionAspect
    {
 
       ClassAdvisor advisor = AspectManager.instance().getAdvisorIfAdvised(clazz);
-      Field field = clazz.getDeclaredField((String) args[0]);
+      Field field = getDeclaredField(clazz, (String) args[0]);
 
       if (advisor == null)
       {
@@ -1471,21 +1467,55 @@ public class ReflectionAspect
       }
    }
    
-   private interface GetDeclaredMethodsAction
+   private interface SecurityAction
    {
       Method[] getDeclaredMethods(Class clazz);
+      Field[] getDeclaredFields(Class clazz);
+      Class[] getDeclaredClasses(Class clazz);
+      Field getDeclaredField(Class clazz, String name) throws NoSuchFieldException;
+      Method getDeclaredMethod(Class clazz, String name, Class[] paramTypes) throws NoSuchMethodException;
 
-      GetDeclaredMethodsAction NON_PRIVILEGED = new GetDeclaredMethodsAction()
+      SecurityAction NON_PRIVILEGED = new SecurityAction()
       {
+         public Field[] getDeclaredFields(Class clazz)
+         {
+            return clazz.getDeclaredFields();
+         }
+
          public Method[] getDeclaredMethods(Class clazz)
          {
             return clazz.getDeclaredMethods();
          }
+
+         public Class[] getDeclaredClasses(Class clazz)
+         {
+            return clazz.getDeclaredClasses();
+         }
+
+         public Field getDeclaredField(Class clazz, String name) throws NoSuchFieldException
+         {
+            return clazz.getDeclaredField(name);
+         }
+
+         public Method getDeclaredMethod(Class clazz, String name, Class[] paramTypes) throws NoSuchMethodException
+         {
+            return clazz.getDeclaredMethod(name, paramTypes);
+         }
       };
       
 
-      GetDeclaredMethodsAction PRIVILEGED = new GetDeclaredMethodsAction()
+      SecurityAction PRIVILEGED = new SecurityAction()
       {
+         public Field[] getDeclaredFields(final Class clazz)
+         {
+            return (Field[])AccessController.doPrivileged(new PrivilegedAction(){
+               public Object run()
+               {
+                  return clazz.getDeclaredFields();
+               }
+            });
+         }
+
          public Method[] getDeclaredMethods(final Class clazz)
          {
             return (Method[])AccessController.doPrivileged(new PrivilegedAction(){
@@ -1495,7 +1525,120 @@ public class ReflectionAspect
                }
             });
          }
+
+         public Class[] getDeclaredClasses(final Class clazz)
+         {
+            return (Class[])AccessController.doPrivileged(new PrivilegedAction(){
+               public Object run()
+               {
+                  return clazz.getDeclaredClasses();
+               }
+            });
+         }
+
+         public Field getDeclaredField(final Class clazz, final String name) throws NoSuchFieldException 
+         {
+            try
+            {
+               return (Field)AccessController.doPrivileged(new PrivilegedExceptionAction(){
+                  public Object run() throws Exception
+                  {
+                     return clazz.getDeclaredField(name);
+                  }
+               });
+            }
+            catch (PrivilegedActionException e)
+            {
+               Exception ex = e.getException();
+               if (ex instanceof NoSuchFieldException)
+               {
+                  throw (NoSuchFieldException)ex;
+               }
+               throw new RuntimeException(ex);
+            }
+         }
+
+         public Method getDeclaredMethod(final Class clazz, final String name, final Class[] paramTypes) throws NoSuchMethodException 
+         {
+            try
+            {
+               return (Method)AccessController.doPrivileged(new PrivilegedExceptionAction(){
+                  public Object run() throws Exception
+                  {
+                     return clazz.getDeclaredMethod(name, paramTypes);
+                  }
+               });
+            }
+            catch (PrivilegedActionException e)
+            {
+               Exception ex = e.getException();
+               if (ex instanceof NoSuchMethodException)
+               {
+                  throw (NoSuchMethodException)ex;
+               }
+               throw new RuntimeException(ex);
+            }
+         }
       };
    }
    
+   private static Method[] getDeclaredMethods(Class clazz)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         return SecurityAction.NON_PRIVILEGED.getDeclaredMethods(clazz);
+      }
+      else
+      {
+         return SecurityAction.PRIVILEGED.getDeclaredMethods(clazz);
+      }
+   }
+
+   private static Field[] getDeclaredFields(Class clazz)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         return SecurityAction.NON_PRIVILEGED.getDeclaredFields(clazz);
+      }
+      else
+      {
+         return SecurityAction.PRIVILEGED.getDeclaredFields(clazz);
+      }
+   }
+
+   private static Class[] getDeclaredClasses(Class clazz)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         return SecurityAction.NON_PRIVILEGED.getDeclaredClasses(clazz);
+      }
+      else
+      {
+         return SecurityAction.PRIVILEGED.getDeclaredClasses(clazz);
+      }
+   }
+
+   private static Field getDeclaredField(Class clazz, String name) throws NoSuchFieldException
+   {
+      if (System.getSecurityManager() == null)
+      {
+         return SecurityAction.NON_PRIVILEGED.getDeclaredField(clazz, name);
+      }
+      else
+      {
+         return SecurityAction.PRIVILEGED.getDeclaredField(clazz, name);
+      }
+   }
+
+   private static Method getDeclaredMethod(Class clazz, String name, Class[] paramTypes) throws NoSuchMethodException
+   {
+      if (System.getSecurityManager() == null)
+      {
+         return SecurityAction.NON_PRIVILEGED.getDeclaredMethod(clazz, name, paramTypes);
+      }
+      else
+      {
+         return SecurityAction.PRIVILEGED.getDeclaredMethod(clazz, name, paramTypes);
+      }
+   }
 }

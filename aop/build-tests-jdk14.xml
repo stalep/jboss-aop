@@ -169,6 +169,7 @@
       <path id="jbossretrort.classpath">
          <path refid="jboss/backport.concurrent.classpath"/>
          <pathelement path="${jboss.jbossretro.lib}/jbossretro-rt.jar"/>
+			<path refid="jboss.microcontainer14.classpath"/>
       </path>
 
       <path id="jboss.aop.retro.classpath">
