@@ -78,6 +78,10 @@ public class JoinpointFullClassifier extends JoinpointClassifier
             else if (pointcutInfo.isDynamicAop())
             {
                classification = JoinpointClassification.DYNAMICALY_WRAPPED;
+               synchronized (pointcutInfo)
+               {
+                  pointcutInfo.setDynamicAop(false);
+               }
             } 
             else
             {

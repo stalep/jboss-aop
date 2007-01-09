@@ -83,6 +83,9 @@ class InstrumentationAdapter implements HotSwapper
       {
          throw new RuntimeException(e);
       }
-      this.classDefinitions.clear();
+      finally
+      {
+         this.classDefinitions.clear();
+      }
    }
 }

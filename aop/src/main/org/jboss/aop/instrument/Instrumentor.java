@@ -630,15 +630,11 @@ public abstract class Instrumentor
    public boolean transform(CtClass clazz,
                             ClassAdvisor advisor)
    {
-      synchronized(this.processedClasses)
-      {
-         processedClasses.add(clazz);
-      }
       try
       {
          if (shouldNotTransform(clazz)) return false;
          if (AspectManager.verbose) System.out.println("[trying to transform] " + clazz.getName());
-
+         
          DeclareChecker.checkDeclares(manager, clazz, advisor);
 
          boolean converted = instrumentAnnotationIntroductions(clazz, advisor);
@@ -689,6 +685,11 @@ public abstract class Instrumentor
          // notifies dynamic transformation observer
          dynamicTransformationObserver.transformationFinished(clazz, converter);
 
+         synchronized(this.processedClasses)
+         {
+            processedClasses.add(clazz);
+         }
+         
          if (AspectManager.verbose) System.out.println("[debug] was " + clazz.getName() + " converted: " + (basicsSet || converted));
 
          if (basicsSet || converted)

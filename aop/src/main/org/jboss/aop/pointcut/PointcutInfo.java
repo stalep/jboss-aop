@@ -90,4 +90,9 @@ public class PointcutInfo
    {
       return this.dynamicAop;
    }
+   
+   public void setDynamicAop(boolean ok)
+   {
+      this.dynamicAop = ok;
+   }
 }
