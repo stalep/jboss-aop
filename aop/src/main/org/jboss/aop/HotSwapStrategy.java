@@ -24,6 +24,9 @@ package org.jboss.aop;
 import gnu.trove.TLongObjectHashMap;
 
 import java.lang.reflect.Constructor;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -35,6 +38,7 @@ import javassist.CtClass;
 import javassist.CtField;
 import javassist.NotFoundException;
 
+import org.jboss.aop.SecurityActions.SetAccessibleAction;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.instrument.DynamicTransformationObserver;
 import org.jboss.aop.instrument.HotSwapper;
@@ -261,12 +265,36 @@ public class HotSwapStrategy implements DynamicAOPStrategy
        * This method must be called before any other notification method is invoked.
        * @see org.jboss.aop.InterceptorChainObserver#initialInterceptorChains(Interceptor[][], Interceptor[][], Interceptor[][], TLongObjectHashMap)
        */
-      public synchronized void initialInterceptorChains(Class reflectionClass, Interceptor[][] fieldReadInterceptors, Interceptor[][] fieldWriteInterceptors,
+      public synchronized void initialInterceptorChains(final Class reflectionClass, Interceptor[][] fieldReadInterceptors, Interceptor[][] fieldWriteInterceptors,
             Interceptor[][] constructorInterceptors, TLongObjectHashMap methodInterceptors)
       {
-         Constructor[] declaredConstructors = reflectionClass.getDeclaredConstructors();
+         Constructor[] declaredConstructors = null;
+         if (System.getSecurityManager() == null)
+         {
+            declaredConstructors = reflectionClass.getDeclaredConstructors();
+         }
+         else
+         {
+            try
+            {
+               declaredConstructors = 
+                  AccessController.doPrivileged(new PrivilegedExceptionAction<Constructor[]>()
+               {
+                  public Constructor[] run() throws Exception
+                  {
+                     return reflectionClass.getDeclaredConstructors();
+                  }
+               });
+            }
+            catch (PrivilegedActionException e)
+            {
+               throw new RuntimeException("Error retrieving declared constructors of " + reflectionClass.getName(), e.getException());
+            }
+            
+         }
+         
+         
          constructorIndexMap = new int[declaredConstructors.length];
-         Collection constructorList = new ArrayList();
          int javassistIndex = 0;
          for (int reflectionIndex = 0; reflectionIndex < declaredConstructors.length; reflectionIndex++)
          {
