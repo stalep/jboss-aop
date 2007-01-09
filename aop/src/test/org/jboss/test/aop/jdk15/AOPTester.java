@@ -25,6 +25,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
+import org.jboss.aop.annotation.AnnotationElement;
 import org.jboss.aop.annotation.factory.duplicate.AnnotationCreator;
 import org.jboss.test.aop.AOPTestWithSetup;
 
@@ -93,7 +94,7 @@ public class AOPTester extends AOPTestWithSetup
       AnnotatedPOJO pojo = new AnnotatedPOJO();
       if (!SimpleInterceptor.intercepted) throw new RuntimeException("failed to intercept tagged constructor");
 
-      complex c = (complex) AnnotatedPOJO.class.getAnnotation(complex.class);
+      complex c = (complex) AnnotationElement.getAnyAnnotation(AnnotatedPOJO.class, complex.class);
       printComplex(c);
 
       SimpleInterceptor.intercepted = false;
