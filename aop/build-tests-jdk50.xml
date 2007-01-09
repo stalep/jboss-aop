@@ -212,8 +212,11 @@
          <include name="**/*.java"/>
          <exclude name="org/jboss/test/aop/memoryleaks/**/*.java"/>
       </javac>
+      <jar destfile="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
+        basedir="${build.tests.classes}" includes="org/jboss/test/aop/jdk15/dynamic/common/scenario/**"/>
+      <delete dir="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
    </target>
-
+   
    <!-- ================================================================== -->
    <!-- Cleaning                                                           -->
    <!-- ================================================================== -->
@@ -541,7 +544,7 @@
    <target name="precompiled-genadvisor-test" depends="init">
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
       <antcall target="_run-precompiled-test" inheritRefs="true">
-         <param name="test" value="args"/>
+         <param name="test" value="${test}"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
 	</target>
@@ -617,13 +620,14 @@
             <isset property="use.annotations"/>
          </not>
       </condition>
-
+ 
       <!-- determine output directory from weaving mode -->
       <mkdir dir="${build.reports}"/>
 
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
+         <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
          <sysproperty key="jboss-junit-configuration" value="${caller}"/>
          <formatter type="plain" extension="-${caller}-jdk50.txt"/>
          <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-${caller}-jdk50.xml"/>
@@ -701,7 +705,26 @@
 
       <property name="report.dir" value="${build.reports}"/>
       <mkdir dir="${report.dir}"/>
-
+      
+      <junit printsummary="yes" fork="yes" haltonfailure="no">
+         <sysproperty key="jboss.aop.path" value="${source.res}/test/jdk15/jboss-aop.xml"/>
+         <sysproperty key="jboss.aop.class.path" value="${build.tests.classes}"/>
+         <sysproperty key="jboss.aop.verbose" value="${jboss.aop.verbose}"/>
+         <sysproperty key="java5Agent" value="true"/>
+         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
+         <sysproperty key="jboss.aop.prune" value="false"/>
+         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
+         <classpath>
+            <path refid="test.classpath"/>
+            <pathelement location="${build.tests.classes}"/>
+            <pathelement location="docs"/>
+         </classpath>
+         <formatter usefile="true" type="plain" extension="-jdk15-loadtime-tests.txt"/>
+         <formatter usefile="true" type="xml" extension="-jdk15-loadtime-tests.xml"/>
+         <test todir="${report.dir}" name="org.jboss.test.aop.jdk15.AOPTester"/>
+         <test todir="${report.dir}" name="org.jboss.test.aop.jdk15annotated.AnnotatedTestCase"/>
+      </junit>
+   
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${source.res}/test/jdk15/dynamic/prepareAll/jboss-aop.xml"/>
          <sysproperty key="scenario.jar" value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"/>
@@ -710,7 +733,7 @@
          <sysproperty key="jboss.aop.prune" value="false"/>
          <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -727,7 +750,7 @@
          <sysproperty key="jboss.aop.prune" value="false"/>
          <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -743,7 +766,7 @@
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -759,7 +782,7 @@
          <sysproperty key="jboss.aop.prune" value="false"/>
          <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -775,7 +798,7 @@
          <sysproperty key="jboss.aop.prune" value="false"/>
          <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -791,7 +814,7 @@
          <sysproperty key="jboss.aop.prune" value="false"/>
          <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -809,7 +832,7 @@
 
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
       <path id="aop.task.classpath">
-         <path refid="test15.classpath"/>
+         <path refid="test.classpath"/>
          <pathelement location="${build.tests.classes}"/>
          <pathelement location="docs"/>
       </path>
@@ -819,6 +842,7 @@
          <classpath path="${build.tests.classes}"/>
          <src path="${build.tests.classes}"/>
          <include name="org/jboss/test/aop/jdk15/**"/>
+         <include name="org/jboss/test/aop/jdk15annotated/**"/>
          <exclude name="org/jboss/test/aop/jdk15/dynamic/**"/>
          <aoppath path="${source.res}/test/jdk15/jboss-aop.xml"/>
          <aopclasspath path="${build.tests.classes}"/>
@@ -915,24 +939,24 @@
            basedir="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario/"/>
       <delete dir="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
 
-        <junit printsummary="yes" fork="yes" haltonfailure="no">
+      <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${source.res}/test/jdk15/jboss-aop.xml"/>
          <sysproperty key="jboss.aop.class.path" value="${build.tests.classes}"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
          <formatter usefile="true" type="plain" extension="-jdk15-precompiled-tests.txt"/>
          <formatter usefile="true" type="xml" extension="-jdk15-precompiled-tests.xml"/>
          <test todir="${report.dir}" name="org.jboss.test.aop.jdk15.AOPTester"/>
-         <test todir="${report.dir}" name="org.jboss.test.aop.jdk15.annotated.AnnotatedTestCase"/>
+         <test todir="${report.dir}" name="org.jboss.test.aop.jdk15annotated.AnnotatedTestCase"/>
       </junit>
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${source.res}/test/basic/jboss-aop.xml"/>
          <sysproperty key="jboss.aop.class.path" value="${build.tests.classes}"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -945,7 +969,7 @@
          <sysproperty key="scenario.jar"
             value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenarioAopcPrepareAll.jar"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -958,7 +982,7 @@
          <sysproperty key="scenario.jar"
             value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenarioAopcPrepareConstructor.jar"/>
            <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -971,7 +995,7 @@
          <sysproperty key="scenario.jar"
              value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenarioAopcPrepareField.jar"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -984,7 +1008,7 @@
         <sysproperty key="scenario.jar"
             value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenarioAopcPrepareFieldGet.jar"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -997,7 +1021,7 @@
          <sysproperty key="scenario.jar"
             value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenarioAopcPrepareFieldSet.jar"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -1010,7 +1034,7 @@
          <sysproperty key="scenario.jar"
             value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenarioAopcPrepareMethod.jar"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -1027,11 +1051,12 @@
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${source.res}/test/jdk15/dynamic/prepareAll/jboss-aop.xml"/>
          <sysproperty key="scenario.jar" value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"/>
+         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <!-- don't prune it so that we can inspect the bytecodes state during tests execution -->
          <sysproperty key="jboss.aop.prune" value="false"/>
          <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar=-hotSwap"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -1042,10 +1067,11 @@
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${source.res}/test/jdk15/dynamic/prepareConstructor/jboss-aop.xml"/>
          <sysproperty key="scenario.jar" value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"/>
+         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
          <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar=-hotSwap"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -1056,10 +1082,11 @@
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${source.res}/test/jdk15/dynamic/prepareMethod/jboss-aop.xml"/>
          <sysproperty key="scenario.jar" value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"/>
+         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
          <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar=-hotSwap"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -1070,10 +1097,11 @@
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${source.res}/test/jdk15/dynamic/prepareField/jboss-aop.xml"/>
          <sysproperty key="scenario.jar" value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"/>
+         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
          <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar=-hotSwap"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -1084,10 +1112,11 @@
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${source.res}/test/jdk15/dynamic/prepareFieldGet/jboss-aop.xml"/>
          <sysproperty key="scenario.jar" value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"/>
+         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
          <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar=-hotSwap"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -1098,10 +1127,11 @@
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${source.res}/test/jdk15/dynamic/prepareFieldSet/jboss-aop.xml"/>
          <sysproperty key="scenario.jar" value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"/>
+         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
          <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar=-hotSwap"/>
          <classpath>
-            <path refid="test15.classpath"/>
+            <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
