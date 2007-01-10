@@ -105,16 +105,28 @@ public class InterfaceIntroduction
    protected ArrayList mixins = new ArrayList();
    protected ClassExpression classExpr;
    protected ASTStart ast;
+   
+   protected String constructorClass; // name of the class containing the mixin constructor method
+   protected String constructorMethod; // name of the mixin constructor method
 
    public InterfaceIntroduction()
    {
 
    }
+   
    public InterfaceIntroduction(String name, String exp, String[] interfaces)
    {
       this.name = name;
       this.interfaces = interfaces;
       this.classExpr = new ClassExpression(exp);
+   }
+   
+   public InterfaceIntroduction(String name, String exp, String[] interfaces,
+         String constructorClass, String constructorMethod)
+   {
+      this(name, exp, interfaces);
+      this.constructorClass = constructorClass;
+      this.constructorMethod = constructorMethod;
    }
 
    public InterfaceIntroduction(String name, ASTStart ast, String[] interfaces)
@@ -122,6 +134,15 @@ public class InterfaceIntroduction
       this.name = name;
       this.ast = ast;
       this.interfaces = interfaces;
+   }
+
+   
+   public InterfaceIntroduction(String name, ASTStart ast, String[] interfaces,
+         String constructorClass, String constructorMethod)
+   {
+      this(name, ast, interfaces);
+      this.constructorClass = constructorClass;
+      this.constructorMethod = constructorMethod;
    }
 
    public void setClassExpression(String exp)
@@ -176,7 +197,18 @@ public class InterfaceIntroduction
       return mixins;
    }
 
+   // this value is set only when there is a mixin constructor class and this
+   // method receives the target as parameter
+   public String getConstructorClass()
+   {
+      return this.constructorClass;
+   }
 
+   public String getConstructorMethod()
+   {
+      return this.constructorMethod;
+   }
+   
    public void addAdvisor(Advisor advisor)
    {
       advisors.add(new WeakReference(advisor));

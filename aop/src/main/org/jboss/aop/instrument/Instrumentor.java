@@ -231,7 +231,51 @@ public abstract class Instrumentor
       // mixin is adding any interfaces already
       // defined in base class or another mixin.
       CtClass mixinClass = classPool.get(mixin.getClassName());
-      String initializer = (mixin.getConstruction() == null) ? ("new " + mixinClass.getName() + "()") : mixin.getConstruction();
+
+      // check mixin constructor method if this is the case
+      if (pointcut.getConstructorClass() != null)
+      {
+         CtClass type = forName(pointcut.getConstructorClass());
+         CtMethod[] methods = type.getDeclaredMethods();
+         boolean correct = false;
+         for (int i = 0; i < methods.length; i++)
+         {
+            if (methods[i].getName().equals(pointcut.getConstructorMethod())
+                  && methods[i].getParameterTypes().length == 1)
+            {
+               if (clazz.subclassOf(methods[i].getParameterTypes()[0]))
+               {
+                  correct = true;
+               }
+
+            }
+         }
+         if (!correct)
+         {
+            throw new RuntimeException("Could not find a method named '" + 
+                  pointcut.getConstructorMethod() + "' on class " +
+                  pointcut.getConstructorClass() + " that receives " + 
+                  clazz.getName() + " or one of its superclasses as parameter.");
+         }
+      }
+      
+      String initializer = null;
+      if (mixin.getConstruction() == null)
+      {
+         CtConstructor[] constructors = mixinClass.getConstructors();
+         for (int i = 0; i < constructors.length; i++)
+            System.out.println("constructors[" + i + "] = " + constructors[i].getSignature());
+         if (mixinClass.getConstructor("()V") == null)
+         {
+            throw new RuntimeException("Default constructor of mixin class '" +
+                  mixinClass + "' not found.");
+         }
+         initializer = "new " + mixinClass.getName() + "()";
+      }
+      else
+      {
+         initializer = mixin.getConstruction(); 
+      } 
       CtClass type = forName(mixinClass.getName());
       CtField field = new CtField(type, mixinFieldName(mixinClass), clazz);
       int modifiers = Modifier.PRIVATE;
@@ -271,7 +315,17 @@ public abstract class Instrumentor
             }
             // If another interface of this mixin has a duplicate method, then its ok, but don't re-add
             if (addedMethods.contains(hash)) continue;
-            createMixinInvokeMethod(clazz, mixinClass, initializer, method, hash.longValue());
+            try{
+               createMixinInvokeMethod(clazz, mixinClass, initializer, method, hash.longValue());
+            }
+            catch (CannotCompileException e)
+            {
+               String generatedCode = "class " + clazz.getName() + "\n{\n   ...\n" +
+                      "   private " + type.getName() + " = " + initializer + ";\n"
+                      + "   ...\n}";
+               throw new RuntimeException("Mixin construction expression '"
+                  + initializer + "' may have sintax error:\n" + generatedCode, e);
+            }
             baseMethods.put(hash, method);
             addedMethods.add(hash);
          }

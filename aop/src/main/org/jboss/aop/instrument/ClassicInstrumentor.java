@@ -147,17 +147,9 @@ public class ClassicInstrumentor extends Instrumentor
       "   }" +
       "}";
       
-      CtMethod wmethod = null;
-      try
-      {
-         wmethod = CtNewMethod.make(method.getReturnType(), method.getName(), method.getParameterTypes(),
+      CtMethod wmethod = CtNewMethod.make(method.getReturnType(), method.getName(), method.getParameterTypes(),
                method.getExceptionTypes(), code, clazz);
          wmethod.setModifiers(modifier);
-      }
-      catch (CannotCompileException e)
-      {
-         throw new RuntimeException("<mixin> construction may have syntax error: '" + initializer + "'", e);
-      }
       clazz.addMethod(wmethod);
       
       return wmethod;

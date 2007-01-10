@@ -183,7 +183,10 @@ public class AnnotatedTestCase extends AOPTestWithSetup
       System.out.println("deserialized pojo2.stuff2: " + pojo2.stuff);
       assertTrue("writeExternal was not called for pojo2", ExternalizableMixin.write);
       assertTrue("readExternal was not called for pojo2", ExternalizableMixin.read);
-
+      
+      ComparableMixin.COMPARED = false;
+      ((Comparable) pojo2).compareTo(null);
+      assertTrue("mixin method was not called", ComparableMixin.COMPARED);
    }
 
    public void testIntroduction() throws Exception

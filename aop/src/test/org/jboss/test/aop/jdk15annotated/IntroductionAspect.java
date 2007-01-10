@@ -37,6 +37,11 @@ public class IntroductionAspect
        return new ExternalizableMixin(pojo);
    }
    
+   @Mixin (target=org.jboss.test.aop.jdk15annotated.NoInterfacesPOJO2.class, interfaces={Comparable.class})
+   public static ComparableMixin createComparableMixin(/*NoInterfacesPOJO2 pojo*/) {
+       return new ComparableMixin();
+   }
+   
    @Introduction (target=org.jboss.test.aop.jdk15annotated.NoInterfacesPOJO.class, interfaces={org.jboss.test.aop.jdk15annotated.EmptyInterface.class})
    public static Object noInterfacesPOJOIntro;
 

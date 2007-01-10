@@ -21,8 +21,18 @@
   */
 package org.jboss.aop;
 
+import java.io.DataInputStream;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javassist.CtClass;
+import javassist.CtPrimitiveType;
+import javassist.Modifier;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
+import javassist.bytecode.Descriptor;
 import javassist.bytecode.FieldInfo;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.annotation.ArrayMemberValue;
@@ -61,12 +71,6 @@ import org.jboss.aop.pointcut.ast.ASTStart;
 import org.jboss.aop.pointcut.ast.PointcutExpressionParser;
 import org.jboss.aop.pointcut.ast.TypeExpressionParser;
 import org.jboss.aop.util.MethodHashing;
-
-import java.io.DataInputStream;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Comment
@@ -595,7 +599,6 @@ public class AspectAnnotationLoader
          
          MemberValue mv = binfo.getMemberValue("target");
          String target = (mv != null) ? ((ClassMemberValue) mv).getValue() : "java.lang.Class";//Note! this should be the same as the default in @Mixin
-
          mv = binfo.getMemberValue("typeExpression");
          String typeExpression = (mv != null) ? ((StringMemberValue) mv).getValue() : "";//Note! this should be the same as the default in @Mixin
 
@@ -608,14 +611,82 @@ public class AspectAnnotationLoader
          boolean isTransient = (mv != null) ? ((BooleanMemberValue) mv).getValue() : true;//Note! this should be the same as the default in @Mixin
 
          String name = cf.getName() + "." + minfo.getName(); //Name of the method defined on
+         
+         InterfaceIntroduction intro = null;
+         String construction = name;
+         switch(Descriptor.numOfParameters(minfo.getDescriptor()))
+         {
+            case 0:
+               construction += "()";
+               break;
+            case 1:
+               construction += "(this)";
+               
+/*               
+               String parameter = Descriptor.getParamDescriptor(minfo.getDescriptor());
+               
+               if (parameter.charAt(1) != 'L')
+               {
+                  String errorMessage = "Mixin creator method '" + name +
+                  "' parameter is primitive type ";
+                  char desc = parameter.charAt(1);
+                  if (desc == ((CtPrimitiveType) CtClass.booleanType).getDescriptor())
+                  {
+                     errorMessage += "boolean";
+                  }
+                  else if (desc == ((CtPrimitiveType) CtClass.byteType).getDescriptor())
+                  {
+                     errorMessage += "byte";
+                  }
+                  else if (desc == ((CtPrimitiveType) CtClass.charType).getDescriptor())
+                  {
+                     errorMessage += "char";
+                  }
+                  else if (desc == ((CtPrimitiveType) CtClass.doubleType).getDescriptor())
+                  {
+                     errorMessage += "double";
+                  }
+                  else if (desc == ((CtPrimitiveType) CtClass.floatType).getDescriptor())
+                  {
+                     errorMessage += "float";
+                  }
+                  else if (desc == ((CtPrimitiveType) CtClass.intType).getDescriptor())
+                  {
+                     errorMessage += "int";
+                  }
+                  else if (desc == ((CtPrimitiveType) CtClass.longType).getDescriptor())
+                  {
+                     errorMessage += "long";
+                  }
+                  else if (desc == ((CtPrimitiveType) CtClass.shortType).getDescriptor())
+                  {
+                     errorMessage += "short";
+                  }
+                  else
+                  {
+                     break;
+                  }
+                  errorMessage += ".\n   It should have the introduction target type as parameter, or have no parameter at all.";
+                  throw new RuntimeException(errorMessage);
 
-         InterfaceIntroduction intro = createIntroduction(name, target, typeExpression, null);
-
-
-         String construction = name + "(this)";
+               }*/
+               break;
+            default:
+               throw new RuntimeException("Mixin creator method '" + name +
+                     "' should not have more than one parameter.");
+         }
+         
+         intro = createIntroduction(name, target, typeExpression, null, null, null);//cf.getName(), minfo.getName());         
+         if (!Modifier.isStatic(minfo.getAccessFlags()) ||
+               !Modifier.isPublic(minfo.getAccessFlags()))
+         {
+            throw new RuntimeException("Mixin creator method '" + name +
+                  "' must be public and static.");
+         }
          
          //Parse the descriptor to get the returntype of the method.
          String classname = getReturnType(minfo);
+         
          intro.getMixins().add(new InterfaceIntroduction.Mixin(classname, interfaces, construction, isTransient));
 
          manager.addInterfaceIntroduction(intro);
@@ -674,7 +745,7 @@ public class AspectAnnotationLoader
 
          String name = cf.getName() + "." + finfo.getName(); //Name of the field defined on
 
-         InterfaceIntroduction interfaceIntro = createIntroduction(name, target, typeExpression, interfaces);
+         InterfaceIntroduction interfaceIntro = createIntroduction(name, target, typeExpression, interfaces, null, null);
          manager.addInterfaceIntroduction(interfaceIntro);
       }
    }
@@ -916,7 +987,8 @@ public class AspectAnnotationLoader
       return cf.getName() + "." + finfo.getName();
    }
 
-   private InterfaceIntroduction createIntroduction(String name, String target, String typeExpression, String[] interfaces)
+   private InterfaceIntroduction createIntroduction(String name, String target, String typeExpression, String[] interfaces,
+         String constructorClass, String constructorMethod)
    throws Exception
    {
       if (typeExpression != null && typeExpression.trim().equals(""))
@@ -944,12 +1016,12 @@ public class AspectAnnotationLoader
 
       if (target != null)
       {
-         intro = new InterfaceIntroduction(name, target, interfaces);
+         intro = new InterfaceIntroduction(name, target, interfaces, constructorClass, constructorMethod);
       }
       else
       {
          ASTStart start = new TypeExpressionParser(new StringReader(typeExpression)).Start();
-         intro = new InterfaceIntroduction(name, start, interfaces);
+         intro = new InterfaceIntroduction(name, start, interfaces, constructorClass, constructorMethod);
       }
 
       return intro;
