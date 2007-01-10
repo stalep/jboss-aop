@@ -1030,8 +1030,8 @@ public class AspectAnnotationLoader
    private String getReturnType(MethodInfo minfo)
    {
       String descriptor = minfo.getDescriptor();
-      int paramsEnd = descriptor.indexOf(";)");
-      String classname = descriptor.substring(paramsEnd + 3, descriptor.length() - 1);
+      int paramsEnd = descriptor.indexOf(")");
+      String classname = descriptor.substring(paramsEnd + 2, descriptor.length() - 1);
       classname = classname.replace('/', '.');
       return classname;
    }
