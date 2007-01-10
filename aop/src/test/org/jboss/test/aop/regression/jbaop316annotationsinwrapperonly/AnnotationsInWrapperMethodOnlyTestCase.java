@@ -23,12 +23,9 @@ package org.jboss.test.aop.regression.jbaop316annotationsinwrapperonly;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 
 import org.jboss.aop.Advised;
-import org.jboss.aop.annotation.AnnotationElement;
 import org.jboss.aop.annotation.PortableAnnotationElement;
 import org.jboss.test.aop.AOPTestWithSetup;
 
@@ -93,33 +90,4 @@ public class AnnotationsInWrapperMethodOnlyTestCase extends AOPTestWithSetup
       assertEquals("method1", hasParameterAnnotation.get(0));
       assertTrue("Class was not woven", Advised.class.isAssignableFrom(POJO.class));
    }
-
-   private interface IsAnnotationPresentAction
-   {
-      boolean isAnnotationPresent(Method m, Class clazz);
-
-      IsAnnotationPresentAction NON_PRIVILEGED = new IsAnnotationPresentAction()
-      {
-         public boolean isAnnotationPresent(Method m, Class clazz)
-         {
-            return m.isAnnotationPresent(clazz);
-         }
-      };
-      
-
-      IsAnnotationPresentAction PRIVILEGED = new IsAnnotationPresentAction()
-      {
-         public boolean isAnnotationPresent(final Method m, final Class clazz)
-         {
-            Boolean present = (Boolean)AccessController.doPrivileged(new PrivilegedAction(){
-               public Object run()
-               {
-                  return m.isAnnotationPresent(clazz) ? Boolean.TRUE : Boolean.FALSE;
-               }
-            });
-            return present.booleanValue();
-         }
-      };
-   }
-      
 }
