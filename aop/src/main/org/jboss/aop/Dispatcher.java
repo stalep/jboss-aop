@@ -92,7 +92,7 @@ public class Dispatcher
       }
       else if (target instanceof Proxy)
       {
-         ClassProxy proxy = (ClassProxy) target;
+         Proxy proxy = (Proxy) target;
          return proxy._dynamicInvoke(invocation);
       }
       else if (target instanceof Advised)
