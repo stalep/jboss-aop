@@ -38,7 +38,6 @@ import org.jboss.aop.util.Advisable;
 import org.jboss.aop.util.ConstructorComparator;
 import org.jboss.aop.util.FieldComparator;
 import org.jboss.aop.util.MethodHashing;
-import gnu.trove.TLongObjectHashMap;
 
 /**
  * Comment
@@ -48,6 +47,8 @@ import gnu.trove.TLongObjectHashMap;
  */
 public class ClassContainer extends Advisor
 {
+   private boolean chainOverridingForInheritedMethods;
+   
    public ClassContainer(String name, AspectManager manager)
    {
       super(name, manager);
@@ -261,5 +262,24 @@ public class ClassContainer extends Advisor
       populateInterceptorsFromInfos();
 
       doesHaveAspects = adviceBindings.size() > 0;
+   }
+
+   /**
+    * @return the value of chainOverridingForInheritedMethods
+    * @see Advisor#chainOverridingForInheritedMethods()
+    */
+   @Override
+   public boolean chainOverridingForInheritedMethods()
+   {
+      return chainOverridingForInheritedMethods;
+   }
+
+   /**
+    * @param overriding the new value of chainOverridingForInheritedMethods
+    * @see Advisor#chainOverridingForInheritedMethods()
+    */
+   public void setChainOverridingForInheritedMethods(boolean overriding)
+   {
+      this.chainOverridingForInheritedMethods = overriding;
    }
 }

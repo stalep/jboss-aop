@@ -207,6 +207,11 @@ public class ClassProxyContainer extends ClassContainer
       return super.getPerClassAspect(def);
    }
 
+   /**
+    * @return true always
+    * @see Advisor#chainOverridingForInheritedMethods()
+    */
+   @Override
    public boolean chainOverridingForInheritedMethods()
    {
       return true;
