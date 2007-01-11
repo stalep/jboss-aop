@@ -185,7 +185,7 @@ public class AnnotatedTestCase extends AOPTestWithSetup
       assertTrue("readExternal was not called for pojo2", ExternalizableMixin.read);
       
       ComparableMixin.COMPARED = false;
-      ((Comparable) pojo2).compareTo(null);
+      ((Comparable<Object>) pojo2).compareTo(null);
       assertTrue("mixin method was not called", ComparableMixin.COMPARED);
    }
 

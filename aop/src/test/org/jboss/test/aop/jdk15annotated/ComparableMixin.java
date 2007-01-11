@@ -26,7 +26,7 @@ package org.jboss.test.aop.jdk15annotated;
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-public class ComparableMixin implements Comparable
+public class ComparableMixin implements Comparable<Object>
 {
    static boolean COMPARED = false;
    

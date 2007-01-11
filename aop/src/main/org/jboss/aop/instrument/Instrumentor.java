@@ -315,7 +315,8 @@ public abstract class Instrumentor
             }
             // If another interface of this mixin has a duplicate method, then its ok, but don't re-add
             if (addedMethods.contains(hash)) continue;
-            try{
+            try
+            {
                createMixinInvokeMethod(clazz, mixinClass, initializer, method, hash.longValue());
             }
             catch (CannotCompileException e)

@@ -38,7 +38,7 @@ public class IntroductionAspect
    }
    
    @Mixin (target=org.jboss.test.aop.jdk15annotated.NoInterfacesPOJO2.class, interfaces={Comparable.class})
-   public static ComparableMixin createComparableMixin(/*NoInterfacesPOJO2 pojo*/) {
+   public static ComparableMixin createComparableMixin() {
        return new ComparableMixin();
    }
    

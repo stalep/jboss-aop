@@ -618,11 +618,12 @@ public class AspectAnnotationLoader
          {
             case 0:
                construction += "()";
+               intro = createIntroduction(name, target, typeExpression, null, null, null);//cf.getName(), minfo.getName());
                break;
             case 1:
                construction += "(this)";
-               
-/*               
+               intro = createIntroduction(name, target, typeExpression, null, cf.getName(), minfo.getName());               
+  
                String parameter = Descriptor.getParamDescriptor(minfo.getDescriptor());
                
                if (parameter.charAt(1) != 'L')
@@ -669,14 +670,13 @@ public class AspectAnnotationLoader
                   errorMessage += ".\n   It should have the introduction target type as parameter, or have no parameter at all.";
                   throw new RuntimeException(errorMessage);
 
-               }*/
+               }
                break;
             default:
                throw new RuntimeException("Mixin creator method '" + name +
                      "' should not have more than one parameter.");
          }
          
-         intro = createIntroduction(name, target, typeExpression, null, null, null);//cf.getName(), minfo.getName());         
          if (!Modifier.isStatic(minfo.getAccessFlags()) ||
                !Modifier.isPublic(minfo.getAccessFlags()))
          {

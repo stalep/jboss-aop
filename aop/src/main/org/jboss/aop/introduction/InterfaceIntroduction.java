@@ -121,6 +121,8 @@ public class InterfaceIntroduction
       this.classExpr = new ClassExpression(exp);
    }
    
+   // call this constructor only when constructor method receives the mixin target
+   // as parameter, for posterior validation of constructor method signature
    public InterfaceIntroduction(String name, String exp, String[] interfaces,
          String constructorClass, String constructorMethod)
    {
@@ -136,7 +138,8 @@ public class InterfaceIntroduction
       this.interfaces = interfaces;
    }
 
-   
+   // call this constructor only when constructor method receives the mixin target
+   // as parameter, for posterior validation of constructor method signature
    public InterfaceIntroduction(String name, ASTStart ast, String[] interfaces,
          String constructorClass, String constructorMethod)
    {
@@ -197,13 +200,15 @@ public class InterfaceIntroduction
       return mixins;
    }
 
-   // this value is set only when there is a mixin constructor class and this
+   // this value is set only when there is a mixin constructor method and this
    // method receives the target as parameter
    public String getConstructorClass()
    {
       return this.constructorClass;
    }
 
+   // this value is set only when there is a mixin constructor method and this
+   // method receives the target as parameter
    public String getConstructorMethod()
    {
       return this.constructorMethod;

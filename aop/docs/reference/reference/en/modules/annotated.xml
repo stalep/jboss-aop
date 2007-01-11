@@ -595,6 +595,7 @@ public @interface Bind
          <itemizedlist>
             <listitem>be public</listitem>
             <listitem>be static</listitem>
+            <listitem>have an empty parameter list, or receive the target of introduction as parameter</listitem>
             <listitem>contain the logic to create the mixin class</listitem>
             <listitem>return an instance of the mixin class</listitem>
          </itemizedlist>
