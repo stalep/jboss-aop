@@ -15,6 +15,10 @@
   <bind pointcut="field(* org.jboss.test.aop.field.SubSubPOJO->mine)">                
        <interceptor class="org.jboss.test.aop.field.TraceInterceptor"/>
   </bind>
+  <bind pointcut="field(* org.jboss.test.aop.field.POJO->privateField)">                
+       <interceptor class="org.jboss.test.aop.field.TraceInterceptor"/>
+  </bind>
+
 
   <interceptor name="field" class="org.jboss.test.aop.field.FieldPerJoinpointInterceptor" scope="PER_JOINPOINT"/>
   <interceptor name="staticField" class="org.jboss.test.aop.field.FieldPerJoinpointInterceptor" scope="PER_CLASS_JOINPOINT"/>

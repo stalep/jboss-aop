@@ -30,6 +30,7 @@ public class POJO
 {
    int field;
    public int pojoInherited;
+   private int privateField;
    
    public POJO() {}
    
@@ -42,5 +43,14 @@ public class POJO
    {
       return field;
    }
- 
+   
+   public void setPrivate(int i)
+   {
+      privateField = i;
+   }
+   
+   public int getPrivate()
+   {
+      return privateField;
+   }
 }

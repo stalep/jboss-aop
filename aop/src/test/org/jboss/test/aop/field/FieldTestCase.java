@@ -22,7 +22,6 @@
 package org.jboss.test.aop.field;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -99,6 +98,29 @@ public class FieldTestCase extends AOPTestWithSetup
       assertTrue(TraceInterceptor.intercepted);
    }
 
+   public void testSuperPrivateField()
+   {
+      POJO pojo = new POJO();
+
+      TraceInterceptor.intercepted = false;
+      pojo.setPrivate(5);
+      assertTrue(TraceInterceptor.intercepted);
+
+      TraceInterceptor.intercepted = false;
+      assertEquals(5, pojo.getPrivate());
+      assertTrue(TraceInterceptor.intercepted);
+
+      SubPOJO sub = new SubPOJO();
+
+      TraceInterceptor.intercepted = false;
+      sub.setPrivate(5);
+      assertTrue(TraceInterceptor.intercepted);
+
+      TraceInterceptor.intercepted = false;
+      assertEquals(5, sub.getPrivate());
+      assertTrue(TraceInterceptor.intercepted);
+   }
+   
    public void testPerJoinpoint() throws Exception
    {
       ScopedPojo pojo1 = new ScopedPojo();
