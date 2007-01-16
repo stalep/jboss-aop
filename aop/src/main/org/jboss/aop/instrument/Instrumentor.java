@@ -359,6 +359,7 @@ public abstract class Instrumentor
            throws Exception
    {
       ArrayList pointcuts = advisor.getInterfaceIntroductions();
+      
       if (pointcuts.size() == 0) return;
       HashMap baseMethods = JavassistMethodHashing.getMethodMap(clazz);
       Iterator it = pointcuts.iterator();

@@ -165,9 +165,20 @@ public class JavassistMethodHashing
    {
       if (superclass == null) return;
       if (superclass.getName().equals("java.lang.Object")) return;
-
-      populateMethodTables(advised, superclass.getSuperclass());
-      addDeclaredMethods(advised, superclass);
+      if (superclass.isInterface())
+      {
+         CtClass[] ifs = superclass.getInterfaces();
+         for (int i = 0 ; i < ifs.length ; i++)
+         {
+            populateMethodTables(advised, ifs[i]);
+         }
+         addDeclaredMethods(advised, superclass);
+      }
+      else
+      {
+         populateMethodTables(advised, superclass.getSuperclass());
+         addDeclaredMethods(advised, superclass);
+      }
    }
 
    public static HashMap getMethodMap(CtClass clazz) throws Exception
