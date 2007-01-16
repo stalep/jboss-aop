@@ -1745,23 +1745,17 @@ public abstract class JoinPointGenerator
    
    private static class AroundAdviceCallStrategy extends AdviceCallStrategy
    {
-      private static ThreadLocal<AroundAdviceCallStrategy> INSTANCE;
-      
-      static
-      {
-         INSTANCE = new ThreadLocal<AroundAdviceCallStrategy>();
-         INSTANCE.set(new AroundAdviceCallStrategy());
-      }
-      
+      private static ThreadLocal<AroundAdviceCallStrategy> INSTANCE =
+         new ThreadLocal<AroundAdviceCallStrategy>()
+         {
+            protected synchronized AroundAdviceCallStrategy initialValue() {
+               return new AroundAdviceCallStrategy();
+            }
+         };
+   
       public static final AroundAdviceCallStrategy getInstance()
       {
-         AroundAdviceCallStrategy strategy = INSTANCE.get();
-         if (strategy == null)
-         {
-            strategy = new AroundAdviceCallStrategy();
-            INSTANCE.set(strategy);
-         }
-         return strategy;
+         return INSTANCE.get();
       }
       
       private AroundAdviceCallStrategy() {}
