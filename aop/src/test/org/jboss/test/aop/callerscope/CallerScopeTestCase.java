@@ -263,7 +263,7 @@ public class CallerScopeTestCase extends AOPTestWithSetup
 
 
 /**
- * Target of a garbage collection (used in weak has map test).
+ * Target of a garbage collection (used in weak hash map test).
  * 
  * @author Flavia Rainone
  */
