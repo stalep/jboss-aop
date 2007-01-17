@@ -379,6 +379,7 @@
             <include name="org/jboss/lang/**"/>
             <include name="org/jboss/aop/Advisor.class"/>
             <include name="org/jboss/aop/AspectManager.class"/>
+            <include name="org/jboss/aop/AspectManager$*.class"/>
             <include name="org/jboss/aop/ClassAdvisor.class"/>
             <include name="org/jboss/aop/ClassInstanceAdvisor.class"/>
             <include name="org/jboss/aop/InstanceAdvisorDelegate.class"/>

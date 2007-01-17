@@ -72,8 +72,7 @@ public class ContainerTestCase extends AOPTestWithSetup
    public void invokeContainer(boolean overriding) throws Throwable
    {
          AspectManager manager = AspectManager.instance();
-         ClassContainer container = new ClassContainer("X", manager);
-         container.setChainOverridingForInheritedMethods(overriding);
+         ClassContainer container = (overriding ) ? new ContainerWithChainOverriding("X", manager) : new ClassContainer("X", manager);
          container.setClass(Child.class);
          container.initializeClassContainer();
          Child child = new Child();
@@ -99,6 +98,15 @@ public class ContainerTestCase extends AOPTestWithSetup
       invocation.setTargetObject(target);
       invocation.setArguments(new Object[0]);
       return invocation;
+   }
+   
+   static class ContainerWithChainOverriding extends ClassContainer
+   {
+      public ContainerWithChainOverriding(String name, AspectManager manager)
+      {
+         super(name, manager);
+         super.setChainOverridingForInheritedMethods(true);
+      }
    }
 }
 

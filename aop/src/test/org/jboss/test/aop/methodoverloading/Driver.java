@@ -35,18 +35,4 @@ public class Driver extends SuperDriver implements DriverInterface
       System.out.println("--- in driverMethod(); ---");
    }
    
-   public static void main(String[] args)
-   {
-      Driver d = new Driver();
-      d.superMethod();
-      d.driverMethod();
-      
-      if (Driver.superMethodIntercepted && Driver.driverMethodIntercepted)
-         System.out.println("Passed!");
-      if (!Driver.superMethodIntercepted)
-         System.out.println("FAILED: superMethod wasn't intercepted");
-      if (!Driver.driverMethodIntercepted)
-         System.out.println("FAILED: driverMethod wasn't intercepted");
-   }
-
 }

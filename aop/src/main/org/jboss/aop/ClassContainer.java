@@ -227,7 +227,7 @@ public class ClassContainer extends Advisor
       {
          for (int i = 0; i < constructors.length; i++)
          {
-            constructors[i].setAccessible(true);
+            SecurityActions.setAccessible(constructors[i]);
          }
          Arrays.sort(constructors, ConstructorComparator.INSTANCE);
       }

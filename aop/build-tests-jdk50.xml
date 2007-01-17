@@ -673,6 +673,7 @@
 
       <junit printsummary="yes" fork="no" haltonfailure="no" >
          <sysproperty key="jboss.aop.debug.classes" value="false"/>
+         <sysproperty key="jboss.aop.path" value="${source.res}/test/container/jboss-aop.xml"/>
          <classpath>
             <path refid="javac.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -693,8 +694,19 @@
       		   <include name="org/jboss/test/aop/bridgemethodnotwoven/BridgeMethodTestCase.class"/>
 		      </fileset>
 		   </batchtest>
-
       </junit>
+	   <junit printsummary="yes" fork="yes" haltonfailure="no">
+		   <sysproperty key="jboss.aop.path" value="${source.res}/test/container/jboss-aop.xml"/>
+		   <classpath>
+		      <path refid="javac.classpath"/>
+		      <pathelement location="${build.tests.classes}"/>
+		      <pathelement location="docs"/>
+		   </classpath>
+		   <sysproperty key="jboss-junit-configuration" value="jdk50"/>
+		   <formatter type="plain" extension="-jdk50.txt"/>
+		   <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-jdk50.xml"/>
+	      <test todir="${build.reports}" name="org.jboss.test.aop.container.ContainerTestCase"/>
+	   </junit>
    </target>
 
    <!-- ==================================================================================== -->
