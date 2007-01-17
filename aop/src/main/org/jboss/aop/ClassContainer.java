@@ -278,7 +278,7 @@ public class ClassContainer extends Advisor
     * @param overriding the new value of chainOverridingForInheritedMethods
     * @see Advisor#chainOverridingForInheritedMethods()
     */
-   public void setChainOverridingForInheritedMethods(boolean overriding)
+   protected void setChainOverridingForInheritedMethods(boolean overriding)
    {
       this.chainOverridingForInheritedMethods = overriding;
    }

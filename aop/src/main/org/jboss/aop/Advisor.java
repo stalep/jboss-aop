@@ -1108,6 +1108,16 @@ public abstract class Advisor
       return false;
    }
 
+   /**
+    * @param overriding the new value of chainOverridingForInheritedMethods
+    * @see Advisor#chainOverridingForInheritedMethods()
+    */
+   protected void setChainOverridingForInheritedMethods(boolean overriding)
+   {
+      //Implemented by base-classes
+      throw new NotImplementedException("Not a legal operation for Advisor");
+   }
+   
    interface DeployAnnotationOverrideAction
    {
       void deploy(Advisor advisor, AnnotationIntroduction introduction);
