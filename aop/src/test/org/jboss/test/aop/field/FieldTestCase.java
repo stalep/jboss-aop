@@ -88,16 +88,57 @@ public class FieldTestCase extends AOPTestWithSetup
       pojo.mine = 5;
       assertTrue(TraceInterceptor.intercepted);
 
-
       TraceInterceptor.intercepted = false;
-      pojo.pojoInherited = 5;
+      assertEquals(5, pojo.mine);
       assertTrue(TraceInterceptor.intercepted);
 
       TraceInterceptor.intercepted = false;
-      pojo.subpojoInherited = 5;
+      pojo.pojoInherited = 6;
+      assertTrue(TraceInterceptor.intercepted);
+
+      TraceInterceptor.intercepted = false;
+      assertEquals(6, pojo.pojoInherited);
+      assertTrue(TraceInterceptor.intercepted);
+
+      TraceInterceptor.intercepted = false;
+      pojo.subpojoInherited = 7;
+      assertTrue(TraceInterceptor.intercepted);
+
+      TraceInterceptor.intercepted = false;
+      assertEquals(7, pojo.subpojoInherited);
       assertTrue(TraceInterceptor.intercepted);
    }
 
+   public void testFieldInheritanceInSubClass()
+   {
+      SubSubPOJO pojo = new SubSubPOJO(5);
+      
+      TraceInterceptor.intercepted = false;
+      pojo.updateMine(5);
+      assertTrue(TraceInterceptor.intercepted);
+
+      TraceInterceptor.intercepted = false;
+      assertEquals(5, pojo.useMine());
+      assertTrue(TraceInterceptor.intercepted);
+
+      TraceInterceptor.intercepted = false;
+      pojo.updatePojoInherited(6);
+      assertTrue(TraceInterceptor.intercepted);
+
+      TraceInterceptor.intercepted = false;
+      assertEquals(6, pojo.usePojoInherited());
+      assertTrue(TraceInterceptor.intercepted);
+
+      TraceInterceptor.intercepted = false;
+      pojo.updateSubPojoInherited(7);
+      assertTrue(TraceInterceptor.intercepted);
+
+      TraceInterceptor.intercepted = false;
+      assertEquals(7, pojo.useSubPojoInherited());
+      assertTrue(TraceInterceptor.intercepted);
+   }
+   
+   
    public void testSuperPrivateField()
    {
       POJO pojo = new POJO();

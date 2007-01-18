@@ -42,5 +42,34 @@ public class SubSubPOJO extends SubPOJO
       return field;
    }
    
-
+   
+   public int useMine()
+   {
+      return mine;
+   }
+   
+   public void updateMine(int i)
+   {
+      mine = i;
+   }
+   
+   public int useSubPojoInherited()
+   {
+      return subpojoInherited;
+   }
+   
+   public void updateSubPojoInherited(int i)
+   {
+      subpojoInherited = i;
+   }
+   
+   public int usePojoInherited()
+   {
+      return pojoInherited;
+   }
+   
+   public void updatePojoInherited(int i)
+   {
+      pojoInherited = i;
+   }
 }
