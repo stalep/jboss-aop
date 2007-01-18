@@ -323,6 +323,7 @@
             <include name="org/jboss/aspects/**"/>
          </fileset>
          <fileset file="docs/jboss-aop_1_0.dtd"/>
+         <fileset file ="${source.etc}/jbossorg-eula.txt"/>
       </jar>
 
       <jar jarfile="${build.lib}/jdk14-pluggable-instrumentor.jar"
@@ -331,6 +332,7 @@
             <!-- Include everything else -->
             <include name="org/jboss/aop/hook/JDK14*.class"/>
          </fileset>
+         <fileset file ="${source.etc}/jbossorg-eula.txt"/>
       </jar>
 
       <!-- Update the build marker to allow bypassing -->
@@ -347,7 +349,7 @@
             <include name="org/jboss/aop/hook/JRockitPluggableClassPreProcessor.class"/>
             <include name="org/jboss/aop/hook/JDK14*.class"/>
          </fileset>
-
+         <fileset file ="${source.etc}/jbossorg-eula.txt"/>
       </jar>
    </target>
 
@@ -363,6 +365,7 @@
             <exclude name="org/jboss/aop/standalone/PluggableInstrumentor.class"/>
          </fileset>
          <fileset file="docs/jboss-aop_1_0.dtd"/>
+         <fileset file ="${source.etc}/jbossorg-eula.txt"/>
       </jar>
      <jar jarfile="${build.lib}/pluggable-instrumentor.jar"
          manifest="${build.etc}/pluggable-instrumentor.mf">
@@ -370,6 +373,7 @@
             <!-- Include everything else -->
             <include name="org/jboss/aop/standalone/PluggableInstrumentor.class"/>
          </fileset>
+         <fileset file ="${source.etc}/jbossorg-eula.txt"/>
       </jar>
       <!-- Build the jboss-aop-jdk50-client.jar needed for EJB 3-->
       <jar jarfile="${build.lib}/jboss-aop-jdk50-client.jar"
@@ -413,6 +417,7 @@
             <include name="org/jboss/aop/util/MethodHashing*.class"/>
             <include name="org/jboss/aop/util/PayloadKey*.class"/>
          </fileset>
+         <fileset file ="${source.etc}/jbossorg-eula.txt"/>
       </jar>
    </target>
 
@@ -508,6 +513,7 @@
             <exclude name="src/**/CVS/**"/>
          </zipfileset>
          <zipfileset file="src/build.xml" prefix="${aop.version}"/>
+         <zipfileset file ="${source.etc}/jbossorg-eula.txt"/>
       </zip>
    </target>
 
@@ -605,11 +611,11 @@
          </fileset>
       </copy>
    </target>
-	
+
    <target name="create-eclipse-test-agent" depends="compile-etc">
       <jar jarfile="${build.lib}/eclipse-agent.jar"
          manifest="${build.etc}/eclipsesupport.mf">
       </jar>
    </target>
-	
+
 </project>
