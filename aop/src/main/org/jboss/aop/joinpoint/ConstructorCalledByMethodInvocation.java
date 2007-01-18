@@ -50,8 +50,6 @@ public class ConstructorCalledByMethodInvocation extends CallerInvocation
    protected Constructor constructor;
    protected Method wrappingMethod; 
    
-   protected Object callingObject;
-
    public ConstructorCalledByMethodInvocation(ConByMethodInfo info, Object callingObject, Object[] args, Interceptor[] interceptors)
    {
       this(info.getAdvisor(), info.getCallingClass(), info.getCallingMethod(), info.getConstructor(), info.getWrappingMethod(), callingObject, args, interceptors);
@@ -65,7 +63,7 @@ public class ConstructorCalledByMethodInvocation extends CallerInvocation
    public ConstructorCalledByMethodInvocation(Advisor advisor, Class callingClass, 
          Method callingMethod, Constructor constructor, Method wrappingMethod, Object callingObject, Object[] args, Interceptor[] interceptors)
    {
-      super(advisor, interceptors);
+      super(advisor, callingObject, interceptors);
       this.callingClass = callingClass;
       this.callingMethod = callingMethod;
       this.constructor = constructor;
@@ -74,9 +72,9 @@ public class ConstructorCalledByMethodInvocation extends CallerInvocation
       this.arguments = args;
    }
 
-   public ConstructorCalledByMethodInvocation(Interceptor[] interceptors)
+   public ConstructorCalledByMethodInvocation(Object callingObject, Interceptor[] interceptors)
    {
-      super(interceptors);
+      super(callingObject, interceptors);
    }
 
    /**
@@ -252,10 +250,5 @@ public class ConstructorCalledByMethodInvocation extends CallerInvocation
       wrapper.instanceResolver = this.instanceResolver;
       wrapper.currentInterceptor = this.currentInterceptor;
       return wrapper;
-   }
-
-   public Object getCallingObject()
-   {
-      return callingObject;
    }
 }

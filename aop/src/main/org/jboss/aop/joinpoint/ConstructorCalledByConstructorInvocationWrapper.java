@@ -45,7 +45,7 @@ public class ConstructorCalledByConstructorInvocationWrapper extends Constructor
 
    public ConstructorCalledByConstructorInvocationWrapper(ConstructorCalledByConstructorInvocation wrapped, Interceptor[] interceptors)
    {
-      super(interceptors);
+      super(wrapped.getCallingObject(), interceptors);
       this.wrapped = wrapped;
    }
 

@@ -33,14 +33,28 @@ public abstract class CallerInvocation extends InvocationBase
 {   
    private static final long serialVersionUID = -6040602776303974658L;
    
-   public CallerInvocation(Advisor advisor, Interceptor[] interceptors)
+   protected Object callingObject;
+
+   public CallerInvocation(Advisor advisor, Object callingObject, Interceptor[] interceptors)
    {
       super(interceptors);
+      this.callingObject = callingObject;
       super.advisor = advisor;
    }
 
-   public CallerInvocation(Interceptor[] interceptors)
+   public CallerInvocation(Object callingObject, Interceptor[] interceptors)
    {
       super(interceptors);
+      this.callingObject = callingObject;
+   }
+   
+   /**
+    * Returns the caller object.
+    *
+    * @return the caller object
+    */
+   public Object getCallingObject()
+   {
+      return this.callingObject;
    }
 }

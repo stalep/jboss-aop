@@ -42,9 +42,9 @@ import org.jboss.aop.util.ReflectToJavassist;
 
 public class MethodByConJoinPointGenerator extends JoinPointGenerator
 {
-   public static final String GENERATOR_PREFIX = JoinPointGenerator.GENERATOR_PREFIX + "CByM_";
-   public static final String JOINPOINT_CLASS_PREFIX = JoinPointGenerator.JOINPOINT_CLASS_PREFIX + "CByM_";
-   public static final String JOINPOINT_FIELD_PREFIX = JoinPointGenerator.JOINPOINT_FIELD_PREFIX + "CByM_";
+   public static final String GENERATOR_PREFIX = JoinPointGenerator.GENERATOR_PREFIX + "MByC_";
+   public static final String JOINPOINT_CLASS_PREFIX = JoinPointGenerator.JOINPOINT_CLASS_PREFIX + "MByC_";
+   public static final String JOINPOINT_FIELD_PREFIX = JoinPointGenerator.JOINPOINT_FIELD_PREFIX + "MByC_";
    private static final Class INVOCATION_TYPE = MethodCalledByConstructorInvocation.class;
    private static final CtClass INVOCATION_CT_TYPE;
    static
@@ -125,7 +125,9 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
                method.getParameterTypes(),
                method.getExceptionTypes(),
                method.getDeclaringClass(),
-               hasTargetObject());
+               hasTargetObject(),
+               ((MethodByConInfo) info).getCallingClass(),
+               hasCallingObject());
    }
 
    protected boolean isCaller()
@@ -135,7 +137,7 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
 
    protected boolean hasCallingObject()
    {
-      return false;
+      return true;
    }
 
    protected boolean hasTargetObject()
@@ -278,7 +280,7 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
          publicConstructor = CtNewConstructor.make(
                new CtClass[] {methodInfoClass},
                new CtClass[0],
-               "{super($1, null, $1.getInterceptors()); this." + INFO_FIELD + " = $1;}",
+               "{super($1, null, null, $1.getInterceptors()); this." + INFO_FIELD + " = $1;}",
                jp);
 
          jp.addConstructor(publicConstructor);
@@ -290,24 +292,25 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
        */
       protected void addProtectedConstructor() throws CannotCompileException
       {
-         final int offset =  hasTargetObject ? 2 : 1;
+         final int offset =  hasTargetObject ? 3 : 2;
          CtClass[] ctorParams = new CtClass[params.length + offset];
          ctorParams[0] = jp;
-
+         ctorParams[1] = callingClass;
          if (hasTargetObject)
          {
-            ctorParams[1] = targetClass;
+            ctorParams[2] = targetClass;
          }
          System.arraycopy(params, 0, ctorParams, offset, params.length);
 
          StringBuffer body = new StringBuffer();
          body.append("{");
          body.append("   this($1." + INFO_FIELD + ");");
-
+         body.append("   super.callingObject=$2;");
+         
          if (hasTargetObject)
          {
-            body.append("   super.targetObject=$2;");
-            body.append("   this.tgt=$2;");
+            body.append("   super.targetObject=$3;");
+            body.append("   this.tgt=$3;");
          }
 
          for (int i = offset ; i < ctorParams.length ; i++)
@@ -333,13 +336,16 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
       {
          if (hasTargetObject)
          {
-            CtClass[] invokeParams = new CtClass[params.length + 1];
-            invokeParams[0] = targetClass;
-            System.arraycopy(params, 0, invokeParams, 1, params.length);
+            CtClass[] invokeParams = new CtClass[params.length + 2];
+            invokeParams[0] = callingClass;
+            invokeParams[1] = targetClass;
+            System.arraycopy(params, 0, invokeParams, 2, params.length);
             return invokeParams;
          }
-
-         return params;
+         CtClass[] invokeParams = new CtClass[params.length + 1];
+         invokeParams[0] = callingClass;
+         System.arraycopy(params, 0, invokeParams, 1, params.length);
+         return invokeParams;
       }
 
       /**
@@ -370,11 +376,7 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
       private void addDispatchMethods() throws CannotCompileException, NotFoundException
       {
          addInvokeNextDispatchMethod();
-         if (hasTargetObject || params.length > 0)
-         {
-            addInvokeJoinPointDispatchMethod();
-         }
-         
+         addInvokeJoinPointDispatchMethod();
          addInvokeTargetMethod();
       }
 
@@ -425,7 +427,7 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
          //This dispatch method will be called by the invokeJoinPoint() method if the joinpoint has no around advices
          final boolean isVoid = targetMethod.getReturnType().equals(CtClass.voidType);
 
-         final int offset = hasTargetObject ? 1 : 0;
+         final int offset = hasTargetObject ? 2 : 1;
          StringBuffer parameters = new StringBuffer();
          for (int i = 0 ; i < params.length ; i++)
          {
@@ -441,7 +443,7 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
          }
          else
          {
-            body.append(MethodExecutionTransformer.getAopReturnStr(isVoid) + "$1." + targetMethod.getName() + "(" + parameters + ");");
+            body.append(MethodExecutionTransformer.getAopReturnStr(isVoid) + "$2." + targetMethod.getName() + "(" + parameters + ");");
          }
 
          body.append("}");

@@ -129,7 +129,7 @@ public class OptimizedCallerTransformer extends CallerTransformer
          methodByConInfoFromWeakReference("info", cd.callerInfoField) +
          "if (info.getInterceptors() != (org.jboss.aop.advice.Interceptor[])null) { " +
          invocationClassName + " invocation = new "
-         + invocationClassName + "    (info, $0, $args, info.getInterceptors());" +
+         + invocationClassName + "    (info, this, $0, $args, info.getInterceptors());" +
          typedTargetObject +
          OptimizedBehaviourInvocations.setArguments(cd.calledMethod.getParameterTypes().length) +
          "invocation.setTargetObject($0);" +
@@ -214,7 +214,7 @@ public class OptimizedCallerTransformer extends CallerTransformer
          conByConInfoFromWeakReference("info", cd.callerInfoField) +
          "if (info.getInterceptors() != (org.jboss.aop.advice.Interceptor[])null) { " +
          invocationClassName + " invocation = new " 
-         + invocationClassName + "(info, $args, info.getInterceptors());" +
+         + invocationClassName + "(info, this, $args, info.getInterceptors());" +
          OptimizedBehaviourInvocations.setArguments(cd.calledConstructor.getParameterTypes().length) +
          "$_ = ($r)invocation.invokeNext();" +
          "} else { " +

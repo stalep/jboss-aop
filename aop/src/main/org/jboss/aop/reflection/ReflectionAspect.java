@@ -1187,7 +1187,7 @@ public class ReflectionAspect
 
                         if (info != null && info.hasAdvices())
                         {
-                           return advisor.invokeConCalledByCon(info, args);
+                           return advisor.invokeConCalledByCon(info, inv.getCallingObject(), args);
                         }
                      }
                   }
@@ -1340,7 +1340,7 @@ public class ReflectionAspect
                         if (info != null && info.hasAdvices())
                         {
                            //return advisor.invokeConstructorCaller(index, targetObject, args, info);
-                           return advisor.invokeConstructorCaller(info, targetObject, args);
+                           return advisor.invokeConstructorCaller(info, inv.getCallingObject(), targetObject, args);
                         }
                      }
                   }

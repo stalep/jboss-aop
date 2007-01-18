@@ -21,24 +21,20 @@
   */
 package org.jboss.aop.advice;
 
+import java.lang.reflect.Modifier;
+
 import org.jboss.aop.Advised;
 import org.jboss.aop.Advisor;
 import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.joinpoint.CallerInvocation;
-import org.jboss.aop.joinpoint.ConstructorCalledByConstructorJoinpoint;
-import org.jboss.aop.joinpoint.ConstructorCalledByMethodInvocation;
 import org.jboss.aop.joinpoint.ConstructorCalledByMethodJoinpoint;
 import org.jboss.aop.joinpoint.ConstructorJoinpoint;
 import org.jboss.aop.joinpoint.FieldJoinpoint;
 import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.Joinpoint;
-import org.jboss.aop.joinpoint.MethodCalledByConstructorJoinpoint;
-import org.jboss.aop.joinpoint.MethodCalledByMethodInvocation;
 import org.jboss.aop.joinpoint.MethodCalledByMethodJoinpoint;
 import org.jboss.aop.joinpoint.MethodJoinpoint;
-
-import java.lang.reflect.Modifier;
 
 /**
  * Comment
@@ -58,9 +54,7 @@ public class PerJoinpointInterceptor implements Interceptor
             return (Interceptor) def.getFactory().createPerJoinpoint(advisor, joinpoint);
          }
       }
-      else if (joinpoint instanceof ConstructorJoinpoint
-              || joinpoint instanceof ConstructorCalledByConstructorJoinpoint
-              || joinpoint instanceof MethodCalledByConstructorJoinpoint)
+      else if (joinpoint instanceof ConstructorJoinpoint)
       {
          return (Interceptor) def.getFactory().createPerJoinpoint(advisor, joinpoint);
       }
@@ -114,16 +108,7 @@ public class PerJoinpointInterceptor implements Interceptor
       {
          //TODO: Naive implementation. Ideally callers should be able to look up the aspect by target instance
          //to make sure that there is only one instance per target rather than caller
-         Object callingObject = null;
-
-         if (invocation instanceof ConstructorCalledByMethodInvocation)
-         {
-            callingObject = ((ConstructorCalledByMethodInvocation)invocation).getCallingObject();
-         }
-         else if (invocation instanceof MethodCalledByMethodInvocation)
-         {
-            callingObject = ((MethodCalledByMethodInvocation)invocation).getCallingObject();
-         }
+         Object callingObject = ((CallerInvocation) invocation).getCallingObject();
 
          if (callingObject == null) return invocation.invokeNext(); // called from static method
          
@@ -144,6 +129,4 @@ public class PerJoinpointInterceptor implements Interceptor
          return interceptor.invoke(invocation);         
       }
    }
-
-
 }

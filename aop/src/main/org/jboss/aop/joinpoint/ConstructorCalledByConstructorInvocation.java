@@ -49,28 +49,28 @@ public class ConstructorCalledByConstructorInvocation extends CallerInvocation
    protected Constructor constructor;
    protected Method wrappingMethod;
    
-   public ConstructorCalledByConstructorInvocation(ConByConInfo info, Object[] args, Interceptor[] interceptors)
+   public ConstructorCalledByConstructorInvocation(ConByConInfo info, Object callingObject, Object[] args, Interceptor[] interceptors)
    {
-      this(info.getAdvisor(), info.getCalling(), info.getConstructor(), info.getWrappingMethod(), args, interceptors);
+      this(info.getAdvisor(), info.getCalling(), info.getConstructor(), info.getWrappingMethod(), callingObject, args, interceptors);
    }
    
-   public ConstructorCalledByConstructorInvocation(ConByConInfo info, Interceptor[] interceptors)
+   public ConstructorCalledByConstructorInvocation(ConByConInfo info, Object callingObject, Interceptor[] interceptors)
    {
-      this(info.getAdvisor(), info.getCalling(), info.getConstructor(), info.getWrappingMethod(), null, interceptors);
+      this(info.getAdvisor(), info.getCalling(), info.getConstructor(), info.getWrappingMethod(), callingObject, null, interceptors);
    }
    
-   public ConstructorCalledByConstructorInvocation(Advisor advisor, Constructor calling, Constructor constructor, Method wrappingMethod, Object[] args, Interceptor[] interceptors)
+   public ConstructorCalledByConstructorInvocation(Advisor advisor, Constructor calling, Constructor constructor, Method wrappingMethod, Object callingObject, Object[] args, Interceptor[] interceptors)
    {
-      super(advisor, interceptors);
+      super(advisor, callingObject, interceptors);
       this.calling = calling;
       this.constructor = constructor;
       this.wrappingMethod = wrappingMethod;
       this.arguments = args;
    }
    
-   public ConstructorCalledByConstructorInvocation(Interceptor[] interceptors)
+   public ConstructorCalledByConstructorInvocation(Object callingObject, Interceptor[] interceptors)
    {
-      super(interceptors);
+      super(callingObject, interceptors);
    }
    
    public Object[] getArguments()
@@ -211,7 +211,7 @@ public class ConstructorCalledByConstructorInvocation extends CallerInvocation
     */
    public Invocation copy()
    {
-      ConstructorCalledByConstructorInvocation wrapper = new ConstructorCalledByConstructorInvocation(advisor, calling, constructor, wrappingMethod, arguments, interceptors);
+      ConstructorCalledByConstructorInvocation wrapper = new ConstructorCalledByConstructorInvocation(advisor, calling, constructor, wrappingMethod, callingObject, arguments, interceptors);
       wrapper.setAdvisor(this.getAdvisor());
       wrapper.setTargetObject(this.getTargetObject());
       wrapper.currentInterceptor = this.currentInterceptor;
@@ -219,6 +219,4 @@ public class ConstructorCalledByConstructorInvocation extends CallerInvocation
       wrapper.metadata = this.metadata;
       return wrapper;
    }
-
-
 }

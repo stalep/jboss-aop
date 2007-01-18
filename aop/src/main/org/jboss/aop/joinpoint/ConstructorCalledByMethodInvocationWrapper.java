@@ -44,7 +44,7 @@ public class ConstructorCalledByMethodInvocationWrapper extends ConstructorCalle
 
    public ConstructorCalledByMethodInvocationWrapper(ConstructorCalledByMethodInvocation wrapped, Interceptor[] interceptors)
    {
-      super(interceptors);
+      super(wrapped.getCallingObject(), interceptors);
       this.wrapped = wrapped;
    }
 
@@ -160,10 +160,5 @@ public class ConstructorCalledByMethodInvocationWrapper extends ConstructorCalle
    public void setArguments(Object[] arguments)
    {
       wrapped.setArguments(arguments);
-   }
-
-   public Object getCallingObject()
-   {
-      return wrapped.getCallingObject();
    }
 }

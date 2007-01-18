@@ -124,7 +124,7 @@ public class OptimizedCallerInvocations extends OptimizedBehaviourInvocations
       + invocation.getName()
       + " wrapper = new "
       + invocation.getName()
-      + "(this.advisor, this.calling, this.method, this.targetObject, this.arguments, this.interceptors);"
+      + "(this.advisor, this.calling, this.method, this.callingObject, this.targetObject, this.arguments, this.interceptors);"
       + "   wrapper.metadata = this.metadata; "
       + "   wrapper.currentInterceptor = this.currentInterceptor; "
       + "   wrapper.instanceResolver = this.instanceResolver; "
@@ -233,7 +233,7 @@ public class OptimizedCallerInvocations extends OptimizedBehaviourInvocations
          + invocation.getName()
          + " wrapper = new "
          + invocation.getName()
-         + "(this.advisor, this.calling, this.constructor, this.wrappingMethod, this.arguments, this.interceptors);"
+         + "(this.advisor, this.calling, this.constructor, this.wrappingMethod, this.callingObject, this.arguments, this.interceptors);"
          + "   wrapper.metadata = super.metadata; "
          + "   wrapper.currentInterceptor = super.currentInterceptor; "
          + "   wrapper.instanceResolver = super.instanceResolver; "

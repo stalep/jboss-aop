@@ -47,28 +47,28 @@ public class MethodCalledByConstructorInvocation extends CallerInvocation
    protected Method method;
    protected Object[] arguments = null;
 
-   public MethodCalledByConstructorInvocation(MethodByConInfo info, Object target, Object[] args, Interceptor[] interceptors)
+   public MethodCalledByConstructorInvocation(MethodByConInfo info, Object callingObject, Object target, Object[] args, Interceptor[] interceptors)
    {
-      this(info.getAdvisor(), info.getCalling(), info.getMethod(), target, args, interceptors);
+      this(info.getAdvisor(), info.getCalling(), info.getMethod(), callingObject, target, args, interceptors);
    }
 
-   public MethodCalledByConstructorInvocation(MethodByConInfo info, Object target, Interceptor[] interceptors)
+   public MethodCalledByConstructorInvocation(MethodByConInfo info, Object callingObject, Object target, Interceptor[] interceptors)
    {
-      this(info.getAdvisor(), info.getCalling(), info.getMethod(), target, null, interceptors);
+      this(info.getAdvisor(), info.getCalling(), info.getMethod(), callingObject, target, null, interceptors);
    }
    
-   public MethodCalledByConstructorInvocation(Advisor advisor, Constructor calling, Method method, Object target, Object[] args, Interceptor[] interceptors)
+   public MethodCalledByConstructorInvocation(Advisor advisor, Constructor calling, Method method, Object callingObject, Object target, Object[] args, Interceptor[] interceptors)
    {
-      super(advisor, interceptors);
+      super(advisor, callingObject, interceptors);
       this.calling = calling;
       this.method = method;
       setTargetObject(target);
       this.arguments = args;
    }
 
-   public MethodCalledByConstructorInvocation(Interceptor[] interceptors)
+   public MethodCalledByConstructorInvocation(Object callingObject, Interceptor[] interceptors)
    {
-      super(interceptors);
+      super(callingObject, interceptors);
    }
 
    /**
@@ -149,7 +149,7 @@ public class MethodCalledByConstructorInvocation extends CallerInvocation
    public Invocation copy()
    {
       MethodCalledByConstructorInvocation wrapper = new MethodCalledByConstructorInvocation(
-            advisor, calling, method, targetObject, arguments, interceptors);
+            advisor, calling, method, callingObject, targetObject, arguments, interceptors);
       wrapper.currentInterceptor = this.currentInterceptor;
       wrapper.metadata = this.metadata;
       wrapper.instanceResolver = this.instanceResolver;

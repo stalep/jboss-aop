@@ -25,9 +25,7 @@ import org.jboss.aop.Advised;
 import org.jboss.aop.Advisor;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.joinpoint.CallerInvocation;
-import org.jboss.aop.joinpoint.ConstructorCalledByMethodInvocation;
 import org.jboss.aop.joinpoint.Invocation;
-import org.jboss.aop.joinpoint.MethodCalledByMethodInvocation;
 import org.jboss.aop.proxy.container.ClassProxyContainer;
 import org.jboss.aop.proxy.container.ContainerProxyMethodInvocation;
 
@@ -58,16 +56,7 @@ public class PerInstanceInterceptor implements Interceptor
       {
          //TODO: Naive implementation. Ideally callers should be able to look up the aspect by target instance
          //to make sure that there is only one instance per target rather than caller
-         Object callingObject = null;
-
-         if (invocation instanceof ConstructorCalledByMethodInvocation)
-         {
-            callingObject = ((ConstructorCalledByMethodInvocation)invocation).getCallingObject();
-         }
-         else if (invocation instanceof MethodCalledByMethodInvocation)
-         {
-            callingObject = ((MethodCalledByMethodInvocation)invocation).getCallingObject();
-         }
+         Object callingObject = ((CallerInvocation) invocation).getCallingObject();
 
          if (callingObject == null) return invocation.invokeNext(); // called from static method
          

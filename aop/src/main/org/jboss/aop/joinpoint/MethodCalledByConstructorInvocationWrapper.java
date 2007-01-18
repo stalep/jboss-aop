@@ -44,7 +44,7 @@ public class MethodCalledByConstructorInvocationWrapper extends MethodCalledByCo
 
    public MethodCalledByConstructorInvocationWrapper(MethodCalledByConstructorInvocation wrapped, Interceptor[] interceptors)
    {
-      super(interceptors);
+      super(wrapped.getCallingObject(), interceptors);
       this.wrapped = wrapped;
    }
 
@@ -148,5 +148,4 @@ public class MethodCalledByConstructorInvocationWrapper extends MethodCalledByCo
       invocation.currentInterceptor = this.currentInterceptor;
       return invocation;
    }
-
 }

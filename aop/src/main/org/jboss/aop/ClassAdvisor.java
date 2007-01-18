@@ -1802,14 +1802,36 @@ public class ClassAdvisor extends Advisor
    public Object invokeConstructorCaller(int callingIndex, Object target, Object[] args, CallerMethodInfo info)
    throws Throwable
    {
-      return invokeConstructorCaller((MethodByConInfo)info, target, args);
+      return invokeConstructorCaller((MethodByConInfo)info, null, target, args);
    }
-      
    
+   /**
+    *@deprecated
+    */
+   public Object invokeConstructorCaller(int callingIndex, Object callingObject, Object target, Object[] args, CallerMethodInfo info)
+   throws Throwable
+   {
+      return invokeConstructorCaller((MethodByConInfo)info, callingObject, target, args);
+   }
+   
+   /**
+    * @deprecated
+    * 
+    * Prefer using the version with <code>callingObject</code> instead of this one,
+    * since this object is available for call invocations made inside constructors.
+    * 
+    * @see #invokeConstructorCaller(MethodByConInfo, Object, Object, Object[])
+    */
    public Object invokeConstructorCaller(MethodByConInfo info, Object target, Object[] args)
    throws Throwable
    {
-      MethodCalledByConstructorInvocation invocation = new MethodCalledByConstructorInvocation(info, target, args, info.getInterceptors());
+      return this.invokeConstructorCaller(info, null, target, args);
+   }
+   
+   public Object invokeConstructorCaller(MethodByConInfo info, Object callingObject, Object target, Object[] args)
+   throws Throwable
+   {
+      MethodCalledByConstructorInvocation invocation = new MethodCalledByConstructorInvocation(info, callingObject, target, args, info.getInterceptors());
       invocation.setTargetObject(target);
       return invocation.invokeNext();
    }
@@ -1820,13 +1842,36 @@ public class ClassAdvisor extends Advisor
    public Object invokeConCalledByCon(int callingIndex, Object[] args, CallerConstructorInfo info)
    throws Throwable
    {
-      return invokeConCalledByCon((ConByConInfo)info, args);
+      return invokeConCalledByCon((ConByConInfo)info, null, args);
    }
    
+   /**
+    *@deprecated
+    */
+   public Object invokeConCalledByCon(int callingIndex, Object callingObject, Object[] args, CallerConstructorInfo info)
+   throws Throwable
+   {
+      return invokeConCalledByCon((ConByConInfo)info, callingObject, args);
+   }
+   
+   /**
+    * @deprecated
+    * 
+    * Prefer using the version with <code>callingObject</code> instead of this one,
+    * since this object is available for call invocations made inside constructors.
+    * 
+    * @see #invokeConCalledByCon(ConByConInfo, Object, Object[])
+    */
    public Object invokeConCalledByCon(ConByConInfo info, Object[] args)
    throws Throwable
    {
-      ConstructorCalledByConstructorInvocation invocation = new ConstructorCalledByConstructorInvocation(info, args, info.getInterceptors());
+      return invokeConCalledByCon(info, null, args);
+   }
+   
+   public Object invokeConCalledByCon(ConByConInfo info, Object callingObject, Object[] args)
+   throws Throwable
+   {
+      ConstructorCalledByConstructorInvocation invocation = new ConstructorCalledByConstructorInvocation(info, callingObject, args, info.getInterceptors());
       return invocation.invokeNext();
    }
 

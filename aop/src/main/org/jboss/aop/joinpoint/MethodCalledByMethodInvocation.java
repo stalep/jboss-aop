@@ -47,8 +47,7 @@ public class MethodCalledByMethodInvocation extends CallerInvocation
    Method method;
    
    protected Object[] arguments = null;
-   protected Object callingObject;
-
+   
    public MethodCalledByMethodInvocation(MethodByMethodInfo info, Object callingObject, Object targetObject, Object[] arguments, Interceptor[] interceptors)
    {
       this(info.getAdvisor(), info.getCallingClass(), info.getCallingMethod(), info.getMethod(), callingObject, targetObject, arguments, interceptors);
@@ -62,18 +61,17 @@ public class MethodCalledByMethodInvocation extends CallerInvocation
    public MethodCalledByMethodInvocation(Advisor advisor, Class callingClass, 
          Method callingMethod, Method method, Object callingObject, Object targetObject, Object[] args, Interceptor[] interceptors)
    {
-      super(advisor, interceptors);
+      super(advisor, callingObject, interceptors);
       this.callingClass = callingClass;
       this.callingMethod = callingMethod;
       this.method = method;
-      this.callingObject = callingObject;
       setTargetObject(targetObject);
       this.arguments = args;
    }
    
-   public MethodCalledByMethodInvocation(Interceptor[] interceptors)
+   public MethodCalledByMethodInvocation(Object callingObject, Interceptor[] interceptors)
    {
-      super(interceptors);
+      super(callingObject, interceptors);
    }
 
    /**
@@ -202,10 +200,4 @@ public class MethodCalledByMethodInvocation extends CallerInvocation
    {
       return method;
    }
-
-   public Object getCallingObject()
-   {
-      return callingObject;
-   }
-
 }

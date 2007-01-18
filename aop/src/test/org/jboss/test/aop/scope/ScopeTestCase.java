@@ -675,18 +675,18 @@ public class ScopeTestCase extends AOPTestWithSetup
       CallingPOJO pojo = new CallingPOJO();
       CallingPOJO pojo2 = new CallingPOJO();
 
-      String[] expectedNames = new String[16];
+      String[] expectedNames = new String[20];
       
-      for (int i = 0 ; i < 16 ; i += 4)
+      for (int i = 0 ; i < 20 ; i += 5)
       {
-         System.arraycopy(staticNames, 0, expectedNames, i, staticNames.length);
+         System.arraycopy(nonStaticNames, 0, expectedNames, i, nonStaticNames.length);
       }
       checkExpectedNames(expectedNames);
-      assertNotSame(Interceptions.get(0), Interceptions.get(4));
-      assertSame(Interceptions.get(1), Interceptions.get(5));
-      assertSame(Interceptions.get(2), Interceptions.get(6));
-      assertNotSame(Interceptions.get(3), Interceptions.get(7));
-      
+      assertNotSame(Interceptions.get(0), Interceptions.get(5));
+      assertSame(Interceptions.get(1), Interceptions.get(6));
+      assertSame(Interceptions.get(2), Interceptions.get(7));
+      assertNotSame(Interceptions.get(3), Interceptions.get(8));
+      assertSame(Interceptions.get(4), Interceptions.get(9));
       
       
       for (int i = 0 ; i < Interceptions.size() ; i ++)
@@ -702,12 +702,15 @@ public class ScopeTestCase extends AOPTestWithSetup
       pojo2 = new CallingPOJO();
       ArrayList ctorB = (ArrayList)Interceptions.interceptions.clone();
       
-      assertNotSame(Interceptions.get(0), Interceptions.get(4));
-      assertSame(Interceptions.get(1), Interceptions.get(5));
-      assertSame(Interceptions.get(2), Interceptions.get(6));
-      assertNotSame(Interceptions.get(3), Interceptions.get(7));
+      assertNotSame(Interceptions.get(0), Interceptions.get(5));
+      assertSame(Interceptions.get(1), Interceptions.get(6));
+      assertSame(Interceptions.get(2), Interceptions.get(7));
+      assertNotSame(Interceptions.get(3), Interceptions.get(8));
+      assertSame(Interceptions.get(4), Interceptions.get(9));
       
-      checkSimilarities(ctorA, ctorB, new Boolean[] {Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE});
+      checkSimilarities(ctorA, ctorB, new Boolean[] {
+            Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE,
+            Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE});
    }
    
    public void testCallerFromStaticMethodWithMixedChains() throws Exception
@@ -749,12 +752,6 @@ public class ScopeTestCase extends AOPTestWithSetup
       assertNotSame(Interceptions.get(3), Interceptions.get(7));
       
       checkSimilarities(staticA, staticB, new Boolean[] {Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE});
-
-      Interceptions.clear();
-      CallingPOJO pojo = new CallingPOJO();
-      ArrayList ctorA = (ArrayList)Interceptions.interceptions.clone();
-
-      checkSimilarities(staticA, ctorA, new Boolean[] {Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE});      
    }
    
    public void testCallerFromMethodWithMixedChains() throws Exception

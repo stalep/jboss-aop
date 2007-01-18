@@ -383,7 +383,7 @@ public abstract class CallerTransformer
          String replaced =
             methodByConInfoFromWeakReference("info", cd.callerInfoField) +
             "if (info.getInterceptors() != (org.jboss.aop.advice.Interceptor[])null) { " +
-            "$_ = ($r)aop$classAdvisor$aop.invokeConstructorCaller(info, $0, $args);" + 
+            "$_ = ($r)aop$classAdvisor$aop.invokeConstructorCaller(info, this, $0, $args);" + 
             //+ cd.callingIndex + ", $0, $args, " + cd.callerInfoField + "); " +
             "} else { " +
             "$_ = $proceed($$); " +
@@ -510,7 +510,7 @@ public abstract class CallerTransformer
          String replaced =
             conByConInfoFromWeakReference("info", cd.callerInfoField) +
             "if (info.getInterceptors() != (org.jboss.aop.advice.Interceptor[])null) { " +
-            "$_ = ($r)aop$classAdvisor$aop.invokeConCalledByCon(info, $args);" +
+            "$_ = ($r)aop$classAdvisor$aop.invokeConCalledByCon(info, this, $args);" +
             //+ cd.callingIndex + ", $args, " + cd.callerInfoField + "); " +
             "} else { " +
             "$_ = $proceed($$); " +

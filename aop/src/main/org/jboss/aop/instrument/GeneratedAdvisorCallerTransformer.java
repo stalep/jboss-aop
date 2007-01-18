@@ -111,24 +111,27 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
 
          if (hasTargetObject)
          {
-            params = new CtClass[originalLength + 1];
-            params[0] = instrumentor.forName(cd.classname); //target object
-            System.arraycopy(cd.calledMethod.getParameterTypes(), 0, params, 1, originalLength);
+            params = new CtClass[originalLength + 2];
+            params[0] = callingClass;
+            params[1] = instrumentor.forName(cd.classname); //target object
+            System.arraycopy(cd.calledMethod.getParameterTypes(), 0, params, 2, originalLength);
          }
          else
          {
-            params = cd.calledMethod.getParameterTypes();
+            params = new CtClass[originalLength + 1];
+            params[0] = callingClass;
+            System.arraycopy(cd.calledMethod.getParameterTypes(), 0, params, 1, originalLength);
          }
 
          String proceed = null;
 
          if (hasTargetObject)
          {
-            proceed = MethodExecutionTransformer.getAopReturnStr(cd.calledMethod) + "$1." + cd.calledMethod.getName() + "(" + getArguments(params.length, 1) +");";
+            proceed = MethodExecutionTransformer.getAopReturnStr(cd.calledMethod) + "$2." + cd.calledMethod.getName() + "(" + getArguments(params.length, 2) +");";
          }
          else
          {
-            proceed = MethodExecutionTransformer.getAopReturnStr(cd.calledMethod) + cd.classname + "." + cd.calledMethod.getName() + "($$);";
+            proceed = MethodExecutionTransformer.getAopReturnStr(cd.calledMethod) + cd.classname + "." + cd.calledMethod.getName() + "(" + getArguments(params.length, 1) + ");";
          }
 
          String infoName = MethodByConJoinPointGenerator.getInfoFieldName(cd.callingIndex, cd.classname, cd.calledHash);
@@ -400,6 +403,12 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
 
       private void createGenAdvisorConByConMethod(ConByConDetail cd)throws CannotCompileException, NotFoundException
       {
+
+         final int originalLength = cd.calledConstructor.getParameterTypes().length;
+         CtClass[] params = new CtClass[originalLength + 1];
+         params[0] = callingClass;
+         System.arraycopy(cd.calledConstructor.getParameterTypes(), 0, params, 1, originalLength);
+         
          String infoName = ConByConJoinPointGenerator.getInfoFieldName(cd.callingIndex, cd.classname, cd.calledHash);
          String generatorName = ConByConJoinPointGenerator.getJoinPointGeneratorFieldName(cd.callingIndex, cd.classname, cd.calledHash);
          String code =
@@ -410,20 +419,20 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
                "   }" +
                "   if (" + infoName + " == null)" +
                "   { " +
-               "      return new " + cd.calledConstructor.getDeclaringClass().getName() + "($$); " +
+               "      return new " + cd.calledConstructor.getDeclaringClass().getName() + "(" + getArguments(params.length, 1) + "); " +
                "   }" +
                "   else" +
                "   {" +
                "      return " + infoName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
                "   }" +
                "}";
-   
+
          try
          {
             CtMethod method = CtNewMethod.make(
                   cd.calledConstructor.getDeclaringClass(),
                   cd.callerInfoField,
-                  cd.calledConstructor.getParameterTypes(),
+                  params,
                   cd.calledConstructor.getExceptionTypes(),
                   code,
                   getGenadvisor());
@@ -438,16 +447,17 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
 
       protected void replaceMethodCallInCon(ConstructorDetail cd)throws CannotCompileException, NotFoundException
       {
-         final String advisor = " ((" + GeneratedAdvisorInstrumentor.getAdvisorFQN(callingClass) + ")" + Instrumentor.HELPER_FIELD_NAME + ")";
+         final String advisor = " ((" + GeneratedAdvisorInstrumentor.getAdvisorFQN(callingClass) + ")" +
+            GeneratedAdvisorInstrumentor.GET_CURRENT_ADVISOR + ")";
          final int paramsLength = cd.calledMethod.getParameterTypes().length;
          String args = null;
          if (Modifier.isStatic(cd.calledMethod.getModifiers()))
          {
-            args = (paramsLength > 0) ? "$$" : "";
+            args = "this" + ((paramsLength > 0) ? ", $$" : "");
          }
          else
          {
-            args = "$0" + ((paramsLength > 0) ? ", $$" : "");
+            args = "this, $0" + ((paramsLength > 0) ? ", $$" : "");
          }
 
          final String ret = (!cd.calledMethod.getReturnType().equals(CtClass.voidType)) ? "$_ = " : "";
@@ -547,9 +557,11 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
       protected void replaceConCallInCon(ConByConDetail cd)throws CannotCompileException, NotFoundException
       {
          String advisor = "((" + GeneratedAdvisorInstrumentor.getAdvisorFQN(callingClass) + ")" +
-                     Instrumentor.HELPER_FIELD_NAME + ")";
+                     GeneratedAdvisorInstrumentor.GET_CURRENT_ADVISOR + ")";
 
-         String replaced = "$_ = " + advisor + "." + cd.callerInfoField + "($$);";
+         final int paramsLength = cd.calledConstructor.getParameterTypes().length;
+         String args = "this" + ((paramsLength > 0)?", $$": "");
+         String replaced = "$_ = " + advisor + "." + cd.callerInfoField + "(" + args + ");";
 
          try
          {

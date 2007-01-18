@@ -43,7 +43,7 @@ public class MethodCalledByMethodInvocationWrapper extends MethodCalledByMethodI
 
    public MethodCalledByMethodInvocationWrapper(MethodCalledByMethodInvocation wrapped, Interceptor[] interceptors)
    {
-      super(interceptors);
+      super(wrapped.getCallingObject(), interceptors);
       this.wrapped = wrapped;
    }
 
@@ -155,10 +155,4 @@ public class MethodCalledByMethodInvocationWrapper extends MethodCalledByMethodI
    {
       return wrapped.getCalledMethod();
    }
-
-   public Object getCallingObject()
-   {
-      return wrapped.getCallingObject();
-   }
-
 }
