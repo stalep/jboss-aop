@@ -155,4 +155,14 @@
    </bind>
    
    <prepare expr="all(org.jboss.test.aop.regression.jbaop316annotationsinwrapperonly.POJO)"/>
+   
+   <interceptor class="org.jboss.test.aop.regression.jbaop336callnpe.LogInterceptor" scope="PER_INSTANCE"/>
+
+   <bind pointcut="call(org.jboss.test.aop.regression.jbaop336callnpe.Log->new(java.lang.String))">
+      <interceptor-ref name="org.jboss.test.aop.regression.jbaop336callnpe.LogInterceptor"/>
+   </bind>
+
+   <bind pointcut="call(void org.jboss.test.aop.regression.jbaop336callnpe.Log->overwriteFile(java.lang.String))">
+      <interceptor-ref name="org.jboss.test.aop.regression.jbaop336callnpe.LogInterceptor"/>
+   </bind>
 </aop>
