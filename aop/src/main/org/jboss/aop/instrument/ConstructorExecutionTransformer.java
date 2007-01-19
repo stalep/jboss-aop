@@ -138,7 +138,6 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
    public boolean transform(CtClass clazz, ClassAdvisor classAdvisor) throws Exception
    {
       List constructors = instrumentor.getConstructors(clazz);
-      JoinpointClassification[] classification = classifyConstructor(constructors, classAdvisor);
       boolean wrappersGenerated = false;
       boolean oneOrMoreWrapped = false;
       int i = 0;
@@ -149,39 +148,45 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
       {
          firstConstructor = (CtConstructor) constructors.get(0);
       }
-      for (Iterator iterator = constructors.iterator(); iterator.hasNext(); i++)
+      if (constructors.size() > 0)
       {
-         CtConstructor constructor = (CtConstructor) iterator.next();
-         if (classification[i] == JoinpointClassification.NOT_INSTRUMENTED
-               && !oneOrMoreWrapped)
+         for (Iterator iterator = constructors.iterator(); iterator.hasNext(); i++)
          {
-            continue;
-         }
-         else if (!wrappersGenerated)
-         {
-            //generateWrapper + prepareForWrapping
-            buildConstructorWrappers(clazz, classAdvisor);
-            wrappersGenerated = true;
-            wrapper.prepareForWrapping(firstConstructor, ALL_CONSTRUCTORS_STATUS);
-         }
-         
-         if (classification[i].equals(JoinpointClassification.WRAPPED))
-         {
-            if (!oneOrMoreWrapped)
+            CtConstructor constructor = (CtConstructor) iterator.next();
+            
+            JoinpointClassification classification = classifier.classifyConstructorExecution(constructor, classAdvisor);
+            
+            if (classification == JoinpointClassification.NOT_INSTRUMENTED
+                  && !oneOrMoreWrapped)
             {
-               for (int j = 0; j < i; j++)
-               {
-                  this.setEmptyWrapperCodeLater((CtConstructor) constructors.get(j));
-               }
-               oneOrMoreWrapped = true;
+               continue;
             }
-            wrap(clazz, constructor, i);
-            dynamicallyWrapped = dynamicallyWrapped || classification[i].equals(JoinpointClassification.DYNAMICALY_WRAPPED);
-            notDynamicallyWrapped = notDynamicallyWrapped || !classification[i].equals(JoinpointClassification.DYNAMICALY_WRAPPED);
-         }
-         else if (oneOrMoreWrapped)
-         {
-            this.setEmptyWrapperCodeLater(constructor);
+            else if (!wrappersGenerated)
+            {
+               //generateWrapper + prepareForWrapping
+               buildConstructorWrappers(clazz, classAdvisor);
+               wrappersGenerated = true;
+               wrapper.prepareForWrapping(firstConstructor, ALL_CONSTRUCTORS_STATUS);
+            }
+            
+            if (classification.equals(JoinpointClassification.WRAPPED))
+            {
+               if (!oneOrMoreWrapped)
+               {
+                  for (int j = 0; j < i; j++)
+                  {
+                     this.setEmptyWrapperCodeLater((CtConstructor) constructors.get(j));
+                  }
+                  oneOrMoreWrapped = true;
+               }
+               wrap(clazz, constructor, i);
+               dynamicallyWrapped = dynamicallyWrapped || classification.equals(JoinpointClassification.DYNAMICALY_WRAPPED);
+               notDynamicallyWrapped = notDynamicallyWrapped || !classification.equals(JoinpointClassification.DYNAMICALY_WRAPPED);
+            }
+            else if (oneOrMoreWrapped)
+            {
+               this.setEmptyWrapperCodeLater(constructor);
+            }
          }
       }
       
@@ -468,24 +473,6 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
       return false;
    }
 
-   /**
-    * Classifies the constructor execution joinpoints.
-    * @param clazz the clazz whose constructors will be classified.
-    * @param advisor the advisor associated to <code>clazz</code>.
-    * @return a classification array.
-    */
-   protected JoinpointClassification[] classifyConstructor(List constructors, ClassAdvisor advisor) throws NotFoundException
-   {
-      JoinpointClassification[] classification = new JoinpointClassification[constructors.size()];
-      int index = 0;
-      for (Iterator iterator = constructors.iterator(); iterator.hasNext(); index++)
-      {
-         CtConstructor constructor = (CtConstructor) iterator.next();
-         classification[index] = classifier.classifyConstructorExecution(constructor, advisor);
-      }
-      return classification;
-   }
-   
    protected abstract void createWrapper(ConstructorTransformation trans) throws CannotCompileException, NotFoundException;
 
    protected void initialiseWrapper(int mod, CtConstructor constructor, int index) throws NotFoundException, CannotCompileException

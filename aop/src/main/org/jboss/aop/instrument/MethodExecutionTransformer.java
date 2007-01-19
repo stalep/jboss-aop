@@ -114,37 +114,19 @@ public abstract class MethodExecutionTransformer
       return TransformerCommon.infoFromWeakReference(METHOD_INFO_CLASS_NAME, localName, methodInfoName);
    }
 
-   /**
-    * Classifies the method execution joinpoints.
-    *
-    * @param clazz   the clazz whose methods will be classified.
-    * @param advisor the advisor associated to <code>clazz</code>.
-    * @return a classification array.
-    */
-   protected JoinpointClassification[] classifyMethods(CtClass clazz, ClassAdvisor advisor) throws NotFoundException
-   {
-      CtMethod[] methods = clazz.getDeclaredMethods();
-      JoinpointClassification[] classification = new JoinpointClassification[methods.length];
-      for (int i = 0; i < methods.length; i++)
-      {
-         classification[i] = classifier.classifyMethodExecution(methods[i], advisor);
-      }
-      return classification;
-   }
-
    public void instrument(CtClass clazz, ClassAdvisor advisor)throws NotFoundException, CannotCompileException
    {
-      JoinpointClassification[] classification = classifyMethods(clazz, advisor);
       CtMethod[] methods = clazz.getDeclaredMethods();
       for (int i = 0; i < methods.length; i++)
       {
-         if (classification[i] == JoinpointClassification.NOT_INSTRUMENTED)
+         JoinpointClassification classification = classifier.classifyMethodExecution(methods[i], advisor);
+         if (classification == JoinpointClassification.NOT_INSTRUMENTED)
          {
             continue;
          }
          instrumentor.setupBasics(clazz);
          MethodTransformation trans = new MethodTransformation(instrumentor, clazz, methods[i]);
-         boolean wrap = (classification[i].equals(JoinpointClassification.WRAPPED));
+         boolean wrap = (classification.equals(JoinpointClassification.WRAPPED));
          transformMethod(trans, wrap);
 
          int modifier = trans.getWMethod().getModifiers();
