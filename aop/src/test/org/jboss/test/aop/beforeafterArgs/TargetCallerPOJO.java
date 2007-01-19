@@ -69,7 +69,7 @@ public class TargetCallerPOJO
    }
 }
 
-class TargetCallerPOJO2
+class TargetCallerPOJO2 extends TargetCallerPOJO
 {
    public TargetCallerPOJO2(){}
    public TargetCallerPOJO2(int x){}

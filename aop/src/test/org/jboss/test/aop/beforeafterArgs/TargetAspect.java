@@ -21,6 +21,8 @@
  */
 package org.jboss.test.aop.beforeafterArgs;
 
+import junit.framework.Assert;
+
 import org.jboss.aop.advice.annotation.Target;
 import org.jboss.aop.joinpoint.CurrentInvocation;
 
@@ -65,6 +67,11 @@ public class TargetAspect
       before2 = true;
       before2Target = target;
    }
+
+   public void before3(@Target TargetAspect target)
+   {
+      Assert.fail("This advice should never be executed");
+   }
    
    public Object around1() throws Throwable
    {
@@ -79,12 +86,18 @@ public class TargetAspect
       return CurrentInvocation.proceed();
    }
    
+   public Object around3(@Target ReturnPOJO target) throws Throwable
+   {
+      Assert.fail("This advice should never be executed");
+      return null;
+   }
+   
    public void after1()
    {
       after1 = true;
    }
    
-   public void after2(@Target Object target)
+   public void after2(@Target TargetCallerPOJO target)
    {
       after2 = true;
       after2Target = target;

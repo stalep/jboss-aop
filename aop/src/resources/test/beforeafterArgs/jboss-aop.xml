@@ -200,8 +200,10 @@
    <stack name="TargetAdvices">
       <before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
       <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+      <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
       <advice name="around1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
       <advice name="around2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+      <advice name="around3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
       <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
       <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
 	</stack>
