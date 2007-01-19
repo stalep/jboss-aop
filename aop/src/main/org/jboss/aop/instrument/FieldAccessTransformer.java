@@ -79,25 +79,28 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
       List fields = Instrumentor.getAdvisableFields(clazz);
 
       int fieldIndex = fieldOffset(clazz.getSuperclass());
-      JoinpointClassification[] classificationGet = classifyFieldGet(clazz, advisor);
-      JoinpointClassification[] classificationSet = classifyFieldSet(clazz, advisor);
-      Iterator it = fields.iterator();
       boolean skipFieldInterception = true;
-      for (int index = 0; it.hasNext(); index++, fieldIndex++)
+      if (fields.size() > 0)
       {
-         CtField field = (CtField) it.next();
-
-         if (!isPrepared(classificationGet[index]) && !isPrepared(classificationSet[index]))
+         Iterator it = fields.iterator();
+         for (int index = 0; it.hasNext(); index++, fieldIndex++)
          {
-            continue;
+            CtField field = (CtField) it.next();
+   
+            JoinpointClassification classificationGet = instrumentor.joinpointClassifier.classifyFieldGet(field, advisor); 
+            JoinpointClassification classificationSet = instrumentor.joinpointClassifier.classifyFieldSet(field, advisor); 
+            if (!isPrepared(classificationGet) && !isPrepared(classificationSet))
+            {
+               continue;
+            }
+            
+            if (!javassist.Modifier.isPrivate(field.getModifiers()))
+            {
+               skipFieldInterception = false;
+            }
+            
+            doBuildFieldWrappers(clazz, field, fieldIndex, classificationGet, classificationSet);
          }
-         
-         if (!javassist.Modifier.isPrivate(field.getModifiers()))
-         {
-            skipFieldInterception = false;
-         }
-         
-         doBuildFieldWrappers(clazz, field, fieldIndex, classificationGet[index], classificationSet[index]);
       }
       
       if (skipFieldInterception)
@@ -305,44 +308,6 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
          }
       }
       return offset;
-   }
-
-   /**
-    * Classifies the field read joinpoints.
-    * @param clazz the clazz whose field reads will be classified.
-    * @param advisor the advisor associated to <code>clazz</code>.
-    * @return a classification array.
-    */
-   private JoinpointClassification[] classifyFieldGet(CtClass clazz, ClassAdvisor advisor) throws NotFoundException
-   {
-      List fields = instrumentor.getAdvisableFields(clazz);
-      JoinpointClassification[] classification = new JoinpointClassification[fields.size()];
-      int index = 0;
-      for (Iterator iterator = fields.iterator(); iterator.hasNext(); index++)
-      {
-         CtField field = (CtField) iterator.next();
-         classification[index] = instrumentor.joinpointClassifier.classifyFieldGet(field, advisor);
-      }
-      return classification;
-   }
-
-   /**
-    * Classifies the field write joinpoints.
-    * @param clazz the clazz whose field writes will be classified.
-    * @param advisor the advisor associated to <code>clazz</code>.
-    * @return a classification array.
-    */
-   private JoinpointClassification[] classifyFieldSet(CtClass clazz, ClassAdvisor advisor) throws NotFoundException
-   {
-      List fields = instrumentor.getAdvisableFields(clazz);
-      JoinpointClassification[] classification = new JoinpointClassification[fields.size()];
-      int index = 0;
-      for (Iterator iterator = fields.iterator(); iterator.hasNext(); index++)
-      {
-         CtField field = (CtField) iterator.next();
-         classification[index] = instrumentor.joinpointClassifier.classifyFieldSet(field, advisor);
-      }
-      return classification;
    }
 
    protected String addFieldReadInfoFieldWithAccessors(int modifiers, CtClass addTo, CtField field) throws NotFoundException, CannotCompileException
