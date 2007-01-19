@@ -35,4 +35,8 @@
   <bind pointcut="get(* org.jboss.test.aop.field.SetOrGetOnlyPOJO->getOnly)">                
        <interceptor class="org.jboss.test.aop.field.TraceInterceptor"/>
   </bind>
+  	
+  	<bind pointcut="get(* *->inheritedFieldInSubClassFieldA)">
+  	  <interceptor class="org.jboss.test.aop.field.ReplaceReadInterceptor"/>
+  	</bind>
 </aop>

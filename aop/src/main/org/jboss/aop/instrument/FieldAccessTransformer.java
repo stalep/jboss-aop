@@ -105,6 +105,15 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
       
       if (skipFieldInterception)
       {
+         //Need to check if any of the superclass fields are advised, since we may need to replace access to them
+         if (superClassHasAdvisedFields(clazz.getSuperclass()))
+         {
+            skipFieldInterception = false;
+         }
+      }
+      
+      if (skipFieldInterception)
+      {
          advisor.getManager().getInterceptionMarkers().skipFieldAccess(clazz.getName());
       }
       else
@@ -114,6 +123,58 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
          
    }
    
+   private boolean superClassHasAdvisedFields(CtClass superClass) throws NotFoundException
+   {
+      if (superClass == null || superClass.getName().indexOf("java.") == 0)
+      {
+         return false;
+      }
+
+      ClassAdvisor advisor;
+      try
+      {
+         //TODO Would ideally like to be able to use the existing advisor if class already exists
+         advisor = instrumentor.getManager().getTempClassAdvisor(superClass);
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+      
+      List fields = Instrumentor.getAdvisableFields(superClass);
+      if (fields.size() > 0)
+      {
+         for (Iterator it = fields.iterator(); it.hasNext(); )
+         {
+            CtField field = (CtField) it.next();
+            if (javassist.Modifier.isPrivate(field.getModifiers()))
+            {
+               continue;
+            }
+            
+            JoinpointClassification classificationGet = instrumentor.joinpointClassifier.classifyFieldGet(field, advisor); 
+            if (isPrepared(classificationGet))
+            {
+               return true;
+            }
+            
+            JoinpointClassification classificationSet = instrumentor.joinpointClassifier.classifyFieldSet(field, advisor);
+            if (isPrepared(classificationSet))
+            {
+               return true;
+            }
+         }
+      }
+      
+      //We had no advised fields, check superclass again
+      if (superClassHasAdvisedFields(superClass.getSuperclass()))
+      {
+         return true;
+      }
+      
+      return false;
+   }
+      
    protected boolean isPrepared(JoinpointClassification classification)
    {
       return classification != JoinpointClassification.NOT_INSTRUMENTED;

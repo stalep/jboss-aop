@@ -1141,4 +1141,8 @@ public abstract class Instrumentor
       }
    }
    
+   AspectManager getManager()
+   {
+      return manager;
+   }
 }

@@ -139,7 +139,7 @@ public class FieldTestCase extends AOPTestWithSetup
    }
    
    
-   public void testSuperPrivateField()
+    public void testSuperPrivateField()
    {
       POJO pojo = new POJO();
 
@@ -250,5 +250,16 @@ public class FieldTestCase extends AOPTestWithSetup
       TraceInterceptor.intercepted = false;
       assertEquals(10, pojo.getOnly);
       assertTrue(TraceInterceptor.intercepted);
+   }
+
+   public void testFieldsReplacedInSubClass()
+   {
+      C c = new C();
+      //Sanity
+      assertEquals("intercepted", c.inheritedFieldInSubClassFieldA);
+      //These are the real purpose of this test
+      assertEquals("intercepted", c.useField());
+      assertEquals("intercepted", AccessFieldViaB.accessField(c));
+      assertEquals("intercepted", AccessFieldViaC.accessField(c));
    }
 }
