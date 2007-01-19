@@ -112,7 +112,7 @@ public class AdvisorFactory
                {
                   Method getAdvisor = loadedClass.getMethod(GeneratedAdvisorInstrumentor.GET_CLASS_ADVISOR, NO_ARGS);
                   ClassAdvisor advisor = (ClassAdvisor)getAdvisor.invoke(null, null);
-                  if (advisor.getClazz() == loadedClass)
+                  if (advisor != null && advisor.getClazz() == loadedClass)
                   {
                      //Sub classes may not be instrumented, in which case we have the super class advisor here, which we don't want
                      return advisor;

@@ -1088,7 +1088,15 @@ public class AspectManager
                {
                   Field field = superClass.getDeclaredField(Instrumentor.HELPER_FIELD_NAME);
                   SecurityActions.setAccessible(field);
-                  return (ClassAdvisor) field.get(null);
+                  advisor = (ClassAdvisor) field.get(null);
+                  if (advisor != null)
+                  {
+                     return advisor;
+                  }
+                  else
+                  {
+                     break;
+                  }
                }
                catch (NoSuchFieldException e)
                {
