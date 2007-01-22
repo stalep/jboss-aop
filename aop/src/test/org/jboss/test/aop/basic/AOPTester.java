@@ -26,6 +26,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import org.jboss.aop.Advised;
+import org.jboss.aop.InstanceAdvised;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.test.aop.AOPTestWithSetup;
 
@@ -821,7 +822,25 @@ public class AOPTester extends AOPTestWithSetup
       assertTrue("Found A", NamedInterceptor.invoked.contains("G"));
       assertTrue("Found A", NamedInterceptor.invoked.contains("H"));
       assertFalse("Didn't find NotBound", NamedInterceptor.invoked.contains("NotBound"));
-   }   
+   }
+   
+   public void testInstanceAdvisorGetInstance()
+   {
+      POJO pojo1 = new POJO();
+      POJO pojo2 = new POJO();
+      
+      InstanceAdvisor ia1 = ((InstanceAdvised)pojo1)._getInstanceAdvisor();
+      assertNotNull(ia1);
+      InstanceAdvisor ia2 = ((InstanceAdvised)pojo2)._getInstanceAdvisor();
+      assertNotNull(ia2);
+      
+      Object instance1 = ia1.getInstance();
+      assertNotNull(instance1);
+      assertSame(pojo1, instance1);
+      Object instance2 = ia2.getInstance();
+      assertNotNull(instance2);
+      assertSame(pojo2, instance2);
+   }
    // Inner classes -------------------------------------------------
 }
 

@@ -195,6 +195,11 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
       domain.removeAdvisor(this);
    }
 
+   public Object getInstance()
+   {
+      throw new RuntimeException("Not implemented");
+   }
+
    /**
     * If the target instance is advised, make sure that we set the unadvised method to the one stored by the class advisor
     * so that we don't get double invocations.
@@ -218,4 +223,5 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
    {
       return classAdvisor;
    }
+
 }

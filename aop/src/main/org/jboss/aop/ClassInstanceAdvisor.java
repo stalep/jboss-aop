@@ -368,11 +368,11 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
       return null;
    }
 
-   private Object getInstance()
+   public Object getInstance()
    {
       if (instanceRef != null)
       {
-         return (Advisor)instanceRef.get();
+         return instanceRef.get();
       }
       return null;
    }

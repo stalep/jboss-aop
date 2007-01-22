@@ -387,6 +387,11 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
    {
       return new GeneratedAdvisorInterceptor(new InstanceInterceptorFactory(interceptor), null, null);
    }
+   
+   public Object getInstance()
+   {
+      return instance;
+   }
 
    public class InstanceInterceptorFactory implements InterceptorFactory
    {
@@ -426,7 +431,5 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
       {
          return true;
       }
-      
-      
    }
 }

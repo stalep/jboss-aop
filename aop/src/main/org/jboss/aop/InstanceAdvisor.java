@@ -74,4 +74,6 @@ public interface InstanceAdvisor
    public Object getPerInstanceJoinpointAspect(Joinpoint joinpoint, AspectDefinition def);
    
    public Domain getDomain();
+   
+   public Object getInstance();
 }
