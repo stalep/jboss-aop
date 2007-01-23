@@ -61,8 +61,10 @@ public class ArgsAspect
 
    static boolean around1 = false;
    static boolean around2 = false;
+   static boolean around3 = false;
    static Object[] around1Args = null;
    static Object[] around2Args = null;
+   static Object[] around3Args = null;
    
    static boolean throwing = false;
    static Object[] throwingArgs = null;
@@ -95,8 +97,10 @@ public class ArgsAspect
       
       around1 = false;
       around2 = false;
+      around3 = false;
       around1Args = null;
       around2Args = null;
+      around3Args = null;
       
       throwing = false;
       throwingArgs = null;
@@ -216,6 +220,13 @@ public class ArgsAspect
    {
       around2 = true;
       around2Args = invocation.getArguments();
+      return invocation.invokeNext();
+   }
+   
+   public Object around3(MethodInvocation invocation, @Args Object[] arguments) throws Throwable
+   {
+      around3 = true;
+      around3Args = arguments;
       return invocation.invokeNext();
    }
    

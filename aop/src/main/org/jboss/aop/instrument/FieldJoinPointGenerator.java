@@ -223,14 +223,9 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       CtClass advisedClass;
       CtField advisedField;
       String finame;
-      int index;
       boolean hasTargetObject;
 
       CtClass jp;
-      CtMethod invokeJoinpointMethod;
-      CtConstructor publicConstructor;
-      CtConstructor protectedConstructor;
-      CtField targetField;
       CtClass fieldType;
       CtClass fieldInfoClass;
       boolean read;
@@ -293,7 +288,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
 
       private void addTypedTargetField()throws CannotCompileException
       {
-         targetField = new CtField(advisedClass, TARGET_FIELD, jp);
+         CtField targetField = new CtField(advisedClass, TARGET_FIELD, jp);
          jp.addField(targetField);
          targetField.setModifiers(Modifier.PROTECTED);
       }
@@ -305,7 +300,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
        */
       private void addPublicConstructor() throws CannotCompileException
       {
-         publicConstructor = CtNewConstructor.make(
+         CtConstructor publicConstructor = CtNewConstructor.make(
                new CtClass[] {fieldInfoClass},
                new CtClass[0],
                "{super($1, $1.getInterceptors()); this." + INFO_FIELD + " = $1;}",
@@ -321,7 +316,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       protected void addProtectedConstructor() throws CannotCompileException, NotFoundException
       {
 
-         protectedConstructor = CtNewConstructor.make(
+         CtConstructor protectedConstructor = CtNewConstructor.make(
                createProtectedCtorParams(),
                new CtClass[0],
                createProtectedCtorBody(),
@@ -475,7 +470,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
 
       protected CtMethod addInvokeJoinpointMethod() throws CannotCompileException, NotFoundException
       {
-         invokeJoinpointMethod  = CtNewMethod.make(
+         CtMethod invokeJoinpointMethod  = CtNewMethod.make(
                advisedField.getType(),
                INVOKE_JOINPOINT,
                getInvokeJoinPointParams(),
@@ -561,7 +556,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
 
       protected CtMethod addInvokeJoinpointMethod() throws CannotCompileException, NotFoundException
       {
-         invokeJoinpointMethod  = CtNewMethod.make(
+         CtMethod invokeJoinpointMethod  = CtNewMethod.make(
                CtClass.voidType,
                JoinPointGenerator.INVOKE_JOINPOINT,
                getInvokeJoinPointParams(),

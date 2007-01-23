@@ -199,7 +199,7 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertEquals(6, ((Integer) ArgsAspect.before3Args[1]).intValue());
       assertEquals(true, ((Boolean) ArgsAspect.before3Args[2]).booleanValue());
       assertNull(ArgsAspect.before3Args[3]);
-      
+      System.out.println("AROUND ARGS: " + ArgsAspect.around3Args);
       assertFalse(ArgsAspect.before1);
       assertFalse(ArgsAspect.before2);
       assertFalse(ArgsAspect.before6);
@@ -224,6 +224,7 @@ public class ArgsTestCase extends AOPTestWithSetup
       
       assertNotNull(ArgsAspect.before7Args);
       assertSame(ArgsAspect.before7Args, ArgsAspect.after7Args);
+      assertSame(ArgsAspect.before7Args, ArgsAspect.around1Args);
       assertEquals(4, ArgsAspect.before7Args.length);
       assertEquals("after7", ArgsAspect.before7Args[0]);
       assertEquals(14, ((Integer) ArgsAspect.before7Args[1]).intValue());
@@ -232,15 +233,6 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertNotNull(ArgsAspect.before7Args[3]);
       assertEquals(1, ((ArgsPOJO[]) ArgsAspect.before7Args[3]).length);
       assertNull(((ArgsPOJO[]) ArgsAspect.before7Args[3])[0]);
-      
-      assertNotNull(ArgsAspect.around1Args);
-      assertEquals(4, ArgsAspect.around1Args.length);
-      assertEquals("before7", ArgsAspect.around1Args[0]);
-      assertEquals(7, ((Integer) ArgsAspect.around1Args[1]).intValue());
-      assertEquals(true, ((Boolean) ArgsAspect.around1Args[2]).booleanValue());
-      
-      assertNotNull(ArgsAspect.around1Args[3]);
-      assertEquals(0, ((ArgsPOJO[]) ArgsAspect.around1Args[3]).length);
       
       assertFalse(ArgsAspect.before1);
       assertFalse(ArgsAspect.before2);

@@ -201,9 +201,6 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
       String ciname;
 
       CtClass jp;
-      CtMethod invokeJoinpointMethod;
-      CtConstructor publicConstructor;
-      CtConstructor protectedConstructor;
       CtClass[] params;
       CtClass constructorInfoClass;
 
@@ -267,7 +264,7 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
        */
       private void addPublicConstructor() throws CannotCompileException
       {
-         publicConstructor = CtNewConstructor.make(
+         CtConstructor publicConstructor = CtNewConstructor.make(
                new CtClass[] {constructorInfoClass},
                new CtClass[0],
                "{super($1, null, $1.getInterceptors()); this." + INFO_FIELD + " = $1;}",
@@ -279,30 +276,41 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
        * This constructor will be called by invokeJoinpoint in the generated subclass when we need to
        * instantiate a joinpoint containing target and args
        */
-      protected void addProtectedConstructor() throws CannotCompileException
+      protected void addProtectedConstructor()
+         throws CannotCompileException, NotFoundException
       {
-         CtClass[] ctorParams = new CtClass[params.length + 2];
-         ctorParams[0] = jp;
-         ctorParams[1] = callingClass;
-         System.arraycopy(params, 0, ctorParams, 2, params.length);
-
+         CtClass[] ctorParams1 = new CtClass[params.length + 2];
+         CtClass[] ctorParams2 = new CtClass[3];
+         ctorParams1[0] = ctorParams2[0] = jp;
+         ctorParams1[1] = ctorParams2[1] = callingClass;
+         System.arraycopy(params, 0, ctorParams1, 2, params.length);
+         ctorParams2[2] = instrumentor.forName("java.lang.Object[]");
+         
          StringBuffer body = new StringBuffer();
          body.append("{");
          body.append("   this($1." + INFO_FIELD + ");");
          body.append("   super.callingObject=$2;");
          
+         StringBuffer setArguments = new StringBuffer();
          int offset = 2;
-         for (int i = offset ; i < ctorParams.length ; i++)
+         for (int i = offset ; i < ctorParams1.length ; i++)
          {
-            body.append("   arg" + (i - offset) + " = $" + (i + 1)  + ";");
+            setArguments.append("   arg" + (i - offset) + " = $" + (i + 1)  + ";");
          }
+         setArguments.append("}");
 
-         body.append("}");
-
-         protectedConstructor = CtNewConstructor.make(
-               ctorParams,
+         CtConstructor protectedConstructor = CtNewConstructor.make(
+               ctorParams1,
                new CtClass[0],
-               body.toString(),
+               body.toString() + setArguments.toString(),
+               jp);
+         protectedConstructor.setModifiers(Modifier.PROTECTED);
+         jp.addConstructor(protectedConstructor);
+         
+         protectedConstructor = CtNewConstructor.make(
+               ctorParams2,
+               new CtClass[0],
+               body.toString() + "   setArguments($3);}",
                jp);
          protectedConstructor.setModifiers(Modifier.PROTECTED);
          jp.addConstructor(protectedConstructor);
@@ -323,7 +331,7 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
        */
       private CtMethod addInvokeJoinpointMethod() throws CannotCompileException, NotFoundException
       {
-         invokeJoinpointMethod  = CtNewMethod.make(
+         CtMethod invokeJoinpointMethod  = CtNewMethod.make(
                targetClass,
                INVOKE_JOINPOINT,
                getInvokeJoinPointParameters(),

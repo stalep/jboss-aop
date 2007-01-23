@@ -262,9 +262,6 @@ public abstract class Instrumentor
       String initializer = null;
       if (mixin.getConstruction() == null)
       {
-         CtConstructor[] constructors = mixinClass.getConstructors();
-         for (int i = 0; i < constructors.length; i++)
-            System.out.println("constructors[" + i + "] = " + constructors[i].getSignature());
          if (mixinClass.getConstructor("()V") == null)
          {
             throw new RuntimeException("Default constructor of mixin class '" +

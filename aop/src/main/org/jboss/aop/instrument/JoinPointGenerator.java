@@ -64,7 +64,7 @@ public abstract class JoinPointGenerator
 {
    // TODO replace by enum
    protected static class JoinPointParameters {
-      public static final JoinPointParameters ONLY_ARGS = new JoinPointParameters(false, -1, false, -1, 0, "");
+      public static final JoinPointParameters ONLY_ARGS = new JoinPointParameters(false, -1, false, -1, 0, null);
       public static final JoinPointParameters TARGET_ARGS = new JoinPointParameters(true, 1, false, -1, 1, "$1");
       public static final JoinPointParameters CALLER_ARGS = new JoinPointParameters(false, -1, true, 1, 1, "$1");
       public static final JoinPointParameters TARGET_CALLER_ARGS = new JoinPointParameters(true, 1, true, 2, 2, "$1, $2");
@@ -75,16 +75,16 @@ public abstract class JoinPointGenerator
       private int targetIndex;
       private int callerIndex;
       private int firstArgIndex;
-      private String listPrefix;
+      private String targetCallerList;
       
-      private JoinPointParameters(boolean target, int targetIndex, boolean caller, int callerIndex, int firstArgIndex, String listPrefix)
+      private JoinPointParameters(boolean target, int targetIndex, boolean caller, int callerIndex, int firstArgIndex, String targetCallerList)
       {
          this.target = target;
          this.targetIndex = targetIndex;
          this.caller = caller;
          this.callerIndex = callerIndex;
          this.firstArgIndex = firstArgIndex + 1;
-         this.listPrefix = listPrefix;
+         this.targetCallerList = targetCallerList;
       }
       
       public final boolean hasTarget()
@@ -114,44 +114,40 @@ public abstract class JoinPointGenerator
       
       public final String declareArgsArray(int totalParameters)
       {
-         if (++totalParameters == firstArgIndex)
-         {
-            return "Object[] " + ARGUMENTS + " = new Object[0];";
-         }
          StringBuffer buffer = new StringBuffer("Object[] ");
          buffer.append(ARGUMENTS);
-         buffer.append(" = new Object[]{($w)$");
-         buffer.append(firstArgIndex);
-         for (int i = firstArgIndex + 1; i < totalParameters; i++)
+         if (++totalParameters == firstArgIndex)
          {
-            buffer.append(", ($w)$");
-            buffer.append(i);
+            buffer.append(" = new Object[0];");
          }
-         buffer.append("};");
+         else
+         {
+            buffer.append(" = new Object[]{($w)$");
+            buffer.append(firstArgIndex);
+            for (int i = firstArgIndex + 1; i < totalParameters; i++)
+            {
+               buffer.append(", ($w)$");
+               buffer.append(i);
+            }
+            buffer.append("};");
+         }
          return buffer.toString();
       }
       
-      public final void appendParameterListWithArgs(StringBuffer code, CtClass[] parameterTypes, boolean beginWithComma)
+      public final void appendParameterList(StringBuffer code, CtClass[] parameterTypes)
       {
 
          int j = firstArgIndex - 1;
          int totalParameters = parameterTypes.length - j;
-         if (listPrefix == "" && totalParameters == 0)
+         if (targetCallerList != null)
          {
-            return;
+            code.append(targetCallerList);
          }
-
-         if (beginWithComma)
-         {
-            code.append(", ");
-         }
-
-         code.append(listPrefix);
          if (totalParameters == 0)
          {
             return;
          }
-         if (listPrefix.length() != 0)
+         if (targetCallerList != null)
          {
             code.append(", ");
          }
@@ -164,7 +160,19 @@ public abstract class JoinPointGenerator
             castArgument(code, parameterTypes[j], i);
          }
       }
-
+      
+      public final void appendParameterListWithArgs(StringBuffer code)
+      {
+         if (targetCallerList != null)
+         {
+            code.append(targetCallerList);
+            code.append(",");
+         }
+         
+         code.append(ARGUMENTS);
+      }
+      
+      
       private static final String[][] primitiveExtractions;
 
       static{
@@ -232,33 +240,6 @@ public abstract class JoinPointGenerator
             code.append("]");
          }
       }
-
-      public void appendArgsArrayList(StringBuffer code, CtClass[] parameterTypes)
-      {
-         int j = firstArgIndex - 1;
-         int totalParameters = parameterTypes.length - j;
-
-         if (totalParameters == 0)
-         {
-            return;
-         }
-         code.append("(");
-         code.append(parameterTypes[j++].getName());
-         code.append(") ");
-         code.append(ARGUMENTS);
-         code.append("[0]");
-         
-         for (int i = 1; i < totalParameters; i++, j++)
-         {
-            code.append(", (");
-            code.append(parameterTypes[j].getName());
-            code.append(") ");
-            code.append(ARGUMENTS);
-            code.append("[");
-            code.append(i);
-            code.append("]");
-         }
-      }
    }
    
    public static final String INFO_FIELD = "info";
@@ -276,6 +257,7 @@ public abstract class JoinPointGenerator
    private static final String RETURN_VALUE = "ret";
    private static final String THROWABLE = "t";
    private static final String ARGUMENTS= " arguments";
+   private static final String GET_ARGUMENTS= " getArguments()";
    protected static final CtClass[] EMPTY_CTCLASS_ARRAY = new CtClass[0];
 
    private JoinPointInfo oldInfo;
@@ -755,18 +737,23 @@ public abstract class JoinPointGenerator
       }
       code.append("   try");
       code.append("   {");
-      boolean argsFound = addInvokeCode(DefaultAdviceCallStrategy.getInstance(),
+      boolean argsFoundBefore = addInvokeCode(DefaultAdviceCallStrategy.getInstance(),
             setups.getBeforeSetups(), code);
-      addAroundInvokeCode(code, setups, joinpointClass, argsFound, parameterTypes);
-
-      argsFound = addInvokeCode(AfterAdviceCallStrategy.getInstance(),
-            setups.getAfterSetups(), code) || argsFound;
-      
-      code.append("   }");
-      code.append("   catch(java.lang.Throwable " + THROWABLE + ")");
-      code.append("   {");
-      argsFound = addInvokeCode(DefaultAdviceCallStrategy.getInstance(),
-            setups.getThrowingSetups(), code) || argsFound;
+      // process after code
+      StringBuffer afterCode = new StringBuffer();
+      boolean argsFoundAfter = addInvokeCode(AfterAdviceCallStrategy.getInstance(),
+            setups.getAfterSetups(), afterCode);
+      afterCode.append("   }");
+      afterCode.append("   catch(java.lang.Throwable " + THROWABLE + ")");
+      afterCode.append("   {");
+      argsFoundAfter = addInvokeCode(DefaultAdviceCallStrategy.getInstance(),
+            setups.getThrowingSetups(), afterCode) || argsFoundAfter;
+      // add around according to whether @Args were found before and/or later
+      addAroundInvokeCode(code, setups, joinpointClass, argsFoundBefore,
+            argsFoundAfter, parameterTypes);
+      // add after code
+      code.append(afterCode.toString());
+      // finish code body
       addHandleExceptionCode(code, declaredExceptions);
       code.append("   }");
       if (!isVoid())
@@ -775,12 +762,13 @@ public abstract class JoinPointGenerator
       }
       code.append("}");;
       
-      if (argsFound)
+      // declare arguments array if necessary
+      if (argsFoundBefore || argsFoundAfter)
       {
          code.insert(1, parameters.declareArgsArray(parameterTypes.length));
       }
       return code.toString();
-   }   
+   }
 
    private boolean addInvokeCode(AdviceCallStrategy callStrategy, AdviceSetup[] setups, StringBuffer code) throws NotFoundException
    {
@@ -800,7 +788,8 @@ public abstract class JoinPointGenerator
    
    
    private void addAroundInvokeCode(StringBuffer code, AdviceSetupsByType setups,
-         CtClass joinpointClass, boolean argsFound, CtClass[] parameterTypes) throws NotFoundException
+         CtClass joinpointClass, boolean argsFoundBefore, boolean argsFoundAfter,
+         CtClass[] parameterTypes) throws NotFoundException
    {
       if (setups.getAroundSetups() != null)
       {
@@ -827,15 +816,15 @@ public abstract class JoinPointGenerator
 
          code.append("      if(" + INFO_FIELD + ".getInterceptors() != null)");
          code.append("      {");
-         code.append("         " + joinpointFqn + " jp = new " + joinpointClass.getName() + "(this");
-         if (argsFound)
+         code.append("         " + joinpointFqn + " jp = new " + joinpointClass.getName() + "(this, ");
+         if (argsFoundBefore)
          {
-            parameters.appendParameterListWithArgs(code, parameterTypes, true);
+            parameters.appendParameterListWithArgs(code);
             
          }
          else
          {
-            code.append(", $$");
+            code.append("$$");
          }
          
          code.append(aspects.toString() + cflows.toString() + ");");
@@ -845,17 +834,23 @@ public abstract class JoinPointGenerator
          }
          code.append("jp.invokeNext();");
          
+         if (argsFoundAfter)
+         {
+            code.append(ARGUMENTS);
+            code.append(" = jp.getArguments();");
+         }
+         
          code.append("      }");
          code.append("      else");
          code.append("      {");
          
-         addDispatchCode(code, parameterTypes, argsFound);
+         addDispatchCode(code, parameterTypes, argsFoundBefore);
          
          code.append("      }");
       }
       else
       {
-         addDispatchCode(code, parameterTypes, argsFound);
+         addDispatchCode(code, parameterTypes, argsFoundBefore);
       }
    }
 
@@ -869,7 +864,7 @@ public abstract class JoinPointGenerator
       code.append("super.dispatch(");
       if (argsFound)
       {
-         parameters.appendParameterListWithArgs(code, parameterTypes, false);
+         parameters.appendParameterList(code, parameterTypes);
       }
       else
       {
@@ -938,17 +933,23 @@ public abstract class JoinPointGenerator
    private void createConstructors(ClassPool pool, CtClass superClass, CtClass clazz, AdviceSetupsByType setups) throws NotFoundException, CannotCompileException
    {
       CtConstructor[] superCtors = superClass.getDeclaredConstructors();
-      if (superCtors.length != 2 && !this.getClass().equals(MethodJoinPointGenerator.class))
+      if (superCtors.length != 3 && !this.getClass().equals(MethodJoinPointGenerator.class)
+            && !FieldJoinPointGenerator.class.isAssignableFrom(this.getClass()))
       {
-         throw new RuntimeException("JoinPoints should only have 2 and only constructors, not " + superCtors.length);
+         throw new RuntimeException("JoinPoints should only have 3 and only constructors, not " + superCtors.length);
       }
-      else if (superCtors.length != 3 && this.getClass().equals(MethodJoinPointGenerator.class))
+      else if (superCtors.length != 2 && FieldJoinPointGenerator.class.isAssignableFrom(this.getClass()))
       {
-         throw new RuntimeException("Method JoinPoints should only have 2 and only constructors, not " + superCtors.length);
+         throw new RuntimeException("Field JoinPoints should only have 2 and only constructors, not " + superCtors.length);
+      }
+      else if (superCtors.length != 4 && this.getClass().equals(MethodJoinPointGenerator.class))
+      {
+         throw new RuntimeException("Method JoinPoints should only have 4 and only constructors, not " + superCtors.length);
       }
       
       int publicIndex = -1;
-      int protectedIndex = -1;
+      int protectedIndex1 = -1;
+      int protectedIndex2 = -1;
       int defaultIndex = -1;
       
       for (int i = 0 ; i < superCtors.length ; i++)
@@ -961,13 +962,20 @@ public abstract class JoinPointGenerator
          }
          else if (Modifier.isProtected(modifier))
          {
-            protectedIndex = i;
+            if (protectedIndex1 == -1)
+            {
+               protectedIndex1 = i;
+            }
+            else
+            {
+               protectedIndex2 = i;
+            }
          }
       }
       
-      if (publicIndex < 0 || protectedIndex < 0)
+      if (publicIndex < 0 || protectedIndex1 < 0)
       {
-         throw new RuntimeException("One of the JoinPoint constructors should be public, the other protected");
+         throw new RuntimeException("One of the JoinPoint constructors should be public, and at least one of them should be protected");
       }
       
       if (defaultIndex >= 0)
@@ -976,7 +984,14 @@ public abstract class JoinPointGenerator
       }
       
       createPublicConstructor(superCtors[publicIndex], clazz, setups);
-      createProtectedConstructor(pool, superCtors[protectedIndex], clazz, setups);
+      if (protectedIndex2 == -1)
+      {
+         createProtectedConstructors(pool, superCtors[protectedIndex1], null, clazz, setups);
+      }
+      else
+      {
+         createProtectedConstructors(pool, superCtors[protectedIndex1], superCtors[protectedIndex2], clazz, setups);
+      }
       createCopyConstructorAndMethod(pool, clazz);
    }
 
@@ -1024,18 +1039,17 @@ public abstract class JoinPointGenerator
    }
    
    /**
-    * This is the constructor that will be called by the invokeJoinPoint() method, make sure it
-    * copies across all the non-per-instance aspects
+    * These are the constructors that will be called by the invokeJoinPoint() method,
+    * make sure it copies across all the non-per-instance aspects
     */
-   private void createProtectedConstructor(ClassPool pool, CtConstructor superCtor,
-         CtClass clazz, AdviceSetupsByType setups)
+   private void createProtectedConstructors(ClassPool pool, CtConstructor superCtor1,
+         CtConstructor superCtor2, CtClass clazz, AdviceSetupsByType setups)
          throws CannotCompileException, NotFoundException
    {
       
-      CtClass[] superParams = superCtor.getParameterTypes();
       ArrayList<AdviceSetup> aspects = new ArrayList<AdviceSetup>(); 
       ArrayList<Integer> cflows = new ArrayList<Integer>();
-      StringBuffer adviceInit = new StringBuffer(); 
+      StringBuffer adviceInit  = new StringBuffer(); 
       
       AdviceSetup[] allSetups = setups.getAllSetups();
       for (int i = 0 ; i < allSetups.length ; i++)
@@ -1062,18 +1076,32 @@ public abstract class JoinPointGenerator
             cflows.add(allSetups[i].useCFlowFrom());
          }
       }
-
-      StringBuffer cflowInit = new StringBuffer();
-
-      //Set up the parameters
+      createProtectedConstructor(pool, clazz, superCtor1, allSetups, aspects, cflows,
+            adviceInit.toString());
+      if (superCtor2 != null)
+      {
+         createProtectedConstructor(pool, clazz, superCtor2, allSetups, aspects, cflows,
+            adviceInit.toString());
+      }
+   }
+   
+   private void createProtectedConstructor(ClassPool pool, CtClass clazz,
+         CtConstructor superCtor, AdviceSetup[] allSetups,
+         ArrayList<AdviceSetup> aspects, ArrayList<Integer> cflows,
+         String aspectInitialization)
+      throws NotFoundException, CannotCompileException
+   {
+      // Set up the parameters
+      CtClass[] superParams = superCtor.getParameterTypes();
       CtClass[] params = new CtClass[superParams.length + aspects.size() + cflows.size()];
       System.arraycopy(superParams, 0, params, 0, superParams.length);
 
+      StringBuffer init = new StringBuffer();
       for (int i = 0 ; i < aspects.size() ; i++)
       {
          AdviceSetup setup = (AdviceSetup)aspects.get(i);
          params[i + superParams.length] = setup.getAspectCtClass();
-         adviceInit.append("this." + setup.getAspectFieldName() + " = $" + (i + superParams.length + 1) + ";");
+         init.append("this." + setup.getAspectFieldName() + " = $" + (i + superParams.length + 1) + ";");
       }
       final int aspectsLength = superParams.length + aspects.size();
       if (cflows.size() > 0 )
@@ -1082,8 +1110,8 @@ public abstract class JoinPointGenerator
          for (int i = 0 ; i < cflows.size() ; i++)
          {
             params[i + aspectsLength] = astCFlowExpr;
-            cflowInit.append("cflow" + cflows.get(i) + "= $" + (i + aspectsLength + 1) + ";");
-            cflowInit.append("matchesCflow" + cflows.get(i) + " = getCFlow" + allSetups[i].useCFlowFrom() + "();");
+            init.append("cflow" + cflows.get(i) + "= $" + (i + aspectsLength + 1) + ";");
+            init.append("matchesCflow" + cflows.get(i) + " = getCFlow" + allSetups[i].useCFlowFrom() + "();");
          }
       }
       
@@ -1098,8 +1126,9 @@ public abstract class JoinPointGenerator
       
       }
       body.append(");");
-      body.append(adviceInit.toString());
-      body.append(cflowInit.toString());
+      body.append(aspectInitialization);
+      body.append(init.toString());
+      
       body.append("}");   
       CtConstructor ctor = CtNewConstructor.make(
           params, 
@@ -1723,7 +1752,14 @@ public abstract class JoinPointGenerator
             }
             break;
          case AdviceMethodProperties.ARGS_ARG:
-            code.append(ARGUMENTS);
+            if (isAround)
+            {
+               code.append(GET_ARGUMENTS);
+            }
+            else
+            {
+               code.append(ARGUMENTS);
+            }
             // return true when args has been found; false otherwise
             return true;
          default:
