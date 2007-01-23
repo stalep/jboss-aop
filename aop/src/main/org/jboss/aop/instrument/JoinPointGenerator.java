@@ -161,15 +161,13 @@ public abstract class JoinPointGenerator
          }
       }
       
-      public final void appendParameterListWithArgs(StringBuffer code)
+      public final void appendParameterListWithoutArgs(StringBuffer code)
       {
          if (targetCallerList != null)
          {
+            code.append(',');
             code.append(targetCallerList);
-            code.append(",");
          }
-         
-         code.append(ARGUMENTS);
       }
       
       
@@ -816,18 +814,26 @@ public abstract class JoinPointGenerator
 
          code.append("      if(" + INFO_FIELD + ".getInterceptors() != null)");
          code.append("      {");
-         code.append("         " + joinpointFqn + " jp = new " + joinpointClass.getName() + "(this, ");
+         code.append("         " + joinpointFqn + " jp = new " + joinpointClass.getName() + "(this");
          if (argsFoundBefore)
          {
-            parameters.appendParameterListWithArgs(code);
+            parameters.appendParameterListWithoutArgs(code);
             
          }
          else
          {
-            code.append("$$");
+            code.append(", $$");
          }
          
          code.append(aspects.toString() + cflows.toString() + ");");
+         
+         if (argsFoundBefore)
+         {
+            code.append("   jp.setArguments(");
+            code.append(ARGUMENTS);
+            code.append(");");
+         }
+         
          if (!isVoid())
          {
             code.append("          " + RETURN_VALUE + " = ($r)");
@@ -933,18 +939,18 @@ public abstract class JoinPointGenerator
    private void createConstructors(ClassPool pool, CtClass superClass, CtClass clazz, AdviceSetupsByType setups) throws NotFoundException, CannotCompileException
    {
       CtConstructor[] superCtors = superClass.getDeclaredConstructors();
-      if (superCtors.length != 3 && !this.getClass().equals(MethodJoinPointGenerator.class)
+      if (superCtors.length != 3 && superCtors.length != 2 && !this.getClass().equals(MethodJoinPointGenerator.class)
             && !FieldJoinPointGenerator.class.isAssignableFrom(this.getClass()))
       {
-         throw new RuntimeException("JoinPoints should only have 3 and only constructors, not " + superCtors.length);
+         throw new RuntimeException("JoinPoints should have 2 or 3 constructors, not " + superCtors.length);
       }
       else if (superCtors.length != 2 && FieldJoinPointGenerator.class.isAssignableFrom(this.getClass()))
       {
          throw new RuntimeException("Field JoinPoints should only have 2 and only constructors, not " + superCtors.length);
       }
-      else if (superCtors.length != 4 && this.getClass().equals(MethodJoinPointGenerator.class))
+      else if (superCtors.length != 4 && superCtors.length != 3 && this.getClass().equals(MethodJoinPointGenerator.class))
       {
-         throw new RuntimeException("Method JoinPoints should only have 4 and only constructors, not " + superCtors.length);
+         throw new RuntimeException("Method JoinPoints should have 3 or 4 constructors, not " + superCtors.length);
       }
       
       int publicIndex = -1;

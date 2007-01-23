@@ -244,7 +244,7 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
          addInvokeJoinpointMethod();
          addMethodInfoField();
          addPublicConstructor();
-         addProtectedConstructor();
+         addProtectedConstructors();
          addDispatchMethods();
 
          TransformerCommon.compileOrLoadClass(callingClass, jp);
@@ -286,23 +286,21 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
       }
 
       /**
-       * This constructor will be called by invokeJoinpoint in the generated subclass when we need to
-       * instantiate a joinpoint containing target and args
+       * These constructors will be called by invokeJoinpoint in the generated
+       * subclass when we need to instantiate a joinpoint containing target and args
        */
-      protected void addProtectedConstructor()
-         throws CannotCompileException, NotFoundException
+      protected void addProtectedConstructors() throws CannotCompileException
       {
          final int offset = (hasCallingObject) ? 2 : 1;
          CtClass[] ctorParams1 = new CtClass[params.length + offset];
-         CtClass[] ctorParams2 = new CtClass[offset + 1];
+         CtClass[] ctorParams2 = new CtClass[offset];
          ctorParams1[0] = ctorParams2[0] = jp;
          if (hasCallingObject)
          {
             ctorParams1[1] = ctorParams2[1] = callingClass;
          }
          System.arraycopy(params, 0, ctorParams1, offset, params.length);
-         ctorParams2[offset] = instrumentor.forName("java.lang.Object[]");
-         
+                  
          StringBuffer body = new StringBuffer();
          body.append("{");
          body.append("   this($1." + INFO_FIELD + ");");
@@ -326,14 +324,16 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
                jp);
          protectedConstructor.setModifiers(Modifier.PROTECTED);
          jp.addConstructor(protectedConstructor);
-
-         protectedConstructor = CtNewConstructor.make(
+         if (params.length > 0)
+         {
+            protectedConstructor = CtNewConstructor.make(
                ctorParams2,
                new CtClass[0],
-               body.toString() + "setArguments($" + (offset + 1) + ");}",
+               body.toString() + "}",
                jp);
-         protectedConstructor.setModifiers(Modifier.PROTECTED);
-         jp.addConstructor(protectedConstructor);
+            protectedConstructor.setModifiers(Modifier.PROTECTED);
+            jp.addConstructor(protectedConstructor);
+         }
       }
 
       private CtClass[] getInvokeJoinPointParams()

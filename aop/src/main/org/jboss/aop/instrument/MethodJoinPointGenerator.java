@@ -280,10 +280,10 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
       }
       
       /**
-       * These constructor will be called by invokeJoinpoint in the generated subclass when we need to 
-       * instantiate a joinpoint containing target and args
+       * These constructors will be called by invokeJoinpoint in the generated
+       * subclass when we need to instantiate a joinpoint containing target and args
        */
-      protected void addProtectedConstructors() throws CannotCompileException, NotFoundException
+      protected void addProtectedConstructors() throws CannotCompileException
       {
          CtClass[] ctorParams1 = new CtClass[params.length + 1];
          CtClass[] ctorParams2 = null;
@@ -300,18 +300,16 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
          {
             offset = 2;
             // second version of constructor, that receives Arguments array
-            ctorParams2 = new CtClass[3];
+            ctorParams2 = new CtClass[2];
             System.arraycopy(ctorParams1, 0, ctorParams2, 0, 2);
-            ctorParams2[2] = instrumentor.forName("java.lang.Object[]");
-            
+                        
             body.append("   this." + TARGET_FIELD + " = $2;");
             body.append("   super.setTargetObject($2);");
          }
          else
          {
-            ctorParams2 = new CtClass[2];
+            ctorParams2 = new CtClass[1];
             ctorParams2[0] = ctorParams1[0];
-            ctorParams2[1] = ctorParams1[0].getClassPool().get("java.lang.Object[]");
          }
          
          
@@ -331,14 +329,16 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
          protectedConstructor.setModifiers(Modifier.PROTECTED);
                
          jp.addConstructor(protectedConstructor);
-
-         protectedConstructor = CtNewConstructor.make(
-               ctorParams2,
-               new CtClass[0],
-               body.toString() + "   setArguments($" + (offset + 1) + ");}",
-               jp);
-         protectedConstructor.setModifiers(Modifier.PROTECTED);
-         jp.addConstructor(protectedConstructor);
+         if (params.length > 1)
+         {
+            protectedConstructor = CtNewConstructor.make(
+                  ctorParams2,
+                  new CtClass[0],
+                  body.toString() + "}",
+                  jp);
+            protectedConstructor.setModifiers(Modifier.PROTECTED);
+            jp.addConstructor(protectedConstructor);
+         }
       }
       
       /**
