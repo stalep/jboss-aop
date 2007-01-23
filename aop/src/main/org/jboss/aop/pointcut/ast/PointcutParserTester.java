@@ -391,6 +391,8 @@ public class PointcutParserTester implements PointcutExpressionParserVisitor
 
    public static void main(String args[])
    {
+      args = new String[1];
+      args[0] = "execution(* $instanceof{com.blah.Test}->$implements{@IF}(..) throws Exception)";
       System.out.println("----" + args[0]);
       StringReader reader = new StringReader(args[0]);
       PointcutExpressionParser t = new PointcutExpressionParser(reader);

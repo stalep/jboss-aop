@@ -126,9 +126,9 @@ TOKEN : /* IDENTIFIERS */
 |
   < ANNOTATION: "@" <IDENTIFIER> (<DOT> <IDENTIFIER>)*>
 |
-  <IMPLEMENTS: "$implements{" (<CLASS> | <ANNOTATION>) "}">
+  <IMPLEMENTS: "$implements{" (<IDENTIFIER> | <CLASS> | <ANNOTATION>) "}">
 |
-  <IMPLEMENTING: "$implementing{" (<CLASS> | <ANNOTATION>) "}">
+  <IMPLEMENTING: "$implementing{" (<IDENTIFIER> | <CLASS> | <ANNOTATION>) "}">
 |
   < IDENTIFIER: (<WILD_LETTER>)+ >
 |
