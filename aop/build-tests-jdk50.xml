@@ -95,10 +95,25 @@
          <path refid="xdoclet.xdoclet.classpath"/>
       </path>
 
-      <!-- Defines jrockit.home -->
+      <!-- 
+      		Settable in local.properties:
+      			-jrockit.home: location of JRockit JVM
+      			-jdk14.executable: Full path to a JDK 1.4 java.exe (Needed for the JDK 1.4 tests)
+      			-repository.home: Location of local copy of repository (for the "update-repository" target
+      			-debug: if set, -Djboss.aop.debug.classes=true for the tests; otherwise it is false
+       -->
       <property file="local.properties"/>
-
+		
       <available file="${jrockit.home}/jre/lib/managementapi.jar" property="JROCKIT_AVAILABLE"/>
+	   <condition property="jboss.aop.debug.classes" value="true">
+	      <isset property="debug"/>
+	   </condition>
+	   <condition property="jboss.aop.debug.classes" value="false">
+	      <not>
+	         <isset property="debug"/>
+	      </not>
+	   </condition>
+
 
       <!-- ======= -->
       <!-- Modules -->
@@ -406,7 +421,7 @@
          <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
-         <sysproperty key="jboss.aop.debug.classes" value="true"/>
+         <sysproperty key="jboss.aop.debug.classes" value="${jboss.aop.debug.classes}"/>
          <!--sysproperty key="jboss.aop.verbose" value="true"/-->
          <sysproperty key="jboss-junit-configuration" value="${caller}"/>
       	<formatter type="plain" extension="-${caller}.txt"/>
@@ -629,6 +644,7 @@
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
          <sysproperty key="jboss-junit-configuration" value="${caller}"/>
+         <sysproperty key="jboss.aop.debug.classes" value="${jboss.aop.debug.classes}"/>
          <formatter type="plain" extension="-${caller}-jdk50.txt"/>
          <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-${caller}-jdk50.xml"/>
          <classpath>

@@ -96,10 +96,26 @@
          <path refid="xdoclet.xdoclet.classpath"/>
        </path>
 
-      <!-- Defines jrockit.home and jdk14.home -->
+      <!-- 
+      		Settable in local.properties:
+      			-jrockit.home: location of JRockit JVM
+      			-jdk14.executable: Full path to a JDK 1.4 java.exe (Needed for the JDK 1.4 tests)
+      			-repository.home: Location of local copy of repository (for the "update-repository" target
+      			-debug: if set, -Djboss.aop.debug.classes=true for the tests; otherwise it is false
+       -->
       <property file="local.properties"/>
-
+		
       <available file="${jrockit.home}/jre/lib/managementapi.jar" property="JROCKIT_AVAILABLE"/>
+	   <condition property="jboss.aop.debug.classes" value="true">
+	      <isset property="debug"/>
+	   </condition>
+	   <condition property="jboss.aop.debug.classes" value="false">
+	      <not>
+	         <isset property="debug"/>
+	      </not>
+	   </condition>
+
+
 
       <fail unless="jdk14.executable">Need to set jdk14.executable to a jdk 1.4 executable in local.properties. For example
       jdk14.executable=C:/Java/jdk14/bin/java.exe
@@ -424,7 +440,7 @@
          <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
-         <sysproperty key="jboss.aop.debug.classes" value="true"/>
+         <sysproperty key="jboss.aop.debug.classes" value="${jboss.aop.debug.classes}"/>
       	<formatter type="plain" extension="-${caller}-jdk14.txt"/>
          <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter"
                     usefile="true" extension="-${caller}-jdk14.xml"/>
@@ -639,6 +655,7 @@
          <formatter type="plain" extension="-${caller}-jdk14.txt"/>
          <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter"
                     usefile="true" extension="-${caller}-jdk14.xml"/>
+         <sysproperty key="jboss.aop.debug.classes" value="${jboss.aop.debug.classes}"/>
          <classpath>
             <path refid="test.classpath"/>
             <path refid="aopc.classpath"/>
@@ -688,6 +705,7 @@
 
       <junit printsummary="yes" fork="no" haltonfailure="no" jvm="${java14}">
          <sysproperty key="jboss-junit-configuration" value="jdk14"/>
+         <sysproperty key="jboss.aop.debug.classes" value="${jboss.aop.debug.classes}"/>
          <classpath>
             <path refid="test.classpath"/>
             <path refid="aopc.classpath"/>
@@ -712,6 +730,7 @@
       </junit>
 	   <junit printsummary="yes" fork="yes" haltonfailure="no">
 		   <sysproperty key="jboss.aop.path" value="${source.res}/test/container/jboss-aop.xml"/>
+         <sysproperty key="jboss.aop.debug.classes" value="${jboss.aop.debug.classes}"/>
 		   <classpath>
             <path refid="test.classpath"/>
             <path refid="aopc.classpath"/>
@@ -732,6 +751,7 @@
          <sysproperty key="java.system.class.loader" value="org.jboss.aop.standalone.SystemClassLoader"/>
          <sysproperty key="jboss.aop.path" value="${source.res}/test/basic/jboss-aop.xml"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
+         <sysproperty key="jboss.aop.debug.classes" value="${jboss.aop.debug.classes}"/>
          <classpath>
             <path refid="test.classpath"/>
             <path refid="jboss.test14.classpath"/>
