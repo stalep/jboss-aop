@@ -37,7 +37,7 @@ import junit.framework.TestSuite;
 /**
  * Tests an annotated introduction
  *
- * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
+ * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision: 45977 $
  */
 public class PointcutTestCase extends AOPTestWithSetup
@@ -54,24 +54,323 @@ public class PointcutTestCase extends AOPTestWithSetup
       super(name);
    }
 
-   public void testPassingPointcuts() throws Exception
+   public void testGoodMethodPointcuts() throws Exception
    {
       Executor e = new Executor();
-      e.parseGoodPointcut("execution(public * *->*())");
       e.parseGoodPointcut("execution(* *->*())");
-      e.parseGoodPointcut("execution(* $instanceof{a}->$implements{a}())");
-      e.parseGoodPointcut("execution(* $instanceof{a.b}->$implements{a.b}())");
-      e.parseGoodPointcut("execution(* $instanceof{@a.b}->$implements{@a.b}())");
-      e.parseGoodPointcut("execution(* $instanceof{a}->$implementing{a}())");
-      e.parseGoodPointcut("execution(* $instanceof{a.b}->$implementing{a.b}())");
-      e.parseGoodPointcut("execution(* $instanceof{@a.b}->$implementing{@a.b}())");
+      e.parseGoodPointcut("execution(public * *->*())");
+      e.parseGoodPointcut("execution(public static * *->*())");
+      e.parseGoodPointcut("execution(protected static * *->*())");
+      e.parseGoodPointcut("execution(private static * *->*())");
+      e.parseGoodPointcut("execution(!public !static * *->*())");
+      e.parseGoodPointcut("execution(!protected !static * *->*())");
+      e.parseGoodPointcut("execution(!private !static * *->*())");
+
+      e.parseGoodPointcut("execution(@Ann @Ann->@Ann())");
+      e.parseGoodPointcut("execution(@org.acme.Ann @org.acme.Ann->@org.acme.Ann(int))");
+      e.parseGoodPointcut("execution(* @org.acme.Ann->@org.acme.Ann(int,..,long))");
+      e.parseGoodPointcut("execution(* @org.acme.Ann->@org.acme.Ann(..))");
+
+      e.parseGoodPointcut("execution(* *->*(org.acme.Clazz))");
+      e.parseGoodPointcut("execution(* *->*(Clazz))");
+      e.parseGoodPointcut("execution(* *->*(org.acme.Clazz, Clazz))");
+      e.parseGoodPointcut("execution(* *->*(org.acme.Clazz, int, Clazz))");
+      e.parseGoodPointcut("execution(* *->*(org.acme.Clazz, .., Clazz))");
+
+      e.parseGoodPointcut("execution(* *->*(@org.acme.Ann))");
+      e.parseGoodPointcut("execution(* *->*(@Ann))");
+      e.parseGoodPointcut("execution(* *->*(@org.acme.Ann, @Ann))");
+      e.parseGoodPointcut("execution(* *->*(@org.acme.Ann, int, @Ann))");
+      e.parseGoodPointcut("execution(* *->*(@org.acme.Ann, .., @Ann))");
+
+      e.parseGoodPointcut("execution(* *->*(org.acme.*))");
+      e.parseGoodPointcut("execution(* *->*(*))");
+      e.parseGoodPointcut("execution(* *->*(org.acme.*, Clazz))");
+      e.parseGoodPointcut("execution(* *->*(org.acme.Clazz, int, Clazz))");
+      e.parseGoodPointcut("execution(* *->*(org.acme.Clazz, .., Clazz))");
+
+      e.parseGoodPointcut("execution(* *->*(@org.acme.*))");
+      e.parseGoodPointcut("execution(* *->*(@*))");
+      e.parseGoodPointcut("execution(* *->*(@org.acme.*, @*))");
+      e.parseGoodPointcut("execution(* *->*(@org.acme.*, int, @*))");
+      e.parseGoodPointcut("execution(* *->*(@org.acme.*, .., @*))");
+
+      e.parseGoodPointcut("execution(* *->*($instanceof{@org.acme.Ann}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{@Ann}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{@org.acme.Ann}, $instanceof{@Ann}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{@org.acme.Ann}, int, $instanceof{@Ann}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{@org.acme.Ann}, .., $instanceof{@Ann}))");
+
+      e.parseGoodPointcut("execution(* *->*($instanceof{@org.acme.*}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{@*}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{@org.acme.*}, $instanceof{@*}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{@org.acme.*}, int, $instanceof{@*}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{@org.acme.*}, .., $instanceof{@*}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{@org.*.Clazz}, .., $instanceof{@*}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{@*.acme.Clazz}, .., $instanceof{@*}))");
+
+      e.parseGoodPointcut("execution(* *->*($instanceof{org.acme.Clazz}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{Clazz}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{org.acme.Clazz}, $instanceof{Clazz}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{org.acme.Clazz}, int, $instanceof{Clazz}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{org.acme.Clazz}, .., $instanceof{Clazz}))");
+
+      e.parseGoodPointcut("execution(* *->*($instanceof{org.acme.*}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{*}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{org.acme.*}, $instanceof{*}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{org.acme.*}, int, $instanceof{*}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{org.acme.*}, .., $instanceof{*}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{org.*.Clazz}, .., $instanceof{*}))");
+      e.parseGoodPointcut("execution(* *->*($instanceof{*.acme.Clazz}, .., $instanceof{*}))");
+
+      e.parseGoodPointcut("execution($instanceof{a} $instanceof{Clazz}->$implements{Clazz}())");
+      e.parseGoodPointcut("execution($instanceof{a.b} $instanceof{org.acme.Clazz}->$implements{org.acme.Clazz}())");
+      e.parseGoodPointcut("execution($instanceof{@a.Ann} $instanceof{Clazz}->$implements{org.acme.Clazz}())");
+      e.parseGoodPointcut("execution($instanceof{@Ann} $instanceof{org.acme.Clazz}->$implements{Clazz}())");
+      
+      e.parseGoodPointcut("execution($instanceof{a} $instanceof{Clazz}->$implementing{Clazz}())");
+      e.parseGoodPointcut("execution($instanceof{a.b} $instanceof{org.acme.Clazz}->$implementing{org.acme.Clazz}())");
+      e.parseGoodPointcut("execution($instanceof{@a.Ann} $instanceof{Clazz}->$implementing{org.acme.Clazz}())");
+      e.parseGoodPointcut("execution($instanceof{@Ann} $instanceof{org.acme.Clazz}->$implementing{Clazz}())");
+      
+      e.parseGoodPointcut("execution(* org..->*())");
+      e.parseGoodPointcut("execution(* org.acme..->*())");
+      e.parseGoodPointcut("execution(* org.*..->*())");
+      e.parseGoodPointcut("execution(* *.acme..->*())");
+      
+      checkFailures(e.failures);
+   }
+   
+   public void testGoodConstructorPointcuts() throws Exception
+   {
+      Executor e = new Executor();
+
+      e.parseGoodPointcut("execution(*->new())");
+      e.parseGoodPointcut("execution(public *->new())");
+      e.parseGoodPointcut("execution(public *->new())");
+      e.parseGoodPointcut("execution(protected *->new())");
+      e.parseGoodPointcut("execution(private *->new())");
+
+      //These should work
+//      e.parseGoodPointcut("execution(!public *->new())");
+//      e.parseGoodPointcut("execution(!protected *->new())");
+//      e.parseGoodPointcut("execution(!private *->new())");
+
+      e.parseGoodPointcut("execution(@Ann->new())");
+      e.parseGoodPointcut("execution(@org.acme.Ann->new(int))");
+      e.parseGoodPointcut("execution(@org.acme.Ann->@org.acme.Ann(int,..,long))");
+      e.parseGoodPointcut("execution(@org.acme.Ann->@Ann(..))");
+
+      e.parseGoodPointcut("execution(*->new(org.acme.Clazz))");
+      e.parseGoodPointcut("execution(*->new(Clazz))");
+      e.parseGoodPointcut("execution(*->new(org.acme.Clazz, Clazz))");
+      e.parseGoodPointcut("execution(*->new(org.acme.Clazz, int, Clazz))");
+      e.parseGoodPointcut("execution(*->new(org.acme.Clazz, .., Clazz))");
+
+      e.parseGoodPointcut("execution(*->new(@org.acme.Ann))");
+      e.parseGoodPointcut("execution(*->new(@Ann))");
+      e.parseGoodPointcut("execution(*->new(@org.acme.Ann, @Ann))");
+      e.parseGoodPointcut("execution(*->new(@org.acme.Ann, int, @Ann))");
+      e.parseGoodPointcut("execution(*->new(@org.acme.Ann, .., @Ann))");
+
+      e.parseGoodPointcut("execution(*->new(org.acme.*))");
+      e.parseGoodPointcut("execution(*->new(*))");
+      e.parseGoodPointcut("execution(*->new(org.acme.*, Clazz))");
+      e.parseGoodPointcut("execution(*->new(org.acme.Clazz, int, Clazz))");
+      e.parseGoodPointcut("execution(*->new(org.acme.Clazz, .., Clazz))");
+
+      e.parseGoodPointcut("execution(*->new(@org.acme.*))");
+      e.parseGoodPointcut("execution(*->new(@*))");
+      e.parseGoodPointcut("execution(*->new(@org.acme.*, @*))");
+      e.parseGoodPointcut("execution(*->new(@org.acme.*, int, @*))");
+      e.parseGoodPointcut("execution(*->new(@org.acme.*, .., @*))");
+
+      e.parseGoodPointcut("execution(*->new($instanceof{@org.acme.Ann}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{@Ann}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{@org.acme.Ann}, $instanceof{@Ann}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{@org.acme.Ann}, int, $instanceof{@Ann}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{@org.acme.Ann}, .., $instanceof{@Ann}))");
+
+      e.parseGoodPointcut("execution(*->new($instanceof{@org.acme.*}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{@*}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{@org.acme.*}, $instanceof{@*}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{@org.acme.*}, int, $instanceof{@*}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{@org.acme.*}, .., $instanceof{@*}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{@org.*.Clazz}, .., $instanceof{@*}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{@*.acme.Clazz}, .., $instanceof{@*}))");
+
+      e.parseGoodPointcut("execution(*->new($instanceof{org.acme.Clazz}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{Clazz}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{org.acme.Clazz}, $instanceof{Clazz}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{org.acme.Clazz}, int, $instanceof{Clazz}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{org.acme.Clazz}, .., $instanceof{Clazz}))");
+
+      e.parseGoodPointcut("execution(*->new($instanceof{org.acme.*}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{*}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{org.acme.*}, $instanceof{*}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{org.acme.*}, int, $instanceof{*}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{org.acme.*}, .., $instanceof{*}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{org.*.Clazz}, .., $instanceof{*}))");
+      e.parseGoodPointcut("execution(*->new($instanceof{*.acme.Clazz}, .., $instanceof{*}))");
+     
+      e.parseGoodPointcut("execution(org..->new())");
+      e.parseGoodPointcut("execution(org.acme..->new())");
+      e.parseGoodPointcut("execution(org.*..->new())");
+      e.parseGoodPointcut("execution(*.acme..->new())");
+      
+      checkFailures(e.failures);
+   }
+   
+   public void testGoodConstructionPointcuts() throws Exception
+   {
+      Executor e = new Executor();
+
+      e.parseGoodPointcut("construction(*->new())");
+      e.parseGoodPointcut("construction(public *->new())");
+      e.parseGoodPointcut("construction(public *->new())");
+      e.parseGoodPointcut("construction(protected *->new())");
+      e.parseGoodPointcut("construction(private *->new())");
+
+      //These should work
+//      e.parseGoodPointcut("construction(!public *->new())");
+//      e.parseGoodPointcut("construction(!protected *->new())");
+//      e.parseGoodPointcut("construction(!private *->new())");
+
+      e.parseGoodPointcut("construction(@Ann->new())");
+      e.parseGoodPointcut("construction(@org.acme.Ann->new(int))");
+      e.parseGoodPointcut("construction(@org.acme.Ann->@org.acme.Ann(int,..,long))");
+      e.parseGoodPointcut("construction(@org.acme.Ann->@Ann(..))");
+
+      e.parseGoodPointcut("construction(*->new(org.acme.Clazz))");
+      e.parseGoodPointcut("construction(*->new(Clazz))");
+      e.parseGoodPointcut("construction(*->new(org.acme.Clazz, Clazz))");
+      e.parseGoodPointcut("construction(*->new(org.acme.Clazz, int, Clazz))");
+      e.parseGoodPointcut("construction(*->new(org.acme.Clazz, .., Clazz))");
+
+      e.parseGoodPointcut("construction(*->new(@org.acme.Ann))");
+      e.parseGoodPointcut("construction(*->new(@Ann))");
+      e.parseGoodPointcut("construction(*->new(@org.acme.Ann, @Ann))");
+      e.parseGoodPointcut("construction(*->new(@org.acme.Ann, int, @Ann))");
+      e.parseGoodPointcut("construction(*->new(@org.acme.Ann, .., @Ann))");
+
+      e.parseGoodPointcut("construction(*->new(org.acme.*))");
+      e.parseGoodPointcut("construction(*->new(*))");
+      e.parseGoodPointcut("construction(*->new(org.acme.*, Clazz))");
+      e.parseGoodPointcut("construction(*->new(org.acme.Clazz, int, Clazz))");
+      e.parseGoodPointcut("construction(*->new(org.acme.Clazz, .., Clazz))");
+
+      e.parseGoodPointcut("construction(*->new(@org.acme.*))");
+      e.parseGoodPointcut("construction(*->new(@*))");
+      e.parseGoodPointcut("construction(*->new(@org.acme.*, @*))");
+      e.parseGoodPointcut("construction(*->new(@org.acme.*, int, @*))");
+      e.parseGoodPointcut("construction(*->new(@org.acme.*, .., @*))");
+
+      e.parseGoodPointcut("construction(*->new($instanceof{@org.acme.Ann}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{@Ann}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{@org.acme.Ann}, $instanceof{@Ann}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{@org.acme.Ann}, int, $instanceof{@Ann}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{@org.acme.Ann}, .., $instanceof{@Ann}))");
+
+      e.parseGoodPointcut("construction(*->new($instanceof{@org.acme.*}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{@*}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{@org.acme.*}, $instanceof{@*}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{@org.acme.*}, int, $instanceof{@*}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{@org.acme.*}, .., $instanceof{@*}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{@org.*.Clazz}, .., $instanceof{@*}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{@*.acme.Clazz}, .., $instanceof{@*}))");
+
+      e.parseGoodPointcut("construction(*->new($instanceof{org.acme.Clazz}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{Clazz}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{org.acme.Clazz}, $instanceof{Clazz}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{org.acme.Clazz}, int, $instanceof{Clazz}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{org.acme.Clazz}, .., $instanceof{Clazz}))");
+
+      e.parseGoodPointcut("construction(*->new($instanceof{org.acme.*}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{*}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{org.acme.*}, $instanceof{*}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{org.acme.*}, int, $instanceof{*}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{org.acme.*}, .., $instanceof{*}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{org.*.Clazz}, .., $instanceof{*}))");
+      e.parseGoodPointcut("construction(*->new($instanceof{*.acme.Clazz}, .., $instanceof{*}))");
+     
+      e.parseGoodPointcut("construction(org..->new())");
+      e.parseGoodPointcut("construction(org.acme..->new())");
+      e.parseGoodPointcut("construction(org.*..->new())");
+      e.parseGoodPointcut("construction(*.acme..->new())");
+      
+      checkFailures(e.failures);
+   }
+   
+   public void testGoodFieldPointcuts() throws Exception
+   {
+      Executor e = new Executor();
+      e.parseGoodPointcut("field(* *->*)");
+      e.parseGoodPointcut("field(public * *->*)");
+      e.parseGoodPointcut("field(public static * *->*)");
+      e.parseGoodPointcut("field(protected static * *->*)");
+      e.parseGoodPointcut("field(private static * *->*)");
+      e.parseGoodPointcut("field(!public !static * *->*)");
+      e.parseGoodPointcut("field(!protected !static * *->*)");
+      e.parseGoodPointcut("field(!private !static * *->*)");
+
+      e.parseGoodPointcut("field(@Ann @Ann->@Ann)");
+      e.parseGoodPointcut("field(@org.acme.Ann @org.acme.Ann->@org.acme.Ann)");
+
+      e.parseGoodPointcut("field($instanceof{a} $instanceof{Clazz}->x)");
+      e.parseGoodPointcut("field($instanceof{a.b} $instanceof{org.acme.Clazz}->y)");
+      e.parseGoodPointcut("field($instanceof{@a.Ann} $instanceof{Clazz}->x)");
+      e.parseGoodPointcut("field($instanceof{@Ann} $instanceof{org.acme.Clazz}->x)");
+          
+      e.parseGoodPointcut("field(* org..->*)");
+      e.parseGoodPointcut("field(* org.acme..->*)");
+      e.parseGoodPointcut("field(* org.*..->*)");
+      e.parseGoodPointcut("field(* *.acme..->*)");
+      
+      checkFailures(e.failures);
+   }
+
+   public void testGoodCompsitePointcuts() throws Exception
+   {
+      Executor e = new Executor();
+
+      e.parseGoodPointcut("call(* *->*()) AND within(*)");
+      
+      e.parseGoodPointcut("call(org.acme.Clazz->new()) AND within(org.acme.Clazz)");
+      e.parseGoodPointcut("call(Clazz->new()) AND within(org.acme.Clazz)");
+      e.parseGoodPointcut("call(Clazz->new()) AND within(org.acme..)");
+      e.parseGoodPointcut("call(org.acme..->new()) AND within(*.acme..)");
+      
+      e.parseGoodPointcut("call(int org.acme.Clazz->method()) AND within(org.acme.Clazz)");
+      e.parseGoodPointcut("call(int Clazz->method()) AND within(Clazz)");
+      e.parseGoodPointcut("call(int Clazz->method()) AND within(*.acme..)");
+      e.parseGoodPointcut("call(int org.acme..->method()) AND within(org.acme..)");
+      
+      e.parseGoodPointcut("call(org.acme.Clazz->new()) AND withincode(org.acme.Clazz->new(int, java.lang.String[]))");
+      e.parseGoodPointcut("call(Clazz->new()) AND withincode(Clazz->new(.., int))");
+      e.parseGoodPointcut("call(org.acme..->new()) AND withincode(org.acme..->new(int, java.lang.String[]))");
+      e.parseGoodPointcut("call(Clazz->new()) AND withincode(*.acme..->new(.., int))");
+      
+      
+      e.parseGoodPointcut("call(int org.acme.Clazz->method()) AND withincode(int[] org.acme.Clazz->method(..))");
+      e.parseGoodPointcut("call(int Clazz->method()) AND withincode(* Clazz->method(long))");
+      e.parseGoodPointcut("call(int org.acme..->method()) AND withincode(int[] org.acme..->method(..))");
+      e.parseGoodPointcut("call(int Clazz->method()) AND withincode(* *acme..->method(long))");
+      
       checkFailures(e.failures);
    }
    
    public void testBadPointcuts() throws Exception
    {
       Executor e = new Executor();
-      e.parseBadPointcut("execution(*->*()");
+
+      //Should maybe be implemented?
+      e.parseBadPointcut("execution(org.acme.. *->*())");
+      e.parseBadPointcut("execution(* *->*(org.acme..))");
+      e.parseBadPointcut("execution(* *->*(org.acme..))");
+
+      //Should maybe be implemented?
+      e.parseBadPointcut("execution(*->new(org.acme..))");
+
       checkFailures(e.failures);
    }
    
@@ -125,6 +424,8 @@ public class PointcutTestCase extends AOPTestWithSetup
             if (!expectFailure)
             {
                failures.add("+ Should have passed: " + pointcut);
+               System.out.println(pointcut);
+               e.printStackTrace(System.out);
             }
          }
       }

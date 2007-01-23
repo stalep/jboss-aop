@@ -2,6 +2,9 @@
 
    <target name="_base-tests">
       <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="packagedotdot"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="serialization/simple"/>
       </antcall>
       <antcall target="${test-target}" inheritRefs="true">

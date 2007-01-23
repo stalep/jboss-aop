@@ -155,9 +155,9 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(86);
+      jj_consume_token(88);
       SubExpression();
-      jj_consume_token(87);
+      jj_consume_token(89);
     } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -464,9 +464,9 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(86);
+      jj_consume_token(88);
       SubCFlow();
-      jj_consume_token(87);
+      jj_consume_token(89);
     } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -699,6 +699,9 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
       case FIELD_CLASS:
         pointcut = jj_consume_token(FIELD_CLASS);
         break;
+      case FIELD_PACKAGE:
+        pointcut = jj_consume_token(FIELD_PACKAGE);
+        break;
       case FIELD_IDENTIFIER:
         pointcut = jj_consume_token(FIELD_IDENTIFIER);
         break;
@@ -772,6 +775,9 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case FIELD_CLASS:
         clazz = jj_consume_token(FIELD_CLASS);
+        break;
+      case FIELD_PACKAGE:
+        clazz = jj_consume_token(FIELD_PACKAGE);
         break;
       case FIELD_IDENTIFIER:
         clazz = jj_consume_token(FIELD_IDENTIFIER);
@@ -1116,6 +1122,9 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
       case CLASS:
         clazz = jj_consume_token(CLASS);
         break;
+      case PACKAGE:
+        clazz = jj_consume_token(PACKAGE);
+        break;
       case IDENTIFIER:
         clazz = jj_consume_token(IDENTIFIER);
         break;
@@ -1332,6 +1341,9 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case CLASS:
         clazz = jj_consume_token(CLASS);
+        break;
+      case PACKAGE:
+        clazz = jj_consume_token(PACKAGE);
         break;
       case IDENTIFIER:
         clazz = jj_consume_token(IDENTIFIER);
@@ -1577,6 +1589,9 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case FIELD_CLASS:
         clazz = jj_consume_token(FIELD_CLASS);
+        break;
+      case FIELD_PACKAGE:
+        clazz = jj_consume_token(FIELD_PACKAGE);
         break;
       case FIELD_IDENTIFIER:
         clazz = jj_consume_token(FIELD_IDENTIFIER);
@@ -2026,21 +2041,6 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
     finally { jj_save(46, xla); }
   }
 
-  final private boolean jj_3_45() {
-    if (jj_3R_30()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_30() {
-    if (jj_3R_21()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_37() {
-    if (jj_3R_46()) return true;
-    return false;
-  }
-
   final private boolean jj_3R_29() {
     Token xsp;
     while (true) {
@@ -2050,11 +2050,11 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
     xsp = jj_scanpos;
     if (jj_scan_token(49)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(55)) {
+    if (jj_scan_token(56)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(53)) {
     jj_scanpos = xsp;
     if (jj_scan_token(52)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(51)) {
     jj_scanpos = xsp;
     if (jj_scan_token(47)) {
     jj_scanpos = xsp;
@@ -2067,9 +2067,11 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
     xsp = jj_scanpos;
     if (jj_scan_token(49)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(55)) {
+    if (jj_scan_token(50)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(52)) {
+    if (jj_scan_token(56)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(53)) {
     jj_scanpos = xsp;
     if (jj_scan_token(47)) {
     jj_scanpos = xsp;
@@ -2078,15 +2080,16 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
     }
     }
     }
+    }
     if (jj_scan_token(SEPARATOR)) return true;
     xsp = jj_scanpos;
-    if (jj_scan_token(55)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(52)) {
+    if (jj_scan_token(56)) {
     jj_scanpos = xsp;
     if (jj_scan_token(53)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(54)) return true;
+    if (jj_scan_token(54)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(55)) return true;
     }
     }
     }
@@ -2220,15 +2223,18 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
     if (jj_scan_token(WITHIN)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(76)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(79)) {
+    if (jj_scan_token(77)) {
     jj_scanpos = xsp;
     if (jj_scan_token(78)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(74)) {
+    if (jj_scan_token(81)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(75)) return true;
+    if (jj_scan_token(80)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(75)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(76)) return true;
+    }
     }
     }
     }
@@ -2303,15 +2309,18 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
     if (jj_scan_token(ALL)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(76)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(79)) {
+    if (jj_scan_token(77)) {
     jj_scanpos = xsp;
     if (jj_scan_token(78)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(74)) {
+    if (jj_scan_token(81)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(75)) return true;
+    if (jj_scan_token(80)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(75)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(76)) return true;
+    }
     }
     }
     }
@@ -2496,7 +2505,7 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
   }
 
   final private boolean jj_3R_16() {
-    if (jj_scan_token(86)) return true;
+    if (jj_scan_token(88)) return true;
     if (jj_3R_35()) return true;
     return false;
   }
@@ -2620,9 +2629,9 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
   }
 
   final private boolean jj_3R_10() {
-    if (jj_scan_token(86)) return true;
+    if (jj_scan_token(88)) return true;
     if (jj_3R_9()) return true;
-    if (jj_scan_token(87)) return true;
+    if (jj_scan_token(89)) return true;
     return false;
   }
 
@@ -2762,41 +2771,44 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
       if (jj_3R_45()) { jj_scanpos = xsp; break; }
     }
     xsp = jj_scanpos;
-    if (jj_scan_token(76)) {
+    if (jj_scan_token(77)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(81)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(80)) {
     jj_scanpos = xsp;
     if (jj_scan_token(79)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(78)) {
+    if (jj_scan_token(75)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(77)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(74)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(75)) return true;
+    if (jj_scan_token(76)) return true;
     }
     }
     }
     }
     }
     xsp = jj_scanpos;
-    if (jj_scan_token(76)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(79)) {
+    if (jj_scan_token(77)) {
     jj_scanpos = xsp;
     if (jj_scan_token(78)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(74)) {
+    if (jj_scan_token(81)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(75)) return true;
+    if (jj_scan_token(80)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(75)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(76)) return true;
+    }
     }
     }
     }
     }
     if (jj_scan_token(FIELD_SEPARATOR)) return true;
     xsp = jj_scanpos;
-    if (jj_scan_token(79)) {
+    if (jj_scan_token(81)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(78)) return true;
+    if (jj_scan_token(80)) return true;
     }
     return false;
   }
@@ -2895,9 +2907,11 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
     xsp = jj_scanpos;
     if (jj_scan_token(49)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(55)) {
+    if (jj_scan_token(50)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(52)) {
+    if (jj_scan_token(56)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(53)) {
     jj_scanpos = xsp;
     if (jj_scan_token(47)) {
     jj_scanpos = xsp;
@@ -2906,11 +2920,12 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
     }
     }
     }
+    }
     if (jj_scan_token(SEPARATOR)) return true;
     xsp = jj_scanpos;
     if (jj_scan_token(45)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(52)) return true;
+    if (jj_scan_token(53)) return true;
     }
     if (jj_3R_39()) return true;
     if (jj_3R_74()) return true;
@@ -2973,7 +2988,7 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
     xsp = jj_scanpos;
     if (jj_scan_token(49)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(55)) return true;
+    if (jj_scan_token(56)) return true;
     }
     return false;
   }
@@ -3006,6 +3021,21 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
     return false;
   }
 
+  final private boolean jj_3_45() {
+    if (jj_3R_30()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_30() {
+    if (jj_3R_21()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_37() {
+    if (jj_3R_46()) return true;
+    return false;
+  }
+
   public PointcutExpressionParserTokenManager token_source;
   SimpleCharStream jj_input_stream;
   public Token token, jj_nt;
@@ -3028,10 +3058,10 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
       jj_la1_0 = new int[] {0x11ffe0,0x18,0x18,0x18,0x18,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x40000000,0x3f800000,0x3f800000,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x10001fe0,0x9b8000,0x938000,0xf00000,0x40000,0x4000,0x820000,0x10000000,0x1fe0,0x380,0x938000,0x102000,0x380,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x20001fe0,0x1338000,0x1278000,0x1e00000,0x80000,0x4000,0x1020000,0x20000000,0x1fe0,0x380,0x1278000,0x202000,0x380,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0xdc00,0xdc00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1000fc,0xfc00,0xdc00,0xc000,0x100000,0xfc,};
+      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x37800,0x37800,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x4001f8,0x3b800,0x37800,0x30000,0x400000,0x1f8,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[47];
   private boolean jj_rescan = false;
@@ -3205,8 +3235,8 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
 
   public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[88];
-    for (int i = 0; i < 88; i++) {
+    boolean[] la1tokens = new boolean[90];
+    for (int i = 0; i < 90; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
@@ -3228,7 +3258,7 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
         }
       }
     }
-    for (int i = 0; i < 88; i++) {
+    for (int i = 0; i < 90; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

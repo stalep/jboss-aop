@@ -1,0 +1,55 @@
+<aop>
+   <interceptor class="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
+   <interceptor class="org.jboss.test.aop.packagedotdot.ConstructionInterceptor"/>
+   
+   <bind pointcut="execution(org.jboss.test.aop.packagedotdot..->new(int))">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
+   </bind>
+   <bind pointcut="construction(org.jboss.test.aop.packagedotdot..->new(int))">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.ConstructionInterceptor"/>
+   </bind>
+   <bind pointcut="execution(* org.jboss.test.aop.packagedotdot..->method(int))">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
+   </bind>
+   <bind pointcut="field(* org.jboss.test.aop.packagedotdot..->ifield)">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
+   </bind>
+   
+   <bind pointcut="execution(*.packagedotdot..->new(int, int))">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
+   </bind>
+   <bind pointcut="construction(*.packagedotdot..->new(int, int))">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.ConstructionInterceptor"/>
+   </bind>
+   <bind pointcut="execution(* *.packagedotdot..->method(int, int))">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
+   </bind>
+   <bind pointcut="field(* *.packagedotdot..->lfield)">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
+   </bind>
+
+   <bind pointcut="execution(org.jboss.test.aop.packagedotdot.sub.*..->new(int, int, int))">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
+   </bind>
+   <bind pointcut="construction(org.jboss.test.aop.packagedotdot.sub.*..->new(int, int, int))">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.ConstructionInterceptor"/>
+   </bind>
+   <bind pointcut="execution(* org.jboss.test.aop.packagedotdot.sub.*..->method(int, int, int))">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
+   </bind>
+   <bind pointcut="field(* org.jboss.test.aop.packagedotdot.sub.*..->sfield)">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
+   </bind>
+   
+   <bind pointcut="all(org.jboss.test.aop.packagedotdot.all..)">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
+   </bind>
+   
+   <bind pointcut="call(org.jboss.test.aop.packagedotdot.callee..->new()) AND within(org.jboss.test.aop.packagedotdot.caller..)">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
+   </bind>
+   
+   <bind pointcut="call(* org.jboss.test.aop.packagedotdot.callee..->method()) AND within(org.jboss.test.aop.packagedotdot.caller..)">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
+   </bind>
+</aop>

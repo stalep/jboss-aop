@@ -37,6 +37,7 @@ public class ClassExpression
    private boolean isAnnotation = false;
    private boolean isInstanceOf = false;
    private boolean isTypedef = false;
+   private boolean isPackage = false;
 
    private boolean isInstanceOfAnnotated = false;
 
@@ -61,6 +62,11 @@ public class ClassExpression
             isTypedef = true;
             expr = expr.substring(9, expr.lastIndexOf("}"));
          }
+         else if (expr.endsWith(".."))
+         {
+            isPackage = true;
+            expr = expr.substring(0, expr.lastIndexOf(".."));
+         }
          
          if (!isAnnotation)
          {
@@ -80,12 +86,26 @@ public class ClassExpression
       return !(isAnnotation || isInstanceOf || isTypedef || isInstanceOfAnnotated);
    }
 
-
    public boolean matches(String classname)
    {
       if (isAnnotation) return false;
-      Matcher m = classPattern.matcher(classname);
-      return m.matches();
+      if (isPackage())
+      {
+         int index = classname.lastIndexOf(".");
+         boolean matches = classPattern.toString().equals(".*");
+         if (!matches && index != -1)
+         {
+            String candidate = classname.substring(0, index);
+            java.util.regex.Matcher m = classPattern.matcher(candidate);
+            matches = m.matches();
+         }
+         return matches;
+      }
+      else
+      {
+         Matcher m = classPattern.matcher(classname);
+         return m.matches();
+      }
    }
 
    public boolean matchesAnnotation(String annotation)
@@ -98,6 +118,11 @@ public class ClassExpression
    public boolean isAnnotation()
    {
       return this.isAnnotation;
+   }
+   
+   public boolean isPackage()
+   {
+      return this.isPackage;
    }
 
    public boolean isInstanceOf()

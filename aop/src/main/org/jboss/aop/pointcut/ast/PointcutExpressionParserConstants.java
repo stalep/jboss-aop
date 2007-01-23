@@ -47,40 +47,42 @@ public interface PointcutExpressionParserConstants {
   int INSTANCEOF = 47;
   int TYPEDEF = 48;
   int CLASS = 49;
-  int EXCEPTION_SEPERATOR = 50;
-  int ARRAY_CLASS = 51;
-  int ANNOTATION = 52;
-  int IMPLEMENTS = 53;
-  int IMPLEMENTING = 54;
-  int IDENTIFIER = 55;
-  int WILD_LETTER = 56;
-  int DOT = 57;
-  int ARRAY = 58;
-  int SEPARATOR = 59;
-  int BEHAVIOR_NOT = 60;
-  int PARAMS_OPEN = 61;
-  int BEHAVIOR_CLOSE = 62;
-  int FIELD_ABSTRACT = 65;
-  int FIELD_FINAL = 66;
-  int FIELD_PRIVATE = 67;
-  int FIELD_PROTECTED = 68;
-  int FIELD_PUBLIC = 69;
-  int FIELD_STATIC = 70;
-  int FIELD_TRANSIENT = 71;
-  int FIELD_NATIVE = 72;
-  int FIELD_SYNCHRONIZED = 73;
-  int FIELD_INSTANCEOF = 74;
-  int FIELD_TYPEDEF = 75;
-  int FIELD_CLASS = 76;
-  int FIELD_ARRAY_CLASS = 77;
-  int FIELD_ANNOTATION = 78;
-  int FIELD_IDENTIFIER = 79;
-  int FIELD_WILD_LETTER = 80;
-  int FIELD_DOT = 81;
-  int FIELD_ARRAY = 82;
-  int FIELD_SEPARATOR = 83;
-  int FIELD_NOT = 84;
-  int FIELD_CLOSE = 85;
+  int PACKAGE = 50;
+  int EXCEPTION_SEPERATOR = 51;
+  int ARRAY_CLASS = 52;
+  int ANNOTATION = 53;
+  int IMPLEMENTS = 54;
+  int IMPLEMENTING = 55;
+  int IDENTIFIER = 56;
+  int WILD_LETTER = 57;
+  int DOT = 58;
+  int ARRAY = 59;
+  int SEPARATOR = 60;
+  int BEHAVIOR_NOT = 61;
+  int PARAMS_OPEN = 62;
+  int BEHAVIOR_CLOSE = 63;
+  int FIELD_ABSTRACT = 66;
+  int FIELD_FINAL = 67;
+  int FIELD_PRIVATE = 68;
+  int FIELD_PROTECTED = 69;
+  int FIELD_PUBLIC = 70;
+  int FIELD_STATIC = 71;
+  int FIELD_TRANSIENT = 72;
+  int FIELD_NATIVE = 73;
+  int FIELD_SYNCHRONIZED = 74;
+  int FIELD_INSTANCEOF = 75;
+  int FIELD_TYPEDEF = 76;
+  int FIELD_CLASS = 77;
+  int FIELD_PACKAGE = 78;
+  int FIELD_ARRAY_CLASS = 79;
+  int FIELD_ANNOTATION = 80;
+  int FIELD_IDENTIFIER = 81;
+  int FIELD_WILD_LETTER = 82;
+  int FIELD_DOT = 83;
+  int FIELD_ARRAY = 84;
+  int FIELD_SEPARATOR = 85;
+  int FIELD_NOT = 86;
+  int FIELD_CLOSE = 87;
 
   int DEFAULT = 0;
   int PARAMS = 1;
@@ -138,6 +140,7 @@ public interface PointcutExpressionParserConstants {
     "<INSTANCEOF>",
     "<TYPEDEF>",
     "<CLASS>",
+    "<PACKAGE>",
     "\",\"",
     "<ARRAY_CLASS>",
     "<ANNOTATION>",
@@ -165,6 +168,7 @@ public interface PointcutExpressionParserConstants {
     "<FIELD_INSTANCEOF>",
     "<FIELD_TYPEDEF>",
     "<FIELD_CLASS>",
+    "<FIELD_PACKAGE>",
     "<FIELD_ARRAY_CLASS>",
     "<FIELD_ANNOTATION>",
     "<FIELD_IDENTIFIER>",

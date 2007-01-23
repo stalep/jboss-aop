@@ -76,7 +76,7 @@ TOKEN : /* IDENTIFIERS */
 |
   < PARAM_ARRAY_CLASS: <PARAM_IDENTIFIER> (<PARAM_ARRAY>)+>
 |
-  < PARAM_ANNOTATION: "@" <PARAM_IDENTIFIER> (<PARAM_DOT> <PARAM_IDENTIFIER>)+ >
+  < PARAM_ANNOTATION: "@" <PARAM_IDENTIFIER> (<PARAM_DOT> <PARAM_IDENTIFIER>)* >
 |
   < PARAM_INSTANCEOF: "$instanceof{" (<PARAM_IDENTIFIER> | <PARAM_CLASS> | <PARAM_ANNOTATION>) "}">
 |
@@ -119,6 +119,8 @@ TOKEN : /* IDENTIFIERS */
   < TYPEDEF: "$typedef{" <POINTCUT> "}">
 |
   < CLASS: <IDENTIFIER> (<DOT> <IDENTIFIER>)+ (<ARRAY>)*>
+| 
+  < PACKAGE: <IDENTIFIER> (<DOT> <IDENTIFIER>)* <DOT><DOT>>
 | 
   < EXCEPTION_SEPERATOR: "," >
 |
@@ -166,6 +168,8 @@ TOKEN : /* IDENTIFIERS */
   < FIELD_TYPEDEF: "$typedef{" <POINTCUT> "}">
 |
   < FIELD_CLASS: <FIELD_IDENTIFIER> (<FIELD_DOT> <FIELD_IDENTIFIER>)+ (<FIELD_ARRAY>)*>
+| 
+  < FIELD_PACKAGE: <FIELD_IDENTIFIER> (<FIELD_DOT> <FIELD_IDENTIFIER>)* <FIELD_DOT><FIELD_DOT>>
 |
   < FIELD_ARRAY_CLASS: <FIELD_IDENTIFIER> (<FIELD_ARRAY>)+>
 |
@@ -305,7 +309,7 @@ void All() #All :
 {
    <ALL>
 
-   (pointcut=<FIELD_CLASS>|pointcut=<FIELD_IDENTIFIER>|pointcut=<FIELD_ANNOTATION>|pointcut=<FIELD_INSTANCEOF>|pointcut=<FIELD_TYPEDEF>)
+   (pointcut=<FIELD_CLASS>|pointcut=<FIELD_PACKAGE>|pointcut=<FIELD_IDENTIFIER>|pointcut=<FIELD_ANNOTATION>|pointcut=<FIELD_INSTANCEOF>|pointcut=<FIELD_TYPEDEF>)
    {
       jjtThis.setClassExpression(pointcut.image);
    }
@@ -324,7 +328,7 @@ void Within() #Within :
 }
 {
   <WITHIN>
-  (clazz=<FIELD_CLASS> | clazz=<FIELD_IDENTIFIER> | clazz=<FIELD_ANNOTATION> | clazz=<FIELD_INSTANCEOF>| clazz=<FIELD_TYPEDEF>)
+  (clazz=<FIELD_CLASS> | clazz=<FIELD_PACKAGE> | clazz=<FIELD_IDENTIFIER> | clazz=<FIELD_ANNOTATION> | clazz=<FIELD_INSTANCEOF>| clazz=<FIELD_TYPEDEF>)
   <FIELD_CLOSE>
    { jjtThis.setClassExpression(clazz.image); }
 }
@@ -375,7 +379,7 @@ void Method() #Method :
   Token ret, clazz, body;
 }
 {
-  (Attribute())* (ret=<CLASS>|ret=<IDENTIFIER>|ret=<ANNOTATION>|ret=<ARRAY_CLASS>|ret=<INSTANCEOF>|ret=<TYPEDEF>) (clazz=<CLASS>|clazz=<IDENTIFIER>|clazz=<ANNOTATION>|clazz=<INSTANCEOF>|clazz=<TYPEDEF>) <SEPARATOR> (body=<IDENTIFIER>|body=<ANNOTATION>|body=<IMPLEMENTS>|body=<IMPLEMENTING>) Parameters() Throws()
+  (Attribute())* (ret=<CLASS>|ret=<IDENTIFIER>|ret=<ANNOTATION>|ret=<ARRAY_CLASS>|ret=<INSTANCEOF>|ret=<TYPEDEF>) (clazz=<CLASS>|clazz=<PACKAGE>|clazz=<IDENTIFIER>|clazz=<ANNOTATION>|clazz=<INSTANCEOF>|clazz=<TYPEDEF>) <SEPARATOR> (body=<IDENTIFIER>|body=<ANNOTATION>|body=<IMPLEMENTS>|body=<IMPLEMENTING>) Parameters() Throws()
   {
     jjtThis.setReturnTypeExpression(ret.image);
     jjtThis.setClassExpression(clazz.image);
@@ -412,7 +416,7 @@ void Constructor() #Constructor :
   Token clazz, danew;
 }
 {
-  (ConstructorAttribute())* (clazz=<CLASS> | clazz=<IDENTIFIER> | clazz=<ANNOTATION> | clazz=<INSTANCEOF> | clazz=<TYPEDEF>)
+  (ConstructorAttribute())* (clazz=<CLASS> | clazz=<PACKAGE> | clazz=<IDENTIFIER> | clazz=<ANNOTATION> | clazz=<INSTANCEOF> | clazz=<TYPEDEF>)
   {
     jjtThis.setClassExpression(clazz.image);
   }
@@ -464,7 +468,7 @@ void Field() #Field :
   {
     jjtThis.setTypeExpression(type.image);
   }
-  (clazz=<FIELD_CLASS> | clazz=<FIELD_IDENTIFIER> | clazz=<FIELD_ANNOTATION> | clazz=<FIELD_INSTANCEOF> | clazz=<FIELD_TYPEDEF>)
+  (clazz=<FIELD_CLASS> | clazz=<FIELD_PACKAGE> | clazz=<FIELD_IDENTIFIER> | clazz=<FIELD_ANNOTATION> | clazz=<FIELD_INSTANCEOF> | clazz=<FIELD_TYPEDEF>)
   {
     jjtThis.setClassExpr(clazz.image);
   }
