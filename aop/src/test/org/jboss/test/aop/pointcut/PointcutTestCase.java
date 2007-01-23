@@ -40,16 +40,16 @@ import junit.framework.TestSuite;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision: 45977 $
  */
-public class PointcutTester extends AOPTestWithSetup
+public class PointcutTestCase extends AOPTestWithSetup
 {
    public static Test suite()
    {
-      TestSuite suite = new TestSuite("PointcutTester");
-      suite.addTestSuite(PointcutTester.class);
+      TestSuite suite = new TestSuite("PointcutTestCase");
+      suite.addTestSuite(PointcutTestCase.class);
       return suite;
    }
 
-   public PointcutTester(String name)
+   public PointcutTestCase(String name)
    {
       super(name);
    }

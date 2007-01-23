@@ -673,7 +673,6 @@
 
       <junit printsummary="yes" fork="no" haltonfailure="no" >
          <sysproperty key="jboss.aop.debug.classes" value="false"/>
-         <sysproperty key="jboss.aop.path" value="${source.res}/test/container/jboss-aop.xml"/>
          <classpath>
             <path refid="javac.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -692,6 +691,7 @@
       		   <include name="org/jboss/test/aop/methodhashing/MethodHashingTestCase.class"/>
       		   <include name="org/jboss/test/aop/annotationc/AnnotationTester.class"/>
       		   <include name="org/jboss/test/aop/bridgemethodnotwoven/BridgeMethodTestCase.class"/>
+				   <include name="org/jboss/test/aop/pointcut/PointcutTestCase.class"/>
 		      </fileset>
 		   </batchtest>
       </junit>

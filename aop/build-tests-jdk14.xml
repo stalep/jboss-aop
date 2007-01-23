@@ -706,10 +706,23 @@
 		         <include name="org/jboss/test/aop/proxy/ProxyTestCase.class"/>
       		   <include name="org/jboss/test/aop/methodhashing/MethodHashingTestCase.class"/>
       		   <include name="org/jboss/test/aop/annotationc/AnnotationTester.class"/>
+				   <include name="org/jboss/test/aop/pointcut/PointcutTestCase.class"/>
 		      </fileset>
 		   </batchtest>
-
       </junit>
+	   <junit printsummary="yes" fork="yes" haltonfailure="no">
+		   <sysproperty key="jboss.aop.path" value="${source.res}/test/container/jboss-aop.xml"/>
+		   <classpath>
+            <path refid="test.classpath"/>
+            <path refid="aopc.classpath"/>
+            <pathelement location="${build.tests.retro}"/>
+            <pathelement location="docs"/>
+		   </classpath>
+		   <sysproperty key="jboss-junit-configuration" value="jdk14"/>
+		   <formatter type="plain" extension="-jdk14.txt"/>
+		   <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-jdk14.xml"/>
+	      <test todir="${build.reports}" name="org.jboss.test.aop.container.ContainerTestCase"/>
+	   </junit>
    </target>
 
    <target name="system-classloader-test" depends="compile-test-classes">
