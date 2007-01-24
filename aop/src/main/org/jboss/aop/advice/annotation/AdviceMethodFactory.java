@@ -26,10 +26,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.WeakHashMap;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.AdviceMethodProperties;
@@ -200,6 +202,9 @@ public class AdviceMethodFactory
       return message;
    }
    
+   private HashMap<String, WeakHashMap<ParameterAnnotationRule[],
+      Collection<AdviceInfo>>> adviceInfoCache;
+   
    private ReturnType returnType;
    private AdviceSignatureRule adviceSignatureRule;
    private ParameterAnnotationRule[] rules;
@@ -212,18 +217,17 @@ public class AdviceMethodFactory
     *                            that avoids the parameter rules verification.
     * @param rules               the parameter annotation rules that can be used by
     *                            this factory on the advice method matching.
-    * @param mutuallyExclusive   collection of the rules that are mutually exclusive
     * @param returnType          indicates whether the queried advice methods can return
     *                            a value to overwrite the join point execution result.
     */
    private AdviceMethodFactory(AdviceSignatureRule adviceSignatureRule,
-         ParameterAnnotationRule[] rules,/*, int[][] mutuallyExclusive,*/
-         ReturnType returnType)
+         ParameterAnnotationRule[] rules, ReturnType returnType)
    {
       this.adviceSignatureRule = adviceSignatureRule;
       this.rules = rules;
-      //this.mutuallyExclusive = mutuallyExclusive;
       this.returnType = returnType;
+      this.adviceInfoCache = new HashMap
+         <String, WeakHashMap<ParameterAnnotationRule[], Collection<AdviceInfo>>>();
    }
    
    /**
@@ -238,21 +242,6 @@ public class AdviceMethodFactory
       if (AspectManager.verbose)
       {
          adviceMatchingMessage = new StringBuffer();
-      }
-      Method[] methods = ReflectUtils.getMethodsWithName(
-            properties.getAspectClass(), properties.getAdviceName());
-    
-      if (methods.length == 0)
-      {
-         if (AspectManager.verbose)
-         {
-            adviceMatchingMessage.append("\n[warn] - advice method ");
-            adviceMatchingMessage.append(properties.getAspectClass());
-            adviceMatchingMessage.append(".");
-            adviceMatchingMessage.append(properties.getAdviceName());
-            adviceMatchingMessage.append(" not found");
-         }
-         return null;
       }
       
       ParameterAnnotationRule[] contextRules = null;
@@ -280,8 +269,79 @@ public class AdviceMethodFactory
                   properties.getOptionalParameters());
       }
       
+      LinkedList<AdviceInfo> rankedAdvices = getRankedAdvices(
+            properties, contextRules, mutuallyExclusive);
       
-      LinkedList<AdviceInfo> rankedAdvices = new LinkedList<AdviceInfo>();
+      // no advice method following the rules was found
+      if (rankedAdvices == null || rankedAdvices.isEmpty())
+      {
+         return null;
+      }
+      
+      // validate and retrive best match
+      AdviceInfo bestAdvice = bestValidAdvice(rankedAdvices, properties,
+            contextRules);
+      if (bestAdvice == null)
+      {
+         return null;
+      }
+      // assign best Advice info to properties 
+      bestAdvice.assignAdviceInfo(properties);
+      return properties;
+   }
+
+   /**
+    * Returns a list of one or more advice infos ranked according to their priority.
+    * The valid advice with the highest rank is the one that should be chosen.
+    * 
+    * @param properties        contains information regarding the queried advice
+    *                          method
+    * @param contextRules      the rules that must be followed according to the
+    *                          joinpoint context
+    * @param mutuallyExclusive a list of which context rules are mutually exclusive
+    * 
+    * @return a sorted linked list containing all advice infos that might be
+    *         used on the joinpoint interception
+    */
+   private LinkedList<AdviceInfo> getRankedAdvices(AdviceMethodProperties properties,
+         ParameterAnnotationRule[] contextRules, int[][] mutuallyExclusive)
+   {
+      // verify if list is on cache
+      String key =
+              properties.getAspectClass().getName() + properties.getAdviceName();
+      WeakHashMap<ParameterAnnotationRule[], Collection<AdviceInfo>> map = 
+         adviceInfoCache.get(key);
+      if (map != null)
+      {
+         if (map.containsKey(contextRules))
+         {
+            return new LinkedList<AdviceInfo> (map.get(contextRules));
+         }
+      }
+      else
+      {
+          map = new WeakHashMap<ParameterAnnotationRule[], Collection<AdviceInfo>>();
+          adviceInfoCache.put(key, map);
+      }
+      
+      // create the list
+      Method[] methods = ReflectUtils.getMethodsWithName(
+            properties.getAspectClass(), properties.getAdviceName());
+    
+      if (methods.length == 0)
+      {
+         if (AspectManager.verbose)
+         {
+            adviceMatchingMessage.append("\n[warn] - advice method ");
+            adviceMatchingMessage.append(properties.getAspectClass());
+            adviceMatchingMessage.append(".");
+            adviceMatchingMessage.append(properties.getAdviceName());
+            adviceMatchingMessage.append(" not found");
+         }
+         return null;
+      }
+      
+      ArrayList<AdviceInfo> rankedAdvices = new ArrayList<AdviceInfo>();
       for (int i = 0; i < methods.length; i++)
       {
          // advice applies to signature rule
@@ -303,23 +363,13 @@ public class AdviceMethodFactory
             }
          }
       }
-      // no advice method following the rules was found
-      if (rankedAdvices.isEmpty())
-      {
-         return null;
-      }
       // sort according to rank
       Collections.sort(rankedAdvices);
-      // validate and retrive best match
-      AdviceInfo bestAdvice = bestValidAdvice(rankedAdvices, properties,
-            contextRules);
-      if (bestAdvice == null)
-      {
-         return null;
-      }
-      // assign best Advice info to properties 
-      bestAdvice.assignAdviceInfo(properties);
-      return properties;
+      
+      // add list to cache
+      map.put(contextRules, rankedAdvices);
+      
+      return new LinkedList<AdviceInfo> (rankedAdvices);
    }
    
    /**
