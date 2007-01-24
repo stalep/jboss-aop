@@ -2,6 +2,7 @@ package org.jboss.aop.advice.annotation;
 
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.joinpoint.FieldReadInvocation;
 import org.jboss.aop.joinpoint.Invocation;
 
 /**
@@ -107,7 +108,13 @@ enum ParameterAnnotationRule
     * Rule for parameter annotation {@link Args}.
     */
    ARGS (
-         Args.class, Object[].class, AdviceMethodProperties.ARGS_ARG, 30, false, true);
+         Args.class, Object[].class, AdviceMethodProperties.ARGS_ARG, 30, false, true)
+   {
+      public boolean lowerRankGrade(AdviceMethodProperties properties)
+      {
+         return properties.getInvocationType() == FieldReadInvocation.class;
+      } 
+   };
    
    private Class annotation;
    private Class assignableFrom;
