@@ -108,13 +108,6 @@ public class ClassExpression
       }
    }
 
-   public boolean matchesAnnotation(String annotation)
-   {
-      if (!isAnnotation) return false;
-      Matcher m = classPattern.matcher(annotation);
-      return m.matches();
-   }
-
    public boolean isAnnotation()
    {
       return this.isAnnotation;
