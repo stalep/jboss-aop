@@ -7,7 +7,7 @@
 
 	<bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->field1)">
 		<before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
-      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+        <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
@@ -20,8 +20,9 @@
    </bind>
 
 	<bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->field3)">
+    	<advice name="around3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
-      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+        <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
@@ -29,12 +30,13 @@
 
 	<bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->field4)">
 		<before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
-      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+        <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+    	<advice name="around3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
-      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+        <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
@@ -43,6 +45,7 @@
 	<bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->method1(..))">
 	   <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
 	   <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
+ 	   <throwing name="throwing" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect" />
 	</bind>
 
 	<bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->method2(..))">

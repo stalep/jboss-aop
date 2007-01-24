@@ -25,6 +25,7 @@ import junit.framework.Assert;
 
 import org.jboss.aop.advice.annotation.Args;
 import org.jboss.aop.advice.annotation.Thrown;
+import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.MethodCalledByMethodInvocation;
 import org.jboss.aop.joinpoint.MethodInvocation;
 
@@ -204,9 +205,8 @@ public class ArgsAspect
    
    public void after8(@Args Object[] arguments)
    {
-      before8 = true;
-      before8Args = arguments;
-      // TODO make after 8 realize changes made during around invocations
+      after8 = true;
+      after8Args = arguments;
    }
    
    public Object around1(MethodInvocation invocation) throws Throwable
@@ -223,7 +223,7 @@ public class ArgsAspect
       return invocation.invokeNext();
    }
    
-   public Object around3(MethodInvocation invocation, @Args Object[] arguments) throws Throwable
+   public Object around3(@org.jboss.aop.advice.annotation.Invocation Invocation invocation, @Args Object[] arguments) throws Throwable
    {
       around3 = true;
       around3Args = arguments;
@@ -233,7 +233,6 @@ public class ArgsAspect
    public void throwing(@Args Object[] arguments, @Thrown Throwable throwable)
    {
       throwing = true;
-      System.out.println("RECEIVING ARGUMENTS: " + arguments);
       throwingArgs = arguments;
    }
 }

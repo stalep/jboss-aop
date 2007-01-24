@@ -254,7 +254,7 @@ public abstract class JoinPointGenerator
    public static final String GENERATOR_PREFIX = "generator_";
    private static final String RETURN_VALUE = "ret";
    private static final String THROWABLE = "t";
-   private static final String ARGUMENTS= " arguments";
+   protected static final String ARGUMENTS= "arguments";
    private static final String GET_ARGUMENTS= " getArguments()";
    protected static final CtClass[] EMPTY_CTCLASS_ARRAY = new CtClass[0];
 
@@ -943,10 +943,6 @@ public abstract class JoinPointGenerator
             && !FieldJoinPointGenerator.class.isAssignableFrom(this.getClass()))
       {
          throw new RuntimeException("JoinPoints should have 2 or 3 constructors, not " + superCtors.length);
-      }
-      else if (superCtors.length != 2 && FieldJoinPointGenerator.class.isAssignableFrom(this.getClass()))
-      {
-         throw new RuntimeException("Field JoinPoints should only have 2 and only constructors, not " + superCtors.length);
       }
       else if (superCtors.length != 4 && superCtors.length != 3 && this.getClass().equals(MethodJoinPointGenerator.class))
       {

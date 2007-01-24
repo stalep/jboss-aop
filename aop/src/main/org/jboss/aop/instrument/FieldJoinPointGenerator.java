@@ -250,16 +250,34 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
          {
             addTypedTargetField();
          }
+         addArgumentFieldAndAccessor();
          addInvokeJoinpointMethod();
          addFieldInfoField();
          addPublicConstructor();
-         addProtectedConstructor();
+         addProtectedConstructors();
          addDispatchMethods();
 
          TransformerCommon.compileOrLoadClass(advisedClass, jp);
          return jp;
       }
 
+      protected void addArgumentFieldAndAccessor() throws CannotCompileException, NotFoundException
+      {
+         CtField argumentsField = new CtField(
+               instrumentor.forName("java.lang.Object[]"), ARGUMENTS, jp);
+         argumentsField.setModifiers(Modifier.PROTECTED);
+         jp.addField(argumentsField);
+         CtMethod getArguments = CtNewMethod.make(createGetArgumentsBody(), jp);
+         getArguments.setModifiers(Modifier.PUBLIC);
+         jp.addMethod(getArguments);
+         CtMethod setArguments = CtNewMethod.make(createSetArgumentsBody(), jp);
+         setArguments.setModifiers(Modifier.PUBLIC);
+         jp.addMethod(setArguments);
+      }
+
+      protected abstract String createGetArgumentsBody();
+      protected abstract String createSetArgumentsBody();
+      
       private static String debugFields(CtClass clazz) throws NotFoundException
       {
          StringBuffer sb = new StringBuffer();
@@ -310,25 +328,58 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       }
 
       /**
-       * This constructor will be called by invokeJoinpoint in the generated subclass when we need to
-       * instantiate a joinpoint containing target and args
+       * These constructors will be called by invokeJoinpoint in the generated
+       * subclass when we need to instantiate a joinpoint containing target and args
        */
-      protected void addProtectedConstructor() throws CannotCompileException, NotFoundException
+      protected void addProtectedConstructors() throws CannotCompileException, NotFoundException
       {
+         CtClass[] ctorParams1 = (hasTargetObject) ? new CtClass[2] : new CtClass[1];
+         CtClass[] ctorParams2 = (hasTargetObject) ? new CtClass[3] : new CtClass[2];
+         
+         ctorParams1[0] = ctorParams2[0] = jp;
+         if (hasTargetObject) ctorParams1[1] = ctorParams2[1] = advisedClass;
+         ctorParams2[ctorParams2.length - 1] = getArgumentType();
+         
+         StringBuffer body = new StringBuffer();
+         body.append("{");
+         body.append("   this($1." + INFO_FIELD + ");");
 
+         if (hasTargetObject)
+         {
+            body.append("   this." + TARGET_FIELD + " = $2;");
+            body.append("   super.setTargetObject($2);");
+         }
+         
+         if (getArgumentType() != null)
+         {
+            CtConstructor protectedConstructor = CtNewConstructor.make(
+                  ctorParams1,
+                  new CtClass[0],
+                  body.toString() + "}",
+                  jp);
+            protectedConstructor.setModifiers(Modifier.PROTECTED);
+            jp.addConstructor(protectedConstructor);
+         }
+         else
+         {
+            ctorParams2 = ctorParams1;
+         }
+         String setArguments = createSetValue();
          CtConstructor protectedConstructor = CtNewConstructor.make(
-               createProtectedCtorParams(),
+               ctorParams2,
                new CtClass[0],
-               createProtectedCtorBody(),
+               body.toString() + setArguments + "}",
                jp);
          protectedConstructor.setModifiers(Modifier.PROTECTED);
-
          jp.addConstructor(protectedConstructor);
+         
+         
       }
 
-      protected abstract CtClass[] createProtectedCtorParams() throws NotFoundException;
-      protected abstract String createProtectedCtorBody();
+      protected abstract CtClass getArgumentType() throws NotFoundException;
+      protected abstract String createSetValue();
       protected abstract CtClass[] getInvokeJoinPointParams() throws NotFoundException;
+      
       /**
        * Add an empty invokeJoinpoint() method. This method will be overridden by generated subclasses,
        * when the interceptors are rebuilt
@@ -438,31 +489,16 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
          return READ_INVOCATION_CT_TYPE;
       }
 
-      protected CtClass[] createProtectedCtorParams() throws NotFoundException
+      protected CtClass getArgumentType()
       {
-         CtClass[] ctorParams = (hasTargetObject) ? new CtClass[2] : new CtClass[1];
-         ctorParams[0] = jp;
-         if (hasTargetObject) ctorParams[1] = advisedClass;
-
-         return ctorParams;
+         return null;
       }
-
-      protected String createProtectedCtorBody()
+      
+      protected String createSetValue()
       {
-         StringBuffer body = new StringBuffer();
-         body.append("{");
-         body.append("   this($1." + INFO_FIELD + ");");
-
-         if (hasTargetObject)
-         {
-            body.append("   this." + TARGET_FIELD + " = $2;");
-            body.append("   super.setTargetObject($2);");
-         }
-
-         body.append("}");
-         return body.toString();
+         return "";
       }
-
+      
       protected CtClass[] getInvokeJoinPointParams() throws NotFoundException
       {
          return (hasTargetObject) ? new CtClass[] {advisedClass} : new CtClass[0];
@@ -496,6 +532,36 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
             "{return "  + "$1." + advisedField.getName() + ";}" :
             "{return " + advisedClass.getName() + "." + advisedField.getName() + ";}";
       }
+      
+      protected String createGetArgumentsBody()
+      {
+         StringBuffer code = new StringBuffer("public java.lang.Object[] getArguments()");
+         code.append("{ ");
+         code.append("   if(");
+         code.append(ARGUMENTS);
+         code.append("  == null)");
+         code.append("   {");
+         code.append("      ");
+         code.append(ARGUMENTS);
+         code.append(" = new java.lang.Object[0];");
+         code.append("   }");
+         code.append("   return ");
+         code.append(ARGUMENTS);
+         code.append("; ");
+         code.append("}");
+         return code.toString();
+      }
+      
+      protected String createSetArgumentsBody()
+      {
+         StringBuffer code = new StringBuffer(
+         "public void setArguments(java.lang.Object[] args)");
+         code.append("{   ");
+         code.append(ARGUMENTS);
+         code.append("=args;");
+         code.append("}");
+         return code.toString();
+      }
    }
 
    private static class WriteBaseClassGenerator extends BaseClassGenerator
@@ -510,43 +576,19 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       {
          return WRITE_INVOCATION_CT_TYPE;
       }
-
-      protected CtClass[] createProtectedCtorParams() throws NotFoundException
+      
+      protected CtClass getArgumentType() throws NotFoundException
       {
-         CtClass[] ctorParams = (hasTargetObject) ? new CtClass[3] : new CtClass[2];
-         ctorParams[0] = jp;
-         if (hasTargetObject)
-         {
-            ctorParams[1] = advisedClass;
-            ctorParams[2] = advisedField.getType();
-         }
-         else
-         {
-            ctorParams[1] = advisedField.getType();
-         }
-
-         return ctorParams;
+         return advisedField.getType();
       }
 
-      protected String createProtectedCtorBody()
+      protected String createSetValue()
       {
-         StringBuffer body = new StringBuffer();
-         body.append("{");
-         body.append("   this($1." + INFO_FIELD + ");");
-
          if (hasTargetObject)
          {
-            body.append("   this." + TARGET_FIELD + " = $2;");
-            body.append("   super.setTargetObject($2);");
-            body.append("   super.value = ($w)$3;");
+            return "   super.value = ($w)$3;";
          }
-         else
-         {
-            body.append("   super.value = ($w)$2;");
-         }
-
-         body.append("}");
-         return body.toString();
+         return "   super.value = ($w)$2;";
       }
 
       protected CtClass[] getInvokeJoinPointParams() throws NotFoundException
@@ -591,6 +633,37 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
          return (hasTargetObject) ?
             "{$1." + advisedField.getName() + " = $2;}" :
             "{" + advisedClass.getName() + "." + advisedField.getName() + " = $1;}";
+      }
+      
+      protected String createGetArgumentsBody()
+      {
+         StringBuffer code = new StringBuffer("public java.lang.Object[] getArguments()");
+         code.append("{ ");
+         code.append("   if(");
+         code.append(ARGUMENTS);
+         code.append("  == null)");
+         code.append("   {");
+         code.append("      ");
+         code.append(ARGUMENTS);
+         code.append(" = new java.lang.Object[]{super.value};");
+         code.append("   }");
+         code.append("   return ");
+         code.append(ARGUMENTS);
+         code.append("; ");
+         code.append("}");
+         return code.toString();
+      }
+      
+      protected String createSetArgumentsBody()
+      {
+         StringBuffer code = new StringBuffer(
+         "public void setArguments(java.lang.Object[] args)");
+         code.append("{   ");
+         code.append(ARGUMENTS);
+         code.append("=args;");
+         code.append("   super.value=args[0];");
+         code.append("}");
+         return code.toString();
       }
    }
 }
