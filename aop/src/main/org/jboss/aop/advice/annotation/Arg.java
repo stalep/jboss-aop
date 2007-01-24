@@ -33,4 +33,12 @@ import java.lang.annotation.RetentionPolicy;
  * @author Flavia Rainone
  */
 @Target (ElementType.PARAMETER) @Retention(RetentionPolicy.RUNTIME)
-public @interface Arg {}
+public @interface Arg
+{
+   /**
+    * Indicates which joinpoint argument this advice parameter refers to.
+    * When this value is not set, JBoss AOP will select the first joinpoint
+    * argument of the same type.
+    */
+   int index() default -1;
+}

@@ -324,7 +324,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       {
          if (parameterAnnotation.annotationType() == rule.getAnnotation())
          {
-            setIndex(parameterIndex);
+            setIndex(parameterIndex, parameterAnnotation);
             return true;
          }
          return false;
@@ -359,13 +359,16 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       }
       
       /**
-       * Records that the parameter identified by <code>paramterIndex</code> is of this
-       * type.
+       * Records that the parameter identified by <code>parameterIndex</code> is of
+       * this type.
        * @param parameterIndex the index of the parameter
+       * @param annotation     the annotation used on parameter <code>parameterIndex
+       *                       </code>        
        * @throws ParameterAnnotationRuleException if the parameter annotation has more
        *         than one occurrence and this is forbidden by the annotation rule
        */
-      public abstract void setIndex(int parameterIndex) throws ParameterAnnotationRuleException;
+      public abstract void setIndex(int parameterIndex,
+            Annotation annotation) throws ParameterAnnotationRuleException;
 
       /**
        * Returns <code>true</code> if there is a parameter of this type.
@@ -412,7 +415,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          this.index = -1;
       }
       
-      public final void setIndex(int parameterIndex)
+      public final void setIndex(int parameterIndex, Annotation annotation)
          throws ParameterAnnotationRuleException
       {
          if (this.index != -1)
@@ -489,13 +492,15 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          this.indexesLength = 0;
       }
       
-      public final void setIndex(int index) throws ParameterAnnotationRuleException
+      public final void setIndex(int index, Annotation annotation)
+         throws ParameterAnnotationRuleException
       {
          if (indexesLength == indexes.length)
          {
-            throw new ParameterAnnotationRuleException("Found more arg annotated parameters");
+            throw new ParameterAnnotationRuleException("Found more @Arg annotated parameters than the number of parameters available on joinpoint");
          }
-         indexes[indexesLength++][0] = index;
+         indexes[indexesLength][0] = index;
+         indexes[indexesLength++][1] = ((Arg) annotation).index();
          rank += rule.getRankGrade();
       }
       
@@ -511,6 +516,44 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          boolean[] taken = new boolean[expectedTypes.length];
          for (int i = 0; i < indexesLength; i++)
          {
+            // parameter index is set on @Arg annotation
+            if (indexes[i][1] != -1)
+            {
+               // wrong index set
+               if (indexes[i][1] >= expectedTypes.length)
+               {
+                  if (AspectManager.verbose)
+                  {
+                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - There is no joinpoint parameter with index ");
+                     AdviceMethodFactory.adviceMatchingMessage.append(indexes[i][1]);
+                     AdviceMethodFactory.adviceMatchingMessage.append(", since there are ");
+                     AdviceMethodFactory.adviceMatchingMessage.append(expectedTypes.length == 0? "no": expectedTypes.length);
+                     AdviceMethodFactory.adviceMatchingMessage.append("joinpoint parameters available");
+                  }
+                  return false;
+               }
+               // wrong type
+               if (!adviceTypes[indexes[i][0]].isAssignableFrom(
+                     expectedTypes[indexes[i][1]]))
+               {
+                  if (AspectManager.verbose)
+                  {
+                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - Advice parameter ");
+                     AdviceMethodFactory.adviceMatchingMessage.append(indexes[i][0]);
+                     AdviceMethodFactory.adviceMatchingMessage.append(", of type ");
+                     AdviceMethodFactory.adviceMatchingMessage.append(adviceTypes[indexes[i][0]].getName());
+                     AdviceMethodFactory.adviceMatchingMessage.append(", cannot be assigned to the value of joinpoint parameter with index ");
+                     AdviceMethodFactory.adviceMatchingMessage.append(indexes[i][1]);
+                     AdviceMethodFactory.adviceMatchingMessage.append(", whose type is ");
+                     AdviceMethodFactory.adviceMatchingMessage.append(expectedTypes[indexes[i][1]].getName());
+                  }
+                  return false;
+               }
+               taken[indexes[i][1]] = true;
+               // TODO give priority to indexes set first
+               continue;
+            }
+            
             boolean found = false;
             for (int j = 0; j < expectedTypes.length; j++)
             {
