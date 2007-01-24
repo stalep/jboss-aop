@@ -38,38 +38,40 @@ public interface TypeExpressionParserConstants {
   int INSTANCEOF = 38;
   int TYPEDEF = 39;
   int CLASS = 40;
-  int ARRAY_CLASS = 41;
-  int ANNOTATION = 42;
-  int IDENTIFIER = 43;
-  int WILD_LETTER = 44;
-  int DOT = 45;
-  int EXCEPTION_SEPERATOR = 46;
-  int ARRAY = 47;
-  int SEPARATOR = 48;
-  int BEHAVIOR_NOT = 49;
-  int PARAMS_OPEN = 50;
-  int BEHAVIOR_CLOSE = 51;
-  int FIELD_ABSTRACT = 54;
-  int FIELD_FINAL = 55;
-  int FIELD_PRIVATE = 56;
-  int FIELD_PROTECTED = 57;
-  int FIELD_PUBLIC = 58;
-  int FIELD_STATIC = 59;
-  int FIELD_TRANSIENT = 60;
-  int FIELD_NATIVE = 61;
-  int FIELD_SYNCHRONIZED = 62;
-  int FIELD_INSTANCEOF = 63;
-  int FIELD_TYPEDEF = 64;
-  int FIELD_CLASS = 65;
-  int FIELD_ARRAY_CLASS = 66;
-  int FIELD_ANNOTATION = 67;
-  int FIELD_IDENTIFIER = 68;
-  int FIELD_WILD_LETTER = 69;
-  int FIELD_DOT = 70;
-  int FIELD_ARRAY = 71;
-  int FIELD_SEPARATOR = 72;
-  int FIELD_NOT = 73;
-  int FIELD_CLOSE = 74;
+  int PACKAGE = 41;
+  int ARRAY_CLASS = 42;
+  int ANNOTATION = 43;
+  int IDENTIFIER = 44;
+  int WILD_LETTER = 45;
+  int DOT = 46;
+  int EXCEPTION_SEPERATOR = 47;
+  int ARRAY = 48;
+  int SEPARATOR = 49;
+  int BEHAVIOR_NOT = 50;
+  int PARAMS_OPEN = 51;
+  int BEHAVIOR_CLOSE = 52;
+  int FIELD_ABSTRACT = 55;
+  int FIELD_FINAL = 56;
+  int FIELD_PRIVATE = 57;
+  int FIELD_PROTECTED = 58;
+  int FIELD_PUBLIC = 59;
+  int FIELD_STATIC = 60;
+  int FIELD_TRANSIENT = 61;
+  int FIELD_NATIVE = 62;
+  int FIELD_SYNCHRONIZED = 63;
+  int FIELD_INSTANCEOF = 64;
+  int FIELD_TYPEDEF = 65;
+  int FIELD_CLASS = 66;
+  int FIELD_PACKAGE = 67;
+  int FIELD_ARRAY_CLASS = 68;
+  int FIELD_ANNOTATION = 69;
+  int FIELD_IDENTIFIER = 70;
+  int FIELD_WILD_LETTER = 71;
+  int FIELD_DOT = 72;
+  int FIELD_ARRAY = 73;
+  int FIELD_SEPARATOR = 74;
+  int FIELD_NOT = 75;
+  int FIELD_CLOSE = 76;
 
   int DEFAULT = 0;
   int PARAMS = 1;
@@ -118,6 +120,7 @@ public interface TypeExpressionParserConstants {
     "<INSTANCEOF>",
     "<TYPEDEF>",
     "<CLASS>",
+    "<PACKAGE>",
     "<ARRAY_CLASS>",
     "<ANNOTATION>",
     "<IDENTIFIER>",
@@ -143,6 +146,7 @@ public interface TypeExpressionParserConstants {
     "<FIELD_INSTANCEOF>",
     "<FIELD_TYPEDEF>",
     "<FIELD_CLASS>",
+    "<FIELD_PACKAGE>",
     "<FIELD_ARRAY_CLASS>",
     "<FIELD_ANNOTATION>",
     "<FIELD_IDENTIFIER>",

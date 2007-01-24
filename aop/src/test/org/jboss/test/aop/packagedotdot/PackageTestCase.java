@@ -27,6 +27,8 @@ import org.jboss.test.aop.packagedotdot.callee.Callee;
 import org.jboss.test.aop.packagedotdot.caller.Caller;
 import org.jboss.test.aop.packagedotdot.sub.POJO;
 import org.jboss.test.aop.packagedotdot.sub.nested.Nested;
+import org.jboss.test.aop.packagedotdot.type.Type;
+import org.jboss.test.aop.packagedotdot.type.WrongType;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -284,8 +286,25 @@ public class PackageTestCase extends AOPTestWithSetup
       NotConstructionInterceptor.intercepted = false;
       caller.method();
       assertTrue(NotConstructionInterceptor.intercepted);
+   }
+   
+   public void testTypeExpressions()
+   {
+      NotConstructionInterceptor.intercepted = false;
+      Type type = new Type(1);
+      assertTrue(NotConstructionInterceptor.intercepted);
 
+      NotConstructionInterceptor.intercepted = false;
+      int i = type.field;
+      assertTrue(NotConstructionInterceptor.intercepted);
       
+      NotConstructionInterceptor.intercepted = false;
+      type.method(5);
+      assertTrue(NotConstructionInterceptor.intercepted);
+      
+      NotConstructionInterceptor.intercepted = false;
+      WrongType wt = new WrongType();
+      assertFalse(NotConstructionInterceptor.intercepted);
    }
 }
 

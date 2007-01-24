@@ -19,25 +19,24 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.test.aop.packagedotdot.caller;
-
-import org.jboss.test.aop.packagedotdot.callee.Callee;
+package org.jboss.test.aop.packagedotdot.type;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class Caller
+public class Type
 {
-   Callee callee;
-   public Caller()
+   public int field = 5;
+   
+   public Type(int i)
    {
-      callee = new Callee();
+      
    }
    
-   public void method()
+   public void method(int i)
    {
-      callee.method();
+      
    }
 }

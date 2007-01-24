@@ -95,6 +95,8 @@ TOKEN : /* IDENTIFIERS */
   < TYPEDEF: "$typedef{" (<IDENTIFIER> | <CLASS>) "}">
 |
   < CLASS: <IDENTIFIER> (<DOT> <IDENTIFIER>)+ (<ARRAY>)*>
+| 
+  < PACKAGE: <IDENTIFIER> (<DOT> <IDENTIFIER>)* <DOT><DOT>>
 |
   < ARRAY_CLASS: <IDENTIFIER> (<ARRAY>)+>
 |
@@ -138,6 +140,8 @@ TOKEN : /* IDENTIFIERS */
   < FIELD_TYPEDEF: "$typedef{" (<FIELD_IDENTIFIER> | <FIELD_CLASS>) "}">
 |
   < FIELD_CLASS: <FIELD_IDENTIFIER> (<FIELD_DOT> <FIELD_IDENTIFIER>)+ (<FIELD_ARRAY>)*>
+| 
+  < FIELD_PACKAGE: <FIELD_IDENTIFIER> (<FIELD_DOT> <FIELD_IDENTIFIER>)* <FIELD_DOT><FIELD_DOT>>
 |
   < FIELD_ARRAY_CLASS: <FIELD_IDENTIFIER> (<FIELD_ARRAY>)+>
 |
@@ -236,7 +240,7 @@ void Method() #Method :
   Token ret, clazz, body;
 }
 {
-  (Attribute())* (ret=<CLASS>|ret=<IDENTIFIER>|ret=<ANNOTATION>|ret=<ARRAY_CLASS>|ret=<INSTANCEOF>|ret=<TYPEDEF>) (clazz=<CLASS>|clazz=<IDENTIFIER>|clazz=<ANNOTATION>|clazz=<INSTANCEOF>|clazz=<TYPEDEF>) <SEPARATOR> (body=<IDENTIFIER>|body=<ANNOTATION>) Parameters() Throws()
+  (Attribute())* (ret=<CLASS>|ret=<IDENTIFIER>|ret=<ANNOTATION>|ret=<ARRAY_CLASS>|ret=<INSTANCEOF>|ret=<TYPEDEF>) (clazz=<CLASS>|clazz=<PACKAGE>|clazz=<IDENTIFIER>|clazz=<ANNOTATION>|clazz=<INSTANCEOF>|clazz=<TYPEDEF>) <SEPARATOR> (body=<IDENTIFIER>|body=<ANNOTATION>) Parameters() Throws()
   {
     jjtThis.setReturnTypeExpression(ret.image);
     jjtThis.setClassExpression(clazz.image);
@@ -257,7 +261,7 @@ void Constructor() #Constructor :
   Token clazz, danew;
 }
 {
-  (ConstructorAttribute())* (clazz=<CLASS> | clazz=<IDENTIFIER> | clazz=<ANNOTATION> | clazz=<INSTANCEOF> | clazz=<TYPEDEF>)
+  (ConstructorAttribute())* (clazz=<CLASS> | clazz=<PACKAGE> | clazz=<IDENTIFIER> | clazz=<ANNOTATION> | clazz=<INSTANCEOF> | clazz=<TYPEDEF>)
   {
     jjtThis.setClassExpression(clazz.image);
   }
@@ -310,7 +314,7 @@ void Field() #Field :
   {
     jjtThis.setTypeExpression(type.image);
   }
-  (clazz=<FIELD_CLASS> | clazz=<FIELD_IDENTIFIER> | clazz=<FIELD_ANNOTATION> | clazz=<FIELD_INSTANCEOF> | clazz=<FIELD_TYPEDEF>)
+  (clazz=<FIELD_CLASS> | clazz=<FIELD_PACKAGE> | clazz=<FIELD_IDENTIFIER> | clazz=<FIELD_ANNOTATION> | clazz=<FIELD_INSTANCEOF> | clazz=<FIELD_TYPEDEF>)
   {
     jjtThis.setClassExpr(clazz.image);
   }
@@ -335,7 +339,7 @@ void Class() #Class :
 }
 {
   <CLASS_EXPR>
-  (clazz=<FIELD_CLASS> | clazz=<FIELD_IDENTIFIER> | clazz=<FIELD_ANNOTATION> | clazz=<FIELD_INSTANCEOF> | clazz=<FIELD_TYPEDEF>)
+  (clazz=<FIELD_CLASS> | clazz=<FIELD_PACKAGE> | clazz=<FIELD_IDENTIFIER> | clazz=<FIELD_ANNOTATION> | clazz=<FIELD_INSTANCEOF> | clazz=<FIELD_TYPEDEF>)
   {
     jjtThis.setClassExpr(clazz.image);
   }

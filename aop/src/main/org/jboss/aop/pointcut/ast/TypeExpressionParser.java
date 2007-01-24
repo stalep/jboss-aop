@@ -104,9 +104,9 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(75);
+      jj_consume_token(77);
       SubExpression();
-      jj_consume_token(76);
+      jj_consume_token(78);
     } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -463,6 +463,9 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
       case CLASS:
         clazz = jj_consume_token(CLASS);
         break;
+      case PACKAGE:
+        clazz = jj_consume_token(PACKAGE);
+        break;
       case IDENTIFIER:
         clazz = jj_consume_token(IDENTIFIER);
         break;
@@ -620,6 +623,9 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case CLASS:
         clazz = jj_consume_token(CLASS);
+        break;
+      case PACKAGE:
+        clazz = jj_consume_token(PACKAGE);
         break;
       case IDENTIFIER:
         clazz = jj_consume_token(IDENTIFIER);
@@ -866,6 +872,9 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
       case FIELD_CLASS:
         clazz = jj_consume_token(FIELD_CLASS);
         break;
+      case FIELD_PACKAGE:
+        clazz = jj_consume_token(FIELD_PACKAGE);
+        break;
       case FIELD_IDENTIFIER:
         clazz = jj_consume_token(FIELD_IDENTIFIER);
         break;
@@ -995,6 +1004,9 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case FIELD_CLASS:
         clazz = jj_consume_token(FIELD_CLASS);
+        break;
+      case FIELD_PACKAGE:
+        clazz = jj_consume_token(FIELD_PACKAGE);
         break;
       case FIELD_IDENTIFIER:
         clazz = jj_consume_token(FIELD_IDENTIFIER);
@@ -1243,27 +1255,6 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
     finally { jj_save(23, xla); }
   }
 
-  final private boolean jj_3R_28() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_27()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_45() {
-    if (jj_scan_token(PRIVATE)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_4() {
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_6() {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
   final private boolean jj_3R_8() {
     Token xsp;
     xsp = jj_scanpos;
@@ -1310,9 +1301,9 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
   }
 
   final private boolean jj_3R_9() {
-    if (jj_scan_token(75)) return true;
+    if (jj_scan_token(77)) return true;
     if (jj_3R_8()) return true;
-    if (jj_scan_token(76)) return true;
+    if (jj_scan_token(78)) return true;
     return false;
   }
 
@@ -1346,7 +1337,7 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
     xsp = jj_scanpos;
     if (jj_scan_token(40)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(43)) return true;
+    if (jj_scan_token(44)) return true;
     }
     return false;
   }
@@ -1397,15 +1388,18 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
     if (jj_scan_token(CLASS_EXPR)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(65)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(68)) {
+    if (jj_scan_token(66)) {
     jj_scanpos = xsp;
     if (jj_scan_token(67)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(63)) {
+    if (jj_scan_token(70)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(64)) return true;
+    if (jj_scan_token(69)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(64)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(65)) return true;
+    }
     }
     }
     }
@@ -1480,41 +1474,44 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
       if (jj_3R_29()) { jj_scanpos = xsp; break; }
     }
     xsp = jj_scanpos;
-    if (jj_scan_token(65)) {
+    if (jj_scan_token(66)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(70)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(69)) {
     jj_scanpos = xsp;
     if (jj_scan_token(68)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(67)) {
+    if (jj_scan_token(64)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(66)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(63)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(64)) return true;
+    if (jj_scan_token(65)) return true;
     }
     }
     }
     }
     }
     xsp = jj_scanpos;
-    if (jj_scan_token(65)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(68)) {
+    if (jj_scan_token(66)) {
     jj_scanpos = xsp;
     if (jj_scan_token(67)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(63)) {
+    if (jj_scan_token(70)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(64)) return true;
+    if (jj_scan_token(69)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(64)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(65)) return true;
+    }
     }
     }
     }
     }
     if (jj_scan_token(FIELD_SEPARATOR)) return true;
     xsp = jj_scanpos;
-    if (jj_scan_token(68)) {
+    if (jj_scan_token(70)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(67)) return true;
+    if (jj_scan_token(69)) return true;
     }
     return false;
   }
@@ -1648,9 +1645,11 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
     xsp = jj_scanpos;
     if (jj_scan_token(40)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(43)) {
+    if (jj_scan_token(41)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(42)) {
+    if (jj_scan_token(44)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(43)) {
     jj_scanpos = xsp;
     if (jj_scan_token(38)) {
     jj_scanpos = xsp;
@@ -1659,11 +1658,12 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
     }
     }
     }
+    }
     if (jj_scan_token(SEPARATOR)) return true;
     xsp = jj_scanpos;
     if (jj_scan_token(36)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(42)) return true;
+    if (jj_scan_token(43)) return true;
     }
     if (jj_3R_26()) return true;
     if (jj_3R_57()) return true;
@@ -1739,11 +1739,11 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
     xsp = jj_scanpos;
     if (jj_scan_token(40)) {
     jj_scanpos = xsp;
+    if (jj_scan_token(44)) {
+    jj_scanpos = xsp;
     if (jj_scan_token(43)) {
     jj_scanpos = xsp;
     if (jj_scan_token(42)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(41)) {
     jj_scanpos = xsp;
     if (jj_scan_token(38)) {
     jj_scanpos = xsp;
@@ -1756,9 +1756,11 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
     xsp = jj_scanpos;
     if (jj_scan_token(40)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(43)) {
+    if (jj_scan_token(41)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(42)) {
+    if (jj_scan_token(44)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(43)) {
     jj_scanpos = xsp;
     if (jj_scan_token(38)) {
     jj_scanpos = xsp;
@@ -1767,11 +1769,12 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
     }
     }
     }
+    }
     if (jj_scan_token(SEPARATOR)) return true;
     xsp = jj_scanpos;
-    if (jj_scan_token(43)) {
+    if (jj_scan_token(44)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(42)) return true;
+    if (jj_scan_token(43)) return true;
     }
     if (jj_3R_26()) return true;
     if (jj_3R_57()) return true;
@@ -1943,6 +1946,27 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
     return false;
   }
 
+  final private boolean jj_3R_28() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_27()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_4() {
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_45() {
+    if (jj_scan_token(PRIVATE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_6() {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
   public TypeExpressionParserTokenManager token_source;
   SimpleCharStream jj_input_stream;
   public Token token, jj_nt;
@@ -1965,10 +1989,10 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
       jj_la1_0 = new int[] {0xfe0,0x18,0x18,0xf0000000,0x0,0x0,0x0,0x0,0xf0000000,0xc0000000,0x0,0x0,0xc0000000,0x200000,0x1fc000,0x1fc000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x2000f,0xfc0,0xdc0,0xc00,0x20000,0xf,0x1,0xdc0,0x410,0x1,0x0,0x0,0x0,0x1f800000,0x80000000,0x80000000,0x0,0x0,0x1f800000,0x80000000,0x4000,0x20,0x900,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x4000f,0x1dc0,0x1bc0,0x1800,0x40000,0xf,0x1,0x1bc0,0x810,0x1,0x0,0x0,0x0,0x3f000000,0x0,0x0,0x0,0x0,0x3f000000,0x0,0x8000,0x20,0x1100,};
    }
    private static void jj_la1_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x200,0x1f,0x1b,0x18,0x200,0x0,0x1b,0x0,0x0,0x0,};
+      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x800,0x77,0x6f,0x60,0x800,0x0,0x6f,0x0,0x0,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[24];
   private boolean jj_rescan = false;
@@ -2142,8 +2166,8 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
 
   public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[77];
-    for (int i = 0; i < 77; i++) {
+    boolean[] la1tokens = new boolean[79];
+    for (int i = 0; i < 79; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
@@ -2165,7 +2189,7 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
         }
       }
     }
-    for (int i = 0; i < 77; i++) {
+    for (int i = 0; i < 79; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

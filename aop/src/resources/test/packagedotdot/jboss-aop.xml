@@ -45,11 +45,17 @@
 	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
    </bind>
    
-   <bind pointcut="call(org.jboss.test.aop.packagedotdot.callee..->new()) AND within(org.jboss.test.aop.packagedotdot.caller..)">
+   <bind pointcut="call(org.jboss.test.aop.packagedotdot.callee..->new()) AND within(org.jboss.test.aop.packagedotdot.caller..) AND withincode(org.jboss.test.aop.packagedotdot.caller..->new())">
 	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
    </bind>
    
-   <bind pointcut="call(* org.jboss.test.aop.packagedotdot.callee..->method()) AND within(org.jboss.test.aop.packagedotdot.caller..)">
+   <bind pointcut="call(* org.jboss.test.aop.packagedotdot.callee..->method()) AND within(org.jboss.test.aop.packagedotdot.caller..) AND withincode(* org.jboss.test.aop.packagedotdot.caller..->method())">
 	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
    </bind>
+   
+   <typedef name="type" expr="class(org.jboss.test.aop.packagedotdot.type..) AND has(org.jboss.test.aop.packagedotdot.type..->new(int)) AND has(* org.jboss.test.aop.packagedotdot.type..->method(int)) AND hasfield(int org.jboss.test.aop.packagedotdot.type..->field)"/>
+   <bind pointcut="all($typedef{type})">
+	   <interceptor-ref name="org.jboss.test.aop.packagedotdot.NotConstructionInterceptor"/>
+   </bind>
+
 </aop>

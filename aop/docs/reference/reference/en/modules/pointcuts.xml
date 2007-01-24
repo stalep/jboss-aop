@@ -13,7 +13,10 @@
             </listitem>
             <listitem>
                <literal>..</literal>  Is used to specify any number of parameters in an constructor or method
-               expression.
+               expression. <literal>..</literal> following a package-name is used to specify all classes from within a given 
+               package ut not within sub-packages. e.g <literal>org.acme..</literal> matches 
+               <literal>org.acme.Foo</literal> and <literal>org.acme.Bar</literal>, but it does not match
+               <literal>org.acme.sub.SubFoo</literal>.
             </listitem>
          </itemizedlist>
       </para>
@@ -73,10 +76,18 @@
          <literal>!</literal> modifier for negation.
       </para>
       <programlisting>public !static void org.acme.SomeClass->*(..)</programlisting>
+
       <para>
-         <literal>$instanceof{}</literal> in the class name.
+         <literal>$instanceof{}</literal> can be used in place of the class name.
       </para>
       <programlisting>void $instanceof{org.acme.SomeInterface}->methodName(java.lang.String)</programlisting>
+      
+      <para>
+         To pick out all <literal>toString()</literal> methods of all classes within the <literal>org.acme</literal>
+         package, we can use <literal>org.acme..</literal> in place of the class name.
+      </para>
+      <programlisting>java.lang.String org.acme..->toString()</programlisting>
+      
       <para>
          To only match methods from a given interface you can use the <literal>$implements{}</literal> or 
          <literal>$implementing{}</literal> keywords in place of the method name. <literal>$implements{}</literal>
@@ -98,10 +109,10 @@
       <para>
          In addition you can use typedefs, <literal>$instanceof{}</literal>, annotations and wildcards 
          for method parameters and return types. The following matches all methods called <literal>loadEntity</literal>
-         that return a class annotated with @javax.ejb.Entity, that takes a class annotated as @org.acme.Ann and any class
-         that matches <literal>java.*.String</literal> (such as java.lang.String).
+         that return a class annotated with @javax.ejb.Entity, that takes a class (or a class whose superclass/interface is)
+         annotated as @org.acme.Ann and any class that matches <literal>java.*.String</literal> (such as java.lang.String).
       </para>
-      <programlisting>@javax.ejb.Entity *->loadEntity(@org.acme.Ann, java.*.String)</programlisting>
+      <programlisting>@javax.ejb.Entity *->loadEntity($instanceof{@org.acme.Ann}, java.*.String)</programlisting>
       You can also include an optional throws clause in the pointcut expression:
       <programlisting>public void org.acme.SomeClass->methodName(java.lang.String) \
       throws org.acme.SomeException, java.lang.Exception</programlisting>
@@ -121,10 +132,18 @@
          <literal>!</literal> modifier for negation.
       </para>
       <programlisting>!public org.acme.SomeClass->new(..)</programlisting>
+
       <para>
          <literal>$instanceof{}</literal> can be used in the class name.
       </para>
       <programlisting>$instanceof{org.acme.SomeInterface}->new(..)</programlisting>
+
+      <para>
+         To pick out all no-args constructors of all classes within the <literal>org.acme</literal>
+         package, we can use <literal>org.acme..</literal> in place of the class name.
+      </para>
+      <programlisting>org.acme..->new()</programlisting>     
+
       <para>
          Annotations can be used in place of the class name.  The below example matches any constructor of a tagged
          @javax.ejb.Entity class.
@@ -186,6 +205,14 @@
          The following matches all fields where the type class has been tagged with @javax.ejb.Entity.
       </para>
       <programlisting>@javax.ejb.Entity *->*</programlisting>
+
+      <para>
+         To pick out all fields annotated with <literal>@org.foo.Transient</literal> within the <literal>org.acme</literal>
+         package, we can use <literal>org.acme..</literal> in place of the class name, and <literal>@org.foo.Transient</literal>
+         in please of the field name
+      </para>
+      <programlisting>* org.acme..->@org.foo.Transient</programlisting>
+
    </sect1>
 
    <sect1 id="pointcuts-pointcut" revision="1">
@@ -229,14 +256,6 @@ execution(public Foo->new())</programlisting>
             <term>
                <literal>get
                (field expression)</literal>
-               B
-               b
-               b 
-               b 
-               B 
-               b b               
-               
-               
             </term>
             <listitem>
                <programlisting>get(public int Foo->fieldname)</programlisting>
