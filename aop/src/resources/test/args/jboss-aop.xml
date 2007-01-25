@@ -19,10 +19,7 @@
 
    <bind pointcut="execution(* org.jboss.test.aop.args.POJO->bunch(..))">
       <advice name="bunch" aspect="org.jboss.test.aop.args.ArgAspect"/>
-<!--		<advice name="bunch1" aspect="org.jboss.test.aop.args.ArgAspect"/> -->
-      <advice name="bunch2" aspect="org.jboss.test.aop.args.ArgAspect"/>
-<!--      <advice name="bunch3" aspect="org.jboss.test.aop.args.ArgAspect"/>
-      <advice name="bunch4" aspect="org.jboss.test.aop.args.ArgAspect"/> -->
+      <advice name="bunch1" aspect="org.jboss.test.aop.args.ArgAspect"/>
       <advice name="arg1" aspect="org.jboss.test.aop.args.ArgAspect"/>
       <advice name="arg2" aspect="org.jboss.test.aop.args.ArgAspect"/>
       <advice name="arg3" aspect="org.jboss.test.aop.args.ArgAspect"/>

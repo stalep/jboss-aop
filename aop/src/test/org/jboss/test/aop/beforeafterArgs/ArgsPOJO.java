@@ -36,6 +36,11 @@ public class ArgsPOJO
    
    public static boolean field4;
    
+   public int bunch(int x, double y, float z, String str, int q)
+   {
+      return x + (int) y + (int) z + q;
+   }
+   
    public void method1(String param1, int param2, boolean param3, ArgsPOJO[] param4)
    {}
    

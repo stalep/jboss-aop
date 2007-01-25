@@ -2,12 +2,34 @@
 <!DOCTYPE aop SYSTEM "jboss-aop_1_0.dtd">
 
 <aop>
+
+   <!-- @Arg test -->
+	<aspect class="org.jboss.test.aop.beforeafterArgs.ArgAspect" scope="PER_VM"/>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->bunch(..))">
+      <before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <advice name="around1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <advice name="around2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <advice name="around3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <advice name="around4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <advice name="around5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+<!--      <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/> -->
+   </bind>
+
    <!-- @Args test -->
 	<aspect class="org.jboss.test.aop.beforeafterArgs.ArgsAspect" scope="PER_VM"/>
 
 	<bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->field1)">
 		<before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
-        <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 		<before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>

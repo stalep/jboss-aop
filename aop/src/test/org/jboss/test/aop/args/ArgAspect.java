@@ -125,13 +125,7 @@ public class ArgAspect implements ArgPOJOInterface
       }
    }
 
-   public int bunch1(@Arg int x, @Arg double y, @Arg float z, @Arg String str, @Arg long q)
-   {
-      Assert.fail("This advice should never be executed");
-      return 0;
-   }
-
-   public int bunch2(@Arg int x, @Arg int q, @Arg String str, @Arg double y, @Arg float z)
+   public int bunch1(@Arg int x, @Arg int q, @Arg String str, @Arg double y, @Arg float z)
    {
       bunch2Called = true;
 
@@ -147,18 +141,6 @@ public class ArgAspect implements ArgPOJOInterface
       {
          throw new RuntimeException(throwable);
       }
-   }
-
-   public int bunch3(@Arg int x, @Arg int q, @Arg int w, @Arg String str, @Arg double y, @Arg float z)
-   {
-      Assert.fail("This advice should never be executed");
-      return 0;
-   }
-
-   public int bunch4(@Arg int x, @Arg int q, @Arg float z, @Arg Collection str, @Arg double y)
-   {
-      Assert.fail("This advice should never be executed");
-      return 0;
    }
    
    public Object arg1(@Arg int x) throws Throwable
