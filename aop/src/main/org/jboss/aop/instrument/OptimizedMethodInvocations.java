@@ -77,7 +77,7 @@ public class OptimizedMethodInvocations extends OptimizedBehaviourInvocations
    
       CtClass invocation = makeInvocationClass(pool, makeInnerClass, clazz, className, methodInvocation);
       CtClass[] params = method.getParameterTypes();
-      addArgumentFieldsToInvocation(invocation, params);
+      addArgumentFieldsAndAccessors(pool, invocation, params, true);
    
       boolean isStatic = javassist.Modifier.isStatic(method.getModifiers());
       if (!isStatic)
@@ -127,8 +127,8 @@ public class OptimizedMethodInvocations extends OptimizedBehaviourInvocations
       }
       invokeTarget.setModifiers(in.getModifiers());
       invocation.addMethod(invokeTarget);
-      addSetArguments(pool, invocation, method.getParameterTypes());
-      addGetArguments(pool, invocation, method.getParameterTypes(), true);
+      
+      
       addCopy(pool, invocation, method.getParameterTypes(), isStatic);
    
       TransformerCommon.compileOrLoadClass(method.getDeclaringClass(), invocation);

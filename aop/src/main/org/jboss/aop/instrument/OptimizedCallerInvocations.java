@@ -50,121 +50,24 @@ public class OptimizedCallerInvocations extends OptimizedBehaviourInvocations
          int callingIndex, 
          long calledHash) throws NotFoundException, CannotCompileException
    {
-      AOPClassPool pool = (AOPClassPool) instrumentor.getClassPool();
-      CtClass methodInvocation = pool.get("org.jboss.aop.joinpoint.MethodCalledByConstructorInvocation");
+      return createOptimizedMethodCalledInvocationClass(
+            instrumentor, className, callingClass, method,
+            "org.jboss.aop.joinpoint.MethodCalledByConstructorInvocation",
+            "this.calling, ");
+   }
    
-      ////////////////
-      //Create the class
-      boolean makeInnerClass = Modifier.isPrivate(method.getModifiers());
-      CtClass invocation = makeInvocationClass(pool, makeInnerClass, callingClass, className, methodInvocation);
-   
-      CtClass[] params = method.getParameterTypes();
-      addArgumentFieldsToInvocation(invocation, params);
-   
-      /////////
-      //Create invokeTarget() body
-      boolean isStatic = javassist.Modifier.isStatic(method.getModifiers());
-      if (!isStatic)
-      {
-         CtField target = new CtField(method.getDeclaringClass(), "typedTargetObject", invocation);
-         target.setModifiers(Modifier.PUBLIC);
-         invocation.addField(target);
-      }
-   
-   
-      CtMethod in = methodInvocation.getDeclaredMethod("invokeTarget");
-   
-      String code = "{";
-   
-      String returnStr = (method.getReturnType().equals(CtClass.voidType)) ? "" : "return ($w)";
-      if (isStatic)
-      {
-         code +=
-         "   " + returnStr + " " + method.getDeclaringClass().getName() + ".";
-      }
-      else
-      {
-         code +=
-         "   " + returnStr + " typedTargetObject.";
-      }
-      code += method.getName() + "(";
-      for (int i = 0; i < params.length; i++)
-      {
-         if (i > 0) code += ", ";
-         code += "arg" + i;
-      }
-      code += ");  ";
-      if (method.getReturnType().equals(CtClass.voidType))
-      {
-         code += " return null; ";
-      }
-      code += "}";
-      CtMethod invokeTarget = null;
-      try
-      {
-         invokeTarget = CtNewMethod.make(in.getReturnType(), "invokeTarget", in.getParameterTypes(), in.getExceptionTypes(), code, invocation);
-      }
-      catch (CannotCompileException e)
-      {
-         System.out.println(code);
-         throw e;
-      }
-      invokeTarget.setModifiers(in.getModifiers());
-      invocation.addMethod(invokeTarget);
-      addGetArguments(pool, invocation, method.getParameterTypes());
-      addSetArguments(pool, invocation, method.getParameterTypes());
-      
-   
-      ////////////
-      //Create copy() method
-      CtMethod copyTemplate = methodInvocation.getDeclaredMethod("copy");
-   
-      String copyCode = "{ "
-      + "   "
-      + invocation.getName()
-      + " wrapper = new "
-      + invocation.getName()
-      + "(this.advisor, this.calling, this.method, this.callingObject, this.targetObject, this.arguments, this.interceptors);"
-      + "   wrapper.metadata = this.metadata; "
-      + "   wrapper.currentInterceptor = this.currentInterceptor; "
-      + "   wrapper.instanceResolver = this.instanceResolver; "
-      + "   wrapper.targetObject = this.targetObject; "
-      + "   wrapper.responseContextInfo = this.responseContextInfo; ";
-   
-      if (!isStatic)
-      {
-         copyCode += "wrapper.typedTargetObject = typedTargetObject;";
-      }
-   
-      for (int i = 0; i < params.length; i++)
-      {
-         copyCode += "   wrapper.arg" + i + " = this.arg" + i + "; ";
-      }
-      copyCode += "   return wrapper; }";
-   
-      CtMethod copy = null;
-      try
-      {
-         copy = CtNewMethod.make(
-               copyTemplate.getReturnType(), 
-               "copy",
-               copyTemplate.getParameterTypes(), 
-               copyTemplate.getExceptionTypes(), 
-               copyCode, 
-               invocation);
-      }
-      catch (CannotCompileException e)
-      {
-         System.out.println(copyCode);
-         throw e;
-      }
-      copy.setModifiers(copyTemplate.getModifiers());
-      invocation.addMethod(copy);
-   
-      TransformerCommon.compileOrLoadClass(callingClass, invocation);
-   
-      //Return fully qualified name of class (may be an inner class)
-      return invocation.getName();
+   protected static String createOptimizedMethodCalledByMethodInvocationClass(
+         Instrumentor instrumentor, 
+         String className, 
+         CtClass callingClass, 
+         CtMethod method, 
+         long callingHash, 
+         long calledHash)  throws NotFoundException, CannotCompileException
+   {
+      return createOptimizedMethodCalledInvocationClass(
+            instrumentor, className, callingClass, method,
+            "org.jboss.aop.joinpoint.MethodCalledByMethodInvocation",
+            "this.callingClass, this.callingMethod, ");
    }
 
    protected static String createOptimizedConCalledByConInvocationClass(
@@ -175,102 +78,12 @@ public class OptimizedCallerInvocations extends OptimizedBehaviourInvocations
          int callingIndex, 
          long calledHash)  throws NotFoundException, CannotCompileException
    {
-      //TODO: Merge this method with createOptimizedConCalledByMethodInvocationClass()
-      AOPClassPool pool = (AOPClassPool) instrumentor.getClassPool();
-      CtClass conInvocation = pool.get("org.jboss.aop.joinpoint.ConstructorCalledByConstructorInvocation");
-   
-      ////////////////
-      //Create the class
-      //String className = getOptimizedConCalledByConInvocationClassName(callingIndex, callingClass.getName(), calledHash);
-      boolean makeInnerClass = Modifier.isPrivate(con.getModifiers());
-      CtClass invocation = makeInvocationClass(pool, makeInnerClass, callingClass, className, conInvocation);
-   
-      CtClass[] params = con.getParameterTypes();
-      addArgumentFieldsToInvocation(invocation, params);
-   
-      /////////
-      //Create invokeTarget() body
-      CtMethod in = conInvocation.getDeclaredMethod("invokeTarget");
-
-      String code = "{";
-      
-      code += "setTargetObject(new " + con.getDeclaringClass().getName() + "(";
-      for (int i = 0; i < params.length; i++)
-      {
-         if (i > 0) code += ", ";
-         code += "arg" + i;
-      }
-      code += "));  ";
-      code += "return getTargetObject();";
-      code += "}";
-
-      CtMethod invokeTarget = null;
-      try
-      {
-         invokeTarget = CtNewMethod.make(
-               in.getReturnType(),
-               "invokeTarget", 
-               in.getParameterTypes(), 
-               in.getExceptionTypes(),
-               code, 
-               invocation);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException("code: " + code, e);
-      }
-      invokeTarget.setModifiers(in.getModifiers());
-      invocation.addMethod(invokeTarget);
-      addGetArguments(pool, invocation, con.getParameterTypes());
-      addSetArguments(pool, invocation, con.getParameterTypes());
-   
-      ////////////
-      //Create copy() method
-      CtMethod copyTemplate = conInvocation.getDeclaredMethod("copy");
-   
-      String copyCode = "{ "
-         + "   "
-         + invocation.getName()
-         + " wrapper = new "
-         + invocation.getName()
-         + "(this.advisor, this.calling, this.constructor, this.wrappingMethod, this.callingObject, this.arguments, this.interceptors);"
-         + "   wrapper.metadata = super.metadata; "
-         + "   wrapper.currentInterceptor = super.currentInterceptor; "
-         + "   wrapper.instanceResolver = super.instanceResolver; "
-         + "   wrapper.interceptors = super.interceptors; "
-         + "   wrapper.responseContextInfo = super.responseContextInfo; "
-         + "   wrapper.targetObject = super.targetObject; ";
-      
-      for (int i = 0; i < params.length; i++)
-      {
-         copyCode += "   wrapper.arg" + i + " = this.arg" + i + "; ";
-      }
-      copyCode += "   return wrapper; }";
-
-      CtMethod copy = null;
-      try
-      {
-         copy = CtNewMethod.make(
-               copyTemplate.getReturnType(), 
-               "copy",
-               copyTemplate.getParameterTypes(), 
-               copyTemplate.getExceptionTypes(), 
-               copyCode, 
-               invocation);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException("code: " + code, e);
-      }
-      copy.setModifiers(copyTemplate.getModifiers());
-      invocation.addMethod(copy);
-   
-      TransformerCommon.compileOrLoadClass(callingClass, invocation);
-   
-      //Return fully qualified name of class (may be an inner class)
-      return invocation.getName();
+      return createOptimizedConCalledInvocationClass(
+            instrumentor, className, callingClass, con,
+            "org.jboss.aop.joinpoint.ConstructorCalledByConstructorInvocation",
+            "this.calling, ");
    }
-
+   
    protected static String createOptimizedConCalledByMethodInvocationClass(
          Instrumentor instrumentor, 
          String className, 
@@ -279,203 +92,139 @@ public class OptimizedCallerInvocations extends OptimizedBehaviourInvocations
          long callingHash, 
          long calledHash) throws NotFoundException, CannotCompileException
    {
+      return createOptimizedConCalledInvocationClass(
+            instrumentor, className, callingClass, con,
+            "org.jboss.aop.joinpoint.ConstructorCalledByMethodInvocation",
+            "this.callingClass, this.callingMethod, ");
+   }
+   
+   private static String createOptimizedMethodCalledInvocationClass(
+         Instrumentor instrumentor, String className, CtClass callingClass,
+         CtMethod method, String invocationClassName, String callerDescription)
+   throws NotFoundException, CannotCompileException
+   {
       AOPClassPool pool = (AOPClassPool) instrumentor.getClassPool();
-      CtClass conInvocation = pool.get("org.jboss.aop.joinpoint.ConstructorCalledByMethodInvocation");
+      CtClass methodInvocation = pool.get(invocationClassName);
    
       ////////////////
       //Create the class
-      boolean makeInnerClass = Modifier.isPrivate(con.getModifiers());
-      CtClass invocation = makeInvocationClass(pool, makeInnerClass, callingClass, className, conInvocation);
+      CtClass invocation = makeInvocationClass(pool, 
+            Modifier.isPrivate(method.getModifiers()), callingClass, className,
+                  methodInvocation);
    
-      CtClass[] params = con.getParameterTypes();
-      addArgumentFieldsToInvocation(invocation, params);
-   
+      ////////////////
+      //Add typed fields
+      CtClass[] params = method.getParameterTypes();
+      addArgumentFieldsAndAccessors(pool, invocation, params, false);
+      boolean isStatic = javassist.Modifier.isStatic(method.getModifiers());
+      if (!isStatic)
+      {
+         CtField target = new CtField(
+               method.getDeclaringClass(), "typedTargetObject", invocation);
+         target.setModifiers(Modifier.PUBLIC);
+         invocation.addField(target);
+      }
+
       /////////
       //Create invokeTarget() body
-      CtMethod in = conInvocation.getDeclaredMethod("invokeTarget");
-
-      String code = "{";
-      code += "setTargetObject(new " + con.getDeclaringClass().getName() + "(";
-      for (int i = 0; i < params.length; i++)
+      StringBuffer dispatchLine = new StringBuffer();
+      boolean isVoid = method.getReturnType().equals(CtClass.voidType);
+      if (!isVoid)
       {
-         if (i > 0) code += ", ";
-         code += "arg" + i;
+         dispatchLine.append("return ($w)");
       }
-      code += "));  ";
-      code += "return getTargetObject();";
-      code += "}";
-      
-      CtMethod invokeTarget = null;
-      try
-      {
-         invokeTarget = CtNewMethod.make(
-               in.getReturnType(),
-               "invokeTarget", 
-               in.getParameterTypes(), 
-               in.getExceptionTypes(),
-               code, 
-               invocation);
-      }
-      catch (CannotCompileException e)
-      {
-         System.out.println(code);
-         throw e;
-      }
-
-      invokeTarget.setModifiers(in.getModifiers());
+      dispatchLine.append((isStatic? (method.getDeclaringClass().getName()):
+         " typedTargetObject") + '.' + method.getName());
+      addInvokeTarget(invocation, dispatchLine.toString(),
+            method.getParameterTypes(), "", isVoid?"  return null;": "");
    
-      invocation.addMethod(invokeTarget);
-      addGetArguments(pool, invocation, con.getParameterTypes());
-      addSetArguments(pool, invocation, con.getParameterTypes());
-   
-      ////////////
+      ////////////////
       //Create copy() method
-      CtMethod copyTemplate = conInvocation.getDeclaredMethod("copy");
+      String copy = "";
+      if (!Modifier.isStatic(method.getModifiers()))
+      {
+         copy = "wrapper.typedTargetObject = typedTargetObject;";
+      }
+      addCopyMethod(invocation, callerDescription,
+            "this.method, this.callingObject, this.targetObject, ", copy,
+            params.length);
+      
+      /////////
+      //Compile/Load
+      TransformerCommon.compileOrLoadClass(callingClass, invocation);
+      
+      //Return fully qualified name of class (may be an inner class)
+      return invocation.getName();
+   }
+   
+   private static String createOptimizedConCalledInvocationClass(
+         Instrumentor instrumentor, String className, CtClass callingClass,
+         CtConstructor con, String invocationClassName, String callerDescription)
+   throws NotFoundException, CannotCompileException
+   {
+      AOPClassPool pool = (AOPClassPool) instrumentor.getClassPool();
+      CtClass conInvocation = pool.get(invocationClassName);
+   
+      ////////////////
+      //Create the class
+      CtClass invocation = makeInvocationClass(pool,
+            Modifier.isPrivate(con.getModifiers()), callingClass, className,
+            conInvocation);
+   
+      ////////////////
+      //Add typed fields
+      CtClass[] params = con.getParameterTypes();
+      addArgumentFieldsAndAccessors(pool, invocation, params, false);
+
+      /////////
+      //Create invokeTarget() body
+      StringBuffer dispatchLine = new StringBuffer("   result = new ");
+      dispatchLine.append(con.getDeclaringClass().getName());
+      OptimizedBehaviourInvocations.addInvokeTarget(invocation,
+            dispatchLine.toString(), con.getParameterTypes(),
+            "Object result = null;", "   setTargetObject(result);   return result;");
+
+      ////////////////
+      //Create copy() method
+      addCopyMethod(invocation, callerDescription,
+            "this.constructor, this.wrappingMethod, this.callingObject, ", "",
+            params.length);
+
+      ////////////////
+      //Compile/Load
+      TransformerCommon.compileOrLoadClass(callingClass, invocation);
+
+      //Return fully qualified name of class (may be an inner class)
+      return invocation.getName();
+    }
+   
+
+   private static void addCopyMethod(CtClass invocation, String callerDescription,
+         String calledDescription, String copyText, int paramsLength)
+   throws NotFoundException, CannotCompileException
+   {
+      CtMethod copyTemplate = invocation.getSuperclass().getDeclaredMethod("copy");
 
       String copyCode = "{ "
          + "   "
          + invocation.getName()
          + " wrapper = new "
          + invocation.getName()
-         + "(this.advisor, this.callingClass, this.callingMethod, this.constructor, this.wrappingMethod, this.callingObject, this.arguments, this.interceptors);"
+         + "(this.advisor, " + callerDescription + calledDescription + "this.arguments, this.interceptors);"
+         + "   wrapper.interceptors = super.interceptors; "
          + "   wrapper.metadata = this.metadata; "
          + "   wrapper.currentInterceptor = this.currentInterceptor; "
          + "   wrapper.instanceResolver = this.instanceResolver; "
          + "   wrapper.targetObject = this.targetObject; "
-         + "   wrapper.responseContextInfo = this.responseContextInfo; ";
+         + "   wrapper.responseContextInfo = this.responseContextInfo; "
+         + copyText;
       
-      for (int i = 0; i < params.length; i++)
+      for (int i = 0; i < paramsLength; i++)
       {
          copyCode += "   wrapper.arg" + i + " = this.arg" + i + "; ";
       }
       copyCode += "   return wrapper; }";
-
-      CtMethod copy = null;
-      try
-      {
-         copy = CtNewMethod.make(
-               copyTemplate.getReturnType(), 
-               "copy",
-               copyTemplate.getParameterTypes(), 
-               copyTemplate.getExceptionTypes(), 
-               copyCode, 
-               invocation);
-      }
-      catch (CannotCompileException e)
-      {
-         System.out.println(copyCode);
-         throw e;
-      }
-      copy.setModifiers(copyTemplate.getModifiers());
-   
-      invocation.addMethod(copy);
-   
-      TransformerCommon.compileOrLoadClass(callingClass, invocation);
       
-      //Return fully qualified name of class (may be an inner class)
-      return invocation.getName();
-   }
-
-   protected static String createOptimizedMethodCalledByMethodInvocationClass(
-         Instrumentor instrumentor, 
-         String className, 
-         CtClass callingClass, 
-         CtMethod method, 
-         long callingHash, 
-         long calledHash)  throws NotFoundException, CannotCompileException
-   {
-      AOPClassPool pool = (AOPClassPool) instrumentor.getClassPool();
-      CtClass methodInvocation = pool.get("org.jboss.aop.joinpoint.MethodCalledByMethodInvocation");
-   
-      ////////////////
-      //Create the class
-      boolean makeInnerClass = Modifier.isPrivate(method.getModifiers());
-      CtClass invocation = makeInvocationClass(pool, makeInnerClass, callingClass, className, methodInvocation);
-   
-      CtClass[] params = method.getParameterTypes();
-      addArgumentFieldsToInvocation(invocation, params);
-   
-      /////////
-      //Create invokeTarget() body
-      boolean isStatic = javassist.Modifier.isStatic(method.getModifiers());
-      if (!isStatic)
-      {
-         CtField target = new CtField(method.getDeclaringClass(), "typedTargetObject", invocation);
-         target.setModifiers(Modifier.PUBLIC);
-         invocation.addField(target);
-      }
-   
-   
-      CtMethod in = methodInvocation.getDeclaredMethod("invokeTarget");
-   
-      String code = "{";
-   
-      String returnStr = (method.getReturnType().equals(CtClass.voidType)) ? "" : "return ($w)";
-      if (isStatic)
-      {
-         code +=
-         "   " + returnStr + " " + method.getDeclaringClass().getName() + ".";
-      }
-      else
-      {
-         code +=
-         "   " + returnStr + " typedTargetObject.";
-      }
-      code += method.getName() + "(";
-      for (int i = 0; i < params.length; i++)
-      {
-         if (i > 0) code += ", ";
-         code += "arg" + i;
-      }
-      code += ");  ";
-      if (method.getReturnType().equals(CtClass.voidType))
-      {
-         code += " return null; ";
-      }
-      code += "}";
-      
-      CtMethod invokeTarget = null;
-      try
-      {
-         invokeTarget = CtNewMethod.make(in.getReturnType(), "invokeTarget", in.getParameterTypes(), in.getExceptionTypes(), code, invocation);
-      }
-      catch (CannotCompileException e)
-      {
-         System.out.println(code);
-         throw e;
-      }
-      invokeTarget.setModifiers(in.getModifiers());
-      invocation.addMethod(invokeTarget);
-      addGetArguments(pool, invocation, method.getParameterTypes());
-      addSetArguments(pool, invocation, method.getParameterTypes());
-   
-      ////////////
-      //Create copy() method
-      CtMethod copyTemplate = methodInvocation.getDeclaredMethod("copy");
-   
-      String copyCode = "{ "
-      + "   "
-      + invocation.getName()
-      + " wrapper = new "
-      + invocation.getName()
-      + "(this.advisor, this.callingClass, this.callingMethod, this.method, this.callingObject, this.targetObject, this.arguments, this.interceptors);"
-      + "   wrapper.metadata = this.metadata; "
-      + "   wrapper.currentInterceptor = this.currentInterceptor; "
-      + "   wrapper.instanceResolver = this.instanceResolver; "
-      + "   wrapper.targetObject = this.targetObject; "
-      + "   wrapper.responseContextInfo = this.responseContextInfo; ";
-   
-      if (!isStatic)
-      {
-         copyCode += "wrapper.typedTargetObject = typedTargetObject;";
-      }
-   
-      for (int i = 0; i < params.length; i++)
-      {
-         copyCode += "   wrapper.arg" + i + " = this.arg" + i + "; ";
-      }
-      copyCode += "   return wrapper; }";
-   
       CtMethod copy = null;
       try
       {
@@ -494,11 +243,5 @@ public class OptimizedCallerInvocations extends OptimizedBehaviourInvocations
       }
       copy.setModifiers(copyTemplate.getModifiers());
       invocation.addMethod(copy);
-   
-      TransformerCommon.compileOrLoadClass(callingClass, invocation);
-   
-      //Return fully qualified name of class (may be an inner class)
-      return invocation.getName();
    }
-   
 }

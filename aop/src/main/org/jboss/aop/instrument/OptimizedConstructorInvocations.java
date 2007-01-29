@@ -21,24 +21,17 @@
   */
 package org.jboss.aop.instrument;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.net.URI;
-import java.net.URL;
-
-import org.jboss.aop.classpool.AOPClassPool;
-import org.jboss.aop.standalone.Compiler;
-
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
-import javassist.CtField;
 import javassist.CtMethod;
 import javassist.CtNewConstructor;
 import javassist.CtNewMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
+
+import org.jboss.aop.classpool.AOPClassPool;
 
 /**
  * Comment
@@ -64,7 +57,6 @@ public class OptimizedConstructorInvocations extends
    {
       AOPClassPool pool = (AOPClassPool) instrumentor.getClassPool();
       CtClass conInvocation = pool.get("org.jboss.aop.joinpoint.ConstructorInvocation");
-      CtClass untransformable = pool.get("org.jboss.aop.instrument.Untransformable");
 
       String className = getOptimizedInvocationClassName(clazz, index);
       boolean makeInnerClass = !Modifier.isPublic(con.getModifiers());
@@ -76,13 +68,9 @@ public class OptimizedConstructorInvocations extends
       invocation.addConstructor(icon);
 
       CtClass[] params = con.getParameterTypes();
-      for (int i = 0; i < params.length; i++)
-      {
-         CtField field = new CtField(params[i], "arg" + i, invocation);
-         field.setModifiers(Modifier.PUBLIC);
-         invocation.addField(field);
-      }
-
+      addArgumentFieldsAndAccessors(pool, invocation, params, false);
+      
+      
       CtMethod in = conInvocation.getDeclaredMethod("invokeTarget");
 
       StringBuffer code = new StringBuffer("{") ;
@@ -110,7 +98,6 @@ public class OptimizedConstructorInvocations extends
       }
       invocation.addMethod(invokeTarget);
       invokeTarget.setModifiers(in.getModifiers());
-      addGetArguments(pool, invocation, con.getParameterTypes());
       addCopy(pool, invocation, con.getParameterTypes());
       
       TransformerCommon.compileOrLoadClass(clazz, invocation);

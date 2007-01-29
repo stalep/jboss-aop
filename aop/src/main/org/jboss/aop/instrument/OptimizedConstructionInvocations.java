@@ -22,16 +22,15 @@
 package org.jboss.aop.instrument;
 
 
-import org.jboss.aop.classpool.AOPClassPool;
-
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
-import javassist.CtField;
 import javassist.CtMethod;
 import javassist.CtNewConstructor;
 import javassist.CtNewMethod;
 import javassist.Modifier;
+
+import org.jboss.aop.classpool.AOPClassPool;
 
 /**
  * Comment
@@ -81,8 +80,7 @@ public class OptimizedConstructionInvocations extends
    {
       AOPClassPool pool = (AOPClassPool) instrumentor.getClassPool();
       CtClass conInvocation = pool.get("org.jboss.aop.joinpoint.ConstructionInvocation");
-      CtClass untransformable = pool.get("org.jboss.aop.instrument.Untransformable");
-   
+      
       String className = getOptimizedInvocationClassName(clazz, index);
       boolean makeInnerClass = !Modifier.isPublic(con.getModifiers());
    
@@ -101,15 +99,7 @@ public class OptimizedConstructionInvocations extends
       CtConstructor icon = CtNewConstructor.make(template.getParameterTypes(), template.getExceptionTypes(), invocation);
       invocation.addConstructor(icon);
    
-      CtClass[] params = con.getParameterTypes();
-      for (int i = 0; i < params.length; i++)
-      {
-         CtField field = new CtField(params[i], "arg" + i, invocation);
-         field.setModifiers(Modifier.PUBLIC);
-         invocation.addField(field);
-      }
-   
-      addGetArguments(pool, invocation, con.getParameterTypes());
+      addArgumentFieldsAndAccessors(pool, invocation, con.getParameterTypes(), false);
       addCopy(pool, invocation, con.getParameterTypes());
       // If compile time
       TransformerCommon.compileOrLoadClass(con.getDeclaringClass(), invocation);

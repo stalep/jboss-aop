@@ -141,44 +141,44 @@ public class JavassistToReflect
       {
          if (type.equals(CtClass.booleanType))
          {
-            cast = "((Boolean)" + valueName +").booleanValue();";
+            cast = "((Boolean)" + valueName +").booleanValue()";
          }
          else if (type.equals(CtClass.byteType))
          {
-            cast = "((Byte)" + valueName +").byteValue();";
+            cast = "((Byte)" + valueName +").byteValue()";
          }
          else if (type.equals(CtClass.charType))
          {
-            cast = "((Character)" + valueName +").charValue();";
+            cast = "((Character)" + valueName +").charValue()";
          }
          else if (type.equals(CtClass.doubleType))
          {
-            cast = "((Double)" + valueName +").doubleValue();";
+            cast = "((Double)" + valueName +").doubleValue()";
          }
          else if (type.equals(CtClass.floatType))
          {
-            cast = "((Float)" + valueName +").floatValue();";
+            cast = "((Float)" + valueName +").floatValue()";
          }
          else if (type.equals(CtClass.intType))
          {
-            cast = "((Integer)" + valueName +").intValue();";
+            cast = "((Integer)" + valueName +").intValue()";
          }
          else if (type.equals(CtClass.longType))
          {
-            cast = "((Long)" + valueName +").longValue();";
+            cast = "((Long)" + valueName +").longValue()";
          }
          else if (type.equals(CtClass.shortType))
          {
-            cast = "((Short)" + valueName +").shortValue();";
+            cast = "((Short)" + valueName +").shortValue()";
          }
       }
       else if (type.isArray())
       {
-         cast = "(" + type.getName() + ")" + valueName +";";
+         cast = "(" + type.getName() + ")" + valueName;
       }
       else
       {
-         cast = "(" + type.getName() + ")" + valueName +";";
+         cast = "(" + type.getName() + ")" + valueName;
       }
 
       return cast;

@@ -31,6 +31,8 @@ import javassist.CtPrimitiveType;
 import javassist.Modifier;
 import javassist.NotFoundException;
 
+import org.jboss.aop.util.JavassistToReflect;
+
 /**
  * Comment
  *
@@ -39,41 +41,154 @@ import javassist.NotFoundException;
  */
 public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
 {
-   protected static void addSetArguments(ClassPool pool, CtClass invocation, CtClass[] params)throws NotFoundException, CannotCompileException 
+   /**
+    * Returns a piece of code that sets all typed argument fields to the
+    * parameter values of current behaviour (i.e., arg0 = $1; arg1 = $2...).
+    * 
+    * @param length number of arguments
+    * @return the code that sets all argument fields to the values of current
+    *         behaviour parameters
+    */
+   protected static String setArguments(int length)
+   {
+      return setArguments("invocation", length, 0);
+   }
+
+   /**
+    * Adds typed argument fields to <code>invocation</code> and overwrites its
+    * arguments accessor methods accordingly. 
+    * 
+    * @param pool                    the class pool that contains <code>invocation
+    *                                <code>
+    * @param invocation              the invocation class to which fields and methods
+    *                                will be added
+    * @param params                  the list of the parameter types
+    * @param hasMarshalledArguments  indicates whether this invocation class has a
+    *                                marshalled arguments field
+    */
+   protected static void addArgumentFieldsAndAccessors(ClassPool pool,
+         CtClass invocation, CtClass[] params, boolean hasMarshalledArguments)
+      throws NotFoundException, CannotCompileException
+   {
+      addArgumentFieldsToInvocation(invocation, params);
+      addGetArguments(pool, invocation, params, hasMarshalledArguments);
+      addSetArguments(pool, invocation, params);
+   }
+   
+   protected static void addInvokeTarget(CtClass invocation, String dispatchLine, 
+         CtClass[] params, String beforeDispatch, String afterDispatch)
+   throws NotFoundException, CannotCompileException
+   {
+      StringBuffer sb = new StringBuffer("{");
+      sb.append(beforeDispatch);
+      if (params.length == 0)
+      {
+         sb.append(dispatchLine);
+         sb.append("();");
+      }
+      else
+      {
+         sb.append("  if (inconsistentArgs){");
+         sb.append(dispatchLine);
+         sb.append('(');
+         sb.append(JavassistToReflect.castInvocationValueToTypeString(params[0], "arguments[0]"));
+         for (int i = 1; i < params.length; i++)
+         {
+            sb.append(", ");
+            sb.append(JavassistToReflect.castInvocationValueToTypeString(params[i],
+                  "arguments[" + i + "]"));
+         }
+         sb.append(");}   else {");
+         sb.append(dispatchLine);
+         sb.append("(arg0");
+         for (int i = 1; i < params.length; i++)
+         {
+            sb.append(", ");
+            sb.append("arg");
+            sb.append(i);
+         }
+         sb.append(");} ");
+      }
+      sb.append(afterDispatch);
+      sb.append("}");
+      System.out.println("CODE: " + sb.toString());
+      CtMethod invokeTarget = null;
+      CtMethod in = invocation.getSuperclass().getDeclaredMethod("invokeTarget");
+      try
+      {
+         invokeTarget = CtNewMethod.make(in.getReturnType(), "invokeTarget",
+               in.getParameterTypes(), in.getExceptionTypes(), sb.toString(),
+               invocation);
+      }
+      catch (CannotCompileException e)
+      {
+         System.out.println(sb.toString());
+         throw e;
+      }
+      invokeTarget.setModifiers(in.getModifiers());
+      invocation.addMethod(invokeTarget);
+   }
+   
+   private static String setArguments(String inv, int length, int offset)
+   {
+      StringBuffer sb = new StringBuffer("");
+      for (int i = 0 ; i < length ; i++)
+      {
+         sb.append(inv + ".arg" + (i) + " = $" + (i + 1 + offset) + "; ");
+      }
+      return sb.toString();
+   }
+   
+   
+   private static void addSetArguments(ClassPool pool, CtClass invocation, CtClass[] params)throws NotFoundException, CannotCompileException 
    {
       if (params == null || params.length == 0) return;
       CtClass methodInvocation = pool.get("org.jboss.aop.joinpoint.MethodInvocation");
       CtMethod template = methodInvocation.getDeclaredMethod("setArguments");
    
-      String code =
-              "public void setArguments(java.lang.Object[] args)" +
-              "{ ";
-      code += "   arguments = args; ";
+      StringBuffer code = new StringBuffer(
+              "public void setArguments(java.lang.Object[] args){");
+      code.append("   inconsistentArgs = false;");
+      code.append("   arguments = args; ");
       for (int i = 0; i < params.length; i++)
       {
          if (params[i].isPrimitive())
          {
             CtPrimitiveType primitive = (CtPrimitiveType) params[i];
-            code += "   arg" + i + " = ((" + primitive.getWrapperName() + ")args[" + i + "])." + primitive.getGetMethodName() + "(); ";
+            code.append("   arg");
+            code.append(i);
+            code.append(" = ((");
+            code.append(primitive.getWrapperName());
+            code.append(")args[");
+            code.append(i);
+            code.append("]).");
+            code.append(primitive.getGetMethodName());
+            code.append("(); ");
          }
          else
          {
-            code += "   Object warg" + i + " = args[" + i + "]; ";
-            code += "   arg" + i + " = (" + params[i].getName() + ")warg" + i + "; ";
+            code.append("   Object warg");
+            code.append(i);
+            code.append(" = args[");
+            code.append(i);
+            code.append("]; ");
+            code.append("   arg");
+            code.append(i);
+            code.append(" = (");
+            code.append(params[i].getName());
+            code.append(")warg");
+            code.append(i);
+            code.append("; ");
          }
       }
-      code += "}";
-      CtMethod setArguments = CtNewMethod.make(code, invocation);
+      code.append("   inconsistentArgs = false;");
+      code.append("}");
+      CtMethod setArguments = CtNewMethod.make(code.toString(), invocation);
       setArguments.setModifiers(template.getModifiers());
       invocation.addMethod(setArguments);
    }
 
-   public static void addGetArguments(ClassPool pool, CtClass invocation, CtClass[] params) throws CannotCompileException
-   {
-      addGetArguments(pool, invocation, params, false);
-   }
-
-   public static void addGetArguments(ClassPool pool, CtClass invocation, CtClass[] params, boolean hasMarshalledArguments) throws CannotCompileException
+   private static void addGetArguments(ClassPool pool, CtClass invocation, CtClass[] params, boolean hasMarshalledArguments) throws CannotCompileException
    {
       if (params == null || params.length == 0) return;
       try {
@@ -83,7 +198,7 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
          StringBuffer code = new StringBuffer();
          code.append("public Object[] getArguments()");
          code.append("{ ");
-         
+         code.append("   inconsistentArgs = true;");
          if (hasMarshalledArguments)
          {
             code.append("   if (super.marshalledArguments != null)");
@@ -110,29 +225,18 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
       } 
    }
 
-   protected static String setArguments(int length)
-   {
-      return setArguments("invocation", length, 0);
-   }
-
-   protected static String setArguments(String inv, int length, int offset)
-   {
-      StringBuffer sb = new StringBuffer("");
-      for (int i = 0 ; i < length ; i++)
-      {
-         sb.append(inv + ".arg" + (i) + " = $" + (i + 1 + offset) + "; ");
-      }
-      return sb.toString();
-   }
-
    /** Adds fields arg0, arg1 etc. to the invocation class for storing the parameters for a method
     * 
     * @param invocation The invocation we want to add 
     * @param params Array of the types of the parameters
     * @throws CannotCompileException 
     */
-   public static void addArgumentFieldsToInvocation(CtClass invocation, CtClass[] params)throws CannotCompileException
+   private static void addArgumentFieldsToInvocation(CtClass invocation, CtClass[] params)throws CannotCompileException
    {
+      CtField inconsistentArgs = new CtField(CtClass.booleanType, "inconsistentArgs",
+            invocation);
+      invocation.addField(inconsistentArgs, CtField.Initializer.byExpr("false"));
+      
       for (int i = 0 ; i < params.length ; i++)
       {
          CtField field = new CtField(params[i], "arg" + i, invocation);

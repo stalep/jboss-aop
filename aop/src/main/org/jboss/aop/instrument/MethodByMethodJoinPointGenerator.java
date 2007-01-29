@@ -233,7 +233,8 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
       protected CtClass generate() throws CannotCompileException, NotFoundException
       {
          jp = setupClass();
-         addArgumentsFieldsAndAccessors();
+         OptimizedBehaviourInvocations.addArgumentFieldsAndAccessors(
+               instrumentor.getClassPool(), jp, params, false);
          if (hasTargetObject)
          {
             addTypedTargetField();
@@ -262,13 +263,6 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
          jp.setSuperclass(invocation);
          addUntransformableInterface(instrumentor, jp);
          return jp;
-      }
-
-      private void addArgumentsFieldsAndAccessors() throws NotFoundException, CannotCompileException
-      {
-         OptimizedBehaviourInvocations.addArgumentFieldsToInvocation(jp, params);
-         OptimizedBehaviourInvocations.addSetArguments(instrumentor.getClassPool(), jp, params);
-         OptimizedBehaviourInvocations.addGetArguments(instrumentor.getClassPool(), jp, params);
       }
 
       private void addTypedTargetField()throws CannotCompileException

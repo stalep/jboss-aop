@@ -204,7 +204,8 @@ public class ConstructionJoinPointGenerator extends JoinPointGenerator
       protected CtClass generate() throws CannotCompileException, NotFoundException
       {
          jp = setupClass();
-         addArgumentsFieldsAndAccessors();
+         OptimizedBehaviourInvocations.addArgumentFieldsAndAccessors(
+               instrumentor.getClassPool(), jp, originalParams, false);
          addTypedTargetField();
          addInvokeJoinpointMethod();
          addConstructionInfoField();
@@ -232,14 +233,6 @@ public class ConstructionJoinPointGenerator extends JoinPointGenerator
          targetField = new CtField(advisedClass, TARGET_FIELD, jp);
          jp.addField(targetField);
          targetField.setModifiers(Modifier.PROTECTED);
-      }
-
-
-      private void addArgumentsFieldsAndAccessors() throws NotFoundException, CannotCompileException
-      {
-         OptimizedBehaviourInvocations.addArgumentFieldsToInvocation(jp, originalParams);
-         OptimizedBehaviourInvocations.addSetArguments(instrumentor.getClassPool(), jp, originalParams);
-         OptimizedBehaviourInvocations.addGetArguments(instrumentor.getClassPool(), jp, originalParams);
       }
 
       /**

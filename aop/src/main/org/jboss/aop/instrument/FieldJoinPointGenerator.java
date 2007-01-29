@@ -614,7 +614,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       protected String createInvokeNextDispatchMethodBody() throws NotFoundException
       {
          CtClass type = advisedField.getType();
-         String value = JavassistToReflect.castInvocationValueToTypeString(type);
+         String value = JavassistToReflect.castInvocationValueToTypeString(type) + ";";
 
          return
             "{" +

@@ -176,7 +176,7 @@ public class OptimizedFieldInvocations extends OptimizedInvocations
       {
          //TODO: Must be a better way to do the cast of the value that what is done by castInvocationValueToTypeString()?
          CtClass type = field.getType();
-         code += ref + field.getName() + " = " + JavassistToReflect.castInvocationValueToTypeString(type) + " return null;";
+         code += ref + field.getName() + " = " + JavassistToReflect.castInvocationValueToTypeString(type) + ";   return null;";
       }
    
       code += "}";

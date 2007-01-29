@@ -187,7 +187,8 @@ public class ConstructorJoinPointGenerator extends JoinPointGenerator
       protected CtClass generate() throws CannotCompileException, NotFoundException
       {
          jp = setupClass();
-         addArgumentsFieldsAndAccessors();
+         OptimizedBehaviourInvocations.addArgumentFieldsAndAccessors(
+               instrumentor.getClassPool(), jp, params, false);
          addInvokeJoinpointMethod();
          addMethodInfoField();
          addPublicConstructor();
@@ -207,13 +208,6 @@ public class ConstructorJoinPointGenerator extends JoinPointGenerator
          jp = TransformerCommon.makeNestedClass(advisedClass, className, true, Modifier.PUBLIC | Modifier.STATIC, INVOCATION_CT_TYPE);
          addUntransformableInterface(instrumentor, jp);
          return jp;
-      }
-
-      private void addArgumentsFieldsAndAccessors() throws NotFoundException, CannotCompileException
-      {
-         OptimizedBehaviourInvocations.addArgumentFieldsToInvocation(jp, params);
-         OptimizedBehaviourInvocations.addSetArguments(instrumentor.getClassPool(), jp, params);
-         OptimizedBehaviourInvocations.addGetArguments(instrumentor.getClassPool(), jp, params);
       }
 
       /**
