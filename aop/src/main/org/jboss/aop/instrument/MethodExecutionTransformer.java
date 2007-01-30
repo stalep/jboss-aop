@@ -25,9 +25,6 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import org.jboss.aop.ClassAdvisor;
-import org.jboss.aop.classpool.AOPClassPool;
-import org.jboss.aop.util.JavassistMethodHashing;
 
 import javassist.CannotCompileException;
 import javassist.CtClass;
@@ -39,6 +36,11 @@ import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
+
+import org.jboss.aop.ClassAdvisor;
+import org.jboss.aop.classpool.AOPClassPool;
+import org.jboss.aop.util.Advisable;
+import org.jboss.aop.util.JavassistMethodHashing;
 
 /**
  * Comment
@@ -119,6 +121,10 @@ public abstract class MethodExecutionTransformer
       CtMethod[] methods = clazz.getDeclaredMethods();
       for (int i = 0; i < methods.length; i++)
       {
+         if (!Advisable.isAdvisable(methods[i]))
+         {
+            continue;
+         }
          JoinpointClassification classification = classifier.classifyMethodExecution(methods[i], advisor);
          if (classification == JoinpointClassification.NOT_INSTRUMENTED)
          {
