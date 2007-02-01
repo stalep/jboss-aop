@@ -55,7 +55,8 @@ import org.jboss.aop.pointcut.ast.ClassExpression;
 import org.jboss.aop.util.JavassistUtils;
 import org.jboss.aop.util.ReflectToJavassist;
 
-/** Creates the Joinpoint invocation replacement classes used with Generated advisors
+/**
+ * Creates the Joinpoint invocation replacement classes used with Generated advisors
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
@@ -865,7 +866,7 @@ public abstract class JoinPointGenerator
    {
       if (! isVoid())
       {
-         code.append("          " + RETURN_VALUE + " = ");
+         code.append("          " + RETURN_VALUE + " = ($r)");
       }
       code.append("super.dispatch(");
       if (argsFound)
@@ -922,7 +923,6 @@ public abstract class JoinPointGenerator
       body.append("{");
       body.append("   try{");
       body.append("      switch(++" + CURRENT_ADVICE + "){");
-      
       addInvokeCode(AroundAdviceCallStrategy.getInstance(), aroundSetups, body);
       body.append("      default:");
       body.append("         " + returnStr + "this.dispatch();");
@@ -1113,7 +1113,7 @@ public abstract class JoinPointGenerator
          {
             params[i + aspectsLength] = astCFlowExpr;
             init.append("cflow" + cflows.get(i) + "= $" + (i + aspectsLength + 1) + ";");
-            init.append("matchesCflow" + cflows.get(i) + " = getCFlow" + allSetups[i].useCFlowFrom() + "();");
+            init.append("matchesCflow" + cflows.get(i) + " = getCFlow" + allSetups[cflows.get(i)].useCFlowFrom() + "();");
          }
       }
       
