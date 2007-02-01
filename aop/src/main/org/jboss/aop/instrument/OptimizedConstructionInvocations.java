@@ -22,7 +22,6 @@
 package org.jboss.aop.instrument;
 
 
-import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtMethod;
@@ -41,30 +40,6 @@ import org.jboss.aop.classpool.AOPClassPool;
 public class OptimizedConstructionInvocations extends
       OptimizedBehaviourInvocations
 {
-
-   protected static void addCopy(ClassPool pool, CtClass invocation, CtClass[] params) throws Exception
-   {
-      CtClass methodInvocation = pool.get("org.jboss.aop.joinpoint.ConstructionInvocation");
-      CtMethod template = methodInvocation.getDeclaredMethod("copy");
-   
-   
-      String code =
-      "{ " +
-      "   " + invocation.getName() + " wrapper = new " + invocation.getName() + "(this.interceptors, this.constructor); " +
-      "   wrapper.metadata = this.metadata; " +
-      "   wrapper.currentInterceptor = this.currentInterceptor; ";
-      for (int i = 0; i < params.length; i++)
-      {
-         code += "   wrapper.arg" + i + " = this.arg" + i + "; ";
-      }
-      code += "   return wrapper; }";
-   
-      CtMethod copy = CtNewMethod.make(template.getReturnType(), "copy", template.getParameterTypes(), template.getExceptionTypes(), code, invocation);
-      copy.setModifiers(template.getModifiers());
-      invocation.addMethod(copy);
-   
-   }
-
    /**
     * Returns the name of the optimized Invocation class.
     * @param declaringClazz the class that contains the constructor.
@@ -76,16 +51,19 @@ public class OptimizedConstructionInvocations extends
       return declaringClazz.getName() + constructorIndex + "OptimizedConstructionInvocation";
    }
 
-   protected static String createOptimizedInvocationClass(Instrumentor instrumentor, CtClass clazz, CtConstructor con, int index) throws Exception
+   protected static String createOptimizedInvocationClass(
+         Instrumentor instrumentor, CtClass clazz, CtConstructor con, int index)
+   throws Exception
    {
       AOPClassPool pool = (AOPClassPool) instrumentor.getClassPool();
       CtClass conInvocation = pool.get("org.jboss.aop.joinpoint.ConstructionInvocation");
       
+      ////////////////
+      //Create the class
       String className = getOptimizedInvocationClassName(clazz, index);
       boolean makeInnerClass = !Modifier.isPublic(con.getModifiers());
-   
-      CtClass invocation = makeInvocationClassNoCtors(pool, makeInnerClass, clazz, className, conInvocation);
-      
+      CtClass invocation = makeInvocationClassNoCtors(pool, makeInnerClass, clazz,
+            className, conInvocation);
       CtConstructor template = null;
       CtConstructor[] tcons = conInvocation.getDeclaredConstructors();
       for (int i = 0; i < tcons.length; i++)
@@ -96,16 +74,45 @@ public class OptimizedConstructionInvocations extends
             break;
          }
       }
-      CtConstructor icon = CtNewConstructor.make(template.getParameterTypes(), template.getExceptionTypes(), invocation);
+      CtConstructor icon = CtNewConstructor.make(template.getParameterTypes(),
+            template.getExceptionTypes(), invocation);
       invocation.addConstructor(icon);
    
+      ////////////////
+      //Add typed fields
       addArgumentFieldsAndAccessors(pool, invocation, con.getParameterTypes(), false);
-      addCopy(pool, invocation, con.getParameterTypes());
-      // If compile time
+      
+      ////////////////
+      //Create copy() method
+      addCopy(invocation, con.getParameterTypes());
+
+      /////////
+      //Compile/Load
       TransformerCommon.compileOrLoadClass(con.getDeclaringClass(), invocation);
    
       //Return fully qualified name of class (may be an inner class)
       return invocation.getName();
    }
-
+   
+   protected static void addCopy(CtClass invocation, CtClass[] params) throws Exception
+   {
+      CtMethod template = invocation.getSuperclass().getDeclaredMethod("copy");
+      StringBuffer code = new StringBuffer("{    ");
+      code.append(invocation.getName()).append(" wrapper = new ");
+      code.append(invocation.getName());
+      code.append("(this.interceptors, this.constructor); ");
+      code.append("   wrapper.metadata = this.metadata; ");
+      code.append("   wrapper.currentInterceptor = this.currentInterceptor; ");
+      for (int i = 0; i < params.length; i++)
+      {
+         code.append("   wrapper.arg" + i + " = this.arg" + i + "; ");
+      }
+      code.append("   return wrapper; }");
+   
+      CtMethod copy = CtNewMethod.make(template.getReturnType(), "copy",
+            template.getParameterTypes(), template.getExceptionTypes(),
+            code.toString(), invocation);
+      copy.setModifiers(template.getModifiers());
+      invocation.addMethod(copy);
+   }
 }

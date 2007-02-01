@@ -94,6 +94,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
             (GeneratedAdvisorInstrumentor)trans.getInstrumentor(),
             trans.getClazz(),
             trans.getMethod(),
+            trans.getWMethod(),
             miname,
             trans.getOriginalName(),
             trans.getWrappedName(),

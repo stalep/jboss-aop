@@ -41,12 +41,14 @@ import org.jboss.aop.util.JavassistToReflect;
  */
 public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
 {
+   protected static final String INVOKE_TARGET = "invokeTarget";
+   
    /**
     * Returns a piece of code that sets all typed argument fields to the
     * parameter values of current behaviour (i.e., arg0 = $1; arg1 = $2...).
     * 
-    * @param length number of arguments
-    * @return the code that sets all argument fields to the values of current
+    * @param length total number of parameters
+    * @return code that sets all argument fields to the values of current
     *         behaviour parameters
     */
    protected static String setArguments(int length)
@@ -56,14 +58,13 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
 
    /**
     * Adds typed argument fields to <code>invocation</code> and overwrites its
-    * arguments accessor methods accordingly. 
+    * <code>arguments</code> field accessor methods accordingly. 
     * 
-    * @param pool                    the class pool that contains <code>invocation
-    *                                <code>
-    * @param invocation              the invocation class to which fields and methods
+    * @param pool                    class pool that contains <code>invocation<code>
+    * @param invocation              invocation class to which fields and methods
     *                                will be added
-    * @param params                  the list of the parameter types
-    * @param hasMarshalledArguments  indicates whether this invocation class has a
+    * @param params                  list of the parameter types
+    * @param hasMarshalledArguments  indicates whether <code>invocation</code>has a
     *                                marshalled arguments field
     */
    protected static void addArgumentFieldsAndAccessors(ClassPool pool,
@@ -75,9 +76,34 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
       addSetArguments(pool, invocation, params);
    }
    
-   protected static void addInvokeTarget(CtClass invocation, String dispatchLine, 
-         CtClass[] params, String beforeDispatch, String afterDispatch)
-   throws NotFoundException, CannotCompileException
+   /**
+    * Creates a method that dispatches execution to a joinpoint, and adds this method
+    * to <code>invocation</code> class.
+    * <br>
+    * Except for its name, the generated method is constrained to have the same
+    * signature as {@link org.jboss.aop.joinpoint.InvocationBase#invokeTarget()}.
+    * 
+    * @param invocation     optimized invocation class
+    * @param methodName     name of the generated method
+    * @param dispatchLine   line that dispatches the execution to joinpoint. This
+    *                       line must not cointain <code>';'</code> nor brackets or
+    *                       the arguments list.
+    * @param params         joinpoint parameters type
+    * @param beforeDispatch one or more lines of code that should be executed before
+    *                       <code>dispatchLine</code> (this code must be complete,
+    *                       without compilation errors)
+    * @param afterDispatch  one or more lines of code that should be executed after
+    *                       <code>dispatchLine</code>  (this code must be complete,
+    *                       without compilation errors)
+    * 
+    * @throws NotFoundException
+    * @throws CannotCompileException
+    * 
+    * @see org.jboss.aop.joinpoint.InvocationBase#invokeTarget()
+    */
+   protected static void addDispatch(CtClass invocation, String methodName,
+         CtClass[] params, String dispatchLine, String beforeDispatch,
+         String afterDispatch) throws NotFoundException, CannotCompileException
    {
       StringBuffer sb = new StringBuffer("{");
       sb.append(beforeDispatch);
@@ -91,7 +117,8 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
          sb.append("  if (inconsistentArgs){");
          sb.append(dispatchLine);
          sb.append('(');
-         sb.append(JavassistToReflect.castInvocationValueToTypeString(params[0], "arguments[0]"));
+         sb.append(JavassistToReflect.castInvocationValueToTypeString(params[0],
+               "arguments[0]"));
          for (int i = 1; i < params.length; i++)
          {
             sb.append(", ");
@@ -111,13 +138,14 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
       }
       sb.append(afterDispatch);
       sb.append("}");
-      System.out.println("CODE: " + sb.toString());
-      CtMethod invokeTarget = null;
+      CtMethod dispatch = null;
       CtMethod in = invocation.getSuperclass().getDeclaredMethod("invokeTarget");
       try
       {
-         invokeTarget = CtNewMethod.make(in.getReturnType(), "invokeTarget",
-               in.getParameterTypes(), in.getExceptionTypes(), sb.toString(),
+         dispatch = CtNewMethod.make(
+               in.getReturnType(), methodName,
+               in.getParameterTypes(),
+               in.getExceptionTypes(), sb.toString(),
                invocation);
       }
       catch (CannotCompileException e)
@@ -125,8 +153,8 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
          System.out.println(sb.toString());
          throw e;
       }
-      invokeTarget.setModifiers(in.getModifiers());
-      invocation.addMethod(invokeTarget);
+      dispatch.setModifiers(in.getModifiers());
+      invocation.addMethod(dispatch);
    }
    
    private static String setArguments(String inv, int length, int offset)
@@ -142,14 +170,13 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
    
    private static void addSetArguments(ClassPool pool, CtClass invocation, CtClass[] params)throws NotFoundException, CannotCompileException 
    {
-      if (params == null || params.length == 0) return;
+      if (params.length == 0) return;
       CtClass methodInvocation = pool.get("org.jboss.aop.joinpoint.MethodInvocation");
       CtMethod template = methodInvocation.getDeclaredMethod("setArguments");
    
-      StringBuffer code = new StringBuffer(
-              "public void setArguments(java.lang.Object[] args){");
+      StringBuffer code = new StringBuffer("{");
       code.append("   inconsistentArgs = false;");
-      code.append("   arguments = args; ");
+      code.append("   arguments = $1; ");
       for (int i = 0; i < params.length; i++)
       {
          if (params[i].isPrimitive())
@@ -159,7 +186,7 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
             code.append(i);
             code.append(" = ((");
             code.append(primitive.getWrapperName());
-            code.append(")args[");
+            code.append(")$1[");
             code.append(i);
             code.append("]).");
             code.append(primitive.getGetMethodName());
@@ -169,7 +196,7 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
          {
             code.append("   Object warg");
             code.append(i);
-            code.append(" = args[");
+            code.append(" = $1[");
             code.append(i);
             code.append("]; ");
             code.append("   arg");
@@ -183,22 +210,37 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
       }
       code.append("   inconsistentArgs = false;");
       code.append("}");
-      CtMethod setArguments = CtNewMethod.make(code.toString(), invocation);
+      CtMethod setArguments = null;
+      try
+      {
+         setArguments = CtNewMethod.make(
+            template.getReturnType(), template.getName(),
+            template.getParameterTypes(),
+            template.getExceptionTypes(), code.toString(),
+            invocation);
+      }
+      catch(CannotCompileException e)
+      {
+         System.out.println(code.toString());
+         throw e;
+      }
       setArguments.setModifiers(template.getModifiers());
       invocation.addMethod(setArguments);
    }
 
    private static void addGetArguments(ClassPool pool, CtClass invocation, CtClass[] params, boolean hasMarshalledArguments) throws CannotCompileException
    {
-      if (params == null || params.length == 0) return;
       try {
          CtClass superInvocation = invocation.getSuperclass();
          CtMethod template = superInvocation.getDeclaredMethod("getArguments");
-   
+         
          StringBuffer code = new StringBuffer();
-         code.append("public Object[] getArguments()");
          code.append("{ ");
-         code.append("   inconsistentArgs = true;");
+         if (params.length != 0)
+         {
+            code.append("   inconsistentArgs = true;");
+         }
+         
          if (hasMarshalledArguments)
          {
             code.append("   if (super.marshalledArguments != null)");
@@ -217,7 +259,21 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
          }
    
          code.append("   return arguments; }");
-         CtMethod getArguments = CtNewMethod.make(code.toString(), invocation);
+         CtMethod getArguments = null;
+         try
+         {
+            getArguments = CtNewMethod.make(
+               template.getReturnType(), template.getName(),
+               template.getParameterTypes(),
+               template.getExceptionTypes(), code.toString(),
+               invocation);
+         }
+         catch(CannotCompileException e)
+         {
+            System.out.println(code.toString());
+            throw e;
+         }
+         
          getArguments.setModifiers(template.getModifiers());
          invocation.addMethod(getArguments);
       } catch (NotFoundException e) {
@@ -233,6 +289,10 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
     */
    private static void addArgumentFieldsToInvocation(CtClass invocation, CtClass[] params)throws CannotCompileException
    {
+      if (params.length == 0)
+      {
+         return;
+      }
       CtField inconsistentArgs = new CtField(CtClass.booleanType, "inconsistentArgs",
             invocation);
       invocation.addField(inconsistentArgs, CtField.Initializer.byExpr("false"));

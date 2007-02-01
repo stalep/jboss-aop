@@ -56,7 +56,7 @@ public class OptimizedMethodExecutionTransformer extends MethodExecutionTransfor
       wmethod.setName(wrappedName);
       trans.getClazz().addMethod(wmethod);
       moveAnnotations(trans.getMethod(), wmethod);
-      String optimizedInvocation = OptimizedMethodInvocations.createOptimizedInvocationClass(trans.getInstrumentor(), trans.getClazz(), trans.getMethod());
+      String optimizedInvocation = OptimizedMethodInvocations.createOptimizedInvocationClass(trans.getInstrumentor(), trans.getClazz(), trans.getMethod(), wmethod);
       trans.getMethod().setName(wrappedName);
       wmethod.setName(originalName);
 
@@ -91,7 +91,6 @@ public class OptimizedMethodExecutionTransformer extends MethodExecutionTransfor
          "{ " +
          "    " + methodInfoFromWeakReference("info", methodInfoField) +
          "    org.jboss.aop.ClassInstanceAdvisor instAdv = (org.jboss.aop.ClassInstanceAdvisor)_getInstanceAdvisor();" +
-         //"    System.out.println(\"" + trans.getMethod() + " \" + instAdv);" +
          "    org.jboss.aop.advice.Interceptor[] interceptors = info.getInterceptors();" +
          "    if (interceptors != (Object[])null || (instAdv != null && instAdv.hasInstanceAspects)) " +
          "    { " +

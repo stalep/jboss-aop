@@ -22,7 +22,6 @@
 package org.jboss.aop.instrument;
 
 import javassist.CannotCompileException;
-import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtMethod;
@@ -53,81 +52,91 @@ public class OptimizedConstructorInvocations extends
       return declaringClazz.getName() + "_" + constructorIndex + "OptimizedConstructorInvocation";
    }
 
-   protected static String createOptimizedInvocationClass(Instrumentor instrumentor, CtClass clazz, CtConstructor con, int index) throws NotFoundException, CannotCompileException
+   protected static String createOptimizedInvocationClass(Instrumentor instrumentor,
+         CtClass clazz, CtConstructor con, int index)
+   throws NotFoundException, CannotCompileException
    {
       AOPClassPool pool = (AOPClassPool) instrumentor.getClassPool();
       CtClass conInvocation = pool.get("org.jboss.aop.joinpoint.ConstructorInvocation");
 
+      ////////////////
+      //Create the class
       String className = getOptimizedInvocationClassName(clazz, index);
       boolean makeInnerClass = !Modifier.isPublic(con.getModifiers());
-
-      CtClass invocation = makeInvocationClassNoCtors(pool, makeInnerClass, clazz, className, conInvocation);
+      CtClass invocation = makeInvocationClassNoCtors(pool, makeInnerClass,
+            clazz, className, conInvocation);
       
       CtConstructor template = conInvocation.getDeclaredConstructors()[0];
-      CtConstructor icon = CtNewConstructor.make(template.getParameterTypes(), template.getExceptionTypes(), invocation);
+      CtConstructor icon = CtNewConstructor.make(template.getParameterTypes(),
+            template.getExceptionTypes(), invocation);
       invocation.addConstructor(icon);
 
+      ////////////////
+      //Add typed fields
       CtClass[] params = con.getParameterTypes();
       addArgumentFieldsAndAccessors(pool, invocation, params, false);
       
+      /////////
+      //Create invokeTarget() body
+      addDispatch(invocation, INVOKE_TARGET, con);
       
-      CtMethod in = conInvocation.getDeclaredMethod("invokeTarget");
-
-      StringBuffer code = new StringBuffer("{") ;
-
-      code.append("setTargetObject( new ").append(con.getDeclaringClass().getName()).append("(");
-      for (int i = 0; i < params.length; i++)
-      {
-         if (i > 0) 
-            code.append(", ");
-          code.append("arg").append(i);
-      }
-      code.append("));");
-      code.append("return getTargetObject();");
-      code.append("}");
-
-      CtMethod invokeTarget = null;
-      try
-      {
-         invokeTarget = CtNewMethod.make(in.getReturnType(), "invokeTarget", in.getParameterTypes(), in.getExceptionTypes(), code.toString(), invocation);
-      }
-      catch (CannotCompileException e)
-      {
-         System.out.println(code.toString());
-         throw e;
-      }
-      invocation.addMethod(invokeTarget);
-      invokeTarget.setModifiers(in.getModifiers());
-      addCopy(pool, invocation, con.getParameterTypes());
+      ////////////////
+      //Create copy() method
+      addCopy(invocation, con.getParameterTypes());
       
+      /////////
+      //Compile/Load
       TransformerCommon.compileOrLoadClass(clazz, invocation);
       
       //Return fully qualified name of class (may be an inner class)
       return invocation.getName();
    }
-   
-   private static void addCopy(ClassPool pool, CtClass invocation, CtClass[] params) throws CannotCompileException, NotFoundException
-   {
-      CtClass methodInvocation = pool.get("org.jboss.aop.joinpoint.ConstructorInvocation");
-      CtMethod template = methodInvocation.getDeclaredMethod("copy");
 
-      String code =
-      "{ " +
-      "   " + invocation.getName() + " wrapper = new " + invocation.getName() + "(this.interceptors); " +
-      "   wrapper.constructor = this.constructor; " +
-      "   wrapper.arguments = this.arguments; " +
-      "   wrapper.metadata = this.metadata; " +
-      "   wrapper.currentInterceptor = this.currentInterceptor; ";
+   /**
+    * Creates a method that dispatches execution to a constructor joinpoint,
+    * and adds this method to <code>invocation</code> class.
+    * 
+    * @param invocation   invocation class
+    * @param methodName   name of method to create
+    * @param constructor  constructor to be executed on dispatch
+    * 
+    * @throws NotFoundException
+    * @throws CannotCompileException
+    */
+   public static final void addDispatch(CtClass invocation, String methodName,
+         CtConstructor constructor)
+   throws NotFoundException, CannotCompileException
+   {
+      StringBuffer dispatchLine = new StringBuffer("   result = new ");
+      dispatchLine.append(constructor.getDeclaringClass().getName());
+      OptimizedBehaviourInvocations.addDispatch(invocation,
+            methodName, constructor.getParameterTypes(), dispatchLine.toString(),
+            "Object result = null;", "   setTargetObject(result);   return result;");
+   }
+   
+   private static void addCopy(CtClass invocation, CtClass[] params)
+   throws CannotCompileException, NotFoundException
+   {
+      CtMethod template = invocation.getSuperclass().getDeclaredMethod("copy");
+
+      StringBuffer code = new StringBuffer("{    ");
+      code.append(invocation.getName()).append(" wrapper = new ");
+      code.append(invocation.getName()).append("(this.interceptors); ");
+      code.append("   wrapper.constructor = this.constructor; ");
+      code.append("   wrapper.arguments = this.arguments; ");
+      code.append("   wrapper.metadata = this.metadata; ");
+      code.append("   wrapper.currentInterceptor = this.currentInterceptor; ");
+      
       for (int i = 0; i < params.length; i++)
       {
-         code += "   wrapper.arg" + i + " = this.arg" + i + "; ";
+         code.append("   wrapper.arg" + i + " = this.arg" + i + "; ");
       }
-      code += "   return wrapper; }";
+      code.append("   return wrapper; }");
 
-      CtMethod copy = CtNewMethod.make(template.getReturnType(), "copy", template.getParameterTypes(), template.getExceptionTypes(), code, invocation);
+      CtMethod copy = CtNewMethod.make(template.getReturnType(), "copy",
+            template.getParameterTypes(), template.getExceptionTypes(),
+            code.toString(), invocation);
       copy.setModifiers(template.getModifiers());
       invocation.addMethod(copy);
-
    }
-
 }

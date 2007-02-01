@@ -245,7 +245,7 @@ public abstract class JoinPointGenerator
    public static final String INVOKE_JOINPOINT = "invokeJoinpoint";
    public static final String INVOKE_TARGET = "invokeTarget";
    public static final String DISPATCH = "dispatch";
-   protected static final String TARGET_FIELD = "tgt";
+   protected static final String TARGET_FIELD = "typedTargetObject";
    protected static final String CALLER_FIELD = "callingObject";
    protected static final String GENERATED_CLASS_ADVISOR = GeneratedClassAdvisor.class.getName();
    public static final String GENERATE_JOINPOINT_CLASS = "generateJoinPointClass";

@@ -24,7 +24,6 @@ package org.jboss.aop.instrument;
 import java.lang.reflect.Method;
 
 import javassist.CannotCompileException;
-import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
@@ -32,7 +31,6 @@ import javassist.CtNewMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
 
-import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.classpool.AOPClassPool;
 
 /**
@@ -65,20 +63,23 @@ public class OptimizedMethodInvocations extends OptimizedBehaviourInvocations
       return sb.toString();
    }
 
-   protected static String createOptimizedInvocationClass(Instrumentor instrumentor, CtClass clazz, CtMethod method) throws NotFoundException, CannotCompileException
+   protected static String createOptimizedInvocationClass(Instrumentor instrumentor,
+         CtClass clazz, CtMethod method, CtMethod notAdvisedMethod)
+   throws NotFoundException, CannotCompileException
    {
-      String wrappedName = ClassAdvisor.notAdvisedMethodName(clazz.getName(),
-                                                             method.getName());
       AOPClassPool pool = (AOPClassPool) instrumentor.getClassPool();
       CtClass methodInvocation = pool.get("org.jboss.aop.joinpoint.MethodInvocation");
    
+      ////////////////
+      //Create the class
       String className = getOptimizedInvocationClassName(clazz, method);
       boolean makeInnerClass = true; //!Modifier.isPublic(method.getModifiers());
-   
       CtClass invocation = makeInvocationClass(pool, makeInnerClass, clazz, className, methodInvocation);
+      
+      ////////////////
+      //Add typed fields
       CtClass[] params = method.getParameterTypes();
       addArgumentFieldsAndAccessors(pool, invocation, params, true);
-   
       boolean isStatic = javassist.Modifier.isStatic(method.getModifiers());
       if (!isStatic)
       {
@@ -87,83 +88,79 @@ public class OptimizedMethodInvocations extends OptimizedBehaviourInvocations
          invocation.addField(target);
       }
    
-      CtMethod in = methodInvocation.getDeclaredMethod("invokeTarget");
-   
-      String code = "{";
-   
-      String returnStr = (method.getReturnType().equals(CtClass.voidType)) ? "" : "return ($w)";
-      if (isStatic)
-      {
-         code +=
-         "   " + returnStr + " " + method.getDeclaringClass().getName() + ".";
-      }
-      else
-      {
-         code +=
-         "   " + returnStr + " typedTargetObject.";
-      }
-      code += wrappedName + "(";
-      for (int i = 0; i < params.length; i++)
-      {
-         if (i > 0) code += ", ";
-         code += "arg" + i;
-      }
-      code += ");  ";
-      if (method.getReturnType().equals(CtClass.voidType))
-      {
-         code += " return null; ";
-      }
-      code += "}";
+      /////////
+      //Create invokeTarget() body
+      addDispatch(invocation, INVOKE_TARGET, notAdvisedMethod, isStatic);
       
-      CtMethod invokeTarget = null;
-      try
-      {
-         invokeTarget = CtNewMethod.make(in.getReturnType(), "invokeTarget", in.getParameterTypes(), in.getExceptionTypes(), code, invocation);
-      }
-      catch (CannotCompileException e)
-      {
-         System.out.println(code);
-         throw e;
-      }
-      invokeTarget.setModifiers(in.getModifiers());
-      invocation.addMethod(invokeTarget);
-      
-      
-      addCopy(pool, invocation, method.getParameterTypes(), isStatic);
+      ////////////////
+      //Create copy() method      
+      addCopy(invocation, method.getParameterTypes(), isStatic);
    
+      /////////
+      //Compile/Load
       TransformerCommon.compileOrLoadClass(method.getDeclaringClass(), invocation);
    
       //Return fully qualified name of class (may be an inner class)
       return invocation.getName();
    }
 
-   static void addCopy(ClassPool pool, CtClass invocation, CtClass[] params, boolean isStatic) throws NotFoundException, CannotCompileException
+   /**
+    * Creates a method that dispatches execution to a method joinpoint,
+    * and adds this method to <code>invocation</code> class.
+    * 
+    * @param invocation  invocation class
+    * @param methodName  name of method to create
+    * @param method      method to be executed on dispatch
+    * 
+    * @throws NotFoundException
+    * @throws CannotCompileException
+    */
+   static final void addDispatch(CtClass invocation, String methodName,
+         CtMethod method, boolean isStatic)
+   throws NotFoundException, CannotCompileException
    {
-      CtClass methodInvocation = pool.get("org.jboss.aop.joinpoint.MethodInvocation");
-      CtMethod template = methodInvocation.getDeclaredMethod("copy");
+      StringBuffer dispatchLine = new StringBuffer();
+      boolean isVoid = method.getReturnType().equals(CtClass.voidType);
+      if (!isVoid)
+      {
+         dispatchLine.append("return ($w)");
+      }
+      dispatchLine.append((isStatic? method.getDeclaringClass().getName():
+         " typedTargetObject"));
+      dispatchLine.append('.');
+      dispatchLine.append(method.getName());
+      addDispatch(invocation, methodName, method.getParameterTypes(),
+            dispatchLine.toString(), "", isVoid?"  return null;": "");
+   }
+
+   static void addCopy(CtClass invocation, CtClass[] params, boolean isStatic)
+   throws NotFoundException, CannotCompileException
+   {
+      CtMethod template = invocation.getSuperclass().getDeclaredMethod("copy");
    
       StringBuffer code = new StringBuffer("{");
-              code.append("   ").append(invocation.getName()).append(" wrapper = new ").append(invocation.getName()).append("(this.interceptors, methodHash, advisedMethod, unadvisedMethod, advisor); ")
-              .append("   wrapper.arguments = this.arguments; ")
-              .append("   wrapper.metadata = this.metadata; ")
-              .append("   wrapper.currentInterceptor = this.currentInterceptor; ")
-              .append("   wrapper.instanceResolver = this.instanceResolver; ");
+      code.append("   ").append(invocation.getName()).append(" wrapper = new ");
+      code.append(invocation.getName());
+      code.append("(this.interceptors, methodHash, advisedMethod, unadvisedMethod, advisor); ");
+      code.append("   wrapper.arguments = this.arguments; ");
+      code.append("   wrapper.metadata = this.metadata; ");
+      code.append("   wrapper.currentInterceptor = this.currentInterceptor; ");
+      code.append("   wrapper.instanceResolver = this.instanceResolver; ");
       if (!isStatic)
       {
          code.append("   wrapper.typedTargetObject = this.typedTargetObject; ");
          code.append("   wrapper.targetObject = this.targetObject; ");
       }
-   
       for (int i = 0; i < params.length; i++)
       {
          code.append("   wrapper.arg").append(i).append(" = this.arg").append(i).append("; ");
       }
       code.append("   return wrapper; }");
    
-      CtMethod copy = CtNewMethod.make(template.getReturnType(), "copy", template.getParameterTypes(), template.getExceptionTypes(), code.toString(), invocation);
+      CtMethod copy = CtNewMethod.make(template.getReturnType(), "copy",
+            template.getParameterTypes(), template.getExceptionTypes(),
+            code.toString(), invocation);
       copy.setModifiers(template.getModifiers());
       invocation.addMethod(copy);
-   
    }
-
 }

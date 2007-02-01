@@ -311,7 +311,7 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
          if (hasTargetObject)
          {
             body.append("   super.targetObject=$2;");
-            body.append("   this.tgt=$2;");
+            body.append("   this.").append(TARGET_FIELD).append("=$2;");
          }
          if (hasCallingObject) body.append("   super.callingObject=$" + (hasTargetObject ? 3 : 2) + ";");
          
@@ -388,55 +388,13 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
 
       private void addDispatchMethods() throws CannotCompileException, NotFoundException
       {
-         addInvokeNextDispatchMethod();
+         OptimizedMethodInvocations.addDispatch(jp, DISPATCH, targetMethod,
+               !hasTargetObject);
          if (hasCallingObject || hasTargetObject || params.length > 0)
          {
             addInvokeJoinPointDispatchMethod();
          }
-         
          addInvokeTargetMethod();
-      }
-
-      private void addInvokeNextDispatchMethod() throws CannotCompileException, NotFoundException
-      {
-         //This dispatch method will be called by the invokeNext() methods for around advice
-         final boolean isVoid = targetMethod.getReturnType().equals(CtClass.voidType);
-
-         StringBuffer parameters = new StringBuffer();
-         for (int i = 0 ; i < params.length ; i++)
-         {
-            if (i > 0)parameters.append(", ");
-            parameters.append("arg" + i);
-         }
-
-         StringBuffer body = new StringBuffer("{");
-
-         if (hasTargetObject)
-         {
-            body.append(MethodExecutionTransformer.getAopReturnStr(isVoid) + TARGET_FIELD + "." + targetMethod.getName() + "(" + parameters + ");");
-         }
-         else
-         {
-            body.append(MethodExecutionTransformer.getReturnStr(isVoid) + targetClass.getName() + "." + targetMethod.getName() + "(" + parameters + ");");
-         }
-
-         body.append("}");
-         try
-         {
-            CtMethod dispatch = CtNewMethod.make(
-                  (isVoid) ? CtClass.voidType : targetMethod.getReturnType(),
-                  JoinPointGenerator.DISPATCH,
-                  EMPTY_CTCLASS_ARRAY,
-                  targetMethod.getExceptionTypes(),
-                  body.toString(),
-                  jp);
-            dispatch.setModifiers(Modifier.PROTECTED);
-            jp.addMethod(dispatch);
-         }
-         catch (CannotCompileException e)
-         {
-            throw new RuntimeException("Could not compile code " + body + " for method " + getMethodString(jp, JoinPointGenerator.DISPATCH, EMPTY_CTCLASS_ARRAY), e);
-         }
       }
 
       private void addInvokeJoinPointDispatchMethod() throws CannotCompileException, NotFoundException

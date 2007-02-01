@@ -37,7 +37,6 @@ import org.jboss.aop.ConByConInfo;
 import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
-import org.jboss.aop.advice.AdviceMethodProperties.OptionalParameters;
 import org.jboss.aop.joinpoint.ConstructorCalledByConstructorInvocation;
 import org.jboss.aop.util.ReflectToJavassist;
 
@@ -345,45 +344,9 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
 
       private void addDispatchMethods() throws CannotCompileException, NotFoundException
       {
-         addInvokeNextDispatchMethod();
+         OptimizedConstructorInvocations.addDispatch(jp, DISPATCH, targetCtor);
          addInvokeJoinpointDispatchMethod();
          addInvokeTargetMethod();
-      }
-
-      private void addInvokeNextDispatchMethod() throws CannotCompileException, NotFoundException
-      {
-         //This dispatch method will be called by the invokeNext() methods for around advice
-         StringBuffer parameters = new StringBuffer("(");
-         for (int i = 0 ; i < params.length ; i++)
-         {
-            if (i > 0)parameters.append(", ");
-            parameters.append("arg" + i);
-         }
-         parameters.append(")");
-
-         String body =
-            "{" +
-            "   " + targetClass.getName() + " obj = new " + targetClass.getName() + parameters + ";" +
-            "   setTargetObject(obj);" +
-            "   return obj;" +
-            "}";
-
-         try
-         {
-            CtMethod dispatch = CtNewMethod.make(
-                  targetClass,
-                  JoinPointGenerator.DISPATCH,
-                  new CtClass[0],
-                  targetCtor.getExceptionTypes(),
-                  body,
-                  jp);
-            dispatch.setModifiers(Modifier.PROTECTED);
-            jp.addMethod(dispatch);
-         }
-         catch (CannotCompileException e)
-         {
-            throw new RuntimeException("Could not compile code " + body + " for method " + getMethodString(jp, JoinPointGenerator.DISPATCH, params), e);
-         }
       }
 
       private void addInvokeJoinpointDispatchMethod() throws CannotCompileException, NotFoundException

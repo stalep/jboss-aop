@@ -370,51 +370,13 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
 
       private void addDispatchMethods() throws CannotCompileException, NotFoundException
       {
-         addInvokeNextDispatchMethod();
-
+         OptimizedConstructorInvocations.addDispatch(jp, DISPATCH, targetCtor);
          if (hasCallingObject || params.length > 0)
          {
             addInvokeJoinPointDispatchMethod();
          }
          
          addInvokeTargetMethod();
-      }
-
-      private void addInvokeNextDispatchMethod() throws CannotCompileException, NotFoundException
-      {
-         //This dispatch method will be called by the invokeNext() methods for around advice
-
-         StringBuffer parameters = new StringBuffer("(");
-         for (int i = 0 ; i < params.length ; i++)
-         {
-            if (i > 0)parameters.append(", ");
-            parameters.append("arg" + i);
-         }
-         parameters.append(")");
-
-         String body =
-            "{" +
-            "   " + targetClass.getName() + " obj = new " + targetClass.getName() + parameters + ";" +
-            "   setTargetObject(obj);" +
-            "   return obj;" +
-            "}";
-
-         try
-         {
-            CtMethod dispatch = CtNewMethod.make(
-                  targetClass,
-                  JoinPointGenerator.DISPATCH,
-                  EMPTY_CTCLASS_ARRAY,
-                  targetCtor.getExceptionTypes(),
-                  body,
-                  jp);
-            dispatch.setModifiers(Modifier.PROTECTED);
-            jp.addMethod(dispatch);
-         }
-         catch (CannotCompileException e)
-         {
-            throw new RuntimeException("Could not compile code " + body + " for method " + getMethodString(jp, JoinPointGenerator.DISPATCH, EMPTY_CTCLASS_ARRAY), e);
-         }
       }
 
       private void addInvokeJoinPointDispatchMethod() throws CannotCompileException, NotFoundException

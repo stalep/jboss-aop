@@ -137,6 +137,7 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
          GeneratedAdvisorInstrumentor instrumentor, 
          CtClass advisedClass, 
          CtMethod targetMethod,
+         CtMethod wMethod,
          String miname, 
          String originalMethodName, 
          String wrappedMethodName, 
@@ -145,7 +146,7 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
       instrumentor.addJoinPointGeneratorFieldToGenAdvisor(
             getJoinPointGeneratorFieldName(originalMethodName, hash));
 
-      BaseClassGenerator factory = new BaseClassGenerator(instrumentor, advisedClass, targetMethod, miname, originalMethodName, wrappedMethodName, hash);
+      BaseClassGenerator factory = new BaseClassGenerator(instrumentor, advisedClass, targetMethod, wMethod, miname, originalMethodName, wrappedMethodName, hash);
       return factory.generate();
    }
 
@@ -174,12 +175,13 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
       GeneratedAdvisorInstrumentor instrumentor; 
       CtClass advisedClass; 
       CtMethod advisedMethod;
+      CtMethod wMethod;
       String miname; 
       String originalMethodName; 
-      String wrappedMethodName; 
+      String wrappedMethodName;
       long hash;
       boolean hasTargetObject;
-      
+      CtMethod targetMethod;
       CtClass jp;
       
       CtClass[] originalParams;
@@ -187,12 +189,14 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
       CtClass methodInfoClass;
       
       BaseClassGenerator(GeneratedAdvisorInstrumentor instrumentor,  CtClass advisedClass, 
-                        CtMethod targetMethod, String miname, 
+                        CtMethod targetMethod, CtMethod wMethod, String miname, 
                        String originalMethodName, String wrappedMethodName,long hash) throws NotFoundException
       {
          this.instrumentor = instrumentor;
          this.advisedClass = advisedClass;
          this.advisedMethod = targetMethod;
+         this.targetMethod = targetMethod;
+         this.wMethod = wMethod;
          this.miname = miname;
          this.originalMethodName = originalMethodName;
          this.wrappedMethodName = wrappedMethodName;
@@ -362,47 +366,14 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
       
       private void addDispatchMethods() throws CannotCompileException, NotFoundException
       {
-         addInvokeNextDispatchMethod();
-         
+         OptimizedMethodInvocations.addDispatch(jp, DISPATCH, targetMethod,
+               !hasTargetObject);
          if (params.length > 0)
          {
             addInvokeJoinPointDispatchMethod();
          }
          
          addInvokeTargetMethod();
-      }
-      
-      private void addInvokeNextDispatchMethod() throws CannotCompileException, NotFoundException
-      {
-         //This dispatch method will be called by the invokeNext() methods for around advice
-         
-         StringBuffer parameters = new StringBuffer();
-         for (int i = 0 ; i < originalParams.length ; i++)
-         {
-            if (i > 0)parameters.append(", ");
-            parameters.append("arg" + i);
-         }
-         
-         String body = (!hasTargetObject) ?
-               "{" + MethodExecutionTransformer.getReturnStr(advisedMethod) + advisedClass.getName() + "." + wrappedMethodName + "(" + parameters + ");}" :
-               "{" + MethodExecutionTransformer.getAopReturnStr(advisedMethod) + TARGET_FIELD + "." + wrappedMethodName + "(" + parameters + ");}"; 
-      
-         try
-         {
-            CtMethod dispatch = CtNewMethod.make(
-                  advisedMethod.getReturnType(), 
-                  JoinPointGenerator.DISPATCH, 
-                  EMPTY_CTCLASS_ARRAY, 
-                  advisedMethod.getExceptionTypes(), 
-                  body, 
-                  jp);
-            dispatch.setModifiers(Modifier.PROTECTED);
-            jp.addMethod(dispatch);
-         }
-         catch (CannotCompileException e)
-         {
-            throw new RuntimeException("Could not compile code " + body + " for method " + getMethodString(jp, JoinPointGenerator.DISPATCH, EMPTY_CTCLASS_ARRAY), e);
-         }
       }
       
       private void addInvokeJoinPointDispatchMethod() throws CannotCompileException, NotFoundException

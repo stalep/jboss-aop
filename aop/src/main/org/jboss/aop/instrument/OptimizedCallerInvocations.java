@@ -127,17 +127,9 @@ public class OptimizedCallerInvocations extends OptimizedBehaviourInvocations
 
       /////////
       //Create invokeTarget() body
-      StringBuffer dispatchLine = new StringBuffer();
-      boolean isVoid = method.getReturnType().equals(CtClass.voidType);
-      if (!isVoid)
-      {
-         dispatchLine.append("return ($w)");
-      }
-      dispatchLine.append((isStatic? (method.getDeclaringClass().getName()):
-         " typedTargetObject") + '.' + method.getName());
-      addInvokeTarget(invocation, dispatchLine.toString(),
-            method.getParameterTypes(), "", isVoid?"  return null;": "");
-   
+      OptimizedMethodInvocations.addDispatch(invocation, INVOKE_TARGET, method,
+            isStatic);
+      
       ////////////////
       //Create copy() method
       String copy = "";
@@ -178,12 +170,8 @@ public class OptimizedCallerInvocations extends OptimizedBehaviourInvocations
 
       /////////
       //Create invokeTarget() body
-      StringBuffer dispatchLine = new StringBuffer("   result = new ");
-      dispatchLine.append(con.getDeclaringClass().getName());
-      OptimizedBehaviourInvocations.addInvokeTarget(invocation,
-            dispatchLine.toString(), con.getParameterTypes(),
-            "Object result = null;", "   setTargetObject(result);   return result;");
-
+      OptimizedConstructorInvocations.addDispatch(invocation, "invokeTarget", con);
+      
       ////////////////
       //Create copy() method
       addCopyMethod(invocation, callerDescription,
@@ -211,7 +199,6 @@ public class OptimizedCallerInvocations extends OptimizedBehaviourInvocations
          + " wrapper = new "
          + invocation.getName()
          + "(this.advisor, " + callerDescription + calledDescription + "this.arguments, this.interceptors);"
-         + "   wrapper.interceptors = super.interceptors; "
          + "   wrapper.metadata = this.metadata; "
          + "   wrapper.currentInterceptor = this.currentInterceptor; "
          + "   wrapper.instanceResolver = this.instanceResolver; "
