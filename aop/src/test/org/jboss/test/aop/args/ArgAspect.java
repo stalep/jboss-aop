@@ -21,8 +21,6 @@
   */
 package org.jboss.test.aop.args;
 
-import java.util.Collection;
-
 import junit.framework.Assert;
 
 import org.jboss.aop.advice.annotation.Arg;

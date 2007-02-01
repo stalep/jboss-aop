@@ -465,10 +465,6 @@
       </antcall>
 
    	<!-- Tests only applicable for this weaving mode -->
-      <antcall target="_run-precompiled-test" inheritRefs="true">
-         <param name="test" value="args"/>
-         <param name="caller" value="precompiled-tests"/>
-      </antcall>
 	   <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="override"/>
          <param name="caller" value="precompiled-tests"/>
@@ -501,6 +497,14 @@
          <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
       </antcall>
    </target>
+   
+   <target name="non-optimized-test" depends="init">
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="${test}"/>
+         <param name="caller" value="non-optimized-precompiled-tests"/>
+      </antcall>
+   </target>
 
    <!-- ==================================================================================== -->
    <!-- JDK 5.0 GENERATED ADVISOR PRECOMPILED TESTS                                          -->
@@ -515,10 +519,6 @@
       </path>
 
       <!-- Tests only applicable for this weaving mode -->
-      <antcall target="_run-precompiled-test" inheritRefs="true">
-         <param name="test" value="args"/>
-         <param name="caller" value="precompiled-genadvisor-tests"/>
-      </antcall>
       <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="beforeafter"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
