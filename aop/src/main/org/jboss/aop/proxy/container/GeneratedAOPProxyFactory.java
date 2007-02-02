@@ -26,7 +26,6 @@ import java.lang.reflect.Constructor;
 import org.jboss.aop.Advised;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.instrument.Untransformable;
-import org.jboss.aop.metadata.SimpleMetaData;
 //import org.jboss.repository.spi.MetaDataContext;
 
 /**
@@ -36,6 +35,30 @@ import org.jboss.aop.metadata.SimpleMetaData;
  */
 public class GeneratedAOPProxyFactory implements AOPProxyFactory
 {
+   /**
+    * Create a proxy 
+    * 
+    * @param <T> the expected type
+    * @param target the target
+    * @param interfaceClass the interface class
+    * @return the proxy
+    */
+   public static <T> T createProxy(T target, Class<T> interfaceClass)
+   {
+      if (target == null)
+         return null;
+
+      GeneratedAOPProxyFactory proxyFactory = new GeneratedAOPProxyFactory();
+      AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
+      params.setInterfaces(new Class[] { interfaceClass });
+      params.setObjectAsSuperClass(true);
+      params.setTarget(target);
+      Object proxy = proxyFactory.createAdvisedProxy(params);
+      if( AspectManager.verbose )
+         System.out.println("[debug] Created proxy: "+proxy.getClass()+"@"+System.identityHashCode(proxy)+" target: "+target.getClass());
+      return interfaceClass.cast(proxy);
+   }
+   
    public Object createAdvisedProxy(AOPProxyFactoryParameters params)
    {
       if (params.getTarget() != null)
