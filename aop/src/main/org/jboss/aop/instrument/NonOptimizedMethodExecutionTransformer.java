@@ -86,8 +86,6 @@ public class NonOptimizedMethodExecutionTransformer  extends MethodExecutionTran
       //wmethod = method;
       boolean isStatic = Modifier.isStatic(trans.getMethod().getModifiers());
       String code = null;
-      String args = "null";
-      if (trans.getMethod().getParameterTypes().length > 0) args = "$args";
       if (!isStatic)
       {
          code =
@@ -96,7 +94,7 @@ public class NonOptimizedMethodExecutionTransformer  extends MethodExecutionTran
          "    org.jboss.aop.ClassInstanceAdvisor instAdv = (org.jboss.aop.ClassInstanceAdvisor)_getInstanceAdvisor();" +
          "    if (info.getInterceptors() != (Object[])null || (instAdv != null && instAdv.hasInstanceAspects)) " +
          "    { " +
-         "       Object[] ags = " + args + "; " +
+         "       Object[] ags = $args; " +
          "       " + getAopReturnStr(trans.getMethod()) + Instrumentor.HELPER_FIELD_NAME + ".invokeMethod(instAdv, this, " + trans.getHash() + "L, ags, info); " +
          "    } " +
          "    else " +
@@ -113,7 +111,7 @@ public class NonOptimizedMethodExecutionTransformer  extends MethodExecutionTran
          "    if (info.getInterceptors() != (Object[])null) " +
          "    { " +
          "       org.jboss.aop.ClassInstanceAdvisor ia = null; " +
-         "       Object[] ags = " + args + "; " +
+         "       Object[] ags = $args; " +
          "       Object target = null; " +
          "       " + getAopReturnStr(trans.getMethod()) + Instrumentor.HELPER_FIELD_NAME + ".invokeMethod(ia, target, " + trans.getHash() + "L, ags, info); " +
          "    } " +

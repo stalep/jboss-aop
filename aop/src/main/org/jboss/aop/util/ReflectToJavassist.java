@@ -52,7 +52,6 @@ public class ReflectToJavassist
    
    public static CtField fieldToJavassist(Field field) throws NotFoundException
    {
-      Class clazz = field.getDeclaringClass();
       return classToJavassist(field.getDeclaringClass()).getField(field.getName());
    }
    public static CtConstructor constructorToJavassist(Constructor con) throws NotFoundException
@@ -146,5 +145,66 @@ public class ReflectToJavassist
       //throw new Exception("failed to find method: " + method.toString() + " state: " + state);
       return null;
    }
+   
+   /**
+    * Casts a value to the type required.
+    * 
+    * @param type      type to use on casting
+    * @param valueName name of the value as recognized on the generated code.
+    *                  Compiler considers this expression as being of type <code>
+    *                  java.lang.Object</code>
+    * @return          a string that casts <code>valueName</code> to <code>type
+    *                  </code> (if <code>type</code> is primitive, the value will
+    *                  be unwrapped).
+    */
+   public static String castInvocationValueToTypeString(Class type, String valueName)
+   {
+      // TODO replace this method by T Class.cast(valueName) once javassist enables support to generics
+      String cast = null;
+      if (type.isPrimitive())
+      {
+         if (type.equals(boolean.class))
+         {
+            cast = "((Boolean)" + valueName +").booleanValue()";
+         }
+         else if (type.equals(byte.class))
+         {
+            cast = "((Byte)" + valueName +").byteValue()";
+         }
+         else if (type.equals(char.class))
+         {
+            cast = "((Character)" + valueName +").charValue()";
+         }
+         else if (type.equals(double.class))
+         {
+            cast = "((Double)" + valueName +").doubleValue()";
+         }
+         else if (type.equals(float.class))
+         {
+            cast = "((Float)" + valueName +").floatValue()";
+         }
+         else if (type.equals(int.class))
+         {
+            cast = "((Integer)" + valueName +").intValue()";
+         }
+         else if (type.equals(long.class))
+         {
+            cast = "((Long)" + valueName +").longValue()";
+         }
+         else if (type.equals(short.class))
+         {
+            cast = "((Short)" + valueName +").shortValue()";
+         }
+      }
+      else if (type.isArray())
+      {
+         cast = "(" + type.getName() + ")" + valueName;
+      }
+      else
+      {
+         cast = "(" + type.getName() + ")" + valueName;
+      }
 
+      return cast;
+   }
 }

@@ -47,12 +47,6 @@ public class NonOptimizedConstructorExecutionTransformer extends ConstructorExec
    protected void createWrapper(ConstructorTransformation trans) throws CannotCompileException, NotFoundException
    {
       String code = null;
-      String args = "(Object[])null";
-      if (trans.getConstructor().getParameterTypes().length > 0)
-      {
-         args = "$args";
-      }
-      
       String infoName = getConstructorInfoFieldName(trans.getSimpleName(), trans.getIndex());
       
       code =
@@ -61,7 +55,7 @@ public class NonOptimizedConstructorExecutionTransformer extends ConstructorExec
          "    org.jboss.aop.advice.Interceptor[] interceptors = info.getInterceptors(); " +
          "    if (interceptors != (org.jboss.aop.advice.Interceptor[])null) " +
          "    { " +
-         "       return ($r)" + Instrumentor.HELPER_FIELD_NAME + ".invokeNew(" + args + ", (int)" + (trans.getIndex()) + "); " +
+         "       return ($r)" + Instrumentor.HELPER_FIELD_NAME + ".invokeNew($args, (int)" + (trans.getIndex()) + "); " +
          "    } " +
          "    return new " + trans.getClazz().getName() + "($$); " +
          "}";
