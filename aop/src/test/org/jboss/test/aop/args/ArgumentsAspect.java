@@ -89,11 +89,15 @@ public class ArgumentsAspect
       {
          ((MethodInvocation) invocation).setArguments(arguments);
       }
-      else if (invocation instanceof ConstructorCalledByConstructorInvocation)
+      else if (invocation instanceof ConstructorCalledByConstructorInvocation &&
+            // avoid constructors that receive an intance of Call enum
+            ((ConstructorCalledByConstructorInvocation) invocation).getArguments().length == 1)
       {
          ((ConstructorCalledByConstructorInvocation) invocation).setArguments(arguments);
       }
-      else if (invocation instanceof ConstructorCalledByMethodInvocation)
+      else if (invocation instanceof ConstructorCalledByMethodInvocation &&
+            // avoid constructors that receive an intance of Call enum
+            ((ConstructorCalledByMethodInvocation) invocation).getArguments().length == 1)
       {
          ((ConstructorCalledByMethodInvocation) invocation).setArguments(arguments);
       }

@@ -120,33 +120,36 @@ class ArgumentsPOJO2
    
 }
 
-enum Call
+abstract class Call
 {
-   CONSTRUCTOR
+   public static final Call CONSTRUCTOR = new Call("CONSTRUCTOR")
    {
       public int perform(int arg)
       {
          CalledPOJO pojo = new CalledPOJO(arg);
          return pojo.arg;
       }
-   },
+   };
    
-   METHOD
+   public static final Call METHOD = new Call("METHOD")
    {
       public int perform(int arg)
       {
          CalledPOJO pojo = new CalledPOJO();
          return pojo.method(arg);
       }
-   },
+   };
    
-   STATIC_METHOD()
+   public static final Call STATIC_METHOD = new Call("STATIC_METHOD")
    {
       public int perform(int arg)
       {
          return CalledPOJO.staticMethod(arg);
       }
    };
+
+   // TODO replace by enum
+   private Call(String name) {}
    
    public abstract int perform(int arg);
 }
