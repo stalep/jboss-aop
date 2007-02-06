@@ -651,6 +651,7 @@
       <junit printsummary="yes" fork="yes" haltonfailure="no" jvm="${java14}">
          <sysproperty key="jboss-junit-configuration" value="${caller}-jdk14"/>
          <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
+         <sysproperty key="jboss.aop.optimized" value="${optimized}"/>
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <formatter type="plain" extension="-${caller}-jdk14.txt"/>
          <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter"
