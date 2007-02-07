@@ -259,7 +259,7 @@ public abstract class JoinPointGenerator
    private static final String RETURN_VALUE = "ret";
    private static final String THROWABLE = "t";
    protected static final String ARGUMENTS= "arguments";
-   private static final String GET_ARGUMENTS= " getArguments()";
+   private static final String GET_ARGUMENTS= OptimizedBehaviourInvocations.GET_ARGUMENTS + "()";
    protected static final CtClass[] EMPTY_CTCLASS_ARRAY = new CtClass[0];
    private final ArrayList<Integer> joinPointArguments;
    
@@ -849,7 +849,7 @@ public abstract class JoinPointGenerator
          if (argsFoundAfter)
          {
             code.append(ARGUMENTS);
-            code.append(" = jp.getArguments();");
+            code.append(" = jp.").append(GET_ARGUMENTS).append(";");
          }
          
          code.append("      }");

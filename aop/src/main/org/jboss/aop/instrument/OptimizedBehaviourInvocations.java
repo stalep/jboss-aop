@@ -50,6 +50,9 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
    
    protected static final String INVOKE_TARGET = "invokeTarget";
    
+   static final String GET_ARGUMENTS = "getArguments";
+   private static final String SET_ARGUMENTS = "setArguments";
+   
    /**
     * Returns a piece of code that sets all typed argument fields to the
     * parameter values of current behaviour (i.e., arg0 = $1; arg1 = $2...).
@@ -168,7 +171,7 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
    {
       if (params.length == 0) return;
       CtClass methodInvocation = pool.get("org.jboss.aop.joinpoint.MethodInvocation");
-      CtMethod template = methodInvocation.getDeclaredMethod("setArguments");
+      CtMethod template = methodInvocation.getDeclaredMethod(SET_ARGUMENTS);
    
       StringBuffer code = new StringBuffer("{");
       code.append("   inconsistentArgs = false;");
@@ -228,7 +231,7 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
    {
       try {
          CtClass superInvocation = invocation.getSuperclass();
-         CtMethod template = superInvocation.getDeclaredMethod("getArguments");
+         CtMethod template = superInvocation.getDeclaredMethod(GET_ARGUMENTS);
          
          StringBuffer code = new StringBuffer();
          code.append("{ ");
@@ -241,8 +244,9 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
          {
             code.append("   if (super.marshalledArguments != null)");
             code.append("   {");
-            code.append("      Object[] args = super.getArguments();");
-            code.append("      setArguments(args);");
+            code.append("      Object[] args = super.").append(GET_ARGUMENTS);
+            code.append("();      ");
+            code.append(SET_ARGUMENTS).append("(args);");
             code.append("      return args;");
             code.append("   }");
          }

@@ -536,8 +536,9 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       
       protected String createGetArgumentsBody()
       {
-         StringBuffer code = new StringBuffer("public java.lang.Object[] getArguments()");
-         code.append("{ ");
+         StringBuffer code = new StringBuffer("public java.lang.Object[] ");
+         code.append(OptimizedBehaviourInvocations.GET_ARGUMENTS);
+         code.append("(){ ");
          code.append("   if(");
          code.append(ARGUMENTS);
          code.append("  == null)");
@@ -638,8 +639,9 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       
       protected String createGetArgumentsBody()
       {
-         StringBuffer code = new StringBuffer("public java.lang.Object[] getArguments()");
-         code.append("{ ");
+         StringBuffer code = new StringBuffer("public java.lang.Object[] ");
+         code.append(OptimizedBehaviourInvocations.GET_ARGUMENTS);
+         code.append("(){ ");
          code.append("   if(");
          code.append(ARGUMENTS);
          code.append("  == null)");
