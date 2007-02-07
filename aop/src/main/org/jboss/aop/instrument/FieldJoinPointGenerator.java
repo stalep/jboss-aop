@@ -74,7 +74,8 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
 
    public FieldJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
-      super(advisor, info, getParameters((FieldInfo) info));
+      super(advisor, info, getParameters((FieldInfo) info),
+            ((FieldInfo) info).isRead()? 0: 1);
    }
 
    private static JoinPointParameters getParameters(FieldInfo info)

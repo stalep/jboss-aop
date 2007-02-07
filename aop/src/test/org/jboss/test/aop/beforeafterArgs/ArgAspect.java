@@ -144,7 +144,6 @@ public class ArgAspect
       Object[] arguments = invocation.getArguments();
       arguments[0] = Integer.valueOf(((Integer) arguments[0]).intValue() - 8);
       arguments[4] = Integer.valueOf(((Integer) arguments[4]).intValue() + 51);
-      invocation.setArguments(arguments);
       return invocation.invokeNext();
    }
    

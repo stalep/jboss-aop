@@ -28,6 +28,8 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -186,7 +188,8 @@ public abstract class JoinPointGenerator
                {"((Short) " + ARGUMENTS + "[", "]).shortValue()"}
          };
       }
-      private final void castArgument(StringBuffer code, CtClass expectedType, int i)
+      
+      public final void castArgument(StringBuffer code, CtClass expectedType, int i)
       {
 
          if (expectedType.isPrimitive())
@@ -258,7 +261,9 @@ public abstract class JoinPointGenerator
    protected static final String ARGUMENTS= "arguments";
    private static final String GET_ARGUMENTS= " getArguments()";
    protected static final CtClass[] EMPTY_CTCLASS_ARRAY = new CtClass[0];
-
+   private final ArrayList<Integer> joinPointArguments;
+   
+   
    private JoinPointInfo oldInfo;
    protected JoinPointInfo info;
    private JoinPointParameters parameters;
@@ -271,9 +276,10 @@ public abstract class JoinPointGenerator
    private Field joinpointField;
    private Field generatorField;
    private boolean initialised;
+   private ThreadLocal<Set<Integer>> inconsistentTypeArgs;
    
    protected JoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info,
-         JoinPointParameters parameters)
+         JoinPointParameters parameters, int argumentsSize)
    {
       this.info = info;
       this.parameters = parameters;
@@ -290,9 +296,25 @@ public abstract class JoinPointGenerator
             break;
          }
       }
-
+      // helper collection
+      joinPointArguments = new ArrayList<Integer>(argumentsSize);
+      // iterate once so we don't need to iterate always (use this array instead)
+      for (int i = 0; i < argumentsSize; i++)
+      {
+         joinPointArguments.add(i);
+      }
+      // joinpoint generation helper field, will contain list of typed args that are
+      // inconsistent with arguments array
+      // is ThreadLocal so we can support more than one Thread
+      // generating the a joinpoint class
+      inconsistentTypeArgs = new ThreadLocal<Set<Integer>>()
+      {
+         protected synchronized Set<Integer> initialValue() {
+            return new HashSet<Integer>();
+         }
+      };
+      
       initialiseJoinPointNames();
-   
       findAdvisedField(advisorClass, info);
    }
    
@@ -736,16 +758,16 @@ public abstract class JoinPointGenerator
       }
       code.append("   try");
       code.append("   {");
-      boolean argsFoundBefore = addInvokeCode(DefaultAdviceCallStrategy.getInstance(),
-            setups.getBeforeSetups(), code);
+      boolean argsFoundBefore = DefaultAdviceCallStrategy.getInstance().
+         addInvokeCode(this, setups.getBeforeSetups(), code);
       // process after code
       StringBuffer afterCode = new StringBuffer();
-      boolean argsFoundAfter = addInvokeCode(AfterAdviceCallStrategy.getInstance(),
-            setups.getAfterSetups(), afterCode);
+      boolean argsFoundAfter = AfterAdviceCallStrategy.getInstance().addInvokeCode(
+            this, setups.getAfterSetups(), afterCode);
       afterCode.append("   }");
       afterCode.append("   catch(java.lang.Throwable " + THROWABLE + ")");
       afterCode.append("   {");
-      argsFoundAfter = addInvokeCode(DefaultAdviceCallStrategy.getInstance(),
+      argsFoundAfter = DefaultAdviceCallStrategy.getInstance().addInvokeCode(this,
             setups.getThrowingSetups(), afterCode) || argsFoundAfter;
       // add around according to whether @Args were found before and/or later
       addAroundInvokeCode(code, setups, joinpointClass, argsFoundBefore,
@@ -769,23 +791,6 @@ public abstract class JoinPointGenerator
       return code.toString();
    }
 
-   private boolean addInvokeCode(AdviceCallStrategy callStrategy, AdviceSetup[] setups, StringBuffer code) throws NotFoundException
-   {
-      if (setups == null || setups.length == 0)
-      {
-         return false;
-      }
-      boolean argsFound = false;
-      String key = callStrategy.generateKey(this);
-      for (int i = 0 ; i < setups.length ; i++)
-      {
-         argsFound = callStrategy.appendAdviceCall(setups[i], key, code, this)
-            || argsFound;
-      }
-      return argsFound;
-   }
-   
-   
    private void addAroundInvokeCode(StringBuffer code, AdviceSetupsByType setups,
          CtClass joinpointClass, boolean argsFoundBefore, boolean argsFoundAfter,
          CtClass[] parameterTypes) throws NotFoundException
@@ -923,7 +928,7 @@ public abstract class JoinPointGenerator
       body.append("{");
       body.append("   try{");
       body.append("      switch(++" + CURRENT_ADVICE + "){");
-      addInvokeCode(AroundAdviceCallStrategy.getInstance(), aroundSetups, body);
+      AroundAdviceCallStrategy.getInstance().addInvokeCode(this, aroundSetups, body);
       body.append("      default:");
       body.append("         " + returnStr + "this.dispatch();");
       body.append("      }");
@@ -1664,11 +1669,33 @@ public abstract class JoinPointGenerator
 
    private static abstract class AdviceCallStrategy
    {
-      public abstract String generateKey(JoinPointGenerator generator);
-      public abstract boolean appendAdviceCall(AdviceSetup setup, String key,
-           StringBuffer code, JoinPointGenerator generator) throws NotFoundException;
+      public boolean addInvokeCode(JoinPointGenerator generator,
+            AdviceSetup[] setups, StringBuffer code) throws NotFoundException
+      {
+         StringBuffer call = new StringBuffer();
+         if (setups == null || setups.length == 0)
+         {
+            return false;
+         }
+         boolean argsFound = false;
+         String key = generateKey(generator);
+         for (int i = 0 ; i < setups.length ; i++)
+         {
+            call.setLength(0);
+            argsFound = appendAdviceCall(setups[i], key, code, call, generator)
+               || argsFound;
+            code.append(call);
+            call.setLength(0);
+         }
+         return argsFound;
+      }
       
-      private final boolean appendAdviceCall(AdviceSetup setup, StringBuffer code,
+      protected abstract String generateKey(JoinPointGenerator generator);
+      protected abstract boolean appendAdviceCall(AdviceSetup setup, String key,
+           StringBuffer beforeCall, StringBuffer call, JoinPointGenerator generator) throws NotFoundException;
+      
+      private final boolean appendAdviceCall(AdviceSetup setup,
+            StringBuffer beforeCall, StringBuffer call,
             boolean isAround, JoinPointGenerator generator) 
       {
          AdviceMethodProperties properties = setup.getAdviceMethodProperties();
@@ -1676,10 +1703,10 @@ public abstract class JoinPointGenerator
          {
             return false;
          }
-         code.append(setup.getAspectFieldName());
-         code.append(".");
-         code.append(setup.getAdviceName());
-         code.append("(");
+         call.append(setup.getAspectFieldName());
+         call.append(".");
+         call.append(setup.getAdviceName());
+         call.append("(");
          
          
          final int[] args = properties.getArgs();
@@ -1687,73 +1714,86 @@ public abstract class JoinPointGenerator
          if (args.length > 0)
          {
             final Class[] adviceParams = properties.getAdviceMethod().getParameterTypes();
-            code.append("(");
-            code.append(ClassExpression.simpleType(adviceParams[0]));
-            code.append(")");
-            argsFound = appendParameter(code, args[0], adviceParams[0], properties,
+            call.append("(");
+            call.append(ClassExpression.simpleType(adviceParams[0]));
+            call.append(")");
+            argsFound = appendParameter(beforeCall, call, args[0], adviceParams[0], properties,
                   generator);
             for (int i = 1 ; i < args.length ; i++)
             {
-               code.append(", (");
-               code.append(ClassExpression.simpleType(adviceParams[i]));
-               code.append(")");
-               argsFound = appendParameter(code, args[i], adviceParams[i],
+               call.append(", (");
+               call.append(ClassExpression.simpleType(adviceParams[i]));
+               call.append(")");
+               argsFound = appendParameter(beforeCall, call, args[i], adviceParams[i],
                      properties, generator) || argsFound;
             }
          }
          
-         code.append(");");
+         call.append(");");
          return argsFound;
       }
       
-      protected boolean appendParameter(StringBuffer code, final int arg,
-            final Class adviceParam, AdviceMethodProperties properties,
+      protected boolean appendParameter(StringBuffer beforeCall, StringBuffer call,
+            final int arg, final Class adviceParam, AdviceMethodProperties properties,
             JoinPointGenerator generator)
       {
          switch(arg)
          {
          case AdviceMethodProperties.INVOCATION_ARG:
-            code.append("this");
+            call.append("this");
             break;
          case AdviceMethodProperties.JOINPOINT_ARG:
-            code.append(INFO_FIELD);
+            call.append(INFO_FIELD);
             break;
          case AdviceMethodProperties.RETURN_ARG:
-            code.append(RETURN_VALUE);
+            call.append(RETURN_VALUE);
             break;
          case AdviceMethodProperties.THROWABLE_ARG:
-            code.append(THROWABLE);
+            call.append(THROWABLE);
             break;
          case AdviceMethodProperties.TARGET_ARG:
             if (!generator.parameters.hasTarget())
             {
-               code.append("null");
+               call.append("null");
             }
             else
             {
-               code.append('$');
-               code.append(generator.parameters.getTargetIndex());
+               call.append('$');
+               call.append(generator.parameters.getTargetIndex());
             }
             break;
          case AdviceMethodProperties.CALLER_ARG:
             if (!generator.parameters.hasCaller())
             {
-               code.append("null");
+               call.append("null");
             }
             else
             {
-               code.append('$');
-               code.append(generator.parameters.getCallerIndex());
+               call.append('$');
+               call.append(generator.parameters.getCallerIndex());
             }
             break;
          case AdviceMethodProperties.ARGS_ARG:
-            code.append(ARGUMENTS);
+            call.append(ARGUMENTS);
+            // all typed args may become inconsistent with arguments array after
+            // advice call
+            generator.inconsistentTypeArgs.get().addAll(generator.joinPointArguments);
             // return true when args has been found; false otherwise
             return true;
          default:
+            // make typed argument consistent, if that is the case
+            Set<Integer> inconsistentTypeArgs = generator.inconsistentTypeArgs.get();
+            int argIndex = arg + generator.parameters.getFirstArgIndex();
+            if (inconsistentTypeArgs.contains(arg))
+            {
+               beforeCall.append("$").append(argIndex).append(" = ");
+               beforeCall.append(ReflectToJavassist.castInvocationValueToTypeString(properties.getJoinpointParameters()[arg], ARGUMENTS + '[' + arg + ']'));
+               beforeCall.append(';');
+               inconsistentTypeArgs.remove(arg);
+            }
             //The parameter array is 1-based, and the invokeJoinPoint method may also take the target and caller objects
-            code.append("$");
-            code.append(arg + generator.parameters.getFirstArgIndex());
+            call.append("$");
+            call.append(arg + generator.parameters.getFirstArgIndex());
          }
          return false;
       }
@@ -1856,6 +1896,7 @@ public abstract class JoinPointGenerator
       private AroundAdviceCallStrategy() {}
       
       private int addedAdvice = 0;
+      private boolean consistencyEnforced = false;
       
       public String generateKey(JoinPointGenerator generator)
       {
@@ -1868,7 +1909,7 @@ public abstract class JoinPointGenerator
       }
       
       public boolean appendAdviceCall(AdviceSetup setup, String key,
-            StringBuffer code, JoinPointGenerator generator)
+            StringBuffer beforeCall, StringBuffer call, JoinPointGenerator generator)
       {
          if (!setup.shouldInvokeAspect())
          {
@@ -1886,37 +1927,40 @@ public abstract class JoinPointGenerator
             return false;
          }
          
-         code.append("      case ");
-         code.append(++addedAdvice);
-         code.append(":");
+         beforeCall.append("      case ");
+         beforeCall.append(++addedAdvice);
+         beforeCall.append(":");
          
          if (setup.getCFlowString() != null)
          {
-            code.append("         if (matchesCflow" + setup.useCFlowFrom() + ")");
-            code.append("         {");
-            result = appendAroundCallString(code, key, setup, properties, generator);
-            code.append("         }");
-            code.append("         else");
-            code.append("         {");
-            code.append("            ");
-            code.append(key);
-            code.append(" invokeNext();");
-            code.append("         }");
+            beforeCall.append("         if (matchesCflow" + setup.useCFlowFrom() + ")");
+            beforeCall.append("         {");
+            result = appendAroundCallString(beforeCall, call, key, setup, properties, generator);
+            call.append("         }");
+            call.append("         else");
+            call.append("         {");
+            call.append("            ");
+            call.append(key);
+            call.append(" invokeNext();");
+            call.append("         }");
          }
          else
          {
-            result = appendAroundCallString(code, key, setup, properties, generator);
+            result = appendAroundCallString(beforeCall, call, key, setup, properties, generator);
          }
          
-         code.append("      break;");
+         call.append("      break;");
          return result;
       }
       
       
-      public boolean appendAroundCallString(StringBuffer invokeNextBody,
-            String returnStr, AdviceSetup setup, AdviceMethodProperties properties,
+      public boolean appendAroundCallString(StringBuffer beforeCall,
+            StringBuffer call, String returnStr, AdviceSetup setup,
+            AdviceMethodProperties properties,
             JoinPointGenerator generator)
       {
+         // method that avoids more than one repeated call to ASSURE_ARGS_CONSISTENCY
+         this.consistencyEnforced = false;
          int[] args = properties.getArgs();
          
          final boolean firstParamIsInvocation =
@@ -1924,56 +1968,62 @@ public abstract class JoinPointGenerator
 
          if (!firstParamIsInvocation)
          {
-            invokeNextBody.append("try{");
-            invokeNextBody.append("   org.jboss.aop.joinpoint.CurrentInvocation.push(this); ");
+            call.append("try{");
+            call.append("   org.jboss.aop.joinpoint.CurrentInvocation.push(this); ");
          }
-         invokeNextBody.append("   ");
-         invokeNextBody.append(returnStr);
-         invokeNextBody.append(" ");
-         boolean result = super.appendAdviceCall(setup, invokeNextBody, true,
+         call.append("   ");
+         call.append(returnStr);
+         call.append(" ");
+         boolean result = super.appendAdviceCall(setup, beforeCall, call, true,
                generator);
          
          if (!firstParamIsInvocation)
          {
-            invokeNextBody.append("}finally{");
-            invokeNextBody.append("   org.jboss.aop.joinpoint.CurrentInvocation.pop(); ");
-            invokeNextBody.append("}");
+            call.append("}finally{");
+            call.append("   org.jboss.aop.joinpoint.CurrentInvocation.pop(); ");
+            call.append("}");
          }
          return result;
       }
       
-      protected boolean appendParameter(StringBuffer code, final int arg,
-            final Class adviceParam, AdviceMethodProperties properties,
-            JoinPointGenerator generator)
+      protected boolean appendParameter(StringBuffer beforeCall, StringBuffer call,
+            final int arg, final Class adviceParam,
+            AdviceMethodProperties properties, JoinPointGenerator generator)
       {
          switch(arg)
          {
          case AdviceMethodProperties.TARGET_ARG:
             if (generator.parameters.hasTarget())
             {
-               code.append(TARGET_FIELD);
+               call.append(TARGET_FIELD);
                return false;
             }
             break;
          case AdviceMethodProperties.CALLER_ARG:
             if (generator.parameters.hasCaller())
             {
-               code.append(CALLER_FIELD);
+               call.append(CALLER_FIELD);
                return false;
             }
             break;
          case AdviceMethodProperties.ARGS_ARG:
-            code.append(GET_ARGUMENTS);
+            call.append(GET_ARGUMENTS);
             // return true when args has been found; false otherwise
             return true;
          }
          if (arg >= 0)
          {
-            code.append("this.arg");
-            code.append(arg);
+            if (!consistencyEnforced)
+            {
+               beforeCall.append(OptimizedBehaviourInvocations.ENFORCE_ARGS_CONSISTENCY);
+               beforeCall.append("();");
+               consistencyEnforced = true;
+            }
+            call.append("this.arg");
+            call.append(arg);
             return false;
          }
-         return super.appendParameter(code, arg, adviceParam, properties, generator);
+         return super.appendParameter(beforeCall, call, arg, adviceParam, properties, generator);
       } 
    }
    
@@ -1994,9 +2044,9 @@ public abstract class JoinPointGenerator
       }
       
       public boolean appendAdviceCall(AdviceSetup setup, String key,
-            StringBuffer code, JoinPointGenerator generator)
+            StringBuffer beforeCall, StringBuffer call, JoinPointGenerator generator)
       {
-         return super.appendAdviceCall(setup, code, false, generator);
+         return super.appendAdviceCall(setup, beforeCall, call, false, generator);
       }
    }
    
@@ -2022,14 +2072,14 @@ public abstract class JoinPointGenerator
       }
 
       public boolean appendAdviceCall(AdviceSetup setup, String key,
-            StringBuffer code, JoinPointGenerator generator) throws NotFoundException
+            StringBuffer beforeCall, StringBuffer call, JoinPointGenerator generator) throws NotFoundException
       {
          AdviceMethodProperties properties = setup.getAdviceMethodProperties();
          if (properties != null && !properties.isAdviceVoid())
          {
-            code.append(key);
+            call.append(key);
          }
-         return super.appendAdviceCall(setup, code, false, generator);
+         return super.appendAdviceCall(setup, beforeCall, call, false, generator);
       }
    }
 }

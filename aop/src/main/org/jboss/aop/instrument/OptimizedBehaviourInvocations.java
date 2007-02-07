@@ -41,6 +41,13 @@ import org.jboss.aop.util.JavassistToReflect;
  */
 public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
 {
+   /**
+    * Name of method that enforces consistency between the values contained in typed
+    * argument fields and those contained in arguments array.
+    * This method is added to all optimized invocations that contain arguments field.
+    */
+   public static final String ENFORCE_ARGS_CONSISTENCY = "enforceArgsConsistency";
+
    protected static final String INVOKE_TARGET = "invokeTarget";
    
    /**
@@ -74,6 +81,7 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
       addArgumentFieldsToInvocation(invocation, params);
       addGetArguments(pool, invocation, params, hasMarshalledArguments);
       addSetArguments(pool, invocation, params);
+      addEnforceArgsConsistency(invocation, params);
    }
    
    /**
@@ -107,26 +115,14 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
    {
       StringBuffer sb = new StringBuffer("{");
       sb.append(beforeDispatch);
+      sb.append(ENFORCE_ARGS_CONSISTENCY).append("();");
+      sb.append(dispatchLine);
       if (params.length == 0)
       {
-         sb.append(dispatchLine);
          sb.append("();");
       }
       else
       {
-         sb.append("  if (inconsistentArgs){");
-         sb.append(dispatchLine);
-         sb.append('(');
-         sb.append(JavassistToReflect.castInvocationValueToTypeString(params[0],
-               "arguments[0]"));
-         for (int i = 1; i < params.length; i++)
-         {
-            sb.append(", ");
-            sb.append(JavassistToReflect.castInvocationValueToTypeString(params[i],
-                  "arguments[" + i + "]"));
-         }
-         sb.append(");}   else {");
-         sb.append(dispatchLine);
          sb.append("(arg0");
          for (int i = 1; i < params.length; i++)
          {
@@ -134,7 +130,7 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
             sb.append("arg");
             sb.append(i);
          }
-         sb.append(");} ");
+         sb.append(");");
       }
       sb.append(afterDispatch);
       sb.append("}");
@@ -279,6 +275,56 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
       } catch (NotFoundException e) {
         //Field invocations don't have a getArguments() method, that's fine
       } 
+   }
+   
+   /**
+    * Creates a method called <code>enforceArgsConsistency</code>, and adds this
+    * method to <code>invocation</code>
+    * <p>
+    * This method is responsible for updating typed argument fields with the current
+    * values of <code>arguments</code>, if they are different.
+    * 
+    * @param invocation optimized invocation class
+    * @param params     joinpoint parameter types
+    * 
+    * @throws CannotCompileException
+    */
+   private static void addEnforceArgsConsistency(CtClass invocation, CtClass[] params)
+      throws CannotCompileException
+   {
+      StringBuffer code = new StringBuffer();
+      code.append("{ ");
+      if (params.length != 0)
+      {
+         code.append("if(inconsistentArgs) {");
+         code.append("arg0 = ");
+         code.append(JavassistToReflect.castInvocationValueToTypeString(params[0],
+               "arguments[0]"));
+         for (int i = 1; i < params.length; i++)
+         {
+            code.append("; arg").append(i).append('=');
+            code.append(JavassistToReflect.castInvocationValueToTypeString(params[i],
+                  "arguments[" + i + "]"));
+         }
+         code.append("; }");
+      }
+      code.append('}');
+      
+      CtMethod assureArgsConsistency = null;
+      try
+      {
+         assureArgsConsistency = CtNewMethod.make(
+               CtClass.voidType, ENFORCE_ARGS_CONSISTENCY,
+               new CtClass[0],
+               new CtClass[0], code.toString(),
+               invocation);
+      }
+      catch(CannotCompileException e)
+      {
+         System.out.println(code.toString());
+         throw e;
+      }
+      invocation.addMethod(assureArgsConsistency); 
    }
 
    /** Adds fields arg0, arg1 etc. to the invocation class for storing the parameters for a method

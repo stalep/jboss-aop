@@ -68,7 +68,8 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
 
    public ConByMethodJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
-      super(advisor, info, getParameters((ConByMethodInfo) info));
+      super(advisor, info, getParameters((ConByMethodInfo) info),
+            ((ConByMethodInfo) info).getConstructor().getParameterTypes().length);
    }
    
    private static JoinPointParameters getParameters(ConByMethodInfo info)
