@@ -1687,13 +1687,18 @@ public abstract class JoinPointGenerator
          if (args.length > 0)
          {
             final Class[] adviceParams = properties.getAdviceMethod().getParameterTypes();
-            argsFound = appendParameters(code, args[0], adviceParams[0],
-                  isAround, properties, generator);
+            code.append("(");
+            code.append(ClassExpression.simpleType(adviceParams[0]));
+            code.append(")");
+            argsFound = appendParameter(code, args[0], adviceParams[0], properties,
+                  generator);
             for (int i = 1 ; i < args.length ; i++)
             {
-               code.append(", ");
-               argsFound = appendParameters(code, args[i], adviceParams[i],
-                     isAround, properties, generator) || argsFound;
+               code.append(", (");
+               code.append(ClassExpression.simpleType(adviceParams[i]));
+               code.append(")");
+               argsFound = appendParameter(code, args[i], adviceParams[i],
+                     properties, generator) || argsFound;
             }
          }
          
@@ -1701,14 +1706,10 @@ public abstract class JoinPointGenerator
          return argsFound;
       }
       
-      private final boolean appendParameters(StringBuffer code, final int arg,
-            final Class adviceParam, boolean isAround,
-            AdviceMethodProperties properties, JoinPointGenerator generator)
+      protected boolean appendParameter(StringBuffer code, final int arg,
+            final Class adviceParam, AdviceMethodProperties properties,
+            JoinPointGenerator generator)
       {
-         code.append("(");
-         // In case of overloaded methods javassist sometimes seems to pick up the wrong method - use explicit casts to get hold of the parameters
-         code.append(ClassExpression.simpleType(adviceParam));
-         code.append(")");
          switch(arg)
          {
          case AdviceMethodProperties.INVOCATION_ARG:
@@ -1728,10 +1729,6 @@ public abstract class JoinPointGenerator
             {
                code.append("null");
             }
-            else if (isAround)
-            {
-               code.append(TARGET_FIELD);
-            }
             else
             {
                code.append('$');
@@ -1743,10 +1740,6 @@ public abstract class JoinPointGenerator
             {
                code.append("null");
             }
-            else if (isAround)
-            {
-               code.append(CALLER_FIELD);
-            }
             else
             {
                code.append('$');
@@ -1754,31 +1747,95 @@ public abstract class JoinPointGenerator
             }
             break;
          case AdviceMethodProperties.ARGS_ARG:
-            if (isAround)
-            {
-               code.append(GET_ARGUMENTS);
-            }
-            else
-            {
-               code.append(ARGUMENTS);
-            }
+            code.append(ARGUMENTS);
             // return true when args has been found; false otherwise
             return true;
          default:
-            if (isAround)
-            {
-               code.append("this.arg");
-               code.append(arg);
-            }
-            else 
-            {
-               //The parameter array is 1-based, and the invokeJoinPoint method may also take the target and caller objects
-               code.append("$");
-               code.append(arg + generator.parameters.getFirstArgIndex());
-            }
+            //The parameter array is 1-based, and the invokeJoinPoint method may also take the target and caller objects
+            code.append("$");
+            code.append(arg + generator.parameters.getFirstArgIndex());
          }
          return false;
       }
+      
+//      private final boolean appendParameters(StringBuffer code, final int arg,
+//            final Class adviceParam, boolean isAround,
+//            AdviceMethodProperties properties, JoinPointGenerator generator)
+//      {
+//         code.append("(");
+//         // In case of overloaded methods javassist sometimes seems to pick up the wrong method - use explicit casts to get hold of the parameters
+//         code.append(ClassExpression.simpleType(adviceParam));
+//         code.append(")");
+//         switch(arg)
+//         {
+//         case AdviceMethodProperties.INVOCATION_ARG:
+//            code.append("this");
+//            break;
+//         case AdviceMethodProperties.JOINPOINT_ARG:
+//            code.append(INFO_FIELD);
+//            break;
+//         case AdviceMethodProperties.RETURN_ARG:
+//            code.append(RETURN_VALUE);
+//            break;
+//         case AdviceMethodProperties.THROWABLE_ARG:
+//            code.append(THROWABLE);
+//            break;
+//         case AdviceMethodProperties.TARGET_ARG:
+//            if (!generator.parameters.hasTarget())
+//            {
+//               code.append("null");
+//            }
+//            else if (isAround)
+//            {
+//               code.append(TARGET_FIELD);
+//            }
+//            else
+//            {
+//               code.append('$');
+//               code.append(generator.parameters.getTargetIndex());
+//            }
+//            break;
+//         case AdviceMethodProperties.CALLER_ARG:
+//            if (!generator.parameters.hasCaller())
+//            {
+//               code.append("null");
+//            }
+//            else if (isAround)
+//            {
+//               code.append(CALLER_FIELD);
+//            }
+//            else
+//            {
+//               code.append('$');
+//               code.append(generator.parameters.getCallerIndex());
+//            }
+//            break;
+//         case AdviceMethodProperties.ARGS_ARG:
+//            if (isAround)
+//            {
+//               code.append(GET_ARGUMENTS);
+//            }
+//            else
+//            {
+//               code.append(ARGUMENTS);
+//            }
+//            // return true when args has been found; false otherwise
+//            return true;
+//         default:
+//            if (isAround)
+//            {
+//               code.append("this.arg");
+//               code.append(arg);
+//            }
+//            else 
+//            {
+//               //The parameter array is 1-based, and the invokeJoinPoint method may also take the target and caller objects
+//               code.append("$");
+//               code.append(arg + generator.parameters.getFirstArgIndex());
+//            }
+//         }
+//         return false;
+//      }
    }
    
    private static class AroundAdviceCallStrategy extends AdviceCallStrategy
@@ -1884,6 +1941,40 @@ public abstract class JoinPointGenerator
          }
          return result;
       }
+      
+      protected boolean appendParameter(StringBuffer code, final int arg,
+            final Class adviceParam, AdviceMethodProperties properties,
+            JoinPointGenerator generator)
+      {
+         switch(arg)
+         {
+         case AdviceMethodProperties.TARGET_ARG:
+            if (generator.parameters.hasTarget())
+            {
+               code.append(TARGET_FIELD);
+               return false;
+            }
+            break;
+         case AdviceMethodProperties.CALLER_ARG:
+            if (generator.parameters.hasCaller())
+            {
+               code.append(CALLER_FIELD);
+               return false;
+            }
+            break;
+         case AdviceMethodProperties.ARGS_ARG:
+            code.append(GET_ARGUMENTS);
+            // return true when args has been found; false otherwise
+            return true;
+         }
+         if (arg >= 0)
+         {
+            code.append("this.arg");
+            code.append(arg);
+            return false;
+         }
+         return super.appendParameter(code, arg, adviceParam, properties, generator);
+      } 
    }
    
    private static class DefaultAdviceCallStrategy extends AdviceCallStrategy
