@@ -47,7 +47,7 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
     * This method is added to all optimized invocations that contain arguments field.
     */
    public static final String ENFORCE_ARGS_CONSISTENCY = "enforceArgsConsistency";
-
+   
    protected static final String INVOKE_TARGET = "invokeTarget";
    
    /**
@@ -324,6 +324,7 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
          System.out.println(code.toString());
          throw e;
       }
+      assureArgsConsistency.setModifiers(javassist.Modifier.FINAL);
       invocation.addMethod(assureArgsConsistency); 
    }
 
