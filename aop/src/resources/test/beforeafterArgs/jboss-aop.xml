@@ -21,7 +21,7 @@
       <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
       <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
       <after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
-<!--      <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/> -->
+      <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
 
    <!-- @Args test -->

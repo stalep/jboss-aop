@@ -178,9 +178,8 @@ public class ArgAspect
       after4Y = y;
    }
    
-   // TODO
-   /*public void after5(@Arg(index = 4) int x, @Arg(index = -3) int y)
+   public void after5(@Arg(index = 4) int x, @Arg(index = -3) int y)
    {
       Assert.fail("This advice should never be executed");
-   }*/
+   }
 }
