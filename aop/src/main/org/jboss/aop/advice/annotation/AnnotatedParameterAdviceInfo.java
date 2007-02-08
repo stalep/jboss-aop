@@ -519,7 +519,16 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             // parameter index is set on @Arg annotation
             if (indexes[i][1] != -1)
             {
-               // wrong index set
+               // negative index
+               if (indexes[i][1] < 0)
+               {
+                  if (AspectManager.verbose)
+                  {
+                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - Negative joinpoint parameter indexes are not allowed.");
+                  }
+                  return false;
+               }
+               // wrong index
                if (indexes[i][1] >= expectedTypes.length)
                {
                   if (AspectManager.verbose)
