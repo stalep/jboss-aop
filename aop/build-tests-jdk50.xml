@@ -104,7 +104,8 @@
        -->
       <property file="local.properties"/>
 		
-      <available file="${jrockit.home}/jre/lib/managementapi.jar" property="JROCKIT_AVAILABLE"/>
+   <available file="${jrockit.home}/jre/lib/managementapi.jar" property="JROCKIT_API_AVAILABLE" value="managementapi.jar"/>
+   <available file="${jrockit.home}/jre/lib/management-agent.jar" property="JROCKIT_API_AVAILABLE" value="rt.jar"/>
 	   <condition property="jboss.aop.debug.classes" value="true">
 	      <isset property="debug"/>
 	   </condition>
@@ -164,7 +165,7 @@
 
       <path id="javac.jrockit.classpath">
          <path refid="javac.classpath"/>
-         <path path="${jrockit.home}/jre/lib/managementapi.jar"/>
+         <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
       </path>
 
       <path id="test.classpath">
@@ -174,7 +175,7 @@
 
       <path id="test.jrockit.classpath">
          <path refid="test.classpath"/>
-         <path path="${jrockit.home}/jre/lib/managementapi.jar"/>
+         <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
       </path>
 
       <!-- The classpath required to build javadocs. -->
@@ -1174,7 +1175,7 @@
    <!-- ==================================================================================== -->
    <!-- JROCKIT TESTS (JDK 5.0)                                                        -->
    <!-- ==================================================================================== -->
-   <target name="jrockit-tests" depends="compile-test-classes" if="JROCKIT_AVAILABLE">
+   <target name="jrockit-tests" depends="compile-test-classes" if="JROCKIT_API_AVAILABLE">
 
    	<!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-jdk50-tests" inheritRefs="true">
@@ -1194,7 +1195,7 @@
    <!-- ==================================================================================== -->
    <!-- GENERATED ADVISOR JROCKIT TESTS (JDK 5.0)                                           -->
    <!-- ==================================================================================== -->
-   <target name="jrockit-genadvisor-tests" depends="compile-test-classes" if="JROCKIT_AVAILABLE">
+   <target name="jrockit-genadvisor-tests" depends="compile-test-classes" if="JROCKIT_API_AVAILABLE">
 
 	   <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-jdk50-tests" inheritRefs="true">

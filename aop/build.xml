@@ -97,7 +97,8 @@
       <!-- Defines jrockit.home -->
       <property file="local.properties"/>
 
-      <available file="${jrockit.home}/jre/lib/managementapi.jar" property="JROCKIT_AVAILABLE"/>
+      <available file="${jrockit.home}/jre/lib/managementapi.jar" property="JROCKIT_API_AVAILABLE" value="managementapi.jar"/>
+      <available file="${jrockit.home}/jre/lib/management-agent.jar" property="JROCKIT_API_AVAILABLE" value="rt.jar"/>
 
       <!-- ======= -->
       <!-- Modules -->
@@ -158,8 +159,8 @@
       </path>
 
       <path id="javac.jrockit.classpath">
-         <path refid="javac.classpath"/>
-         <path path="${jrockit.home}/jre/lib/managementapi.jar"/>
+         <path refid="javac.classpath"/> 
+         <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
       </path>
 
       <path id="javac15.classpath">
@@ -252,7 +253,7 @@
       </javac>
    </target>
 
-   <target name="compile-jrockit-classes" depends="init" if="JROCKIT_AVAILABLE">
+   <target name="compile-jrockit-classes" depends="init" if="JROCKIT_API_AVAILABLE">
       <mkdir dir="${build.classes}"/>
       <javac destdir="${build.classes}"
          optimize="${javac.optimize}"
@@ -341,7 +342,7 @@
    </target>
 
    <target name="jars-jrockit" description="Builds all jar files."
-      depends="jars,compile-jrockit-classes" if="JROCKIT_AVAILABLE">
+      depends="jars,compile-jrockit-classes" if="JROCKIT_API_AVAILABLE">
 
       <jar jarfile="${build.lib}/jrockit-pluggable-instrumentor.jar"
          manifest="${build.etc}/default.mf">
@@ -435,7 +436,7 @@
    <!-- ================================================================== -->
 
    <target name="dist" depends="javadocs, init">
-      <fail unless="JROCKIT_AVAILABLE">
+      <fail unless="JROCKIT_API_AVAILABLE">
          To build a distribution you must have a version of JRockit available and set the jrockit.home property.
       </fail>
 

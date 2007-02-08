@@ -29,6 +29,13 @@ import com.bea.jvm.JVMFactory;
 
 public class JRockitClassPreProcessor implements ClassPreProcessor{
 
+   static
+   {
+      //pre-load necessary classes 
+      Class clazz = JDK14TransformerManager.class;
+      clazz = AspectManager.class;
+   }
+   
    public JRockitClassPreProcessor()
    {
       ClassLibrary lib = JVMFactory.getJVM().getClassLibrary();
@@ -53,7 +60,5 @@ public class JRockitClassPreProcessor implements ClassPreProcessor{
       {
          throw new RuntimeException(e);
       }
-      
    }
-
 }

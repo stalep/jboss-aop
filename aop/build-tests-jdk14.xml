@@ -105,7 +105,6 @@
        -->
       <property file="local.properties"/>
 		
-      <available file="${jrockit.home}/jre/lib/managementapi.jar" property="JROCKIT_AVAILABLE"/>
 	   <condition property="jboss.aop.debug.classes" value="true">
 	      <isset property="debug"/>
 	   </condition>
