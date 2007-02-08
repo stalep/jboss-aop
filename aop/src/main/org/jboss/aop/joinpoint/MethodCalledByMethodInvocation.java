@@ -46,8 +46,6 @@ public class MethodCalledByMethodInvocation extends CallerInvocation
    Method callingMethod;
    Method method;
    
-   protected Object[] arguments = null;
-   
    public MethodCalledByMethodInvocation(MethodByMethodInfo info, Object callingObject, Object targetObject, Object[] arguments, Interceptor[] interceptors)
    {
       this(info.getAdvisor(), info.getCallingClass(), info.getCallingMethod(), info.getMethod(), callingObject, targetObject, arguments, interceptors);
@@ -133,13 +131,13 @@ public class MethodCalledByMethodInvocation extends CallerInvocation
    }
 
    /**
-    * Get a wrapper invocation object that can insert a new chain of interceptors
+    * Returns a wrapper invocation object that can insert a new chain of interceptors
     * at runtime to the invocation flow.  CFlow makes use of this.
     * When the wrapper object finishes its invocation chain it delegates back to
     * the wrapped invocation.
     *
-    * @param newchain
-    * @return
+    * @param newchain chain of interceptors to be inserted on invocation
+    * @return an invocation wrapper
     */
    public Invocation getWrapper(Interceptor[] newchain)
    {
@@ -150,7 +148,7 @@ public class MethodCalledByMethodInvocation extends CallerInvocation
    /**
     * Copies complete state of Invocation object.
     *
-    * @return
+    * @return a copy of this instance
     */
    public Invocation copy()
    {
@@ -160,24 +158,6 @@ public class MethodCalledByMethodInvocation extends CallerInvocation
       wrapper.instanceResolver = this.instanceResolver;
       wrapper.metadata = this.metadata;
       return wrapper;
-   }
-
-   /**
-    * @return the arguments of the called method
-    */
-   public Object[] getArguments()
-   {
-      return arguments;
-   }
-
-   /**
-    * change the arguments to the called method
-    *
-    * @param arguments
-    */
-   public void setArguments(Object[] arguments)
-   {
-      this.arguments = arguments;
    }
 
    /**

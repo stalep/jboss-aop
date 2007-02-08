@@ -159,12 +159,13 @@ public class ConstructorInvocation extends InvocationBase
    }
 
    /**
-    * Get a wrapper invocation object that can insert a new chain of interceptors
+    * Returns a wrapper invocation object that can insert a new chain of interceptors
     * at runtime to the invocation flow.  CFlow makes use of this.
     * When the wrapper object finishes its invocation chain it delegates back to
     * the wrapped invocation.
-    * @param newchain
-    * @return
+    * 
+    * @param newchain chain of interceptors to be inserted on invocation
+    * @return an invocation wrapper
     */
    public Invocation getWrapper(Interceptor[] newchain)
    {
@@ -174,7 +175,8 @@ public class ConstructorInvocation extends InvocationBase
 
    /**
     * Copies complete state of Invocation object.
-    * @return
+    * 
+    * @return a copy of this instance
     */
    public Invocation copy()
    {
@@ -187,11 +189,39 @@ public class ConstructorInvocation extends InvocationBase
       return wrapper;
    }
 
+   /**
+    * Returns an array containing all constructor arguments.
+    * <p>
+    * The returned array can be changed by the advice or interceptor accordingly. All
+    * changes are reflected on joinpoint execution, and are noticed as well by
+    * other advices and interceptors that are executed after the current one.
+    * <br>
+    * However, changes to this array are limited to the scope of current advice
+    * execution, and must be performed before execution of {@link #invokeNext()},
+    * {@link #invokeNext(Interceptor[])}, or {@link #invokeTarget()} method.
+    * Otherwise, inconsistency on joinpoint argument values may be noticed.
+    *
+    * @return the constructor arguments
+    */
    public Object[] getArguments()
    {
       return arguments;
    }
 
+   /**
+    * Replaces constructor argument values by the ones contained in <code>
+    * arguments</code>.
+    * <p>
+    * Advices and interceptors must be aware that, for performance reasons,
+    * this array does not get copied across; its reference is directly used instead.
+    * Hence, changes to <code>arguments</code> array after this method being called
+    * are forbidden. Otherwise, inconsistency on joinpoint argument values may be
+    * noticed. 
+    *  
+    * @param arguments an array containing the new values of constructor arguments.
+    *                  The size of this array must be the same as the one of 
+    *                  {@link #getArguments()}, as well as the element types.
+    */
    public void setArguments(Object[] arguments)
    {
       this.arguments = arguments;

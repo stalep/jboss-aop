@@ -45,8 +45,7 @@ public class MethodCalledByConstructorInvocation extends CallerInvocation
    //info fields
    protected Constructor calling;
    protected Method method;
-   protected Object[] arguments = null;
-
+   
    public MethodCalledByConstructorInvocation(MethodByConInfo info, Object callingObject, Object target, Object[] args, Interceptor[] interceptors)
    {
       this(info.getAdvisor(), info.getCalling(), info.getMethod(), callingObject, target, args, interceptors);
@@ -129,12 +128,13 @@ public class MethodCalledByConstructorInvocation extends CallerInvocation
    }
 
    /**
-    * Get a wrapper invocation object that can insert a new chain of interceptors
+    * Returns a wrapper invocation object that can insert a new chain of interceptors
     * at runtime to the invocation flow.  CFlow makes use of this.
     * When the wrapper object finishes its invocation chain it delegates back to
     * the wrapped invocation.
-    * @param newchain
-    * @return
+    * 
+    * @param newchain chain of interceptors to be inserted on invocation
+    * @return an invocation wrapper
     */
    public Invocation getWrapper(Interceptor[] newchain)
    {
@@ -144,7 +144,8 @@ public class MethodCalledByConstructorInvocation extends CallerInvocation
 
    /**
     * Copies complete state of Invocation object.
-    * @return
+    * 
+    * @return a copy of this instance
     */
    public Invocation copy()
    {
@@ -154,26 +155,6 @@ public class MethodCalledByConstructorInvocation extends CallerInvocation
       wrapper.metadata = this.metadata;
       wrapper.instanceResolver = this.instanceResolver;
       return wrapper;
-   }
-
-   /**
-    * What are the arguments of the method call
-    * The are expressed as an Object[] array.
-    *
-    * @return the arguments of the method call
-    */
-   public Object[] getArguments()
-   {
-      return arguments;
-   }
-
-   /**
-    * Change the arguments of the method call
-    * @param arguments
-    */
-   public void setArguments(Object[] arguments)
-   {
-      this.arguments = arguments;
    }
 
    /**

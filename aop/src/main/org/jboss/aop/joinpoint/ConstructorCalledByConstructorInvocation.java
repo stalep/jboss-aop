@@ -42,8 +42,6 @@ public class ConstructorCalledByConstructorInvocation extends CallerInvocation
 {
    private static final long serialVersionUID = -1569257745454443521L;
 
-   protected Object[] arguments;
-   
    //info fields
    protected Constructor calling;
    protected Constructor constructor;
@@ -73,16 +71,6 @@ public class ConstructorCalledByConstructorInvocation extends CallerInvocation
       super(callingObject, interceptors);
    }
    
-   public Object[] getArguments()
-   {
-      return arguments;
-   }
-
-   public void setArguments(Object[] arguments)
-   {
-      this.arguments = arguments;
-   }
-
    /**
     *
     * @return the constructor that is calling the called constructor
@@ -100,14 +88,17 @@ public class ConstructorCalledByConstructorInvocation extends CallerInvocation
    /**
     * Is the called constructor aspectized?  If so then there is a wrapping
     * method that must be called.
-    * @return
+    * 
+    * @return <code>true</code> if the constructor is wrapped
     */
    public boolean isWrapped() { return wrappingMethod != null; }
 
    /**
     * Is the called constructor aspectized?  If so then this method
     * returns the method that wraps the constructor.
-    * @return
+    * 
+    * @return the method that wraps the constructor if {@link #isWrapped()} returns
+    *         <code>true</code>; <code>null</code> otherwise.
     */
    public Method getWrappingMethod() { return wrappingMethod; }
 
@@ -192,12 +183,13 @@ public class ConstructorCalledByConstructorInvocation extends CallerInvocation
    }
 
    /**
-    * Get a wrapper invocation object that can insert a new chain of interceptors
+    * Returns a wrapper invocation object that can insert a new chain of interceptors
     * at runtime to the invocation flow.  CFlow makes use of this.
     * When the wrapper object finishes its invocation chain it delegates back to
     * the wrapped invocation.
-    * @param newchain
-    * @return
+   
+    * @param newchain chain of interceptors to be inserted on invocation
+    * @return an invocation wrapper
     */
    public Invocation getWrapper(Interceptor[] newchain)
    {
@@ -207,7 +199,8 @@ public class ConstructorCalledByConstructorInvocation extends CallerInvocation
 
    /**
     * Copies complete state of Invocation object.
-    * @return
+    * 
+    * @return a copy of this instance
     */
    public Invocation copy()
    {
