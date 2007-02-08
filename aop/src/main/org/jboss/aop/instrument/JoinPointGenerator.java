@@ -736,7 +736,6 @@ public abstract class JoinPointGenerator
    private String createJoinpointInvokeBody(CtClass joinpointClass,
          AdviceSetupsByType setups, CtClass[] declaredExceptions, CtClass[] parameterTypes)throws NotFoundException
    {
-
       StringBuffer code = new StringBuffer();
       code.append("{");
       if (!isVoid())
@@ -760,7 +759,12 @@ public abstract class JoinPointGenerator
       code.append("   {");
       boolean argsFoundBefore = DefaultAdviceCallStrategy.getInstance().
          addInvokeCode(this, setups.getBeforeSetups(), code);
-      // process after code
+      
+      // add around according to whether @Args were found before
+      boolean joinPointCreated = addAroundInvokeCode(code, setups, joinpointClass,
+            argsFoundBefore, parameterTypes);
+      
+      // generate after code
       StringBuffer afterCode = new StringBuffer();
       boolean argsFoundAfter = AfterAdviceCallStrategy.getInstance().addInvokeCode(
             this, setups.getAfterSetups(), afterCode);
@@ -769,9 +773,13 @@ public abstract class JoinPointGenerator
       afterCode.append("   {");
       argsFoundAfter = DefaultAdviceCallStrategy.getInstance().addInvokeCode(this,
             setups.getThrowingSetups(), afterCode) || argsFoundAfter;
-      // add around according to whether @Args were found before and/or later
-      addAroundInvokeCode(code, setups, joinpointClass, argsFoundBefore,
-            argsFoundAfter, parameterTypes);
+      
+      if ((argsFoundAfter || argsFoundBefore) && joinPointCreated)
+      {
+         code.append(ARGUMENTS);
+         code.append(" = jp.").append(GET_ARGUMENTS).append(";");
+      }
+      
       // add after code
       code.append(afterCode.toString());
       // finish code body
@@ -791,9 +799,9 @@ public abstract class JoinPointGenerator
       return code.toString();
    }
 
-   private void addAroundInvokeCode(StringBuffer code, AdviceSetupsByType setups,
-         CtClass joinpointClass, boolean argsFoundBefore, boolean argsFoundAfter,
-         CtClass[] parameterTypes) throws NotFoundException
+   private boolean addAroundInvokeCode(StringBuffer code, AdviceSetupsByType setups,
+         CtClass joinpointClass, boolean argsFoundBefore, CtClass[] parameterTypes)
+   throws NotFoundException
    {
       if (setups.getAroundSetups() != null)
       {
@@ -817,10 +825,10 @@ public abstract class JoinPointGenerator
                cflows.append(", cflow" + asetups[i].getIndex());
             }
          }
-
+         code.append(joinpointFqn).append(" jp = null;");
          code.append("      if(" + INFO_FIELD + ".getInterceptors() != null)");
          code.append("      {");
-         code.append("         " + joinpointFqn + " jp = new " + joinpointClass.getName() + "(this");
+         code.append("         jp = new " + joinpointClass.getName() + "(this");
          if (argsFoundBefore)
          {
             parameters.appendParameterListWithoutArgs(code);
@@ -846,12 +854,6 @@ public abstract class JoinPointGenerator
          }
          code.append("jp.invokeNext();");
          
-         if (argsFoundAfter)
-         {
-            code.append(ARGUMENTS);
-            code.append(" = jp.").append(GET_ARGUMENTS).append(";");
-         }
-         
          code.append("      }");
          code.append("      else");
          code.append("      {");
@@ -859,10 +861,16 @@ public abstract class JoinPointGenerator
          addDispatchCode(code, parameterTypes, argsFoundBefore);
          
          code.append("      }");
+         
+         // 'after' code will find all args inconsistent, since we have to update
+         // arguments array according to invocation values
+         inconsistentTypeArgs.get().addAll(joinPointArguments);
+         return true;
       }
       else
       {
          addDispatchCode(code, parameterTypes, argsFoundBefore);
+         return false;
       }
    }
 
