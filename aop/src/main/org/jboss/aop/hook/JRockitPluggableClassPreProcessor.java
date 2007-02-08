@@ -27,6 +27,13 @@ import com.bea.jvm.JVMFactory;
 
 public class JRockitPluggableClassPreProcessor implements ClassPreProcessor{
 
+   static
+   {
+      //pre-load necessary classes 
+      Class clazz = JDK14TransformerManager.class;
+      clazz = JDK14Transformer.class;
+   }
+   
    public JRockitPluggableClassPreProcessor()
    {
       ClassLibrary lib = JVMFactory.getJVM().getClassLibrary();
