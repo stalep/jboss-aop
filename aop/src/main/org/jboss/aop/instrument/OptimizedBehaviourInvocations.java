@@ -27,10 +27,10 @@ import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
-import javassist.CtPrimitiveType;
 import javassist.Modifier;
 import javassist.NotFoundException;
 
+import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.aop.util.JavassistToReflect;
 
 /**
@@ -170,44 +170,13 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
    private static void addSetArguments(ClassPool pool, CtClass invocation, CtClass[] params)throws NotFoundException, CannotCompileException 
    {
       if (params.length == 0) return;
-      CtClass methodInvocation = pool.get("org.jboss.aop.joinpoint.MethodInvocation");
+      CtClass methodInvocation = pool.get(MethodInvocation.class.getName());
       CtMethod template = methodInvocation.getDeclaredMethod(SET_ARGUMENTS);
    
       StringBuffer code = new StringBuffer("{");
-      code.append("   inconsistentArgs = false;");
+      code.append("   inconsistentArgs = true;");
       code.append("   arguments = $1; ");
-      for (int i = 0; i < params.length; i++)
-      {
-         if (params[i].isPrimitive())
-         {
-            CtPrimitiveType primitive = (CtPrimitiveType) params[i];
-            code.append("   arg");
-            code.append(i);
-            code.append(" = ((");
-            code.append(primitive.getWrapperName());
-            code.append(")$1[");
-            code.append(i);
-            code.append("]).");
-            code.append(primitive.getGetMethodName());
-            code.append("(); ");
-         }
-         else
-         {
-            code.append("   Object warg");
-            code.append(i);
-            code.append(" = $1[");
-            code.append(i);
-            code.append("]; ");
-            code.append("   arg");
-            code.append(i);
-            code.append(" = (");
-            code.append(params[i].getName());
-            code.append(")warg");
-            code.append(i);
-            code.append("; ");
-         }
-      }
-      code.append("   inconsistentArgs = false;");
+      code.append("   inconsistentArgs = true;");
       code.append("}");
       CtMethod setArguments = null;
       try
@@ -230,8 +199,8 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
    private static void addGetArguments(ClassPool pool, CtClass invocation, CtClass[] params, boolean hasMarshalledArguments) throws CannotCompileException
    {
       try {
-         CtClass superInvocation = invocation.getSuperclass();
-         CtMethod template = superInvocation.getDeclaredMethod(GET_ARGUMENTS);
+         CtClass methodInvocation = pool.get(MethodInvocation.class.getName());
+         CtMethod template = methodInvocation.getDeclaredMethod(GET_ARGUMENTS);
          
          StringBuffer code = new StringBuffer();
          code.append("{ ");
