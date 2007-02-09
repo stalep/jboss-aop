@@ -69,7 +69,6 @@ import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
 import org.jboss.metadata.spi.MetaData;
 import org.jboss.metadata.spi.signature.MethodSignature;
-import org.jboss.repository.spi.MetaDataContext;
 import org.jboss.util.NestedRuntimeException;
 import org.jboss.util.NotImplementedException;
 
@@ -581,18 +580,6 @@ public abstract class Advisor
       // todo these are here so that we can chain configuration domains
       if (annotations.hasAnnotation(member, annotation)) return true;
       return AnnotationElement.isAnyAnnotationPresent(member, annotation);
-   }
-
-   @Deprecated // use getMetaData
-   public MetaDataContext getMetadataContext()
-   {
-      throw new NotImplementedException("getMetaDataContext");
-   }
-
-   @Deprecated // use setMetaData
-   public void setMetadataContext(/*MetaDataContext*/ Object metadataContext)
-   {
-      throw new NotImplementedException("setMetaDataContext");
    }
 
    /**

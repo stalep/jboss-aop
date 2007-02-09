@@ -53,12 +53,17 @@ public class AOPClassPool extends ScopedClassPool
    
    public AOPClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
    {
-      super(cl, src, repository);
+      this(cl, src, repository, false);
    }
 
    protected AOPClassPool(ClassPool src, ScopedClassPoolRepository repository)
    {
-      this(null, src, repository);
+      this(null, src, repository, true);
+   }
+
+   private AOPClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, boolean isTemp)
+   {
+      super(cl, src, repository, isTemp);
    }
 
    public void setClassLoader(ClassLoader cl)
