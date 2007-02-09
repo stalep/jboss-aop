@@ -60,7 +60,7 @@ public abstract class CallerInvocation extends InvocationBase
    }
    
    /**
-    * Returns an array containing all call arguments.
+    * Returns a non-null array containing all call arguments.
     * <p>
     * The returned array can be changed by the advice or interceptor accordingly. All
     * changes are reflected on joinpoint execution, and are noticed as well by
@@ -88,7 +88,7 @@ public abstract class CallerInvocation extends InvocationBase
     * are forbidden. Otherwise, inconsistency on joinpoint argument values may be
     * noticed. 
     *  
-    * @param arguments an array containing the new values of call arguments.
+    * @param arguments a non-null array containing the new values of call arguments.
     *                  The size of this array must be the same as the one of 
     *                  {@link #getArguments()}, as well as the element types.
     */

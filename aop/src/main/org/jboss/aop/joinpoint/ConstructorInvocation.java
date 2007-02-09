@@ -190,7 +190,7 @@ public class ConstructorInvocation extends InvocationBase
    }
 
    /**
-    * Returns an array containing all constructor arguments.
+    * Returns a non-null array containing all constructor arguments.
     * <p>
     * The returned array can be changed by the advice or interceptor accordingly. All
     * changes are reflected on joinpoint execution, and are noticed as well by
@@ -218,9 +218,9 @@ public class ConstructorInvocation extends InvocationBase
     * are forbidden. Otherwise, inconsistency on joinpoint argument values may be
     * noticed. 
     *  
-    * @param arguments an array containing the new values of constructor arguments.
-    *                  The size of this array must be the same as the one of 
-    *                  {@link #getArguments()}, as well as the element types.
+    * @param arguments a non-null array containing the new values of constructor
+    *                  arguments. The size of this array must be the same as the one
+    *                  of {@link #getArguments()}, as well as the element types.
     */
    public void setArguments(Object[] arguments)
    {
