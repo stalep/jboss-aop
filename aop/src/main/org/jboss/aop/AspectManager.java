@@ -575,7 +575,7 @@ public class AspectManager
     * @param clazz
     * @return
     */
-   public ClassAdvisor getAdvisor(Class clazz)
+   public synchronized ClassAdvisor getAdvisor(Class clazz)
    {
       ClassAdvisor advisor = null;
       // See if one already exists
@@ -589,7 +589,7 @@ public class AspectManager
       return advisor;
    }
 
-   public void initialiseClassAdvisor(Class clazz, ClassAdvisor advisor)
+   public synchronized void initialiseClassAdvisor(Class clazz, ClassAdvisor advisor)
    {
       synchronized (advisors)
       {
@@ -1260,7 +1260,7 @@ public class AspectManager
    /**
     * Remove an interceptor pointcut with a given name
     */
-   public void removeBinding(String name)
+   public synchronized void removeBinding(String name)
    {
       AdviceBinding binding = internalRemoveBinding(name);
       if (binding != null)
@@ -1270,7 +1270,7 @@ public class AspectManager
       }
    }
 
-   public void removeBindings(ArrayList binds)
+   public synchronized void removeBindings(ArrayList binds)
    {
       clearUnregisteredClassLoaders();
 
