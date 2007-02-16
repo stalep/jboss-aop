@@ -99,7 +99,7 @@ public class AspectManager
 
    // Attributes ---------------------------------------------------
    protected final WeakHashMap advisors = new WeakHashMap();
-   /** A map of domains by classloader, maintaned by the top level AspectManager */
+   /** A map of domains by loader repository, maintaned by the top level AspectManager */
    protected final WeakHashMap scopedClassLoaderDomains = new WeakHashMap();
 
    /** A map of domains by class, maintaned by the top level AspectManager */
@@ -292,7 +292,8 @@ public class AspectManager
             Domain scopedManager = null;
             synchronized (AOPClassPoolRepository.getInstance().getRegisteredCLs())
             {
-               scopedManager = (Domain)manager.scopedClassLoaderDomains.get(scopedClassLoader);
+               Object loaderRepository = scopedCLHelper.getLoaderRepository(loadingClassLoader);
+               scopedManager = (Domain)manager.scopedClassLoaderDomains.get(loaderRepository);
                if (scopedManager == null)
                {
                   scopedManager = scopedCLHelper.getScopedClassLoaderDomain(scopedClassLoader, manager);
@@ -303,7 +304,7 @@ public class AspectManager
                   }
                   scopedManager.setInheritsBindings(true);
                   scopedManager.setInheritsDeclarations(true);
-                  manager.scopedClassLoaderDomains.put(scopedClassLoader, scopedManager);
+                  manager.scopedClassLoaderDomains.put(loaderRepository, scopedManager);
                }
             }
             return scopedManager;
@@ -680,7 +681,7 @@ public class AspectManager
    {
       AOPClassPoolRepository.getInstance().unregisterClassLoader(cl);
       //top-level only
-      getScopedClassLoaderDomains().remove(cl);
+//      getScopedClassLoaderDomains().remove(cl);
    }
 
    public ArrayList getExclude()
@@ -1732,12 +1733,18 @@ public class AspectManager
 
    public void removeAspectDefinition(String name)
    {
+      internalRemoveAspectDefintion(name);
+   }
+   
+   protected AspectDefinition internalRemoveAspectDefintion(String name)
+   {
       AspectDefinition def = (AspectDefinition) aspectDefinitions.remove(name);
       if (def != null)
       {
          def.undeploy();
          if (def.getScope() == Scope.PER_VM) perVMAspects.remove(def.getName());
       }
+      return def;
    }
 
    public Map getAspectDefinitions()

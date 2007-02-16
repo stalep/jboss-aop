@@ -21,6 +21,13 @@
   */
 package org.jboss.aop.advice;
 
+import java.util.Iterator;
+import java.util.Map;
+
+import org.jboss.aop.Advisor;
+
+import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
+
 /**
  * Contains definition of aspect or interceptor
  * Scope defaults to PER_VM if it is null.
@@ -34,6 +41,7 @@ public class AspectDefinition
    protected Scope scope = Scope.PER_VM;
    protected AspectFactory factory;
    protected boolean deployed = true;
+   public Map advisors = new ConcurrentReaderHashMap();
 
    /**
     * @param name
@@ -52,11 +60,32 @@ public class AspectDefinition
 
    public AspectDefinition() {}
 
-   public void undeploy()
+   public synchronized void undeploy()
    {
+      if (advisors.size() > 0)
+      {
+         for (Iterator it = advisors.keySet().iterator() ; it.hasNext() ; )
+         {
+            Advisor advisor = (Advisor)it.next();
+            if (advisors.remove(advisor) !=  null)
+            {
+               if (scope == Scope.PER_INSTANCE)
+               {
+                  advisor.removePerInstanceAspect(this);
+               }
+               else if (scope == Scope.PER_JOINPOINT)
+               {
+                  advisor.removePerInstanceJoinpointAspect(this);
+               }
+               else if (scope == Scope.PER_CLASS)
+               {
+                  advisor.removePerClassAspect(this);
+               }
+            }
+         }
+      }
       this.deployed = false;
    }
-
    public boolean isDeployed()
    {
       return deployed;
@@ -102,5 +131,10 @@ public class AspectDefinition
       if (obj == this) return true;
       if (!(obj instanceof AspectDefinition)) return false;
       return name.equals(((AspectDefinition) obj).name);
+   }
+   
+   public synchronized void registerAdvisor(Advisor advisor)
+   {
+      advisors.put(advisor, Boolean.TRUE);
    }
 }

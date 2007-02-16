@@ -1075,6 +1075,10 @@ public class AspectXmlLoader implements XmlLoader
             {
                deployDeclare(element, tag);
             }
+            else if (tag.equals("loader-repository"))
+            {
+               //Handled by AspctDeployer in JBoss
+            }
             else
             {
                throw new IllegalArgumentException("Unknown AOP tag: " + tag);

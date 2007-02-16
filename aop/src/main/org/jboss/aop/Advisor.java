@@ -666,6 +666,7 @@ public abstract class Advisor
    public void addPerInstanceAspect(AspectDefinition def)
    {
       perInstanceAspectDefinitions.add(def);
+      def.registerAdvisor(this);
    }
 
    public void removePerInstanceAspect(AspectDefinition def)
@@ -687,6 +688,7 @@ public abstract class Advisor
       {
          joinpoints = new CopyOnWriteArraySet();
          perInstanceJoinpointAspectDefinitions.put(def, joinpoints);
+         def.registerAdvisor(this);
       }
       joinpoints.add(joinpoint);
    }
@@ -716,6 +718,7 @@ public abstract class Advisor
       if (aspects.containsKey(def.getName())) return;
       Object aspect = def.getFactory().createPerClass(this);
       aspects.put(def.getName(), aspect);
+      def.registerAdvisor(this);
    }
 
    public void removePerClassAspect(AspectDefinition def)
