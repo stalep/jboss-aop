@@ -38,6 +38,8 @@ public class EchoInterceptor implements Interceptor, Serializable
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
 
+   static boolean intercepted;
+   
    public String getName()
    {
       return "EchoInterceptor";
@@ -45,6 +47,7 @@ public class EchoInterceptor implements Interceptor, Serializable
 
    public Object invoke(Invocation invocation) throws Throwable
    {
+      intercepted = true;
       MethodInvocation mi = (MethodInvocation) invocation;
       System.out.println(mi.getMethod().getName());
       return "echoed";

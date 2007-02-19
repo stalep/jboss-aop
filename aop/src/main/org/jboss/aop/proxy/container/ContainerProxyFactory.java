@@ -609,7 +609,7 @@ public class ContainerProxyFactory
       {
          Map.Entry entry = (Map.Entry) it.next();
          CtMethod m = (CtMethod) entry.getValue();
-         if (!Modifier.isPublic(m.getModifiers()) || Modifier.isStatic(m.getModifiers())) continue;
+         if (!Modifier.isPublic(m.getModifiers()) || Modifier.isStatic(m.getModifiers()) || Modifier.isFinal(m.getModifiers())) continue;
 
          Long hash = (Long) entry.getKey();
          if (addedMethods.contains(hash)) continue;

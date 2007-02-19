@@ -213,4 +213,39 @@ public class ProxyTestCase extends AOPTestWithSetup
       assertEquals("echoed", mi.intercepted("error"));
 
    }
+   
+   public void testContainerProxyWithFinalMethods() throws Exception
+   {
+      InstanceDomain domain = new InstanceDomain(AspectManager.instance(), "test", false);
+      AspectDefinition def = new AspectDefinition("aspect", Scope.PER_VM, new GenericAspectFactory(EchoInterceptor.class.getName(), null));
+      domain.addAspectDefinition(def);
+      AdviceFactory advice = new AdviceFactory(def, "invoke");
+      domain.addInterceptorFactory(advice.getName(), advice);
+      {
+      PointcutExpression pointcut = new PointcutExpression("pointcut", "execution(* " + POJOWithFinalMethods.class.getName() + "->*(..))");
+      domain.addPointcut(pointcut);
+      InterceptorFactory[] interceptors = {advice};
+      AdviceBinding binding = new AdviceBinding("pojo-binding", pointcut, null, null, interceptors);
+      domain.addBinding(binding);
+      }
+
+      Class proxyClass = ContainerProxyFactory.getProxyClass(POJOWithFinalMethods.class, domain);
+      ClassProxyContainer container = new ClassProxyContainer("test", domain);
+      domain.setAdvisor(container);
+      container.setClass(proxyClass);
+      container.initializeClassContainer();
+      POJOWithFinalMethods proxy = (POJOWithFinalMethods) proxyClass.newInstance();
+      AspectManaged cp = (AspectManaged)proxy;
+      cp.setAdvisor(container);
+      Delegate delegate = (Delegate)cp;
+      delegate.setDelegate(new POJOWithFinalMethods());
+      
+      EchoInterceptor.intercepted = false;
+      proxy.method();
+      assertTrue(EchoInterceptor.intercepted);
+      
+      EchoInterceptor.intercepted = false;
+      proxy.finalMethod();
+      assertFalse(EchoInterceptor.intercepted);
+   }
 }
