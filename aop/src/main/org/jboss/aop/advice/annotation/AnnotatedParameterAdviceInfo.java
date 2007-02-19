@@ -116,6 +116,18 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       }
       return true;
    }
+
+   public void resetValidation()
+   {
+      for (int i = 0;  i < paramTypes.length; i++)
+      {
+         paramTypes[i].resetValidation();
+      }
+      for (int i = 0; i < contextParamTypes.length; i++)
+      {
+         contextParamTypes[i].resetValidation();
+      }
+   }
    
    public short getAssignabilityDegree(int annotationIndex, boolean isContextRule,
          AdviceMethodProperties properties)
@@ -140,7 +152,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       }
       properties.setFoundProperties(this.method, args);
    }
-
+   
    /**
     * Creates a parameter annotation type array correpondent to the parameter
     * annotation rules contained in <code>rules</code>.
@@ -385,6 +397,12 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       public abstract boolean internalValidate(AdviceMethodProperties properties);
       
       /**
+       * Resets all advice method properties information that has been set during
+       * validation.
+       */
+      public abstract void resetValidation();
+      
+      /**
        * Returns the sum of the assignability degrees of every paramater of this type.
        * 
        * @param properties       contains information about the queried advice method
@@ -456,6 +474,9 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          return  true;
       }
 
+      // this class doesn't set any field during validation
+      public final void resetValidation() { }
+
       public final short getAssignabilityDegree(AdviceMethodProperties properties)
       {
          if (this.index == -1)
@@ -482,6 +503,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
    class MultipleParameterType extends ParameterAnnotationType
    {
       private int[][] indexes;
+      private int[] originalIndexValues; // for resetting purposes
       private int indexesLength;
       
       // maximum size is the total number of parameters
@@ -490,6 +512,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          super(rule);
          this.indexes = new int[totalParams][2];
          this.indexesLength = 0;
+         this.originalIndexValues = new int[totalParams];
       }
       
       public final void setIndex(int index, Annotation annotation)
@@ -500,7 +523,9 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             throw new ParameterAnnotationRuleException("Found more @Arg annotated parameters than the number of parameters available on joinpoint");
          }
          indexes[indexesLength][0] = index;
-         indexes[indexesLength++][1] = ((Arg) annotation).index();
+         originalIndexValues[indexesLength] = ((Arg) annotation).index();
+         indexes[indexesLength][1] = originalIndexValues[indexesLength];
+         indexesLength ++;
          rank += rule.getRankGrade();
       }
       
@@ -560,6 +585,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
                }
                taken[indexes[i][1]] = true;
                // TODO give priority to indexes set first
+               // TODO Check on taken for indexes set
                continue;
             }
             
@@ -608,6 +634,14 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          }
          return true;
       }
+            
+      public void resetValidation()
+      {
+         for (int i = 0; i < indexesLength; i++)
+         {
+            indexes[i][1] = originalIndexValues[i];
+         }
+      }
       
       public short getAssignabilityDegree(AdviceMethodProperties properties)
       {
@@ -632,6 +666,6 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          {
             args[this.indexes[i][0]] = this.indexes[i][1];
          }
-      }  
+      }
    }
 }

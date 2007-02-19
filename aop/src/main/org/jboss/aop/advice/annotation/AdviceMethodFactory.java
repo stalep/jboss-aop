@@ -145,6 +145,8 @@ public class AdviceMethodFactory
                      }
                      return false;
                   }
+                  
+                  public void resetValidation() {}
 
                   public short getAssignabilityDegree(int typeIndex,
                         boolean isContextRule, AdviceMethodProperties properties)
@@ -309,13 +311,19 @@ public class AdviceMethodFactory
       // verify if list is on cache
       String key =
               properties.getAspectClass().getName() + properties.getAdviceName();
+      
       WeakHashMap<ParameterAnnotationRule[], Collection<AdviceInfo>> map = 
          adviceInfoCache.get(key);
       if (map != null)
       {
          if (map.containsKey(contextRules))
          {
-            return new LinkedList<AdviceInfo> (map.get(contextRules));
+            Collection<AdviceInfo> advices = map.get(contextRules);
+            for(AdviceInfo adviceInfo: advices)
+            {
+               adviceInfo.resetValidation();
+            }
+            return new LinkedList<AdviceInfo> (advices);
          }
       }
       else
@@ -341,7 +349,7 @@ public class AdviceMethodFactory
          return null;
       }
       
-      ArrayList<AdviceInfo> rankedAdvices = new ArrayList<AdviceInfo>();
+      ArrayList<AdviceInfo> rankedAdvices = new ArrayList<AdviceInfo>(methods.length);
       for (int i = 0; i < methods.length; i++)
       {
          // advice applies to signature rule

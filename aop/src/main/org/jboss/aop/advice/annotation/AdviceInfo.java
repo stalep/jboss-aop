@@ -255,6 +255,11 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
     */
    public abstract boolean validate(AdviceMethodProperties properties,
          ReturnType returnType);
+   
+   /**
+    * Resets all information that has been set during validation.
+    */
+   public abstract void resetValidation();
 
    /**
     * Returns the distance in hierarchy between the annotated parameter identified by
