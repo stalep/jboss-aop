@@ -1191,6 +1191,14 @@
       </antcall>
 
    </target>
+   
+   <target name="jrockit-test" depends="compile-test-classes" if="JROCKIT_API_AVAILABLE">
+         <antcall target="_run-jrockit-test" inheritRefs="true">
+            <param name="test" value="${test}"/>
+            <param name="caller" value="jrockit-tests"/>
+            <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
+         </antcall>
+   </target>
 
    <!-- ==================================================================================== -->
    <!-- GENERATED ADVISOR JROCKIT TESTS (JDK 5.0)                                           -->
@@ -1274,6 +1282,9 @@
                <!-- These are not test cases, and so they will fail when junit tries to run them. Should really rename all tests to *TestCase -->
                <exclude name="org/jboss/test/aop/reflection/ReflectionAspectTester.class"/>
                <exclude name="org/jboss/test/aop/basic/POJOAspectTester.class"/>
+               <!-- This test won't work with JRockit, due to the limit on stack trace
+                   length, which breaks cflow functionality on this test case -->
+               <exclude name="org/jboss/test/aop/args/ArgumentsTestCase.class"/>
             </fileset>
          </batchtest>
       </junit>

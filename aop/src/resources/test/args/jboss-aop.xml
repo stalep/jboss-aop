@@ -18,7 +18,7 @@
    <cflow-stack name="ArgumentsPOJO1_method">
       <called expr="* org.jboss.test.aop.args.ArgumentsPOJO1->*(..)"/>
    </cflow-stack>
-  
+
    <bind pointcut="all(org.jboss.test.aop.args.ArgumentsPOJO1)">
 		<stack-ref name="getAndChange"/>
    </bind>
@@ -52,19 +52,19 @@
    <bind pointcut="all(org.jboss.test.aop.args.ArgumentsPOJO2)">
       <stack-ref name="set"/>
    </bind>
-   
+
    <bind pointcut="call(org.jboss.test.aop.args.CalledPOJO->new(..))" cflow="(ArgumentsPOJO2_constructor OR ArgumentsPOJO2_method)">
       <stack-ref name="set"/>
    </bind>
 
-	<bind pointcut="call(* org.jboss.test.aop.args.CalledPOJO->*(..))" cflow="(ArgumentsPOJO2_constructor OR ArgumentsPOJO2_method)">
+   <bind pointcut="call(* org.jboss.test.aop.args.CalledPOJO->*(..))" cflow="(ArgumentsPOJO2_constructor OR ArgumentsPOJO2_method)">
       <stack-ref name="set"/>
    </bind>
 
 	<bind pointcut="call(static * org.jboss.test.aop.args.CalledPOJO->*(int))" cflow="(ArgumentsPOJO2_constructor OR ArgumentsPOJO2_method)">
       <advice name="getAndChangeArgumentsAdvice" aspect="org.jboss.test.aop.args.ArgumentsAspect"/>
    </bind>
-      
+
    <!-- @Arg test -->
    <aspect class="org.jboss.test.aop.args.ArgAspect" scope="PER_VM"/>
 
