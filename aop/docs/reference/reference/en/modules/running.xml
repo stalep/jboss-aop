@@ -267,10 +267,10 @@ $ run-load15 classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotat
          <sect3>
             <title>Loadtime using JRockit</title>
             <para>
-            In JRockit the -Xbootclass/p option does not work, so we cannot replace the classloader. Instead we plug 
-            natively into its JVM using vendor specific hooks to provide transformation when a class is loaded. All 
+            In JRockit the -Xbootclass/p option does not work, so we cannot replace the classloader. Instead we plug
+            natively into its JVM using vendor specific hooks to provide transformation when a class is loaded. All
             you have to do is define an additional switch on the Java command line.
-               <literal>-Xmanagement:class=org.jboss.aop.hook.JRockitClassPreProcessor</literal>            
+               <literal>-Xmanagement:class=org.jboss.aop.hook.JRockitClassPreProcessor</literal>
             Here's how run an AOP application in JDK 1.4 with loadtime instrumentation, with JRockit:
                <programlisting>
 $ java -cp=&lt;classpath as described above&gt; -Djboss.aop.path=&lt;path to jboss-aop.xml&gt; \
@@ -386,7 +386,7 @@ $ java -cp=&lt;classpath as described above&gt; -Djboss.aop.path=&lt;path to jbo
                   <listitem>
                      <para>
                         A way to completely ignore classes from being instrumented. This overrides whatever you have set up using the include/exclude filters. The system property
-                        is <literal>jboss.aop.ignore</literal>, and you can use wildcards in the classnames. As for include/exclude you may specify a comma separated list of class 
+                        is <literal>jboss.aop.ignore</literal>, and you can use wildcards in the classnames. As for include/exclude you may specify a comma separated list of class
                         name patterns. This following example avoids instrumenting the cglib generated proxies for hibernate:
                   	  <programlisting>
                         java -Djboss.aop.ignore=*$$EnhancerByCGLIB$$*
@@ -430,7 +430,7 @@ $ java -cp=&lt;classpath as described above&gt; -javaagent:jboss-aop-jdk50.jar=-
             </programlisting>
          </para>
          <para>
-            The <literal>run-load15HotSwap</literal> batch/script files contained in the /bin folder of the distribution are similar to the 
+            The <literal>run-load15HotSwap</literal> batch/script files contained in the /bin folder of the distribution are similar to the
             <literal>run-load15</literal> ones, described in the previous subsection. All aop libs are included in these script files.
             To use them, run:
             <programlisting>
@@ -456,11 +456,11 @@ $ run-load15 classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotat
       <para>
          JBoss AOP is integrated with JBoss 4.0.1+ and JBoss 3.2.6+ application server.  The integration steps are different
          depending on what version of JBoss AS you are using and what JDK version you are using.  It is also dependent
-         on whether you want to use loadtime or compiletime instrumentation. 
+         on whether you want to use loadtime or compiletime instrumentation.
       </para>
       <para>
-         If you wish to use JBoss AS 4.0.0 you will need to use JBoss AOP 1.0 Final since later releases of JBoss AOP leverage 
-         improvements in JBoss's deployement architecture. If you do this please consult the docs for JBoss AOP 1.0 Final. It is 
+         If you wish to use JBoss AS 4.0.0 you will need to use JBoss AOP 1.0 Final since later releases of JBoss AOP leverage
+         improvements in JBoss's deployement architecture. If you do this please consult the docs for JBoss AOP 1.0 Final. It is
          recommended though that you use the latest versions of JBoss AOP and AS.
       </para>
       <para>
@@ -488,7 +488,7 @@ $ run-load15 classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotat
             file contained in the .aop file will affect all the classes in the whole war!
          </para>
          <para>
-            To pick up a .aop file in an .ear file, it must be listed in the 
+            To pick up a .aop file in an .ear file, it must be listed in the
             <literal>.ear/META-INF/application.xml</literal> as a java module, e.g.:
          </para>
          <programlisting>
@@ -507,16 +507,16 @@ $ run-load15 classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotat
     </module>
     <module>
         <web>
-           <web-uri>aopexample.war</web-uri> 
-          <context-root>/aopexample</context-root> 
+           <web-uri>aopexample.war</web-uri>
+          <context-root>/aopexample</context-root>
        </web>
    </module>
 </application>
 ]]>
-			</programlisting>         
+			</programlisting>
 			<para>
 			   Note that in newer versions of JBoss (&gt;= 4.0.5), the contents of the .ear file are deployed in the order they
-			   are listed in the application.xml. When using loadtime weaving the bindings listed in the example.aop file must be 
+			   are listed in the application.xml. When using loadtime weaving the bindings listed in the example.aop file must be
 			   deployed before the classes being advised are deployed, so that the bindings exist in the system before the
 			   ejb, servlet etc. classes are loaded. This is acheived by listing the .aop file at the start of the application.xml.
 			   Older versions of JBoss did not have this issue since the contained .aop files were deployed before anything else, and
@@ -593,7 +593,7 @@ $ create-pluggable-jboss-classloader.sh
 JAVA_OPTS="$JAVA_OPTS -Dprogram.name=%PROGNAME% \
 -Xbootclasspath/p:jboss-classloader-transformer.jar:jdk14-pluggable-instrumentor.jar"
          </programlisting>
-         Note that if you are using a cygwin shell on Windows, you will need to use a semicolon instead of a colon to separate the 
+         Note that if you are using a cygwin shell on Windows, you will need to use a semicolon instead of a colon to separate the
          bootclasspath jars:
          <programlisting>
 JAVA_OPTS="$JAVA_OPTS -Dprogram.name=%PROGNAME% \
@@ -669,15 +669,15 @@ set JAVA_OPTS=%JAVA_OPTS% -Dprogram.name=%PROGNAME% -javaagent:pluggable-instrum
          </para>
          <para>
             Note that the <literal>code</literal> attribute of the AspectManager mbean must be <literal>org.jboss.aop.deployment.AspectManagerServiceJDK5</literal>
-            as that is what works with the -javaagent weaver. 
-         </para>            
+            as that is what works with the -javaagent weaver.
+         </para>
       </sect2>
 
    <!-- 4.0 and jrockit -->
       <sect2>
          <title>JBoss 4.x and JRockit</title>
          <para>
-         	To use loadtime transformations with JRockit we can instruct Jrockit to use its native classloader hooks. Note that 
+         	To use loadtime transformations with JRockit we can instruct Jrockit to use its native classloader hooks. Note that
          	with JRockit 1.4.2 this is your only option to do loadtime transformations.
          </para>
       <para>
@@ -690,7 +690,7 @@ set JAVA_OPTS=%JAVA_OPTS% -Dprogram.name=%PROGNAME% -javaagent:pluggable-instrum
       </para>
       <para>
          The
-         <literal>jboss-aop.deployer</literal> or <literal>jboss-aop-jdk50.deployer</literal> file (depending on which you are using) 
+         <literal>jboss-aop.deployer</literal> or <literal>jboss-aop-jdk50.deployer</literal> file (depending on which you are using)
          contains some MBeans that deploy and manage the AOP framework.
          <programlisting>
             <![CDATA[      <mbean code="org.jboss.aop.deployment.AspectManagerService"
@@ -720,7 +720,7 @@ set JAVA_OPTS=%JAVA_OPTS% -Dprogram.name=%PROGNAME% -javaagent:pluggable-instrum
          <para>
             The next step is to copy the jrockit-pluggable-instrumentor.jar from the lib directory of your JBoss AOP
             distribution to the bin/ directory of your JBoss AOP application server installation.  Next edit
-            run.sh or run.bat (depending on what OS you're on) and add the following to the JAVA_OPTS and 
+            run.sh or run.bat (depending on what OS you're on) and add the following to the JAVA_OPTS and
             JBOSS_CLASSPATH environment variables
          </para>
          <programlisting>
@@ -734,8 +734,8 @@ JBOSS_CLASSPATH="$JBOSS_CLASSPATH:jrockit-pluggable-instrumentor.jar"
          </para>
          <para>
             Note that the <literal>code</literal> attribute of the AspectManager mbean must be <literal>org.jboss.aop.deployment.AspectManagerService</literal>
-            as that is what works with the JRockit special hooks. 
-         </para>            
+            as that is what works with the JRockit special hooks.
+         </para>
       </sect2>
 
    <!-- 4.0 and jrockit - end -->
@@ -841,8 +841,8 @@ set JAVA_OPTS=%JAVA_OPTS% -Dprogram.name=%PROGNAME% -javaagent:pluggable-instrum
    <sect2>
       <title>JBoss 3.2.x and JRockit</title>
       <para>
-         You can use the JRockit classloader integration if you like with JBoss 3.2.x. If you are using JRockit 1.4.2 
-         this is the only way to achieve loadtime transformations. 
+         You can use the JRockit classloader integration if you like with JBoss 3.2.x. If you are using JRockit 1.4.2
+         this is the only way to achieve loadtime transformations.
       </para>
       <para>
          If you want to do load-time
@@ -852,9 +852,9 @@ set JAVA_OPTS=%JAVA_OPTS% -Dprogram.name=%PROGNAME% -javaagent:pluggable-instrum
          After installing, you need to modify the
          <literal>jboss-3.2.7/server/xxx/conf/jboss-service.xml</literal>
          file to add these mbean definitions.  They are similar to the 4.0 release, but notice the '32' added to the
-         class name. Note that the <literal>code</literal> attribute of the AspectManager mbean must be 
+         class name. Note that the <literal>code</literal> attribute of the AspectManager mbean must be
          <literal>org.jboss.aop.deployment.AspectManagerService</literal>
-         as that is what works with the JRockit special hooks. 
+         as that is what works with the JRockit special hooks.
       </para>
       <programlisting>
          <![CDATA[      <mbean code="org.jboss.aop.deployment.AspectManagerService32"
@@ -885,7 +885,7 @@ set JAVA_OPTS=%JAVA_OPTS% -Dprogram.name=%PROGNAME% -javaagent:pluggable-instrum
       <para>
          The next step is to copy the jrockit-pluggable-instrumentor.jar from the lib directory of your JBoss AOP
          distribution to the bin/ directory of your JBoss AOP application server installation and to modify your run.sh/bat file
-         as mentioned in "JBoss 4.x and JRockit".  
+         as mentioned in "JBoss 4.x and JRockit".
       </para>
    </sect2>
    <sect2>
@@ -903,16 +903,41 @@ set JAVA_OPTS=%JAVA_OPTS% -Dprogram.name=%PROGNAME% -javaagent:pluggable-instrum
       <para>
          By default all deployments in JBoss are global to the whole application server. That means that any ear, sar, jar etc. that is
          put in the deploy directory can see the classes from any other deployed archive. Similarly, aop bindings are global to the whole
-         virtual machine. This "global" visibility can be turned off per top-level deployment. 
+         virtual machine. This "global" visibility can be turned off per top-level deployment.
       </para>
-      <para>   
-      	How the following works may be changed in future versions of jboss-aop. If you deploy a .aop file as part of a 
-         scoped archive, the bindings etc. applied within the .aop/META-INF/jboss-aop.xml file will only apply to the classes within the scoped archive
-         and not to anything else in the application server. Another alternative is to deploy -aop.xml files as part of a service 
-         archive (SAR). Again if the SAR is scoped, the bindings contained in the -aop.xml files will only apply to the contents of the SAR 
-         file. It is not currently possible to deploy a standalone -aop.xml file and have that attach to a scoped deployment. Standalone 
-         -aop.xml files will apply to classes in the whole application server.
-      </para>
+      <sect2>
+         <title>Deploying as part of a scoped classloader</title>
+         <para>
+            How the following works may be changed in future versions of jboss-aop. If you deploy a .aop file as part of a
+            scoped archive, the bindings etc. applied within the .aop/META-INF/jboss-aop.xml file will only apply to the classes within the scoped archive
+            and not to anything else in the application server. Another alternative is to deploy -aop.xml files as part of a service
+            archive (SAR). Again if the SAR is scoped, the bindings contained in the -aop.xml files will only apply to the contents of the SAR
+            file. It is not currently possible to deploy a standalone -aop.xml file and have that attach to a scoped deployment. Standalone
+            -aop.xml files will apply to classes in the whole application server.
+         </para>
+      </sect2>
+      <sect2>
+         <title>Attaching to a scoped deployment</title>
+         <para>
+            If you have an application using classloader isolation, as long as you have "prepared your classes" you can later attach a .aop file to that deployment. If
+            we have a .ear file scoped using a jboss-app.xml file, with the scoped loader repository <literal>jboss.test:service=scoped</literal>:
+         </para>
+         <programlisting><![CDATA[<jboss-app>
+  <loader-repository>
+      jboss.test:service=scoped
+  </loader-repository>
+</jboss-app>]]></programlisting>
+         <para>We can later deploy a .aop file containing aspects and configuration to attach that deployment to the scoped .ear. This is done using the <literal>loader-repository</literal>
+         tag in the .aop files <literal>META-INF/jboss-aop.xml</literal> file.
+         </para>
+         <programlisting><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<aop>
+   <loader-repository>jboss.test:service=scoped</loader-repository>
+
+   <!-- Aspects and bindings -->
+</aop>]]></programlisting>
+         <para>This has the same effect as deploying the .aop file as part of the .ear as we saw previously, but allows you to hot deploy aspects into your scoped application.</para>
+      </sect2>
    </sect1>
 
 </chapter>
