@@ -146,12 +146,13 @@ public class ConstructionInvocation extends InvocationBase
    }
 
    /**
-    * Get a wrapper invocation object that can insert a new chain of interceptors
+    * Returns a wrapper invocation object that can insert a new chain of interceptors
     * at runtime to the invocation flow.  CFlow makes use of this.
     * When the wrapper object finishes its invocation chain it delegates back to
     * the wrapped invocation.
-    * @param newchain
-    * @return
+
+    * @param newchain chain of interceptors to be inserted on invocation
+    * @return an invocation wrapper
     */
    public Invocation getWrapper(Interceptor[] newchain)
    {
@@ -161,7 +162,8 @@ public class ConstructionInvocation extends InvocationBase
 
    /**
     * Copies complete state of Invocation object.
-    * @return
+    * 
+    * @return an copy of this instance
     */
    public Invocation copy()
    {
@@ -172,11 +174,48 @@ public class ConstructionInvocation extends InvocationBase
       return wrapper;
    }
 
+   /**
+    * Returns an array containing all arguments of constructor.
+    * Any changes on this TODO
+    *   
+    * @return TODO
+    */
+   /**
+    * Returns a non-null array containing all constructor arguments.
+    * <p>
+    * The returned array can be changed by the advice or interceptor accordingly. All
+    * changes will be noticed by construction advices and interceptors that are
+    * executed after the current one.
+    * <br>
+    * However, changes to this array are limited to the scope of current advice
+    * execution, and must be performed before execution of {@link #invokeNext()},
+    * {@link #invokeNext(Interceptor[])}, or {@link #invokeTarget()} method.
+    * Otherwise, inconsistency on joinpoint argument values may be noticed.
+    *
+    * @return the constructor arguments
+    */
    public Object[] getArguments()
    {
       return arguments;
    }
 
+   /**
+    * Replaces constructor argument values by the ones contained in <code>
+    * arguments</code>. Since this invocation is executed after construction, the
+    * changes performed on <code>arguments</code> will not be applied on the
+    * construction itself. However, these changes will be noticeable to all
+    * subsequent construction advices.
+    * <p>
+    * Advices and interceptors must be aware that, for performance reasons,
+    * this array does not get copied across; its reference is directly used instead.
+    * Hence, changes to <code>arguments</code> array after this method being called
+    * are forbidden. Otherwise, inconsistency on joinpoint argument values may be
+    * noticed.
+    *  
+    * @param arguments a non-null array containing the new values of constructor
+    *                  arguments. The size of this array must be the same as the one
+    *                  of {@link #getArguments()}, as well as the element types.
+    */
    public void setArguments(Object[] arguments)
    {
       this.arguments = arguments;
