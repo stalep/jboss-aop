@@ -48,22 +48,27 @@ public class ArgAspect
    
    static boolean around4 = false;
    static boolean around5 = false;
+   static boolean around6 = false;
    
    static boolean after1 = false;
    static boolean after4 = false;
+   static boolean after6 = false;
    
    static int before1X = 0;
    static int before2X = 0;
-   static int before3Y = 0;
+   static int before3Q = 0;
    static int before5X = 0;
-   static int before5Y = 0;
+   static int before5Q = 0;
    
    static int around5X = 0;
-   static int around5Y = 0;
+   static int around5Q = 0;
+   
+   static Object[] around6Args = null;
    
    static int after1X = 0;
    static int after4X = 0;
-   static int after4Y = 0;
+   static int after4Q = 0;
+   static Object[] after6Args = null;
    
    public static void clear()
    {
@@ -74,18 +79,23 @@ public class ArgAspect
       before5 = false;
       around4 = false;
       around5 = false;
+      around6 = false;
+      after1 = false;
       after4 = false;
+      after6 = false;
       
       before1X = 0;
       before2X = 0;
-      before3Y = 0;
+      before3Q = 0;
       before5X = 0;
-      before5Y = 0;
+      before5Q = 0;
       around5X = 0;
-      around5Y = 0;
+      around5Q = 0;
+      around6Args = null;
       after1X = 0;
       after4X = 0;
-      after4Y = 0;
+      after4Q = 0;
+      after6Args = null;
    }
    
    public void before1(@Arg(index=0) int x)
@@ -103,21 +113,24 @@ public class ArgAspect
    public void before3(@Arg(index=4) int y)
    {
       before3 = true;
-      before3Y = y;
+      before3Q = y;
    }
    
    public void before4(@Args Object[] arguments)
    {
       before4 = true;
       arguments[0] = Integer.valueOf(((Integer) arguments[0]).intValue() * 5);
-      arguments[4] = Integer.valueOf(((Integer) arguments[4]).intValue() * -17);
+      if (arguments.length > 4)
+      {
+         arguments[4] = Integer.valueOf(((Integer) arguments[4]).intValue() * -17);
+      }
    }
    
    public void before5(@Arg int x, @Arg int y)
    {
       before5 = true;
       before5X = x;
-      before5Y = y;
+      before5Q = y;
    }
    
    public int around1(@Arg int x, @Arg double y, @Arg float z, @Arg String str, @Arg long q)
@@ -147,12 +160,24 @@ public class ArgAspect
       return invocation.invokeNext();
    }
    
-   public int around5(@Arg(index = 4) int y, @Arg int x) throws Throwable
+   public int around5(@Arg(index = 4) int q, @Arg int x) throws Throwable
    {
       around5 = true;
       around5X = x;
-      around5Y = y;
+      around5Q = q;
       return ((Integer) CurrentInvocation.proceed()).intValue();
+   }
+   
+   public Object around6(MethodInvocation invocation) throws Throwable
+   {
+      around6 = true;
+      around6Args = new Object[4];
+      around6Args[0] = 6;
+      around6Args[1] = 12.0;
+      around6Args[2] = (float) 24;
+      around6Args[3] = 48;
+      invocation.setArguments(around6Args);
+      return Integer.valueOf(((Integer) invocation.invokeNext()).intValue() + 6);
    }
    
    public void after1(@Arg String str, @Arg(index = 0) int x)
@@ -171,15 +196,21 @@ public class ArgAspect
       Assert.fail("This advice should never be executed");
    }
    
-   public void after4(@Arg int x, @Arg int y)
+   public void after4(@Arg int x, @Arg int q)
    {
       after4 = true;
       after4X = x;
-      after4Y = y;
+      after4Q = q;
    }
    
    public void after5(@Arg(index = 4) int x, @Arg(index = -3) int y)
    {
       Assert.fail("This advice should never be executed");
+   }
+   
+   public void after6(@Args Object[] args)
+   {
+      after6 = true;
+      after6Args = args;
    }
 }

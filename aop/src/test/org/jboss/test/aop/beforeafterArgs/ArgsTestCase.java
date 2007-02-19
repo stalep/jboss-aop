@@ -357,7 +357,7 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertFalse(ArgsAspect.after3);
       assertFalse(ArgsAspect.after6);
       assertFalse(ArgsAspect.after7);
-      // after 8 is not called due to the exceptio thrown
+      // after 8 is not called due to the exception thrown
       assertFalse(ArgsAspect.after8);
       assertFalse(ArgsAspect.around1);
       assertFalse(ArgsAspect.around3);

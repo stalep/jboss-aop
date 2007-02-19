@@ -6,7 +6,7 @@
    <!-- @Arg test -->
 	<aspect class="org.jboss.test.aop.beforeafterArgs.ArgAspect" scope="PER_VM"/>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->bunch(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->bunch1(..))">
       <before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
       <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
 		<before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
@@ -22,6 +22,71 @@
       <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
       <after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
       <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->bunch2(..))">
+      <before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <advice name="around6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->bunch3(..))">
+      <before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->bunch4(..))">
+      <before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <advice name="around6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->bunch5(..))">
+      <before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+		<before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->bunch6(..))">
+      <advice name="around6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->bunch7(..))">
+      <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="after6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
 
    <!-- @Args test -->

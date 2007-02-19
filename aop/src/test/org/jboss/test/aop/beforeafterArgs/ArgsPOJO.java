@@ -36,9 +36,39 @@ public class ArgsPOJO
    
    public static boolean field4;
    
-   public int bunch(int x, double y, float z, String str, int q)
+   public int bunch1(int x, double y, float z, String str, int q)
    {
       return x + (int) y + (int) z + q;
+   }
+   
+   public int bunch2(int x, double y, float z, int q)
+   {
+      return x + (int) y * 2 + (int) z + q;
+   }
+   
+   public int bunch3(int x, double y, float z, int q)
+   {
+      return x + (int) y * 3 + (int) z + q;
+   }
+   
+   public int bunch4(int x, double y, float z, int q)
+   {
+      return x + (int) y * 4 + (int) z + q;
+   }
+   
+   public int bunch5(int x, double y, float z, int q)
+   {
+      return x + (int) y * 5 + (int) z + q;
+   }
+   
+   public int bunch6(int x, double y, float z, int q)
+   {
+      return x + (int) y * 6 + (int) z + q;
+   }
+   
+   public int bunch7(int x, double y, float z, int q)
+   {
+      return x + (int) y * 7 + (int) z + q;
    }
    
    public void method1(String param1, int param2, boolean param3, ArgsPOJO[] param4)
