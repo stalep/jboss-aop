@@ -27,10 +27,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.jboss.aop.JoinPointInfo;
+import org.jboss.aop.joinpoint.Invocation;
 
 /**
- * Use this annotation on the advice parameter that receives {@link JoinPointInfo} or
- * one of its subtypes.
+ * Use this annotation on the advice parameter that receives:
+ * <ul>
+ * <li>{@link JoinPointInfo} or one of its subtypes (for before, after and throwing
+ * advices);</li>
+ * <li>{@link Invocation} or one of its subtypes (for around
+ * advices).</li>
+ * </ul>
  * 
  * @author Flavia Rainone
  */

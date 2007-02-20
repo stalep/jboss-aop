@@ -24,6 +24,7 @@ package org.jboss.test.aop.beforeafterArgs;
 import junit.framework.Assert;
 
 import org.jboss.aop.advice.annotation.Arg;
+import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.joinpoint.ConstructorInvocation;
 import org.jboss.aop.joinpoint.CurrentInvocation;
 import org.jboss.aop.joinpoint.Invocation;
@@ -74,77 +75,77 @@ public class OverloadedAroundAspect
       return invocation.invokeNext();
    }
    
-   public Object around1(@org.jboss.aop.advice.annotation.Invocation
+   public Object around1(@JoinPoint
          MethodInvocation invocation, @Arg int arg1, @Arg long arg2) throws Throwable
    {
       around1 = "MethodInvocation,int,long";
       return invocation.invokeNext();
    }
    
-   public Object around1(@org.jboss.aop.advice.annotation.Invocation
+   public Object around1(@JoinPoint
          Invocation invocation, @Arg int arg1, @Arg long arg2) throws Throwable
    {
       around1 = "Invocation,int,long";
       return invocation.invokeNext();
    }
    
-   public Object around1(@org.jboss.aop.advice.annotation.Invocation
+   public Object around1(@JoinPoint
          Object invocation, @Arg int arg1, @Arg long arg2) throws Throwable
    {
       around1 = "Object,int,long";
       return ((Invocation) invocation).invokeNext();
    }
    
-   public Object around1(@org.jboss.aop.advice.annotation.Invocation
+   public Object around1(@JoinPoint
          MethodInvocation invocation, @Arg int arg1) throws Throwable
    {
       around1 = "MethodInvocation,int";
       return invocation.invokeNext();
    }
 
-   public Object around1(@org.jboss.aop.advice.annotation.Invocation
+   public Object around1(@JoinPoint
          MethodInvocation invocation, @Arg long arg2) throws Throwable
    {
       around1 = "MethodInvocation,long";
       return invocation.invokeNext();
    }
    
-   public Object around1(@org.jboss.aop.advice.annotation.Invocation
+   public Object around1(@JoinPoint
          Invocation invocation, @Arg int arg1) throws Throwable
    {
       around1 = "Invocation,int";
       return invocation.invokeNext();
    }
 
-   public Object around1(@org.jboss.aop.advice.annotation.Invocation
+   public Object around1(@JoinPoint
          Invocation invocation, @Arg long arg2) throws Throwable
    {
       around1 = "Invocation,long";
       return invocation.invokeNext();
    }
 
-   public Object around1(@org.jboss.aop.advice.annotation.Invocation
+   public Object around1(@JoinPoint
          Object invocation, @Arg int arg1) throws Throwable
    {
       around1 = "Object,int";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around1(@org.jboss.aop.advice.annotation.Invocation
+   public Object around1(@JoinPoint
          Object invocation, @Arg long arg2) throws Throwable
    {
       around1 = "Object,long";
       return ((Invocation) invocation).invokeNext();
    }
    
-   public Object around1(@org.jboss.aop.advice.annotation.Invocation
+   public Object around1(@JoinPoint
          MethodInvocation invocation) throws Throwable
    {
       around1 = "MethodInvocation";
       return invocation.invokeNext();
    }
    
-   public Object around1(@org.jboss.aop.advice.annotation.Invocation
+   public Object around1(@JoinPoint
          Object invocation) throws Throwable
    {
       around1 = "Object";
@@ -175,7 +176,7 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
-   public Object around1(@org.jboss.aop.advice.annotation.Invocation
+   public Object around1(@JoinPoint
          ConstructorInvocation invocation) throws Throwable
    {
       Assert.fail("This advice should never be executed");
@@ -184,77 +185,77 @@ public class OverloadedAroundAspect
    
    /* AROUND2 ADVICE */
    
-   public Object around2(@org.jboss.aop.advice.annotation.Invocation
+   public Object around2(@JoinPoint
          MethodInvocation invocation, @Arg int arg1, @Arg long arg2) throws Throwable
    {
       around2 = "MethodInvocation,int,long";
       return invocation.invokeNext();
    }
    
-   public Object around2(@org.jboss.aop.advice.annotation.Invocation
+   public Object around2(@JoinPoint
          Invocation invocation, @Arg int arg1, @Arg long arg2) throws Throwable
    {
       around2 = "Invocation,int,long";
       return invocation.invokeNext();
    }
    
-   public Object around2(@org.jboss.aop.advice.annotation.Invocation
+   public Object around2(@JoinPoint
          Object invocation, @Arg int arg1, @Arg long arg2) throws Throwable
    {
       around2 = "Object,int,long";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around2(@org.jboss.aop.advice.annotation.Invocation
+   public Object around2(@JoinPoint
          MethodInvocation invocation, @Arg int arg1) throws Throwable
    {
       around2 = "MethodInvocation,int";
       return invocation.invokeNext();
    }
 
-   public Object around2(@org.jboss.aop.advice.annotation.Invocation
+   public Object around2(@JoinPoint
          MethodInvocation invocation, @Arg long arg2) throws Throwable
    {
       around2 = "MethodInvocation,long";
       return invocation.invokeNext();
    }
    
-   public Object around2(@org.jboss.aop.advice.annotation.Invocation
+   public Object around2(@JoinPoint
          Invocation invocation, @Arg int arg1) throws Throwable
    {
       around2 = "Invocation,int";
       return invocation.invokeNext();
    }
 
-   public Object around2(@org.jboss.aop.advice.annotation.Invocation
+   public Object around2(@JoinPoint
          Invocation invocation, @Arg long arg2) throws Throwable
    {
       around2 = "Invocation,long";
       return invocation.invokeNext();
    }
 
-   public Object around2(@org.jboss.aop.advice.annotation.Invocation
+   public Object around2(@JoinPoint
          Object invocation, @Arg int arg1) throws Throwable
    {
       around2 = "Object,int";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around2(@org.jboss.aop.advice.annotation.Invocation
+   public Object around2(@JoinPoint
          Object invocation, @Arg long arg2) throws Throwable
    {
       around2 = "Object,long";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around2(@org.jboss.aop.advice.annotation.Invocation
+   public Object around2(@JoinPoint
          MethodInvocation invocation) throws Throwable
    {
       around2 = "MethodInvocation";
       return invocation.invokeNext();
    }
    
-   public Object around2(@org.jboss.aop.advice.annotation.Invocation
+   public Object around2(@JoinPoint
          Object invocation) throws Throwable
    {
       around2 = "Object";
@@ -285,7 +286,7 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
-   public Object around2(@org.jboss.aop.advice.annotation.Invocation
+   public Object around2(@JoinPoint
          ConstructorInvocation invocation) throws Throwable
    {
       Assert.fail("This advice should never be executed");
@@ -294,70 +295,70 @@ public class OverloadedAroundAspect
 
    /* AROUND3 ADVICE */
    
-   public Object around3(@org.jboss.aop.advice.annotation.Invocation
+   public Object around3(@JoinPoint
          Invocation invocation, @Arg int arg1, @Arg long arg2) throws Throwable
    {
       around3 = "Invocation,int,long";
       return invocation.invokeNext();
    }
 
-   public Object around3(@org.jboss.aop.advice.annotation.Invocation
+   public Object around3(@JoinPoint
          Object invocation, @Arg int arg1, @Arg long arg2) throws Throwable
    {
       around3 = "Object,int,long";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around3(@org.jboss.aop.advice.annotation.Invocation
+   public Object around3(@JoinPoint
          MethodInvocation invocation, @Arg int arg1) throws Throwable
    {
       around3 = "MethodInvocation,int";
       return invocation.invokeNext();
    }
 
-   public Object around3(@org.jboss.aop.advice.annotation.Invocation
+   public Object around3(@JoinPoint
          MethodInvocation invocation, @Arg long arg2) throws Throwable
    {
       around3 = "MethodInvocation,long";
       return invocation.invokeNext();
    }
    
-   public Object around3(@org.jboss.aop.advice.annotation.Invocation
+   public Object around3(@JoinPoint
          Invocation invocation, @Arg int arg1) throws Throwable
    {
       around3 = "Invocation,int";
       return invocation.invokeNext();
    }
 
-   public Object around3(@org.jboss.aop.advice.annotation.Invocation
+   public Object around3(@JoinPoint
          Invocation invocation, @Arg long arg2) throws Throwable
    {
       around3 = "Invocation,long";
       return invocation.invokeNext();
    }
 
-   public Object around3(@org.jboss.aop.advice.annotation.Invocation
+   public Object around3(@JoinPoint
          Object invocation, @Arg int arg1) throws Throwable
    {
       around3 = "Object,int";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around3(@org.jboss.aop.advice.annotation.Invocation
+   public Object around3(@JoinPoint
          Object invocation, @Arg long arg2) throws Throwable
    {
       around3 = "Object,long";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around3(@org.jboss.aop.advice.annotation.Invocation
+   public Object around3(@JoinPoint
          MethodInvocation invocation) throws Throwable
    {
       around3 = "MethodInvocation";
       return invocation.invokeNext();
    }
 
-   public Object around3(@org.jboss.aop.advice.annotation.Invocation
+   public Object around3(@JoinPoint
          Object invocation) throws Throwable
    {
       around3 = "Object";
@@ -388,7 +389,7 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
-   public Object around3(@org.jboss.aop.advice.annotation.Invocation
+   public Object around3(@JoinPoint
          ConstructorInvocation invocation) throws Throwable
    {
       Assert.fail("This advice should never be executed");
@@ -397,63 +398,63 @@ public class OverloadedAroundAspect
 
    /* AROUND4 ADVICE */
    
-   public Object around4(@org.jboss.aop.advice.annotation.Invocation
+   public Object around4(@JoinPoint
          Object invocation, @Arg int arg1, @Arg long arg2) throws Throwable
    {
       around4 = "Object,int,long";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around4(@org.jboss.aop.advice.annotation.Invocation
+   public Object around4(@JoinPoint
          MethodInvocation invocation, @Arg int arg1) throws Throwable
    {
       around4 = "MethodInvocation,int";
       return invocation.invokeNext();
    }
 
-   public Object around4(@org.jboss.aop.advice.annotation.Invocation
+   public Object around4(@JoinPoint
          MethodInvocation invocation, @Arg long arg2) throws Throwable
    {
       around4 = "MethodInvocation,long";
       return invocation.invokeNext();
    }
    
-   public Object around4(@org.jboss.aop.advice.annotation.Invocation
+   public Object around4(@JoinPoint
          Invocation invocation, @Arg int arg1) throws Throwable
    {
       around4 = "Invocation,int";
       return invocation.invokeNext();
    }
 
-   public Object around4(@org.jboss.aop.advice.annotation.Invocation
+   public Object around4(@JoinPoint
          Invocation invocation, @Arg long arg2) throws Throwable
    {
       around4 = "Invocation,long";
       return invocation.invokeNext();
    }
 
-   public Object around4(@org.jboss.aop.advice.annotation.Invocation
+   public Object around4(@JoinPoint
          Object invocation, @Arg int arg1) throws Throwable
    {
       around4 = "Object,int";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around4(@org.jboss.aop.advice.annotation.Invocation
+   public Object around4(@JoinPoint
          Object invocation, @Arg long arg2) throws Throwable
    {
       around4 = "Object,long";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around4(@org.jboss.aop.advice.annotation.Invocation
+   public Object around4(@JoinPoint
          MethodInvocation invocation) throws Throwable
    {
       around4 = "MethodInvocation";
       return invocation.invokeNext();
    }
 
-   public Object around4(@org.jboss.aop.advice.annotation.Invocation
+   public Object around4(@JoinPoint
          Object invocation) throws Throwable
    {
       around4 = "Object";
@@ -484,7 +485,7 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
-   public Object around4(@org.jboss.aop.advice.annotation.Invocation
+   public Object around4(@JoinPoint
          ConstructorInvocation invocation) throws Throwable
    {
       Assert.fail("This advice should never be executed");
@@ -493,56 +494,56 @@ public class OverloadedAroundAspect
 
    /* AROUND5 ADVICE */
    
-   public Object around5(@org.jboss.aop.advice.annotation.Invocation
+   public Object around5(@JoinPoint
          MethodInvocation invocation, @Arg int arg1) throws Throwable
    {
       around5 = "MethodInvocation,int";
       return invocation.invokeNext();
    }
 
-   public Object around5(@org.jboss.aop.advice.annotation.Invocation
+   public Object around5(@JoinPoint
          MethodInvocation invocation, @Arg long arg2) throws Throwable
    {
       around5 = "MethodInvocation,long";
       return invocation.invokeNext();
    }
 
-   public Object around5(@org.jboss.aop.advice.annotation.Invocation
+   public Object around5(@JoinPoint
          Invocation invocation, @Arg int arg1) throws Throwable
    {
       around5 = "Invocation,int";
       return invocation.invokeNext();
    }
 
-   public Object around5(@org.jboss.aop.advice.annotation.Invocation
+   public Object around5(@JoinPoint
          Invocation invocation, @Arg long arg2) throws Throwable
    {
       around5 = "Invocation,long";
       return invocation.invokeNext();
    }
 
-   public Object around5(@org.jboss.aop.advice.annotation.Invocation
+   public Object around5(@JoinPoint
          Object invocation, @Arg int arg1) throws Throwable
    {
       around5 = "Object,int";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around5(@org.jboss.aop.advice.annotation.Invocation
+   public Object around5(@JoinPoint
          Object invocation, @Arg long arg2) throws Throwable
    {
       around5 = "Object,long";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around5(@org.jboss.aop.advice.annotation.Invocation
+   public Object around5(@JoinPoint
          MethodInvocation invocation) throws Throwable
    {
       around5 = "MethodInvocation";
       return invocation.invokeNext();
    }
 
-   public Object around5(@org.jboss.aop.advice.annotation.Invocation
+   public Object around5(@JoinPoint
          Object invocation) throws Throwable
    {
       around5 = "Object";
@@ -573,7 +574,7 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around5(@org.jboss.aop.advice.annotation.Invocation
+   public Object around5(@JoinPoint
          ConstructorInvocation invocation) throws Throwable
    {
       Assert.fail("This advice should never be executed");
@@ -582,42 +583,42 @@ public class OverloadedAroundAspect
 
    /* AROUND6 ADVICE */
    
-   public Object around6(@org.jboss.aop.advice.annotation.Invocation
+   public Object around6(@JoinPoint
          Invocation invocation, @Arg int arg1) throws Throwable
    {
       around6 = "Invocation,int";
       return invocation.invokeNext();
    }
 
-   public Object aroun6(@org.jboss.aop.advice.annotation.Invocation
+   public Object aroun6(@JoinPoint
          Invocation invocation, @Arg long arg2) throws Throwable
    {
       around6 = "Invocation,long";
       return invocation.invokeNext();
    }
 
-   public Object around6(@org.jboss.aop.advice.annotation.Invocation
+   public Object around6(@JoinPoint
          Object invocation, @Arg int arg1) throws Throwable
    {
       around6 = "Object,int";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around6(@org.jboss.aop.advice.annotation.Invocation
+   public Object around6(@JoinPoint
          Object invocation, @Arg long arg2) throws Throwable
    {
       around6 = "Object,long";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around6(@org.jboss.aop.advice.annotation.Invocation
+   public Object around6(@JoinPoint
          MethodInvocation invocation) throws Throwable
    {
       around6 = "MethodInvocation";
       return invocation.invokeNext();
    }
    
-   public Object around6(@org.jboss.aop.advice.annotation.Invocation
+   public Object around6(@JoinPoint
          Object invocation) throws Throwable
    {
       around6 = "Object";
@@ -648,7 +649,7 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
-   public Object around6(@org.jboss.aop.advice.annotation.Invocation
+   public Object around6(@JoinPoint
          ConstructorInvocation invocation) throws Throwable
    {
       Assert.fail("This advice should never be executed");
@@ -657,28 +658,28 @@ public class OverloadedAroundAspect
 
    /* AROUND7 ADVICE */
    
-   public Object around7(@org.jboss.aop.advice.annotation.Invocation
+   public Object around7(@JoinPoint
          Object invocation, @Arg int arg1) throws Throwable
    {
       around7 = "Object,int";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around7(@org.jboss.aop.advice.annotation.Invocation
+   public Object around7(@JoinPoint
          Object invocation, @Arg long arg2) throws Throwable
    {
       around7 = "Object,long";
       return ((Invocation) invocation).invokeNext();
    }
 
-   public Object around7(@org.jboss.aop.advice.annotation.Invocation
+   public Object around7(@JoinPoint
          MethodInvocation invocation) throws Throwable
    {
       around7 = "MethodInvocation";
       return invocation.invokeNext();
    }
    
-   public Object around7(@org.jboss.aop.advice.annotation.Invocation
+   public Object around7(@JoinPoint
          Object invocation) throws Throwable
    {
       around7 = "Object";
@@ -709,7 +710,7 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
-   public Object around7(@org.jboss.aop.advice.annotation.Invocation
+   public Object around7(@JoinPoint
          ConstructorInvocation invocation) throws Throwable
    {
       Assert.fail("This advice should never be executed");
@@ -718,14 +719,14 @@ public class OverloadedAroundAspect
 
    /* AROUND8 ADVICE */
    
-   public Object around8(@org.jboss.aop.advice.annotation.Invocation
+   public Object around8(@JoinPoint
          MethodInvocation invocation) throws Throwable
    {
       around8 = "MethodInvocation";
       return invocation.invokeNext();
    }
 
-   public Object around8(@org.jboss.aop.advice.annotation.Invocation
+   public Object around8(@JoinPoint
          Object invocation) throws Throwable
    {
       around8 = "Object";
@@ -756,7 +757,7 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
-   public Object around8(@org.jboss.aop.advice.annotation.Invocation
+   public Object around8(@JoinPoint
          ConstructorInvocation invocation) throws Throwable
    {
       Assert.fail("This advice should never be executed");
@@ -765,7 +766,7 @@ public class OverloadedAroundAspect
 
    /* AROUND9 ADVICE */
    
-   public Object around9(@org.jboss.aop.advice.annotation.Invocation
+   public Object around9(@JoinPoint
          Object invocation) throws Throwable
    {
       around9 = "Object";
@@ -796,7 +797,7 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
-   public Object around9(@org.jboss.aop.advice.annotation.Invocation
+   public Object around9(@JoinPoint
          ConstructorInvocation invocation) throws Throwable
    {
       Assert.fail("This advice should never be executed");
@@ -829,7 +830,7 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around10(@org.jboss.aop.advice.annotation.Invocation
+   public Object around10(@JoinPoint
          ConstructorInvocation invocation) throws Throwable
    {
       Assert.fail("This advice should never be executed");
@@ -856,7 +857,7 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around11(@org.jboss.aop.advice.annotation.Invocation
+   public Object around11(@JoinPoint
          ConstructorInvocation invocation) throws Throwable
    {
       Assert.fail("This advice should never be executed");
@@ -871,7 +872,7 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around12(@org.jboss.aop.advice.annotation.Invocation
+   public Object around12(@JoinPoint
          ConstructorInvocation invocation) throws Throwable
    {
       Assert.fail("This advice should never be executed");

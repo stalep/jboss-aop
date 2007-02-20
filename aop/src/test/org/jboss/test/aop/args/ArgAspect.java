@@ -24,7 +24,7 @@ package org.jboss.test.aop.args;
 import junit.framework.Assert;
 
 import org.jboss.aop.advice.annotation.Arg;
-import org.jboss.aop.advice.annotation.Invocation;
+import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.joinpoint.CurrentInvocation;
 import org.jboss.aop.joinpoint.MethodInvocation;
 
@@ -98,7 +98,7 @@ public class ArgAspect implements ArgPOJOInterface
    }
 
    public int bunchArgsWithInvocation(
-         @Invocation MethodInvocation invocation,
+         @JoinPoint MethodInvocation invocation,
          @Arg int x, @Arg double y, @Arg float z, @Arg String str, @Arg int q) throws Throwable
    {
       argsWithInvocation = true;

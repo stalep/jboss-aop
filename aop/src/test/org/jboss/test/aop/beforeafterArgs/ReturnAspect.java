@@ -63,7 +63,7 @@ public class ReturnAspect
       Assert.fail("This advice should never be executed");
    }
    
-   public void around2(@org.jboss.aop.advice.annotation.Invocation
+   public void around2(@JoinPoint
          Invocation invocation) throws Exception
    {
       Assert.fail("This advice should never be executed");
@@ -76,7 +76,7 @@ public class ReturnAspect
       return aroundAdvice;
    }
    
-   public Object around4(@org.jboss.aop.advice.annotation.Invocation
+   public Object around4(@JoinPoint
          Invocation invocation) throws Throwable
    {
       aroundAdvice = "around4";
@@ -95,7 +95,7 @@ public class ReturnAspect
       Assert.fail("This advice should never be executed");
    }
    
-   public String around7(@org.jboss.aop.advice.annotation.Invocation Invocation
+   public String around7(@JoinPoint Invocation
          invocation) throws Throwable
    {
       aroundAdvice = "around7";
@@ -109,14 +109,14 @@ public class ReturnAspect
       return new SubValue(80);
    }
    
-   public SuperValue around9(@org.jboss.aop.advice.annotation.Invocation Invocation
+   public SuperValue around9(@JoinPoint Invocation
          invocation) throws Throwable
    {
       Assert.fail("This advice should never be executed");
       return null;
    }
    
-   public SubValue around10(@org.jboss.aop.advice.annotation.Invocation Invocation
+   public SubValue around10(@JoinPoint Invocation
          invocation) throws Throwable
    {
       aroundAdvice = "around10";
@@ -124,7 +124,7 @@ public class ReturnAspect
       return new SubValue(100);
    }
    
-   public SuperValue around11(@org.jboss.aop.advice.annotation.Invocation Invocation
+   public SuperValue around11(@JoinPoint Invocation
          invocation) throws Throwable
    {
       aroundAdvice = "around11";

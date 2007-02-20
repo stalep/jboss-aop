@@ -23,6 +23,8 @@ package org.jboss.test.aop.beforeafterArgs;
 
 import junit.framework.Assert;
 
+import org.jboss.aop.advice.annotation.JoinPoint;
+
 /**
  * Aspect whose advices must never be called.
  * 
@@ -33,17 +35,17 @@ import junit.framework.Assert;
  */
 public class InvalidAspect
 {
-   public void before(@org.jboss.aop.advice.annotation.Invocation Object object)
+   public void before(@JoinPoint Object object)
    {
       Assert.fail("This advice should never be executed");
    }
    
-   public void after(@org.jboss.aop.advice.annotation.Invocation Object object)
+   public void after(@JoinPoint Object object)
    {
       Assert.fail("This advice should never be executed");
    }
    
-   public void throwing(@org.jboss.aop.advice.annotation.Invocation Object object)
+   public void throwing(@JoinPoint Object object)
    {
       Assert.fail("This advice should never be executed");
    }

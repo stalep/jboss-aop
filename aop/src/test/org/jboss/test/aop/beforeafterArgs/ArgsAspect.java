@@ -24,6 +24,7 @@ package org.jboss.test.aop.beforeafterArgs;
 import junit.framework.Assert;
 
 import org.jboss.aop.advice.annotation.Args;
+import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Thrown;
 import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.MethodCalledByMethodInvocation;
@@ -223,7 +224,8 @@ public class ArgsAspect
       return invocation.invokeNext();
    }
    
-   public Object around3(@org.jboss.aop.advice.annotation.Invocation Invocation invocation, @Args Object[] arguments) throws Throwable
+   public Object around3(@JoinPoint Invocation invocation, @Args Object[] arguments)
+      throws Throwable
    {
       around3 = true;
       around3Args = arguments;

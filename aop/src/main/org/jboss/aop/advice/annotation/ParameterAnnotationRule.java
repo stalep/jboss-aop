@@ -17,8 +17,8 @@ enum ParameterAnnotationRule
     * Rule for parameter annotation {@link JoinPoint}.
     */
    JOIN_POINT (
-         JoinPoint.class, JoinPointInfo.class, AdviceMethodProperties.JOINPOINT_ARG, 100,
-         false, true)
+         JoinPoint.class, JoinPointInfo.class, AdviceMethodProperties.JOINPOINT_ARG,
+         100, false, true)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
@@ -30,8 +30,8 @@ enum ParameterAnnotationRule
     * Rule for parameter annotation {@link Invocation}.
     */
    INVOCATION (
-         org.jboss.aop.advice.annotation.Invocation.class, Invocation.class,
-         AdviceMethodProperties.INVOCATION_ARG, 100, false, true)
+         JoinPoint.class, Invocation.class, AdviceMethodProperties.INVOCATION_ARG,
+         100, false, true)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
