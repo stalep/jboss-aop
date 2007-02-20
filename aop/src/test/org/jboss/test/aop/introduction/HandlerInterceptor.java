@@ -25,6 +25,12 @@ import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.Invocation;
 
 /**
+ * Handles calls to <code>InterceptorHandledIntroduction.handledByIntroduction()
+ * </code> method on <code>POJO</code>.
+ * <br>
+ * This class is used on introduction handler tests.
+ * 
+ * 
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */

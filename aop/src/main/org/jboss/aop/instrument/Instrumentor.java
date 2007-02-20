@@ -114,7 +114,7 @@ public abstract class Instrumentor
    
    /**
     * Constructs new instrumentor.
-    * @joinpointClassifier algorithm of joinpoint classification to be used.
+    * @param joinpointClassifier algorithm of joinpoint classification to be used.
     * @param observer need be notified of every joinpoint wrapping caused only
     * by pointcuts dynamicaly added.
     */
@@ -333,10 +333,10 @@ public abstract class Instrumentor
    private void addIntroductionPointcutInterface(CtClass clazz, Advisor advisor, String intf, HashMap baseMethods) throws Exception
    {
       CtClass iface = classPool.get(intf);
-      if (clazz.subtypeOf(iface)) return;
-      if (clazz.subclassOf(iface)) return;
-
-      clazz.addInterface(iface);
+      if (!clazz.subtypeOf(iface) && !clazz.subclassOf(iface))
+      {
+         clazz.addInterface(iface);
+      }
 
       CtMethod mixinInvokeMethod = createInvokeMethod(clazz);
       HashMap intfMap = JavassistMethodHashing.getMethodMap(iface);
@@ -358,7 +358,7 @@ public abstract class Instrumentor
       ArrayList pointcuts = advisor.getInterfaceIntroductions();
       
       if (pointcuts.size() == 0) return;
-      HashMap baseMethods = JavassistMethodHashing.getMethodMap(clazz);
+      HashMap baseMethods = JavassistMethodHashing.getDeclaredMethodMap(clazz);
       Iterator it = pointcuts.iterator();
       if (it.hasNext()) setupBasics(clazz);
       while (it.hasNext())
@@ -1001,7 +1001,9 @@ public abstract class Instrumentor
     * class has just been loaded and one or more of its joinpoints were wrapped due
     * only to bindings added dynamicaly; in this case, the previously loaded classes
     * may not call the wrappers of this joinpoints, and need to be instrumented).
-    * @param hostSwapper
+    * 
+    * @param hotSwapper responsible for performing any hot swapping operations when
+    *                   needed.
     * @param clazz the clazz whose transformation involved dynamic wrapping.
     * @param fieldReads collection of fields whose read joinpoit was dynamicaly wrapped.
     * @param fieldWrites collection of fields whose read joinpoit was dynamicaly wrapped.

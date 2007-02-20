@@ -78,9 +78,23 @@ public class IntroductionTester extends AOPTestWithSetup
 
    public void testHandledByInterceptor() throws Exception
    {
+      // load first POJO
       POJO pojo = new POJO();
       int ret = ((InterceptorHandledIntroduction) pojo).handledByIntroduction();
+      // is it being intercepted by HandlerInterceptor?
       assertEquals(5, ret);
+      
+      // then, test on its subclass...
+      POJOSubClass pojoSubClass = new POJOSubClass();
+      ret = ((InterceptorHandledIntroduction) pojoSubClass).handledByIntroduction();
+      // is it being intercepted by SubClassHandlerInterceptor?
+      assertEquals(25, ret);
+   
+      // finally, test on its superclass...
+      POJOSuperClass pojoSuperClass = new POJOSuperClass();
+      // is it being intercepted by SuperClassHandlerInterceptor?
+      ret = ((InterceptorHandledIntroduction) pojoSuperClass).handledByIntroduction();
+      assertEquals(1, ret);
    }   
    
    public void testOverrideBaseclassMethodsWithMixin() throws Exception

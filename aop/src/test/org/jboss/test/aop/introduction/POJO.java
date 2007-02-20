@@ -25,7 +25,7 @@ package org.jboss.test.aop.introduction;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
-public class POJO
+public class POJO extends POJOSuperClass
 {
 
 }
