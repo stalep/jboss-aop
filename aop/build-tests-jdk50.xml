@@ -95,7 +95,7 @@
          <path refid="xdoclet.xdoclet.classpath"/>
       </path>
 
-      <!-- 
+      <!--
       		Settable in local.properties:
       			-jrockit.home: location of JRockit JVM
       			-jdk14.executable: Full path to a JDK 1.4 java.exe (Needed for the JDK 1.4 tests)
@@ -103,7 +103,7 @@
       			-debug: if set, -Djboss.aop.debug.classes=true for the tests; otherwise it is false
        -->
       <property file="local.properties"/>
-		
+
    <available file="${jrockit.home}/jre/lib/managementapi.jar" property="JROCKIT_API_AVAILABLE" value="managementapi.jar"/>
    <available file="${jrockit.home}/jre/lib/management-agent.jar" property="JROCKIT_API_AVAILABLE" value="rt.jar"/>
 	   <condition property="jboss.aop.debug.classes" value="true">
@@ -232,7 +232,7 @@
         basedir="${build.tests.classes}" includes="org/jboss/test/aop/jdk15/dynamic/common/scenario/**"/>
       <delete dir="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
    </target>
-   
+
    <!-- ================================================================== -->
    <!-- Cleaning                                                           -->
    <!-- ================================================================== -->
@@ -471,6 +471,11 @@
          <param name="caller" value="precompiled-tests"/>
          <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
       </antcall>
+
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="postweavingmixins"/>
+         <param name="caller" value="precompiled-tests"/>
+      </antcall>
    </target>
 
    <!-- ==================================================================================== -->
@@ -497,8 +502,14 @@
          <param name="caller" value="non-optimized-precompiled-tests"/>
          <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
       </antcall>
+
+       <!-- This should only be run using compile-time weaving -->
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="postweavingmixins"/>
+         <param name="caller" value="non-optimized-precompiled-tests"/>
+      </antcall>
    </target>
-   
+
    <target name="non-optimized-precompiled-test" depends="init">
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
       <antcall target="_run-precompiled-test" inheritRefs="true">
@@ -537,9 +548,14 @@
          <param name="caller" value="precompiled-genadvisor-tests"/>
          <param name="exclude" value="**/OverrideTestCase.class"/>
       </antcall>
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="nameddomain"/>
-         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="caller" value="precompiled-genadvisor-tests"/>
+      </antcall>
+       <!-- This should only be run using compile-time weaving -->
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="postweavingmixins"/>
+         <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
 
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
@@ -547,6 +563,7 @@
          <param name="caller" value="precompiled-genadvisor-tests"/>
          <param name="test-target" value="_run-precompiled-test"/>
       </antcall>
+
    </target>
 
    <target name="precompiled-test" depends="init">
@@ -636,7 +653,7 @@
             <isset property="use.annotations"/>
          </not>
       </condition>
- 
+
       <!-- determine output directory from weaving mode -->
       <mkdir dir="${build.reports}"/>
 
@@ -735,7 +752,7 @@
 
       <property name="report.dir" value="${build.reports}"/>
       <mkdir dir="${report.dir}"/>
-      
+
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${source.res}/test/jdk15/jboss-aop.xml"/>
          <sysproperty key="jboss.aop.class.path" value="${build.tests.classes}"/>
@@ -754,7 +771,7 @@
          <test todir="${report.dir}" name="org.jboss.test.aop.jdk15.AOPTester"/>
          <test todir="${report.dir}" name="org.jboss.test.aop.jdk15annotated.AnnotatedTestCase"/>
       </junit>
-   
+
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${source.res}/test/jdk15/dynamic/prepareAll/jboss-aop.xml"/>
          <sysproperty key="scenario.jar" value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"/>
@@ -1191,7 +1208,7 @@
       </antcall>
 
    </target>
-   
+
    <target name="jrockit-test" depends="compile-test-classes" if="JROCKIT_API_AVAILABLE">
          <antcall target="_run-jrockit-test" inheritRefs="true">
             <param name="test" value="${test}"/>

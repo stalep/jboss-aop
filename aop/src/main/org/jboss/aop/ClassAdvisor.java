@@ -117,11 +117,11 @@ public class ClassAdvisor extends Advisor
    /** @deprecated Use fieldWriteInfos instead */
    private Interceptor[][] fieldWriteInterceptors;
    private FieldInfo[] fieldWriteInfos;
-   
-   
+
+
    protected Field[] advisedFields;
    //PER_JOINPOINT aspects for static fields or PER_CLASS_JOINPOINT aspects
-   //all apply to fields, and we need this since the same aspect should be used for 
+   //all apply to fields, and we need this since the same aspect should be used for
    //read and write
    private HashMap fieldAspectsWithNoInstance = new HashMap();
 
@@ -164,7 +164,7 @@ public class ClassAdvisor extends Advisor
             }
          }
       }
-      
+
       Object aspect = map.get(joinpoint);
       if (aspect == null)
       {
@@ -178,7 +178,7 @@ public class ClassAdvisor extends Advisor
             }
          }
       }
-      
+
       return aspect;
    }
 
@@ -248,13 +248,13 @@ public class ClassAdvisor extends Advisor
    {
       return fieldWriteInfos;
    }
-   
+
    public TLongObjectHashMap getMethodInterceptors()
    {
       return methodInterceptors;
    }
 
-   
+
    /**
     * Constructs a new helper.
     */
@@ -388,15 +388,18 @@ public class ClassAdvisor extends Advisor
             for (int j = 0; j < interfaces.length; j++)
             {
                Class intf = Thread.currentThread().getContextClassLoader().loadClass(interfaces[j]);
-               Method[] methods = intf.getMethods();
-               for (int k = 0; k < methods.length; k++)
+               if (intf.isAssignableFrom(clazz))//This is a fix for JBAOP-365. Class may have been woven, with the extra mixin information only available at init time
                {
-                  //Put wrapped method in the class itself into the unadvisedMethods map
-                  //   String wrappedName = ClassAdvisor.notAdvisedMethodName(clazz.getName(), methods[k].getName());
-                  //   Method method = clazz.getMethod(wrappedName, methods[k].getParameterTypes());
-                  Method method = getMethod(clazz, methods[k]);
-                  long hash = MethodHashing.methodHash(method);
-                  unadvisedMethods.put(hash, method);
+                  Method[] methods = intf.getMethods();
+                  for (int k = 0; k < methods.length; k++)
+                  {
+                     //Put wrapped method in the class itself into the unadvisedMethods map
+                     //   String wrappedName = ClassAdvisor.notAdvisedMethodName(clazz.getName(), methods[k].getName());
+                     //   Method method = clazz.getMethod(wrappedName, methods[k].getParameterTypes());
+                     Method method = getMethod(clazz, methods[k]);
+                     long hash = MethodHashing.methodHash(method);
+                     unadvisedMethods.put(hash, method);
+                  }
                }
             }
          }
@@ -427,7 +430,7 @@ public class ClassAdvisor extends Advisor
       for (int i = 0; i < advisedFields.length; i++)
       {
          Field field = advisedFields[i];
-         
+
          if ((!write && binding.getPointcut().matchesGet(this, field))
          || (write && binding.getPointcut().matchesSet(this, field)))
          {
@@ -435,7 +438,7 @@ public class ClassAdvisor extends Advisor
             adviceBindings.add(binding);
             binding.addAdvisor(this);
             FieldInfo info = (FieldInfo)newFieldInfos.get(i);
-            pointcutResolved(info, binding, new FieldJoinpoint(field));         
+            pointcutResolved(info, binding, new FieldJoinpoint(field));
          }
       }
    }
@@ -496,7 +499,7 @@ public class ClassAdvisor extends Advisor
          }
 
          chain.add(info);
-         
+
          try
          {
             Field infoField = clazz.getDeclaredField(FieldAccessTransformer.getFieldReadInfoFieldName(advisedFields[i].getName()));
@@ -511,7 +514,7 @@ public class ClassAdvisor extends Advisor
          {
             throw new RuntimeException(e);
          }
-         
+
       }
       return chain;
    }
@@ -538,7 +541,7 @@ public class ClassAdvisor extends Advisor
          }
 
          chain.add(info);
-         
+
          try
          {
             Field infoField = clazz.getDeclaredField(FieldAccessTransformer.getFieldWriteInfoFieldName(advisedFields[i].getName()));
@@ -553,7 +556,7 @@ public class ClassAdvisor extends Advisor
          {
             throw new RuntimeException(e);
          }
-         
+
       }
       return chain;
    }
@@ -563,7 +566,7 @@ public class ClassAdvisor extends Advisor
       for (int i = 0; i < newFieldInfos.size(); i++)
       {
          FieldInfo info = (FieldInfo)newFieldInfos.get(i);
-         ArrayList list = info.getInterceptorChain();        
+         ArrayList list = info.getInterceptorChain();
          Interceptor[] interceptors = null;
          if (list.size() > 0)
          {
@@ -578,7 +581,7 @@ public class ClassAdvisor extends Advisor
       for (int i = 0; i < newFieldInfos.size(); i++)
       {
          FieldInfo info = (FieldInfo)newFieldInfos.get(i);
-         ArrayList list = info.getInterceptorChain();        
+         ArrayList list = info.getInterceptorChain();
          Interceptor[] interceptors = null;
          if (list.size() > 0)
          {
@@ -596,7 +599,7 @@ public class ClassAdvisor extends Advisor
       ArrayList newFieldWriteInfos = initializeFieldWriteChain();
       ArrayList newConstructorInfos = initializeConstructorChain();
       ArrayList newConstructionInfos = initializeConstructionChain();
-      
+
       synchronized (manager.getBindings())
       {
          Iterator it = manager.getBindings().values().iterator();
@@ -620,9 +623,9 @@ public class ClassAdvisor extends Advisor
       fieldWriteInfos = (FieldInfo[]) newFieldWriteInfos.toArray(new FieldInfo[newFieldWriteInfos.size()]);
       constructorInfos = (ConstructorInfo[]) newConstructorInfos.toArray(new ConstructorInfo[newConstructorInfos.size()]);
       constructionInfos = (ConstructionInfo[]) newConstructionInfos.toArray(new ConstructionInfo[newConstructionInfos.size()]);
-      
+
       populateInterceptorsFromInfos();
-      
+
       doesHaveAspects = adviceBindings.size() > 0;
       // Notify observer about this change
       if (this.interceptorChainObserver != null)
@@ -631,7 +634,7 @@ public class ClassAdvisor extends Advisor
                constructorInterceptors, methodInterceptors);
       }
    }
-   
+
    private MethodByMethodInfo initializeCallerInterceptorsMap(long callingMethodHash, String calledClass, long calledMethodHash, Method callingMethod, Method calledMethod) throws Exception
    {
       HashMap calledClassesMap = (HashMap) methodCalledByMethodInterceptors.get(callingMethodHash);
@@ -648,7 +651,7 @@ public class ClassAdvisor extends Advisor
       }
       //The standard MethodCalledByXXXXInvocation class calls by reflection and needs access
       calledMethod.setAccessible(true);
-      
+
       Class calledClazz = Thread.currentThread().getContextClassLoader().loadClass(calledClass);
       MethodByMethodInfo info = new MethodByMethodInfo(this, calledClazz, calledMethod, callingMethodHash, calledMethodHash, null);
       calledMethodsMap.put(calledMethodHash, info);
@@ -656,7 +659,7 @@ public class ClassAdvisor extends Advisor
    }
 
    private ConByMethodInfo initializeConCalledByMethodInterceptorsMap(long callingMethodHash, String calledClass, long calledConHash, Constructor calledCon) throws Exception
-   {       
+   {
       HashMap calledClassesMap = (HashMap) conCalledByMethodInterceptors.get(callingMethodHash);
       if (calledClassesMap == null)
       {
@@ -755,7 +758,7 @@ public class ClassAdvisor extends Advisor
          return new ConByConInfo(this, calledClazz, callingIndex, calledCon, calledConHash, null, null);
       }
    }
-   
+
    protected void rebuildCallerInterceptors() throws Exception
    {
       long[] callingKeys = methodCalledByMethodInterceptors.keys();
@@ -879,7 +882,7 @@ public class ClassAdvisor extends Advisor
       }
       finalizeMethodCalledByMethodInterceptorChain(info);
    }
-   
+
    protected void finalizeMethodCalledByMethodInterceptorChain(MethodByMethodInfo info)
    {
       ArrayList list = info.getInterceptorChain();
@@ -903,7 +906,7 @@ public class ClassAdvisor extends Advisor
       }
       finalizeConCalledByMethodInterceptorChain(info);
    }
-   
+
    protected void finalizeConCalledByMethodInterceptorChain(ConByMethodInfo info)
    {
       ArrayList list = info.getInterceptorChain();
@@ -951,7 +954,7 @@ public class ClassAdvisor extends Advisor
       }
       finalizeMethodCalledByConInterceptorChain(info);
    }
-   
+
    protected void finalizeMethodCalledByConInterceptorChain(MethodByConInfo info)
    {
       ArrayList list = info.getInterceptorChain();
@@ -1027,7 +1030,7 @@ public class ClassAdvisor extends Advisor
          ClassMetaDataBinding data = (ClassMetaDataBinding) classMetaDataBindings.get(i);
          bindClassMetaData(data);
       }
-      
+
       deployAnnotationOverrides();
    }
 
@@ -1055,8 +1058,8 @@ public class ClassAdvisor extends Advisor
          doesHaveAspects = false;
          rebuildInterceptors();
       }
-      
-      
+
+
    }
 
    private void initializeEmptyCallerChain(long callingMethodHash, String calledClass, long calledMethodHash) throws Exception
@@ -1339,20 +1342,20 @@ public class ClassAdvisor extends Advisor
       !isWithoutAdvisement(method.getName()) &&
       !Modifier.isAbstract(modifiers) &&
       !Modifier.isNative(modifiers) &&
-      !(method.getName().equals("_getAdvisor") && 
-            method.getParameterTypes().length == 0 && 
+      !(method.getName().equals("_getAdvisor") &&
+            method.getParameterTypes().length == 0 &&
             method.getReturnType().equals(Advisor.class)) &&
-      !(method.getName().equals("_getClassAdvisor") && 
-            method.getParameterTypes().length == 0 && 
+      !(method.getName().equals("_getClassAdvisor") &&
+            method.getParameterTypes().length == 0 &&
             method.getReturnType().equals(Advisor.class)) &&
-      !(method.getName().equals("_getInstanceAdvisor") && 
+      !(method.getName().equals("_getInstanceAdvisor") &&
             method.getParameterTypes().length == 0 &&
             method.getReturnType().equals(InstanceAdvisor.class)) &&
-      !(method.getName().equals("_setInstanceAdvisor") && 
-            method.getParameterTypes().length == 1 && 
+      !(method.getName().equals("_setInstanceAdvisor") &&
+            method.getParameterTypes().length == 1 &&
             method.getParameterTypes()[0].equals(InstanceAdvisor.class)));
    }
-   
+
    private void populateFieldTable(ArrayList fields, Class superclass)
    throws Exception
    {
@@ -1515,7 +1518,7 @@ public class ClassAdvisor extends Advisor
       //Javassist doesn't like this in a field initialiser hence this method
       return new WeakReference(resolveCallerMethodInfo(callingMethodHash, calledClass, calledMethodHash));
    }
-   
+
    public ConByMethodInfo resolveCallerConstructorInfo(long callingMethodHash, String calledClass, long calledConHash)
    {
       if (System.getSecurityManager() == null)
@@ -1563,7 +1566,7 @@ public class ClassAdvisor extends Advisor
          throw new RuntimeException(x);
       }
    }
-   
+
    public WeakReference resolveCallerConstructorInfoAsWeakReference(long callingMethodHash, String calledClass, long calledConHash)
    {
       //Javassist doesn't like this in a field initialiser hence this method
@@ -1593,7 +1596,7 @@ public class ClassAdvisor extends Advisor
          if (calledMethod == null) throw new RuntimeException("Unable to figure out calledmethod of a caller pointcut");
 
          boolean matched = false;
-         
+
          synchronized (manager.getBindings())
          {
             Iterator it = manager.getBindings().values().iterator();
@@ -1625,7 +1628,7 @@ public class ClassAdvisor extends Advisor
       //Javassist doesn't like this in a field initialiser hence this method
       return new WeakReference(resolveConstructorCallerMethodInfo(callingIndex, calledClass, calledMethodHash));
    }
-   
+
    public ConByConInfo resolveConstructorCallerConstructorInfo(int callingIndex, String calledClass, long calledConHash)
    {
       if (System.getSecurityManager() == null)
@@ -1788,14 +1791,14 @@ public class ClassAdvisor extends Advisor
    {
       return invokeConCalledByMethod((ConByMethodInfo)info, callingObject, args);
    }
-   
+
    public Object invokeConCalledByMethod(ConByMethodInfo info, Object callingObject, Object[] args)
    throws Throwable
    {
       ConstructorCalledByMethodInvocation invocation = new ConstructorCalledByMethodInvocation(info, callingObject, args, info.getInterceptors());
       return invocation.invokeNext();
    }
-   
+
    /**
     *@deprecated
     */
@@ -1804,7 +1807,7 @@ public class ClassAdvisor extends Advisor
    {
       return invokeConstructorCaller((MethodByConInfo)info, null, target, args);
    }
-   
+
    /**
     *@deprecated
     */
@@ -1813,13 +1816,13 @@ public class ClassAdvisor extends Advisor
    {
       return invokeConstructorCaller((MethodByConInfo)info, callingObject, target, args);
    }
-   
+
    /**
     * @deprecated
-    * 
+    *
     * Prefer using the version with <code>callingObject</code> instead of this one,
     * since this object is available for call invocations made inside constructors.
-    * 
+    *
     * @see #invokeConstructorCaller(MethodByConInfo, Object, Object, Object[])
     */
    public Object invokeConstructorCaller(MethodByConInfo info, Object target, Object[] args)
@@ -1827,7 +1830,7 @@ public class ClassAdvisor extends Advisor
    {
       return this.invokeConstructorCaller(info, null, target, args);
    }
-   
+
    public Object invokeConstructorCaller(MethodByConInfo info, Object callingObject, Object target, Object[] args)
    throws Throwable
    {
@@ -1844,7 +1847,7 @@ public class ClassAdvisor extends Advisor
    {
       return invokeConCalledByCon((ConByConInfo)info, null, args);
    }
-   
+
    /**
     *@deprecated
     */
@@ -1853,13 +1856,13 @@ public class ClassAdvisor extends Advisor
    {
       return invokeConCalledByCon((ConByConInfo)info, callingObject, args);
    }
-   
+
    /**
     * @deprecated
-    * 
+    *
     * Prefer using the version with <code>callingObject</code> instead of this one,
     * since this object is available for call invocations made inside constructors.
-    * 
+    *
     * @see #invokeConCalledByCon(ConByConInfo, Object, Object[])
     */
    public Object invokeConCalledByCon(ConByConInfo info, Object[] args)
@@ -1867,7 +1870,7 @@ public class ClassAdvisor extends Advisor
    {
       return invokeConCalledByCon(info, null, args);
    }
-   
+
    public Object invokeConCalledByCon(ConByConInfo info, Object callingObject, Object[] args)
    throws Throwable
    {
@@ -2011,7 +2014,7 @@ public class ClassAdvisor extends Advisor
 
    // interceptor chain observer
    private InterceptorChainObserver interceptorChainObserver;
-   
+
    /**
     * Returns the interceptor chain observer associated with this advisor.
     */
@@ -2019,7 +2022,7 @@ public class ClassAdvisor extends Advisor
    {
       return this.interceptorChainObserver;
    }
-   
+
    /**
     * Defines the interceptor chain observer associated with this advisor.
     * @param observer the interceptor chain observer.
@@ -2046,20 +2049,20 @@ public class ClassAdvisor extends Advisor
       fieldWriteInterceptors = new Interceptor[fieldWriteInfos.length][];
       for (int i = 0 ; i < fieldWriteInfos.length ; i++)
       {
-         fieldWriteInterceptors[i] = fieldWriteInfos[i].getInterceptors(); 
+         fieldWriteInterceptors[i] = fieldWriteInfos[i].getInterceptors();
       }
       constructionInterceptors = new Interceptor[constructionInfos.length][];
       for (int i = 0 ; i < constructionInfos.length ; i++)
       {
-         constructionInterceptors[i] = constructionInfos[i].getInterceptors(); 
+         constructionInterceptors[i] = constructionInfos[i].getInterceptors();
       }
 
    }
-   
+
    interface ResolveCallerConstuctorInfoAction
    {
       ConByMethodInfo resolveInfo(ClassAdvisor advisor, long callingMethodHash, String calledClass, long calledConHash);
-      
+
       ResolveCallerConstuctorInfoAction PRIVILEGED = new ResolveCallerConstuctorInfoAction()
       {
          public ConByMethodInfo resolveInfo(final ClassAdvisor advisor, final long callingMethodHash, final String calledClass, final long calledConHash)
@@ -2077,8 +2080,8 @@ public class ClassAdvisor extends Advisor
             catch (PrivilegedActionException e)
             {
                Exception ex = e.getException();
-               if (ex instanceof RuntimeException) 
-               { 
+               if (ex instanceof RuntimeException)
+               {
                   throw (RuntimeException)ex;
                }
                throw new RuntimeException(ex);
@@ -2098,7 +2101,7 @@ public class ClassAdvisor extends Advisor
    interface ResolveCallerMethodInfoAction
    {
       MethodByMethodInfo resolveInfo(ClassAdvisor advisor, long callingMethodHash, String calledClass, long calledMethodHash);
-      
+
       ResolveCallerMethodInfoAction PRIVILEGED = new ResolveCallerMethodInfoAction()
       {
          public MethodByMethodInfo resolveInfo(final ClassAdvisor advisor, final long callingMethodHash, final String calledClass, final long calledMethodHash)
@@ -2116,8 +2119,8 @@ public class ClassAdvisor extends Advisor
             catch (PrivilegedActionException e)
             {
                Exception ex = e.getException();
-               if (ex instanceof RuntimeException) 
-               { 
+               if (ex instanceof RuntimeException)
+               {
                   throw (RuntimeException)ex;
                }
                throw new RuntimeException(ex);
@@ -2137,7 +2140,7 @@ public class ClassAdvisor extends Advisor
    interface ResolveConstructorCallerMethodInfoAction
    {
       MethodByConInfo resolveInfo(ClassAdvisor advisor, int callingIndex, String calledClass, long calledMethodHash);
-      
+
       ResolveConstructorCallerMethodInfoAction PRIVILEGED = new ResolveConstructorCallerMethodInfoAction()
       {
          public MethodByConInfo resolveInfo(final ClassAdvisor advisor, final int callingIndex, final String calledClass, final long calledMethodHash)
@@ -2155,8 +2158,8 @@ public class ClassAdvisor extends Advisor
             catch (PrivilegedActionException e)
             {
                Exception ex = e.getException();
-               if (ex instanceof RuntimeException) 
-               { 
+               if (ex instanceof RuntimeException)
+               {
                   throw (RuntimeException)ex;
                }
                throw new RuntimeException(ex);
@@ -2176,7 +2179,7 @@ public class ClassAdvisor extends Advisor
    interface ResolveConstructorCallerConstructorInfoAction
    {
       ConByConInfo resolveInfo(ClassAdvisor advisor, int callingIndex, String calledClass, long calledConHash);
-      
+
       ResolveConstructorCallerConstructorInfoAction PRIVILEGED = new ResolveConstructorCallerConstructorInfoAction()
       {
          public ConByConInfo resolveInfo(final ClassAdvisor advisor, final int callingIndex, final String calledClass, final long calledConHash)
@@ -2194,8 +2197,8 @@ public class ClassAdvisor extends Advisor
             catch (PrivilegedActionException e)
             {
                Exception ex = e.getException();
-               if (ex instanceof RuntimeException) 
-               { 
+               if (ex instanceof RuntimeException)
+               {
                   throw (RuntimeException)ex;
                }
                throw new RuntimeException(ex);
@@ -2214,7 +2217,7 @@ public class ClassAdvisor extends Advisor
    interface RebuildInterceptorsAction
    {
       void rebuildInterceptors(ClassAdvisor advisor);
-      
+
       RebuildInterceptorsAction PRIVILEGED = new RebuildInterceptorsAction()
       {
          public void rebuildInterceptors(final ClassAdvisor advisor)
@@ -2233,8 +2236,8 @@ public class ClassAdvisor extends Advisor
             catch (PrivilegedActionException e)
             {
                Exception ex = e.getException();
-               if (ex instanceof RuntimeException) 
-               { 
+               if (ex instanceof RuntimeException)
+               {
                   throw (RuntimeException)ex;
                }
                throw new RuntimeException(ex);
