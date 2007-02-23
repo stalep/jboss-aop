@@ -57,7 +57,7 @@
     -->
 
    <target name="configure" unless="configure.disable">
-      <property name="aop.version" value="jboss-aop-snapshot"/>
+      <property name="aop.version" value="jboss-aop-2.0.0.alpha3"/>
       <property name="aop.title" value="JBoss AOP Framework"/>
 
       <!-- =================== -->
@@ -159,7 +159,7 @@
       </path>
 
       <path id="javac.jrockit.classpath">
-         <path refid="javac.classpath"/> 
+         <path refid="javac.classpath"/>
          <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
       </path>
 
