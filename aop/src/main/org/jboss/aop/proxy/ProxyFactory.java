@@ -36,6 +36,7 @@ import org.jboss.util.collection.WeakValueHashMap;
 import org.jboss.util.id.GUID;
 
 import java.lang.reflect.Field;
+import java.security.ProtectionDomain;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -112,8 +113,14 @@ public class ProxyFactory
    throws Exception
    {
       CtClass proxy = createProxyCtClass(loader, mixins, interfaces);
-
-      Class clazz = TransformerCommon.toClass(proxy, loader);
+      // Choose the first non-null ProtectionDomain
+      int length = interfaces != null ? interfaces.length: 0;
+      ProtectionDomain pd = null;
+      for(int n = 0; n < interfaces.length && pd == null; n ++)
+      {
+        pd = interfaces[n].getProtectionDomain(); 
+      }
+      Class clazz = TransformerCommon.toClass(proxy, loader, pd);
       Map methodmap = ClassProxyFactory.getMethodMap(clazz);
       Field field = clazz.getDeclaredField("methodMap");
       SecurityActions.setAccessible(field);

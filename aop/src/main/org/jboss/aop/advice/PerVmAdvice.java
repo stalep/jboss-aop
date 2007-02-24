@@ -23,6 +23,7 @@ package org.jboss.aop.advice;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 
 import javassist.CannotCompileException;
@@ -185,7 +186,8 @@ public class PerVmAdvice
             invoke.setModifiers(javassist.Modifier.PUBLIC);
             clazz.addMethod(invoke);
 
-            iclass = TransformerCommon.toClass(clazz, cl);
+            ProtectionDomain pd = aspect.getClass().getProtectionDomain();
+            iclass = TransformerCommon.toClass(clazz, cl, pd);
          }
       }
       Interceptor rtn = (Interceptor) iclass.newInstance();
@@ -261,7 +263,8 @@ public class PerVmAdvice
       }
       invoke.setModifiers(javassist.Modifier.PUBLIC);
       clazz.addMethod(invoke);
-      Class iclass = TransformerCommon.toClass(clazz);
+      ProtectionDomain pd = aspect.getClass().getProtectionDomain();
+      Class iclass = TransformerCommon.toClass(clazz, pd);
 
       Interceptor rtn = (Interceptor) iclass.newInstance();
       Field f = iclass.getField("aspectField");

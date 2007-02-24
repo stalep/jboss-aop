@@ -22,6 +22,7 @@
 package org.jboss.aop.proxy.container;
 
 import java.lang.reflect.Method;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -135,8 +136,8 @@ public class ContainerProxyFactory
    {
       ArrayList introductions = advisor.getInterfaceIntroductions();
       CtClass proxy = createProxyCtClass(objectAsSuper, introductions, clazz, advisor);
-      
-      Class proxyClass = TransformerCommon.toClass(proxy);
+      ProtectionDomain pd = clazz.getProtectionDomain();
+      Class proxyClass = TransformerCommon.toClass(proxy, pd);
       return proxyClass;
    }
 

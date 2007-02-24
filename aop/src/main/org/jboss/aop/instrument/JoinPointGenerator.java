@@ -26,6 +26,7 @@ import java.lang.reflect.Field;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -391,7 +392,8 @@ public abstract class JoinPointGenerator
          ClassPool pool = manager.findClassPool(classloader);
          GeneratedClassInfo generatedClass = generateJoinpointClass(pool, info);
          
-         Class clazz = toClass(pool, generatedClass.getGenerated());
+         ProtectionDomain pd = advisorClass.getProtectionDomain();
+         Class clazz = toClass(pool, generatedClass.getGenerated(), pd);
          Object obj = instantiateClass(clazz, generatedClass.getAroundSetups());
          
          joinpointField.set(advisor, obj);
@@ -406,9 +408,9 @@ public abstract class JoinPointGenerator
       initialised = true;
    }
 
-   private Class toClass(ClassPool pool, CtClass ctclass) throws NotFoundException, CannotCompileException, ClassNotFoundException
+   private Class toClass(ClassPool pool, CtClass ctclass, ProtectionDomain pd) throws NotFoundException, CannotCompileException, ClassNotFoundException
    {
-      return TransformerCommon.toClass(ctclass);
+      return TransformerCommon.toClass(ctclass, pd);
    }
    
    private Object instantiateClass(Class clazz, AdviceSetup[] aroundSetups) throws Exception

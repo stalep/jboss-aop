@@ -30,6 +30,7 @@ import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.security.ProtectionDomain;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassPool;
@@ -99,11 +100,11 @@ public class TransformerCommon {
             // if load time
             if (System.getSecurityManager() == null)
             {
-               ToClassAction.NON_PRIVILEGED.toClass(newClass, null);
+               ToClassAction.NON_PRIVILEGED.toClass(newClass, null, null);
             }
             else
             {
-               ToClassAction.PRIVILEGED.toClass(newClass, null);
+               ToClassAction.PRIVILEGED.toClass(newClass, null, null);
             }
          }
 
@@ -118,31 +119,32 @@ public class TransformerCommon {
       }
    }
 
-   public static Class toClass(CtClass newClass) throws CannotCompileException
+   public static Class toClass(CtClass newClass, ProtectionDomain pd) throws CannotCompileException
    {
       registerGeneratedClass(newClass);
 
       if (System.getSecurityManager() == null)
       {
-         return ToClassAction.NON_PRIVILEGED.toClass(newClass, null);
+         return ToClassAction.NON_PRIVILEGED.toClass(newClass, null, pd);
       }
       else
       {
-         return ToClassAction.PRIVILEGED.toClass(newClass, null);
+         return ToClassAction.PRIVILEGED.toClass(newClass, null, pd);
       }
    }
 
-   public static Class toClass(CtClass newClass, ClassLoader loader) throws CannotCompileException
+   public static Class toClass(CtClass newClass, ClassLoader loader, ProtectionDomain pd)
+      throws CannotCompileException
    {
       registerGeneratedClass(newClass);
 
       if (System.getSecurityManager() == null)
       {
-         return ToClassAction.NON_PRIVILEGED.toClass(newClass, loader);
+         return ToClassAction.NON_PRIVILEGED.toClass(newClass, loader, pd);
       }
       else
       {
-         return ToClassAction.PRIVILEGED.toClass(newClass, loader);
+         return ToClassAction.PRIVILEGED.toClass(newClass, loader, pd);
       }
    }
 
@@ -245,11 +247,13 @@ public class TransformerCommon {
 
    private interface ToClassAction
    {
-      Class toClass(CtClass clazz, ClassLoader loader) throws CannotCompileException;
+      Class toClass(CtClass clazz, ClassLoader loader, ProtectionDomain pd)
+         throws CannotCompileException;
 
       ToClassAction PRIVILEGED = new ToClassAction()
       {
-         public Class toClass(final CtClass clazz, final ClassLoader loader)  throws CannotCompileException
+         public Class toClass(final CtClass clazz, final ClassLoader loader, final ProtectionDomain pd)
+            throws CannotCompileException
          {
             try
             {
@@ -261,11 +265,7 @@ public class TransformerCommon {
                      {
                         clazz.debugWriteFile();
                      }
-                     if (loader != null)
-                     {
-                        return clazz.toClass(loader, null);
-                     }
-                     return clazz.toClass();
+                     return clazz.toClass(loader, pd);
                   }
                });
             }
@@ -283,17 +283,14 @@ public class TransformerCommon {
 
       ToClassAction NON_PRIVILEGED = new ToClassAction()
       {
-         public Class toClass(CtClass clazz, ClassLoader loader) throws CannotCompileException
+         public Class toClass(CtClass clazz, ClassLoader loader, ProtectionDomain pd)
+            throws CannotCompileException
          {
             if (AspectManager.debugClasses)
             {
                clazz.debugWriteFile();
             }
-            if (loader != null)
-            {
-               return clazz.toClass(loader, null);
-            }
-            return clazz.toClass();
+            return clazz.toClass(loader, pd);
          }
       };
    }
