@@ -52,4 +52,11 @@
          <class>org.jboss.test.aop.introduction.NonSerializableMixin</class>
       </mixin>
    </introduction>
+   
+   <introduction class="org.jboss.test.aop.introduction.OverrideObjectPOJO">
+      <interfaces>
+         org.jboss.test.aop.introduction.OverrideObjectInterface
+      </interfaces>
+   </introduction>
+   
 </aop>

@@ -106,4 +106,23 @@ public class IntroductionTester extends AOPTestWithSetup
       NonSerializedIntroduction intro = (NonSerializedIntroduction)sub;
       assertEquals("original", intro.getNonMessage());
    }
+   
+   public void testObjectHasSameMethodsAsIntroduction() throws Exception
+   {
+      OverrideObjectPOJO pojo = new OverrideObjectPOJO();
+      assertFalse(pojo.invokedEquals);
+      assertFalse(pojo.invokedHashCode);
+      assertFalse(pojo.invokedToString);
+
+      OverrideObjectInterface iface = (OverrideObjectInterface)pojo;
+      
+      iface.equals(null);
+      assertTrue(pojo.invokedEquals);
+      
+      iface.hashCode();
+      assertTrue(pojo.invokedHashCode);
+      
+      iface.toString();
+      assertTrue(pojo.invokedToString);
+   }
 }
