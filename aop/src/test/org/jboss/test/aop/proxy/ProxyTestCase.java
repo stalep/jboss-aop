@@ -41,11 +41,13 @@ import org.jboss.aop.proxy.ClassProxyFactory;
 import org.jboss.aop.proxy.Proxy;
 import org.jboss.aop.proxy.ProxyFactory;
 import org.jboss.aop.proxy.ProxyMixin;
+import org.jboss.aop.proxy.container.AOPProxyFactoryParameters;
 import org.jboss.aop.proxy.container.AspectManaged;
 import org.jboss.aop.proxy.container.ClassProxyContainer;
 import org.jboss.aop.proxy.container.ContainerProxyCacheKey;
 import org.jboss.aop.proxy.container.ContainerProxyFactory;
 import org.jboss.aop.proxy.container.Delegate;
+import org.jboss.aop.proxy.container.GeneratedAOPProxyFactory;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 import junit.framework.Test;
@@ -184,15 +186,6 @@ public class ProxyTestCase extends AOPTestWithSetup
       domain.addBinding(binding);
       }
 
-
-      /*
-      CtClass clazz = ContainerProxyFactory.createProxyCtClass(ContainerProxyFactory.getIntroductions(POJO.class, container), POJO.class);
-      FileOutputStream fo = new FileOutputStream(clazz.getName() + ".class");
-      DataOutputStream dos = new DataOutputStream(fo);
-      clazz.toBytecode(dos);
-      dos.close();
-      */
-
       Class proxyClass = ContainerProxyFactory.getProxyClass(POJO.class, domain);
       ClassProxyContainer container = new ClassProxyContainer("test", domain);
       domain.setAdvisor(container);
@@ -247,5 +240,39 @@ public class ProxyTestCase extends AOPTestWithSetup
       EchoInterceptor.intercepted = false;
       proxy.finalMethod();
       assertFalse(EchoInterceptor.intercepted);
+   }
+   
+   
+   public void testHollowProxyWithInterfaceContainingObjectMethods() throws Exception
+   {
+      //Here to verify that we do not "crash" with methods already in the proxy class (toString(), equals() and hashCode() all exist in the template)
+      AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
+      params.setObjectAsSuperClass(true);
+      params.setInterfaces(new Class[] {OverrideObjectInterface.class});
+      
+      GeneratedAOPProxyFactory factory = new GeneratedAOPProxyFactory();
+      Object o = factory.createAdvisedProxy(params);
+      assertTrue(o instanceof OverrideObjectInterface);
+
+      assertTrue(o.equals(o));
+      assertEquals(o.hashCode(), o.hashCode());
+      assertEquals(o.toString(), o.toString());
+      
+      OverrideObjectClass tgt = new OverrideObjectClass();
+      assertNotNull(tgt);
+      ((Delegate)o).setDelegate(tgt);
+      Object target = ((Delegate)o).getDelegate();
+      assertSame(tgt, target);
+      
+      assertFalse(tgt.invokedEquals);
+      assertFalse(tgt.invokedHashCode);
+      assertFalse(tgt.invokedToString);
+
+      assertTrue(o.equals(o));
+      assertTrue(tgt.invokedEquals);
+      assertEquals(o.hashCode(), o.hashCode());
+      assertTrue(tgt.invokedHashCode);
+      assertEquals(o.toString(), o.toString());
+      assertTrue(tgt.invokedToString);
    }
 }
