@@ -67,6 +67,7 @@ public class AopC extends MatchingTask
    private String maxmemory = null;
    ArrayList sysproperties = new ArrayList();
 
+   File sourceFiles;
    /**
     * flag to control action on execution trouble
     */
@@ -395,6 +396,14 @@ public class AopC extends MatchingTask
                     ex, getLocation());
          }
       }
+      finally
+      {
+         if (sourceFiles != null)
+         {
+            //deleteOnExit does not seem to work so do it explicitly here
+            sourceFiles.delete();
+         }
+      }
    }
 
    protected void logAndAddFilesToCompile(CommandlineJava cmd)
@@ -460,7 +469,7 @@ public class AopC extends MatchingTask
          BufferedWriter writer = null;
          try
          {
-            File sourceFiles = File.createTempFile("src", ".tmp");
+            sourceFiles = File.createTempFile("src", ".tmp");
             if (verbose)
             {
                System.out.println("[info] Total length of filenames to be compiled is greater than "
