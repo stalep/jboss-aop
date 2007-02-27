@@ -446,11 +446,17 @@ public class AopC extends MatchingTask
             cmd.createArgument().setValue(file);
             niceSourceList.append("    " + file + lSep);
          }
-
-         //getProject().log(niceSourceList.toString());
       }
       else
       {
+         for (Iterator it = sysproperties.iterator() ; it.hasNext() ; )
+         {
+            Environment.Variable var = (Environment.Variable)it.next();
+            if (var.getKey().equals("java.io.tmpdir"))
+            {
+               System.setProperty("java.io.tmpdir", var.getValue());
+            }
+         }
          BufferedWriter writer = null;
          try
          {

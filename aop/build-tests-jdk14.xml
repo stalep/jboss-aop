@@ -97,22 +97,22 @@
        </path>
 
       <!-- 
-      		Settable in local.properties:
-      			-jrockit.home: location of JRockit JVM
-      			-jdk14.executable: Full path to a JDK 1.4 java.exe (Needed for the JDK 1.4 tests)
-      			-repository.home: Location of local copy of repository (for the "update-repository" target
-      			-debug: if set, -Djboss.aop.debug.classes=true for the tests; otherwise it is false
+            Settable in local.properties:
+               -jrockit.home: location of JRockit JVM
+               -jdk14.executable: Full path to a JDK 1.4 java.exe (Needed for the JDK 1.4 tests)
+               -repository.home: Location of local copy of repository (for the "update-repository" target
+               -debug: if set, -Djboss.aop.debug.classes=true for the tests; otherwise it is false
        -->
       <property file="local.properties"/>
-		
-	   <condition property="jboss.aop.debug.classes" value="true">
-	      <isset property="debug"/>
-	   </condition>
-	   <condition property="jboss.aop.debug.classes" value="false">
-	      <not>
-	         <isset property="debug"/>
-	      </not>
-	   </condition>
+      
+      <condition property="jboss.aop.debug.classes" value="true">
+         <isset property="debug"/>
+      </condition>
+      <condition property="jboss.aop.debug.classes" value="false">
+         <not>
+            <isset property="debug"/>
+         </not>
+      </condition>
 
 
 
@@ -184,7 +184,7 @@
       <path id="jbossretrort.classpath">
          <path refid="jboss/backport.concurrent.classpath"/>
          <pathelement path="${jboss.jbossretro.lib}/jbossretro-rt.jar"/>
-			<path refid="jboss.microcontainer14.classpath"/>
+         <path refid="jboss.microcontainer14.classpath"/>
       </path>
 
       <path id="jboss.aop.retro.classpath">
@@ -205,6 +205,9 @@
          <path refid="jbossretrort.classpath"/>
          <path refid="jboss.aop14.classpath"/>
       </path>
+
+      <!-- The temp folder for aopc -->
+      <property name="aopc.tmpdir" value="output/aopctmp"/>
 
       <!-- Packages to include when generating api documentation -->
       <property name="javadoc.packages" value="org.jbos.aop.*"/>
@@ -330,7 +333,7 @@
          <arg value="${build.bootclasspath}"/>
       </java>
 
-   	<!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
+      <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-tests" inheritRefs="true">
          <param name="caller" value="bootclasspath-tests"/>
          <param name="test-target" value="_run-bootclasspath-test"/>
@@ -367,7 +370,7 @@
          <param name="caller" value="bootclasspath-genadvisor-tests"/>
       </antcall>
 
-	   <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
+      <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-tests" inheritRefs="true">
          <param name="caller" value="bootclasspath-genadvisor-tests"/>
          <param name="test-target" value="_run-bootclasspath-test"/>
@@ -400,17 +403,17 @@
       <property name="bootclasspath" refid="bootclasspath"/>
 
       <!-- Check for jboss-aop.xml override -->
-	   <condition property="jboss.aop.path" value="${aop.xml}">
-	      <isset property="aop.xml"/>
-	   </condition>
-	   <condition property="jboss.aop.path" value="">
-	      <isset property="no.xml"/>
-	   </condition>
-	   <condition property="jboss.aop.path" value="${source.res}/test/${test}/jboss-aop.xml">
-	      <not>
-	         <isset property="aop.xml"/>
-	      </not>
-	   </condition>
+      <condition property="jboss.aop.path" value="${aop.xml}">
+         <isset property="aop.xml"/>
+      </condition>
+      <condition property="jboss.aop.path" value="">
+         <isset property="no.xml"/>
+      </condition>
+      <condition property="jboss.aop.path" value="${source.res}/test/${test}/jboss-aop.xml">
+         <not>
+            <isset property="aop.xml"/>
+         </not>
+      </condition>
 
       <!-- Get -Djboss.aop.class.path from passed in parameters -->
       <condition property="jboss.aop.class.path" value="${build.tests.classes}">
@@ -422,7 +425,7 @@
          </not>
       </condition>
 
-   	<!-- Set the weaving mode and instrumentor to use-->
+      <!-- Set the weaving mode and instrumentor to use-->
       <condition property="instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor">
          <equals arg1="${caller}" arg2="bootclasspath-tests"/>
       </condition>
@@ -440,7 +443,7 @@
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
          <sysproperty key="jboss.aop.debug.classes" value="${jboss.aop.debug.classes}"/>
-      	<formatter type="plain" extension="-${caller}-jdk14.txt"/>
+         <formatter type="plain" extension="-${caller}-jdk14.txt"/>
          <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter"
                     usefile="true" extension="-${caller}-jdk14.xml"/>
          <classpath>
@@ -471,19 +474,19 @@
    <target name="precompiled-tests" depends="retroweave">
 
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
-   	<antcall target="_base-tests" inheritRefs="true">
+      <antcall target="_base-tests" inheritRefs="true">
          <param name="caller" value="precompiled-tests"/>
          <param name="test-target" value="_run-precompiled-test"/>
       </antcall>
 
-   	<!-- Tests only applicable for this weaving mode -->
+      <!-- Tests only applicable for this weaving mode -->
 
       <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="args"/>
          <param name="caller" value="precompiled-tests"/>
       </antcall>
 
-	   <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="override"/>
          <param name="caller" value="precompiled-tests"/>
          <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
@@ -563,9 +566,12 @@
          <param name="test" value="args"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
-	</target>
+   </target>
 
    <target name="_run-precompiled-test">
+      <delete dir="${aopc.tmpdir}"/>
+      <mkdir dir="${aopc.tmpdir}"/>
+
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.retro.classpath"/>
       <path id="aop.task.classpath">
          <path refid="library.classpath"/>
@@ -615,6 +621,7 @@
          <classpath path="${build.tests.retro}"/>
          <aoppath path="${aoppath}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
+         <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
          <src path="${build.tests.retro}"/>
          <include name="org/jboss/test/aop/${test}/**"/>
          <exclude name="${exclude}"/>
@@ -716,32 +723,32 @@
          <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter"
                     usefile="true" extension="-jdk14.xml"/>
 
-		   <batchtest todir="${build.reports}"
-		      haltonerror="false"
-		      haltonfailure="false"
-		      fork="true">
-		      <fileset dir="${build.tests.retro}">
-		         <include name="org/jboss/test/aop/proxy/ProxyTestCase.class"/>
-      		   <include name="org/jboss/test/aop/methodhashing/MethodHashingTestCase.class"/>
-      		   <include name="org/jboss/test/aop/annotationc/AnnotationTester.class"/>
-				   <include name="org/jboss/test/aop/pointcut/PointcutTestCase.class"/>
-		      </fileset>
-		   </batchtest>
+         <batchtest todir="${build.reports}"
+            haltonerror="false"
+            haltonfailure="false"
+            fork="true">
+            <fileset dir="${build.tests.retro}">
+               <include name="org/jboss/test/aop/proxy/ProxyTestCase.class"/>
+               <include name="org/jboss/test/aop/methodhashing/MethodHashingTestCase.class"/>
+               <include name="org/jboss/test/aop/annotationc/AnnotationTester.class"/>
+               <include name="org/jboss/test/aop/pointcut/PointcutTestCase.class"/>
+            </fileset>
+         </batchtest>
       </junit>
-	   <junit printsummary="yes" fork="yes" haltonfailure="no">
-		   <sysproperty key="jboss.aop.path" value="${source.res}/test/container/jboss-aop.xml"/>
+      <junit printsummary="yes" fork="yes" haltonfailure="no">
+         <sysproperty key="jboss.aop.path" value="${source.res}/test/container/jboss-aop.xml"/>
          <sysproperty key="jboss.aop.debug.classes" value="${jboss.aop.debug.classes}"/>
-		   <classpath>
+         <classpath>
             <path refid="test.classpath"/>
             <path refid="aopc.classpath"/>
             <pathelement location="${build.tests.retro}"/>
             <pathelement location="docs"/>
-		   </classpath>
-		   <sysproperty key="jboss-junit-configuration" value="jdk14"/>
-		   <formatter type="plain" extension="-jdk14.txt"/>
-		   <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-jdk14.xml"/>
-	      <test todir="${build.reports}" name="org.jboss.test.aop.container.ContainerTestCase"/>
-	   </junit>
+         </classpath>
+         <sysproperty key="jboss-junit-configuration" value="jdk14"/>
+         <formatter type="plain" extension="-jdk14.txt"/>
+         <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-jdk14.xml"/>
+         <test todir="${build.reports}" name="org.jboss.test.aop.container.ContainerTestCase"/>
+      </junit>
    </target>
 
    <target name="system-classloader-test" depends="compile-test-classes">
@@ -766,19 +773,23 @@
    </target>
 
    <target name="original-memory-test" depends="compile-test-classes" description="Execute MemoryLeakTestCase">
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.retro.classpath"/>
-   	<property name="test" value="memoryleaks"/>
-   	<property name="caller" value="memoryleaks"/>
-   	<property name="aoppath" value="${source.res}/test/${test}/jboss-aop.xml"/>
-   	<property name="optimized" value="yes"/>
-      <echo>Source=${build.tests.retro}</echo>
-   	<echo message="aoppath=${aoppath}"/>
+      <delete dir="${aopc.tmpdir}"/>
+      <mkdir dir="${aopc.tmpdir}"/>
 
-   	<!-- aopc -->
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.retro.classpath"/>
+      <property name="test" value="memoryleaks"/>
+      <property name="caller" value="memoryleaks"/>
+      <property name="aoppath" value="${source.res}/test/${test}/jboss-aop.xml"/>
+      <property name="optimized" value="yes"/>
+      <echo>Source=${build.tests.retro}</echo>
+      <echo message="aoppath=${aoppath}"/>
+
+      <!-- aopc -->
       <aopc compilerclasspathref="aop.task.classpath" jvm="${java14}">
          <classpath refid="aop.task.classpath"/>
          <classpath refid="test.classpath"/>
          <classpath path="${build.tests.retro}"/>
+         <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
          <aoppath path="${aoppath}"/>
          <src path="${build.tests.retro}"/>
          <include name="org/jboss/test/aop/${test}/**"/>
