@@ -127,7 +127,7 @@ public class AdviceMethodFactory
             public AdviceInfo getAdviceInfo(Method method)
             {
                // creates an advice info with the greatest rank of all advices
-               return new AdviceInfo(method, 500)
+               return new AdviceInfo(method, 1000)
                {
                   public boolean validate(AdviceMethodProperties properties,
                         ReturnType adviceReturn)
@@ -271,24 +271,28 @@ public class AdviceMethodFactory
                   properties.getOptionalParameters());
       }
       
-      LinkedList<AdviceInfo> rankedAdvices = getRankedAdvices(
-            properties, contextRules, mutuallyExclusive);
-      
+      Collection<AdviceInfo> cacheCollection = getRankedAdvices(
+               properties, contextRules, mutuallyExclusive);
+
       // no advice method following the rules was found
-      if (rankedAdvices == null || rankedAdvices.isEmpty())
+      if (cacheCollection == null || cacheCollection.isEmpty())
       {
          return null;
       }
-      
-      // validate and retrive best match
-      AdviceInfo bestAdvice = bestValidAdvice(rankedAdvices, properties,
-            contextRules);
-      if (bestAdvice == null)
+      synchronized(cacheCollection)
       {
-         return null;
+         LinkedList<AdviceInfo> rankedAdvices =
+               new LinkedList<AdviceInfo>(cacheCollection);
+         // validate and retrive best match
+         AdviceInfo bestAdvice = bestValidAdvice(rankedAdvices, properties,
+               contextRules);
+         if (bestAdvice == null)
+         {
+            return null;
+         }
+         // assign best Advice info to properties 
+         bestAdvice.assignAdviceInfo(properties);
       }
-      // assign best Advice info to properties 
-      bestAdvice.assignAdviceInfo(properties);
       return properties;
    }
 
@@ -302,19 +306,29 @@ public class AdviceMethodFactory
     *                          joinpoint context
     * @param mutuallyExclusive a list of which context rules are mutually exclusive
     * 
-    * @return a sorted linked list containing all advice infos that might be
-    *         used on the joinpoint interception
+    * @return a sorted collection containing all advice infos that might be
+    *         used on the joinpoint interception. This collection should not be
+    *         altered during validation, nor should the advice infos be concurrently
+    *         used during validation (these objects cache data of <code>properties
+    *         </code> during the process).
     */
-   private LinkedList<AdviceInfo> getRankedAdvices(AdviceMethodProperties properties,
+   private Collection<AdviceInfo> getRankedAdvices(AdviceMethodProperties properties,
          ParameterAnnotationRule[] contextRules, int[][] mutuallyExclusive)
    {
-      // verify if list is on cache
-      String key =
-              properties.getAspectClass().getName() + properties.getAdviceName();
-      
-      WeakHashMap<ParameterAnnotationRule[], Collection<AdviceInfo>> map = 
-         adviceInfoCache.get(key);
-      if (map != null)
+      WeakHashMap<ParameterAnnotationRule[], Collection<AdviceInfo>> map;
+      synchronized(adviceInfoCache)
+      {
+         // verify if list is on cache
+         String key =
+                 properties.getAspectClass().getName() + properties.getAdviceName();
+         map = adviceInfoCache.get(key);
+         if (map == null)
+         {
+            map = new WeakHashMap<ParameterAnnotationRule[], Collection<AdviceInfo>>();
+            adviceInfoCache.put(key, map);
+         }
+      }
+      synchronized(map)
       {
          if (map.containsKey(contextRules))
          {
@@ -323,61 +337,57 @@ public class AdviceMethodFactory
             {
                adviceInfo.resetValidation();
             }
-            return new LinkedList<AdviceInfo> (advices);
+            return advices;
          }
-      }
-      else
-      {
-          map = new WeakHashMap<ParameterAnnotationRule[], Collection<AdviceInfo>>();
-          adviceInfoCache.put(key, map);
-      }
-      
-      // create the list
-      Method[] methods = ReflectUtils.getMethodsWithName(
-            properties.getAspectClass(), properties.getAdviceName());
-    
-      if (methods.length == 0)
-      {
-         if (AspectManager.verbose)
+
+         // create the list
+         Method[] methods = ReflectUtils.getMethodsWithName(
+               properties.getAspectClass(), properties.getAdviceName());
+         ArrayList<AdviceInfo> rankedAdvices =
+               new ArrayList<AdviceInfo>(methods.length);
+         // add list to cache
+         map.put(contextRules, rankedAdvices);
+
+
+         if (methods.length == 0)
          {
-            adviceMatchingMessage.append("\n[warn] - advice method ");
-            adviceMatchingMessage.append(properties.getAspectClass());
-            adviceMatchingMessage.append(".");
-            adviceMatchingMessage.append(properties.getAdviceName());
-            adviceMatchingMessage.append(" not found");
-         }
-         return null;
-      }
-      
-      ArrayList<AdviceInfo> rankedAdvices = new ArrayList<AdviceInfo>(methods.length);
-      for (int i = 0; i < methods.length; i++)
-      {
-         // advice applies to signature rule
-         if (adviceSignatureRule != null &&
-               adviceSignatureRule.applies(methods[i]))
-         {
-            rankedAdvices.add(adviceSignatureRule.getAdviceInfo(methods[i]));
-         }
-         else
-         {
-            try
+            if (AspectManager.verbose)
             {
-               // advice applies to annotated parameter rules
-               rankedAdvices.add(new AnnotatedParameterAdviceInfo(properties,
-                     methods[i], rules, contextRules, mutuallyExclusive));
-            }catch (ParameterAnnotationRuleException pare)
+               adviceMatchingMessage.append("\n[warn] - advice method ");
+               adviceMatchingMessage.append(properties.getAspectClass());
+               adviceMatchingMessage.append(".");
+               adviceMatchingMessage.append(properties.getAdviceName());
+               adviceMatchingMessage.append(" not found");
+            }
+            return null;
+         }
+
+         for (int i = 0; i < methods.length; i++)
+         {
+            // advice applies to signature rule
+            if (adviceSignatureRule != null &&
+                  adviceSignatureRule.applies(methods[i]))
             {
-               // no need to print messages -> exception prints automatically on verbose
+               rankedAdvices.add(adviceSignatureRule.getAdviceInfo(methods[i]));
+            }
+            else
+            {
+               try
+               {
+                  // advice applies to annotated parameter rules
+                  rankedAdvices.add(new AnnotatedParameterAdviceInfo(properties,
+                        methods[i], rules, contextRules, mutuallyExclusive));
+               }catch (ParameterAnnotationRuleException pare)
+               {
+                  // no need to print messages -> 
+                  // exception prints automatically on verbose mode
+               }
             }
          }
+         // sort according to rank
+         Collections.sort(rankedAdvices);
+         return rankedAdvices;
       }
-      // sort according to rank
-      Collections.sort(rankedAdvices);
-      
-      // add list to cache
-      map.put(contextRules, rankedAdvices);
-      
-      return new LinkedList<AdviceInfo> (rankedAdvices);
    }
    
    /**
