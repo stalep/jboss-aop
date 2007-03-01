@@ -27,6 +27,7 @@ import org.jboss.aop.FieldInfo;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.MethodInfo;
 import org.jboss.aop.advice.annotation.Arg;
+import org.jboss.aop.advice.annotation.Args;
 import org.jboss.aop.advice.annotation.JoinPoint;
 
 /**
@@ -49,6 +50,10 @@ public class OverloadedBeforeAspect
    static String before11 = null;
    static String before12 = null;
    static String before13 = null;
+   static String before14 = null;
+   static String before15 = null;
+   static String before16 = null;
+   static String before17 = null;
    
    public static void clear()
    {
@@ -65,6 +70,10 @@ public class OverloadedBeforeAspect
       before11 = null;
       before12 = null;
       before13 = null;
+      before14 = null;
+      before15 = null;
+      before16 = null;
+      before17 = null;
    }
    
    /* BEFORE1 ADVICE */
@@ -88,7 +97,7 @@ public class OverloadedBeforeAspect
    {
       before1 = "JoinPointInfo,Object";
    }
-
+   
    public void before1(@JoinPoint Object joinPointInfo, @Arg String text)
    {
       before1 = "Object,String";
@@ -97,6 +106,21 @@ public class OverloadedBeforeAspect
    public void before1(@JoinPoint Object joinPointInfo, @Arg Object text)
    {
       before1 = "Object,Object";
+   }
+   
+   public void before1(@JoinPoint FieldInfo joinPointInfo, @Args Object[] args)
+   {
+      before1 = "FieldInfo,Object[]";
+   }
+   
+   public void before1(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
+   {
+      before1 = "JoinPointInfo,Object[]";
+   }
+   
+   public void before1(@JoinPoint Object joinPointInfo, @Args Object[] args)
+   {
+      before1 = "Object,Object[]";
    }
 
    public void before1(@JoinPoint FieldInfo joinPointInfo)
@@ -118,13 +142,18 @@ public class OverloadedBeforeAspect
    {
       before1 = "String";
    }
+   
+   public void before1(@Args Object[] args)
+   {
+      before1 = "Object[]";
+   }
       
    public void before1()
    {
       before1 = "";
    }
    
-/*   public void before1(@JoinPoint MethodInfo constructorInfo)
+   public void before1(@JoinPoint MethodInfo constructorInfo)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -133,7 +162,7 @@ public class OverloadedBeforeAspect
    {
       Assert.fail("This advice should never be executed");
    }
-  */ 
+ 
    /* BEFORE2 ADVICE */
    
    public void before2(@JoinPoint FieldInfo joinPointInfo, @Arg Object text)
@@ -161,6 +190,21 @@ public class OverloadedBeforeAspect
       before2 = "Object,Object";
    }
 
+   public void before2(@JoinPoint FieldInfo joinPointInfo, @Args Object[] args)
+   {
+      before2 = "FieldInfo,Object[]";
+   }
+   
+   public void before2(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
+   {
+      before2 = "FieldInfo,Object[]";
+   }
+   
+   public void before2(@JoinPoint Object joinPointInfo, @Args Object[] args)
+   {
+      before2 = "Object,Object[]";
+   }
+
    public void before2(@JoinPoint FieldInfo joinPointInfo)
    {
       before2 = "FieldInfo";
@@ -179,6 +223,11 @@ public class OverloadedBeforeAspect
    public void before2(@Arg String text)
    {
       before2 = "String";
+   }
+   
+   public void before2(@Args Object[] args)
+   {
+      before2 = "Object[]";
    }
       
    public void before2()
@@ -218,6 +267,21 @@ public class OverloadedBeforeAspect
       before3 = "Object,Object";
    }
 
+   public void before3(@JoinPoint FieldInfo joinPointInfo, @Args Object[] args)
+   {
+      before3 = "FieldInfo,Object[]";
+   }
+
+   public void before3(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
+   {
+      before3 = "JoinPointInfo,Object[]";
+   }
+
+   public void before3(@JoinPoint Object joinPointInfo, @Args Object[] args)
+   {
+      before3 = "Object,Object[]";
+   }
+   
    public void before3(@JoinPoint FieldInfo joinPointInfo)
    {
       before3 = "FieldInfo";
@@ -236,6 +300,11 @@ public class OverloadedBeforeAspect
    public void before3(@Arg String text)
    {
       before3 = "String";
+   }
+   
+   public void before3(@Args Object[] args)
+   {
+      before3 = "Object[]";
    }
       
    public void before3()
@@ -269,6 +338,21 @@ public class OverloadedBeforeAspect
    {
       before4 = "Object,Object";
    }
+   
+   public void before4(@JoinPoint FieldInfo joinPointInfo, @Args Object[] args)
+   {
+      before4 = "FieldInfo,Object[]";
+   }
+
+   public void before4(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
+   {
+      before4 = "JoinPointInfo,Object[]";
+   }
+
+   public void before4(@JoinPoint Object joinPointInfo, @Args Object[] args)
+   {
+      before4 = "Object,Object[]";
+   }
 
    public void before4(@JoinPoint FieldInfo joinPointInfo)
    {
@@ -289,7 +373,12 @@ public class OverloadedBeforeAspect
    {
       before4 = "String";
    }
-      
+
+   public void before4(@Args Object[] args)
+   {
+      before4 = "Object[]";
+   }
+   
    public void before4()
    {
       before4 = "";
@@ -306,7 +395,7 @@ public class OverloadedBeforeAspect
    }
    
    /* BEFORE5 ADVICE */
-   
+      
    public void before5(@JoinPoint Object joinPointInfo, @Arg String text)
    {
       before5 = "Object,String";
@@ -316,7 +405,22 @@ public class OverloadedBeforeAspect
    {
       before5 = "Object,Object";
    }
+   
+   public void before5(@JoinPoint FieldInfo joinPointInfo, @Args Object[] args)
+   {
+      before5 = "FieldInfo,Object[]";
+   }
 
+   public void before5(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
+   {
+      before5 = "JoinPointInfo,Object[]";
+   }
+
+   public void before5(@JoinPoint Object joinPointInfo, @Args Object[] args)
+   {
+      before5 = "Object,Object[]";
+   }
+   
    public void before5(@JoinPoint FieldInfo joinPointInfo)
    {
       before5 = "FieldInfo";
@@ -337,6 +441,11 @@ public class OverloadedBeforeAspect
       before5 = "String";
    }
       
+   public void before5(@Args Object[] args)
+   {
+      before5 = "Object[]";
+   }
+   
    public void before5()
    {
       before5 = "";
@@ -358,6 +467,21 @@ public class OverloadedBeforeAspect
    {
       before6 = "Object,Object";
    }
+   
+   public void before6(@JoinPoint FieldInfo joinPointInfo, @Args Object[] args)
+   {
+      before6 = "FieldInfo,Object[]";
+   }
+
+   public void before6(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
+   {
+      before6 = "JoinPointInfo,Object[]";
+   }
+
+   public void before6(@JoinPoint Object joinPointInfo, @Args Object[] args)
+   {
+      before6 = "Object,Object[]";
+   }
 
    public void before6(@JoinPoint FieldInfo joinPointInfo)
    {
@@ -378,6 +502,11 @@ public class OverloadedBeforeAspect
    {
       before6 = "String";
    }
+   
+   public void before6(@Args Object[] args)
+   {
+      before6 = "Object[]";
+   }
       
    public void before6()
    {
@@ -395,6 +524,21 @@ public class OverloadedBeforeAspect
    }
    
    /* BEFORE7 ADVICE */
+   
+   public void before7(@JoinPoint FieldInfo joinPointInfo, @Args Object[] args)
+   {
+      before7 = "FieldInfo,Object[]";
+   }
+
+   public void before7(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
+   {
+      before7 = "JoinPointInfo,Object[]";
+   }
+
+   public void before7(@JoinPoint Object joinPointInfo, @Args Object[] args)
+   {
+      before7 = "Object,Object[]";
+   }
    
    public void before7(@JoinPoint FieldInfo joinPointInfo)
    {
@@ -415,7 +559,12 @@ public class OverloadedBeforeAspect
    {
       before7 = "String";
    }
-      
+    
+   public void before7(@Args Object[] args)
+   {
+      before7 = "Object[]";
+   }
+   
    public void before7()
    {
       before7 = "";
@@ -433,6 +582,21 @@ public class OverloadedBeforeAspect
    
    /* BEFORE8 ADVICE */
    
+   public void before8(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
+   {
+      before8 = "JoinPointInfo,Object[]";
+   }
+
+   public void before8(@JoinPoint Object joinPointInfo, @Args Object[] args)
+   {
+      before8 = "Object,Object[]";
+   }
+   
+   public void before8(@JoinPoint FieldInfo joinPointInfo)
+   {
+      before8 = "FieldInfo";
+   }
+   
    public void before8(@JoinPoint JoinPointInfo joinPointInfo)
    {
       before8 = "JoinPointInfo";
@@ -447,7 +611,12 @@ public class OverloadedBeforeAspect
    {
       before8 = "String";
    }
-      
+    
+   public void before8(@Args Object[] args)
+   {
+      before8 = "Object[]";
+   }
+   
    public void before8()
    {
       before8 = "";
@@ -465,6 +634,21 @@ public class OverloadedBeforeAspect
    
    /* BEFORE9 ADVICE */
    
+   public void before9(@JoinPoint Object joinPointInfo, @Args Object[] args)
+   {
+      before9 = "Object,Object[]";
+   }
+   
+   public void before9(@JoinPoint FieldInfo joinPointInfo)
+   {
+      before9 = "FieldInfo";
+   }
+   
+   public void before9(@JoinPoint JoinPointInfo joinPointInfo)
+   {
+      before9 = "JoinPointInfo";
+   }
+
    public void before9(@JoinPoint Object joinPointInfo)
    {
       before9 = "Object";
@@ -475,6 +659,11 @@ public class OverloadedBeforeAspect
       before9 = "String";
    }
       
+   public void before9(@Args Object[] args)
+   {
+      before9 = "Object[]";
+   }
+   
    public void before9()
    {
       before9 = "";
@@ -492,14 +681,29 @@ public class OverloadedBeforeAspect
    
    /* BEFORE10 ADVICE */
    
+   public void before10(@JoinPoint FieldInfo joinPointInfo)
+   {
+      before10 = "FieldInfo";
+   }
+   
+   public void before10(@JoinPoint JoinPointInfo joinPointInfo)
+   {
+      before10 = "JoinPointInfo";
+   }
+   
+   public void before10(@JoinPoint Object joinPointInfo)
+   {
+      before10 = "Object";
+   }
+   
    public void before10(@Arg String text)
    {
       before10 = "String";
    }
-
-   public void before10(@Arg Object text)
+   
+   public void before10(@Args Object[] args)
    {
-      before10 = "Object";
+      before10 = "Object[]";
    }
    
    public void before10()
@@ -519,9 +723,24 @@ public class OverloadedBeforeAspect
    
    /* BEFORE11 ADVICE */
    
-   public void before11(@Arg Object text)
+   public void before11(@JoinPoint JoinPointInfo joinPointInfo)
+   {
+      before11 = "JoinPointInfo";
+   }
+   
+   public void before11(@JoinPoint Object joinPointInfo)
    {
       before11 = "Object";
+   }
+   
+   public void before11(@Arg String text)
+   {
+      before11 = "String";
+   }
+
+   public void before11(@Args Object[] args)
+   {
+      before11 = "Object[]";
    }
    
    public void before11()
@@ -541,6 +760,21 @@ public class OverloadedBeforeAspect
    
    /* BEFORE12 ADVICE */
    
+   public void before12(@JoinPoint Object joinPointInfo)
+   {
+      before12 = "Object";
+   }
+   
+   public void before12(@Arg String text)
+   {
+      before12 = "String";
+   }
+
+   public void before12(@Args Object[] args)
+   {
+      before12 = "Object[]";
+   }
+   
    public void before12()
    {
       before12 = "";
@@ -556,13 +790,113 @@ public class OverloadedBeforeAspect
       Assert.fail("This advice should never be executed");
    }
    
-   public void before13(@JoinPoint FieldInfo fieldInfo, @Arg String text)
+   /* BEFORE13 ADVICE */
+   
+   public void before13(@Arg String text)
    {
-      before13 = "FieldInfo,String";
+      before13 = "String";
    }
    
-   public void before13(@JoinPoint FieldInfo fieldInfo)
+   public void before13(@Arg Object text)
    {
-      before13 = "FieldInfo";
+      before13 = "Object";
+   }
+   
+   public void before13(@Args Object[] args)
+   {
+      before13 = "Object[]";
+   }
+   
+   public void before13()
+   {
+      before13 = "";
+   }
+   
+   public void before13(@JoinPoint MethodInfo constructorInfo)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void before13(@Arg SuperValue text)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   /* BEFORE14 ADVICE */
+   
+   public void before14(@Arg Object text)
+   {
+      before14 = "Object";
+   }
+   
+   public void before14(@Args Object[] args)
+   {
+      before14 = "Object[]";
+   }
+   
+   public void before14()
+   {
+      before14 = "";
+   }
+   
+   public void before14(@JoinPoint MethodInfo constructorInfo)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void before14(@Arg SuperValue text)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   /* BEFORE15 ADVICE */
+   
+   public void before15(@Args Object[] args)
+   {
+      before15 = "Object[]";
+   }
+   
+   public void before15()
+   {
+      before15 = "";
+   }
+   
+   public void before15(@JoinPoint MethodInfo constructorInfo)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void before15(@Arg SuperValue text)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   /* BEFORE16 ADVICE */
+   
+   public void before16()
+   {
+      before16 = "";
+   }
+   
+   public void before16(@JoinPoint MethodInfo constructorInfo)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void before16(@Arg SuperValue text)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   /* BEFORE17 ADVICE */
+   
+   public void before17(@JoinPoint FieldInfo fieldInfo, @Arg String text)
+   {
+      before17 = "FieldInfo,String";
+   }
+   
+   public void before17(@JoinPoint FieldInfo fieldInfo)
+   {
+      before17 = "FieldInfo";
    }
 }
