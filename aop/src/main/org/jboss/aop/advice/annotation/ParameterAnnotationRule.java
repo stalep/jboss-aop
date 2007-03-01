@@ -18,7 +18,7 @@ enum ParameterAnnotationRule
     */
    JOIN_POINT (
          JoinPoint.class, JoinPointInfo.class, AdviceMethodProperties.JOINPOINT_ARG,
-         100, false, true)
+         700, false, true)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
@@ -31,38 +31,36 @@ enum ParameterAnnotationRule
     */
    INVOCATION (
          JoinPoint.class, Invocation.class, AdviceMethodProperties.INVOCATION_ARG,
-         100, false, true)
+         700, false, true)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
          return properties.getInvocationType();
       }
    },
-   
+
    /**
-    * Rule for parameter annotation {@link Thrown}.
+    * Rule for parameter annotation {@link Target}.
     */
-   THROWABLE (
-         Thrown.class, Throwable.class, AdviceMethodProperties.THROWABLE_ARG, 40, true,
-         true),
-   
-   /**
-    * Rule for parameter annotation {@link Return}.
-    */
-   RETURN (
-         Return.class, null, AdviceMethodProperties.RETURN_ARG, 40, false, true)
+   TARGET (
+         Target.class, null, AdviceMethodProperties.TARGET_ARG, 300, false, true)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
-         return properties.getJoinpointReturnType();
+         return properties.getTargetType();
+      }
+      
+      public boolean lowerRankGrade(AdviceMethodProperties properties)
+      {
+         return !properties.isTargetAvailable();
       }
    },
-      
+
    /**
     * Rule for parameter annotation {@link Caller}.
     */
    CALLER (
-         Caller.class, null, AdviceMethodProperties.CALLER_ARG, 45, false, true)
+         Caller.class, null, AdviceMethodProperties.CALLER_ARG, 150, false, true)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
@@ -76,27 +74,29 @@ enum ParameterAnnotationRule
    },
    
    /**
-    * Rule for parameter annotation {@link Target}.
+    * Rule for parameter annotation {@link Thrown}.
     */
-   TARGET (
-         Target.class, null, AdviceMethodProperties.TARGET_ARG, 90, false, true)
+   THROWABLE (
+         Thrown.class, Throwable.class, AdviceMethodProperties.THROWABLE_ARG, 50, true,
+         true),
+   
+   /**
+    * Rule for parameter annotation {@link Return}.
+    */
+   RETURN (
+         Return.class, null, AdviceMethodProperties.RETURN_ARG, 50, false, true)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
-         return properties.getTargetType();
-      }
-      
-      public boolean lowerRankGrade(AdviceMethodProperties properties)
-      {
-         return !properties.isTargetAvailable();
+         return properties.getJoinpointReturnType();
       }
    },
-   
+      
    /**
     * Rule for parameter annotation {@link Arg}.
     */
    ARG (
-         Arg.class, null, AdviceMethodProperties.ARG_ARG, 1, false, false)
+         Arg.class, null, AdviceMethodProperties.ARG_ARG, 2, false, false)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
@@ -108,7 +108,7 @@ enum ParameterAnnotationRule
     * Rule for parameter annotation {@link Args}.
     */
    ARGS (
-         Args.class, Object[].class, AdviceMethodProperties.ARGS_ARG, 30, false, true)
+         Args.class, Object[].class, AdviceMethodProperties.ARGS_ARG, 1, false, true)
    {
       public boolean lowerRankGrade(AdviceMethodProperties properties)
       {
