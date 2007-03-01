@@ -367,10 +367,15 @@
    	<before name="before10" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeAspect"/>
    	<before name="before11" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeAspect"/>
    	<before name="before12" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeAspect"/>
+   	<before name="before13" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeAspect"/>
+      <before name="before14" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeAspect"/>
+      <before name="before15" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeAspect"/>
+      <before name="before16" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeAspect"/>
+      <before name="before17" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeAspect"/>
   	</bind>
   	
   	<bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.OverloadedAdvicePOJO->text)">
-  	   <before name="before13" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeAspect"/>
+  	   <before name="before17" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeAspect"/>
   	</bind>
   	
    <aspect class="org.jboss.test.aop.beforeafterArgs.OverloadedAroundAspect" scope="PER_VM"/>
@@ -388,6 +393,10 @@
    	<advice name="around10" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundAspect"/>
    	<advice name="around11" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundAspect"/>
    	<advice name="around12" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundAspect"/> 
+   	<advice name="around13" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundAspect"/>
+   	<advice name="around14" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundAspect"/>
+    	<advice name="around15" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundAspect"/>
+    	<advice name="around16" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundAspect"/>
   	</bind>
    
    <aspect class="org.jboss.test.aop.beforeafterArgs.OverloadedAfterAspect" scope="PER_VM"/>

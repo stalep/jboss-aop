@@ -24,6 +24,7 @@ package org.jboss.test.aop.beforeafterArgs;
 import junit.framework.Assert;
 
 import org.jboss.aop.advice.annotation.Arg;
+import org.jboss.aop.advice.annotation.Args;
 import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.joinpoint.ConstructorInvocation;
 import org.jboss.aop.joinpoint.CurrentInvocation;
@@ -50,6 +51,10 @@ public class OverloadedAroundAspect
    static String around10 = null;
    static String around11 = null;
    static String around12 = null;
+   static String around13 = null;
+   static String around14 = null;
+   static String around15 = null;
+   static String around16 = null;
    
    public static void clear()
    {
@@ -65,6 +70,10 @@ public class OverloadedAroundAspect
       around10 = null;
       around11 = null;
       around12 = null;
+      around13 = null;
+      around14 = null;
+      around15 = null;
+      around16 = null;
    }
 
    /* AROUND1 ADVICE */
@@ -139,6 +148,27 @@ public class OverloadedAroundAspect
    }
    
    public Object around1(@JoinPoint
+         MethodInvocation invocation, @Args Object[] args) throws Throwable
+   {
+      around1 = "MethodInvocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around1(@JoinPoint
+         Invocation invocation, @Args Object[] args) throws Throwable
+   {
+      around1 = "Invocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around1(@JoinPoint
+         Object invocation, @Args Object[] args) throws Throwable
+   {
+      around1 = "Object,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around1(@JoinPoint
          MethodInvocation invocation) throws Throwable
    {
       around1 = "MethodInvocation";
@@ -167,6 +197,12 @@ public class OverloadedAroundAspect
    public Object around1(@Arg long arg2) throws Throwable
    {
       around1 = "long";
+      return CurrentInvocation.proceed();
+   }
+   
+   public Object around1(@Args Object[] args) throws Throwable
+   {
+      around1 = "Object[]";
       return CurrentInvocation.proceed();
    }
 
@@ -249,6 +285,27 @@ public class OverloadedAroundAspect
    }
 
    public Object around2(@JoinPoint
+         MethodInvocation invocation, @Args Object[] args) throws Throwable
+   {
+      around2 = "MethodInvocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around2(@JoinPoint
+         Invocation invocation, @Args Object[] args) throws Throwable
+   {
+      around2 = "Invocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around2(@JoinPoint
+         Object invocation, @Args Object[] args) throws Throwable
+   {
+      around2 = "Object,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around2(@JoinPoint
          MethodInvocation invocation) throws Throwable
    {
       around2 = "MethodInvocation";
@@ -277,6 +334,12 @@ public class OverloadedAroundAspect
    public Object around2(@Arg long arg2) throws Throwable
    {
       around2 = "long";
+      return CurrentInvocation.proceed();
+   }
+   
+   public Object around2(@Args Object[] args) throws Throwable
+   {
+      around2 = "Object[]";
       return CurrentInvocation.proceed();
    }
    
@@ -352,6 +415,27 @@ public class OverloadedAroundAspect
    }
 
    public Object around3(@JoinPoint
+         MethodInvocation invocation, @Args Object[] args) throws Throwable
+   {
+      around3 = "MethodInvocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around3(@JoinPoint
+         Invocation invocation, @Args Object[] args) throws Throwable
+   {
+      around3 = "Invocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around3(@JoinPoint
+         Object invocation, @Args Object[] args) throws Throwable
+   {
+      around3 = "Object,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around3(@JoinPoint
          MethodInvocation invocation) throws Throwable
    {
       around3 = "MethodInvocation";
@@ -383,6 +467,12 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
+   public Object around3(@Args Object[] args) throws Throwable
+   {
+      around3 = "Object[]";
+      return CurrentInvocation.proceed();
+   }
+   
    public Object around3() throws Throwable
    {
       around3 = "";
@@ -448,12 +538,33 @@ public class OverloadedAroundAspect
    }
 
    public Object around4(@JoinPoint
+         MethodInvocation invocation, @Args Object[] args) throws Throwable
+   {
+      around4 = "MethodInvocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around4(@JoinPoint
+         Invocation invocation, @Args Object[] args) throws Throwable
+   {
+      around4 = "Invocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around4(@JoinPoint
+         Object invocation, @Args Object[] args) throws Throwable
+   {
+      around4 = "Object,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around4(@JoinPoint
          MethodInvocation invocation) throws Throwable
    {
       around4 = "MethodInvocation";
       return invocation.invokeNext();
    }
-
+   
    public Object around4(@JoinPoint
          Object invocation) throws Throwable
    {
@@ -479,6 +590,12 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
+   public Object around4(@Args Object[] args) throws Throwable
+   {
+      around4 = "Object[]";
+      return CurrentInvocation.proceed();
+   }
+   
    public Object around4() throws Throwable
    {
       around4 = "";
@@ -537,6 +654,27 @@ public class OverloadedAroundAspect
    }
 
    public Object around5(@JoinPoint
+         MethodInvocation invocation, @Args Object[] args) throws Throwable
+   {
+      around5 = "MethodInvocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around5(@JoinPoint
+         Invocation invocation, @Args Object[] args) throws Throwable
+   {
+      around5 = "Invocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around5(@JoinPoint
+         Object invocation, @Args Object[] args) throws Throwable
+   {
+      around5 = "Object,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around5(@JoinPoint
          MethodInvocation invocation) throws Throwable
    {
       around5 = "MethodInvocation";
@@ -568,6 +706,12 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
+   public Object around5(@Args Object[] args) throws Throwable
+   {
+      around5 = "Object[]";
+      return CurrentInvocation.proceed();
+   }
+   
    public Object around5() throws Throwable
    {
       around5 = "";
@@ -610,6 +754,27 @@ public class OverloadedAroundAspect
       around6 = "Object,long";
       return ((Invocation) invocation).invokeNext();
    }
+   
+   public Object around6(@JoinPoint
+         MethodInvocation invocation, @Args Object[] args) throws Throwable
+   {
+      around6 = "MethodInvocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around6(@JoinPoint
+         Invocation invocation, @Args Object[] args) throws Throwable
+   {
+      around6 = "Invocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around6(@JoinPoint
+         Object invocation, @Args Object[] args) throws Throwable
+   {
+      around6 = "Object,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
 
    public Object around6(@JoinPoint
          MethodInvocation invocation) throws Throwable
@@ -643,6 +808,12 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
+   public Object around6(@Args Object[] args) throws Throwable
+   {
+      around6 = "Object[]";
+      return CurrentInvocation.proceed();
+   }
+   
    public Object around6() throws Throwable
    {
       around6 = "";
@@ -669,6 +840,27 @@ public class OverloadedAroundAspect
          Object invocation, @Arg long arg2) throws Throwable
    {
       around7 = "Object,long";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around7(@JoinPoint
+         MethodInvocation invocation, @Args Object[] args) throws Throwable
+   {
+      around7 = "MethodInvocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around7(@JoinPoint
+         Invocation invocation, @Args Object[] args) throws Throwable
+   {
+      around7 = "Invocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around7(@JoinPoint
+         Object invocation, @Args Object[] args) throws Throwable
+   {
+      around7 = "Object,Object[]";
       return ((Invocation) invocation).invokeNext();
    }
 
@@ -704,6 +896,12 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
+   public Object around7(@Args Object[] args) throws Throwable
+   {
+      around7 = "Object[]";
+      return CurrentInvocation.proceed();
+   }
+   
    public Object around7() throws Throwable
    {
       around7 = "";
@@ -718,6 +916,27 @@ public class OverloadedAroundAspect
    }
 
    /* AROUND8 ADVICE */
+   
+   public Object around8(@JoinPoint
+         MethodInvocation invocation, @Args Object[] args) throws Throwable
+   {
+      around8 = "MethodInvocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around8(@JoinPoint
+         Invocation invocation, @Args Object[] args) throws Throwable
+   {
+      around8 = "Invocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around8(@JoinPoint
+         Object invocation, @Args Object[] args) throws Throwable
+   {
+      around8 = "Object,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
    
    public Object around8(@JoinPoint
          MethodInvocation invocation) throws Throwable
@@ -751,6 +970,12 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
    
+   public Object around8(@Args Object[] args) throws Throwable
+   {
+      around8 = "Object[]";
+      return CurrentInvocation.proceed();
+   }
+   
    public Object around8() throws Throwable
    {
       around8 = "";
@@ -765,6 +990,27 @@ public class OverloadedAroundAspect
    }
 
    /* AROUND9 ADVICE */
+   
+   public Object around9(@JoinPoint
+         Invocation invocation, @Args Object[] args) throws Throwable
+   {
+      around9 = "Invocation,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around9(@JoinPoint
+         Object invocation, @Args Object[] args) throws Throwable
+   {
+      around9 = "Object,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around9(@JoinPoint
+         MethodInvocation invocation) throws Throwable
+   {
+      around9 = "MethodInvocation";
+      return invocation.invokeNext();
+   }
    
    public Object around9(@JoinPoint
          Object invocation) throws Throwable
@@ -791,6 +1037,12 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
+   public Object around9(@Args Object[] args) throws Throwable
+   {
+      around9 = "Object[]";
+      return CurrentInvocation.proceed();
+   }
+   
    public Object around9() throws Throwable
    {
       around9 = "";
@@ -805,6 +1057,27 @@ public class OverloadedAroundAspect
    }
 
    /* AROUND10 ADVICE */
+   
+   public Object around10(@JoinPoint
+         Object invocation, @Args Object[] args) throws Throwable
+   {
+      around10 = "Object,Object[]";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around10(@JoinPoint
+         MethodInvocation invocation) throws Throwable
+   {
+      around10 = "MethodInvocation";
+      return invocation.invokeNext();
+   }
+   
+   public Object around10(@JoinPoint
+         Object invocation) throws Throwable
+   {
+      around10 = "Object";
+      return ((Invocation) invocation).invokeNext();
+   }
    
    public Object around10(@Arg int arg1, @Arg long arg2) throws Throwable
    {
@@ -824,6 +1097,12 @@ public class OverloadedAroundAspect
       return CurrentInvocation.proceed();
    }
 
+   public Object around10(@Args Object[] args) throws Throwable
+   {
+      around10 = "Object[]";
+      return CurrentInvocation.proceed();
+   }
+   
    public Object around10() throws Throwable
    {
       around10 = "";
@@ -839,6 +1118,26 @@ public class OverloadedAroundAspect
 
    /* AROUND11 ADVICE */
    
+   public Object around11(@JoinPoint
+         MethodInvocation invocation) throws Throwable
+   {
+      around11 = "MethodInvocation";
+      return invocation.invokeNext();
+   }
+   
+   public Object around11(@JoinPoint
+         Object invocation) throws Throwable
+   {
+      around11 = "Object";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around11(@Arg int arg1, @Arg long arg2) throws Throwable
+   {
+      around11 = "int,long";
+      return CurrentInvocation.proceed();
+   }
+   
    public Object around11(@Arg int arg1) throws Throwable
    {
       around11 = "int";
@@ -848,6 +1147,12 @@ public class OverloadedAroundAspect
    public Object around11(@Arg long arg2) throws Throwable
    {
       around11 = "long";
+      return CurrentInvocation.proceed();
+   }
+   
+   public Object around11(@Args Object[] args) throws Throwable
+   {
+      around11 = "Object[]";
       return CurrentInvocation.proceed();
    }
    
@@ -865,6 +1170,37 @@ public class OverloadedAroundAspect
    }
    
    /* AROUND12 ADVICE */
+
+   public Object around12(@JoinPoint
+         Object invocation) throws Throwable
+   {
+      around12 = "Object";
+      return ((Invocation) invocation).invokeNext();
+   }
+   
+   public Object around12(@Arg int arg1, @Arg long arg2) throws Throwable
+   {
+      around12 = "int,long";
+      return CurrentInvocation.proceed();
+   }
+   
+   public Object around12(@Arg int arg1) throws Throwable
+   {
+      around12 = "int";
+      return CurrentInvocation.proceed();
+   }
+
+   public Object around12(@Arg long arg2) throws Throwable
+   {
+      around12 = "long";
+      return CurrentInvocation.proceed();
+   }
+
+   public Object around12(@Args Object[] args) throws Throwable
+   {
+      around1 = "Object[]";
+      return CurrentInvocation.proceed();
+   }
    
    public Object around12() throws Throwable
    {
@@ -877,5 +1213,113 @@ public class OverloadedAroundAspect
    {
       Assert.fail("This advice should never be executed");
       return null;
-   }   
+   }
+   
+   /* AROUND13 ADVICE */
+
+   public Object around13(@Arg int arg1, @Arg long arg2) throws Throwable
+   {
+      around13 = "int,long";
+      return CurrentInvocation.proceed();
+   }
+   
+   public Object around13(@Arg int arg1) throws Throwable
+   {
+      around13 = "int";
+      return CurrentInvocation.proceed();
+   }
+
+   public Object around13(@Arg long arg2) throws Throwable
+   {
+      around13 = "long";
+      return CurrentInvocation.proceed();
+   }
+
+   public Object around13(@Args Object[] args) throws Throwable
+   {
+      around13 = "Object[]";
+      return CurrentInvocation.proceed();
+   }
+   
+   public Object around13() throws Throwable
+   {
+      around13 = "";
+      return CurrentInvocation.proceed();
+   }
+   
+   public Object around13(@JoinPoint
+         ConstructorInvocation invocation) throws Throwable
+   {
+      Assert.fail("This advice should never be executed");
+      return null;
+   }
+   
+   /* AROUND14 ADVICE */
+
+   public Object around14(@Arg int arg1) throws Throwable
+   {
+      around14 = "int";
+      return CurrentInvocation.proceed();
+   }
+
+   public Object around14(@Arg long arg2) throws Throwable
+   {
+      around14 = "long";
+      return CurrentInvocation.proceed();
+   }
+
+   public Object around14(@Args Object[] args) throws Throwable
+   {
+      around14 = "Object[]";
+      return CurrentInvocation.proceed();
+   }
+   
+   public Object around14() throws Throwable
+   {
+      around14 = "";
+      return CurrentInvocation.proceed();
+   }
+   
+   public Object around14(@JoinPoint
+         ConstructorInvocation invocation) throws Throwable
+   {
+      Assert.fail("This advice should never be executed");
+      return null;
+   }
+   
+   /* AROUND15 ADVICE */
+
+   public Object around15(@Args Object[] args) throws Throwable
+   {
+      around15 = "Object[]";
+      return CurrentInvocation.proceed();
+   }
+   
+   public Object around15() throws Throwable
+   {
+      around15 = "";
+      return CurrentInvocation.proceed();
+   }
+   
+   public Object around15(@JoinPoint
+         ConstructorInvocation invocation) throws Throwable
+   {
+      Assert.fail("This advice should never be executed");
+      return null;
+   }
+   
+   /* AROUND16 ADVICE */
+
+   public Object around16() throws Throwable
+   {
+      around16 = "";
+      return CurrentInvocation.proceed();
+   }
+   
+   public Object around16(@JoinPoint
+         ConstructorInvocation invocation) throws Throwable
+   {
+      Assert.fail("This advice should never be executed");
+      return null;
+   }
 }

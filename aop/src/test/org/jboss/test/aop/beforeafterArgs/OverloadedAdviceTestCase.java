@@ -69,15 +69,20 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       assertEquals("JoinPointInfo,Object", OverloadedBeforeAspect.before4);
       assertEquals("Object,String", OverloadedBeforeAspect.before5);
       assertEquals("Object,Object", OverloadedBeforeAspect.before6);
-      assertEquals("FieldInfo", OverloadedBeforeAspect.before7);
-      assertEquals("JoinPointInfo", OverloadedBeforeAspect.before8);
-      assertEquals("Object", OverloadedBeforeAspect.before9);
-      assertEquals("String", OverloadedBeforeAspect.before10);
-      assertEquals("Object", OverloadedBeforeAspect.before11);
-      assertEquals("", OverloadedBeforeAspect.before12);
-      assertEquals("FieldInfo,String", OverloadedBeforeAspect.before13);
+      assertEquals("FieldInfo,Object[]", OverloadedBeforeAspect.before7);
+      assertEquals("JoinPointInfo,Object[]", OverloadedBeforeAspect.before8);
+      assertEquals("Object,Object[]", OverloadedBeforeAspect.before9);
+      assertEquals("FieldInfo", OverloadedBeforeAspect.before10);
+      assertEquals("JoinPointInfo", OverloadedBeforeAspect.before11);
+      assertEquals("Object", OverloadedBeforeAspect.before12);
+      assertEquals("String", OverloadedBeforeAspect.before13);
+      assertEquals("Object", OverloadedBeforeAspect.before14);
+      assertEquals("Object[]", OverloadedBeforeAspect.before15);
+      assertEquals("", OverloadedBeforeAspect.before16);
+      assertEquals("FieldInfo,String", OverloadedBeforeAspect.before17);
+      OverloadedBeforeAspect.clear();
       String myText = pojo.text;
-      assertEquals("FieldInfo", OverloadedBeforeAspect.before13);
+      assertEquals("FieldInfo", OverloadedBeforeAspect.before17);
       
    }
    
@@ -98,12 +103,16 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       assertTrue(OverloadedAroundAspect.around7.startsWith("Object,"));
       assertTrue(OverloadedAroundAspect.around7.equals("Object,int") ||
             OverloadedAroundAspect.around7.equals("Object,long"));
-      assertEquals("MethodInvocation", OverloadedAroundAspect.around8);
-      assertEquals("Object", OverloadedAroundAspect.around9);
-      assertEquals("int,long", OverloadedAroundAspect.around10);
-      assertTrue(OverloadedAroundAspect.around11.equals("int") ||
-            OverloadedAroundAspect.around11.equals("long"));
-      assertEquals("", OverloadedAroundAspect.around12);
+      assertEquals("MethodInvocation,Object[]", OverloadedAroundAspect.around8);
+      assertEquals("Invocation,Object[]", OverloadedAroundAspect.around9);
+      assertEquals("Object,Object[]", OverloadedAroundAspect.around10);
+      assertEquals("MethodInvocation", OverloadedAroundAspect.around11);
+      assertEquals("Object", OverloadedAroundAspect.around12);
+      assertEquals("int,long", OverloadedAroundAspect.around13);
+      assertTrue(OverloadedAroundAspect.around14.equals("int") ||
+            OverloadedAroundAspect.around14.equals("long"));
+      assertEquals("Object[]", OverloadedAroundAspect.around15);
+      assertEquals("", OverloadedAroundAspect.around16);
    }
    
    public void test3()
@@ -133,38 +142,46 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       assertEquals("Object,Object,SuperClass,float", OverloadedAfterAspect.after21);
       assertEquals("SubClass,Object,SuperClass,SuperValue", OverloadedAfterAspect.after22);
       assertEquals("Object,Object,SuperClass,Object", OverloadedAfterAspect.after23);
-      assertEquals("Object,MethodInfo,SuperClass", OverloadedAfterAspect.after24);
-      assertEquals("Object,MethodInfo,Object", OverloadedAfterAspect.after25);
-      assertEquals("Object,JoinPointInfo,SuperClass", OverloadedAfterAspect.after26);
-      assertEquals("Object,MethodInfo,float,SubValue", OverloadedAfterAspect.after27);
-      assertEquals("Object,MethodInfo,float,SuperValue", OverloadedAfterAspect.after28);
-      assertEquals("Object,MethodInfo,float,Object", OverloadedAfterAspect.after29);
-      assertEquals("Object,JoinPointInfo,float,SubValue", OverloadedAfterAspect.after30);
-      assertEquals("SuperClass,MethodInfo,SubValue", OverloadedAfterAspect.after31);
-      assertEquals("Object,MethodInfo,float", OverloadedAfterAspect.after32);
-      assertEquals("Object,MethodInfo,SuperValue", OverloadedAfterAspect.after33);
-      assertEquals("SuperClass,JoinPointInfo,SubValue", OverloadedAfterAspect.after34);
-      assertEquals("SubClass,JoinPointInfo,float", OverloadedAfterAspect.after35);
-      assertEquals("SubClass,JoinPointInfo,SuperValue", OverloadedAfterAspect.after36);
-      assertEquals("SubClass,Object,SubValue", OverloadedAfterAspect.after37);
-      assertEquals("Object,Object,float", OverloadedAfterAspect.after38);
-      assertEquals("SubClass,Object,SuperValue", OverloadedAfterAspect.after39);
-      assertEquals("Object,MethodInfo", OverloadedAfterAspect.after40);
-      assertEquals("Object,JoinPointInfo", OverloadedAfterAspect.after41);
-      assertEquals("Object,SuperClass,float,SubValue", OverloadedAfterAspect.after42);
-      assertEquals("Object,SuperClass,float,SuperValue", OverloadedAfterAspect.after43);
-      assertEquals("Object,SuperClass,float,Object", OverloadedAfterAspect.after44);
-      assertEquals("SuperClass,SuperClass,float", OverloadedAfterAspect.after45);
-      assertEquals("Object,SuperClass,SubValue", OverloadedAfterAspect.after46);
-      assertEquals("Object,SuperClass,SuperValue", OverloadedAfterAspect.after47);
-      assertEquals("SuperClass,SuperClass,Object", OverloadedAfterAspect.after48);
-      assertEquals("Object,SuperClass", OverloadedAfterAspect.after49);
-      assertEquals("Object,Object", OverloadedAfterAspect.after50);
-      assertEquals("void,float,SubValue", OverloadedAfterAspect.after51);
-      assertEquals("Object,float", OverloadedAfterAspect.after52);
-      assertEquals("void,SubValue", OverloadedAfterAspect.after53);
-      assertEquals("void,SuperValue", OverloadedAfterAspect.after54);
-      assertEquals("void", OverloadedAfterAspect.after55);
+      assertEquals("Object,MethodInfo,SuperClass,Object[]", OverloadedAfterAspect.after24);
+      assertEquals("Object,MethodInfo,Object,Object[]", OverloadedAfterAspect.after25);
+      assertEquals("Object,JoinPointInfo,SuperClass,Object[]", OverloadedAfterAspect.after26);
+      assertEquals("Object,JoinPointInfo,Object,Object[]", OverloadedAfterAspect.after27);
+      assertEquals("Object,Object,SuperClass,Object[]", OverloadedAfterAspect.after28);
+      assertEquals("Object,Object,Object,Object[]", OverloadedAfterAspect.after29);
+      assertEquals("Object,MethodInfo,SuperClass", OverloadedAfterAspect.after30);
+      assertEquals("Object,MethodInfo,Object", OverloadedAfterAspect.after31);
+      assertEquals("Object,JoinPointInfo,SuperClass", OverloadedAfterAspect.after32);
+      assertEquals("Object,MethodInfo,float,SubValue", OverloadedAfterAspect.after33);
+      assertEquals("Object,MethodInfo,float,SuperValue", OverloadedAfterAspect.after34);
+      assertEquals("Object,MethodInfo,float,Object", OverloadedAfterAspect.after35);
+      assertEquals("Object,JoinPointInfo,float,SubValue", OverloadedAfterAspect.after36);
+      assertEquals("SuperClass,MethodInfo,SubValue", OverloadedAfterAspect.after37);
+      assertEquals("Object,MethodInfo,float", OverloadedAfterAspect.after38);
+      assertEquals("Object,MethodInfo,SuperValue", OverloadedAfterAspect.after39);
+      assertEquals("SuperClass,JoinPointInfo,SubValue", OverloadedAfterAspect.after40);
+      assertEquals("SubClass,JoinPointInfo,float", OverloadedAfterAspect.after41);
+      assertEquals("SubClass,JoinPointInfo,SuperValue", OverloadedAfterAspect.after42);
+      assertEquals("SubClass,Object,SubValue", OverloadedAfterAspect.after43);
+      assertEquals("Object,Object,float", OverloadedAfterAspect.after44);
+      assertEquals("SubClass,Object,SuperValue", OverloadedAfterAspect.after45);
+      assertEquals("SubClass,MethodInfo,Object[]", OverloadedAfterAspect.after46);
+      assertEquals("SubClass,JoinPointInfo,Object[]", OverloadedAfterAspect.after47);
+      assertEquals("Object,MethodInfo", OverloadedAfterAspect.after48);
+      assertEquals("Object,JoinPointInfo", OverloadedAfterAspect.after49);
+      assertEquals("Object,SuperClass,float,SubValue", OverloadedAfterAspect.after50);
+      assertEquals("Object,SuperClass,float,SuperValue", OverloadedAfterAspect.after51);
+      assertEquals("Object,SuperClass,float,Object", OverloadedAfterAspect.after52);
+      assertEquals("SuperClass,SuperClass,float", OverloadedAfterAspect.after53);
+      assertEquals("Object,SuperClass,SubValue", OverloadedAfterAspect.after54);
+      assertEquals("Object,SuperClass,SuperValue", OverloadedAfterAspect.after55);
+      /*assertEquals("SuperClass,SuperClass,Object", OverloadedAfterAspect.after56);
+      assertEquals("Object,SuperClass", OverloadedAfterAspect.after57);
+      assertEquals("Object,Object", OverloadedAfterAspect.after58);
+      assertEquals("void,float,SubValue", OverloadedAfterAspect.after59);
+      assertEquals("Object,float", OverloadedAfterAspect.after60);
+      assertEquals("void,SubValue", OverloadedAfterAspect.after61);
+      assertEquals("void,SuperValue", OverloadedAfterAspect.after62);
+      assertEquals("void", OverloadedAfterAspect.after63);*/
    }
    
    public void test4()
