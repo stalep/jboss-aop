@@ -456,7 +456,6 @@ public class ContainerProxyFactory
    private void addMethodsAndMixins()throws Exception
    {
       HashSet addedMethods = new HashSet();
-
       createMixinsAndIntroductions(addedMethods);
       createProxyMethods(addedMethods);
    }
@@ -492,6 +491,10 @@ public class ContainerProxyFactory
             }
          }
          
+         //Now that we have added the mixins, add all the proxies methods to the added methods set
+         HashMap allMethods = JavassistMethodHashing.getDeclaredMethodMap(proxy);
+         addedMethods.addAll(allMethods.keySet());
+
          createMixins(addedMethods, mixes, addedInterfaces, implementedInterfaces);
          createIntroductions(addedMethods, intfs, addedInterfaces, implementedInterfaces);
       }
@@ -592,7 +595,6 @@ public class ContainerProxyFactory
                CtMethod newMethod = CtNewMethod.make(methods[m].getReturnType(), methods[m].getName(), methods[m].getParameterTypes(), methods[m].getExceptionTypes(), code, proxy);
                newMethod.setModifiers(Modifier.PUBLIC);
                proxy.addMethod(newMethod);
-               //System.out.println("=====> Created mixin method " + methods[m].getName());
             }
 
             proxy.addInterface(intfClass);
@@ -684,7 +686,7 @@ public class ContainerProxyFactory
             Long hash = new Long(JavassistMethodHashing.methodHash(methods[m]));
             if (mixinMethods.contains(hash)) continue;
             if (addedMethods.contains(hash)) continue;
-            
+
             mixinMethods.add(hash);
             addedMethods.add(hash);
             String aopReturnStr = (methods[m].getReturnType().equals(CtClass.voidType)) ? "" : "return ($r)";
@@ -708,7 +710,6 @@ public class ContainerProxyFactory
             CtMethod newMethod = CtNewMethod.make(methods[m].getReturnType(), methods[m].getName(), methods[m].getParameterTypes(), methods[m].getExceptionTypes(), code, proxy);
             newMethod.setModifiers(Modifier.PUBLIC);
             proxy.addMethod(newMethod);
-            //System.out.println("=====> Created introduced method " + methods[m].getName());
          }
 
          proxy.addInterface(intfClass);
