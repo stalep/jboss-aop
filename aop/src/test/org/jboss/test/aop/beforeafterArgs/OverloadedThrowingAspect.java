@@ -23,12 +23,16 @@ package org.jboss.test.aop.beforeafterArgs;
 
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.annotation.Arg;
+import org.jboss.aop.advice.annotation.Args;
 import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Thrown;
 
 /**
- * Aspect used on overloaded throwing advice tests.
- *
+ * Aspect used on overloaded throwing advice tests (for JoinPoint, Thrown, Arg and
+ * Args tests).
+ * 
+ * This class includes both class and interface hierarchy on multiple Arg parameters.
+ * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
 public class OverloadedThrowingAspect
@@ -40,182 +44,7 @@ public class OverloadedThrowingAspect
       throwing1 = null;
    }
 
-   // TODO finish this test when we can define the throwing to catch POJOException
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown POJOException thrown, @Arg SubInterface arg1, @Arg Implementor arg2)
-   {
-      throwing1 = "JoinPointInfo,POJOException,SubInterface,Implementor";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown POJOException thrown, @Arg Interface arg1, @Arg Implementor arg2)
-   {
-      throwing1 = "JoinPointInfo,POJOException,Interface,Implementor";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown POJOException thrown, @Arg SubInterface arg1, @Arg SubInterface arg2)
-   {
-      throwing1 = "JoinPointInfo,POJOException,SubInterface,SubInterface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown POJOException thrown, @Arg SubInterface arg1, @Arg Object arg2)
-   {
-      throwing1 = "JoinPointInfo,POJOException,SubInterface,Object";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown POJOException thrown, @Arg SuperInterface arg,
-         @Arg Implementor implementor)
-   {
-      throwing1 = "JoinPointInfo,POJOException,SuperInterface,Implementor";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown POJOException thrown, @Arg SubInterface arg1, @Arg Interface arg2)
-   {
-      throwing1 = "JoinPointInfo,POJOException,SubInterface,Interface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown POJOException thrown, @Arg Interface arg1, @Arg SubInterface arg2)
-   {
-      throwing1 = "JoinPointInfo,POJOException,Interface,SubInterface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown POJOException thrown, @Arg SuperInterface arg1,
-         @Arg SubInterface arg2)
-   {
-      throwing1 = "JoinPointInfo,POJOException,SuperInterface,SubInterface";
-   }
-
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown POJOException thrown, @Arg SuperInterface arg1, @Arg Object arg2)
-   {
-      throwing1 = "JoinPointInfo,POJOException,SuperInterface,Object";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown POJOException thrown, @Arg Interface arg1, @Arg Interface arg2)
-   {
-      throwing1 = "JoinPointInfo,POJOException,Interface,Interface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown POJOException thrown, @Arg SubInterface arg1, 
-         @Arg SuperInterface arg2)
-   {
-      throwing1 = "JoinPointInfo,POJOException,SubInterface,SuperInterface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown POJOException thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
-   {
-      throwing1 = "JoinPointInfo,POJOException,SuperInterface,Interface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown POJOException thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
-   {
-      throwing1 = "JoinPointInfo,POJOException,Interface,SuperInterface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown POJOException thrown, @Arg SuperInterface arg1, 
-         @Arg SuperInterface arg2)
-   {
-      throwing1 = "JoinPointInfo,POJOException,SuperInterface,SuperInterface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Exception thrown, @Arg SubInterface arg1, @Arg Implementor arg2)
-   {
-      throwing1 = "JoinPointInfo,Exception,SubInterface,Implementor";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Exception thrown, @Arg Interface arg1, @Arg Implementor arg2)
-   {
-      throwing1 = "JoinPointInfo,Exception,Interface,Implementor";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Exception thrown, @Arg SubInterface arg1, @Arg SubInterface arg2)
-   {
-      throwing1 = "JoinPointInfo,Exception,SubInterface,SubInterface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Exception thrown, @Arg SubInterface arg1, @Arg Object arg2)
-   {
-      throwing1 = "JoinPointInfo,Exception,SubInterface,Object";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Exception thrown, @Arg SuperInterface arg,
-         @Arg Implementor implementor)
-   {
-      throwing1 = "JoinPointInfo,Exception,SuperInterface,Implementor";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Exception thrown, @Arg SubInterface arg1, @Arg Interface arg2)
-   {
-      throwing1 = "JoinPointInfo,Exception,SubInterface,Interface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Exception thrown, @Arg Interface arg1, @Arg SubInterface arg2)
-   {
-      throwing1 = "JoinPointInfo,Exception,Interface,SubInterface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Exception thrown, @Arg SuperInterface arg1,
-         @Arg SubInterface arg2)
-   {
-      throwing1 = "JoinPointInfo,Exception,SuperInterface,SubInterface";
-   }
-
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Exception thrown, @Arg SuperInterface arg1, @Arg Object arg2)
-   {
-      throwing1 = "JoinPointInfo,Exception,SuperInterface,Object";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Exception thrown, @Arg Interface arg1, @Arg Interface arg2)
-   {
-      throwing1 = "JoinPointInfo,Exception,Interface,Interface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Exception thrown, @Arg SubInterface arg1, 
-         @Arg SuperInterface arg2)
-   {
-      throwing1 = "JoinPointInfo,Exception,SubInterface,SuperInterface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Exception thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
-   {
-      throwing1 = "JoinPointInfo,Exception,SuperInterface,Interface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Exception thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
-   {
-      throwing1 = "JoinPointInfo,Exception,Interface,SuperInterface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Exception thrown, @Arg SuperInterface arg1, 
-         @Arg SuperInterface arg2)
-   {
-      throwing1 = "JoinPointInfo,Exception,SuperInterface,SuperInterface";
-   }
+   /* THROWING1 ADVICE */
    
    public void throwing1(@JoinPoint JoinPointInfo joinpoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1, @Arg Implementor arg2)
@@ -394,71 +223,13 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing1(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown POJOException thrown, @Arg SubInterface arg1)
-   {
-      throwing1 = "JoinPointInfo,POJOException,SubInterface";
-   }
-
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown POJOException thrown, @Arg Implementor arg1)
-   {
-      throwing1 = "JoinPointInfo,POJOException,Implementor";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown POJOException thrown, @Arg Interface arg1)
-   {
-      throwing1 = "JoinPointInfo,POJOException,Interface";
-   }
-
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown POJOException thrown, @Arg Object arg1)
-   {
-      throwing1 = "JoinPointInfo,POJOException,Object";
-   }
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown POJOException thrown, @Arg SuperInterface arg1)
-   {
-      throwing1 = "JoinPointInfo,POJOException,SuperInterface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Exception thrown, @Arg SubInterface arg1)
-   {
-      throwing1 = "JoinPointInfo,Exception,SubInterface";
-   }
-
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Exception thrown, @Arg Implementor arg1)
-   {
-      throwing1 = "JoinPointInfo,Exception,Implementor";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Exception thrown, @Arg Interface arg1)
-   {
-      throwing1 = "JoinPointInfo,Exception,Interface";
-   }
-
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Exception thrown, @Arg Object arg1)
-   {
-      throwing1 = "JoinPointInfo,Exception,Object";
-   }
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Exception thrown, @Arg SuperInterface arg1)
-   {
-      throwing1 = "JoinPointInfo,Exception,SuperInterface";
-   }
-   
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1)
    {
       throwing1 = "JoinPointInfo,Throwable,SubInterface";
    }
 
    public void throwing1(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Implementor arg1)
+         @Thrown Throwable thrown, @Arg Implementor arg2)
    {
       throwing1 = "JoinPointInfo,Throwable,Implementor";
    }
@@ -470,7 +241,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing1(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg1)
+         @Thrown Throwable thrown, @Arg Object arg2)
    {
       throwing1 = "JoinPointInfo,Throwable,Object";
    }
@@ -480,14 +251,166 @@ public class OverloadedThrowingAspect
       throwing1 = "JoinPointInfo,Throwable,SuperInterface";
    }
    
-   public void throwing1(@Thrown POJOException thrown)
+   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
+         @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing1 = "POJOException";
+      throwing1 = "JoinPointInfo,Throwable,Object[]";
    }
    
-   public void throwing1(@Thrown Exception thrown)
+   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
+         @Thrown Object thrown, @Args Object[] args)
    {
-      throwing1 = "Exception";
+      throwing1 = "JoinPointInfo,Object,Object[]";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg SubInterface arg1,
+         @Arg Implementor arg2)
+   {
+      throwing1 = "Throwable,SubInterface,Implementor";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg SubInterface arg1,
+         @Arg Object arg2)
+   {
+      throwing1 = "Throwable,SubInterface,Object";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg SubInterface arg1,
+         @Arg SubInterface arg2)
+   {
+      throwing1 = "Throwable,SubInterface,SubInterface";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg Interface arg1,
+         @Arg Implementor arg2)
+   {
+      throwing1 = "Throwable,Interface,Implementor";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg Interface arg1,
+         @Arg SubInterface arg2)
+   {
+      throwing1 = "Throwable,Interface,SubInterface";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg SubInterface arg1,
+         @Arg Interface arg2)
+   {
+      throwing1 = "Throwable,SubInterface,Interface";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg SuperInterface arg,
+         @Arg Implementor implementor)
+   {
+      throwing1 = "Throwable,SuperInterface,Implementor";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg SubInterface arg1, 
+         @Arg SuperInterface arg2)
+   {
+      throwing1 = "Throwable,SubInterface,SuperInterface";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg Interface arg1,
+         @Arg Interface arg2)
+   {
+      throwing1 = "Throwable,Interface,Interface";
+   }
+
+   public void throwing1(@Thrown Throwable thrown, @Arg SuperInterface arg1,
+         @Arg Object arg2)
+   {
+      throwing1 = "Throwable,SuperInterface,Object";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg SuperInterface arg1,
+         @Arg SubInterface arg2)
+   {
+      throwing1 = "Throwable,SuperInterface,SubInterface";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg Interface arg1,
+         @Arg SuperInterface arg2)
+   {
+      throwing1 = "Throwable,Interface,SuperInterface";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg SuperInterface arg1,
+         @Arg Interface arg2)
+   {
+      throwing1 = "Throwable,SuperInterface,Interface";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg SuperInterface arg1, 
+         @Arg SuperInterface arg2)
+   {
+      throwing1 = "Throwable,SuperInterface,SuperInterface";
+   }
+   
+   public void throwing1(@Thrown Object thrown, @Arg SubInterface arg1,
+         @Arg Implementor arg2)
+   {
+      throwing1 = "Object,SubInterface,Implementor";
+   }
+
+   public void throwing1(@Thrown Throwable thrown, @Arg Implementor arg2)
+   {
+      throwing1 = "Throwable,Implementor";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg SubInterface arg1)
+   {
+      throwing1 = "Throwable,SubInterface";
+   }
+
+   public void throwing1(@Thrown Throwable thrown, @Arg Object arg2)
+   {
+      throwing1 = "Throwable,Object";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg Interface arg1)
+   {
+      throwing1 = "Throwable,Interface";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Arg SuperInterface arg1)
+   {
+      throwing1 = "Throwable,SuperInterface";
+   }
+
+   public void throwing1(@Thrown Object thrown, @Arg Implementor arg2)
+   {
+      throwing1 = "Object,Implementor";
+   }
+      
+   public void throwing1(@Thrown Object thrown, @Arg SubInterface arg1)
+   {
+      throwing1 = "Object,SubInterface";
+   }
+
+   public void throwing1(@Thrown Object thrown, @Arg Object arg2)
+   {
+      throwing1 = "Object,Object";
+   }
+   
+   public void throwing1(@Thrown Object thrown, @Arg Interface arg1)
+   {
+      throwing1 = "Object,Interface";
+   }
+
+   public void throwing1(@Thrown Object thrown, @Arg SuperInterface arg1)
+   {
+      throwing1 = "Object,SuperInterface";
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Args Object[] args)
+   {
+      throwing1 = "Throwable,Object[]";
+   }
+   
+   public void throwing1(@Thrown Object thrown, @Args Object[] args)
+   {
+      throwing1 = "Object,Object[]";
    }
    
    public void throwing1(@Thrown Throwable thrown)
