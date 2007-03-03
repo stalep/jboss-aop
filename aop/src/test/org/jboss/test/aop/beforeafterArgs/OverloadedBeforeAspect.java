@@ -31,7 +31,9 @@ import org.jboss.aop.advice.annotation.Args;
 import org.jboss.aop.advice.annotation.JoinPoint;
 
 /**
- * Aspect used on overloaded before advice tests.
+ * Aspect used on overloaded around advice tests (for JoinPoint, Arg and Args tests).
+ *
+ * This class includes hierarchy on a single Arg parameter.
  *
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */

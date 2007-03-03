@@ -22,35 +22,24 @@
 package org.jboss.test.aop.beforeafterArgs;
 
 /**
- * Plain old java object used on overloaded advice tests.
+ * Plain old java object used on overloaded advice tests )for Call and Target
+ * parameters).
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-public class OverloadedAdvicePOJO
+public class OverloadedAdvicePOJOCaller extends SuperClass
 {
-   public String text;
-   
-   public OverloadedAdvicePOJO() {}
-   
-   public OverloadedAdvicePOJO(SubInterface arg1, Implementor arg2) throws POJOException
+   public void callMethod3(OverloadedAdvicePOJO pojo)
    {
-      throw new POJOException();
+      pojo.method3(0);
    }
    
-   public void method1(int arg1, long arg2) {}
-   
-   public SuperClass method2(float arg1, SubValue arg2)
+   public void callMethod4(OverloadedAdvicePOJO pojo)
    {
-      return null;
-   }
-   
-   public long method3(int arg)
-   {
-      return (long) arg;
-   }
-   
-   public void method4(boolean arg) throws POJOException
-   {
-      throw new POJOException();
+      try
+      {
+         pojo.method4(true);
+      }
+      catch(POJOException e) {}
    }
 }

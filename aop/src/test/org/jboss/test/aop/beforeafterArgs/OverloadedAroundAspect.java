@@ -32,11 +32,12 @@ import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.MethodInvocation;
 
 /**
- * Aspect used on overloaded around advice tests.
+ * Aspect used on overloaded around advice tests (for JoinPoint, Arg and Args tests).
+ *
+ * This class uses only primitive Arg parameter types.
  *
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-// TODO temporary in this package
 public class OverloadedAroundAspect
 {
    static String around1 = null;

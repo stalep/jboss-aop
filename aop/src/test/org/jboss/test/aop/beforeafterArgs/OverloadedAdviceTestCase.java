@@ -174,23 +174,346 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       assertEquals("SuperClass,SuperClass,float", OverloadedAfterAspect.after53);
       assertEquals("Object,SuperClass,SubValue", OverloadedAfterAspect.after54);
       assertEquals("Object,SuperClass,SuperValue", OverloadedAfterAspect.after55);
-      /*assertEquals("SuperClass,SuperClass,Object", OverloadedAfterAspect.after56);
-      assertEquals("Object,SuperClass", OverloadedAfterAspect.after57);
-      assertEquals("Object,Object", OverloadedAfterAspect.after58);
-      assertEquals("void,float,SubValue", OverloadedAfterAspect.after59);
-      assertEquals("Object,float", OverloadedAfterAspect.after60);
-      assertEquals("void,SubValue", OverloadedAfterAspect.after61);
-      assertEquals("void,SuperValue", OverloadedAfterAspect.after62);
-      assertEquals("void", OverloadedAfterAspect.after63);*/
+      assertEquals("SuperClass,SuperClass,Object", OverloadedAfterAspect.after56);
+      assertEquals("Object,SuperClass,Object[]", OverloadedAfterAspect.after57);
+      assertEquals("Object,Object,Object[]", OverloadedAfterAspect.after58);
+      assertEquals("Object,SuperClass", OverloadedAfterAspect.after59);
+      assertEquals("Object,Object", OverloadedAfterAspect.after60);
+      assertEquals("void,float,SubValue", OverloadedAfterAspect.after61);
+      assertEquals("Object,float", OverloadedAfterAspect.after62);
+      assertEquals("void,SubValue", OverloadedAfterAspect.after63);
+      assertEquals("void,SuperValue", OverloadedAfterAspect.after64);
+      assertEquals("void,Object[]", OverloadedAfterAspect.after65);
+      assertEquals("void", OverloadedAfterAspect.after66);
    }
    
    public void test4()
    {
       try
       {
-         pojo.method3();
+         new OverloadedAdvicePOJO(null, null);
       } catch (POJOException pe) {}
       assertEquals("JoinPointInfo,Throwable,SubInterface,Implementor",
             OverloadedThrowingAspect.throwing1);
+   }
+   
+   public void test5()
+   {
+      (new OverloadedAdvicePOJOCaller()).callMethod3(pojo);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int",
+            OverloadedBeforeCallAspect.before1);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass,int",
+            OverloadedBeforeCallAspect.before2);
+      assertEquals("MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller,int",
+            OverloadedBeforeCallAspect.before3);
+      assertEquals("MethodByMethodInfo,Object,SuperClass,int",
+            OverloadedBeforeCallAspect.before4);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]",
+            OverloadedBeforeCallAspect.before5);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass,Object[]",
+            OverloadedBeforeCallAspect.before6);
+      assertEquals("MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller,Object[]",
+            OverloadedBeforeCallAspect.before7);
+      assertEquals("MethodByMethodInfo,Object,SuperClass,Object[]",
+            OverloadedBeforeCallAspect.before8);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller",
+            OverloadedBeforeCallAspect.before9);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass",
+            OverloadedBeforeCallAspect.before10);
+      assertEquals("MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller",
+            OverloadedBeforeCallAspect.before11);
+      assertEquals("MethodByMethodInfo,Object,SuperClass",
+            OverloadedBeforeCallAspect.before12);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,int",
+            OverloadedBeforeCallAspect.before13);
+      assertEquals("MethodByMethodInfo,Object,int",
+            OverloadedBeforeCallAspect.before14);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,Object[]",
+            OverloadedBeforeCallAspect.before15);
+      assertEquals("MethodByMethodInfo,Object,Object[]",
+            OverloadedBeforeCallAspect.before16);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,int",
+            OverloadedBeforeCallAspect.before17);
+      assertEquals("MethodByMethodInfo,SuperClass,int",
+            OverloadedBeforeCallAspect.before18);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]",
+            OverloadedBeforeCallAspect.before19);
+      assertEquals("MethodByMethodInfo,SuperClass,Object[]",
+            OverloadedBeforeCallAspect.before20);
+      assertEquals("MethodByMethodInfo,int", OverloadedBeforeCallAspect.before21);
+      assertEquals("MethodByMethodInfo,Object[]",
+            OverloadedBeforeCallAspect.before22);
+      assertEquals("MethodByMethodInfo", OverloadedBeforeCallAspect.before23);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int",
+            OverloadedBeforeCallAspect.before24);
+      assertEquals("OverloadedAdvicePOJO,SuperClass,int",
+            OverloadedBeforeCallAspect.before25);
+      assertEquals("Object,OverloadedAdvicePOJOCaller,int",
+            OverloadedBeforeCallAspect.before26);
+      assertEquals("Object,SuperClass,int", OverloadedBeforeCallAspect.before27);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]",
+            OverloadedBeforeCallAspect.before28);
+      assertEquals("OverloadedAdvicePOJO,SuperClass,Object[]",
+            OverloadedBeforeCallAspect.before29);
+      assertEquals("Object,OverloadedAdvicePOJOCaller,Object[]",
+            OverloadedBeforeCallAspect.before30);
+      assertEquals("Object,SuperClass,Object[]",
+            OverloadedBeforeCallAspect.before31);
+      assertEquals("OverloadedAdvicePOJO,int", OverloadedBeforeCallAspect.before32);
+      assertEquals("Object,int", OverloadedBeforeCallAspect.before33);
+      assertEquals("OverloadedAdvicePOJO,Object[]",
+            OverloadedBeforeCallAspect.before34);
+      assertEquals("Object,Object[]", OverloadedBeforeCallAspect.before35);
+      assertEquals("OverloadedAdvicePOJO", OverloadedBeforeCallAspect.before36);
+      assertEquals("Object", OverloadedBeforeCallAspect.before37);
+      assertEquals("OverloadedAdvicePOJOCaller,int",
+            OverloadedBeforeCallAspect.before38);
+      assertEquals("SuperClass,int", OverloadedBeforeCallAspect.before39);
+      assertEquals("OverloadedAdvicePOJOCaller,Object[]",
+            OverloadedBeforeCallAspect.before40);
+      assertEquals("SuperClass,Object[]", OverloadedBeforeCallAspect.before41);
+      assertEquals("OverloadedAdvicePOJOCaller",
+            OverloadedBeforeCallAspect.before42);
+      assertEquals("SuperClass", OverloadedBeforeCallAspect.before43);
+      assertEquals("int", OverloadedBeforeCallAspect.before44);
+      assertEquals("Object[]", OverloadedBeforeCallAspect.before45);
+   }
+   
+   public void test6()
+   {
+      (new OverloadedAdvicePOJOCaller()).callMethod3(pojo);
+      assertEquals("defaultSignature", OverloadedAroundCallAspect.around1);
+      assertEquals(
+            "MethodCalledByMethodInvocation,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int",
+            OverloadedAroundCallAspect.around2);
+      assertEquals(
+            "MethodCalledByMethodInvocation,OverloadedAdvicePOJO,SuperClass,int",
+            OverloadedAroundCallAspect.around3);
+      assertEquals(
+            "MethodCalledByMethodInvocation,Object,OverloadedAdvicePOJOCaller,int",
+            OverloadedAroundCallAspect.around4);
+      assertEquals("MethodCalledByMethodInvocation,Object,SuperClass,int",
+            OverloadedAroundCallAspect.around5);
+      assertEquals(
+            "MethodCalledByMethodInvocation,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]",
+            OverloadedAroundCallAspect.around6);
+      assertEquals(
+            "MethodCalledByMethodInvocation,OverloadedAdvicePOJO,SuperClass,Object[]",
+            OverloadedAroundCallAspect.around7);
+      assertEquals(
+            "MethodCalledByMethodInvocation,Object,OverloadedAdvicePOJOCaller,Object[]",
+            OverloadedAroundCallAspect.around8);
+      assertEquals("MethodCalledByMethodInvocation,Object,SuperClass,Object[]",
+            OverloadedAroundCallAspect.around9);
+      assertEquals(
+            "MethodCalledByMethodInvocation,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller",
+            OverloadedAroundCallAspect.around10);
+      assertEquals("MethodCalledByMethodInvocation,OverloadedAdvicePOJO,SuperClass",
+            OverloadedAroundCallAspect.around11);
+      assertEquals(
+            "MethodCalledByMethodInvocation,Object,OverloadedAdvicePOJOCaller",
+            OverloadedAroundCallAspect.around12);
+      assertEquals("MethodCalledByMethodInvocation,Object,SuperClass",
+            OverloadedAroundCallAspect.around13);
+      assertEquals("MethodCalledByMethodInvocation,OverloadedAdvicePOJO,int",
+            OverloadedAroundCallAspect.around14);
+      assertEquals("MethodCalledByMethodInvocation,Object,int",
+            OverloadedAroundCallAspect.around15);
+      assertEquals("MethodCalledByMethodInvocation,OverloadedAdvicePOJO,Object[]",
+            OverloadedAroundCallAspect.around16);
+      assertEquals("MethodCalledByMethodInvocation,Object,Object[]",
+            OverloadedAroundCallAspect.around17);
+      assertEquals("MethodCalledByMethodInvocation,OverloadedAdvicePOJOCaller,int",
+            OverloadedAroundCallAspect.around18);
+      assertEquals("MethodCalledByMethodInvocation,SuperClass,int",
+            OverloadedAroundCallAspect.around19);
+      assertEquals(
+            "MethodCalledByMethodInvocation,OverloadedAdvicePOJOCaller,Object[]",
+            OverloadedAroundCallAspect.around20);
+      assertEquals("MethodCalledByMethodInvocation,SuperClass,Object[]",
+            OverloadedAroundCallAspect.around21);
+      assertEquals("MethodCalledByMethodInvocation,int",
+            OverloadedAroundCallAspect.around22);
+      assertEquals("MethodCalledByMethodInvocation,Object[]",
+            OverloadedAroundCallAspect.around23);
+      assertEquals("MethodCalledByMethodInvocation",
+            OverloadedAroundCallAspect.around24);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int",
+            OverloadedAroundCallAspect.around25);
+      assertEquals("OverloadedAdvicePOJO,SuperClass,int",
+            OverloadedAroundCallAspect.around26);
+      assertEquals("Object,OverloadedAdvicePOJOCaller,int",
+            OverloadedAroundCallAspect.around27);
+      assertEquals("Object,SuperClass,int", OverloadedAroundCallAspect.around28);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]",
+            OverloadedAroundCallAspect.around29);
+      assertEquals("OverloadedAdvicePOJO,SuperClass,Object[]",
+            OverloadedAroundCallAspect.around30);
+      assertEquals("Object,OverloadedAdvicePOJOCaller,Object[]",
+            OverloadedAroundCallAspect.around31);
+      assertEquals("Object,SuperClass,Object[]",
+            OverloadedAroundCallAspect.around32);
+      assertEquals("OverloadedAdvicePOJO,int", OverloadedAroundCallAspect.around33);
+      assertEquals("Object,int", OverloadedAroundCallAspect.around34);
+      assertEquals("OverloadedAdvicePOJO,Object[]",
+            OverloadedAroundCallAspect.around35);
+      assertEquals("Object,Object[]", OverloadedAroundCallAspect.around36);
+      assertEquals("OverloadedAdvicePOJO", OverloadedAroundCallAspect.around37);
+      assertEquals("Object", OverloadedAroundCallAspect.around38);
+      assertEquals("OverloadedAdvicePOJOCaller,int",
+            OverloadedAroundCallAspect.around39);
+      assertEquals("SuperClass,int", OverloadedAroundCallAspect.around40);
+      assertEquals("OverloadedAdvicePOJOCaller,Object[]",
+            OverloadedAroundCallAspect.around41);
+      assertEquals("SuperClass,Object[]", OverloadedAroundCallAspect.around42);
+      assertEquals("OverloadedAdvicePOJOCaller",
+            OverloadedAroundCallAspect.around43);
+      assertEquals("SuperClass", OverloadedAroundCallAspect.around44);
+      assertEquals("int", OverloadedAroundCallAspect.around45);
+      assertEquals("Object[]", OverloadedAroundCallAspect.around46);
+   }
+   
+   public void test7()
+   {
+      (new OverloadedAdvicePOJOCaller()).callMethod3(pojo);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,int", OverloadedAfterCallAspect.after1);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,Object[]", OverloadedAfterCallAspect.after2);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long", OverloadedAfterCallAspect.after3);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int", OverloadedAfterCallAspect.after4);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller", OverloadedAfterCallAspect.after5);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,long,int", OverloadedAfterCallAspect.after6);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,long,Object[]", OverloadedAfterCallAspect.after7);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,long", OverloadedAfterCallAspect.after8);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,int", OverloadedAfterCallAspect.after9);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO", OverloadedAfterCallAspect.after10);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,int", OverloadedAfterCallAspect.after11);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]", OverloadedAfterCallAspect.after12);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,long", OverloadedAfterCallAspect.after13);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,int", OverloadedAfterCallAspect.after14);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller", OverloadedAfterCallAspect.after15);
+      assertEquals("MethodByMethodInfo,long,int", OverloadedAfterCallAspect.after16);
+      assertEquals("MethodByMethodInfo,long,Object[]", OverloadedAfterCallAspect.after17);
+      assertEquals("MethodByMethodInfo,long", OverloadedAfterCallAspect.after18);
+      assertEquals("MethodByMethodInfo,int", OverloadedAfterCallAspect.after19);
+      assertEquals("MethodByMethodInfo", OverloadedAfterCallAspect.after20);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,int", OverloadedAfterCallAspect.after21);
+      assertEquals("OverloadedAdvicePOJO,SuperClass,long,int", OverloadedAfterCallAspect.after22);
+      assertEquals("Object,OverloadedAdvicePOJOCaller,long,int", OverloadedAfterCallAspect.after23);
+      assertEquals("Object,SuperClass,long,int", OverloadedAfterCallAspect.after24);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,Object[]", OverloadedAfterCallAspect.after25);
+      assertEquals("OverloadedAdvicePOJO,SuperClass,long,Object[]", OverloadedAfterCallAspect.after26);
+      assertEquals("Object,OverloadedAdvicePOJOCaller,long,Object[]", OverloadedAfterCallAspect.after27);
+      assertEquals("Object,SuperClass,long,Object[]", OverloadedAfterCallAspect.after28);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long", OverloadedAfterCallAspect.after29);
+      assertEquals("OverloadedAdvicePOJO,SuperClass,long", OverloadedAfterCallAspect.after30);
+      assertEquals("Object,OverloadedAdvicePOJOCaller,long", OverloadedAfterCallAspect.after31);
+      assertEquals("Object,SuperClass,long", OverloadedAfterCallAspect.after32);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int", OverloadedAfterCallAspect.after33);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller", OverloadedAfterCallAspect.after34);
+      assertEquals("OverloadedAdvicePOJO,long,int", OverloadedAfterCallAspect.after35);
+      assertEquals("Object,long,int", OverloadedAfterCallAspect.after36);
+      assertEquals("OverloadedAdvicePOJO,long,Object[]", OverloadedAfterCallAspect.after37);
+      assertEquals("Object,long,Object[]", OverloadedAfterCallAspect.after38);
+      assertEquals("OverloadedAdvicePOJO,long", OverloadedAfterCallAspect.after39);
+      assertEquals("Object,long", OverloadedAfterCallAspect.after40);
+      assertEquals("OverloadedAdvicePOJO,int", OverloadedAfterCallAspect.after41);
+      assertEquals("OverloadedAdvicePOJO", OverloadedAfterCallAspect.after42);
+      assertEquals("OverloadedAdvicePOJOCaller,long,int", OverloadedAfterCallAspect.after43);
+      assertEquals("SuperClass,long,int", OverloadedAfterCallAspect.after44);
+      assertEquals("OverloadedAdvicePOJOCaller,long,Object[]", OverloadedAfterCallAspect.after45);
+      assertEquals("SuperClass,long,Object[]", OverloadedAfterCallAspect.after46);
+      assertEquals("OverloadedAdvicePOJOCaller,long", OverloadedAfterCallAspect.after47);
+      assertEquals("SuperClass,long", OverloadedAfterCallAspect.after48);
+      assertEquals("OverloadedAdvicePOJOCaller,int", OverloadedAfterCallAspect.after49);
+      assertEquals("OverloadedAdvicePOJOCaller", OverloadedAfterCallAspect.after50);
+   }
+   
+   public void test8()
+   {
+      (new OverloadedAdvicePOJOCaller()).callMethod4(pojo);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable,boolean",
+            OverloadedThrowingCallAspect.throwing1);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable,Object[]",
+            OverloadedThrowingCallAspect.throwing2);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable",
+            OverloadedThrowingCallAspect.throwing3);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable,boolean",
+            OverloadedThrowingCallAspect.throwing4);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable,Object[]",
+            OverloadedThrowingCallAspect.throwing5);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable",
+            OverloadedThrowingCallAspect.throwing6);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,boolean",
+            OverloadedThrowingCallAspect.throwing7);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,Object[]",
+            OverloadedThrowingCallAspect.throwing8);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable",
+            OverloadedThrowingCallAspect.throwing9);
+      assertEquals("MethodByMethodInfo,Throwable,boolean",
+            OverloadedThrowingCallAspect.throwing10);
+      assertEquals("MethodByMethodInfo,Throwable,Object[]",
+            OverloadedThrowingCallAspect.throwing11);
+      assertEquals("MethodByMethodInfo,Throwable",
+            OverloadedThrowingCallAspect.throwing12);
+      assertEquals(
+            "OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable,boolean",
+            OverloadedThrowingCallAspect.throwing13);
+      assertEquals("OverloadedAdvicePOJO,SuperClass,Throwable,boolean",
+            OverloadedThrowingCallAspect.throwing14);
+      assertEquals("Object,OverloadedAdvicePOJOCaller,Throwable,boolean",
+            OverloadedThrowingCallAspect.throwing15);
+      assertEquals("Object,SuperClass,Throwable,boolean",
+            OverloadedThrowingCallAspect.throwing16);
+      assertEquals(
+            "OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable,Object[]",
+            OverloadedThrowingCallAspect.throwing17);
+      assertEquals("OverloadedAdvicePOJO,SuperClass,Throwable,Object[]",
+            OverloadedThrowingCallAspect.throwing18);
+      assertEquals("Object,OverloadedAdvicePOJOCaller,Throwable,Object[]",
+            OverloadedThrowingCallAspect.throwing19);
+      assertEquals("Object,SuperClass,Throwable,Object[]",
+            OverloadedThrowingCallAspect.throwing20);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable",
+            OverloadedThrowingCallAspect.throwing21);
+      assertEquals("OverloadedAdvicePOJO,SuperClass,Throwable",
+            OverloadedThrowingCallAspect.throwing22);
+      assertEquals("Object,OverloadedAdvicePOJOCaller,Throwable",
+            OverloadedThrowingCallAspect.throwing23);
+      assertEquals("Object,SuperClass,Throwable",
+            OverloadedThrowingCallAspect.throwing24);
+      assertEquals("OverloadedAdvicePOJO,Throwable,boolean",
+            OverloadedThrowingCallAspect.throwing25);
+      assertEquals("Object,Throwable,boolean",
+            OverloadedThrowingCallAspect.throwing26);
+      assertEquals("OverloadedAdvicePOJO,Throwable,Object[]",
+            OverloadedThrowingCallAspect.throwing27);
+      assertEquals("Object,Throwable,Object[]",
+            OverloadedThrowingCallAspect.throwing28);
+      assertEquals("OverloadedAdvicePOJO,Throwable",
+            OverloadedThrowingCallAspect.throwing29);
+      assertEquals("Object,Throwable", OverloadedThrowingCallAspect.throwing30);
+      assertEquals("OverloadedAdvicePOJOCaller,Throwable,boolean",
+            OverloadedThrowingCallAspect.throwing31);
+      assertEquals("SuperClass,Throwable,boolean",
+            OverloadedThrowingCallAspect.throwing32);
+      assertEquals("OverloadedAdvicePOJOCaller,Throwable,Object[]",
+            OverloadedThrowingCallAspect.throwing33);
+      assertEquals("SuperClass,Throwable,Object[]",
+            OverloadedThrowingCallAspect.throwing34);
+      assertEquals("OverloadedAdvicePOJOCaller,Throwable",
+            OverloadedThrowingCallAspect.throwing35);
+      assertEquals("SuperClass,Throwable", OverloadedThrowingCallAspect.throwing36);
+      assertEquals("Throwable,boolean", OverloadedThrowingCallAspect.throwing37);
    }
 }
