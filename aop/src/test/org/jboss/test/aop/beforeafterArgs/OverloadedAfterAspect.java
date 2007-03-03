@@ -29,7 +29,10 @@ import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Return;
 
 /**
- * Aspect used on overloaded after advice tests.
+ * Aspect used on overloaded around advice tests (for JoinPoint, Return, Arg and
+ * Args tests).
+ * 
+ * This class includes hierarchy on multiple Arg parameters.
  *
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
@@ -95,6 +98,12 @@ public class OverloadedAfterAspect
    static String after58 = null;
    static String after59 = null;
    static String after60 = null;
+   static String after61 = null;
+   static String after62 = null;
+   static String after63 = null;
+   static String after64 = null;
+   static String after65 = null;
+   static String after66 = null;
 
    public static void clear()
    {
@@ -158,7 +167,15 @@ public class OverloadedAfterAspect
       after58 = null;
       after59 = null;
       after60 = null;
+      after61 = null;
+      after62 = null;
+      after63 = null;
+      after64 = null;
+      after65 = null;
+      after66 = null;
    }
+   
+   /* AFTER2 ADVICE */
    
    public Object after1(@JoinPoint MethodInfo joinPointInfo,
          @Return SuperClass valueReturned, @Arg float arg1, @Arg SubValue arg2)
@@ -534,6 +551,18 @@ public class OverloadedAfterAspect
       return null;
    }
    
+   public Object after1(@Return SuperClass valueReturned, @Args Object[] args)
+   {
+      after1 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after1(@Return Object valueReturned, @Args Object[] args)
+   {
+      after1 = "Object,Object,Object[]";
+      return null;
+   }
+   
    public Object after1(@Return SuperClass valueReturned)
    {
       after1 = "Object,SuperClass";
@@ -565,6 +594,11 @@ public class OverloadedAfterAspect
    public void after1(@Arg SuperValue arg2)
    {
       after1 = "void,SuperValue";
+   }
+   
+   public void after1(@Args Object[] args)
+   {
+      after1 = "void,Object[]";
    }
    
    public void after1()
@@ -642,97 +676,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after2(@JoinPoint MethodInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after2 = "SuperClass,MethodInfo,SuperClass,Object";
-      return null;
-   }
-
-   public SuperClass after2(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg SubValue arg2)
-   {
-      after2 = "SuperClass,MethodInfo,Object,SubValue";
-      return null;
-   }
-   
-   public Object after2(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned,
-         @Arg float arg1)
-   {
-      after2 = "Object,MethodInfo,Object,float";
-      return null;
-   }
-
-   public SubClass after2(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg SuperValue arg2)
-   {
-      after2 = "SubClass,MethodInfo,Object,SuperValue";
-      return null;
-   }
-   
-   public SubClass after2(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg Object arg2)
-   {
-      after2 = "SubClass,MethodInfo,Object,Object";
-      return null;
-   }
-   
-   public SuperClass after2(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SubValue arg2)
-   {
-      after2 = "SuperClass,JoinPointInfo,SuperClass,SubValue";
-      return null;
-   }
-   
-   public SubClass after2(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg float arg1)
-   {
-      after2 = "SubClass,JoinPointInfo,SuperClass,float";
-      return null;
-   }
-
-   public SubClass after2(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SuperValue arg2)
-   {
-      after2 = "SubClass,JoinPointInfo,SuperClass,SuperValue";
-      return null;
-   }
-   
-   public SuperClass after2(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after2 = "SuperClass,JoinPointInfo,SuperClass,Object";
-      return null;
-   }
-
-   public SubClass after2(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SubValue arg2)
-   {
-      after2 = "SubClass,Object,SuperClass,SubValue";
-      return null;
-   }
-   
-   public Object after2(@JoinPoint Object joinPointInfo, @Return SuperClass valueReturned,
-         @Arg float arg1)
-   {
-      after2 = "Object,Object,SuperClass,float";
-      return null;
-   }
-
-   public SubClass after2(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SuperValue arg2)
-   {
-      after2 = "SubClass,Object,SuperClass,SuperValue";
-      return null;
-   }
-   
-   public Object after2(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after2 = "Object,Object,SuperClass,Object";
-      return null;
-   }
-   
    public Object after2(@JoinPoint MethodInfo joinPointInfo,
          @Return SuperClass valueReturned, @Args Object[] args)
    {
@@ -741,60 +684,12 @@ public class OverloadedAfterAspect
    }
    
    public Object after2(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after2 = "Object,MethodInfo,Object,Object[]";
-      return null;
-   }
-   
-   public Object after2(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Args Object[] args)
-   {
-      after2 = "Object,JoinPointInfo,SuperClass,Object[]";
-      return null;
-   }
-   
-   public Object after2(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after2 = "Object,JoinPointInfo,Object,Object[]";
-      return null;
-   }
-   
-   public Object after2(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Args Object[] args)
-   {
-      after2 = "Object,Object,SuperClass,Object[]";
-      return null;
-   }
-   
-   public Object after2(@JoinPoint Object joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after2 = "Object,Object,Object,Object[]";
-      return null;
-   }
-
-   public Object after2(@JoinPoint MethodInfo joinPointInfo,
          @Return SuperClass valueReturned)
    {
       after2 = "Object,MethodInfo,SuperClass";
       return null;
    }
 
-   public Object after2(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after2 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after2(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after2 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-   
    public Object after2(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -809,20 +704,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after2(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
-         @Arg Object arg2)
-   {
-      after2 = "Object,MethodInfo,float,Object";
-      return null;
-   }
-   
-   public Object after2(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1,
-         @Arg SubValue arg2)
-   {
-      after2 = "Object,JoinPointInfo,float,SubValue";
-      return null;
-   }
-
    public Object after2(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1)
    {
       after2 = "Object,MethodInfo,float";
@@ -835,51 +716,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after2(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after2 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after2(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after2 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after2(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after2 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after2(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after2 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after2(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after2 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after2(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after2 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after2(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after2 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after2(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after2 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -889,12 +728,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after2(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after2 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after2(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -909,13 +742,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after2(@Return SuperClass valueReturned, @Arg float arg1,
-         @Arg Object arg2)
-   {
-      after2 = "Object,SuperClass,float,Object";
-      return null;
-   }
-
    public SuperClass after2(@Return SuperClass valueReturned, @Arg float arg1)
    {
       after2 = "SuperClass,MethodInfo,SuperClass,float";
@@ -934,21 +760,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after2(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after2(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after2 = "SuperClass,SuperClass,Object";
+      after2 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after2(@Return SuperClass valueReturned)
    {
       after2 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after2(@Return Object valueReturned)
-   {
-      after2 = "Object,Object";
       return null;
    }
    
@@ -971,6 +791,11 @@ public class OverloadedAfterAspect
    public void after2(@Arg SuperValue arg2)
    {
       after2 = "void,SuperValue";
+   }
+   
+   public void after2(@Args Object[] args)
+   {
+      after2 = "void,Object[]";
    }
    
    public void after2()
@@ -1041,97 +866,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after3(@JoinPoint MethodInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after3 = "SuperClass,MethodInfo,SuperClass,Object";
-      return null;
-   }
-
-   public SuperClass after3(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg SubValue arg2)
-   {
-      after3 = "SuperClass,MethodInfo,Object,SubValue";
-      return null;
-   }
-   
-   public Object after3(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned,
-         @Arg float arg1)
-   {
-      after3 = "Object,MethodInfo,Object,float";
-      return null;
-   }
-
-   public SubClass after3(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg SuperValue arg2)
-   {
-      after3 = "SubClass,MethodInfo,Object,SuperValue";
-      return null;
-   }
-   
-   public SubClass after3(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg Object arg2)
-   {
-      after3 = "SubClass,MethodInfo,Object,Object";
-      return null;
-   }
-   
-   public SuperClass after3(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SubValue arg2)
-   {
-      after3 = "SuperClass,JoinPointInfo,SuperClass,SubValue";
-      return null;
-   }
-   
-   public SubClass after3(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg float arg1)
-   {
-      after3 = "SubClass,JoinPointInfo,SuperClass,float";
-      return null;
-   }
-
-   public SubClass after3(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SuperValue arg2)
-   {
-      after3 = "SubClass,JoinPointInfo,SuperClass,SuperValue";
-      return null;
-   }
-   
-   public SuperClass after3(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after3 = "SuperClass,JoinPointInfo,SuperClass,Object";
-      return null;
-   }
-   
-   public SubClass after3(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SubValue arg2)
-   {
-      after3 = "SubClass,Object,SuperClass,SubValue";
-      return null;
-   }
-   
-   public Object after3(@JoinPoint Object joinPointInfo, @Return SuperClass valueReturned,
-         @Arg float arg1)
-   {
-      after3 = "Object,Object,SuperClass,float";
-      return null;
-   }
-
-   public SubClass after3(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SuperValue arg2)
-   {
-      after3 = "SubClass,Object,SuperClass,SuperValue";
-      return null;
-   }
-   
-   public Object after3(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after3 = "Object,Object,SuperClass,Object";
-      return null;
-   }
-   
    public Object after3(@JoinPoint MethodInfo joinPointInfo,
          @Return SuperClass valueReturned, @Args Object[] args)
    {
@@ -1140,57 +874,9 @@ public class OverloadedAfterAspect
    }
    
    public Object after3(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after3 = "Object,MethodInfo,Object,Object[]";
-      return null;
-   }
-   
-   public Object after3(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Args Object[] args)
-   {
-      after3 = "Object,JoinPointInfo,SuperClass,Object[]";
-      return null;
-   }
-   
-   public Object after3(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after3 = "Object,JoinPointInfo,Object,Object[]";
-      return null;
-   }
-   
-   public Object after3(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Args Object[] args)
-   {
-      after3 = "Object,Object,SuperClass,Object[]";
-      return null;
-   }
-   
-   public Object after3(@JoinPoint Object joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after3 = "Object,Object,Object,Object[]";
-      return null;
-   }
-
-   public Object after3(@JoinPoint MethodInfo joinPointInfo,
          @Return SuperClass valueReturned)
    {
       after3 = "Object,MethodInfo,SuperClass";
-      return null;
-   }
-
-   public Object after3(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after3 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after3(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after3 = "Object,JoinPointInfo,SuperClass";
       return null;
    }
 
@@ -1208,20 +894,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after3(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
-         @Arg Object arg2)
-   {
-      after3 = "Object,MethodInfo,float,Object";
-      return null;
-   }
-   
-   public Object after3(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1,
-         @Arg SubValue arg2)
-   {
-      after3 = "Object,JoinPointInfo,float,SubValue";
-      return null;
-   }
-
    public SuperClass after3(@JoinPoint MethodInfo joinPointInfo, @Arg SubValue arg2)
    {
       after3 = "SuperClass,MethodInfo,SubValue";
@@ -1240,51 +912,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after3(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after3 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after3(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after3 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after3(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after3 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after3(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after3 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after3(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after3 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after3(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after3 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after3(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after3 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after3(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after3 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -1333,21 +963,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after3(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after3(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after3 = "SuperClass,SuperClass,Object";
-      return null;
-   }
-   
-   public Object after3(@Return SuperClass valueReturned)
-   {
-      after3 = "Object,SuperClass";
+      after3 = "Object,SuperClass,Object[]";
       return null;
    }
 
-   public Object after3(@Return Object valueReturned)
+   public Object after3(@Return SuperClass valueReturned)
    {
-      after3 = "Object,Object";
+      after3 = "Object,SuperClass";
       return null;
    }
 
@@ -1370,6 +994,11 @@ public class OverloadedAfterAspect
    public void after3(@Arg SuperValue arg2)
    {
       after3 = "void,SuperValue";
+   }
+   
+   public void after3(@Args Object[] args)
+   {
+      after3 = "void,Object[]";
    }
    
    public void after3()
@@ -1433,122 +1062,10 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after4(@JoinPoint MethodInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after4 = "SuperClass,MethodInfo,SuperClass,Object";
-      return null;
-   }
-
-   public SuperClass after4(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg SubValue arg2)
-   {
-      after4 = "SuperClass,MethodInfo,Object,SubValue";
-      return null;
-   }
-   
-   public Object after4(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned,
-         @Arg float arg1)
-   {
-      after4 = "Object,MethodInfo,Object,float";
-      return null;
-   }
-
-   public SubClass after4(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg SuperValue arg2)
-   {
-      after4 = "SubClass,MethodInfo,Object,SuperValue";
-      return null;
-   }
-   
-   public SubClass after4(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg Object arg2)
-   {
-      after4 = "SubClass,MethodInfo,Object,Object";
-      return null;
-   }
-   
-   public SuperClass after4(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SubValue arg2)
-   {
-      after4 = "SuperClass,JoinPointInfo,SuperClass,SubValue";
-      return null;
-   }
-   
-   public SubClass after4(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg float arg1)
-   {
-      after4 = "SubClass,JoinPointInfo,SuperClass,float";
-      return null;
-   }
-
-   public SubClass after4(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SuperValue arg2)
-   {
-      after4 = "SubClass,JoinPointInfo,SuperClass,SuperValue";
-      return null;
-   }
-   
-   public SuperClass after4(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after4 = "SuperClass,JoinPointInfo,SuperClass,Object";
-      return null;
-   }
-
-   public SubClass after4(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SubValue arg2)
-   {
-      after4 = "SubClass,Object,SuperClass,SubValue";
-      return null;
-   }
-   
-   public Object after4(@JoinPoint Object joinPointInfo, @Return SuperClass valueReturned,
-         @Arg float arg1)
-   {
-      after4 = "Object,Object,SuperClass,float";
-      return null;
-   }
-
-   public SubClass after4(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SuperValue arg2)
-   {
-      after4 = "SubClass,Object,SuperClass,SuperValue";
-      return null;
-   }
-   
-   public Object after4(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after4 = "Object,Object,SuperClass,Object";
-      return null;
-   }
-   
    public Object after4(@JoinPoint MethodInfo joinPointInfo,
          @Return SuperClass valueReturned, @Args Object[] args)
    {
       after4 = "Object,MethodInfo,SuperClass,Object[]";
-      return null;
-   }
-   
-   public Object after4(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after4 = "Object,MethodInfo,Object,Object[]";
-      return null;
-   }
-   
-   public Object after4(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Args Object[] args)
-   {
-      after4 = "Object,JoinPointInfo,SuperClass,Object[]";
-      return null;
-   }
-   
-   public Object after4(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after4 = "Object,JoinPointInfo,Object,Object[]";
       return null;
    }
    
@@ -1559,30 +1076,10 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after4(@JoinPoint Object joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after4 = "Object,Object,Object,Object[]";
-      return null;
-   }
-
    public Object after4(@JoinPoint MethodInfo joinPointInfo,
          @Return SuperClass valueReturned)
    {
       after4 = "Object,MethodInfo,SuperClass";
-      return null;
-   }
-
-   public Object after4(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after4 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after4(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after4 = "Object,JoinPointInfo,SuperClass";
       return null;
    }
 
@@ -1600,20 +1097,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after4(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
-         @Arg Object arg2)
-   {
-      after4 = "Object,MethodInfo,float,Object";
-      return null;
-   }
-   
-   public Object after4(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1,
-         @Arg SubValue arg2)
-   {
-      after4 = "Object,JoinPointInfo,float,SubValue";
-      return null;
-   }
-
    public SuperClass after4(@JoinPoint MethodInfo joinPointInfo, @Arg SubValue arg2)
    {
       after4 = "SuperClass,MethodInfo,SubValue";
@@ -1632,51 +1115,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after4(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after4 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after4(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after4 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after4(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after4 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after4(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after4 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after4(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after4 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after4(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after4 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after4(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after4 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after4(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after4 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -1700,13 +1141,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after4(@Return SuperClass valueReturned, @Arg float arg1,
-         @Arg Object arg2)
-   {
-      after4 = "Object,SuperClass,float,Object";
-      return null;
-   }
-
    public SuperClass after4(@Return SuperClass valueReturned, @Arg float arg1)
    {
       after4 = "SuperClass,MethodInfo,SuperClass,float";
@@ -1725,21 +1159,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after4(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after4(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after4 = "SuperClass,SuperClass,Object";
-      return null;
-   }
-   
-   public Object after4(@Return SuperClass valueReturned)
-   {
-      after4 = "Object,SuperClass";
+      after4 = "Object,SuperClass,Object[]";
       return null;
    }
 
-   public Object after4(@Return Object valueReturned)
+   public Object after4(@Return SuperClass valueReturned)
    {
-      after4 = "Object,Object";
+      after4 = "Object,SuperClass";
       return null;
    }
 
@@ -1762,6 +1190,11 @@ public class OverloadedAfterAspect
    public void after4(@Arg SuperValue arg2)
    {
       after4 = "void,SuperValue";
+   }
+
+   public void after4(@Args Object[] args)
+   {
+      after4 = "void,Object[]";
    }
    
    public void after4()
@@ -1818,94 +1251,10 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after5(@JoinPoint MethodInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after5 = "SuperClass,MethodInfo,SuperClass,Object";
-      return null;
-   }
-
-   public SuperClass after5(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg SubValue arg2)
-   {
-      after5 = "SuperClass,MethodInfo,Object,SubValue";
-      return null;
-   }
-   
-   public Object after5(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned,
-         @Arg float arg1)
-   {
-      after5 = "Object,MethodInfo,Object,float";
-      return null;
-   }
-
-   public SubClass after5(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg SuperValue arg2)
-   {
-      after5 = "SubClass,MethodInfo,Object,SuperValue";
-      return null;
-   }
-   
-   public SubClass after5(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg Object arg2)
-   {
-      after5 = "SubClass,MethodInfo,Object,Object";
-      return null;
-   }
-   
    public SuperClass after5(@JoinPoint JoinPointInfo joinPointInfo,
          @Return SuperClass valueReturned, @Arg SubValue arg2)
    {
       after5 = "SuperClass,JoinPointInfo,SuperClass,SubValue";
-      return null;
-   }
-   
-   public SubClass after5(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg float arg1)
-   {
-      after5 = "SubClass,JoinPointInfo,SuperClass,float";
-      return null;
-   }
-
-   public SubClass after5(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SuperValue arg2)
-   {
-      after5 = "SubClass,JoinPointInfo,SuperClass,SuperValue";
-      return null;
-   }
-   
-   public SuperClass after5(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after5 = "SuperClass,JoinPointInfo,SuperClass,Object";
-      return null;
-   }
-
-   public SubClass after5(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SubValue arg2)
-   {
-      after5 = "SubClass,Object,SuperClass,SubValue";
-      return null;
-   }
-   
-   public Object after5(@JoinPoint Object joinPointInfo, @Return SuperClass valueReturned,
-         @Arg float arg1)
-   {
-      after5 = "Object,Object,SuperClass,float";
-      return null;
-   }
-
-   public SubClass after5(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SuperValue arg2)
-   {
-      after5 = "SubClass,Object,SuperClass,SuperValue";
-      return null;
-   }
-   
-   public Object after5(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after5 = "Object,Object,SuperClass,Object";
       return null;
    }
    
@@ -1917,57 +1266,9 @@ public class OverloadedAfterAspect
    }
    
    public Object after5(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after5 = "Object,MethodInfo,Object,Object[]";
-      return null;
-   }
-   
-   public Object after5(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Args Object[] args)
-   {
-      after5 = "Object,JoinPointInfo,SuperClass,Object[]";
-      return null;
-   }
-   
-   public Object after5(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after5 = "Object,JoinPointInfo,Object,Object[]";
-      return null;
-   }
-   
-   public Object after5(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Args Object[] args)
-   {
-      after5 = "Object,Object,SuperClass,Object[]";
-      return null;
-   }
-   
-   public Object after5(@JoinPoint Object joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after5 = "Object,Object,Object,Object[]";
-      return null;
-   }
-
-   public Object after5(@JoinPoint MethodInfo joinPointInfo,
          @Return SuperClass valueReturned)
    {
       after5 = "Object,MethodInfo,SuperClass";
-      return null;
-   }
-
-   public Object after5(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after5 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after5(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after5 = "Object,JoinPointInfo,SuperClass";
       return null;
    }
 
@@ -1982,20 +1283,6 @@ public class OverloadedAfterAspect
          @Arg SuperValue arg2)
    {
       after5 = "Object,MethodInfo,float,SuperClass";
-      return null;
-   }
-   
-   public Object after5(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
-         @Arg Object arg2)
-   {
-      after5 = "Object,MethodInfo,float,Object";
-      return null;
-   }
-   
-   public Object after5(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1,
-         @Arg SubValue arg2)
-   {
-      after5 = "Object,JoinPointInfo,float,SubValue";
       return null;
    }
    
@@ -2017,51 +1304,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after5(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after5 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after5(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after5 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after5(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after5 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after5(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after5 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after5(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after5 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after5(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after5 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after5(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after5 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after5(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after5 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -2071,12 +1316,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after5(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after5 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after5(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -2116,21 +1355,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after5(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after5(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after5 = "SuperClass,SuperClass,Object";
-      return null;
-   }
-   
-   public Object after5(@Return SuperClass valueReturned)
-   {
-      after5 = "Object,SuperClass";
+      after5 = "Object,SuperClass,Object[]";
       return null;
    }
 
-   public Object after5(@Return Object valueReturned)
+   public Object after5(@Return SuperClass valueReturned)
    {
-      after5 = "Object,Object";
+      after5 = "Object,SuperClass";
       return null;
    }
 
@@ -2153,6 +1386,11 @@ public class OverloadedAfterAspect
    public void after5(@Arg SuperValue arg2)
    {
       after5 = "void,SuperValue";
+   }
+   
+   public void after5(@Args Object[] args)
+   {
+      after5 = "void,Object[]";
    }
    
    public void after5()
@@ -2202,97 +1440,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after6(@JoinPoint MethodInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after6 = "SuperClass,MethodInfo,SuperClass,Object";
-      return null;
-   }
-
-   public SuperClass after6(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg SubValue arg2)
-   {
-      after6 = "SuperClass,MethodInfo,Object,SubValue";
-      return null;
-   }
-   
-   public Object after6(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned,
-         @Arg float arg1)
-   {
-      after6 = "Object,MethodInfo,Object,float";
-      return null;
-   }
-
-   public SubClass after6(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg SuperValue arg2)
-   {
-      after6 = "SubClass,MethodInfo,Object,SuperValue";
-      return null;
-   }
-   
-   public SubClass after6(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Arg Object arg2)
-   {
-      after6 = "SubClass,MethodInfo,Object,Object";
-      return null;
-   }
-   
-   public SuperClass after6(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SubValue arg2)
-   {
-      after6 = "SuperClass,JoinPointInfo,SuperClass,SubValue";
-      return null;
-   }
-   
-   public SubClass after6(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg float arg1)
-   {
-      after6 = "SubClass,JoinPointInfo,SuperClass,float";
-      return null;
-   }
-
-   public SubClass after6(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SuperValue arg2)
-   {
-      after6 = "SubClass,JoinPointInfo,SuperClass,SuperValue";
-      return null;
-   }
-   
-   public SuperClass after6(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after6 = "SuperClass,JoinPointInfo,SuperClass,Object";
-      return null;
-   }
-
-   public SubClass after6(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SubValue arg2)
-   {
-      after6 = "SubClass,Object,SuperClass,SubValue";
-      return null;
-   }
-   
-   public Object after6(@JoinPoint Object joinPointInfo, @Return SuperClass valueReturned,
-         @Arg float arg1)
-   {
-      after6 = "Object,Object,SuperClass,float";
-      return null;
-   }
-
-   public SubClass after6(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SuperValue arg2)
-   {
-      after6 = "SubClass,Object,SuperClass,SuperValue";
-      return null;
-   }
-   
-   public Object after6(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after6 = "Object,Object,SuperClass,Object";
-      return null;
-   }
-   
    public Object after6(@JoinPoint MethodInfo joinPointInfo,
          @Return SuperClass valueReturned, @Args Object[] args)
    {
@@ -2301,57 +1448,9 @@ public class OverloadedAfterAspect
    }
    
    public Object after6(@JoinPoint MethodInfo joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after6 = "Object,MethodInfo,Object,Object[]";
-      return null;
-   }
-   
-   public Object after6(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Args Object[] args)
-   {
-      after6 = "Object,JoinPointInfo,SuperClass,Object[]";
-      return null;
-   }
-   
-   public Object after6(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after6 = "Object,JoinPointInfo,Object,Object[]";
-      return null;
-   }
-   
-   public Object after6(@JoinPoint Object joinPointInfo,
-         @Return SuperClass valueReturned, @Args Object[] args)
-   {
-      after6 = "Object,Object,SuperClass,Object[]";
-      return null;
-   }
-   
-   public Object after6(@JoinPoint Object joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after6 = "Object,Object,Object,Object[]";
-      return null;
-   }
-
-   public Object after6(@JoinPoint MethodInfo joinPointInfo,
          @Return SuperClass valueReturned)
    {
       after6 = "Object,MethodInfo,SuperClass";
-      return null;
-   }
-
-   public Object after6(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after6 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after6(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after6 = "Object,JoinPointInfo,SuperClass";
       return null;
    }
 
@@ -2369,20 +1468,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after6(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
-         @Arg Object arg2)
-   {
-      after6 = "Object,MethodInfo,float,Object";
-      return null;
-   }
-   
-   public Object after6(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1,
-         @Arg SubValue arg2)
-   {
-      after6 = "Object,JoinPointInfo,float,SubValue";
-      return null;
-   }
-
    public SuperClass after6(@JoinPoint MethodInfo joinPointInfo, @Arg SubValue arg2)
    {
       after6 = "SuperClass,MethodInfo,SubValue";
@@ -2401,51 +1486,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after6(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after6 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after6(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after6 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after6(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after6 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after6(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after6 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after6(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after6 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after6(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after6 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after6(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after6 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after6(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after6 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -2455,12 +1498,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after6(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after6 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after6(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -2475,13 +1512,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after6(@Return SuperClass valueReturned, @Arg float arg1,
-         @Arg Object arg2)
-   {
-      after6 = "Object,SuperClass,float,Object";
-      return null;
-   }
-
    public SuperClass after6(@Return SuperClass valueReturned, @Arg float arg1)
    {
       after6 = "SuperClass,MethodInfo,SuperClass,float";
@@ -2500,21 +1530,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after6(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after6(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after6 = "SuperClass,SuperClass,Object";
-      return null;
-   }
-   
-   public Object after6(@Return SuperClass valueReturned)
-   {
-      after6 = "Object,SuperClass";
+      after6 = "Object,SuperClass,Object[]";
       return null;
    }
 
-   public Object after6(@Return Object valueReturned)
+   public Object after6(@Return SuperClass valueReturned)
    {
-      after6 = "Object,Object";
+      after6 = "Object,SuperClass";
       return null;
    }
 
@@ -2537,6 +1561,11 @@ public class OverloadedAfterAspect
    public void after6(@Arg SuperValue arg2)
    {
       after6 = "void,SuperValue";
+   }
+   
+   public void after6(@Args Object[] args)
+   {
+      after6 = "void,Object[]";
    }
    
    public void after6()
@@ -2614,34 +1643,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after7(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SubValue arg2)
-   {
-      after7 = "SuperClass,JoinPointInfo,SuperClass,SubValue";
-      return null;
-   }
-   
-   public SubClass after7(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg float arg1)
-   {
-      after7 = "SubClass,JoinPointInfo,SuperClass,float";
-      return null;
-   }
-
-   public SubClass after7(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg SuperValue arg2)
-   {
-      after7 = "SubClass,JoinPointInfo,SuperClass,SuperValue";
-      return null;
-   }
-   
-   public SuperClass after7(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after7 = "SuperClass,JoinPointInfo,SuperClass,Object";
-      return null;
-   }
-
    public SubClass after7(@JoinPoint Object joinPointInfo,
          @Return SuperClass valueReturned, @Arg SubValue arg2)
    {
@@ -2684,20 +1685,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after7(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned, @Args Object[] args)
-   {
-      after7 = "Object,JoinPointInfo,SuperClass,Object[]";
-      return null;
-   }
-   
-   public Object after7(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return Object valueReturned, @Args Object[] args)
-   {
-      after7 = "Object,JoinPointInfo,Object,Object[]";
-      return null;
-   }
-   
    public Object after7(@JoinPoint Object joinPointInfo,
          @Return SuperClass valueReturned, @Args Object[] args)
    {
@@ -2716,19 +1703,6 @@ public class OverloadedAfterAspect
          @Return SuperClass valueReturned)
    {
       after7 = "Object,MethodInfo,SuperClass";
-      return null;
-   }
-
-   public Object after7(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after7 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after7(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after7 = "Object,JoinPointInfo,SuperClass";
       return null;
    }
 
@@ -2753,13 +1727,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after7(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1,
-         @Arg SubValue arg2)
-   {
-      after7 = "Object,JoinPointInfo,float,SubValue";
-      return null;
-   }
-
    public SuperClass after7(@JoinPoint MethodInfo joinPointInfo, @Arg SubValue arg2)
    {
       after7 = "SuperClass,MethodInfo,SubValue";
@@ -2778,51 +1745,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after7(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after7 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after7(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after7 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after7(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after7 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after7(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after7 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after7(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after7 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after7(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after7 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after7(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after7 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after7(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after7 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -2832,12 +1757,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after7(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after7 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after7(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -2877,19 +1796,13 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after7(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after7(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after7 = "SuperClass,SuperClass,Object";
-      return null;
-   }
-   
-   public Object after7(@Return SuperClass valueReturned)
-   {
-      after7 = "Object,SuperClass";
+      after7 = "Object,SuperClass,Object[]";
       return null;
    }
 
-   public Object after7(@Return Object valueReturned)
+   public Object after7(@Return SuperClass valueReturned)
    {
       after7 = "Object,SuperClass";
       return null;
@@ -2914,6 +1827,11 @@ public class OverloadedAfterAspect
    public void after7(@Arg SuperValue arg2)
    {
       after7 = "void,SuperValue";
+   }
+   
+   public void after7(@Args Object[] args)
+   {
+      after7 = "void,Object[]";
    }
    
    public void after7()
@@ -3089,19 +2007,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after8(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after8 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after8(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after8 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after8(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -3148,51 +2053,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after8(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after8 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after8(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after8 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after8(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after8 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after8(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after8 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after8(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after8 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after8(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after8 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after8(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after8 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after8(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after8 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -3202,12 +2065,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after8(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after8 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after8(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -3247,24 +2104,18 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after8(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after8(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after8 = "SuperClass,SuperClass,Object";
+      after8 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after8(@Return SuperClass valueReturned)
    {
       after8 = "Object,SuperClass";
       return null;
    }
    
-   public Object after8(@Return Object valueReturned)
-   {
-      after7 = "Object,SuperClass";
-      return null;
-   }
-
    public void after8(@Arg float arg1, @Arg SubValue arg2)
    {
       after8 = "void,float,SubValue";
@@ -3284,6 +2135,11 @@ public class OverloadedAfterAspect
    public void after8(@Arg SuperValue arg2)
    {
       after8 = "void,SuperValue";
+   }
+   
+   public void after8(@Args Object[] args)
+   {
+      after8 = "void,Object[]";
    }
    
    public void after8()
@@ -3452,12 +2308,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after9(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after9 = "Object,MethodInfo,Object";
-      return null;
-   }
-
    public Object after9(@JoinPoint JoinPointInfo joinPointInfo,
          @Return SuperClass valueReturned)
    {
@@ -3511,51 +2361,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after9(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after9 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after9(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after9 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after9(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after9 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after9(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after9 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after9(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after9 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after9(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after9 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after9(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after1 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after9(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after1 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -3565,12 +2373,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after9(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after9 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after9(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -3616,15 +2418,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after9(@Return SuperClass valueReturned)
+   public Object after9(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after9 = "Object,SuperClass";
+      after9 = "Object,SuperClass,Object[]";
       return null;
    }
 
-   public Object after9(@Return Object valueReturned)
+   public Object after9(@Return SuperClass valueReturned)
    {
-      after9 = "Object,Object";
+      after9 = "Object,SuperClass";
       return null;
    }
 
@@ -3647,6 +2449,11 @@ public class OverloadedAfterAspect
    public void after9(@Arg SuperValue arg2)
    {
       after9 = "void,SuperValue";
+   }
+   
+   public void after9(@Args Object[] args)
+   {
+      after9 = "void,Object[]";
    }
    
    public void after9()
@@ -3808,19 +2615,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after10(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after10 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after10(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after10 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after10(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -3867,51 +2661,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after10(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after10 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after10(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after10 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after10(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after10 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after10(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after10 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after10(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after10 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after10(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after10 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after10(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after10 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after10(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after10 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -3921,12 +2673,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after10(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after10 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after10(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -3972,15 +2718,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after10(@Return SuperClass valueReturned)
+   public Object after10(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after10 = "Object,SuperClass";
+      after10 = "Object,SuperClass,Object[]";
       return null;
    }
 
-   public Object after10(@Return Object valueReturned)
+   public Object after10(@Return SuperClass valueReturned)
    {
-      after10 = "Object,Object";
+      after10 = "Object,SuperClass";
       return null;
    }
 
@@ -4003,6 +2749,11 @@ public class OverloadedAfterAspect
    public void after10(@Arg SuperValue arg2)
    {
       after10 = "void,SuperValue";
+   }
+   
+   public void after10(@Args Object[] args)
+   {
+      after10 = "void,Object[]";
    }
    
    public void after10()
@@ -4157,19 +2908,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after11(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after11 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after11(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after11 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after11(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -4216,51 +2954,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after11(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after11 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after11(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after11 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after11(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after11 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after11(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after11 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after11(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after11 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after11(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after11 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after11(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after11 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after11(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after11 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -4270,12 +2966,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after11(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after11 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after11(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -4321,15 +3011,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after11(@Return SuperClass valueReturned)
+   public Object after11(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after11 = "Object,SuperClass";
+      after11 = "Object,SuperClass,Object[]";
       return null;
    }
 
-   public Object after11(@Return Object valueReturned)
+   public Object after11(@Return SuperClass valueReturned)
    {
-      after11 = "Object,Object";
+      after11 = "Object,SuperClass";
       return null;
    }
 
@@ -4352,6 +3042,11 @@ public class OverloadedAfterAspect
    public void after11(@Arg SuperValue arg2)
    {
       after11 = "void,SuperValue";
+   }
+   
+   public void after11(@Args Object[] args)
+   {
+      after11 = "void,Object[]";
    }
    
    public void after11()
@@ -4499,19 +3194,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after12(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after12 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after12(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after12 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after12(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -4558,51 +3240,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after12(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after12 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after12(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after12 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after12(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after12 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after12(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after12 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after12(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after12 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after12(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after12 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after12(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after12 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after12(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after12 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -4612,12 +3252,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after12(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after12 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after12(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -4657,21 +3291,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after12(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after12(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after12 = "SuperClass,SuperClass,Object";
-      return null;
-   }
-   
-   public Object after12(@Return SuperClass valueReturned)
-   {
-      after12 = "Object,SuperClass";
+      after12 = "Object,SuperClass,Object[]";
       return null;
    }
 
-   public Object after12(@Return Object valueReturned)
+   public Object after12(@Return SuperClass valueReturned)
    {
-      after12 = "Object,Object";
+      after12 = "Object,SuperClass";
       return null;
    }
 
@@ -4694,6 +3322,11 @@ public class OverloadedAfterAspect
    public void after12(@Arg SuperValue arg2)
    {
       after12 = "void,SuperValue";
+   }
+   
+   public void after12(@Args Object[] args)
+   {
+      after12 = "void,Object[]";
    }
    
    public void after12()
@@ -4834,19 +3467,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after13(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after13 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after13(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after13 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after13(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -4893,51 +3513,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after13(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after13 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after13(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after13 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after13(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after13 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after13(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after13 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after13(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after13 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after13(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after13 = "SubClass,Object,SuperValue";
-      return null;
-   }
-
    public SubClass after13(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after13 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after13(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after13 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -4947,12 +3525,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after13(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after13 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after13(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -4992,21 +3564,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after13(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after13(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after13 = "SuperClass,SuperClass,Object";
-      return null;
-   }
-   
-   public Object after13(@Return SuperClass valueReturned)
-   {
-      after13 = "Object,SuperClass";
+      after13 = "Object,SuperClass,Object[]";
       return null;
    }
 
-   public Object after13(@Return Object valueReturned)
+   public Object after13(@Return SuperClass valueReturned)
    {
-      after13 = "Object,Object";
+      after13 = "Object,SuperClass";
       return null;
    }
 
@@ -5029,6 +3595,11 @@ public class OverloadedAfterAspect
    public void after13(@Arg SuperValue arg2)
    {
       after13 = "void,SuperValue";
+   }
+   
+   public void after13(@Args Object[] args)
+   {
+      after13 = "void,Object[]";
    }
    
    public void after13()
@@ -5162,19 +3733,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after14(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after14 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after14(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after14 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after14(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -5221,51 +3779,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after14(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after14 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after14(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after14 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after14(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after14 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after14(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after14 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after14(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after14 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after14(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after14 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after14(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after14 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after14(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after14 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -5275,12 +3791,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after14(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after14 = "Object,JoinPointInfo";
-      return null;
-   }
-      
    public Object after14(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -5320,21 +3830,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after14(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after14(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after14 = "SuperClass,SuperClass,Object";
-      return null;
-   }
-   
-   public Object after14(@Return SuperClass valueReturned)
-   {
-      after14 = "Object,SuperClass";
+      after14 = "Object,SuperClass,Object[]";
       return null;
    }
 
-   public Object after14(@Return Object valueReturned)
+   public Object after14(@Return SuperClass valueReturned)
    {
-      after14 = "Object,Object";
+      after14 = "Object,SuperClass";
       return null;
    }
 
@@ -5357,6 +3861,11 @@ public class OverloadedAfterAspect
    public void after14(@Arg SuperValue arg2)
    {
       after14 = "void,SuperValue";
+   }
+   
+   public void after14(@Args Object[] args)
+   {
+      after14 = "void,Object[]";
    }
    
    public void after14()
@@ -5483,19 +3992,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after15(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after15 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after15(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after15 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after15(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -5542,51 +4038,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after15(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after15 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after15(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after15 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after15(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after15 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after15(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after15 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after15(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after15 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after15(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after15 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after15(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after15 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after15(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after15 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -5596,12 +4050,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after15(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after15 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after15(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -5647,6 +4095,18 @@ public class OverloadedAfterAspect
       return null;
    }
    
+   public Object after15(@Return SuperClass valueReturned, @Args Object[] args)
+   {
+      after15 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after15(@Return Object valueReturned, @Args Object[] args)
+   {
+      after15 = "Object,Object,Object[]";
+      return null;
+   }
+   
    public Object after15(@Return SuperClass valueReturned)
    {
       after15 = "Object,SuperClass";
@@ -5678,6 +4138,11 @@ public class OverloadedAfterAspect
    public void after15(@Arg SuperValue arg2)
    {
       after15 = "void,SuperValue";
+   }
+   
+   public void after15(@Args Object[] args)
+   {
+      after15 = "void,Object[]";
    }
    
    public void after15()
@@ -5803,13 +4268,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after16(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after16 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after16(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -5856,51 +4314,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after16(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after16 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after16(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after16 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after16(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after16 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after16(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after16 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after16(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after16 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after16(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after16 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after16(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after16 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after16(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after16 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -5910,12 +4326,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after16(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after16 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after16(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -5955,21 +4365,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after16(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after16(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after16 = "SuperClass,SuperClass,Object";
+      after16 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after16(@Return SuperClass valueReturned)
    {
       after16 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after16(@Return Object valueReturned)
-   {
-      after16 = "Object,Object";
       return null;
    }
    
@@ -5992,6 +4396,11 @@ public class OverloadedAfterAspect
    public void after16(@Arg SuperValue arg2)
    {
       after16 = "void,SuperValue";
+   }
+   
+   public void after16(@Args Object[] args)
+   {
+      after16 = "void,Object[]";
    }
    
    public void after16()
@@ -6104,19 +4513,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after17(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after17 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after17(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after17 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after17(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -6163,51 +4559,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after17(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after17 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after17(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after17 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after17(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after17 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after17(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after17 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after17(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after17 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after17(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after17 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after17(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after17 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after17(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after17 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -6217,12 +4571,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after17(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after17 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after17(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -6262,21 +4610,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after17(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after17(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after17 = "SuperClass,SuperClass,Object";
+      after17 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after17(@Return SuperClass valueReturned)
    {
       after17 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after17(@Return Object valueReturned)
-   {
-      after17 = "Object,Object";
       return null;
    }
    
@@ -6299,6 +4641,11 @@ public class OverloadedAfterAspect
    public void after17(@Arg SuperValue arg2)
    {
       after17 = "void,SuperValue";
+   }
+   
+   public void after17(@Args Object[] args)
+   {
+      after17 = "void,Object[]";
    }
    
    public void after17()
@@ -6404,19 +4751,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after18(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after18 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after18(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after18 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after18(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -6463,51 +4797,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after18(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after18 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after18(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after18 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after18(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after18 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after18(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after18 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after18(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after18 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after18(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after18 = "SubClass,Object,SuperValue";
-      return null;
-   }
-
    public SubClass after18(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after18 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after18(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after18 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -6517,12 +4809,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after18(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after18 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after18(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -6562,21 +4848,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after18(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after18(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after18 = "SuperClass,SuperClass,Object";
+      after18 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after18(@Return SuperClass valueReturned)
    {
       after18 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after18(@Return Object valueReturned)
-   {
-      after18 = "Object,Object";
       return null;
    }
    
@@ -6599,6 +4879,11 @@ public class OverloadedAfterAspect
    public void after18(@Arg SuperValue arg2)
    {
       after18 = "void,SuperValue";
+   }
+   
+   public void after18(@Args Object[] args)
+   {
+      after18 = "void,Object[]";
    }
    
    public void after18()
@@ -6697,19 +4982,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after19(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after19 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after19(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after19 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after19(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -6756,51 +5028,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after19(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after19 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after19(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after19 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after19(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after19 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after19(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after19 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after19(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after19 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after19(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after19 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after19(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after19 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after19(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after19 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -6810,12 +5040,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after19(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after19 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after19(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -6855,21 +5079,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after19(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after19(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after19 = "SuperClass,SuperClass,Object";
+      after19 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after19(@Return SuperClass valueReturned)
    {
       after19 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after19(@Return Object valueReturned)
-   {
-      after19 = "Object,Object";
       return null;
    }
    
@@ -6892,6 +5110,11 @@ public class OverloadedAfterAspect
    public void after19(@Arg SuperValue arg2)
    {
       after19 = "void,SuperValue";
+   }
+   
+   public void after19(@Args Object[] args)
+   {
+      after19 = "void,Object[]";
    }
    
    public void after19()
@@ -6983,12 +5206,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after20(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after20 = "Object,MethodInfo,Object";
-      return null;
-   }
-
    public Object after20(@JoinPoint JoinPointInfo joinPointInfo,
          @Return SuperClass valueReturned)
    {
@@ -7042,51 +5259,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after20(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after20 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after20(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after20 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after20(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after20 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after20(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after20 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after20(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after20 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after20(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after20 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after20(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after20 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after20(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after20 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -7096,12 +5271,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after20(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after20 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after20(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -7141,21 +5310,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after20(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after20(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after20 = "SuperClass,SuperClass,Object";
+      after20 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after20(@Return SuperClass valueReturned)
    {
       after20 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after20(@Return Object valueReturned)
-   {
-      after20 = "Object,Object";
       return null;
    }
    
@@ -7178,6 +5341,11 @@ public class OverloadedAfterAspect
    public void after20(@Arg SuperValue arg2)
    {
       after20 = "void,SuperValue";
+   }
+   
+   public void after20(@Args Object[] args)
+   {
+      after20 = "void,Object[]";
    }
    
    public void after20()
@@ -7262,19 +5430,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after21(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after21 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after21(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after21 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after21(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -7321,51 +5476,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after21(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after21 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after21(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after21 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after21(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after21 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after21(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after21 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after21(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after21 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after21(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after21 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after21(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after21 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after21(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after21 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -7375,12 +5488,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after21(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after21 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after21(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -7420,21 +5527,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after21(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after22(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after21 = "SuperClass,SuperClass,Object";
+      after22 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after21(@Return SuperClass valueReturned)
    {
       after21 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after21(@Return Object valueReturned)
-   {
-      after21 = "Object,Object";
       return null;
    }
    
@@ -7457,6 +5558,11 @@ public class OverloadedAfterAspect
    public void after21(@Arg SuperValue arg2)
    {
       after21 = "void,SuperValue";
+   }
+   
+   public void after21(@Args Object[] args)
+   {
+      after21 = "void,Object[]";
    }
    
    public void after21()
@@ -7534,19 +5640,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after22(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after22 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after22(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after22 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after22(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -7593,51 +5686,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after22(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after22 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after22(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after22 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after22(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after22 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after22(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after22 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after22(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after22 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after22(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after22 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after22(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after22 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after22(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after22 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -7647,12 +5698,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after22(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after22 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after22(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -7692,21 +5737,9 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after22(@Return SuperClass valueReturned, @Arg Object arg2)
-   {
-      after22 = "SuperClass,SuperClass,Object";
-      return null;
-   }
-   
    public Object after22(@Return SuperClass valueReturned)
    {
       after22 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after22(@Return Object valueReturned)
-   {
-      after22 = "Object,Object";
       return null;
    }
    
@@ -7729,6 +5762,11 @@ public class OverloadedAfterAspect
    public void after22(@Arg SuperValue arg2)
    {
       after22 = "void,SuperValue";
+   }
+   
+   public void after22(@Args Object[] args)
+   {
+      after22 = "void,Object[]";
    }
    
    public void after22()
@@ -7799,19 +5837,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after23(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after23 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after23(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after23 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after23(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -7858,51 +5883,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after23(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after23 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after23(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after23 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after23(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after23 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after23(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after23 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after23(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after23 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after23(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after23 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after23(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after23 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after23(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after23 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -7912,12 +5895,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after23(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after23 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after23(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -7957,21 +5934,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after23(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after23(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after23 = "SuperClass,SuperClass,Object";
+      after23 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after23(@Return SuperClass valueReturned)
    {
       after23 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after23(@Return Object valueReturned)
-   {
-      after23 = "Object,Object";
       return null;
    }
    
@@ -7994,6 +5965,11 @@ public class OverloadedAfterAspect
    public void after23(@Arg SuperValue arg2)
    {
       after23 = "void,SuperValue";
+   }
+   
+   public void after23(@Args Object[] args)
+   {
+      after23 = "void,Object[]";
    }
    
    public void after23()
@@ -8057,19 +6033,6 @@ public class OverloadedAfterAspect
       return null;
    }
 
-   public Object after24(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after24 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after24(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after24 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after24(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -8116,51 +6079,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after24(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after24 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after24(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after24 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after24(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after24 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after24(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after24 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after24(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after24 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after24(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after24 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after24(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after24 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after24(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after24 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -8170,12 +6091,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after24(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after24 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after24(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -8215,21 +6130,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after24(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after24(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after24 = "SuperClass,SuperClass,Object";
+      after24 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after24(@Return SuperClass valueReturned)
    {
       after24 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after24(@Return Object valueReturned)
-   {
-      after24 = "Object,Object";
       return null;
    }
    
@@ -8252,6 +6161,11 @@ public class OverloadedAfterAspect
    public void after24(@Arg SuperValue arg2)
    {
       after24 = "void,SuperValue";
+   }
+   
+   public void after24(@Args Object[] args)
+   {
+      after24 = "void,Object[]";
    }
    
    public void after24()
@@ -8308,19 +6222,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after25(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after25 = "Object,MethodInfo,Object";
-      return null;
-   }
-
-   public Object after25(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after25 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after25(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -8367,51 +6268,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after25(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after25 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after25(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after25 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after25(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after25 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after25(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after25 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after25(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after25 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after25(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after25 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after25(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after25 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after25(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after25 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -8421,12 +6280,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after25(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after25 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after25(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -8466,21 +6319,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after25(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after25(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after25 = "SuperClass,SuperClass,Object";
+      after25 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after25(@Return SuperClass valueReturned)
    {
       after25 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after25(@Return Object valueReturned)
-   {
-      after25 = "Object,Object";
       return null;
    }
    
@@ -8503,6 +6350,11 @@ public class OverloadedAfterAspect
    public void after25(@Arg SuperValue arg2)
    {
       after25 = "void,SuperValue";
+   }
+   
+   public void after25(@Args Object[] args)
+   {
+      after25 = "void,Object[]";
    }
    
    public void after25()
@@ -8552,19 +6404,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after26(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after26 = "Object,MethodInfo,Object";
-      return null;
-   }
-   
-   public Object after26(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after26 = "Object,JoinPointInfo,SuperClass";
-      return null;
-   }
-
    public Object after26(@JoinPoint MethodInfo joinPointInfo, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -8611,51 +6450,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after26(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after26 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after26(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after26 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after26(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after26 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after26(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after26 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after26(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after26 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after26(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after26 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after26(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after26 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after26(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after26 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -8665,12 +6462,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after26(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after26 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after26(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -8710,21 +6501,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after26(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after26(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after26 = "SuperClass,SuperClass,Object";
+      after26 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after26(@Return SuperClass valueReturned)
    {
       after26 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after26(@Return Object valueReturned)
-   {
-      after26 = "Object,Object";
       return null;
    }
    
@@ -8747,6 +6532,11 @@ public class OverloadedAfterAspect
    public void after26(@Arg SuperValue arg2)
    {
       after26 = "void,SuperValue";
+   }
+   
+   public void after26(@Args Object[] args)
+   {
+      after26 = "void,Object[]";
    }
    
    public void after26()
@@ -8786,19 +6576,6 @@ public class OverloadedAfterAspect
          @Return SuperClass valueReturned)
    {
       after27 = "Object,MethodInfo,SuperClass";
-      return null;
-   }
-   
-   public Object after27(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after27 = "Object,MethodInfo,Object";
-      return null;
-   }
-   
-   public Object after27(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after27 = "Object,JoinPointInfo,SuperClass";
       return null;
    }
    
@@ -8848,51 +6625,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after27(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after27 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after27(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after27 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after27(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after27 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after27(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after27 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after27(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after27 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after27(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after27 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after27(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after27 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after27(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after27 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -8902,12 +6637,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after27(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after27 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after27(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -8947,21 +6676,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after27(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after27(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after27 = "SuperClass,SuperClass,Object";
+      after27 = "Object,SuperClass,Object[]";
       return null;
    }
    
    public Object after27(@Return SuperClass valueReturned)
    {
       after27 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after27(@Return Object valueReturned)
-   {
-      after27 = "Object,Object";
       return null;
    }
    
@@ -8984,6 +6707,11 @@ public class OverloadedAfterAspect
    public void after27(@Arg SuperValue arg2)
    {
       after27 = "void,SuperValue";
+   }
+   
+   public void after27(@Args Object[] args)
+   {
+      after27 = "void,Object[]";
    }
    
    public void after27()
@@ -9016,19 +6744,6 @@ public class OverloadedAfterAspect
          @Return SuperClass valueReturned)
    {
       after28 = "Object,MethodInfo,SuperClass";
-      return null;
-   }
-   
-   public Object after28(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after28 = "Object,MethodInfo,Object";
-      return null;
-   }
-   
-   public Object after28(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after28 = "Object,JoinPointInfo,SuperClass";
       return null;
    }
    
@@ -9078,51 +6793,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after28(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after28 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after28(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after28 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after28(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after28 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after28(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after28 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after28(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after28 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after28(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after28 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after28(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after28 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after28(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after28 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -9132,12 +6805,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after28(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after28 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after28(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -9177,24 +6844,18 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after28(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after28(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after28 = "SuperClass,SuperClass,Object";
+      after28 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after28(@Return SuperClass valueReturned)
    {
       after28 = "Object,SuperClass";
       return null;
    }
-   
-   public Object after28(@Return Object valueReturned)
-   {
-      after28 = "Object,SuperClass";
-      return null;
-   }
-   
+
    public void after28(@Arg float arg1, @Arg SubValue arg2)
    {
       after28 = "void,float,SubValue";
@@ -9214,6 +6875,11 @@ public class OverloadedAfterAspect
    public void after28(@Arg SuperValue arg2)
    {
       after28 = "void,SuperValue";
+   }
+   
+   public void after28(@Args Object[] args)
+   {
+      after28 = "void,Object[]";
    }
    
    public void after28()
@@ -9239,19 +6905,6 @@ public class OverloadedAfterAspect
          @Return SuperClass valueReturned)
    {
       after29 = "Object,MethodInfo,SuperClass";
-      return null;
-   }
-   
-   public Object after29(@JoinPoint MethodInfo joinPointInfo, @Return Object valueReturned)
-   {
-      after29 = "Object,MethodInfo,Object";
-      return null;
-   }
-   
-   public Object after29(@JoinPoint JoinPointInfo joinPointInfo,
-         @Return SuperClass valueReturned)
-   {
-      after29 = "Object,JoinPointInfo,SuperClass";
       return null;
    }
    
@@ -9301,51 +6954,9 @@ public class OverloadedAfterAspect
       return null;
    }
       
-   public SuperClass after29(@JoinPoint JoinPointInfo joinPointInfo,@Arg SubValue arg2)
-   {
-      after29 = "SuperClass,JoinPointInfo,SubValue";
-      return null;
-   }
-   
-   public SubClass after29(@JoinPoint JoinPointInfo joinPointInfo, @Arg float arg1)
-   {
-      after29 = "SubClass,JoinPointInfo,float";
-      return null;
-   }
-
-   public SuperClass after29(@JoinPoint JoinPointInfo joinPointInfo, @Arg SuperValue arg2)
-   {
-      after29 = "SubClass,JoinPointInfo,SuperValue";
-      return null;
-   }
-   
-   public SubClass after29(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after29 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after29(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after29 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after29(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after29 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after29(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after29 = "SubClass,MethodInfo,Object[]";
-      return null;
-   }
-   
-   public SubClass after29(@JoinPoint JoinPointInfo joinPointInfo, @Args Object[] args)
-   {
-      after29 = "SubClass,JoinPointInfo,Object[]";
       return null;
    }
    
@@ -9355,12 +6966,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after29(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after29 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after29(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -9400,21 +7005,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after29(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after29(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after29 = "SuperClass,SuperClass,Object";
+      after29 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after29(@Return SuperClass valueReturned)
    {
       after29 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after29(@Return Object valueReturned)
-   {
-      after29 = "Object,Object";
       return null;
    }
    
@@ -9437,6 +7036,11 @@ public class OverloadedAfterAspect
    public void after29(@Arg SuperValue arg2)
    {
       after29 = "void,SuperValue";
+   }
+
+   public void after29(@Args Object[] args)
+   {
+      after29 = "void,Object[]";
    }
    
    public void after29()
@@ -9535,24 +7139,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SubClass after30(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after30 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after30(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after30 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after30(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after30 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after30(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after30 = "SubClass,MethodInfo,Object[]";
@@ -9568,12 +7154,6 @@ public class OverloadedAfterAspect
    public Object after30(@JoinPoint MethodInfo joinPointInfo)
    {
       after30 = "Object,MethodInfo";
-      return null;
-   }
-        
-   public Object after30(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after30 = "Object,JoinPointInfo";
       return null;
    }
    
@@ -9616,21 +7196,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after30(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after30(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after30 = "SuperClass,SuperClass,Object";
+      after30 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after30(@Return SuperClass valueReturned)
    {
       after30 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after30(@Return Object valueReturned)
-   {
-      after30 = "Object,Object";
       return null;
    }
    
@@ -9653,6 +7227,11 @@ public class OverloadedAfterAspect
    public void after30(@Arg SuperValue arg2)
    {
       after30 = "void,SuperValue";
+   }
+   
+   public void after30(@Args Object[] args)
+   {
+      after30 = "void,Object[]";
    }
    
    public void after30()
@@ -9744,24 +7323,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SubClass after31(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after31 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after31(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after31 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after31(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after31 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after31(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after31 = "SubClass,MethodInfo,Object[]";
@@ -9780,12 +7341,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after31(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after31 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after31(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -9825,21 +7380,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after31(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after31(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after31 = "SuperClass,SuperClass,Object";
+      after31 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after31(@Return SuperClass valueReturned)
    {
       after31 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after31(@Return Object valueReturned)
-   {
-      after31 = "Object,Object";
       return null;
    }
    
@@ -9862,6 +7411,11 @@ public class OverloadedAfterAspect
    public void after31(@Arg SuperValue arg2)
    {
       after31 = "void,SuperValue";
+   }
+   
+   public void after31(@Args Object[] args)
+   {
+      after31 = "void,Object[]";
    }
    
    public void after31()
@@ -9947,24 +7501,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SubClass after32(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after32 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after32(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after32 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after32(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after32 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after32(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after32 = "SubClass,MethodInfo,Object[]";
@@ -9983,12 +7519,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after32(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after32 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after32(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -10028,21 +7558,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after32(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after32(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after32 = "SuperClass,SuperClass,Object";
+      after32 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after32(@Return SuperClass valueReturned)
    {
       after32 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after32(@Return Object valueReturned)
-   {
-      after32 = "Object,Object";
       return null;
    }
    
@@ -10065,6 +7589,11 @@ public class OverloadedAfterAspect
    public void after32(@Arg SuperValue arg2)
    {
       after32 = "void,SuperValue";
+   }
+   
+   public void after32(@Args Object[] args)
+   {
+      after32 = "void,Object[]";
    }
    
    public void after32()
@@ -10143,24 +7672,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SubClass after33(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after33 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after33(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after33 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after33(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after33 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after33(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after33 = "SubClass,MethodInfo,Object[]";
@@ -10179,12 +7690,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after33(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after33 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after33(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -10224,21 +7729,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after33(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after33(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after33 = "SuperClass,SuperClass,Object";
+      after33 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after33(@Return SuperClass valueReturned)
    {
       after33 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after33(@Return Object valueReturned)
-   {
-      after33 = "Object,Object";
       return null;
    }
    
@@ -10261,6 +7760,11 @@ public class OverloadedAfterAspect
    public void after33(@Arg SuperValue arg2)
    {
       after33 = "void,SuperValue";
+   }
+   
+   public void after33(@Args Object[] args)
+   {
+      after33 = "void,Object[]";
    }
    
    public void after33()
@@ -10332,24 +7836,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SubClass after34(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after34 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after34(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after34 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after34(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after34 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after34(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after34 = "SubClass,MethodInfo,Object[]";
@@ -10368,12 +7854,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after34(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after34 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after34(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -10413,21 +7893,21 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after34(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after34(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after34 = "SuperClass,SuperClass,Object";
+      after34 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after34(@Return Object valueReturned, @Args Object[] args)
+   {
+      after34 = "Object,Object,Object[]";
       return null;
    }
    
    public Object after34(@Return SuperClass valueReturned)
    {
       after34 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after34(@Return Object valueReturned)
-   {
-      after34 = "Object,Object";
       return null;
    }
    
@@ -10450,6 +7930,11 @@ public class OverloadedAfterAspect
    public void after34(@Arg SuperValue arg2)
    {
       after34 = "void,SuperValue";
+   }
+  
+   public void after34(@Args Object[] args)
+   {
+      after34 = "void,Object[]";
    }
    
    public void after34()
@@ -10514,24 +7999,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SubClass after35(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after35 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after35(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after35 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after35(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after35 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after35(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after35 = "SubClass,MethodInfo,Object[]";
@@ -10550,12 +8017,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after35(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after35 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after35(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -10595,21 +8056,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after35(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after35(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after35 = "SuperClass,SuperClass,Object";
+      after35 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after35(@Return SuperClass valueReturned)
    {
       after35 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after35(@Return Object valueReturned)
-   {
-      after35 = "Object,Object";
       return null;
    }
    
@@ -10632,6 +8087,11 @@ public class OverloadedAfterAspect
    public void after35(@Arg SuperValue arg2)
    {
       after35 = "void,SuperValue";
+   }
+   
+   public void after35(@Args Object[] args)
+   {
+      after35 = "void,Object[]";
    }
    
    public void after35()
@@ -10689,24 +8149,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SubClass after36(@JoinPoint Object joinPointInfo, @Arg SubValue arg2)
-   {
-      after36 = "SubClass,Object,SubValue";
-      return null;
-   }
-   
-   public Object after36(@JoinPoint Object joinPointInfo, @Arg float arg1)
-   {
-      after36 = "Object,Object,float";
-      return null;
-   }
-
-   public SubClass after36(@JoinPoint Object joinPointInfo, @Arg SuperValue arg2)
-   {
-      after36 = "SubClass,Object,SuperValue";
-      return null;
-   }
-   
    public SubClass after36(@JoinPoint MethodInfo joinPointInfo, @Args Object[] args)
    {
       after36 = "SubClass,MethodInfo,Object[]";
@@ -10725,33 +8167,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after36(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after36 = "Object,JoinPointInfo";
-      return null;
-   }
-   
-   public Object after36(@Return SuperClass valueReturned, @Arg float arg1,
-         @Arg SubValue arg2)
-   {
-      after36 = "Object,SuperClass,float,SubValue";
-      return null;
-   }
-
-   public Object after36(@Return SuperClass valueReturned, @Arg float arg1,
-         @Arg SuperValue arg2)
-   {
-      after36 = "Object,SuperClass,float,SuperValue";
-      return null;
-   }
-   
-   public Object after36(@Return SuperClass valueReturned, @Arg float arg1,
-         @Arg Object arg2)
-   {
-      after36 = "Object,SuperClass,float,Object";
-      return null;
-   }
-
    public SuperClass after36(@Return SuperClass valueReturned, @Arg float arg1)
    {
       after36 = "SuperClass,MethodInfo,SuperClass,float";
@@ -10770,21 +8185,15 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public SuperClass after36(@Return SuperClass valueReturned, @Arg Object arg2)
+   public Object after36(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after36 = "SuperClass,SuperClass,Object";
+      after36 = "Object,SuperClass,Object[]";
       return null;
    }
-   
+
    public Object after36(@Return SuperClass valueReturned)
    {
       after36 = "Object,SuperClass";
-      return null;
-   }
-   
-   public Object after36(@Return Object valueReturned)
-   {
-      after36 = "Object,Object";
       return null;
    }
    
@@ -10807,6 +8216,11 @@ public class OverloadedAfterAspect
    public void after36(@Arg SuperValue arg2)
    {
       after36 = "void,SuperValue";
+   }
+   
+   public void after36(@Args Object[] args)
+   {
+      after36 = "void,Object[]";
    }
    
    public void after36()
@@ -10893,12 +8307,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after37(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after37 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after37(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -10944,15 +8352,21 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after37(@Return SuperClass valueReturned)
+   public Object after37(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after37 = "Object,SuperClass";
+      after37 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after37(@Return Object valueReturned, @Args Object[] args)
+   {
+      after37 = "Object,Object,Object[]";
       return null;
    }
    
-   public Object after37(@Return Object valueReturned)
+   public Object after37(@Return SuperClass valueReturned)
    {
-      after37 = "Object,Object";
+      after37 = "Object,SuperClass";
       return null;
    }
    
@@ -10975,6 +8389,11 @@ public class OverloadedAfterAspect
    public void after37(@Arg SuperValue arg2)
    {
       after37 = "void,SuperValue";
+   }
+   
+   public void after37(@Args Object[] args)
+   {
+      after37 = "void,Object[]";
    }
    
    public void after37()
@@ -11055,12 +8474,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after38(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after38 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after38(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -11106,15 +8519,21 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after38(@Return SuperClass valueReturned)
+   public Object after38(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after38 = "Object,SuperClass";
+      after38 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after38(@Return Object valueReturned, @Args Object[] args)
+   {
+      after38 = "Object,Object,Object[]";
       return null;
    }
    
-   public Object after38(@Return Object valueReturned)
+   public Object after38(@Return SuperClass valueReturned)
    {
-      after38 = "Object,Object";
+      after38 = "Object,SuperClass";
       return null;
    }
    
@@ -11137,6 +8556,11 @@ public class OverloadedAfterAspect
    public void after38(@Arg SuperValue arg2)
    {
       after38 = "void,SuperValue";
+   }
+   
+   public void after38(@Args Object[] args)
+   {
+      after38 = "void,Object[]";
    }
    
    public void after38()
@@ -11210,12 +8634,6 @@ public class OverloadedAfterAspect
       after39 = "Object,MethodInfo";
       return null;
    }
-        
-   public Object after39(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after39 = "Object,JoinPointInfo";
-      return null;
-   }
    
    public Object after39(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
@@ -11262,15 +8680,21 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after39(@Return SuperClass valueReturned)
+   public Object after39(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after39 = "Object,SuperClass";
+      after39 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after39(@Return Object valueReturned, @Args Object[] args)
+   {
+      after39 = "Object,Object,Object[]";
       return null;
    }
    
-   public Object after39(@Return Object valueReturned)
+   public Object after39(@Return SuperClass valueReturned)
    {
-      after39 = "Object,Object";
+      after39 = "Object,SuperClass";
       return null;
    }
    
@@ -11293,6 +8717,11 @@ public class OverloadedAfterAspect
    public void after39(@Arg SuperValue arg2)
    {
       after39 = "void,SuperValue";
+   }
+   
+   public void after39(@Args Object[] args)
+   {
+      after39 = "void,Object[]";
    }
    
    public void after39()
@@ -11361,12 +8790,6 @@ public class OverloadedAfterAspect
       return null;
    }
         
-   public Object after40(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after40 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after40(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -11412,15 +8835,21 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after40(@Return SuperClass valueReturned)
+   public Object after40(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after40 = "Object,SuperClass";
+      after40 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after40(@Return Object valueReturned, @Args Object[] args)
+   {
+      after40 = "Object,Object,Object[]";
       return null;
    }
    
-   public Object after40(@Return Object valueReturned)
+   public Object after40(@Return SuperClass valueReturned)
    {
-      after40 = "Object,Object";
+      after40 = "Object,SuperClass";
       return null;
    }
    
@@ -11443,6 +8872,11 @@ public class OverloadedAfterAspect
    public void after40(@Arg SuperValue arg2)
    {
       after40 = "void,SuperValue";
+   }
+   
+   public void after40(@Args Object[] args)
+   {
+      after40 = "void,Object[]";
    }
    
    public void after40()
@@ -11505,12 +8939,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after41(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after41 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after41(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -11556,15 +8984,21 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after41(@Return SuperClass valueReturned)
+   public Object after41(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after41 = "Object,SuperClass";
+      after41 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after41(@Return Object valueReturned, @Args Object[] args)
+   {
+      after41 = "Object,Object,Object[]";
       return null;
    }
    
-   public Object after41(@Return Object valueReturned)
+   public Object after41(@Return SuperClass valueReturned)
    {
-      after41 = "Object,Object";
+      after41 = "Object,SuperClass";
       return null;
    }
    
@@ -11587,6 +9021,11 @@ public class OverloadedAfterAspect
    public void after41(@Arg SuperValue arg2)
    {
       after41 = "void,SuperValue";
+   }
+   
+   public void after41(@Args Object[] args)
+   {
+      after41 = "void,Object[]";
    }
    
    public void after41()
@@ -11643,12 +9082,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after42(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after42 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after42(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -11694,15 +9127,21 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after42(@Return SuperClass valueReturned)
+   public Object after42(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after42 = "Object,SuperClass";
+      after42 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after42(@Return Object valueReturned, @Args Object[] args)
+   {
+      after42 = "Object,Object,Object[]";
       return null;
    }
    
-   public Object after42(@Return Object valueReturned)
+   public Object after42(@Return SuperClass valueReturned)
    {
-      after42 = "Object,Object";
+      after42 = "Object,SuperClass";
       return null;
    }
    
@@ -11725,6 +9164,11 @@ public class OverloadedAfterAspect
    public void after42(@Arg SuperValue arg2)
    {
       after42 = "void,SuperValue";
+   }
+   
+   public void after42(@Args Object[] args)
+   {
+      after42 = "void,Object[]";
    }
    
    public void after42()
@@ -11775,12 +9219,6 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after43(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after43 = "Object,JoinPointInfo";
-      return null;
-   }
-   
    public Object after43(@Return SuperClass valueReturned, @Arg float arg1,
          @Arg SubValue arg2)
    {
@@ -11826,15 +9264,21 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after43(@Return SuperClass valueReturned)
+   public Object after43(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after43 = "Object,SuperClass";
+      after43 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after43(@Return Object valueReturned, @Args Object[] args)
+   {
+      after43 = "Object,Object,Object[]";
       return null;
    }
    
-   public Object after43(@Return Object valueReturned)
+   public Object after43(@Return SuperClass valueReturned)
    {
-      after43 = "Object,Object";
+      after43 = "Object,SuperClass";
       return null;
    }
    
@@ -11857,6 +9301,11 @@ public class OverloadedAfterAspect
    public void after43(@Arg SuperValue arg2)
    {
       after43 = "void,SuperValue";
+   }
+   
+   public void after43(@Args Object[] args)
+   {
+      after43 = "void,Object[]";
    }
    
    public void after43()
@@ -11898,12 +9347,6 @@ public class OverloadedAfterAspect
    public Object after44(@JoinPoint MethodInfo joinPointInfo)
    {
       after44 = "Object,MethodInfo";
-      return null;
-   }
-   
-   public Object after44(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after44 = "Object,JoinPointInfo";
       return null;
    }
    
@@ -11952,15 +9395,21 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after44(@Return SuperClass valueReturned)
+   public Object after44(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after44 = "Object,SuperClass";
+      after44 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after44(@Return Object valueReturned, @Args Object[] args)
+   {
+      after44 = "Object,Object,Object[]";
       return null;
    }
    
-   public Object after44(@Return Object valueReturned)
+   public Object after44(@Return SuperClass valueReturned)
    {
-      after44 = "Object,Object";
+      after44 = "Object,SuperClass";
       return null;
    }
    
@@ -11983,6 +9432,11 @@ public class OverloadedAfterAspect
    public void after44(@Arg SuperValue arg2)
    {
       after44 = "void,SuperValue";
+   }
+   
+   public void after44(@Args Object[] args)
+   {
+      after44 = "void,Object[]";
    }
    
    public void after44()
@@ -12018,12 +9472,6 @@ public class OverloadedAfterAspect
    public Object after45(@JoinPoint MethodInfo joinPointInfo)
    {
       after45 = "Object,MethodInfo";
-      return null;
-   }
-   
-   public Object after45(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after45 = "Object,JoinPointInfo";
       return null;
    }
    
@@ -12072,15 +9520,21 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after45(@Return SuperClass valueReturned)
+   public Object after45(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after45 = "Object,SuperClass";
+      after45 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after45(@Return Object valueReturned, @Args Object[] args)
+   {
+      after45 = "Object,Object,Object[]";
       return null;
    }
    
-   public Object after45(@Return Object valueReturned)
+   public Object after45(@Return SuperClass valueReturned)
    {
-      after45 = "Object,Object";
+      after45 = "Object,SuperClass";
       return null;
    }
    
@@ -12103,6 +9557,11 @@ public class OverloadedAfterAspect
    public void after45(@Arg SuperValue arg2)
    {
       after45 = "void,SuperValue";
+   }
+   
+   public void after45(@Args Object[] args)
+   {
+      after45 = "void,Object[]";
    }
    
    public void after45()
@@ -12132,12 +9591,6 @@ public class OverloadedAfterAspect
    public Object after46(@JoinPoint MethodInfo joinPointInfo)
    {
       after46 = "Object,MethodInfo";
-      return null;
-   }
-   
-   public Object after46(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after46 = "Object,JoinPointInfo";
       return null;
    }
    
@@ -12186,15 +9639,21 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after46(@Return SuperClass valueReturned)
+   public Object after46(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after46 = "Object,SuperClass";
+      after46 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after46(@Return Object valueReturned, @Args Object[] args)
+   {
+      after46 = "Object,Object,Object[]";
       return null;
    }
    
-   public Object after46(@Return Object valueReturned)
+   public Object after46(@Return SuperClass valueReturned)
    {
-      after46 = "Object,Object";
+      after46 = "Object,SuperClass";
       return null;
    }
    
@@ -12219,6 +9678,11 @@ public class OverloadedAfterAspect
       after46 = "void,SuperValue";
    }
    
+   public void after46(@Args Object[] args)
+   {
+      after46 = "void,Object[]";
+   }
+   
    public void after46()
    {
       after46 = "void";
@@ -12240,12 +9704,6 @@ public class OverloadedAfterAspect
    public Object after47(@JoinPoint MethodInfo joinPointInfo)
    {
       after47 = "Object,MethodInfo";
-      return null;
-   }
-   
-   public Object after47(@JoinPoint JoinPointInfo joinPointInfo)
-   {
-      after47 = "Object,JoinPointInfo";
       return null;
    }
    
@@ -12294,15 +9752,21 @@ public class OverloadedAfterAspect
       return null;
    }
    
-   public Object after47(@Return SuperClass valueReturned)
+   public Object after47(@Return SuperClass valueReturned, @Args Object[] args)
    {
-      after47 = "Object,SuperClass";
+      after47 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after47(@Return Object valueReturned, @Args Object[] args)
+   {
+      after47 = "Object,Object,Object[]";
       return null;
    }
    
-   public Object after47(@Return Object valueReturned)
+   public Object after47(@Return SuperClass valueReturned)
    {
-      after47 = "Object,Object";
+      after47 = "Object,SuperClass";
       return null;
    }
    
@@ -12325,6 +9789,11 @@ public class OverloadedAfterAspect
    public void after47(@Arg SuperValue arg2)
    {
       after47 = "void,SuperValue";
+   }
+   
+   public void after47(@Args Object[] args)
+   {
+      after47 = "void,Object[]";
    }
    
    public void after47()
@@ -12396,6 +9865,18 @@ public class OverloadedAfterAspect
       return null;
    }
    
+   public Object after48(@Return SuperClass valueReturned, @Args Object[] args)
+   {
+      after48 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after48(@Return Object valueReturned, @Args Object[] args)
+   {
+      after48 = "Object,Object,Object[]";
+      return null;
+   }
+   
    public Object after48(@Return SuperClass valueReturned)
    {
       after48 = "Object,SuperClass";
@@ -12427,6 +9908,11 @@ public class OverloadedAfterAspect
    public void after48(@Arg SuperValue arg2)
    {
       after48 = "void,SuperValue";
+   }
+   
+   public void after48(@Args Object[] args)
+   {
+      after48 = "void,Object[]";
    }
    
    public void after48()
@@ -12492,6 +9978,18 @@ public class OverloadedAfterAspect
       return null;
    }
    
+   public Object after49(@Return SuperClass valueReturned, @Args Object[] args)
+   {
+      after49 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after49(@Return Object valueReturned, @Args Object[] args)
+   {
+      after49 = "Object,Object,Object[]";
+      return null;
+   }
+   
    public Object after49(@Return SuperClass valueReturned)
    {
       after49 = "Object,SuperClass";
@@ -12523,6 +10021,11 @@ public class OverloadedAfterAspect
    public void after49(@Arg SuperValue arg2)
    {
       after49 = "void,SuperValue";
+   }
+   
+   public void after49(@Args Object[] args)
+   {
+      after49 = "void,Object[]";
    }
    
    public void after49()
@@ -12582,6 +10085,18 @@ public class OverloadedAfterAspect
       return null;
    }
    
+   public Object after50(@Return SuperClass valueReturned, @Args Object[] args)
+   {
+      after50 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after50(@Return Object valueReturned, @Args Object[] args)
+   {
+      after50 = "Object,Object,Object[]";
+      return null;
+   }
+   
    public Object after50(@Return SuperClass valueReturned)
    {
       after50 = "Object,SuperClass";
@@ -12613,6 +10128,11 @@ public class OverloadedAfterAspect
    public void after50(@Arg SuperValue arg2)
    {
       after50 = "void,SuperValue";
+   }
+   
+   public void after50(@Args Object[] args)
+   {
+      after50 = "void,Object[]";
    }
    
    public void after50()
@@ -12665,6 +10185,18 @@ public class OverloadedAfterAspect
       return null;
    }
    
+   public Object after51(@Return SuperClass valueReturned, @Args Object[] args)
+   {
+      after51 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after51(@Return Object valueReturned, @Args Object[] args)
+   {
+      after51 = "Object,Object,Object[]";
+      return null;
+   }
+   
    public Object after51(@Return SuperClass valueReturned)
    {
       after51 = "Object,SuperClass";
@@ -12696,6 +10228,11 @@ public class OverloadedAfterAspect
    public void after51(@Arg SuperValue arg2)
    {
       after51 = "void,SuperValue";
+   }
+   
+   public void after51(@Args Object[] args)
+   {
+      after51 = "void,Object[]";
    }
    
    public void after51()
@@ -12741,6 +10278,18 @@ public class OverloadedAfterAspect
       return null;
    }
    
+   public Object after52(@Return SuperClass valueReturned, @Args Object[] args)
+   {
+      after52 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after52(@Return Object valueReturned, @Args Object[] args)
+   {
+      after52 = "Object,Object,Object[]";
+      return null;
+   }
+   
    public Object after52(@Return SuperClass valueReturned)
    {
       after52 = "Object,SuperClass";
@@ -12772,6 +10321,11 @@ public class OverloadedAfterAspect
    public void after52(@Arg SuperValue arg2)
    {
       after52 = "void,SuperValue";
+   }
+   
+   public void after52(@Args Object[] args)
+   {
+      after52 = "void,Object[]";
    }
    
    public void after52()
@@ -12810,6 +10364,18 @@ public class OverloadedAfterAspect
       return null;
    }
    
+   public Object after53(@Return SuperClass valueReturned, @Args Object[] args)
+   {
+      after53 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after53(@Return Object valueReturned, @Args Object[] args)
+   {
+      after53 = "Object,Object,Object[]";
+      return null;
+   }
+   
    public Object after53(@Return SuperClass valueReturned)
    {
       after53 = "Object,SuperClass";
@@ -12843,6 +10409,11 @@ public class OverloadedAfterAspect
       after53  = "void,SuperValue";
    }
    
+   public void after53(@Args Object[] args)
+   {
+      after53 = "void,Object[]";
+   }
+   
    public void after53 ()
    {
       after53  = "void";
@@ -12870,6 +10441,18 @@ public class OverloadedAfterAspect
    public SuperClass after54(@Return SuperClass valueReturned, @Arg Object arg2)
    {
       after54 = "SuperClass,SuperClass,Object";
+      return null;
+   }
+   
+   public Object after54(@Return SuperClass valueReturned, @Args Object[] args)
+   {
+      after54 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after54(@Return Object valueReturned, @Args Object[] args)
+   {
+      after54 = "Object,Object,Object[]";
       return null;
    }
    
@@ -12906,6 +10489,11 @@ public class OverloadedAfterAspect
       after54  = "void,SuperValue";
    }
    
+   public void after54(@Args Object[] args)
+   {
+      after54 = "void,Object[]";
+   }
+   
    public void after54 ()
    {
       after54  = "void";
@@ -12927,6 +10515,18 @@ public class OverloadedAfterAspect
    public SuperClass after55(@Return SuperClass valueReturned, @Arg Object arg2)
    {
       after55 = "SuperClass,SuperClass,Object";
+      return null;
+   }
+   
+   public Object after55(@Return SuperClass valueReturned, @Args Object[] args)
+   {
+      after55 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after55(@Return Object valueReturned, @Args Object[] args)
+   {
+      after55 = "Object,Object,Object[]";
       return null;
    }
    
@@ -12963,6 +10563,11 @@ public class OverloadedAfterAspect
       after55  = "void,SuperValue";
    }
    
+   public void after55(@Args Object[] args)
+   {
+      after55 = "void,Object[]";
+   }
+   
    public void after55 ()
    {
       after55  = "void";
@@ -12971,5 +10576,434 @@ public class OverloadedAfterAspect
    public void after55 (@Arg int arg1)
    {
       after55  = "void,int";
+   }
+   
+   /* AFTER56  ADVICE */
+   
+   public SuperClass after56(@Return SuperClass valueReturned, @Arg Object arg2)
+   {
+      after56 = "SuperClass,SuperClass,Object";
+      return null;
+   }
+   
+   public Object after56(@Return SuperClass valueReturned, @Args Object[] args)
+   {
+      after56 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after56(@Return Object valueReturned, @Args Object[] args)
+   {
+      after56 = "Object,Object,Object[]";
+      return null;
+   }
+   
+   public Object after56(@Return SuperClass valueReturned)
+   {
+      after56 = "Object,SuperClass";
+      return null;
+   }
+   
+   public Object after56(@Return Object valueReturned)
+   {
+      after56 = "Object,Object";
+      return null;
+   }
+   
+   public void after56(@Arg float arg1, @Arg SubValue arg2)
+   {
+      after56 = "void,float,SubValue";
+   }
+   
+   public Object after56(@Arg float arg1)
+   {
+      after56 = "Object,float";
+      return null;
+   }
+   
+   public void after56(@Arg SubValue arg2)
+   {
+      after56  = "void,SubValue";
+   }
+   
+   public void after56 (@Arg SuperValue arg2)
+   {
+      after56  = "void,SuperValue";
+   }
+   
+   public void after56(@Args Object[] args)
+   {
+      after56 = "void,Object[]";
+   }
+   
+   public void after56 ()
+   {
+      after56  = "void";
+   }
+   
+   public void after56 (@Arg int arg1)
+   {
+      after56  = "void,int";
+   }
+   
+   /* AFTER57  ADVICE */
+   
+   public Object after57(@Return SuperClass valueReturned, @Args Object[] args)
+   {
+      after57 = "Object,SuperClass,Object[]";
+      return null;
+   }
+
+   public Object after57(@Return Object valueReturned, @Args Object[] args)
+   {
+      after57 = "Object,Object,Object[]";
+      return null;
+   }
+   
+   public Object after57(@Return SuperClass valueReturned)
+   {
+      after57 = "Object,SuperClass";
+      return null;
+   }
+   
+   public Object after57(@Return Object valueReturned)
+   {
+      after57 = "Object,Object";
+      return null;
+   }
+   
+   public void after57(@Arg float arg1, @Arg SubValue arg2)
+   {
+      after57 = "void,float,SubValue";
+   }
+   
+   public Object after57(@Arg float arg1)
+   {
+      after57 = "Object,float";
+      return null;
+   }
+   
+   public void after57(@Arg SubValue arg2)
+   {
+      after57  = "void,SubValue";
+   }
+   
+   public void after57 (@Arg SuperValue arg2)
+   {
+      after57  = "void,SuperValue";
+   }
+   
+   public void after57(@Args Object[] args)
+   {
+      after57 = "void,Object[]";
+   }
+   
+   public void after57 ()
+   {
+      after57  = "void";
+   }
+   
+   public void after57 (@Arg int arg1)
+   {
+      after57  = "void,int";
+   }
+   
+   /* AFTER58  ADVICE */
+   
+   public Object after58(@Return Object valueReturned, @Args Object[] args)
+   {
+      after58 = "Object,Object,Object[]";
+      return null;
+   }
+   
+   public Object after58(@Return SuperClass valueReturned)
+   {
+      after58 = "Object,SuperClass";
+      return null;
+   }
+   
+   public Object after58(@Return Object valueReturned)
+   {
+      after58 = "Object,Object";
+      return null;
+   }
+   
+   public void after58(@Arg float arg1, @Arg SubValue arg2)
+   {
+      after58 = "void,float,SubValue";
+   }
+   
+   public Object after58(@Arg float arg1)
+   {
+      after58 = "Object,float";
+      return null;
+   }
+   
+   public void after58(@Arg SubValue arg2)
+   {
+      after58  = "void,SubValue";
+   }
+   
+   public void after58 (@Arg SuperValue arg2)
+   {
+      after58  = "void,SuperValue";
+   }
+   
+   public void after58(@Args Object[] args)
+   {
+      after58 = "void,Object[]";
+   }
+   
+   public void after58 ()
+   {
+      after58  = "void";
+   }
+   
+   public void after58 (@Arg int arg1)
+   {
+      after58  = "void,int";
+   }
+   
+   /* AFTER59  ADVICE */
+   
+   public Object after59(@Return SuperClass valueReturned)
+   {
+      after59 = "Object,SuperClass";
+      return null;
+   }
+   
+   public Object after59(@Return Object valueReturned)
+   {
+      after59 = "Object,Object";
+      return null;
+   }
+   
+   public void after59(@Arg float arg1, @Arg SubValue arg2)
+   {
+      after59 = "void,float,SubValue";
+   }
+   
+   public Object after59(@Arg float arg1)
+   {
+      after59 = "Object,float";
+      return null;
+   }
+   
+   public void after59(@Arg SubValue arg2)
+   {
+      after59  = "void,SubValue";
+   }
+   
+   public void after59 (@Arg SuperValue arg2)
+   {
+      after59  = "void,SuperValue";
+   }
+   
+   public void after59(@Args Object[] args)
+   {
+      after59 = "void,Object[]";
+   }
+   
+   public void after59 ()
+   {
+      after59  = "void";
+   }
+   
+   public void after59 (@Arg int arg1)
+   {
+      after59  = "void,int";
+   }
+   
+   /* AFTER60  ADVICE */
+   
+   public Object after60(@Return Object valueReturned)
+   {
+      after60 = "Object,Object";
+      return null;
+   }
+   
+   public void after60(@Arg float arg1, @Arg SubValue arg2)
+   {
+      after60 = "void,float,SubValue";
+   }
+   
+   public Object after60(@Arg float arg1)
+   {
+      after60 = "Object,float";
+      return null;
+   }
+   
+   public void after60(@Arg SubValue arg2)
+   {
+      after60  = "void,SubValue";
+   }
+   
+   public void after60 (@Arg SuperValue arg2)
+   {
+      after60  = "void,SuperValue";
+   }
+   
+   public void after60(@Args Object[] args)
+   {
+      after60 = "void,Object[]";
+   }
+   
+   public void after60 ()
+   {
+      after60  = "void";
+   }
+   
+   public void after60 (@Arg int arg1)
+   {
+      after60  = "void,int";
+   }
+   
+   /* AFTER61  ADVICE */
+   
+   public void after61(@Arg float arg1, @Arg SubValue arg2)
+   {
+      after61 = "void,float,SubValue";
+   }
+   
+   public Object after61(@Arg float arg1)
+   {
+      after61 = "Object,float";
+      return null;
+   }
+   
+   public void after61(@Arg SubValue arg2)
+   {
+      after61  = "void,SubValue";
+   }
+   
+   public void after61 (@Arg SuperValue arg2)
+   {
+      after61  = "void,SuperValue";
+   }
+   
+   public void after61(@Args Object[] args)
+   {
+      after61 = "void,Object[]";
+   }
+   
+   public void after61 ()
+   {
+      after61  = "void";
+   }
+   
+   public void after61 (@Arg int arg1)
+   {
+      after61  = "void,int";
+   }
+   
+   /* AFTER62  ADVICE */
+   
+   public Object after62(@Arg float arg1)
+   {
+      after62 = "Object,float";
+      return null;
+   }
+   
+   public void after62(@Arg SubValue arg2)
+   {
+      after62  = "void,SubValue";
+   }
+   
+   public void after62 (@Arg SuperValue arg2)
+   {
+      after62  = "void,SuperValue";
+   }
+   
+   public void after62(@Args Object[] args)
+   {
+      after62 = "void,Object[]";
+   }
+   
+   public void after62 ()
+   {
+      after62  = "void";
+   }
+   
+   public void after62 (@Arg int arg1)
+   {
+      after62  = "void,int";
+   }
+   
+   /* AFTER63  ADVICE */
+   
+   public void after63(@Arg SubValue arg2)
+   {
+      after63  = "void,SubValue";
+   }
+   
+   public void after63 (@Arg SuperValue arg2)
+   {
+      after63  = "void,SuperValue";
+   }
+   
+   public void after63(@Args Object[] args)
+   {
+      after63 = "void,Object[]";
+   }
+   
+   public void after63 ()
+   {
+      after63  = "void";
+   }
+   
+   public void after63 (@Arg int arg1)
+   {
+      after63  = "void,int";
+   }
+   
+   /* AFTER64  ADVICE */
+   
+   public void after64 (@Arg SuperValue arg2)
+   {
+      after64  = "void,SuperValue";
+   }
+   
+   public void after64(@Args Object[] args)
+   {
+      after64 = "void,Object[]";
+   }
+   
+   public void after64 ()
+   {
+      after64  = "void";
+   }
+   
+   public void after64 (@Arg int arg1)
+   {
+      after64  = "void,int";
+   }
+   
+   /* AFTER65  ADVICE */
+   
+   public void after65(@Args Object[] args)
+   {
+      after65 = "void,Object[]";
+   }
+   
+   public void after65 ()
+   {
+      after65  = "void";
+   }
+   
+   public void after65 (@Arg int arg1)
+   {
+      after65  = "void,int";
+   }
+   
+   /* AFTER66  ADVICE */
+   
+   public void after66 ()
+   {
+      after66  = "void";
+   }
+   
+   public void after66 (@Arg int arg1)
+   {
+      after66  = "void,int";
    }
 }
