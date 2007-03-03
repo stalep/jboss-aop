@@ -122,7 +122,6 @@ enum ParameterAnnotationRule
    private boolean mandatory;
    private boolean singleEnforced;
    private int property;
-   //AnnotatedParameterRule() {}
    
    /**
     * Constructor.
