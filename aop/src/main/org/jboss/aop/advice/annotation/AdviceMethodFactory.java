@@ -127,7 +127,7 @@ public class AdviceMethodFactory
             public AdviceInfo getAdviceInfo(Method method)
             {
                // creates an advice info with the greatest rank of all advices
-               return new AdviceInfo(method, 1000)
+               return new AdviceInfo(method, 2000)
                {
                   public boolean validate(AdviceMethodProperties properties,
                         ReturnType adviceReturn)
