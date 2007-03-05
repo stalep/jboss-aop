@@ -583,12 +583,29 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
                   }
                   return false;
                }
+               // index set more than once
+               if (taken[indexes[i][1]])
+               {
+                  if (AspectManager.verbose)
+                  {
+                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - Joinpoint parameter index '");
+                     AdviceMethodFactory.adviceMatchingMessage.append(indexes[i][0]);
+                     AdviceMethodFactory.adviceMatchingMessage.append("' cannot be assigned to more than one '@Arg' advice parameter");
+                  }
+                  return false;
+               }
+               // mark index as set
                taken[indexes[i][1]] = true;
-               // TODO give priority to indexes set first
-               // TODO Check on taken for indexes set
                continue;
             }
-            
+         }
+         for (int i = 0; i < indexesLength; i++)
+         {
+            // parameter index is already set
+            if (indexes[i][1] != -1)
+            {
+               continue;
+            }
             boolean found = false;
             for (int j = 0; j < expectedTypes.length; j++)
             {

@@ -21,6 +21,8 @@
  */
 package org.jboss.test.aop.beforeafterArgs;
 
+import java.util.Collection;
+
 /**
  * Plain old java object used on @Args parameter tests.
  * 
@@ -87,12 +89,16 @@ public class ArgsPOJO
       this.method3((short) -4, (long) 4);
    }
    
-   public void method5(Interface param) throws POJOException 
-   {
-      
-   }
+   public void method5(Interface param) throws POJOException {}
    
    public void method6(Interface param) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method7(String param1, Collection param2) {}
+   
+   public void method8(String param1, Collection param2) throws POJOException
    {
       throw new POJOException();
    }

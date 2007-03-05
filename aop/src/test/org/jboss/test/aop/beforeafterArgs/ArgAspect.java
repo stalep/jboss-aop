@@ -84,6 +84,11 @@ public class ArgAspect
    static boolean throwingInterface2 = false;
    static boolean throwingInterface3 = false;
    
+   static boolean beforeInverted1 = false;
+   static boolean aroundInverted1 = false;
+   static boolean afterInverted1 = false;
+   static boolean throwingInverted1 = false;
+   
    public static void clear()
    {
       before1 = false;
@@ -123,6 +128,11 @@ public class ArgAspect
       throwingInterface1 = false;
       throwingInterface2 = false;
       throwingInterface3 = false;
+      
+      beforeInverted1 = false;
+      aroundInverted1 = false;
+      afterInverted1 = false;
+      throwingInverted1 = false;
    }
    
    public void before1(@Arg(index=0) int x)
@@ -342,6 +352,53 @@ public class ArgAspect
    }
    
    public void throwingInterface5(@Thrown Throwable thrown, @Arg SubInterface param)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void beforeInvertedArgs1(@Arg Object arg2, @Arg (index = 0) String arg1)
+   {
+      beforeInverted1 = true;
+   }
+   
+   public void beforeInvertedArgs2(@Arg (index = 0) Object arg2,
+         @Arg (index = 0) String arg1)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public Object aroundInvertedArgs1(@Arg Object arg2, @Arg (index = 0) String arg1)
+      throws Throwable
+   {
+      aroundInverted1 = true;
+      return CurrentInvocation.proceed();
+   }
+   
+   public void aroundInvertedArgs2(@Arg (index = 0) Object arg2,
+         @Arg (index = 0) String arg1)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void afterInvertedArgs1(@Arg Object arg2, @Arg (index = 0) String arg1)
+   {
+      afterInverted1 = true;
+   }
+   
+   public void afterInvertedArgs2(@Arg (index = 0) Object arg2,
+         @Arg (index = 0) String arg1)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void throwingInvertedArgs1(@Thrown Throwable thrown, @Arg Object arg2,
+         @Arg (index = 0) String arg1)
+   {
+      throwingInverted1 = true;
+   }
+   
+   public void throwingInvertedArgs2(@Arg (index = 0) Object arg2,
+         @Arg (index = 0) String arg1)
    {
       Assert.fail("This advice should never be executed");
    }

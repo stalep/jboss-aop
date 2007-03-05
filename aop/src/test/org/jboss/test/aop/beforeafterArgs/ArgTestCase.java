@@ -311,4 +311,34 @@ public class ArgTestCase extends AOPTestWithSetup
       assertTrue(ArgAspect.throwingInterface2);
       assertTrue(ArgAspect.throwingInterface3);
    }
+   
+   public void testInverted1()
+   {
+      pojo.method7("testInverted", null);
+      
+      assertTrue(ArgAspect.beforeInverted1);
+      assertTrue(ArgAspect.aroundInverted1);
+      assertTrue(ArgAspect.afterInverted1);
+      assertFalse(ArgAspect.throwingInverted1);
+   }
+   
+   public void testInverted2()
+   {
+      boolean thrown = false;
+      try
+      {
+         pojo.method8("testInverted", null);
+      }
+      catch(POJOException e)
+      {
+         thrown = true;
+      }
+      // verify precondition for this test
+      assertTrue(thrown);
+      
+      assertTrue(ArgAspect.beforeInverted1);
+      assertTrue(ArgAspect.aroundInverted1);
+      assertFalse(ArgAspect.afterInverted1);
+      assertTrue(ArgAspect.throwingInverted1);
+   }
 }
