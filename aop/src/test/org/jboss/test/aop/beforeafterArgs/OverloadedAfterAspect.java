@@ -21,6 +21,8 @@
  */
 package org.jboss.test.aop.beforeafterArgs;
 
+import junit.framework.Assert;
+
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.MethodInfo;
 import org.jboss.aop.advice.annotation.Arg;
@@ -608,7 +610,7 @@ public class OverloadedAfterAspect
    
    public void after1(@Arg int arg1)
    {
-      after1 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER2 ADVICE */
@@ -805,7 +807,7 @@ public class OverloadedAfterAspect
    
    public void after2(@Arg int arg1)
    {
-      after2 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER3 ADVICE */
@@ -1008,7 +1010,7 @@ public class OverloadedAfterAspect
    
    public void after3(@Arg int arg1)
    {
-      after3 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER4 ADVICE */
@@ -1204,7 +1206,7 @@ public class OverloadedAfterAspect
    
    public void after4(@Arg int arg1)
    {
-      after4 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER5 ADVICE */
@@ -1400,7 +1402,7 @@ public class OverloadedAfterAspect
    
    public void after5(@Arg int arg1)
    {
-      after5 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER6 ADVICE */
@@ -1575,7 +1577,7 @@ public class OverloadedAfterAspect
    
    public void after6(@Arg int arg1)
    {
-      after6 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER7 ADVICE */
@@ -1841,7 +1843,7 @@ public class OverloadedAfterAspect
    
    public void after7(@Arg int arg1)
    {
-      after7 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER8 ADVICE */
@@ -2149,7 +2151,7 @@ public class OverloadedAfterAspect
    
    public void after8(@Arg int arg1)
    {
-      after8 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER9 ADVICE */
@@ -2463,7 +2465,7 @@ public class OverloadedAfterAspect
    
    public void after9(@Arg int arg1)
    {
-      after9 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER10 ADVICE */
@@ -2763,7 +2765,7 @@ public class OverloadedAfterAspect
    
    public void after10(@Arg int arg1)
    {
-      after10 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER11 ADVICE */
@@ -3056,7 +3058,7 @@ public class OverloadedAfterAspect
    
    public void after11(@Arg int arg1)
    {
-      after11 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER12 ADVICE */
@@ -3336,7 +3338,7 @@ public class OverloadedAfterAspect
    
    public void after12(@Arg int arg1)
    {
-      after12 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER13 ADVICE */
@@ -3609,7 +3611,7 @@ public class OverloadedAfterAspect
    
    public void after13(@Arg int arg1)
    {
-      after13 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER14 ADVICE */
@@ -3875,7 +3877,7 @@ public class OverloadedAfterAspect
    
    public void after14(@Arg int arg1)
    {
-      after14 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER15 ADVICE */
@@ -4152,7 +4154,7 @@ public class OverloadedAfterAspect
    
    public void after15(@Arg int arg1)
    {
-      after15 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER16 ADVICE */
@@ -4410,7 +4412,7 @@ public class OverloadedAfterAspect
    
    public void after16(@Arg int arg1)
    {
-      after16 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER17 ADVICE */
@@ -4655,7 +4657,7 @@ public class OverloadedAfterAspect
    
    public void after17(@Arg int arg1)
    {
-      after17 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER18 ADVICE */
@@ -4893,7 +4895,7 @@ public class OverloadedAfterAspect
    
    public void after18(@Arg int arg1)
    {
-      after18 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER19 ADVICE */
@@ -5124,7 +5126,7 @@ public class OverloadedAfterAspect
    
    public void after19(@Arg int arg1)
    {
-      after19 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER20 ADVICE */
@@ -5355,7 +5357,7 @@ public class OverloadedAfterAspect
    
    public void after20(@Arg int arg1)
    {
-      after20 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER21 ADVICE */
@@ -5572,7 +5574,7 @@ public class OverloadedAfterAspect
    
    public void after21(@Arg int arg1)
    {
-      after21 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER22 ADVICE */
@@ -5776,7 +5778,7 @@ public class OverloadedAfterAspect
    
    public void after22(@Arg int arg1)
    {
-      after22 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER23 ADVICE */
@@ -5979,7 +5981,7 @@ public class OverloadedAfterAspect
    
    public void after23(@Arg int arg1)
    {
-      after23 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER24 ADVICE */
@@ -6175,7 +6177,7 @@ public class OverloadedAfterAspect
    
    public void after24(@Arg int arg1)
    {
-      after24 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER25 ADVICE */
@@ -6364,7 +6366,7 @@ public class OverloadedAfterAspect
    
    public void after25(@Arg int arg1)
    {
-      after25 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER26 ADVICE */
@@ -6546,7 +6548,7 @@ public class OverloadedAfterAspect
    
    public void after26(@Arg int arg1)
    {
-      after26 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER27 ADVICE */
@@ -6721,7 +6723,7 @@ public class OverloadedAfterAspect
    
    public void after27(@Arg int arg1)
    {
-      after27 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER28 ADVICE */
@@ -6889,7 +6891,7 @@ public class OverloadedAfterAspect
    
    public void after28(@Arg int arg1)
    {
-      after28 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER29 ADVICE */
@@ -7050,7 +7052,7 @@ public class OverloadedAfterAspect
    
    public void after29(@Arg int arg1)
    {
-      after29 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER30 ADVICE */
@@ -7241,7 +7243,7 @@ public class OverloadedAfterAspect
    
    public void after30(@Arg int arg1)
    {
-      after30 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER31 ADVICE */
@@ -7425,7 +7427,7 @@ public class OverloadedAfterAspect
    
    public void after31(@Arg int arg1)
    {
-      after31 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER32 ADVICE */
@@ -7603,7 +7605,7 @@ public class OverloadedAfterAspect
    
    public void after32(@Arg int arg1)
    {
-      after32 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER33 ADVICE */
@@ -7774,7 +7776,7 @@ public class OverloadedAfterAspect
    
    public void after33(@Arg int arg1)
    {
-      after33 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER34 ADVICE */
@@ -7944,7 +7946,7 @@ public class OverloadedAfterAspect
    
    public void after34(@Arg int arg1)
    {
-      after34 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER35 ADVICE */
@@ -8101,7 +8103,7 @@ public class OverloadedAfterAspect
    
    public void after35(@Arg int arg1)
    {
-      after35 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER36 ADVICE */
@@ -8230,7 +8232,7 @@ public class OverloadedAfterAspect
    
    public void after36(@Arg int arg1)
    {
-      after36 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER37 ADVICE */
@@ -8403,7 +8405,7 @@ public class OverloadedAfterAspect
    
    public void after37(@Arg int arg1)
    {
-      after37 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER38 ADVICE */
@@ -8570,7 +8572,7 @@ public class OverloadedAfterAspect
    
    public void after38(@Arg int arg1)
    {
-      after38 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER39 ADVICE */
@@ -8731,7 +8733,7 @@ public class OverloadedAfterAspect
    
    public void after39(@Arg int arg1)
    {
-      after39 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER40 ADVICE */
@@ -8886,7 +8888,7 @@ public class OverloadedAfterAspect
    
    public void after40(@Arg int arg1)
    {
-      after40 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER41 ADVICE */
@@ -9035,7 +9037,7 @@ public class OverloadedAfterAspect
    
    public void after41(@Arg int arg1)
    {
-      after41 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER42 ADVICE */
@@ -9178,7 +9180,7 @@ public class OverloadedAfterAspect
    
    public void after42(@Arg int arg1)
    {
-      after42 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER43 ADVICE */
@@ -9315,7 +9317,7 @@ public class OverloadedAfterAspect
    
    public void after43(@Arg int arg1)
    {
-      after43 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER44 ADVICE */
@@ -9446,7 +9448,7 @@ public class OverloadedAfterAspect
    
    public void after44(@Arg int arg1)
    {
-      after44 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER45 ADVICE */
@@ -9571,7 +9573,7 @@ public class OverloadedAfterAspect
    
    public void after45(@Arg int arg1)
    {
-      after45 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER46 ADVICE */
@@ -9690,7 +9692,7 @@ public class OverloadedAfterAspect
    
    public void after46(@Arg int arg1)
    {
-      after46 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER47 ADVICE */
@@ -9803,7 +9805,7 @@ public class OverloadedAfterAspect
    
    public void after47(@Arg int arg1)
    {
-      after47 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER48 ADVICE */
@@ -9922,7 +9924,7 @@ public class OverloadedAfterAspect
    
    public void after48(@Arg int arg1)
    {
-      after48 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER49 ADVICE */
@@ -10035,7 +10037,7 @@ public class OverloadedAfterAspect
    
    public void after49(@Arg int arg1)
    {
-      after49 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER50 ADVICE */
@@ -10142,7 +10144,7 @@ public class OverloadedAfterAspect
    
    public void after50(@Arg int arg1)
    {
-      after50 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER51 ADVICE */
@@ -10242,7 +10244,7 @@ public class OverloadedAfterAspect
    
    public void after51(@Arg int arg1)
    {
-      after51 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER52 ADVICE */
@@ -10335,7 +10337,7 @@ public class OverloadedAfterAspect
    
    public void after52(@Arg int arg1)
    {
-      after52 = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER53  ADVICE */
@@ -10421,7 +10423,7 @@ public class OverloadedAfterAspect
    
    public void after53 (@Arg int arg1)
    {
-      after53  = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER54  ADVICE */
@@ -10501,7 +10503,7 @@ public class OverloadedAfterAspect
    
    public void after54 (@Arg int arg1)
    {
-      after54  = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER55  ADVICE */
@@ -10575,7 +10577,7 @@ public class OverloadedAfterAspect
    
    public void after55 (@Arg int arg1)
    {
-      after55  = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER56  ADVICE */
@@ -10643,7 +10645,7 @@ public class OverloadedAfterAspect
    
    public void after56 (@Arg int arg1)
    {
-      after56  = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER57  ADVICE */
@@ -10705,7 +10707,7 @@ public class OverloadedAfterAspect
    
    public void after57 (@Arg int arg1)
    {
-      after57  = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER58  ADVICE */
@@ -10761,7 +10763,7 @@ public class OverloadedAfterAspect
    
    public void after58 (@Arg int arg1)
    {
-      after58  = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER59  ADVICE */
@@ -10811,7 +10813,7 @@ public class OverloadedAfterAspect
    
    public void after59 (@Arg int arg1)
    {
-      after59  = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER60  ADVICE */
@@ -10855,7 +10857,7 @@ public class OverloadedAfterAspect
    
    public void after60 (@Arg int arg1)
    {
-      after60  = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER61  ADVICE */
@@ -10893,7 +10895,7 @@ public class OverloadedAfterAspect
    
    public void after61 (@Arg int arg1)
    {
-      after61  = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER62  ADVICE */
@@ -10926,7 +10928,7 @@ public class OverloadedAfterAspect
    
    public void after62 (@Arg int arg1)
    {
-      after62  = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER63  ADVICE */
@@ -10953,7 +10955,7 @@ public class OverloadedAfterAspect
    
    public void after63 (@Arg int arg1)
    {
-      after63  = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER64  ADVICE */
@@ -10975,7 +10977,7 @@ public class OverloadedAfterAspect
    
    public void after64 (@Arg int arg1)
    {
-      after64  = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER65  ADVICE */
@@ -10992,7 +10994,7 @@ public class OverloadedAfterAspect
    
    public void after65 (@Arg int arg1)
    {
-      after65  = "void,int";
+      Assert.fail("This advice should never be executed");
    }
    
    /* AFTER66  ADVICE */
@@ -11004,6 +11006,6 @@ public class OverloadedAfterAspect
    
    public void after66 (@Arg int arg1)
    {
-      after66  = "void,int";
+      Assert.fail("This advice should never be executed");
    }
 }
