@@ -776,10 +776,19 @@ public abstract class JoinPointGenerator
       argsFoundAfter = DefaultAdviceCallStrategy.getInstance().addInvokeCode(this,
             setups.getThrowingSetups(), afterCode) || argsFoundAfter;
       
-      if ((argsFoundAfter || argsFoundBefore) && joinPointCreated)
+      // if joinpoint has been created for around,
+      // need to update arguments variable when this variable is used,
+      // which happens in one of both cases
+      // 1.an @Args parameter is found on after code
+      // 2.an @Arg parameter is found on after code (in this case, we need
+      //   to update the variable value according to what is contained in joinpoint)
+      if (joinPointCreated &&  (argsFoundAfter ||
+            inconsistentTypeArgs.get().size() < joinPointArguments.size()))
+         // TODO ((argsFoundAfter || argsFoundBefore) && joinPointCreated) ||
       {
          code.append(ARGUMENTS);
          code.append(" = jp.").append(GET_ARGUMENTS).append(";");
+         argsFoundAfter = true; // force creation of arguments variable
       }
       
       // add after code

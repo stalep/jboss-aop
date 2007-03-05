@@ -86,4 +86,14 @@ public class ArgsPOJO
    {
       this.method3((short) -4, (long) 4);
    }
+   
+   public void method5(Interface param) throws POJOException 
+   {
+      
+   }
+   
+   public void method6(Interface param) throws POJOException
+   {
+      throw new POJOException();
+   }
 }

@@ -89,6 +89,29 @@
       <after name="after6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
 
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsPOJO->*(org.jboss.test.aop.beforeafterArgs.Interface))">
+      <before name="beforeInterface1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <before name="beforeInterface2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <before name="beforeInterface3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <before name="beforeInterface4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <before name="beforeInterface5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <advice name="aroundInterface1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <advice name="aroundInterface2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <advice name="aroundInterface3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <advice name="aroundInterface4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <advice name="aroundInterface5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="afterInterface1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="afterInterface2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="afterInterface3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="afterInterface4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <after name="afterInterface5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+       <throwing name="throwingInterface1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <throwing name="throwingInterface2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <throwing name="throwingInterface3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <throwing name="throwingInterface4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+      <throwing name="throwingInterface5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+
    <!-- @Args test -->
 	<aspect class="org.jboss.test.aop.beforeafterArgs.ArgsAspect" scope="PER_VM"/>
 

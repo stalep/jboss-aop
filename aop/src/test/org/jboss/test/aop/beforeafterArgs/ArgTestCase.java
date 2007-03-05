@@ -259,4 +259,56 @@ public class ArgTestCase extends AOPTestWithSetup
       assertFalse(ArgAspect.around6);
       assertFalse(ArgAspect.after1);
    }
+   
+   public void test9() throws POJOException
+   {
+      this.pojo.method5(new Implementor());
+      
+      assertTrue(ArgAspect.beforeInterface1);
+      assertTrue(ArgAspect.beforeInterface2);
+      assertTrue(ArgAspect.beforeInterface3);
+      
+      assertTrue(ArgAspect.aroundInterface1);
+      assertTrue(ArgAspect.aroundInterface2);
+      assertTrue(ArgAspect.aroundInterface3);
+      
+      assertTrue(ArgAspect.afterInterface1);
+      assertTrue(ArgAspect.afterInterface2);
+      assertTrue(ArgAspect.afterInterface3);
+      
+      assertFalse(ArgAspect.throwingInterface1);
+      assertFalse(ArgAspect.throwingInterface2);
+      assertFalse(ArgAspect.throwingInterface3);
+   }
+   
+   public void test10()
+   {
+      boolean thrown = false;
+      try
+      {
+         this.pojo.method6(null);
+      }
+      catch(POJOException e)
+      {
+         thrown = true;
+      }
+      
+      assertTrue(thrown); // verify precondition for this test
+      
+      assertTrue(ArgAspect.beforeInterface1);
+      assertTrue(ArgAspect.beforeInterface2);
+      assertTrue(ArgAspect.beforeInterface3);
+      
+      assertTrue(ArgAspect.aroundInterface1);
+      assertTrue(ArgAspect.aroundInterface2);
+      assertTrue(ArgAspect.aroundInterface3);
+      
+      assertFalse(ArgAspect.afterInterface1);
+      assertFalse(ArgAspect.afterInterface2);
+      assertFalse(ArgAspect.afterInterface3);
+      
+      assertTrue(ArgAspect.throwingInterface1);
+      assertTrue(ArgAspect.throwingInterface2);
+      assertTrue(ArgAspect.throwingInterface3);
+   }
 }
