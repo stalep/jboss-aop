@@ -59,10 +59,13 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       this.pojo = new OverloadedAdvicePOJO();
    }
 
-   public void test1()
+   public void testBefore()
    {
+      // clear all relevant aspect fields
       OverloadedBeforeAspect.clear();
+      // execute the join point
       pojo.text = "test2";
+      // check aspect fields
       assertEquals("FieldInfo,String", OverloadedBeforeAspect.before1);
       assertEquals("FieldInfo,Object", OverloadedBeforeAspect.before2);
       assertEquals("JoinPointInfo,String", OverloadedBeforeAspect.before3);
@@ -86,10 +89,13 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       
    }
    
-   public void test2()
+   public void testAround()
    {
+      // clear all relevant aspect fields
       OverloadedAroundAspect.clear();
+      // execute the join point
       pojo.method1(10, 15);
+      // check aspect fields
       assertEquals("defaultSignature", OverloadedAroundAspect.around1);
       assertEquals("MethodInvocation,int,long", OverloadedAroundAspect.around2);
       assertEquals("Invocation,int,long", OverloadedAroundAspect.around3);
@@ -115,52 +121,86 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       assertEquals("", OverloadedAroundAspect.around16);
    }
    
-   public void test3()
+   public void testAfter()
    {
+      // clear all relevant aspect fields
       OverloadedAfterAspect.clear();
+      // execute the join point
       pojo.method2(0, null);
-      assertEquals("Object,MethodInfo,SuperClass,float,SubValue", OverloadedAfterAspect.after1);
-      assertEquals("Object,MethodInfo,SuperClass,float,SuperValue", OverloadedAfterAspect.after2);
-      assertEquals("Object,MethodInfo,SuperClass,float,Object", OverloadedAfterAspect.after3);
-      assertEquals("Object,MethodInfo,Object,float,SubValue", OverloadedAfterAspect.after4);
-      assertEquals("Object,MethodInfo,Object,float,SuperValue", OverloadedAfterAspect.after5);
-      assertEquals("Object,MethodInfo,Object,float,Object", OverloadedAfterAspect.after6);
-      assertEquals("Object,JoinPointInfo,SuperClass,float,SubValue", OverloadedAfterAspect.after7);
-      assertEquals("SuperClass,MethodInfo,SuperClass,SubValue", OverloadedAfterAspect.after8);
-      assertEquals("Object,MethodInfo,SuperClass,float", OverloadedAfterAspect.after9);
-      assertEquals("Object,MethodInfo,SuperClass,SuperValue", OverloadedAfterAspect.after10);
-      assertEquals("SuperClass,MethodInfo,SuperClass,Object", OverloadedAfterAspect.after11);
-      assertEquals("SuperClass,MethodInfo,Object,SubValue", OverloadedAfterAspect.after12);
-      assertEquals("Object,MethodInfo,Object,float", OverloadedAfterAspect.after13);
-      assertEquals("SubClass,MethodInfo,Object,SuperValue", OverloadedAfterAspect.after14);
-      assertEquals("SubClass,MethodInfo,Object,Object", OverloadedAfterAspect.after15);
-      assertEquals("SuperClass,JoinPointInfo,SuperClass,SubValue", OverloadedAfterAspect.after16);
-      assertEquals("SubClass,JoinPointInfo,SuperClass,float", OverloadedAfterAspect.after17);
-      assertEquals("SubClass,JoinPointInfo,SuperClass,SuperValue", OverloadedAfterAspect.after18);
-      assertEquals("SuperClass,JoinPointInfo,SuperClass,Object", OverloadedAfterAspect.after19);
-      assertEquals("SubClass,Object,SuperClass,SubValue", OverloadedAfterAspect.after20);
+      // check aspect fields
+      assertEquals("Object,MethodInfo,SuperClass,float,SubValue",
+            OverloadedAfterAspect.after1);
+      assertEquals("Object,MethodInfo,SuperClass,float,SuperValue",
+            OverloadedAfterAspect.after2);
+      assertEquals("Object,MethodInfo,SuperClass,float,Object",
+            OverloadedAfterAspect.after3);
+      assertEquals("Object,MethodInfo,Object,float,SubValue",
+            OverloadedAfterAspect.after4);
+      assertEquals("Object,MethodInfo,Object,float,SuperValue",
+            OverloadedAfterAspect.after5);
+      assertEquals("Object,MethodInfo,Object,float,Object",
+            OverloadedAfterAspect.after6);
+      assertEquals("Object,JoinPointInfo,SuperClass,float,SubValue",
+            OverloadedAfterAspect.after7);
+      assertEquals("SuperClass,MethodInfo,SuperClass,SubValue",
+            OverloadedAfterAspect.after8);
+      assertEquals("Object,MethodInfo,SuperClass,float",
+            OverloadedAfterAspect.after9);
+      assertEquals("Object,MethodInfo,SuperClass,SuperValue",
+            OverloadedAfterAspect.after10);
+      assertEquals("SuperClass,MethodInfo,SuperClass,Object",
+            OverloadedAfterAspect.after11);
+      assertEquals("SuperClass,MethodInfo,Object,SubValue",
+            OverloadedAfterAspect.after12);
+      assertEquals("Object,MethodInfo,Object,float",
+            OverloadedAfterAspect.after13);
+      assertEquals("SubClass,MethodInfo,Object,SuperValue",
+            OverloadedAfterAspect.after14);
+      assertEquals("SubClass,MethodInfo,Object,Object",
+            OverloadedAfterAspect.after15);
+      assertEquals("SuperClass,JoinPointInfo,SuperClass,SubValue",
+            OverloadedAfterAspect.after16);
+      assertEquals("SubClass,JoinPointInfo,SuperClass,float",
+            OverloadedAfterAspect.after17);
+      assertEquals("SubClass,JoinPointInfo,SuperClass,SuperValue",
+            OverloadedAfterAspect.after18);
+      assertEquals("SuperClass,JoinPointInfo,SuperClass,Object",
+            OverloadedAfterAspect.after19);
+      assertEquals("SubClass,Object,SuperClass,SubValue",
+            OverloadedAfterAspect.after20);
       assertEquals("Object,Object,SuperClass,float", OverloadedAfterAspect.after21);
-      assertEquals("SubClass,Object,SuperClass,SuperValue", OverloadedAfterAspect.after22);
+      assertEquals("SubClass,Object,SuperClass,SuperValue",
+            OverloadedAfterAspect.after22);
       assertEquals("Object,Object,SuperClass,Object", OverloadedAfterAspect.after23);
-      assertEquals("Object,MethodInfo,SuperClass,Object[]", OverloadedAfterAspect.after24);
-      assertEquals("Object,MethodInfo,Object,Object[]", OverloadedAfterAspect.after25);
-      assertEquals("Object,JoinPointInfo,SuperClass,Object[]", OverloadedAfterAspect.after26);
-      assertEquals("Object,JoinPointInfo,Object,Object[]", OverloadedAfterAspect.after27);
-      assertEquals("Object,Object,SuperClass,Object[]", OverloadedAfterAspect.after28);
+      assertEquals("Object,MethodInfo,SuperClass,Object[]",
+            OverloadedAfterAspect.after24);
+      assertEquals("Object,MethodInfo,Object,Object[]",
+            OverloadedAfterAspect.after25);
+      assertEquals("Object,JoinPointInfo,SuperClass,Object[]",
+            OverloadedAfterAspect.after26);
+      assertEquals("Object,JoinPointInfo,Object,Object[]",
+            OverloadedAfterAspect.after27);
+      assertEquals("Object,Object,SuperClass,Object[]",
+            OverloadedAfterAspect.after28);
       assertEquals("Object,Object,Object,Object[]", OverloadedAfterAspect.after29);
       assertEquals("Object,MethodInfo,SuperClass", OverloadedAfterAspect.after30);
       assertEquals("Object,MethodInfo,Object", OverloadedAfterAspect.after31);
       assertEquals("Object,JoinPointInfo,SuperClass", OverloadedAfterAspect.after32);
-      assertEquals("Object,MethodInfo,float,SubValue", OverloadedAfterAspect.after33);
-      assertEquals("Object,MethodInfo,float,SuperValue", OverloadedAfterAspect.after34);
+      assertEquals("Object,MethodInfo,float,SubValue",
+            OverloadedAfterAspect.after33);
+      assertEquals("Object,MethodInfo,float,SuperValue",
+            OverloadedAfterAspect.after34);
       assertEquals("Object,MethodInfo,float,Object", OverloadedAfterAspect.after35);
-      assertEquals("Object,JoinPointInfo,float,SubValue", OverloadedAfterAspect.after36);
+      assertEquals("Object,JoinPointInfo,float,SubValue",
+            OverloadedAfterAspect.after36);
       assertEquals("SuperClass,MethodInfo,SubValue", OverloadedAfterAspect.after37);
       assertEquals("Object,MethodInfo,float", OverloadedAfterAspect.after38);
       assertEquals("Object,MethodInfo,SuperValue", OverloadedAfterAspect.after39);
-      assertEquals("SuperClass,JoinPointInfo,SubValue", OverloadedAfterAspect.after40);
+      assertEquals("SuperClass,JoinPointInfo,SubValue",
+            OverloadedAfterAspect.after40);
       assertEquals("SubClass,JoinPointInfo,float", OverloadedAfterAspect.after41);
-      assertEquals("SubClass,JoinPointInfo,SuperValue", OverloadedAfterAspect.after42);
+      assertEquals("SubClass,JoinPointInfo,SuperValue",
+            OverloadedAfterAspect.after42);
       assertEquals("SubClass,Object,SubValue", OverloadedAfterAspect.after43);
       assertEquals("Object,Object,float", OverloadedAfterAspect.after44);
       assertEquals("SubClass,Object,SuperValue", OverloadedAfterAspect.after45);
@@ -168,8 +208,10 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       assertEquals("SubClass,JoinPointInfo,Object[]", OverloadedAfterAspect.after47);
       assertEquals("Object,MethodInfo", OverloadedAfterAspect.after48);
       assertEquals("Object,JoinPointInfo", OverloadedAfterAspect.after49);
-      assertEquals("Object,SuperClass,float,SubValue", OverloadedAfterAspect.after50);
-      assertEquals("Object,SuperClass,float,SuperValue", OverloadedAfterAspect.after51);
+      assertEquals("Object,SuperClass,float,SubValue",
+            OverloadedAfterAspect.after50);
+      assertEquals("Object,SuperClass,float,SuperValue",
+            OverloadedAfterAspect.after51);
       assertEquals("Object,SuperClass,float,Object", OverloadedAfterAspect.after52);
       assertEquals("SuperClass,SuperClass,float", OverloadedAfterAspect.after53);
       assertEquals("Object,SuperClass,SubValue", OverloadedAfterAspect.after54);
@@ -187,19 +229,202 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       assertEquals("void", OverloadedAfterAspect.after66);
    }
    
-   public void test4()
+   public void testAfterThrowing()
    {
+      // clear all relevant aspect fields
+      OverloadedThrowingAspect.clear();
+      // execute the join point
       try
       {
          new OverloadedAdvicePOJO(null, null);
       } catch (POJOException pe) {}
+      
+      // check aspect fields
+      
       assertEquals("JoinPointInfo,Throwable,SubInterface,Implementor",
             OverloadedThrowingAspect.throwing1);
+      
+      assertTrue(OverloadedThrowingAspect.throwing2.startsWith(
+            "JoinPointInfo,Throwable,"));
+      assertTrue(OverloadedThrowingAspect.throwing2.equals(
+            "JoinPointInfo,Throwable,Interface,Implementor") ||
+            OverloadedThrowingAspect.throwing2.equals(
+            "JoinPointInfo,Throwable,SubInterface,SubInterface") ||
+            OverloadedThrowingAspect.throwing2.equals(
+            "JoinPointInfo,Throwable,SubInterface,Object"));
+      
+      assertTrue(OverloadedThrowingAspect.throwing3.startsWith(
+            "JoinPointInfo,Throwable,"));
+      assertTrue(OverloadedThrowingAspect.throwing3.equals(  
+            "JoinPointInfo,Throwable,SuperInterface,Implementor") ||
+            OverloadedThrowingAspect.throwing3.equals(
+            "JoinPointInfo,Throwable,SubInterface,Interface") ||
+            OverloadedThrowingAspect.throwing3.equals(
+            "JoinPointInfo,Throwable,Interface,SubInterface"));
+      
+      assertTrue(OverloadedThrowingAspect.throwing4.startsWith(
+            "JoinPointInfo,Throwable,"));
+      assertTrue(OverloadedThrowingAspect.throwing4.equals(
+            "JoinPointInfo,Throwable,SuperInterface,SubInterface") ||
+            OverloadedThrowingAspect.throwing4.equals(
+            "JoinPointInfo,Throwable,SuperInterface,Object") ||
+            OverloadedThrowingAspect.throwing4.equals(
+            "JoinPointInfo,Throwable,Interface,Interface") ||
+            OverloadedThrowingAspect.throwing4.equals(
+            "JoinPointInfo,Throwable,SubInterface,SuperInterface"));
+      
+      assertTrue(OverloadedThrowingAspect.throwing5.startsWith(
+            "JoinPointInfo,Throwable,"));
+      assertTrue(OverloadedThrowingAspect.throwing5.equals(
+            "JoinPointInfo,Throwable,SuperInterface,Interface") ||
+            OverloadedThrowingAspect.throwing5.equals(
+            "JoinPointInfo,Throwable,Interface,SuperInterface"));
+      
+      assertEquals("JoinPointInfo,Throwable,SuperInterface,SuperInterface",
+            OverloadedThrowingAspect.throwing6);
+      
+      assertEquals("JoinPointInfo,Object,SubInterface,Implementor",
+            OverloadedThrowingAspect.throwing7);
+      
+      assertTrue(OverloadedThrowingAspect.throwing8.startsWith(
+            "JoinPointInfo,Object,"));
+      assertTrue(OverloadedThrowingAspect.throwing8.equals(
+            "JoinPointInfo,Object,Interface,Implementor") ||
+            OverloadedThrowingAspect.throwing8.equals(
+            "JoinPointInfo,Object,SubInterface,SubInterface") ||
+            OverloadedThrowingAspect.throwing8.equals(
+            "JoinPointInfo,Object,SubInterface,Object"));
+
+      assertTrue(OverloadedThrowingAspect.throwing9.startsWith(
+            "JoinPointInfo,Object,"));
+      assertTrue(OverloadedThrowingAspect.throwing9.equals(  
+            "JoinPointInfo,Object,SuperInterface,Implementor") ||
+            OverloadedThrowingAspect.throwing9.equals(
+            "JoinPointInfo,Object,SubInterface,Interface") ||
+            OverloadedThrowingAspect.throwing9.equals(
+            "JoinPointInfo,Object,Interface,SubInterface"));
+
+      assertTrue(OverloadedThrowingAspect.throwing10.startsWith(
+            "JoinPointInfo,Object,"));
+      assertTrue(OverloadedThrowingAspect.throwing10.equals(
+            "JoinPointInfo,Object,SuperInterface,SubInterface") ||
+            OverloadedThrowingAspect.throwing10.equals(
+            "JoinPointInfo,Object,SuperInterface,Object") ||
+            OverloadedThrowingAspect.throwing10.equals(
+            "JoinPointInfo,Object,Interface,Interface") ||
+            OverloadedThrowingAspect.throwing10.equals(
+            "JoinPointInfo,Object,SubInterface,SuperInterface"));
+      
+      assertTrue(OverloadedThrowingAspect.throwing11.startsWith(
+            "JoinPointInfo,Object,"));
+      assertTrue(OverloadedThrowingAspect.throwing11.equals(
+            "JoinPointInfo,Object,SuperInterface,Interface") ||
+            OverloadedThrowingAspect.throwing11.equals(
+            "JoinPointInfo,Object,Interface,SuperInterface"));
+
+      assertEquals("JoinPointInfo,Object,SuperInterface,SuperInterface",
+               OverloadedThrowingAspect.throwing12);
+      
+      assertTrue(OverloadedThrowingAspect.throwing13.startsWith(
+            "JoinPointInfo,Throwable,"));
+      assertTrue(OverloadedThrowingAspect.throwing13.equals(
+            "JoinPointInfo,Throwable,SubInterface") ||
+            OverloadedThrowingAspect.throwing13.equals(
+            "JoinPointInfo,Throwable,Implementor"));
+      
+      assertTrue(OverloadedThrowingAspect.throwing14.startsWith(
+            "JoinPointInfo,Throwable,"));
+      assertTrue(OverloadedThrowingAspect.throwing14.equals(
+            "JoinPointInfo,Throwable,Interface") ||
+            OverloadedThrowingAspect.throwing14.equals(
+            "JoinPointInfo,Throwable,Object"));
+      
+      assertEquals("JoinPointInfo,Throwable,SuperInterface",
+            OverloadedThrowingAspect.throwing15);
+      
+      assertEquals("JoinPointInfo,Throwable,Object[]",
+            OverloadedThrowingAspect.throwing16);
+      
+      assertEquals("JoinPointInfo,Object,Object[]",
+            OverloadedThrowingAspect.throwing17);
+      
+      assertEquals("Throwable,SubInterface,Implementor",
+            OverloadedThrowingAspect.throwing18);
+      
+      assertTrue(OverloadedThrowingAspect.throwing19.startsWith("Throwable,"));
+      assertTrue(OverloadedThrowingAspect.throwing19.equals(
+            "Throwable,Interface,Implementor") ||
+            OverloadedThrowingAspect.throwing19.equals(
+            "Throwable,SubInterface,SubInterface") ||
+            OverloadedThrowingAspect.throwing19.equals(
+            "Throwable,SubInterface,Object"));
+      
+      assertTrue(OverloadedThrowingAspect.throwing20.startsWith("Throwable,"));
+      assertTrue(OverloadedThrowingAspect.throwing20.equals(  
+            "Throwable,SuperInterface,Implementor") ||
+            OverloadedThrowingAspect.throwing20.equals(
+            "Throwable,SubInterface,Interface") ||
+            OverloadedThrowingAspect.throwing20.equals(
+            "Throwable,Interface,SubInterface"));
+      
+      assertTrue(OverloadedThrowingAspect.throwing21.startsWith("Throwable,"));
+      assertTrue(OverloadedThrowingAspect.throwing21.equals(
+            "Throwable,SuperInterface,SubInterface") ||
+            OverloadedThrowingAspect.throwing21.equals(
+            "Throwable,SuperInterface,Object") ||
+            OverloadedThrowingAspect.throwing21.equals(
+            "Throwable,Interface,Interface") ||
+            OverloadedThrowingAspect.throwing21.equals(
+            "Throwable,SubInterface,SuperInterface"));
+
+      assertTrue(OverloadedThrowingAspect.throwing22.startsWith("Throwable,"));
+      assertTrue(OverloadedThrowingAspect.throwing22.equals(
+            "Throwable,SuperInterface,Interface") ||
+            OverloadedThrowingAspect.throwing22.equals(
+            "Throwable,Interface,SuperInterface"));
+
+      assertEquals("Throwable,SuperInterface,SuperInterface",
+            OverloadedThrowingAspect.throwing23);
+
+      assertEquals("Object,SubInterface,Implementor",
+            OverloadedThrowingAspect.throwing24);
+      
+      assertTrue(OverloadedThrowingAspect.throwing25.startsWith("Throwable,"));
+      assertTrue(OverloadedThrowingAspect.throwing25.equals("Throwable,SubInterface")
+            || OverloadedThrowingAspect.throwing25.equals("Throwable,Implementor"));
+
+      assertTrue(OverloadedThrowingAspect.throwing26.startsWith("Throwable,"));
+      assertTrue(OverloadedThrowingAspect.throwing26.equals("Throwable,Interface") ||
+         OverloadedThrowingAspect.throwing26.equals("Throwable,Object"));
+
+      assertEquals("Throwable,SuperInterface", OverloadedThrowingAspect.throwing27);
+      
+      assertTrue(OverloadedThrowingAspect.throwing28.startsWith("Object,"));
+      assertTrue(OverloadedThrowingAspect.throwing28.equals("Object,SubInterface")
+            || OverloadedThrowingAspect.throwing28.equals("Object,Implementor"));
+
+      assertTrue(OverloadedThrowingAspect.throwing29.startsWith("Object,"));
+      assertTrue(OverloadedThrowingAspect.throwing29.equals("Object,Interface") ||
+         OverloadedThrowingAspect.throwing29.equals("Object,Object"));
+
+      assertEquals("Object,SuperInterface", OverloadedThrowingAspect.throwing30);
+      
+      assertEquals("Throwable,Object[]", OverloadedThrowingAspect.throwing31);
+      
+      assertEquals("Object,Object[]", OverloadedThrowingAspect.throwing32);
+      
+      assertEquals("Throwable", OverloadedThrowingAspect.throwing33);
+      
+      assertEquals("Object", OverloadedThrowingAspect.throwing34);
    }
    
-   public void test5()
+   public void testBeforeCall()
    {
+      // clear all relevant aspect fields
+      OverloadedBeforeCallAspect.clear();
+      // execute the join point
       (new OverloadedAdvicePOJOCaller()).callMethod3(pojo);
+      // check aspect fields
       assertEquals(
             "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int",
             OverloadedBeforeCallAspect.before1);
@@ -282,9 +507,13 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       assertEquals("Object[]", OverloadedBeforeCallAspect.before45);
    }
    
-   public void test6()
+   public void testAroundCall()
    {
+      // clear all relevant aspect fields
+      OverloadedAroundCallAspect.clear();
+      // execute the join point
       (new OverloadedAdvicePOJOCaller()).callMethod3(pojo);
+      // check aspect fields
       assertEquals("defaultSignature", OverloadedAroundCallAspect.around1);
       assertEquals(
             "MethodCalledByMethodInvocation,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int",
@@ -376,64 +605,111 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       assertEquals("Object[]", OverloadedAroundCallAspect.around46);
    }
    
-   public void test7()
+   public void testAfterCall()
    {
+      // clear all relevant aspect fields
+      OverloadedAfterCallAspect.clear();
+      // execute the join point
       (new OverloadedAdvicePOJOCaller()).callMethod3(pojo);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,int", OverloadedAfterCallAspect.after1);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,Object[]", OverloadedAfterCallAspect.after2);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long", OverloadedAfterCallAspect.after3);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int", OverloadedAfterCallAspect.after4);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller", OverloadedAfterCallAspect.after5);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,long,int", OverloadedAfterCallAspect.after6);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,long,Object[]", OverloadedAfterCallAspect.after7);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,long", OverloadedAfterCallAspect.after8);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,int", OverloadedAfterCallAspect.after9);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO", OverloadedAfterCallAspect.after10);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,int", OverloadedAfterCallAspect.after11);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]", OverloadedAfterCallAspect.after12);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,long", OverloadedAfterCallAspect.after13);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,int", OverloadedAfterCallAspect.after14);
-      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller", OverloadedAfterCallAspect.after15);
+      // check aspect fields
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,int",
+            OverloadedAfterCallAspect.after1);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,Object[]",
+            OverloadedAfterCallAspect.after2);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long",
+            OverloadedAfterCallAspect.after3);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int",
+            OverloadedAfterCallAspect.after4);
+      assertEquals(
+            "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller",
+            OverloadedAfterCallAspect.after5);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,long,int",
+            OverloadedAfterCallAspect.after6);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,long,Object[]",
+            OverloadedAfterCallAspect.after7);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,long",
+            OverloadedAfterCallAspect.after8);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO,int",
+            OverloadedAfterCallAspect.after9);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJO",
+            OverloadedAfterCallAspect.after10);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,int",
+            OverloadedAfterCallAspect.after11);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]",
+            OverloadedAfterCallAspect.after12);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,long",
+            OverloadedAfterCallAspect.after13);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller,int",
+            OverloadedAfterCallAspect.after14);
+      assertEquals("MethodByMethodInfo,OverloadedAdvicePOJOCaller",
+            OverloadedAfterCallAspect.after15);
       assertEquals("MethodByMethodInfo,long,int", OverloadedAfterCallAspect.after16);
-      assertEquals("MethodByMethodInfo,long,Object[]", OverloadedAfterCallAspect.after17);
+      assertEquals("MethodByMethodInfo,long,Object[]",
+            OverloadedAfterCallAspect.after17);
       assertEquals("MethodByMethodInfo,long", OverloadedAfterCallAspect.after18);
       assertEquals("MethodByMethodInfo,int", OverloadedAfterCallAspect.after19);
       assertEquals("MethodByMethodInfo", OverloadedAfterCallAspect.after20);
-      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,int", OverloadedAfterCallAspect.after21);
-      assertEquals("OverloadedAdvicePOJO,SuperClass,long,int", OverloadedAfterCallAspect.after22);
-      assertEquals("Object,OverloadedAdvicePOJOCaller,long,int", OverloadedAfterCallAspect.after23);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,int",
+            OverloadedAfterCallAspect.after21);
+      assertEquals("OverloadedAdvicePOJO,SuperClass,long,int",
+            OverloadedAfterCallAspect.after22);
+      assertEquals("Object,OverloadedAdvicePOJOCaller,long,int",
+            OverloadedAfterCallAspect.after23);
       assertEquals("Object,SuperClass,long,int", OverloadedAfterCallAspect.after24);
-      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,Object[]", OverloadedAfterCallAspect.after25);
-      assertEquals("OverloadedAdvicePOJO,SuperClass,long,Object[]", OverloadedAfterCallAspect.after26);
-      assertEquals("Object,OverloadedAdvicePOJOCaller,long,Object[]", OverloadedAfterCallAspect.after27);
-      assertEquals("Object,SuperClass,long,Object[]", OverloadedAfterCallAspect.after28);
-      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long", OverloadedAfterCallAspect.after29);
-      assertEquals("OverloadedAdvicePOJO,SuperClass,long", OverloadedAfterCallAspect.after30);
-      assertEquals("Object,OverloadedAdvicePOJOCaller,long", OverloadedAfterCallAspect.after31);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,Object[]",
+            OverloadedAfterCallAspect.after25);
+      assertEquals("OverloadedAdvicePOJO,SuperClass,long,Object[]",
+            OverloadedAfterCallAspect.after26);
+      assertEquals("Object,OverloadedAdvicePOJOCaller,long,Object[]",
+            OverloadedAfterCallAspect.after27);
+      assertEquals("Object,SuperClass,long,Object[]",
+            OverloadedAfterCallAspect.after28);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long",
+            OverloadedAfterCallAspect.after29);
+      assertEquals("OverloadedAdvicePOJO,SuperClass,long",
+            OverloadedAfterCallAspect.after30);
+      assertEquals("Object,OverloadedAdvicePOJOCaller,long",
+            OverloadedAfterCallAspect.after31);
       assertEquals("Object,SuperClass,long", OverloadedAfterCallAspect.after32);
-      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int", OverloadedAfterCallAspect.after33);
-      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller", OverloadedAfterCallAspect.after34);
-      assertEquals("OverloadedAdvicePOJO,long,int", OverloadedAfterCallAspect.after35);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int",
+            OverloadedAfterCallAspect.after33);
+      assertEquals("OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller",
+            OverloadedAfterCallAspect.after34);
+      assertEquals("OverloadedAdvicePOJO,long,int",
+            OverloadedAfterCallAspect.after35);
       assertEquals("Object,long,int", OverloadedAfterCallAspect.after36);
-      assertEquals("OverloadedAdvicePOJO,long,Object[]", OverloadedAfterCallAspect.after37);
+      assertEquals("OverloadedAdvicePOJO,long,Object[]",
+            OverloadedAfterCallAspect.after37);
       assertEquals("Object,long,Object[]", OverloadedAfterCallAspect.after38);
       assertEquals("OverloadedAdvicePOJO,long", OverloadedAfterCallAspect.after39);
       assertEquals("Object,long", OverloadedAfterCallAspect.after40);
       assertEquals("OverloadedAdvicePOJO,int", OverloadedAfterCallAspect.after41);
       assertEquals("OverloadedAdvicePOJO", OverloadedAfterCallAspect.after42);
-      assertEquals("OverloadedAdvicePOJOCaller,long,int", OverloadedAfterCallAspect.after43);
+      assertEquals("OverloadedAdvicePOJOCaller,long,int",
+            OverloadedAfterCallAspect.after43);
       assertEquals("SuperClass,long,int", OverloadedAfterCallAspect.after44);
-      assertEquals("OverloadedAdvicePOJOCaller,long,Object[]", OverloadedAfterCallAspect.after45);
+      assertEquals("OverloadedAdvicePOJOCaller,long,Object[]",
+            OverloadedAfterCallAspect.after45);
       assertEquals("SuperClass,long,Object[]", OverloadedAfterCallAspect.after46);
-      assertEquals("OverloadedAdvicePOJOCaller,long", OverloadedAfterCallAspect.after47);
+      assertEquals("OverloadedAdvicePOJOCaller,long",
+            OverloadedAfterCallAspect.after47);
       assertEquals("SuperClass,long", OverloadedAfterCallAspect.after48);
-      assertEquals("OverloadedAdvicePOJOCaller,int", OverloadedAfterCallAspect.after49);
+      assertEquals("OverloadedAdvicePOJOCaller,int",
+            OverloadedAfterCallAspect.after49);
       assertEquals("OverloadedAdvicePOJOCaller", OverloadedAfterCallAspect.after50);
    }
    
-   public void test8()
+   public void testAfterCallThrowing()
    {
+      // clear all relevant aspect fields
+      OverloadedThrowingCallAspect.clear();
+      // execute the join point
       (new OverloadedAdvicePOJOCaller()).callMethod4(pojo);
+      // check aspect fields
       assertEquals(
             "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable,boolean",
             OverloadedThrowingCallAspect.throwing1);

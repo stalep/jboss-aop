@@ -474,6 +474,39 @@
    
   	<bind pointcut="execution(org.jboss.test.aop.beforeafterArgs.OverloadedAdvicePOJO->new(org.jboss.test.aop.beforeafterArgs.SubInterface,org.jboss.test.aop.beforeafterArgs.Implementor))">
    	<throwing name="throwing1" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing2" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing3" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing4" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing5" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing6" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing7" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing8" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing9" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing10" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing11" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing12" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing13" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing14" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing15" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing16" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing17" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing18" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing19" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing20" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing21" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing22" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing23" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing24" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing25" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing26" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing27" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing28" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing29" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing30" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing31" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing32" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing33" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing34" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
   	</bind>
   	
   	<aspect class="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeCallAspect" scope="PER_VM"/>
