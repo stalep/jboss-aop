@@ -418,6 +418,24 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       assertEquals("Object", OverloadedThrowingAspect.throwing34);
    }
    
+   public void testAfterThrowing2()
+   {
+      // clear all relevant aspect fields
+      OverloadedThrowingAspect.clear();
+      // execute the join point
+      try
+      {
+         new OverloadedAdvicePOJO(null, null, 0);
+      } catch (POJOException pe) {}
+      
+      // check aspect fields
+      
+      assertEquals("Throwable,SuperInterface", OverloadedThrowingAspect.throwing35);
+      assertEquals("Throwable,Object", OverloadedThrowingAspect.throwing36);
+      assertNotNull(OverloadedThrowingAspect.throwing37); // it can choose any advice
+      assertEquals("Throwable,Object", OverloadedThrowingAspect.throwing38);
+   }
+   
    public void testBeforeCall()
    {
       // clear all relevant aspect fields

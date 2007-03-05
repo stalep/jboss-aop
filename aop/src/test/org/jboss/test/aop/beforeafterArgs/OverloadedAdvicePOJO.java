@@ -37,6 +37,11 @@ public class OverloadedAdvicePOJO
       throw new POJOException();
    }
    
+   public OverloadedAdvicePOJO(Interface arg1, Implementor arg2, int arg3) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
    public void method1(int arg1, long arg2) {}
    
    public SuperClass method2(float arg1, SubValue arg2)

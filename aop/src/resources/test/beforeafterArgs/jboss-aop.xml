@@ -532,6 +532,13 @@
    	<throwing name="throwing34" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
   	</bind>
   	
+  	<bind pointcut="execution(org.jboss.test.aop.beforeafterArgs.OverloadedAdvicePOJO->new(org.jboss.test.aop.beforeafterArgs.Interface,org.jboss.test.aop.beforeafterArgs.Implementor,int))">
+   	<throwing name="throwing35" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing36" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing37" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+   	<throwing name="throwing38" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingAspect"/>
+  	</bind>
+  	
   	<aspect class="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeCallAspect" scope="PER_VM"/>
   	<aspect class="org.jboss.test.aop.beforeafterArgs.OverloadedAroundCallAspect" scope="PER_VM"/>
   	<aspect class="org.jboss.test.aop.beforeafterArgs.OverloadedAfterCallAspect" scope="PER_VM"/>

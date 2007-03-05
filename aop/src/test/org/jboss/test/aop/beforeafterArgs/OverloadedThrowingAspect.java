@@ -73,6 +73,10 @@ public class OverloadedThrowingAspect
    static String throwing32 = null;
    static String throwing33 = null;
    static String throwing34 = null;
+   static String throwing35 = null;
+   static String throwing36 = null;
+   static String throwing37 = null;
+   static String throwing38 = null;
    
    static void clear()
    {
@@ -110,6 +114,10 @@ public class OverloadedThrowingAspect
       throwing32 = null;
       throwing33 = null;
       throwing34 = null;
+      throwing35 = null;
+      throwing36 = null;
+      throwing37 = null;
+      throwing38 = null;
    }
 
    /* THROWING1 ADVICE */
@@ -133,7 +141,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Throwable thrown, @Arg SubInterface arg1, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing1 = "JoinPointInfo,Throwable,SubInterface,Object";
    }
@@ -165,7 +173,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing1 = "JoinPointInfo,Throwable,SuperInterface,Object";
    }
@@ -221,7 +229,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SubInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing1 = "JoinPointInfo,Object,SubInterface,Object";
    }
@@ -253,7 +261,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing1(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing1 = "JoinPointInfo,Object,SuperInterface,Object";
    }
@@ -309,7 +317,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing1(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing1 = "JoinPointInfo,Throwable,Object";
    }
@@ -338,7 +346,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing1(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing1 = "Throwable,SubInterface,Object";
    }
@@ -386,7 +394,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing1(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing1 = "Throwable,SuperInterface,Object";
    }
@@ -431,7 +439,7 @@ public class OverloadedThrowingAspect
       throwing1 = "Throwable,SubInterface";
    }
 
-   public void throwing1(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing1(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing1 = "Throwable,Object";
    }
@@ -456,7 +464,7 @@ public class OverloadedThrowingAspect
       throwing1 = "Object,SubInterface";
    }
 
-   public void throwing1(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing1(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing1 = "Object,Object";
    }
@@ -511,7 +519,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing2(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Throwable thrown, @Arg SubInterface arg1, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing2 = "JoinPointInfo,Throwable,SubInterface,Object";
    }
@@ -543,7 +551,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing2(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing2 = "JoinPointInfo,Throwable,SuperInterface,Object";
    }
@@ -599,7 +607,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing2(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SubInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing2 = "JoinPointInfo,Object,SubInterface,Object";
    }
@@ -631,7 +639,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing2(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing2 = "JoinPointInfo,Object,SuperInterface,Object";
    }
@@ -687,7 +695,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing2(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing2 = "JoinPointInfo,Throwable,Object";
    }
@@ -716,7 +724,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing2(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing2 = "Throwable,SubInterface,Object";
    }
@@ -764,7 +772,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing2(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing2 = "Throwable,SuperInterface,Object";
    }
@@ -809,7 +817,7 @@ public class OverloadedThrowingAspect
       throwing2 = "Throwable,SubInterface";
    }
 
-   public void throwing2(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing2(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing2 = "Throwable,Object";
    }
@@ -834,7 +842,7 @@ public class OverloadedThrowingAspect
       throwing2 = "Object,SubInterface";
    }
 
-   public void throwing2(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing2(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing2 = "Object,Object";
    }
@@ -903,7 +911,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing3(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing3 = "JoinPointInfo,Throwable,SuperInterface,Object";
    }
@@ -959,7 +967,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing3(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SubInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing3 = "JoinPointInfo,Object,SubInterface,Object";
    }
@@ -991,7 +999,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing3(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing3 = "JoinPointInfo,Object,SuperInterface,Object";
    }
@@ -1047,7 +1055,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing3(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing3 = "JoinPointInfo,Throwable,Object";
    }
@@ -1076,7 +1084,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing3(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing3 = "Throwable,SubInterface,Object";
    }
@@ -1124,7 +1132,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing3(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing3 = "Throwable,SuperInterface,Object";
    }
@@ -1169,7 +1177,7 @@ public class OverloadedThrowingAspect
       throwing3 = "Throwable,SubInterface";
    }
 
-   public void throwing3(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing3(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing3 = "Throwable,Object";
    }
@@ -1194,7 +1202,7 @@ public class OverloadedThrowingAspect
       throwing3 = "Object,SubInterface";
    }
 
-   public void throwing3(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing3(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing3 = "Object,Object";
    }
@@ -1244,7 +1252,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing4(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing4 = "JoinPointInfo,Throwable,SuperInterface,Object";
    }
@@ -1300,7 +1308,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing4(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SubInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing4 = "JoinPointInfo,Object,SubInterface,Object";
    }
@@ -1332,7 +1340,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing4(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing4 = "JoinPointInfo,Object,SuperInterface,Object";
    }
@@ -1388,7 +1396,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing4(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing4 = "JoinPointInfo,Throwable,Object";
    }
@@ -1417,7 +1425,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing4(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing4 = "Throwable,SubInterface,Object";
    }
@@ -1465,7 +1473,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing4(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing4 = "Throwable,SuperInterface,Object";
    }
@@ -1510,7 +1518,7 @@ public class OverloadedThrowingAspect
       throwing4 = "Throwable,SubInterface";
    }
 
-   public void throwing4(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing4(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing4 = "Throwable,Object";
    }
@@ -1535,7 +1543,7 @@ public class OverloadedThrowingAspect
       throwing4 = "Object,SubInterface";
    }
 
-   public void throwing4(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing4(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing4 = "Object,Object";
    }
@@ -1615,7 +1623,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing5(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SubInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing5 = "JoinPointInfo,Object,SubInterface,Object";
    }
@@ -1647,7 +1655,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing5(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing5 = "JoinPointInfo,Object,SuperInterface,Object";
    }
@@ -1703,7 +1711,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing5(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing5 = "JoinPointInfo,Throwable,Object";
    }
@@ -1732,7 +1740,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing5(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing5 = "Throwable,SubInterface,Object";
    }
@@ -1780,7 +1788,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing5(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing5 = "Throwable,SuperInterface,Object";
    }
@@ -1825,7 +1833,7 @@ public class OverloadedThrowingAspect
       throwing5 = "Throwable,SubInterface";
    }
 
-   public void throwing5(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing5(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing5 = "Throwable,Object";
    }
@@ -1850,7 +1858,7 @@ public class OverloadedThrowingAspect
       throwing5 = "Object,SubInterface";
    }
 
-   public void throwing5(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing5(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing5 = "Object,Object";
    }
@@ -1918,7 +1926,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing6(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SubInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing6 = "JoinPointInfo,Object,SubInterface,Object";
    }
@@ -1950,7 +1958,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing6(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing6 = "JoinPointInfo,Object,SuperInterface,Object";
    }
@@ -2006,7 +2014,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing6(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing6 = "JoinPointInfo,Throwable,Object";
    }
@@ -2035,7 +2043,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing6(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing6 = "Throwable,SubInterface,Object";
    }
@@ -2083,7 +2091,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing6(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing6 = "Throwable,SuperInterface,Object";
    }
@@ -2128,7 +2136,7 @@ public class OverloadedThrowingAspect
       throwing6 = "Throwable,SubInterface";
    }
 
-   public void throwing6(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing6(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing6 = "Throwable,Object";
    }
@@ -2153,7 +2161,7 @@ public class OverloadedThrowingAspect
       throwing6 = "Object,SubInterface";
    }
 
-   public void throwing6(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing6(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing6 = "Object,Object";
    }
@@ -2214,7 +2222,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing7(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SubInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing7 = "JoinPointInfo,Object,SubInterface,Object";
    }
@@ -2246,7 +2254,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing7(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing7 = "JoinPointInfo,Object,SuperInterface,Object";
    }
@@ -2302,7 +2310,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing7(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing7 = "JoinPointInfo,Throwable,Object";
    }
@@ -2331,7 +2339,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing7(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing7 = "Throwable,SubInterface,Object";
    }
@@ -2379,7 +2387,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing7(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing7 = "Throwable,SuperInterface,Object";
    }
@@ -2424,7 +2432,7 @@ public class OverloadedThrowingAspect
       throwing7 = "Throwable,SubInterface";
    }
 
-   public void throwing7(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing7(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing7 = "Throwable,Object";
    }
@@ -2449,7 +2457,7 @@ public class OverloadedThrowingAspect
       throwing7 = "Object,SubInterface";
    }
 
-   public void throwing7(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing7(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing7 = "Object,Object";
    }
@@ -2504,7 +2512,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing8(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SubInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing8 = "JoinPointInfo,Object,SubInterface,Object";
    }
@@ -2536,7 +2544,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing8(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing8 = "JoinPointInfo,Object,SuperInterface,Object";
    }
@@ -2592,7 +2600,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing8(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing8 = "JoinPointInfo,Throwable,Object";
    }
@@ -2621,7 +2629,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing8(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing8 = "Throwable,SubInterface,Object";
    }
@@ -2669,7 +2677,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing8(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing8 = "Throwable,SuperInterface,Object";
    }
@@ -2714,7 +2722,7 @@ public class OverloadedThrowingAspect
       throwing8 = "Throwable,SubInterface";
    }
 
-   public void throwing8(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing8(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing8 = "Throwable,Object";
    }
@@ -2739,7 +2747,7 @@ public class OverloadedThrowingAspect
       throwing8 = "Object,SubInterface";
    }
 
-   public void throwing8(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing8(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing8 = "Object,Object";
    }
@@ -2808,7 +2816,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing9(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing9 = "JoinPointInfo,Object,SuperInterface,Object";
    }
@@ -2864,7 +2872,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing9(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing9 = "JoinPointInfo,Throwable,Object";
    }
@@ -2893,7 +2901,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing9(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing9 = "Throwable,SubInterface,Object";
    }
@@ -2941,7 +2949,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing9(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing9 = "Throwable,SuperInterface,Object";
    }
@@ -2986,7 +2994,7 @@ public class OverloadedThrowingAspect
       throwing9 = "Throwable,SubInterface";
    }
 
-   public void throwing9(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing9(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing9 = "Throwable,Object";
    }
@@ -3011,7 +3019,7 @@ public class OverloadedThrowingAspect
       throwing9 = "Object,SubInterface";
    }
 
-   public void throwing9(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing9(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing9 = "Object,Object";
    }
@@ -3061,7 +3069,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing10(@JoinPoint JoinPointInfo joinpoint,
-         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Object arg2)
+         @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
       throwing10 = "JoinPointInfo,Object,SuperInterface,Object";
    }
@@ -3117,7 +3125,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing10(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing10 = "JoinPointInfo,Throwable,Object";
    }
@@ -3146,7 +3154,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing10(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing10 = "Throwable,SubInterface,Object";
    }
@@ -3194,7 +3202,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing10(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing10 = "Throwable,SuperInterface,Object";
    }
@@ -3239,7 +3247,7 @@ public class OverloadedThrowingAspect
       throwing10 = "Throwable,SubInterface";
    }
 
-   public void throwing10(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing10(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing10 = "Throwable,Object";
    }
@@ -3264,7 +3272,7 @@ public class OverloadedThrowingAspect
       throwing10 = "Object,SubInterface";
    }
 
-   public void throwing10(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing10(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing10 = "Object,Object";
    }
@@ -3344,7 +3352,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing11(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing11 = "JoinPointInfo,Throwable,Object";
    }
@@ -3373,7 +3381,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing11(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing11 = "Throwable,SubInterface,Object";
    }
@@ -3421,7 +3429,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing11(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing11 = "Throwable,SuperInterface,Object";
    }
@@ -3466,7 +3474,7 @@ public class OverloadedThrowingAspect
       throwing11 = "Throwable,SubInterface";
    }
 
-   public void throwing11(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing11(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing11 = "Throwable,Object";
    }
@@ -3491,7 +3499,7 @@ public class OverloadedThrowingAspect
       throwing11 = "Object,SubInterface";
    }
 
-   public void throwing11(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing11(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing11 = "Object,Object";
    }
@@ -3559,7 +3567,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing12(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing12 = "JoinPointInfo,Throwable,Object";
    }
@@ -3588,7 +3596,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing12(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing12 = "Throwable,SubInterface,Object";
    }
@@ -3636,7 +3644,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing12(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing12 = "Throwable,SuperInterface,Object";
    }
@@ -3681,7 +3689,7 @@ public class OverloadedThrowingAspect
       throwing12 = "Throwable,SubInterface";
    }
 
-   public void throwing12(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing12(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing12 = "Throwable,Object";
    }
@@ -3706,7 +3714,7 @@ public class OverloadedThrowingAspect
       throwing12 = "Object,SubInterface";
    }
 
-   public void throwing12(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing12(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing12 = "Object,Object";
    }
@@ -3767,7 +3775,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing13(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing13 = "JoinPointInfo,Throwable,Object";
    }
@@ -3796,7 +3804,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing13(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing13 = "Throwable,SubInterface,Object";
    }
@@ -3844,7 +3852,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing13(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing13 = "Throwable,SuperInterface,Object";
    }
@@ -3889,7 +3897,7 @@ public class OverloadedThrowingAspect
       throwing13 = "Throwable,SubInterface";
    }
 
-   public void throwing13(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing13(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing13 = "Throwable,Object";
    }
@@ -3914,7 +3922,7 @@ public class OverloadedThrowingAspect
       throwing13 = "Object,SubInterface";
    }
 
-   public void throwing13(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing13(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing13 = "Object,Object";
    }
@@ -3963,7 +3971,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing14(@JoinPoint JoinPointInfo joinPoint,
-         @Thrown Throwable thrown, @Arg Object arg2)
+         @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing14 = "JoinPointInfo,Throwable,Object";
    }
@@ -3992,7 +4000,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing14(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing14 = "Throwable,SubInterface,Object";
    }
@@ -4040,7 +4048,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing14(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing14 = "Throwable,SuperInterface,Object";
    }
@@ -4085,7 +4093,7 @@ public class OverloadedThrowingAspect
       throwing14 = "Throwable,SubInterface";
    }
 
-   public void throwing14(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing14(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing14 = "Throwable,Object";
    }
@@ -4110,7 +4118,7 @@ public class OverloadedThrowingAspect
       throwing14 = "Object,SubInterface";
    }
 
-   public void throwing14(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing14(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing14 = "Object,Object";
    }
@@ -4177,7 +4185,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing15(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing15 = "Throwable,SubInterface,Object";
    }
@@ -4225,7 +4233,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing15(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing15 = "Throwable,SuperInterface,Object";
    }
@@ -4270,7 +4278,7 @@ public class OverloadedThrowingAspect
       throwing15 = "Throwable,SubInterface";
    }
 
-   public void throwing15(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing15(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing15 = "Throwable,Object";
    }
@@ -4295,7 +4303,7 @@ public class OverloadedThrowingAspect
       throwing15 = "Object,SubInterface";
    }
 
-   public void throwing15(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing15(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing15 = "Object,Object";
    }
@@ -4356,7 +4364,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing16(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing16 = "Throwable,SubInterface,Object";
    }
@@ -4404,7 +4412,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing16(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing16 = "Throwable,SuperInterface,Object";
    }
@@ -4449,7 +4457,7 @@ public class OverloadedThrowingAspect
       throwing16 = "Throwable,SubInterface";
    }
 
-   public void throwing16(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing16(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing16 = "Throwable,Object";
    }
@@ -4474,7 +4482,7 @@ public class OverloadedThrowingAspect
       throwing16 = "Object,SubInterface";
    }
 
-   public void throwing16(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing16(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing16 = "Object,Object";
    }
@@ -4529,7 +4537,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing17(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing17 = "Throwable,SubInterface,Object";
    }
@@ -4577,7 +4585,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing17(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing17 = "Throwable,SuperInterface,Object";
    }
@@ -4622,7 +4630,7 @@ public class OverloadedThrowingAspect
       throwing17 = "Throwable,SubInterface";
    }
 
-   public void throwing17(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing17(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing17 = "Throwable,Object";
    }
@@ -4647,7 +4655,7 @@ public class OverloadedThrowingAspect
       throwing17 = "Object,SubInterface";
    }
 
-   public void throwing17(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing17(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing17 = "Object,Object";
    }
@@ -4696,7 +4704,7 @@ public class OverloadedThrowingAspect
    }
    
    public void throwing18(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing18 = "Throwable,SubInterface,Object";
    }
@@ -4744,7 +4752,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing18(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing18 = "Throwable,SuperInterface,Object";
    }
@@ -4789,7 +4797,7 @@ public class OverloadedThrowingAspect
       throwing18 = "Throwable,SubInterface";
    }
 
-   public void throwing18(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing18(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing18 = "Throwable,Object";
    }
@@ -4814,7 +4822,7 @@ public class OverloadedThrowingAspect
       throwing18 = "Object,SubInterface";
    }
 
-   public void throwing18(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing18(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing18 = "Object,Object";
    }
@@ -4857,7 +4865,7 @@ public class OverloadedThrowingAspect
    /* THROWING19 ADVICE */
    
    public void throwing19(@Thrown Throwable thrown, @Arg SubInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing19 = "Throwable,SubInterface,Object";
    }
@@ -4905,7 +4913,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing19(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing19 = "Throwable,SuperInterface,Object";
    }
@@ -4950,7 +4958,7 @@ public class OverloadedThrowingAspect
       throwing19 = "Throwable,SubInterface";
    }
 
-   public void throwing19(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing19(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing19 = "Throwable,Object";
    }
@@ -4975,7 +4983,7 @@ public class OverloadedThrowingAspect
       throwing19 = "Object,SubInterface";
    }
 
-   public void throwing19(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing19(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing19 = "Object,Object";
    }
@@ -5048,7 +5056,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing20(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing20 = "Throwable,SuperInterface,Object";
    }
@@ -5093,7 +5101,7 @@ public class OverloadedThrowingAspect
       throwing20 = "Throwable,SubInterface";
    }
 
-   public void throwing20(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing20(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing20 = "Throwable,Object";
    }
@@ -5118,7 +5126,7 @@ public class OverloadedThrowingAspect
       throwing20 = "Object,SubInterface";
    }
 
-   public void throwing20(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing20(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing20 = "Object,Object";
    }
@@ -5173,7 +5181,7 @@ public class OverloadedThrowingAspect
    }
 
    public void throwing21(@Thrown Throwable thrown, @Arg SuperInterface arg1,
-         @Arg Object arg2)
+         @Arg(index=1) Object arg2)
    {
       throwing21 = "Throwable,SuperInterface,Object";
    }
@@ -5218,7 +5226,7 @@ public class OverloadedThrowingAspect
       throwing21 = "Throwable,SubInterface";
    }
 
-   public void throwing21(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing21(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing21 = "Throwable,Object";
    }
@@ -5243,7 +5251,7 @@ public class OverloadedThrowingAspect
       throwing21 = "Object,SubInterface";
    }
 
-   public void throwing21(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing21(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing21 = "Object,Object";
    }
@@ -5319,7 +5327,7 @@ public class OverloadedThrowingAspect
       throwing22 = "Throwable,SubInterface";
    }
 
-   public void throwing22(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing22(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing22 = "Throwable,Object";
    }
@@ -5344,7 +5352,7 @@ public class OverloadedThrowingAspect
       throwing22 = "Object,SubInterface";
    }
 
-   public void throwing22(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing22(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing22 = "Object,Object";
    }
@@ -5408,7 +5416,7 @@ public class OverloadedThrowingAspect
       throwing23 = "Throwable,SubInterface";
    }
 
-   public void throwing23(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing23(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing23 = "Throwable,Object";
    }
@@ -5433,7 +5441,7 @@ public class OverloadedThrowingAspect
       throwing23 = "Object,SubInterface";
    }
 
-   public void throwing23(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing23(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing23 = "Object,Object";
    }
@@ -5491,7 +5499,7 @@ public class OverloadedThrowingAspect
       throwing24 = "Throwable,SubInterface";
    }
 
-   public void throwing24(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing24(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing24 = "Throwable,Object";
    }
@@ -5516,7 +5524,7 @@ public class OverloadedThrowingAspect
       throwing24 = "Object,SubInterface";
    }
 
-   public void throwing24(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing24(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing24 = "Object,Object";
    }
@@ -5568,7 +5576,7 @@ public class OverloadedThrowingAspect
       throwing25 = "Throwable,SubInterface";
    }
 
-   public void throwing25(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing25(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing25 = "Throwable,Object";
    }
@@ -5593,7 +5601,7 @@ public class OverloadedThrowingAspect
       throwing25 = "Object,SubInterface";
    }
 
-   public void throwing25(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing25(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing25 = "Object,Object";
    }
@@ -5635,7 +5643,7 @@ public class OverloadedThrowingAspect
    
    /* THROWING26 ADVICE */
    
-   public void throwing26(@Thrown Throwable thrown, @Arg Object arg2)
+   public void throwing26(@Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
       throwing26 = "Throwable,Object";
    }
@@ -5660,7 +5668,7 @@ public class OverloadedThrowingAspect
       throwing26 = "Object,SubInterface";
    }
 
-   public void throwing26(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing26(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing26 = "Object,Object";
    }
@@ -5717,7 +5725,7 @@ public class OverloadedThrowingAspect
       throwing27 = "Object,SubInterface";
    }
 
-   public void throwing27(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing27(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing27 = "Object,Object";
    }
@@ -5769,7 +5777,7 @@ public class OverloadedThrowingAspect
       throwing28 = "Object,SubInterface";
    }
 
-   public void throwing28(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing28(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing28 = "Object,Object";
    }
@@ -5811,7 +5819,7 @@ public class OverloadedThrowingAspect
    
    /* THROWING29 ADVICE */
    
-   public void throwing29(@Thrown Object thrown, @Arg Object arg2)
+   public void throwing29(@Thrown Object thrown, @Arg(index=1) Object arg2)
    {
       throwing29 = "Object,Object";
    }
@@ -5959,5 +5967,57 @@ public class OverloadedThrowingAspect
    public void throwing34(@JoinPoint JoinPointInfo joinpoint)
    {
       Assert.fail("This advice should never be executed");
+   }
+   
+   /* THROWING35 ADVICE */
+   
+   public void throwing35(@Thrown Throwable thrown, @Arg Object arg1)
+   {
+      throwing35 = "Throwable,Object";
+   }
+   
+   public void throwing35(@Thrown Throwable thrown,
+         @Arg SuperInterface arg2)
+   {
+      throwing35 = "Throwable,SuperInterface";  
+   }
+   
+   /* THROWING36 ADVICE */
+   
+   public void throwing36(@Thrown Throwable thrown, @Arg Object arg1)
+   {
+      throwing36 = "Throwable,Object";
+   }
+   
+   public void throwing36(@Thrown Throwable thrown,
+         @Arg(index=1) SuperInterface arg2)
+   {
+      throwing36 = "Throwable,SuperInterface";  
+   }
+   
+   /* THROWING37 ADVICE */
+   
+   public void throwing37(@Thrown Throwable thrown, @Arg(index=1) Object arg1)
+   {
+      throwing37 = "Throwable,Object";
+   }
+   
+   public void throwing37(@Thrown Throwable thrown,
+         @Arg SuperInterface arg2)
+   {
+      throwing37 = "Throwable,SuperInterface";  
+   }
+   
+   /* THROWING38 ADVICE */
+   
+   public void throwing38(@Thrown Throwable thrown, @Arg(index=1) Object arg1)
+   {
+      throwing38 = "Throwable,Object";
+   }
+   
+   public void throwing38(@Thrown Throwable thrown,
+         @Arg(index=1) SuperInterface arg2)
+   {
+      throwing38 = "Throwable,SuperInterface";  
    }
 }
