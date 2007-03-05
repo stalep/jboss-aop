@@ -1,6 +1,7 @@
 package org.jboss.aop.advice.annotation;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import org.jboss.aop.advice.AdviceMethodProperties;
 import org.jboss.aop.advice.annotation.AdviceMethodFactory.ReturnType;
@@ -77,7 +78,40 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
       }
       if (fromType.isInterface())
       {
-         // you can't get to a class from an interface
+         // if is object, the degree is the size of this interface hierarchy + 1
+         if (toType.getName() == "java.lang.Object")
+         {
+            ArrayList<Class[]> list1 = new ArrayList<Class[]>();
+            ArrayList<Class[]> list2 = new ArrayList<Class[]>();
+            Class[] fromTypeInterfaces = fromType.getInterfaces();
+            if (fromTypeInterfaces.length == 0)
+            {
+               return 1;
+            }
+            list1.add(fromTypeInterfaces);
+            short degree = 2;
+            while (true)
+            {
+               for (Class[] interfaces : list1)
+               {
+                  for (int i = 0; i < interfaces.length; i++)
+                  {
+                     Class[] superInterfaces = interfaces[i].getInterfaces();
+                     if (superInterfaces.length == 0)
+                     {
+                        return degree;
+                     }
+                     list2.add(superInterfaces);
+                  }
+               }
+               degree ++;
+               list1.clear();
+               ArrayList<Class[]> temp = list1;
+               list1 = list2;
+               list2 = temp;
+            }
+         }
+         // you can't get to a class (except Object) from an interface
          return AdviceMethodFactory.NOT_ASSIGNABLE_DEGREE;
       }
       // assignability degree on class inheritance
