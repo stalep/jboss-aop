@@ -25,6 +25,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import org.jboss.aop.joinpoint.ConstructorJoinpoint;
+import org.jboss.aop.joinpoint.IConstructorInfo;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.util.MethodHashing;
 
@@ -34,7 +35,7 @@ import org.jboss.aop.util.MethodHashing;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
-public class ConstructorInfo extends JoinPointInfo
+public class ConstructorInfo extends JoinPointInfo 
 {
    private Method wrapper;
    private Constructor constructor;
@@ -116,4 +117,20 @@ public class ConstructorInfo extends JoinPointInfo
    {
       return index;
    }
+   
+
+   public Object resolveAnnotation(Class annotation)
+   {
+      Object val = super.resolveAnnotation(annotation);
+      if (val != null) return val;
+
+      if (getAdvisor() != null)
+      {
+         val = getAdvisor().resolveAnnotation(constructor, annotation);
+         if (val != null) return val;
+      }
+
+      return null;
+   }
+
 }

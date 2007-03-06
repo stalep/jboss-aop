@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.ConstructorCalledByMethodJoinpoint;
+import org.jboss.aop.joinpoint.IConByMethodInfo;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.util.MethodHashing;
 
@@ -34,7 +35,7 @@ import org.jboss.aop.util.MethodHashing;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
-public class ConByMethodInfo extends CallerConstructorInfo
+public class ConByMethodInfo extends CallerConstructorInfo 
 {
    private final long callingMethodHash;
    private final Method callingMethod;

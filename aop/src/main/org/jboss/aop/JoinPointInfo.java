@@ -23,7 +23,6 @@ package org.jboss.aop;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.Joinpoint;
@@ -136,4 +135,24 @@ public abstract class JoinPointInfo
 
    protected abstract Joinpoint internalGetJoinpoint();
    public abstract JoinPointInfo copy();
+   
+   public Object resolveClassMetaData(Object key, Object attr)
+   {
+      return getAdvisor().getClassMetaData().getMetaData(key, attr);
+   }
+   
+   public Object resolveClassAnnotation(Class annotation)
+   {
+      Advisor advisor = getAdvisor();
+      if (advisor != null)
+      {
+         return advisor.resolveAnnotation(annotation);
+      }
+      return null;
+   }
+   
+   public Object resolveAnnotation(Class annotation)
+   {
+      return null;
+   }
 }

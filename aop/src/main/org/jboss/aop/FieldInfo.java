@@ -21,15 +21,14 @@
   */
 package org.jboss.aop;
 
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
-import org.jboss.aop.SecurityActions.SetAccessibleAction;
 import org.jboss.aop.joinpoint.FieldJoinpoint;
+import org.jboss.aop.joinpoint.IFieldInfo;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.util.MethodHashing;
 
@@ -39,7 +38,7 @@ import org.jboss.aop.util.MethodHashing;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
-public class FieldInfo extends JoinPointInfo
+public class FieldInfo extends JoinPointInfo 
 {
    private int index;
    private Field advisedField;
@@ -147,6 +146,20 @@ public class FieldInfo extends JoinPointInfo
    public boolean isRead()
    {
       return read;
+   }
+
+   public Object resolveAnnotation(Class annotation)
+   {
+      Object val = super.resolveAnnotation(annotation);
+      if (val != null) return val;
+
+      if (getAdvisor() != null)
+      {
+         val = getAdvisor().resolveAnnotation(advisedField, annotation);
+         if (val != null) return val;
+      }
+
+      return null;
    }
 
    private Field doGet(Class clazz, String name)throws NoSuchFieldException

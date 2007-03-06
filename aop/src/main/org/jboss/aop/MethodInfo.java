@@ -21,17 +21,17 @@
   */
 package org.jboss.aop;
 
+import org.jboss.aop.joinpoint.IMethodInfo;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodJoinpoint;
 import org.jboss.aop.util.MethodHashing;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 /**
  *  This class is here to eliminate a hash lookup in invokeMethod
  */
-public class MethodInfo extends JoinPointInfo
+public class MethodInfo extends JoinPointInfo 
 {
    private Method advisedMethod;
    private Method unadvisedMethod;
@@ -115,5 +115,21 @@ public class MethodInfo extends JoinPointInfo
       sb.append("method=" + advisedMethod);
       sb.append("]");
       return sb.toString();
+   }
+
+   public Object resolveAnnotation(Class annotation)
+   {
+      Object val = super.resolveAnnotation(annotation);
+      if (val != null)
+      {
+         return val;
+      }
+      
+      Advisor advisor = getAdvisor();
+      if (advisor != null)
+      {
+         return getAdvisor().resolveAnnotation(hash, advisedMethod, annotation);
+      }
+      return null;
    }
 }
