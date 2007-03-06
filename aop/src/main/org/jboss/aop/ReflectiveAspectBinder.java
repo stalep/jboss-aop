@@ -42,6 +42,7 @@ import java.util.Set;
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.introduction.AnnotationIntroduction;
 import org.jboss.aop.microcontainer.lifecycle.LifecycleCallbackBinding;
+import org.jboss.aop.microcontainer.lifecycle.LifecycleCallbackDefinition;
 import org.jboss.aop.pointcut.AnnotationMatcher;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
 import org.jboss.aop.proxy.container.InstanceProxyContainer;
@@ -65,8 +66,8 @@ public class ReflectiveAspectBinder
    protected boolean isInstanceContainer;
    TLongObjectHashMap methodMap = new TLongObjectHashMap();
 
-   //Lifecycle callbacks are a microcontainer thing
-   protected Map<Object, Set<String>> lifecycleCallbacks = new HashMap<Object, Set<String>>();
+   //Lifecycle callbacks are a microcontainer thing, the key is the MC ControllerState
+   protected Map<Object, Set<LifecycleCallbackDefinition>> lifecycleCallbacks = new HashMap<Object, Set<LifecycleCallbackDefinition>>();
    boolean initialisedAspects;
    boolean intitialisedLifecycleCallbacks;
    
@@ -93,7 +94,7 @@ public class ReflectiveAspectBinder
       return aspects;
    }
 
-   public Map<Object, Set<String>> getLifecycleCallbacks()
+   public Map<Object, Set<LifecycleCallbackDefinition>> getLifecycleCallbacks()
    {
       if (!intitialisedLifecycleCallbacks)
       {
@@ -319,15 +320,15 @@ public class ReflectiveAspectBinder
          if (binding.matches(advisor, clazz))
          {
             final Object state = binding.getControllerState();
-            Set<String> callbacks = lifecycleCallbacks.get(state);
+            Set<LifecycleCallbackDefinition> callbacks = lifecycleCallbacks.get(state);
             if (callbacks == null)
             {
-               callbacks = new HashSet<String>();
+               callbacks = new HashSet<LifecycleCallbackDefinition>();
                lifecycleCallbacks.put(state, callbacks);
             }
             
-            List<String> boundCallbacks = binding.getLifecycleCallbacks();
-            for (String callback : boundCallbacks)
+            List<LifecycleCallbackDefinition> boundCallbacks = binding.getLifecycleCallbacks();
+            for (LifecycleCallbackDefinition callback : boundCallbacks)
             {
                System.out.println("=====> Adding lifecycle " + callback + ":" + state);
                callbacks.add(callback);

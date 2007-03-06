@@ -58,12 +58,13 @@ public class LifecycleCallbackBinding
    /**
     * A list of beans
     */
-   List<String> lifecycleCallbacks = new ArrayList();
+   List<LifecycleCallbackDefinition> lifecycleCallbackDefinitions = new ArrayList<LifecycleCallbackDefinition>();
    
    /**
     * This will be an instance of org.jboss.dependency.spi.ControllerState from the MC project
     */
    Object controllerState;
+
 
    public LifecycleCallbackBinding(String name, String classString, String typeExpression, Object controllerState) throws Exception
    {
@@ -89,19 +90,20 @@ public class LifecycleCallbackBinding
       
       this.controllerState = controllerState;
    }
+   
    public String getName()
    {
       return name;
    }
 
-   public void addLifecycleCallback(String name)
+   public void addLifecycleCallback(String bean, String installMethod, String uninstallMethod)
    {
-      lifecycleCallbacks.add(name);
+      lifecycleCallbackDefinitions.add(new LifecycleCallbackDefinition(bean, installMethod, uninstallMethod));
    }
 
-   public List<String> getLifecycleCallbacks()
+   public List<LifecycleCallbackDefinition> getLifecycleCallbacks()
    {
-      return lifecycleCallbacks;
+      return lifecycleCallbackDefinitions;
    }
    
    public boolean equals(Object obj)
