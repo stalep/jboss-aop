@@ -185,6 +185,8 @@
    
       <!-- The temp folder for aopc -->
       <property name="aopc.tmpdir" value="output/aopctmp"/>
+      <delete dir="${aopc.tmpdir}"/>
+   	<mkdir dir="${aopc.tmpdir}"/>
 
       <!-- Packages to include when generating api documentation -->
       <property name="javadoc.packages" value="org.jbos.aop.*"/>
@@ -586,9 +588,6 @@
    </target>
 
    <target name="_run-precompiled-test">
-      <delete dir="${aopc.tmpdir}"/>
-      <mkdir dir="${aopc.tmpdir}"/>
-   
       <!-- Check for jboss-aop.xml override for compiler -->
       <condition property="aoppath" value="${aop.xml}">
          <isset property="aop.xml"/>
@@ -879,9 +878,6 @@
    </target>
 
    <target name="jdk15-precompiled-tests" depends="compile">
-      <delete dir="${aopc.tmpdir}"/>
-      <mkdir dir="${aopc.tmpdir}"/>
-
       <property name="report.dir" value="${build.reports}"/>
       <mkdir dir="${report.dir}"/>
 

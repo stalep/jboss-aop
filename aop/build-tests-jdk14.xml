@@ -208,6 +208,8 @@
 
       <!-- The temp folder for aopc -->
       <property name="aopc.tmpdir" value="output/aopctmp"/>
+      <delete dir="${aopc.tmpdir}"/>
+   	<mkdir dir="${aopc.tmpdir}"/>
 
       <!-- Packages to include when generating api documentation -->
       <property name="javadoc.packages" value="org.jbos.aop.*"/>
@@ -569,8 +571,6 @@
    </target>
 
    <target name="_run-precompiled-test">
-      <delete dir="${aopc.tmpdir}"/>
-      <mkdir dir="${aopc.tmpdir}"/>
 
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.retro.classpath"/>
       <path id="aop.task.classpath">
@@ -773,8 +773,6 @@
    </target>
 
    <target name="original-memory-test" depends="compile-test-classes" description="Execute MemoryLeakTestCase">
-      <delete dir="${aopc.tmpdir}"/>
-      <mkdir dir="${aopc.tmpdir}"/>
 
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.retro.classpath"/>
       <property name="test" value="memoryleaks"/>
