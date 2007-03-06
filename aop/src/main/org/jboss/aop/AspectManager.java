@@ -42,7 +42,6 @@ import java.util.List;
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AdviceStack;
 import org.jboss.aop.advice.AspectDefinition;
-import org.jboss.aop.advice.AspectFactory;
 import org.jboss.aop.advice.AspectFactoryWithClassLoader;
 import org.jboss.aop.advice.DynamicCFlowDefinition;
 import org.jboss.aop.advice.InterceptorFactory;
@@ -61,6 +60,8 @@ import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.metadata.ClassMetaDataBinding;
 import org.jboss.aop.metadata.ClassMetaDataLoader;
 import org.jboss.aop.metadata.SimpleClassMetaDataLoader;
+import org.jboss.aop.microcontainer.lifecycle.LifecycleCallbackBinding;
+import org.jboss.aop.microcontainer.lifecycle.LifecycleManager;
 import org.jboss.aop.pointcut.CFlowStack;
 import org.jboss.aop.pointcut.DeclareDef;
 import org.jboss.aop.pointcut.DynamicCFlow;
@@ -170,13 +171,16 @@ public class AspectManager
    
    //Keeps track of if we need to convert references etc for a given class. Domains for scoped classloaders will have their own version of this
    protected static InterceptionMarkers interceptionMarkers = new InterceptionMarkers();
-
+   
    // Static -------------------------------------------------------
 
    protected static AspectManager manager;
    public static boolean optimize = true;
    public static boolean debugClasses;//If true, the generated advisor instrumentor will output the generated classes
    public static ClassLoaderValidation classLoaderValidator;
+
+   //Keep track of the microcontainer lifecycle callbacks
+   public LifecycleManager lifecycleManager = new LifecycleManager(this);
 
    /**
     * logging switch.  We don't use log4j to avoid another heavy library
@@ -1940,6 +1944,32 @@ public class AspectManager
       return copied;
    }
 
+   public void addLifecycleDefinition(AspectDefinition def)
+   {
+      lifecycleManager.addLifecycleDefinition(def);
+   }
+   
+   public void removeLifecycleDefinition(String name)
+   {
+      lifecycleManager.removeLifecycleDefinition(name);
+   }
+   
+   public void addLifecycleBinding(LifecycleCallbackBinding lifecycleBinding)
+   {
+      lifecycleManager.addLifecycleBinding(lifecycleBinding);
+   }
+
+   public Map<String, LifecycleCallbackBinding> getLifecycleBindings()
+   {
+      return lifecycleManager.getLifecycleBindings();
+   }
+
+   public void removeLifecycleBinding(String name)
+   {
+      lifecycleManager.removeLifecycleBinding(name);
+   }
+   
+   
 /*
    public void dumpSubDomainsAndAdvisors(int indent)
    {

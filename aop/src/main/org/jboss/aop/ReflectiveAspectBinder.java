@@ -35,9 +35,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.introduction.AnnotationIntroduction;
+import org.jboss.aop.microcontainer.lifecycle.LifecycleCallbackBinding;
 import org.jboss.aop.pointcut.AnnotationMatcher;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
 import org.jboss.aop.proxy.container.InstanceProxyContainer;
@@ -60,16 +64,17 @@ public class ReflectiveAspectBinder
    protected Advisor advisor;
    protected boolean isInstanceContainer;
    TLongObjectHashMap methodMap = new TLongObjectHashMap();
-   
 
+   //Lifecycle callbacks are a microcontainer thing
+   protected Map<Object, Set<String>> lifecycleCallbacks = new HashMap<Object, Set<String>>();
+   boolean initialisedAspects;
+   boolean intitialisedLifecycleCallbacks;
+   
    public ReflectiveAspectBinder(Class clazz, Advisor advisor)
    {
       this.clazz = clazz;
       this.advisor = advisor;
       isInstanceContainer = InstanceProxyContainer.class == advisor.getClass();
-      bindMethodAdvices(clazz);
-      bindConstructorAdvices();
-      bindFieldAdvices();
    }
 
    public Class getClazz()
@@ -79,9 +84,24 @@ public class ReflectiveAspectBinder
 
    public HashSet getAspects()
    {
+      if (!initialisedAspects)
+      {
+         bindMethodAdvices(clazz);
+         bindConstructorAdvices();
+         bindFieldAdvices();
+      }
       return aspects;
    }
 
+   public Map<Object, Set<String>> getLifecycleCallbacks()
+   {
+      if (!intitialisedLifecycleCallbacks)
+      {
+         bindLifecycles();
+      }
+      return lifecycleCallbacks;
+   }
+   
    public HashMap getMethodAdvices()
    {
       return methodAdvices;
@@ -287,6 +307,30 @@ public class ReflectiveAspectBinder
             for (int i = 0; i < binding.getInterceptorFactories().length; i++)
             {
                aspects.add(binding.getInterceptorFactories()[i].getAspect());
+            }
+         }
+      }
+   }
+   
+   protected void bindLifecycles()
+   {
+      for (LifecycleCallbackBinding binding : advisor.getManager().getLifecycleBindings().values())
+      {
+         if (binding.matches(advisor, clazz))
+         {
+            final Object state = binding.getControllerState();
+            Set<String> callbacks = lifecycleCallbacks.get(state);
+            if (callbacks == null)
+            {
+               callbacks = new HashSet<String>();
+               lifecycleCallbacks.put(state, callbacks);
+            }
+            
+            List<String> boundCallbacks = binding.getLifecycleCallbacks();
+            for (String callback : boundCallbacks)
+            {
+               System.out.println("=====> Adding lifecycle " + callback + ":" + state);
+               callbacks.add(callback);
             }
          }
       }

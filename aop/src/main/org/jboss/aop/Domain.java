@@ -24,6 +24,7 @@ package org.jboss.aop;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.jboss.aop.advice.AdviceStack;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.metadata.ClassMetaDataLoader;
+import org.jboss.aop.microcontainer.lifecycle.LifecycleCallbackBinding;
 import org.jboss.aop.pointcut.CFlowStack;
 import org.jboss.aop.pointcut.DynamicCFlow;
 import org.jboss.aop.pointcut.Pointcut;
@@ -706,7 +708,29 @@ public class Domain extends AspectManager
       
       return super.findClassMetaDataLoader(group);
    }
+  
+   public Map<String, LifecycleCallbackBinding> getLifecycleBindings()
+   {
+      if (inheritsBindings)
+      {
+         if (!parentFirst)
+         {
+            // when child first, parent bindings go in first so that they can be overridden by child.
+            LinkedHashMap map = new LinkedHashMap(parent.getLifecycleBindings());
+            map.putAll(super.getLifecycleBindings());
+            return map;
+         }
+         else
+         {
+            LinkedHashMap map = new LinkedHashMap(super.getLifecycleBindings());
+            map.putAll(parent.getLifecycleBindings());
+            return map;
+         }
+      }
+      return super.getLifecycleBindings();
+   }
    
+
    //////////////////////////////////////////////////////////////////////////
    //Methods that should delegate to the top AspectManager
 
