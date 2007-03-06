@@ -25,9 +25,10 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import org.jboss.aop.advice.Interceptor;
+import org.jboss.aop.joinpoint.IJoinPointInfo;
 import org.jboss.aop.joinpoint.Joinpoint;
 
-public abstract class JoinPointInfo
+public abstract class JoinPointInfo implements IJoinPointInfo
 {
    private Interceptor[] interceptors;
 

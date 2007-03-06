@@ -22,6 +22,7 @@
 package org.jboss.aop;
 
 import org.jboss.aop.advice.Interceptor;
+import org.jboss.aop.joinpoint.ICallerConstructorInfo;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -33,7 +34,7 @@ import java.lang.reflect.Method;
  * @version $Revision$
  *
  **/
-public abstract class CallerConstructorInfo extends JoinPointInfo
+public abstract class CallerConstructorInfo extends JoinPointInfo implements ICallerConstructorInfo
 {
    private final Constructor constructor;
    private final Class callingClass;

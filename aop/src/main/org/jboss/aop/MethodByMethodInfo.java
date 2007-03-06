@@ -34,7 +34,7 @@ import org.jboss.aop.util.MethodHashing;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
-public class MethodByMethodInfo extends CallerMethodInfo 
+public class MethodByMethodInfo extends CallerMethodInfo implements IMethodByMethodInfo
 {
    private final long callingMethodHash;
    private final Method callingMethod;

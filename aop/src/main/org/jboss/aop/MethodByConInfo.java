@@ -34,7 +34,7 @@ import org.jboss.aop.joinpoint.MethodCalledByConstructorJoinpoint;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
-public class MethodByConInfo extends CallerMethodInfo 
+public class MethodByConInfo extends CallerMethodInfo implements IMethodByConInfo
 {
 
    private final int callingIndex;

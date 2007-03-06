@@ -31,7 +31,7 @@ import java.lang.reflect.Method;
 /**
  *  This class is here to eliminate a hash lookup in invokeMethod
  */
-public class MethodInfo extends JoinPointInfo 
+public class MethodInfo extends JoinPointInfo implements IMethodInfo
 {
    private Method advisedMethod;
    private Method unadvisedMethod;

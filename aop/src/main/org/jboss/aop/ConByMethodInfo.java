@@ -35,7 +35,7 @@ import org.jboss.aop.util.MethodHashing;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
-public class ConByMethodInfo extends CallerConstructorInfo 
+public class ConByMethodInfo extends CallerConstructorInfo implements IConByMethodInfo
 {
    private final long callingMethodHash;
    private final Method callingMethod;

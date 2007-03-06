@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.ConstructorCalledByConstructorJoinpoint;
+import org.jboss.aop.joinpoint.IConByConInfo;
 import org.jboss.aop.joinpoint.Joinpoint;
 
 /**
@@ -33,7 +34,7 @@ import org.jboss.aop.joinpoint.Joinpoint;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
-public class ConByConInfo extends CallerConstructorInfo
+public class ConByConInfo extends CallerConstructorInfo implements IConByConInfo
 {
    private final int callingIndex;
    private final Constructor calling;

@@ -35,7 +35,7 @@ import org.jboss.aop.util.MethodHashing;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
-public class ConstructorInfo extends JoinPointInfo 
+public class ConstructorInfo extends JoinPointInfo implements IConstructorInfo
 {
    private Method wrapper;
    private Constructor constructor;

@@ -38,7 +38,7 @@ import org.jboss.aop.util.MethodHashing;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
-public class FieldInfo extends JoinPointInfo 
+public class FieldInfo extends JoinPointInfo implements IFieldInfo
 {
    private int index;
    private Field advisedField;
