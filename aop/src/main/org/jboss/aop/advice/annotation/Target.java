@@ -26,7 +26,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- *
+ * Annotate with <code>@Target</code> the advice parameter that receives the
+ * target of the joinpoint.
+ * 
  * @author Flavia Rainone
  */
 @java.lang.annotation.Target( { ElementType.PARAMETER }) @Retention(RetentionPolicy.RUNTIME)

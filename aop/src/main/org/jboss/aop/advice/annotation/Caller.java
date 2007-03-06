@@ -28,6 +28,8 @@ import java.lang.annotation.Target;
 
 
 /**
+ * Annotated with <code>@Caller</code> the advice parameter that receives the caller
+ * object on call joinpoints.
  * 
  * @author Flavia Rainone
  */

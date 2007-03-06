@@ -27,8 +27,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotate with <code>@Thrown</code> the <i>throwing</i> advice parameter that receives
- * the thrown exception.
+ * Annotate with <code>@Thrown</code> the <i>throwing</i> advice parameter that
+ * receives the thrown exception.
  * 
  * @author Flavia Rainone
  */

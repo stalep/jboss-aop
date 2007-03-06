@@ -38,7 +38,8 @@ public @interface Arg
    /**
     * Indicates which joinpoint argument this advice parameter refers to.
     * When this value is not set, JBoss AOP will select the first joinpoint
-    * argument of the same type.
+    * argument of the same type (or, if there is not such argument, the first
+    * joinpoint argument of an assignable type to the advice parameter).
     */
    int index() default -1;
 }
