@@ -208,7 +208,7 @@
 
       <!-- The temp folder for aopc -->
       <property name="aopc.tmpdir" value="output/aopctmp"/>
-      <delete dir="${aopc.tmpdir}"/>
+      <delete dir="${aopc.tmpdir}" failonerror="true" deleteonexit="true"/>
    	<mkdir dir="${aopc.tmpdir}"/>
 
       <!-- Packages to include when generating api documentation -->
