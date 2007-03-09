@@ -83,6 +83,7 @@ public class AspectDefinition
                }
             }
          }
+         advisors.clear();
       }
       this.deployed = false;
    }
