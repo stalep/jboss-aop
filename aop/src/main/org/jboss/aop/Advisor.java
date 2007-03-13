@@ -50,6 +50,7 @@ import org.jboss.aop.advice.GeneratedOnly;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.PrecedenceSorter;
+import org.jboss.aop.advice.Scope;
 import org.jboss.aop.annotation.AnnotationElement;
 import org.jboss.aop.annotation.AnnotationRepository;
 import org.jboss.aop.instrument.ConstructionTransformer;
@@ -1146,5 +1147,33 @@ public abstract class Advisor
             advisor.doDeployAnnotationOverride(introduction);
          }
       };
+   }
+   
+   public void cleanup()
+   {
+      //AspectDefinitions have strong links back to us
+      for(Iterator it = perInstanceAspectDefinitions.iterator() ; it.hasNext() ; )
+      {
+         AspectDefinition def = (AspectDefinition)it.next();
+         removePerInstanceAspect(def);
+         def.unregisterAdvisor(this);
+      }
+      
+      for(Iterator it = perInstanceJoinpointAspectDefinitions.keySet().iterator() ; it.hasNext() ; )
+      {
+         AspectDefinition def = (AspectDefinition)it.next();
+         removePerInstanceJoinpointAspect(def);
+         def.unregisterAdvisor(this);
+      }
+
+      AspectDefinition[] defs = (AspectDefinition[])adviceInterceptors.keySet().toArray(new AspectDefinition[adviceInterceptors.size()]);
+      for(int i = 0 ; i < defs.length ; i++)
+      {
+         if (defs[i].getScope() == Scope.PER_CLASS)
+         {
+            removePerClassAspect(defs[i]);
+            defs[i].unregisterAdvisor(this);
+         }
+      }
    }
 }

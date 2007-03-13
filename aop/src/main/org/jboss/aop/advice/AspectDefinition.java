@@ -41,6 +41,8 @@ public class AspectDefinition
    protected Scope scope = Scope.PER_VM;
    protected AspectFactory factory;
    protected boolean deployed = true;
+   
+   /** @deprecated Should not access directly */
    public Map advisors = new ConcurrentReaderHashMap();
 
    /**
@@ -137,5 +139,10 @@ public class AspectDefinition
    public synchronized void registerAdvisor(Advisor advisor)
    {
       advisors.put(advisor, Boolean.TRUE);
+   }
+   
+   public synchronized void unregisterAdvisor(Advisor advisor)
+   {
+      advisors.remove(advisor);
    }
 }

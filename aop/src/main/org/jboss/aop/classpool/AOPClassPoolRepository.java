@@ -21,6 +21,7 @@
 */ 
 package org.jboss.aop.classpool;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
@@ -30,6 +31,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.instrument.Instrumentor;
 
@@ -193,7 +195,12 @@ public class AOPClassPoolRepository implements ScopedClassPoolRepository
                Object clazz = it.next();
                synchronized (manager.getAdvisors())
                {
-                  manager.getAdvisors().remove(clazz);
+                  WeakReference ref = (WeakReference)manager.getAdvisors().remove(clazz);
+                  Advisor advisor = (Advisor)ref.get();
+                  if (advisor != null)
+                  {
+                     advisor.cleanup();
+                  }
                   Class advisedClass = (Class)clazz;
                   try
                   {
