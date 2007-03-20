@@ -329,7 +329,7 @@ call(public Foo->new())</programlisting>
 within(@org.jboss.security.Permission)</programlisting>
                <para>
                   <literal>within</literal> matches any joinpoint (method or constructor call) within any code within a
-                  particular call.
+                  particular type.
                </para>
             </listitem>
          </varlistentry>

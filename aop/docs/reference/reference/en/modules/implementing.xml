@@ -5,7 +5,7 @@
       <title>Overview</title>
       <para>
          JBoss AOP is a 100% pure Java framework.  All your AOP constructs are defined as pure Java classes and
-         bound to your application code via XML or by annotations.  This sections walks through implementing aspects.
+         bound to your application code via XML or by annotations.  This Chapter walks through implementing aspects.
       </para>
 
    </sect1>
