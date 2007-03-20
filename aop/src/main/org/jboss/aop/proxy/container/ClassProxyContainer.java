@@ -36,7 +36,6 @@ import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.util.ConstructorComparator;
 import org.jboss.aop.util.MethodHashing;
-//import org.jboss.repository.spi.MetaDataContext;
 
 /**
  * Extension of ClassContainer needed because of Mixins
@@ -54,7 +53,7 @@ public class ClassProxyContainer extends ClassContainer
    {
       super(name, manager);
    }
-   
+
    protected void createConstructorTables()
    {
       Class useClass = clazz;
@@ -88,7 +87,7 @@ public class ClassProxyContainer extends ClassContainer
       try
       {
          Method[] declaredMethods = clazz.getMethods();
-         
+
          Class superclass = clazz.getSuperclass();
          for (int i = 0; i < declaredMethods.length; i++)
          {
@@ -109,13 +108,13 @@ public class ClassProxyContainer extends ClassContainer
                advisedMethods.put(hash, method);
             }
          }
-         
+
          for (int i = 0; i < interfaceIntroductions.size(); ++i)
          {
             InterfaceIntroduction ii = (InterfaceIntroduction) interfaceIntroductions.get(i);
             String[] intf = ii.getInterfaces();
             addMethodsFromInterfaces(intf);
-            
+
             ArrayList mixins = ii.getMixins();
             if (mixins.size() > 0)
             {
@@ -144,7 +143,7 @@ public class ClassProxyContainer extends ClassContainer
          for (int k = 0; k < ifaceMethods.length; k++)
          {
             long hash = MethodHashing.methodHash(ifaceMethods[k]);
-            
+
             if (advisedMethods.get(hash) == null)
             {
                advisedMethods.put(hash, ifaceMethods[k]);
@@ -153,7 +152,7 @@ public class ClassProxyContainer extends ClassContainer
          }
       }
    }
-   
+
    public InstanceProxyContainer createInstanceProxyContainer()
    {
       //This seems to get thrown away with every invocation
@@ -162,7 +161,7 @@ public class ClassProxyContainer extends ClassContainer
       domain.setInheritsDeclarations(true);
 
       InstanceProxyContainer ia = new InstanceProxyContainer(super.getName(), domain, this, null);
-      
+
       return ia;
    }
 
@@ -178,7 +177,7 @@ public class ClassProxyContainer extends ClassContainer
    {
       return null;
    }
-   
+
    public void addPerClassAspect(AspectDefinition def)
    {
       Advisor parentAdvisor = getParentAdvisor();
@@ -191,19 +190,19 @@ public class ClassProxyContainer extends ClassContainer
    }
 
    /**
-    * If this is an instance advisor, will check with parent advisor if the aspect 
+    * If this is an instance advisor, will check with parent advisor if the aspect
     * is already registered. If so, we should use the one from the parent advisor
     */
    public Object getPerClassAspect(AspectDefinition def)
    {
       Advisor parentAdvisor = getParentAdvisor();
-      
+
       if (parentAdvisor != null)
       {
          Object aspect = parentAdvisor.getPerClassAspect(def);
          if (aspect != null) return aspect;
       }
-      
+
       return super.getPerClassAspect(def);
    }
 

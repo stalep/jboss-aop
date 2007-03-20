@@ -18,7 +18,7 @@
 * License along with this software; if not, write to the Free
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-*/ 
+*/
 package org.jboss.aop.proxy.container;
 
 import java.util.HashMap;
@@ -30,11 +30,10 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.Domain;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.metadata.SimpleMetaData;
-//import org.jboss.repository.spi.MetaDataContext;
 import org.jboss.metadata.spi.MetaData;
 
 /**
- * 
+ *
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
@@ -47,7 +46,7 @@ public class ContainerCache
    private AspectManager manager;
    private ContainerProxyCacheKey key;
    /** This will be ClassAdvisor if class has been woven i.e implements Advised, or ClassProxyContainer*/
-   private Advisor classAdvisor; 
+   private Advisor classAdvisor;
    private InstanceProxyContainer instanceContainer;
    boolean isClassProxyContainer;
    Class[] interfaces;
@@ -67,7 +66,7 @@ public class ContainerCache
       this.metaDataHasInstanceLevelData = metaDataHasInstanceLevelData;
       key = new ContainerProxyCacheKey(manager.getManagerFQN(), proxiedClass, interfaces, mixins, metaData);
    }
-   
+
    public static ContainerCache initialise(AspectManager manager, Class proxiedClass, MetaData metaData, boolean metaDataHasInstanceLevelData)
    {
       return initialise(manager, proxiedClass, null, null, metaData, metaDataHasInstanceLevelData, null);
@@ -84,7 +83,7 @@ public class ContainerCache
             params.getMetaDataHasInstanceLevelData(),
             params.getSimpleMetaData());
    }
-   
+
    private static ContainerCache initialise(AspectManager manager, Class proxiedClass, Class[] interfaces, AOPProxyFactoryMixin[] mixins, MetaData metaData, boolean metaDataHasInstanceLevelData, SimpleMetaData simpleMetaData)
    {
       ContainerCache factory = new ContainerCache(manager, proxiedClass, interfaces, mixins, metaData, metaDataHasInstanceLevelData, simpleMetaData);
@@ -93,7 +92,7 @@ public class ContainerCache
          factory.initClassContainer();
          factory.initInstanceContainer();
       }
-      
+
       return factory;
    }
 
@@ -101,7 +100,7 @@ public class ContainerCache
    {
       return key;
    }
-   
+
    public Advisor getAdvisor()
    {
       return (instanceContainer != null) ? instanceContainer : classAdvisor;
@@ -125,12 +124,12 @@ public class ContainerCache
       }
       return classAdvisor.hasAspects();
    }
-   
+
    public boolean requiresInstanceAdvisor()
    {
       return hasInterfaceIntroductions() || hasMixins() || (metaData!= null && metaDataHasInstanceLevelData) || simpleMetaData != null;
    }
-   
+
    public boolean isAdvised()
    {
       return Advised.class.isAssignableFrom(key.getClazz());
@@ -140,12 +139,12 @@ public class ContainerCache
    {
       return interfaces != null && interfaces.length > 0;
    }
-   
+
    private boolean hasMixins()
    {
       return mixins != null && mixins.length > 0;
    }
-   
+
    private void initClassContainer()
    {
       if (Advised.class.isAssignableFrom(key.getClazz()))
@@ -171,14 +170,14 @@ public class ContainerCache
       }
       return null;
    }
-   
+
    private ClassProxyContainer createAndCacheContainer()
    {
       ClassProxyContainer container = createContainer();
       cacheContainer(key, container);
       return container;
    }
-   
+
    private ClassProxyContainer createContainer()
    {
       String name = Domain.getDomainName(key.getClazz(), false);
@@ -187,10 +186,10 @@ public class ContainerCache
       ClassProxyContainer container = new ClassProxyContainer(classname /*+ " ClassProxy" + (counter++)*/, domain);
       domain.setAdvisor(container);
       container.initialise(key.getClazz());
-      
+
       return container;
    }
-   
+
    private void cacheContainer(ContainerProxyCacheKey key, ClassProxyContainer container)
    {
       HashMap managerContainers = (HashMap)containerCache.get(key.getClazz());
@@ -201,7 +200,7 @@ public class ContainerCache
       }
       managerContainers.put(key.getManagerFQN(), container);
    }
-   
+
    private InterfaceIntroduction getInterfaceIntroduction()
    {
       int introductionLength = (hasInterfaceIntroductions()) ? interfaces.length : 0;
@@ -211,7 +210,7 @@ public class ContainerCache
       {
          return null;
       }
-      
+
       Class proxiedClass = classAdvisor.getClazz();
       Class clazz = (proxiedClass != null) ? proxiedClass : Object.class;
       String[] introducedNames = getClassNames(interfaces);
@@ -221,17 +220,17 @@ public class ContainerCache
       {
          addMixins(intro);
       }
-      
+
       return intro;
    }
-   
+
    private void addMixins(InterfaceIntroduction intro)
    {
       for (int i = 0 ; i < mixins.length && mixins != null; i++)
       {
          Class[] mixinInterfaces = mixins[i].getInterfaces();
          Class mixinClass = mixins[i].getMixin();
-         
+
          if (mixinInterfaces == null)
          {
             throw new RuntimeException("When defining a mixin, interfaces must be defined");
@@ -240,20 +239,20 @@ public class ContainerCache
          {
             throw new RuntimeException("When defining a mixin, the mixin must be defined");
          }
-         
+
          String[] mixinInterfaceNames = getClassNames(mixinInterfaces);
          InterfaceIntroduction.Mixin mixin = new InterfaceIntroduction.Mixin(mixinClass.getName(), mixinInterfaceNames, mixins[i].getConstruction(), false);
          intro.addMixin(mixin);
       }
    }
-   
+
    private String[] getClassNames(Class[] classes)
    {
       if (classes == null)
       {
          return null;
       }
-      
+
       String[] names = new String[classes.length];
       for (int i = 0 ; i < classes.length ; i++)
       {
@@ -267,7 +266,7 @@ public class ContainerCache
       if (requiresInstanceAdvisor())
       {
          InterfaceIntroduction introduction = null;
-         if (hasInterfaceIntroductions() || hasMixins()) 
+         if (hasInterfaceIntroductions() || hasMixins())
          {
             introduction = getInterfaceIntroduction();
          }

@@ -18,7 +18,7 @@
 * License along with this software; if not, write to the Free
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-*/ 
+*/
 package org.jboss.aop.proxy.container;
 
 import java.lang.reflect.Constructor;
@@ -26,18 +26,17 @@ import java.lang.reflect.Constructor;
 import org.jboss.aop.Advised;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.instrument.Untransformable;
-//import org.jboss.repository.spi.MetaDataContext;
 
 /**
- * 
+ *
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
 public class GeneratedAOPProxyFactory implements AOPProxyFactory
 {
    /**
-    * Create a proxy 
-    * 
+    * Create a proxy
+    *
     * @param <T> the expected type
     * @param target the target
     * @param interfaceClass the interface class
@@ -58,7 +57,7 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
          System.out.println("[debug] Created proxy: "+proxy.getClass()+"@"+System.identityHashCode(proxy)+" target: "+target.getClass());
       return interfaceClass.cast(proxy);
    }
-   
+
    public Object createAdvisedProxy(AOPProxyFactoryParameters params)
    {
       if (params.getTarget() != null)
@@ -79,7 +78,7 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
       {
          params.setProxiedClass(Object.class);
       }
-      
+
       return getProxy(params);
    }
 
@@ -88,15 +87,15 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
       try
       {
          Class proxyClass = null;
-         
+
          boolean isAdvised = Advised.class.isAssignableFrom(params.getProxiedClass());
-         
+
          if (params.getTarget() instanceof Untransformable || (isAdvised && params.getInterfaces() == null && params.getMixins() == null && (params.getMetaData() == null || !params.getMetaDataHasInstanceLevelData()) && params.getSimpleMetaData() == null))
          {
             return params.getTarget();
          }
-         
-         
+
+
          synchronized (ContainerCache.mapLock)
          {
             if (params.getContainerCache() == null)
@@ -104,17 +103,17 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
                params.setContainerCache(
                      ContainerCache.initialise(AspectManager.instance(), params));
             }
-            
+
             if (!params.getContainerCache().hasAspects() && !params.getContainerCache().requiresInstanceAdvisor())
             {
                return params.getTarget();
             }
             else
-            {  
+            {
                proxyClass = generateProxy(params);
             }
          }
-         
+
          return instantiateAndConfigureProxy(proxyClass, params);
       }
       catch (Exception e)
@@ -122,14 +121,14 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
          throw new RuntimeException(e);
       }
    }
-   
+
    private Class generateProxy(AOPProxyFactoryParameters params) throws Exception
    {
       Class proxyClass = ContainerProxyFactory.getProxyClass(params.isObjectAsSuperClass(), params.getContainerCache().getKey(), params.getContainerCache().getAdvisor());
-      
+
       return proxyClass;
    }
-   
+
 //   private Object instantiateAndConfigureProxy(Class proxyClass, ContainerCache cache, SimpleMetaData metadata, Object target, Constructor ctor, Object[] ctorArguments) throws Exception
    private Object instantiateAndConfigureProxy(Class proxyClass, AOPProxyFactoryParameters params) throws Exception
    {
@@ -143,19 +142,19 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
       {
          proxy = (AspectManaged)proxyClass.newInstance();
       }
-         
+
       proxy.setAdvisor(params.getContainerCache().getClassAdvisor());
-      
+
       if (params.getContainerCache().getInstanceContainer() != null)
       {
          proxy.setInstanceAdvisor(params.getContainerCache().getInstanceContainer());
       }
-      
+
       if (params.getSimpleMetaData() != null)
       {
          proxy.setMetadata(params.getSimpleMetaData());
       }
-      
+
       if (params.getTarget() != null)
       {
          ((Delegate)proxy).setDelegate(params.getTarget());
@@ -164,7 +163,7 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
       {
          ((Delegate)proxy).setDelegate(new Object());
       }
-   
+
       return proxy;
    }
 }

@@ -18,7 +18,7 @@
 * License along with this software; if not, write to the Free
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-*/ 
+*/
 package org.jboss.aop.proxy.container;
 
 import org.jboss.aop.Advisor;
@@ -32,12 +32,11 @@ import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.metadata.SimpleMetaData;
-//import org.jboss.repository.spi.MetaDataContext;
 import org.jboss.metadata.spi.MetaData;
 
 /**
  * The InstanceAdvisor returned by ClassProxyContainer
- * 
+ *
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
@@ -45,7 +44,7 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
 {
    Advisor classAdvisor;
    InstanceAdvisorDelegate delegate;
-   
+
    public InstanceProxyContainer(String name, ProxyAdvisorDomain instanceDomain, Advisor classAdvisor, MetaData metaData)
    {
       super(name, instanceDomain);
@@ -67,7 +66,7 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
       }
 
       InstanceProxyContainer ia = new InstanceProxyContainer(classAdvisor.getName(), domain, classAdvisor, metaData);
-      
+
       return ia;
    }
 
@@ -75,7 +74,7 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
    {
       return classAdvisor;
    }
-   
+
    public Object getPerInstanceAspect(String aspectName)
    {
       return delegate.getPerInstanceAspect(aspectName);
@@ -215,7 +214,7 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
             info.setUnadvisedMethod(superInfo.getUnadvisedMethod());
          }
       }
-      
+
       return info;
    }
 
