@@ -21,6 +21,7 @@
 */ 
 package org.jboss.aop.proxy.container;
 
+import java.util.HashMap;
 import java.util.WeakHashMap;
 
 import org.jboss.aop.Advised;
@@ -64,7 +65,7 @@ public class ContainerCache
       this.metaData = metaData;
       this.simpleMetaData = simpleMetaData;
       this.metaDataHasInstanceLevelData = metaDataHasInstanceLevelData;
-      key = new ContainerProxyCacheKey(proxiedClass, interfaces, mixins, metaData);
+      key = new ContainerProxyCacheKey(manager.getManagerFQN(), proxiedClass, interfaces, mixins, metaData);
    }
    
    public static ContainerCache initialise(AspectManager manager, Class proxiedClass, MetaData metaData, boolean metaDataHasInstanceLevelData)
@@ -163,13 +164,18 @@ public class ContainerCache
 
    private ClassProxyContainer getCachedContainer(AspectManager manager)
    {
-      return (ClassProxyContainer)containerCache.get(key.getClazz());
+      HashMap managerContainers = (HashMap)containerCache.get(key.getClazz());
+      if (managerContainers != null)
+      {
+         return (ClassProxyContainer)managerContainers.get(manager.getManagerFQN());
+      }
+      return null;
    }
    
    private ClassProxyContainer createAndCacheContainer()
    {
       ClassProxyContainer container = createContainer();
-      cacheContainer(key, key.getClazz(), container);
+      cacheContainer(key, container);
       return container;
    }
    
@@ -185,9 +191,15 @@ public class ContainerCache
       return container;
    }
    
-   private void cacheContainer(ContainerProxyCacheKey key, Class proxiedClass, ClassProxyContainer container)
+   private void cacheContainer(ContainerProxyCacheKey key, ClassProxyContainer container)
    {
-      containerCache.put(proxiedClass, container);
+      HashMap managerContainers = (HashMap)containerCache.get(key.getClazz());
+      if (managerContainers == null)
+      {
+         managerContainers = new HashMap();
+         containerCache.put(key.getClazz(), managerContainers);
+      }
+      managerContainers.put(key.getManagerFQN(), container);
    }
    
    private InterfaceIntroduction getInterfaceIntroduction()

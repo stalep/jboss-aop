@@ -28,8 +28,6 @@ import java.util.Comparator;
 
 import org.jboss.metadata.spi.MetaData;
 
-//import org.jboss.repository.spi.MetaDataContext;
-
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
@@ -41,6 +39,7 @@ public class ContainerProxyCacheKey implements Serializable
    private static final WeakReference[] EMTPY_WR_ARRAY = new WeakReference[0];
    private static final AOPProxyFactoryMixin[] EMPTY_MIXIN_ARRAY = new AOPProxyFactoryMixin[0];
    
+   private String managerFqn;
    private WeakReference clazzRef;
    private WeakReference[] addedInterfaces = EMTPY_WR_ARRAY;
    
@@ -49,21 +48,27 @@ public class ContainerProxyCacheKey implements Serializable
    private AOPProxyFactoryMixin[] addedMixins = EMPTY_MIXIN_ARRAY;
    private int hashcode = 0;
    
-   public ContainerProxyCacheKey(Class clazz)
+   public ContainerProxyCacheKey(String managerFqn, Class clazz)
    {
-      this.clazzRef = new WeakReference(clazz); 
+      this.clazzRef = new WeakReference(clazz);
+      this.managerFqn = managerFqn;
    }
    
-   public ContainerProxyCacheKey(Class clazz, Class[] addedInterfaces, MetaData metaData)
+   public ContainerProxyCacheKey(Class clazz)
    {
-      this(clazz); 
+      this("/", clazz);
+   }
+   
+   public ContainerProxyCacheKey(String managerFqn, Class clazz, Class[] addedInterfaces, MetaData metaData)
+   {
+      this(managerFqn, clazz); 
       this.addedInterfaces = ContainerCacheUtil.getSortedWeakReferenceForInterfaces(addedInterfaces);
       this.metaData = metaData; 
    }
 
-   public ContainerProxyCacheKey(Class clazz, Class[] addedInterfaces, AOPProxyFactoryMixin[] addedMixins, MetaData metaData)
+   public ContainerProxyCacheKey(String managerFqn, Class clazz, Class[] addedInterfaces, AOPProxyFactoryMixin[] addedMixins, MetaData metaData)
    {
-      this(clazz, addedInterfaces, metaData);
+      this(managerFqn, clazz, addedInterfaces, metaData);
       
       if (addedMixins != null)
       {
@@ -75,11 +80,12 @@ public class ContainerProxyCacheKey implements Serializable
    public Class getClazz()
    {
       Class clazz = (Class)clazzRef.get();
-      if (clazz != null)
-      {
-         return clazz; 
-      }
-      return null;
+      return clazz; 
+   }
+   
+   public String getManagerFQN()
+   {
+      return managerFqn;
    }
    
    public boolean equals(Object obj)
@@ -88,7 +94,7 @@ public class ContainerProxyCacheKey implements Serializable
       {
          return true;
       }
-      
+ 
       if (obj.getClass() != ContainerProxyCacheKey.class)
       {
          return false;
@@ -96,6 +102,10 @@ public class ContainerProxyCacheKey implements Serializable
       
       ContainerProxyCacheKey other = (ContainerProxyCacheKey)obj;
 
+      if (!managerFqn.equals(other.managerFqn))
+      {
+         return false;
+      }
       if (!compareMetadataContext(other))
       {
          return false;
@@ -123,7 +133,7 @@ public class ContainerProxyCacheKey implements Serializable
          
          Class clazz = (Class)clazzRef.get();
          StringBuffer sb = new StringBuffer();
-         
+         sb.append(managerFqn);
          if (clazz != null)
          {
             sb.append(clazz.getName());

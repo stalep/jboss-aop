@@ -44,6 +44,7 @@ import org.jboss.aop.proxy.ProxyMixin;
 import org.jboss.aop.proxy.container.AOPProxyFactoryParameters;
 import org.jboss.aop.proxy.container.AspectManaged;
 import org.jboss.aop.proxy.container.ClassProxyContainer;
+import org.jboss.aop.proxy.container.ContainerCache;
 import org.jboss.aop.proxy.container.ContainerProxyCacheKey;
 import org.jboss.aop.proxy.container.ContainerProxyFactory;
 import org.jboss.aop.proxy.container.Delegate;
@@ -142,15 +143,32 @@ public class ProxyTestCase extends AOPTestWithSetup
 
    public void testContainerProxyCacheKey() throws Exception
    {
-      ContainerProxyCacheKey key1 = new ContainerProxyCacheKey(this.getClass(), new Class[] {Serializable.class, InputStream.class, Externalizable.class}, null);
-      ContainerProxyCacheKey key2 = new ContainerProxyCacheKey(this.getClass(), new Class[] {Serializable.class, Externalizable.class}, null);
-      ContainerProxyCacheKey key3 = new ContainerProxyCacheKey(this.getClass(), new Class[] {Externalizable.class, InputStream.class, Serializable.class}, null);
+      ContainerProxyCacheKey key1 = new ContainerProxyCacheKey("/", this.getClass(), new Class[] {Serializable.class, InputStream.class, Externalizable.class}, null);
+      ContainerProxyCacheKey key2 = new ContainerProxyCacheKey("/", this.getClass(), new Class[] {Serializable.class, Externalizable.class}, null);
+      ContainerProxyCacheKey key3 = new ContainerProxyCacheKey("/", this.getClass(), new Class[] {Externalizable.class, InputStream.class, Serializable.class}, null);
+      ContainerProxyCacheKey key4 = new ContainerProxyCacheKey("/some/fqn", this.getClass(), new Class[] {Serializable.class, Externalizable.class}, null);
+      ContainerProxyCacheKey key5 = new ContainerProxyCacheKey("/some/fqn", this.getClass(), new Class[] {Serializable.class, Externalizable.class}, null);
       
       assertFalse(key1.equals(key2));
       assertTrue(key1.equals(key3));
+      assertFalse(key2.equals(key4));
+      assertTrue(key4.equals(key5));
       
       assertFalse(key1.hashCode() == key2.hashCode());
       assertTrue(key1.hashCode() == key3.hashCode());
+      assertFalse(key2.hashCode() == key4.hashCode());
+      assertTrue(key4.hashCode() == key5.hashCode());
+   }
+   
+   public void testContainerCacheClassAdvisor() throws Exception
+   {
+      AspectManager manager = AspectManager.instance();
+      ContainerCache cache1 = ContainerCache.initialise(manager, String.class, null, true);
+      ContainerCache cache2 = ContainerCache.initialise(manager, String.class, null, true);
+      assertSame(cache1.getClassAdvisor(), cache2.getClassAdvisor());
+
+      ContainerCache cache3 = ContainerCache.initialise(manager, Integer.class, null, true);
+      assertNotSame(cache1.getClassAdvisor(), cache3.getClassAdvisor());
    }
    
    public void testContainerProxy() throws Exception
