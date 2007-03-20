@@ -121,10 +121,15 @@ public abstract class MethodExecutionTransformer
       CtMethod[] methods = clazz.getDeclaredMethods();
       for (int i = 0; i < methods.length; i++)
       {
-         if (!Advisable.isAdvisable(methods[i]))
+         if (Modifier.isNative(methods[i].getModifiers()))
+         {
+            //We still need to weave native methods
+         }
+         else if (!Advisable.isAdvisable(methods[i]))
          {
             continue;
          }
+
          JoinpointClassification classification = classifier.classifyMethodExecution(methods[i], advisor);
          if (classification == JoinpointClassification.NOT_INSTRUMENTED)
          {
