@@ -187,7 +187,10 @@
    <bind {name} pointcut {cflow} >
       [ <interceptor-ref name/> |
         <stack-ref name/> |
-        <advice aspect name/>  ]*
+        <advice aspect name/> |
+        <before aspect name/> |
+        <after aspect name/> |
+        <throwing aspect name/>  ]*
    </bind>
              ]]>
          </programlisting>       
