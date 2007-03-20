@@ -63,23 +63,27 @@
       <para>
          For the following XML "definition":
          <programlisting>
-            <![CDATA[  
+            <![CDATA[
    <test {optional} [choiceA | choiceB] compulsory >               
-      [ <subA></subA> | <subA></subA> ]? 
-   </test>               
+      [ <subA></subA> | <subB></subB> ]? 
+   </test>
+            ]]>   
          </programlisting>
          These would be valid XML:
          <programlisting>
+            <![CDATA[
    <test choiceA="y" compulsory="c" >               
       <subA>4</subA> 
    </test>               
    <test optional="x" choiceB="y" compulsory="c" >               
       <subB>4</subB> 
    </test>               
-   <test optional="x" choiceB="y" compulsory="c" />               
+   <test optional="x" choiceB="y" compulsory="c" />
+            ]]>
          </programlisting>
            These would not be valid:
          <programlisting>
+            <![CDATA[
    <test choiceA="y" choiceB="y" compulsory="c" >               
       <subA>4</subA> 
    </test>               
