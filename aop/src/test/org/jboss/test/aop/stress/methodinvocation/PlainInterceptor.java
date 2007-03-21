@@ -1,8 +1,8 @@
 /*
-* JBoss, Home of Professional Open Source
-* Copyright 2005, JBoss Inc., and individual contributors as indicated
-* by the @authors tag. See the copyright.txt in the distribution for a
-* full listing of individual contributors.
+* JBoss, Home of Professional Open Source.
+* Copyright 2006, Red Hat Middleware LLC, and individual contributors
+* as indicated by the @author tags. See the copyright.txt file in the
+* distribution for a full listing of individual contributors. 
 *
 * This is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as
@@ -21,46 +21,26 @@
 */ 
 package org.jboss.test.aop.stress.methodinvocation;
 
+import org.jboss.aop.advice.Interceptor;
+import org.jboss.aop.joinpoint.Invocation;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class POJO
+public class PlainInterceptor implements Interceptor
 {
-   public static void staticMethodNoAdvice()
+   public static int called;
+   public String getName()
    {
-      
+      return this.getClass().getName();
+   }
+
+   public Object invoke(Invocation invocation) throws Throwable
+   {
+      called++;
+      return invocation.invokeNext();
    }
    
-   public void nonStaticMethodNoAdvice()
-   {
-      
-   }
-   
-   public void oneInterceptor()
-   {
-      
-   }
-   
-   public void fiveInterceptors()
-   {
-      
-   }
-   
-   public void oneAdvice()
-   {
-      
-   }
-   
-   public void fiveAdvices()
-   {
-      
-   }
-   
-   public static void generateStackTrace()
-   {
-      //Look at the depth of the call stack for different weaving types
-      new Exception("CALL STACK - INFO ONLY").printStackTrace();
-   }
 }

@@ -1,8 +1,8 @@
 /*
-* JBoss, Home of Professional Open Source
-* Copyright 2005, JBoss Inc., and individual contributors as indicated
-* by the @authors tag. See the copyright.txt in the distribution for a
-* full listing of individual contributors.
+* JBoss, Home of Professional Open Source.
+* Copyright 2006, Red Hat Middleware LLC, and individual contributors
+* as indicated by the @author tags. See the copyright.txt file in the
+* distribution for a full listing of individual contributors. 
 *
 * This is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as
@@ -21,46 +21,45 @@
 */ 
 package org.jboss.test.aop.stress.methodinvocation;
 
+import org.jboss.aop.joinpoint.Invocation;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class POJO
+public class PlainAspect
 {
-   public static void staticMethodNoAdvice()
+   public static int called;
+   
+   public Object one(Invocation invocation) throws Throwable
    {
-      
+      called++;
+      return invocation.invokeNext();
    }
    
-   public void nonStaticMethodNoAdvice()
+   public Object two(Invocation invocation) throws Throwable
    {
-      
+      called++;
+      return invocation.invokeNext();
    }
    
-   public void oneInterceptor()
+   public Object three(Invocation invocation) throws Throwable
    {
-      
+      called++;
+      return invocation.invokeNext();
    }
    
-   public void fiveInterceptors()
+   public Object four(Invocation invocation) throws Throwable
    {
-      
+      called++;
+      return invocation.invokeNext();
    }
    
-   public void oneAdvice()
+   public Object five(Invocation invocation) throws Throwable
    {
-      
+      called++;
+      return invocation.invokeNext();
    }
    
-   public void fiveAdvices()
-   {
-      
-   }
-   
-   public static void generateStackTrace()
-   {
-      //Look at the depth of the call stack for different weaving types
-      new Exception("CALL STACK - INFO ONLY").printStackTrace();
-   }
 }

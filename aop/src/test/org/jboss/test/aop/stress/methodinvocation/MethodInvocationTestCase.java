@@ -21,10 +21,6 @@
   */
 package org.jboss.test.aop.stress.methodinvocation;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
-import org.jboss.aop.util.ReflectToJavassist;
 import org.jboss.test.aop.stress.Scenario;
 import org.jboss.test.aop.stress.ScenarioTest;
 
@@ -47,20 +43,107 @@ public class MethodInvocationTestCase extends ScenarioTest
       super(name);
    }
 
-   public void testMethod() throws Exception
+   
+   public void testStaticWovenNoAdvice() throws Exception
    {
-      POJO pojo = new POJO();
-      pojo.method();//in case of generated advisors generate the joinpoint class
-      super.runner.executeScenario(new ExceptionScenario());
+      POJO.staticMethodNoAdvice();//in case of generated advisors generate the joinpoint class
+      super.runner.executeScenario(new StaticWovenNoAdviceScenario());
    }
    
-   private class ExceptionScenario implements Scenario
+   private class StaticWovenNoAdviceScenario implements Scenario
    {
       POJO pojo = new POJO();
       public void execute(int thread, int loop) throws Exception
       {
-         pojo.method();
+         POJO.staticMethodNoAdvice();
       }
-      
    }
+   
+   public void testNonStaticWovenNoAdvice() throws Exception
+   {
+      POJO pojo = new POJO();
+      pojo.nonStaticMethodNoAdvice();//in case of generated advisors generate the joinpoint class
+      super.runner.executeScenario(new NonStaticWovenNoAdviceScenario());
+   }
+
+   private class NonStaticWovenNoAdviceScenario implements Scenario
+   {
+      POJO pojo = new POJO();
+      public void execute(int thread, int loop) throws Exception
+      {
+         pojo.nonStaticMethodNoAdvice();
+      }
+   }
+   
+   public void testNonStaticWithOneInterceptor() throws Exception
+   {
+      POJO pojo = new POJO();
+      PlainInterceptor.called = 0;
+      pojo.oneInterceptor();//in case of generated advisors generate the joinpoint class
+      assertEquals(1, PlainInterceptor.called);
+      super.runner.executeScenario(new NonStaticWithOneInterceptorScenario());
+   }
+   
+   private class NonStaticWithOneInterceptorScenario implements Scenario
+   {
+      POJO pojo = new POJO();
+      public void execute(int thread, int loop) throws Exception
+      {
+         pojo.oneInterceptor();
+      }
+   }
+   
+   public void testNonStaticWithFiveInterceptors() throws Exception
+   {
+      POJO pojo = new POJO();
+      PlainInterceptor.called = 0;
+      pojo.fiveInterceptors();//in case of generated advisors generate the joinpoint class
+      assertEquals(5, PlainInterceptor.called);
+      super.runner.executeScenario(new NonStaticWithFiveInterceptorsScenario());
+   }
+   
+   private class NonStaticWithFiveInterceptorsScenario implements Scenario
+   {
+      POJO pojo = new POJO();
+      public void execute(int thread, int loop) throws Exception
+      {
+         pojo.fiveInterceptors();
+      }
+   }   
+   
+   public void testNonStaticWithOneAdvice() throws Exception
+   {
+      POJO pojo = new POJO();
+      PlainAspect.called = 0;
+      pojo.oneAdvice();//in case of generated advisors generate the joinpoint class
+      assertEquals(1, PlainAspect.called);
+      super.runner.executeScenario(new NonStaticWithOneAdviceScenario());
+   }
+   
+   private class NonStaticWithOneAdviceScenario implements Scenario
+   {
+      POJO pojo = new POJO();
+      public void execute(int thread, int loop) throws Exception
+      {
+         pojo.oneAdvice();
+      }
+   }
+   
+   public void testNonStaticWithFiveAdvices() throws Exception
+   {
+      POJO pojo = new POJO();
+      PlainAspect.called = 0;
+      pojo.fiveAdvices();//in case of generated advisors generate the joinpoint class
+      assertEquals(5, PlainAspect.called);
+      super.runner.executeScenario(new NonStaticWithFiveAdvicesScenario());
+   }
+   
+   private class NonStaticWithFiveAdvicesScenario implements Scenario
+   {
+      POJO pojo = new POJO();
+      public void execute(int thread, int loop) throws Exception
+      {
+         pojo.fiveAdvices();
+      }
+   }   
 }
