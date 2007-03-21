@@ -195,11 +195,15 @@ public class AOPClassPoolRepository implements ScopedClassPoolRepository
                Object clazz = it.next();
                synchronized (manager.getAdvisors())
                {
-                  WeakReference ref = (WeakReference)manager.getAdvisors().remove(clazz);
-                  Advisor advisor = (Advisor)ref.get();
-                  if (advisor != null)
+                  WeakReference ref = (WeakReference)manager.getAdvisors().get(clazz);
+                  if (ref != null)
                   {
-                     advisor.cleanup();
+                     Advisor advisor = (Advisor)ref.get();
+                     manager.getAdvisors().remove(clazz);
+                     if (advisor != null)
+                     {
+                        advisor.cleanup();
+                     }
                   }
                   Class advisedClass = (Class)clazz;
                   try

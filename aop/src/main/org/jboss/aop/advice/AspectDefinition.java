@@ -42,7 +42,10 @@ public class AspectDefinition
    protected AspectFactory factory;
    protected boolean deployed = true;
 
-   private Map advisors = new ConcurrentReaderHashMap();
+   /**
+    * @deprecated should not call this directly
+    */
+   public Map advisors = new ConcurrentReaderHashMap();
 
    /**
     * @param name
