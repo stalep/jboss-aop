@@ -527,8 +527,7 @@ public class AdviceMethodFactory
          boolean isContextRule)
    {
       short bestDegree = NOT_ASSIGNABLE_DEGREE;
-      AdviceInfo bestAdvice = null;
-      Collection<AdviceInfo> removeList = new ArrayList<AdviceInfo>();
+      List<AdviceInfo> bestAdviceList = new ArrayList<AdviceInfo>();
       
       // rule i is more important than rule i + 1
       for (int i = 0; i < totalRules; i++)
@@ -541,27 +540,24 @@ public class AdviceMethodFactory
                   isContextRule, properties);
             if (currentDegree < bestDegree)
             {
-               if (bestAdvice != null)
-               {
-                  removeList.add(bestAdvice);
-               }
-               bestAdvice = currentAdvice;
+               bestAdviceList.clear();
+               bestAdviceList.add(currentAdvice);
                bestDegree = currentDegree;
             }
-            else if (currentDegree > bestDegree)
+            else if (currentDegree == bestDegree)
             {
-               iterator.remove();
+            	bestAdviceList.add(currentAdvice);
             }
          }
          // found the best
-         if (greatestRank.size() - removeList.size() == 1)
+         if (bestAdviceList.size() == 1)
          {
-            return bestAdvice;
+            return bestAdviceList.get(0);
          }
-         greatestRank.removeAll(removeList);
+         greatestRank.clear();
+         greatestRank.addAll(bestAdviceList);
          // reset values
-         removeList.clear();
-         bestAdvice = null;
+         bestAdviceList.clear();
          bestDegree = NOT_ASSIGNABLE_DEGREE;
       }
       return null;
