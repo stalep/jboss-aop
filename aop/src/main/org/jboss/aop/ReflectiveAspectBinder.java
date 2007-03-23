@@ -87,9 +87,10 @@ public class ReflectiveAspectBinder
    {
       if (!initialisedAspects)
       {
-         bindMethodAdvices(clazz);
-         bindConstructorAdvices();
-         bindFieldAdvices();
+         Map bindings = advisor.getManager().getBindings();
+         bindMethodAdvices(clazz, bindings);
+         bindConstructorAdvices(bindings);
+         bindFieldAdvices(bindings);
       }
       return aspects;
    }
@@ -161,7 +162,7 @@ public class ReflectiveAspectBinder
       }
    }
    
-   protected void bindMethodAdvices(Class superClass)
+   protected void bindMethodAdvices(Class superClass, Map bindings)
    {
       createMethodMap(superClass); 
       if (methodMap != null)
@@ -169,12 +170,12 @@ public class ReflectiveAspectBinder
          Object[] methods = methodMap.getValues();
          for (int i = 0 ; i < methods.length ; i++)
          {
-            bindMethodAdvice((Method)methods[i]);
+            bindMethodAdvice((Method)methods[i], bindings);
          }
       }
    }
 
-   protected void bindConstructorAdvices()
+   protected void bindConstructorAdvices(Map bindings)
    {
       Constructor[] cons = (Constructor[]) AccessController.doPrivileged(new PrivilegedAction() 
       {
@@ -185,11 +186,11 @@ public class ReflectiveAspectBinder
       });
       for (int i = 0; i < cons.length; i++)
       {
-         bindConstructorAdvice(cons[i]);
+         bindConstructorAdvice(cons[i], bindings);
       }
    }
 
-   protected void bindFieldAdvices()
+   protected void bindFieldAdvices(Map bindings)
    {
       Field[] fields = (Field[]) AccessController.doPrivileged(new PrivilegedAction() 
       {
@@ -200,8 +201,8 @@ public class ReflectiveAspectBinder
       });
       for (int i = 0; i < fields.length; i++)
       {
-         bindFieldGetAdvice(fields[i]);
-         bindFieldSetAdvice(fields[i]);
+         bindFieldGetAdvice(fields[i], bindings);
+         bindFieldSetAdvice(fields[i], bindings);
       }
    }
 
@@ -211,10 +212,9 @@ public class ReflectiveAspectBinder
       return ((Boolean) ai.getTarget().jjtAccept(matcher, null)).booleanValue();
    }
 
-   protected void bindMethodAdvice(Method mi)
+   protected void bindMethodAdvice(Method mi, Map bindings)
    {
-      Map repositoryBindings = advisor.getManager().getBindings();
-      Iterator it = repositoryBindings.values().iterator();
+      Iterator it = bindings.values().iterator();
       ArrayList advices = (ArrayList)methodAdvices.get(mi);
       while (it.hasNext())
       {
@@ -238,10 +238,9 @@ public class ReflectiveAspectBinder
       }
    }
 
-   protected void bindConstructorAdvice(Constructor mi)
+   protected void bindConstructorAdvice(Constructor mi, Map bindings)
    {
-      Map repositoryBindings = advisor.getManager().getBindings();
-      Iterator it = repositoryBindings.values().iterator();
+      Iterator it = bindings.values().iterator();
       ArrayList advices = (ArrayList)constructorAdvices.get(mi);
       while (it.hasNext())
       {
@@ -263,7 +262,7 @@ public class ReflectiveAspectBinder
       }
    }
 
-   protected void bindFieldGetAdvice(Field mi)
+   protected void bindFieldGetAdvice(Field mi, Map bindings)
    {
       Map repositoryBindings = advisor.getManager().getBindings();
       Iterator it = repositoryBindings.values().iterator();
@@ -288,7 +287,7 @@ public class ReflectiveAspectBinder
       }
    }
 
-   protected void bindFieldSetAdvice(Field mi)
+   protected void bindFieldSetAdvice(Field mi, Map bindings)
    {
       Map repositoryBindings = advisor.getManager().getBindings();
       Iterator it = repositoryBindings.values().iterator();
