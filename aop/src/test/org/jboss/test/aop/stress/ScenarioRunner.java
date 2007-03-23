@@ -37,46 +37,39 @@ import java.util.Random;
  */
 public class ScenarioRunner
 {
+   private static final String WARMUP = "warmup";
    private static final String LOOPS = "loops";
    private static final String THREADS = "threads";
    private static final String RANDOM_SLEEP_INTERVAL = "random_sleep_interval";
    private static final String SLEEPTIME_MILLIS = "sleeptime_millis";
    private static final String LOGGING = "logging";
-   
+
+   private Properties properties = new Properties();
+
+   private int warmup;
    private int loops;
    private int threads;
    private boolean randomSleepInterval;
    private int sleeptimeMillis;
    Random random = new Random(10);
    boolean logging;
-
    
    public ScenarioRunner()
    {
       try
       {
-         URL url = this.getClass().getProtectionDomain().getCodeSource().getLocation();
-         System.out.println("class url: " + url);
-         String location = url.toString();
-         int index = location.indexOf("/output/");
-         location = location.substring(0, index);
+         initialiseProperties();
          
-         location = location + "/src/resources/test/stress/config.properties";
-         url = new URL(location);
-         InputStream in = new FileInputStream(url.getFile());
-         Properties properties = new Properties();
-         properties.load(in);
-         
-         loops = Integer.parseInt(properties.getProperty(LOOPS, "10"));
-         threads = Integer.parseInt(properties.getProperty(THREADS, "10"));
-         String bool = properties.getProperty(RANDOM_SLEEP_INTERVAL, "false");
-         randomSleepInterval = bool.equals("true");
-         sleeptimeMillis = Integer.parseInt(properties.getProperty(SLEEPTIME_MILLIS, "100"));
-         bool = properties.getProperty(LOGGING, "false");
-         logging = bool.equals("true");
+         warmup = getIntProperty(WARMUP, "100000");
+         loops = getIntProperty(LOOPS, "10");
+         threads = getIntProperty(THREADS, "10");
+         randomSleepInterval = getBooleanProperty(RANDOM_SLEEP_INTERVAL, "false");
+         sleeptimeMillis = getIntProperty(SLEEPTIME_MILLIS, "100");
+         logging = getBooleanProperty(LOGGING, "false");
          
          System.out.println("============================================");
          System.out.println("Configured ScenarioRunner");
+         System.out.println("   warmup:                  " + warmup);
          System.out.println("   loops:                   " + loops);
          System.out.println("   threads:                 " + threads);
          System.out.println("   Random sleep Interval:   " + randomSleepInterval);
@@ -90,12 +83,63 @@ public class ScenarioRunner
       }
    }
 
+   private void initialiseProperties() throws Exception
+   {
+      URL url = this.getClass().getProtectionDomain().getCodeSource().getLocation();
+      System.out.println("class url: " + url);
+      String location = url.toString();
+      int index = location.indexOf("/output/");
+      location = location.substring(0, index);
+      
+      location = location + "/src/resources/test/stress/config.properties";
+      url = new URL(location);
+      InputStream in = new FileInputStream(url.getFile());
+      properties = new Properties();
+      properties.load(in);
+      
+   }
+   
+   private int getIntProperty(String key, String defaultValue)
+   {
+      return Integer.parseInt(getProperty(key, defaultValue));  
+   }
+   
+   private boolean getBooleanProperty(String key, String defaultValue)
+   {
+      return "true".equals(getProperty(key, defaultValue));
+   }
+   
+   private String getProperty(String key, String defaultValue)
+   {
+      String val = System.getProperty(key);
+      if (val != null)
+      {
+         return val;
+      }
+      
+      val = properties.getProperty(key);
+      if (val != null)
+      {
+         return val;
+      }
+      
+      return defaultValue;
+   }
+   
    public void executeScenario(Scenario scenario) throws Exception
    {
       Scenario[] scenarios = new Scenario[] {scenario};
+      warmupScenario(scenarios);
       executeScenarios(scenarios);
    }
 
+   private void warmupScenario(Scenario[] scenarios) throws Exception
+   {
+      ScenarioLoader loader = getLoader(0, scenarios);
+      loader.start();
+      loader.join();
+   }
+   
    public void executeScenarios(Scenario[] scenarios) throws Exception
    {
       System.out.println("Starting run with Scenarios " + Arrays.asList(scenarios));
@@ -133,6 +177,11 @@ public class ScenarioRunner
       }
       
       System.out.println("--- DONE --- test took " + (end - start) + " ms");
+      
+      for (int thread = 0 ; thread < loaders.length ; thread++)
+      {
+         loaders[thread] = null;
+      }
       
       if (hadExceptions)
       {

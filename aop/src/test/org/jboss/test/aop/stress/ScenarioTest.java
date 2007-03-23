@@ -21,21 +21,32 @@
 */ 
 package org.jboss.test.aop.stress;
 
-import org.jboss.test.aop.AOPTestWithSetup;
+import org.jboss.test.AbstractTestCaseWithSetup;
+import org.jboss.test.AbstractTestDelegate;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
-public class ScenarioTest extends AOPTestWithSetup
+public class ScenarioTest extends AbstractTestCaseWithSetup
 {
-   protected ScenarioRunner runner;
    
    public ScenarioTest(String arg0)
    {
-      // FIXME ScenarioTest constructor
       super(arg0);
-      runner = new ScenarioRunner();
+//      runner = new ScenarioRunner();
+   }
+
+   public static AbstractTestDelegate getDelegate(Class clazz) throws Exception
+   {
+      ScenarioTestDelegate delegate = new ScenarioTestDelegate(clazz);
+      return delegate;
+   }
+
+   
+   protected ScenarioRunner getRunner()
+   {
+      return ((ScenarioTestDelegate)getDelegate()).getRunner();
    }
 }

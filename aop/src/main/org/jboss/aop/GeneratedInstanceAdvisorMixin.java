@@ -29,6 +29,7 @@ import org.jboss.aop.advice.GeneratedAdvisorInterceptor;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.metadata.SimpleMetaData;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -46,7 +47,7 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
 
    protected ArrayList insertedInterceptors = null;
    protected ArrayList appendedInterceptors = null;
-   protected Object instance;
+   protected WeakReference instanceRef;
    public boolean hasInstanceAspects = false;
    private InterceptorChainObserver interceptorChainObserver;
    InstanceAdvisorDelegate delegate;
@@ -57,7 +58,7 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
 
    public GeneratedInstanceAdvisorMixin(Object instance, GeneratedClassAdvisor genadvisor)
    {
-      this.instance = instance;
+      this.instanceRef = new WeakReference(instance);
       delegate = new InstanceAdvisorDelegate(genadvisor, this);
       delegate.initialize();
       this.interceptorChainObserver = ((ClassAdvisor) genadvisor).getInterceptorChainObserver();
@@ -291,9 +292,10 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
       if (stack == null) throw new RuntimeException("Stack " + stackName + " not found.");
 
       ClassAdvisor classAdvisor = null;
-      if (instance instanceof Advised)
+      Object inst = getInstance();
+      if (inst instanceof Advised)
       {
-         Advised advised = (Advised) instance;
+         Advised advised = (Advised) inst;
          classAdvisor = ((ClassAdvisor) advised._getAdvisor());
       }
       int interceptorsAdded = 0;
@@ -318,9 +320,10 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
       if (stack == null) throw new RuntimeException("Stack " + stackName + " not found.");
 
       ClassAdvisor classAdvisor = null;
-      if (instance instanceof Advised)
+      Object inst = getInstance();
+      if (inst instanceof Advised)
       {
-         Advised advised = (Advised) instance;
+         Advised advised = (Advised) inst;
          classAdvisor = ((ClassAdvisor) advised._getAdvisor());
       }
       int interceptorsAdded = 0;
@@ -345,9 +348,10 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
       if (stack == null) throw new RuntimeException("Stack " + stackName + " not found.");
 
       ClassAdvisor classAdvisor = null;
-      if (instance instanceof Advised)
+      Object inst = getInstance();
+      if (inst instanceof Advised)
       {
-         Advised advised = (Advised) instance;
+         Advised advised = (Advised) inst;
          classAdvisor = ((ClassAdvisor) advised._getAdvisor());
       }
       int interceptorsRemoved = 0;
@@ -390,7 +394,12 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
    
    public Object getInstance()
    {
-      return instance;
+      if (instanceRef != null)
+      {
+         Object instance = instanceRef.get();
+         return instance;
+      }
+      return null;
    }
 
    public class InstanceInterceptorFactory implements InterceptorFactory

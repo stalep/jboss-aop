@@ -46,8 +46,7 @@ public class MethodInvocationTestCase extends ScenarioTest
    
    public void testStaticWovenNoAdvice() throws Exception
    {
-      POJO.staticMethodNoAdvice();//in case of generated advisors generate the joinpoint class
-      super.runner.executeScenario(new StaticWovenNoAdviceScenario());
+      getRunner().executeScenario(new StaticWovenNoAdviceScenario());
    }
    
    private class StaticWovenNoAdviceScenario implements Scenario
@@ -61,9 +60,7 @@ public class MethodInvocationTestCase extends ScenarioTest
    
    public void testNonStaticWovenNoAdvice() throws Exception
    {
-      POJO pojo = new POJO();
-      pojo.nonStaticMethodNoAdvice();//in case of generated advisors generate the joinpoint class
-      super.runner.executeScenario(new NonStaticWovenNoAdviceScenario());
+      getRunner().executeScenario(new NonStaticWovenNoAdviceScenario());
    }
 
    private class NonStaticWovenNoAdviceScenario implements Scenario
@@ -79,9 +76,9 @@ public class MethodInvocationTestCase extends ScenarioTest
    {
       POJO pojo = new POJO();
       PlainInterceptor.called = 0;
-      pojo.oneInterceptor();//in case of generated advisors generate the joinpoint class
+      pojo.oneInterceptor();
       assertEquals(1, PlainInterceptor.called);
-      super.runner.executeScenario(new NonStaticWithOneInterceptorScenario());
+      getRunner().executeScenario(new NonStaticWithOneInterceptorScenario());
    }
    
    private class NonStaticWithOneInterceptorScenario implements Scenario
@@ -97,9 +94,9 @@ public class MethodInvocationTestCase extends ScenarioTest
    {
       POJO pojo = new POJO();
       PlainInterceptor.called = 0;
-      pojo.fiveInterceptors();//in case of generated advisors generate the joinpoint class
+      pojo.fiveInterceptors();
       assertEquals(5, PlainInterceptor.called);
-      super.runner.executeScenario(new NonStaticWithFiveInterceptorsScenario());
+      getRunner().executeScenario(new NonStaticWithFiveInterceptorsScenario());
    }
    
    private class NonStaticWithFiveInterceptorsScenario implements Scenario
@@ -115,9 +112,9 @@ public class MethodInvocationTestCase extends ScenarioTest
    {
       POJO pojo = new POJO();
       PlainAspect.called = 0;
-      pojo.oneAdvice();//in case of generated advisors generate the joinpoint class
+      pojo.oneAdvice();
       assertEquals(1, PlainAspect.called);
-      super.runner.executeScenario(new NonStaticWithOneAdviceScenario());
+      getRunner().executeScenario(new NonStaticWithOneAdviceScenario());
    }
    
    private class NonStaticWithOneAdviceScenario implements Scenario
@@ -133,9 +130,9 @@ public class MethodInvocationTestCase extends ScenarioTest
    {
       POJO pojo = new POJO();
       PlainAspect.called = 0;
-      pojo.fiveAdvices();//in case of generated advisors generate the joinpoint class
+      pojo.fiveAdvices();
       assertEquals(5, PlainAspect.called);
-      super.runner.executeScenario(new NonStaticWithFiveAdvicesScenario());
+      getRunner().executeScenario(new NonStaticWithFiveAdvicesScenario());
    }
    
    private class NonStaticWithFiveAdvicesScenario implements Scenario

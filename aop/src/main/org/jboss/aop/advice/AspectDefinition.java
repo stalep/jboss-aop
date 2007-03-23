@@ -21,12 +21,12 @@
   */
 package org.jboss.aop.advice;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.jboss.aop.Advisor;
-
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 
 /**
  * Contains definition of aspect or interceptor
@@ -45,7 +45,7 @@ public class AspectDefinition
    /**
     * @deprecated should not call this directly
     */
-   public Map advisors = new ConcurrentReaderHashMap();
+   public Map advisors = new WeakHashMap();
 
    /**
     * @param name
@@ -71,19 +71,22 @@ public class AspectDefinition
          for (Iterator it = advisors.keySet().iterator() ; it.hasNext() ; )
          {
             Advisor advisor = (Advisor)it.next();
-            if (advisors.remove(advisor) !=  null)
+            if (advisor != null)
             {
-               if (scope == Scope.PER_INSTANCE)
+               if (advisors.remove(advisor) !=  null)
                {
-                  advisor.removePerInstanceAspect(this);
-               }
-               else if (scope == Scope.PER_JOINPOINT)
-               {
-                  advisor.removePerInstanceJoinpointAspect(this);
-               }
-               else if (scope == Scope.PER_CLASS)
-               {
-                  advisor.removePerClassAspect(this);
+                  if (scope == Scope.PER_INSTANCE)
+                  {
+                     advisor.removePerInstanceAspect(this);
+                  }
+                  else if (scope == Scope.PER_JOINPOINT)
+                  {
+                     advisor.removePerInstanceJoinpointAspect(this);
+                  }
+                  else if (scope == Scope.PER_CLASS)
+                  {
+                     advisor.removePerClassAspect(this);
+                  }
                }
             }
          }

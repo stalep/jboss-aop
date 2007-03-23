@@ -52,7 +52,7 @@ public class SimpleReflectToJavassistTestCase extends ScenarioTest
       boolean exception = false;
       try
       {
-         super.runner.executeScenario(new ExceptionScenario());
+         getRunner().executeScenario(new ExceptionScenario());
       }
       catch (Exception e)
       {
@@ -69,7 +69,7 @@ public class SimpleReflectToJavassistTestCase extends ScenarioTest
         new SimpleFieldToJavassistScenario(),
         new SimpleMethodToJavassistScenario()};
       
-      super.runner.executeScenarios(scenarios);
+      getRunner().executeScenarios(scenarios);
    }
 
    private class ExceptionScenario implements Scenario
