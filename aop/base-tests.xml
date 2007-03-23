@@ -17,9 +17,6 @@
          <param name="test" value="jdk15base"/>
       </antcall>
       <antcall target="${test-target}" inheritRefs="true">
-         <param name="test" value="stress/simple"/>
-      </antcall>
-      <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="invoketarget"/>
       </antcall>
    	<antcall target="${test-target}" inheritRefs="true">
