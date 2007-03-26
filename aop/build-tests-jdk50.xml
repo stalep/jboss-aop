@@ -173,6 +173,28 @@
          <pathelement path="${build.lib}/jboss-aop-jdk50.jar"/>
       </path>
 
+      <path id="compatibility15.test.classpath">
+         <pathelement path="1.5.5.lib/concurrent.jar"/>
+         <pathelement path="1.5.5.lib/javassist.jar"/>
+         <pathelement path="1.5.5.lib/jboss-aop-jdk50.jar"/>
+         <pathelement path="1.5.5.lib/jboss-common.jar"/>
+         <pathelement path="1.5.5.lib/qdox.jar"/>
+         <pathelement path="1.5.5.lib/trove.jar"/>
+
+         <path refid="jboss.test.classpath"/>
+         <path refid="junit.junit.classpath"/>
+      </path>
+
+      <path id="aopc.task.classpath">
+         <path refid="library.classpath"/>
+         <path refid="dependentmodule.classpath"/>
+         <path refid="jboss.aop.classpath"/>
+      </path>
+
+      <path id="aopc15.task.classpath">
+         <path refid="compatibility15.test.classpath"/>
+      </path>
+
       <path id="test.jrockit.classpath">
          <path refid="test.classpath"/>
          <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
@@ -182,7 +204,7 @@
       <path id="javadoc.classpath">
          <path refid="javac.classpath"/>
       </path>
-   
+
       <!-- The temp folder for aopc -->
       <property name="aopc.tmpdir" value="output/aopctmp"/>
       <delete dir="${aopc.tmpdir}" failonerror="true" deleteonexit="true"/>
@@ -297,6 +319,9 @@
 
       <delete dir="${build.tests.classes}"/>
       <antcall target="non-optimized-precompiled-tests" inheritRefs="true"/>
+
+      <delete dir="${build.tests.classes}"/>
+      <antcall target="precompiled-compatibitily-tests" inheritRefs="true"/>
    </target>
 
    <target name="all-tests" depends="tests">
@@ -469,13 +494,6 @@
    <!-- ==================================================================================== -->
 
    <target name="precompiled-tests" depends="compile-test-classes">
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
-      <path id="aop.task.classpath">
-         <path refid="library.classpath"/>
-         <path refid="dependentmodule.classpath"/>
-         <path refid="jboss.aop.classpath"/>
-      </path>
-
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-jdk50-tests" inheritRefs="true">
          <param name="caller" value="precompiled-tests"/>
@@ -500,13 +518,6 @@
    <!-- ==================================================================================== -->
 
    <target name="non-optimized-precompiled-tests" depends="compile-test-classes">
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
-      <path id="aop.task.classpath">
-         <path refid="library.classpath"/>
-         <path refid="dependentmodule.classpath"/>
-         <path refid="jboss.aop.classpath"/>
-      </path>
-
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-jdk50-tests" inheritRefs="true">
          <param name="caller" value="non-optimized-precompiled-tests"/>
@@ -528,7 +539,6 @@
    </target>
 
    <target name="non-optimized-precompiled-test" depends="init">
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
       <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="${test}"/>
          <param name="caller" value="non-optimized-precompiled-tests"/>
@@ -540,12 +550,6 @@
    <!-- ==================================================================================== -->
 
    <target name="precompiled-genadvisor-tests" depends="compile-test-classes">
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
-      <path id="aop.task.classpath">
-         <path refid="library.classpath"/>
-         <path refid="dependentmodule.classpath"/>
-         <path refid="jboss.aop.classpath"/>
-      </path>
 
       <!-- Tests only applicable for this weaving mode -->
       <antcall target="_run-precompiled-test" inheritRefs="true">
@@ -587,8 +591,18 @@
 
    </target>
 
+   <!-- ==================================================================================== -->
+   <!-- TEST COMPATIBILITY WITH CODE WOVEN W AOP 1.5                                         -->
+   <!-- ==================================================================================== -->
+
+   <target name="precompiled-compatibitily-tests" depends="compile-test-classes">
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="basic"/>
+         <param name="caller" value="precompiled-compatibitlity-tests"/>
+      </antcall>
+   </target>
+
    <target name="precompiled-test" depends="init">
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
       <antcall  target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="${test}"/>
          <param name="caller" value="precompiled-tests"/>
@@ -596,7 +610,6 @@
    </target>
 
    <target name="precompiled-genadvisor-test" depends="init">
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
       <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="${test}"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
@@ -622,6 +635,7 @@
          <or>
             <equals arg1="${caller}" arg2="precompiled-tests"/>
             <equals arg1="${caller}" arg2="precompiled-genadvisor-tests"/>
+            <equals arg1="${caller}" arg2="precompiled-compatibitlity-tests"/>
          </or>
       </condition>
       <condition property="optimized" value="false">
@@ -636,12 +650,31 @@
          <equals arg1="${caller}" arg2="precompiled-genadvisor-tests"/>
       </condition>
 
-      <echo>Compiling ${test} with optimized=${optimized} and instrumentor ${instrumentor}</echo>
+      <!-- The compatibility tests need another classpath for aopc -->
+      <condition property="aopc.tests.classpath" value="compatibility15.test.classpath" else="test.classpath">
+         <equals arg1="${caller}" arg2="precompiled-compatibitlity-tests"/>
+      </condition>
+      <condition property="aopc.task.classpath" value="aopc15.task.classpath" else="aopc.task.classpath">
+         <equals arg1="${caller}" arg2="precompiled-compatibitlity-tests"/>
+      </condition>
 
+      <echo>Compiling ${test} with optimized=${optimized} and instrumentor ${instrumentor}</echo>
+<!--
+      <echo>aopc.tests.classpath: ${aopc.tests.classpath}</echo>
+      <property name="x" refid="${aopc.tests.classpath}"/>
+      <echo>aopc.tests.classpath expanded: ${x}</echo>
+
+      <echo>aopc.task.classpath: ${aopc.task.classpath}</echo>
+      <property name="y" refid="${aopc.task.classpath}"/>
+      <echo>aopc.task.classpath expanded: ${y}</echo>
+
+      <echo>Classes: ${build.tests.classes}</echo>
+-->
       <!-- aopc -->
-      <aopc optimized="${optimized}" compilerclasspathref="aop.task.classpath">
-         <classpath refid="aop.task.classpath"/>
-         <classpath refid="test.classpath"/>
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="${aopc.task.classpath}"/>
+      <aopc optimized="${optimized}" compilerclasspathref="${aopc.task.classpath}">
+         <classpath refid="${aopc.task.classpath}"/>
+         <classpath refid="${aopc.tests.classpath}"/>
          <classpath path="${build.tests.classes}"/>
          <aoppath path="${aoppath}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
@@ -718,11 +751,8 @@
       <mkdir dir="${build.reports}"/>
 
       <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
-      <path id="aop.task.classpath">
-         <path refid="test.classpath"/>
-      </path>
-      <annotationc compilerclasspathref="aop.task.classpath" bytecode="true">
-         <classpath refid="aop.task.classpath"/>
+      <annotationc compilerclasspathref="aopc.task.classpath" bytecode="true">
+         <classpath refid="aopc.task.classpath"/>
          <classpath path="${build.tests.classes}"/>
          <src path="${source.tests.java}/org/jboss/test/aop/annotationc"/>
       </annotationc>
@@ -898,14 +928,9 @@
       <mkdir dir="${report.dir}"/>
 
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
-      <path id="aop.task.classpath">
-         <path refid="test.classpath"/>
-         <pathelement location="${build.tests.classes}"/>
-         <pathelement location="docs"/>
-      </path>
 
-      <aopc compilerclasspathref="aop.task.classpath">
-         <classpath refid="aop.task.classpath"/>
+      <aopc compilerclasspathref="aopc.task.classpath">
+         <classpath refid="aopc.task.classpath"/>
          <classpath path="${build.tests.classes}"/>
          <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
          <src path="${build.tests.classes}"/>
@@ -916,8 +941,8 @@
          <aopclasspath path="${build.tests.classes}"/>
       </aopc>
 
-      <aopc compilerclasspathref="aop.task.classpath">
-         <classpath refid="aop.task.classpath"/>
+      <aopc compilerclasspathref="aopc.task.classpath">
+         <classpath refid="aopc.task.classpath"/>
          <classpath path="${build.tests.classes}"/>
          <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
          <src path="${build.tests.classes}"/>
@@ -928,7 +953,7 @@
         <!-- process jdk15/dynamic/common/scenario with prepareAll jboss-aop.xml file -->
       <unjar src="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
              dest="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
-        <aopc verbose="false" compilerclasspathref="aop.task.classpath">
+        <aopc verbose="false" compilerclasspathref="aopc.task.classpath">
         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
         <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
         <classpath path="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario/"/>
@@ -943,7 +968,7 @@
      <!-- process jdk15/dynamic/common/scenario with prepareConstructor jboss-aop.xml file -->
       <unjar src="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
              dest="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
-     <aopc verbose="false" compilerclasspathref="aop.task.classpath">
+     <aopc verbose="false" compilerclasspathref="aopc.task.classpath">
         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
         <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
         <classpath path="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario/"/>
@@ -958,7 +983,7 @@
      <!-- process jdk15/dynamic/common/scenario with prepareField jboss-aop.xml file -->
       <unjar src="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
              dest="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
-     <aopc verbose="false" compilerclasspathref="aop.task.classpath">
+     <aopc verbose="false" compilerclasspathref="aopc.task.classpath">
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
          <classpath path="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario/"/>
@@ -973,7 +998,7 @@
      <!-- process jdk15/dynamic/common/scenario with prepareFieldGet jboss-aop.xml file -->
       <unjar src="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
              dest="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
-       <aopc verbose="false" compilerclasspathref="aop.task.classpath">
+       <aopc verbose="false" compilerclasspathref="aopc.task.classpath">
         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
         <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
         <classpath path="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario/"/>
@@ -988,7 +1013,7 @@
      <!-- process jdk15/dynamic/common/scenario with prepareFieldSet jboss-aop.xml file -->
       <unjar src="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
              dest="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
-     <aopc verbose="false" compilerclasspathref="aop.task.classpath">
+     <aopc verbose="false" compilerclasspathref="aopc.task.classpath">
         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
         <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
         <classpath path="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario/"/>
@@ -1003,7 +1028,7 @@
      <!-- process jdk15/dynamic/common/scenario with prepareMethod jboss-aop.xml file -->
       <unjar src="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
              dest="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
-      <aopc verbose="false" compilerclasspathref="aop.task.classpath">
+      <aopc verbose="false" compilerclasspathref="aopc.task.classpath">
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
          <classpath path="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario/"/>
@@ -1338,15 +1363,10 @@
 
    <target name="compiletime-declare" depends="compile-test-classes">
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
-      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
-      <path id="aop.task.classpath">
-         <path refid="library.classpath"/>
-         <path refid="dependentmodule.classpath"/>
-         <path refid="jboss.aop.classpath"/>
-      </path>
+      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aopc.classpath"/>
 
-      <annotationc compilerclasspathref="aop.task.classpath" bytecode="true">
-         <classpath refid="aop.task.classpath"/>
+      <annotationc compilerclasspathref="aopc.task.classpath" bytecode="true">
+         <classpath refid="aopc.task.classpath"/>
          <classpath path="${build.tests.classes}"/>
          <src path="${source.tests.java}"/>
         <include name="org/jboss/test/aop/annotated/declare/*.java"/>
@@ -1368,8 +1388,8 @@
          RUNNING AOPC TASK
       </echo>
 
-      <aopc compilerclasspathref="aop.task.classpath">
-         <classpath refid="aop.task.classpath"/>
+      <aopc compilerclasspathref="aopc.task.classpath">
+         <classpath refid="aopc.task.classpath"/>
          <classpath path="${build.tests.classes}"/>
          <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
          <src path="${build.tests.classes}"/>

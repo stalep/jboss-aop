@@ -1,0 +1,1 @@
+These files are from the AOP 1.5.5.GA release. They are here for the precompiled-compatibitily-tests target to check if files woven with AOP 1.5.5.GA is still runnable in AOP 2.0
