@@ -21,6 +21,7 @@
 */ 
 package org.jboss.test.aop.methodhashing;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
@@ -55,6 +56,8 @@ public class MethodHashingTestCase extends TestCase
       super(arg0);
    }
 
+   
+   
    public void testDeclaredMethodHashing() throws Exception
    {
       Class clazz = SubClass.class;
@@ -184,4 +187,59 @@ public class MethodHashingTestCase extends TestCase
       assertEquals(methodInfo.getParameterTypes().length, method.getParameterTypes().length);
    }
 
+   /**
+    * Written as a sanity check when optimizing the MethodHashing class
+    */
+   public void testMethodHashingFunctionality() throws Exception
+   {
+      Method test1 = TestSubClass.class.getDeclaredMethod("test1", new Class[] {String.class}); 
+      Method test2 = TestSubClass.class.getDeclaredMethod("test2", new Class[] {String.class, Integer.TYPE}); 
+      long test1Hash = MethodHashing.calculateHash(test1);
+      long test2Hash = MethodHashing.calculateHash(test2);
+      assertEquals(-129615495583814694L, test1Hash);
+      assertEquals(-1228234556488761696l, test2Hash);
+      
+      assertEquals(test1Hash, MethodHashing.methodHash(test1));
+      assertEquals(test2Hash, MethodHashing.methodHash(test2));
+      
+      assertEquals(test1, MethodHashing.findMethodByHash(TestSubClass.class, test1Hash));
+      assertEquals(test2, MethodHashing.findMethodByHash(TestSubClass.class, test2Hash));
+      
+      //This method seems pointless and stupid, but better test it anyway for backwards compatibility
+      Map hashes = MethodHashing.getInterfaceHashes(TestSubClass.class);
+      assertEquals(2, hashes.size());
+      long h1 = ((Long)hashes.get(test1.toString())).longValue();
+      assertEquals(test1Hash, h1);
+      long h2 = ((Long)hashes.get(test2.toString())).longValue();
+      assertEquals(test2Hash, h2);
+      
+      Constructor ctor1 = TestSubClass.class.getDeclaredConstructor(new Class[0]);
+      Constructor ctor2 = TestSubClass.class.getDeclaredConstructor(new Class[] {Integer.TYPE});
+      long con1Hash = MethodHashing.constructorHash(ctor1);
+      long con2Hash = MethodHashing.constructorHash(ctor2);
+      assertEquals(-6451128523270287660L, con1Hash);
+      assertEquals(-4215863789501864959L, con2Hash);
+
+      assertEquals(ctor1, MethodHashing.findConstructorByHash(TestSubClass.class, con1Hash));
+      assertEquals(ctor2, MethodHashing.findConstructorByHash(TestSubClass.class, con2Hash));
+
+   }
+   
+   static class TestBaseClass
+   {
+      TestBaseClass(){}
+      TestBaseClass(int i){}
+      void test3() {}
+   }
+   
+   static class TestSubClass extends TestBaseClass
+   {
+      TestSubClass() {}
+      
+      TestSubClass(int i){super(i);}
+      
+      void test1(String s) {}
+      
+      int test2(String s, int i) {return i;}
+   }
 }

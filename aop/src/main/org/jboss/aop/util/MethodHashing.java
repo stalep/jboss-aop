@@ -31,6 +31,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.jboss.aop.util.reference.MethodPersistentReference;
+import org.jboss.aop.util.reference.PersistentReference;
+
 /**
  * Create a unique hash for  
  * 
@@ -44,12 +47,20 @@ public class MethodHashing
    // Static --------------------------------------------------------
    static Map hashMap = new WeakHashMap();
 
+   static Map methodHashesByClass = new WeakHashMap();
+
    public static Method findMethodByHash(Class clazz, long hash) throws Exception
    {
-      Method[] methods = SecurityActions.getDeclaredMethods(clazz);
-      for (int i = 0; i < methods.length; i++)
+      return findMethodByHash(clazz, new Long(hash));
+   }
+
+   public static Method findMethodByHash(Class clazz, Long hash) throws Exception
+   {
+      Map hashes = getMethodHashes(clazz);
+      MethodPersistentReference ref = (MethodPersistentReference)hashes.get(hash);
+      if (ref != null)
       {
-         if (methodHash(methods[i]) == hash) return methods[i];
+         return ref.getMethod();
       }
 
       if (clazz.isInterface())
@@ -71,7 +82,7 @@ public class MethodHashing
       }
       return null;
    }
-
+   
    public static Constructor findConstructorByHash(Class clazz, long hash) throws Exception
    {
       Constructor[] cons = SecurityActions.getDeclaredConstructors(clazz);
@@ -90,13 +101,13 @@ public class MethodHashing
       throws Exception
    {
       Class[] parameterTypes = method.getParameterTypes();
-      String methodDesc = method.getName()+"(";
+      StringBuffer methodDesc = new StringBuffer(method.getName()+"(");
       for(int j = 0; j < parameterTypes.length; j++)
       {
-         methodDesc += getTypeString(parameterTypes[j]);
+         methodDesc.append(getTypeString(parameterTypes[j]));
       }
-      methodDesc += ")"+getTypeString(method.getReturnType());
-      return createHash(methodDesc);
+      methodDesc.append(")"+getTypeString(method.getReturnType()));
+      return createHash(methodDesc.toString());
    }
    
    public static long createHash(String methodDesc)
@@ -119,52 +130,16 @@ public class MethodHashing
       throws Exception
    {
       Class[] parameterTypes = method.getParameterTypes();
-      String methodDesc = method.getName()+"(";
+      StringBuffer methodDesc = new StringBuffer(method.getName()+"(");
       for(int j = 0; j < parameterTypes.length; j++)
       {
-         methodDesc += getTypeString(parameterTypes[j]);
+         methodDesc.append(getTypeString(parameterTypes[j]));
       }
-      methodDesc += ")";
-
-      long hash = 0;
-      ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream(512);
-      MessageDigest messagedigest = MessageDigest.getInstance("SHA");
-      DataOutputStream dataoutputstream = new DataOutputStream(new DigestOutputStream(bytearrayoutputstream, messagedigest));
-      dataoutputstream.writeUTF(methodDesc);
-      dataoutputstream.flush();
-      byte abyte0[] = messagedigest.digest();
-      for(int j = 0; j < Math.min(8, abyte0.length); j++)
-         hash += (long)(abyte0[j] & 0xff) << j * 8;
-      return hash;
-   }
-
-   /**
-   * Calculate method hashes. This algo is taken from RMI.
-   *
-   * @param   intf  
-   * @return     
-   */
-   public static Map getInterfaceHashes(Class intf)
-   {
-      // Create method hashes
-      Method[] methods = SecurityActions.getDeclaredMethods(intf);
-      HashMap map = new HashMap();
-      for (int i = 0; i < methods.length; i++)
-      {
-         Method method = methods[i];
-         try
-         {
-            long hash = methodHash(method);
-            map.put(method.toString(), new Long(hash));
-         }
-         catch (Exception e)
-         {
-         }
-      }
+      methodDesc.append(")");
       
-      return map;
+      return createHash(methodDesc.toString());
    }
-   
+
    static String getTypeString(Class cl)
    {
       if (cl == Byte.TYPE)
@@ -228,4 +203,65 @@ public class MethodHashing
       return ((Long)methodHashes.get(method.toString())).longValue();
    }
 
+   
+   /**
+    * Calculate method hashes. This algo is taken from RMI.
+    *
+    * @param   intf  
+    * @return
+    * @deprecated I can't see why this would have any value to anybody apart from this class. It will be made private     
+    */
+    public static Map getInterfaceHashes(Class intf)
+    {
+       // Create method hashes
+       Method[] methods = SecurityActions.getDeclaredMethods(intf);
+       HashMap map = new HashMap();
+       for (int i = 0; i < methods.length; i++)
+       {
+          Method method = methods[i];
+          try
+          {
+             long hash = methodHash(method);
+             map.put(method.toString(), new Long(hash));
+          }
+          catch (Exception e)
+          {
+          }
+       }
+       
+       return map;
+   }
+    
+   private static Map getMethodHashes(Class clazz)
+   {
+      Map methodHashes = (Map)methodHashesByClass.get(clazz);
+      if (methodHashes == null)
+      {
+         methodHashes = getMethodHashMap(clazz);
+         methodHashesByClass.put(clazz, methodHashes);
+      }
+      return methodHashes;
+   }
+   
+   private static Map getMethodHashMap(Class clazz)
+   {
+      // Create method hashes
+      Method[] methods = SecurityActions.getDeclaredMethods(clazz);
+      HashMap map = new HashMap();
+      for (int i = 0; i < methods.length; i++)
+      {
+         Method method = methods[i];
+         try
+         {
+            long hash = methodHash(method);
+            //Use Clebert's Persistent References so we don't get memory leaks
+            map.put(new Long(hash), new MethodPersistentReference(methods[i], PersistentReference.REFERENCE_SOFT));
+         }
+         catch (Exception e)
+         {
+         }
+      }
+      
+      return map;
+   }
 }
