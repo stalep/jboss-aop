@@ -25,6 +25,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import org.jboss.aop.util.ReflectToJavassist;
+import org.jboss.test.aop.stress.AbstractScenario;
 import org.jboss.test.aop.stress.Scenario;
 import org.jboss.test.aop.stress.ScenarioTest;
 
@@ -72,7 +73,7 @@ public class SimpleReflectToJavassistTestCase extends ScenarioTest
       getRunner().executeScenarios(scenarios);
    }
 
-   private class ExceptionScenario implements Scenario
+   private class ExceptionScenario extends AbstractScenario
    {
       public void execute(int thread, int loop) throws Exception
       {
@@ -84,7 +85,7 @@ public class SimpleReflectToJavassistTestCase extends ScenarioTest
       }
       
    }
-   private class SimpleClassToJavassistScenario implements Scenario
+   private class SimpleClassToJavassistScenario extends AbstractScenario
    {
       public void execute(int thread, int loop) throws Exception
       {
@@ -93,7 +94,7 @@ public class SimpleReflectToJavassistTestCase extends ScenarioTest
       }
    }
 
-   private class SimpleMethodToJavassistScenario implements Scenario
+   private class SimpleMethodToJavassistScenario extends AbstractScenario
    {
       public void execute(int thread, int loop) throws Exception
       {
@@ -103,7 +104,7 @@ public class SimpleReflectToJavassistTestCase extends ScenarioTest
       }
    }
 
-   private class SimpleFieldToJavassistScenario implements Scenario
+   private class SimpleFieldToJavassistScenario extends AbstractScenario
    {
       public void execute(int thread, int loop) throws Exception
       {

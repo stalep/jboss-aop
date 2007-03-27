@@ -21,6 +21,7 @@
   */
 package org.jboss.test.aop.stress.methodinvocation;
 
+import org.jboss.test.aop.stress.AbstractScenario;
 import org.jboss.test.aop.stress.Scenario;
 import org.jboss.test.aop.stress.ScenarioTest;
 
@@ -49,7 +50,7 @@ public class MethodInvocationTestCase extends ScenarioTest
       getRunner().executeScenario(new StaticWovenNoAdviceScenario());
    }
    
-   private class StaticWovenNoAdviceScenario implements Scenario
+   private class StaticWovenNoAdviceScenario extends AbstractScenario
    {
       POJO pojo = new POJO();
       public void execute(int thread, int loop) throws Exception
@@ -63,7 +64,7 @@ public class MethodInvocationTestCase extends ScenarioTest
       getRunner().executeScenario(new NonStaticWovenNoAdviceScenario());
    }
 
-   private class NonStaticWovenNoAdviceScenario implements Scenario
+   private class NonStaticWovenNoAdviceScenario extends AbstractScenario
    {
       POJO pojo = new POJO();
       public void execute(int thread, int loop) throws Exception
@@ -81,7 +82,7 @@ public class MethodInvocationTestCase extends ScenarioTest
       getRunner().executeScenario(new NonStaticWithOneInterceptorScenario());
    }
    
-   private class NonStaticWithOneInterceptorScenario implements Scenario
+   private class NonStaticWithOneInterceptorScenario extends AbstractScenario
    {
       POJO pojo = new POJO();
       public void execute(int thread, int loop) throws Exception
@@ -99,7 +100,7 @@ public class MethodInvocationTestCase extends ScenarioTest
       getRunner().executeScenario(new NonStaticWithFiveInterceptorsScenario());
    }
    
-   private class NonStaticWithFiveInterceptorsScenario implements Scenario
+   private class NonStaticWithFiveInterceptorsScenario extends AbstractScenario
    {
       POJO pojo = new POJO();
       public void execute(int thread, int loop) throws Exception
@@ -117,7 +118,7 @@ public class MethodInvocationTestCase extends ScenarioTest
       getRunner().executeScenario(new NonStaticWithOneAdviceScenario());
    }
    
-   private class NonStaticWithOneAdviceScenario implements Scenario
+   private class NonStaticWithOneAdviceScenario extends AbstractScenario
    {
       POJO pojo = new POJO();
       public void execute(int thread, int loop) throws Exception
@@ -135,7 +136,7 @@ public class MethodInvocationTestCase extends ScenarioTest
       getRunner().executeScenario(new NonStaticWithFiveAdvicesScenario());
    }
    
-   private class NonStaticWithFiveAdvicesScenario implements Scenario
+   private class NonStaticWithFiveAdvicesScenario extends AbstractScenario
    {
       POJO pojo = new POJO();
       public void execute(int thread, int loop) throws Exception

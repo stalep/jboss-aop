@@ -28,5 +28,6 @@ package org.jboss.test.aop.stress;
  */
 public interface Scenario
 {
+   String getName();
    void execute(int thread, int loop) throws Exception;
 }

@@ -42,4 +42,9 @@ public class ScenarioLoggingDecorator implements Scenario
       delegate.execute(thread, loop);
       System.out.println(id + " end");
    }
+
+   public String getName()
+   {
+      return delegate.getName();
+   }
 }

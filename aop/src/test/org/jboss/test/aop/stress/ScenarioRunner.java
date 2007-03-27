@@ -142,7 +142,7 @@ public class ScenarioRunner
    
    public void executeScenarios(Scenario[] scenarios) throws Exception
    {
-      System.out.println("Starting run with Scenarios " + Arrays.asList(scenarios));
+      System.out.println("Starting run with Scenarios " + getScenarionNames(scenarios));
       long start = System.currentTimeMillis();
       
       ScenarioLoader[] loaders = new ScenarioLoader[threads];
@@ -212,6 +212,21 @@ public class ScenarioRunner
       {
          return sleeptimeMillis;
       }
+   }
+   
+   private String getScenarionNames(Scenario[] scenarios)
+   {
+      StringBuffer buf = new StringBuffer("[");
+      for (int i = 0 ; i < scenarios.length ; i++)
+      {
+         if (i > 0)
+         {
+            buf.append(", ");
+         }
+         buf.append(scenarios[i].getName());
+      }
+      buf.append("]");
+      return buf.toString();
    }
    
    private class ScenarioLoader extends Thread
