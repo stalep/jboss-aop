@@ -180,7 +180,8 @@ public class GeneratedAdvisorInterceptor implements Interceptor
    
    private Object getAspectInstance(AspectDefinition def, Advisor advisor, Joinpoint joinpoint, InstanceAdvisor ia)
    {
-      if (def.getScope() == Scope.PER_VM)
+      final Scope scope = def.getScope();
+      if (scope == Scope.PER_VM)
       {
          if (instance == null)
          {
@@ -188,7 +189,7 @@ public class GeneratedAdvisorInterceptor implements Interceptor
          }
          return instance;
       }
-      else if (def.getScope() == Scope.PER_CLASS)
+      else if (scope == Scope.PER_CLASS)
       {
          if (instance == null)
          {
@@ -202,15 +203,15 @@ public class GeneratedAdvisorInterceptor implements Interceptor
          }
          return instance;
       }
-      else if (def.getScope() == Scope.PER_INSTANCE)
+      else if (scope == Scope.PER_INSTANCE)
       {
          return getPerInstanceAspect(def, advisor, joinpoint, ia);
       }
-      else if (def.getScope() == Scope.PER_JOINPOINT)
+      else if (scope == Scope.PER_JOINPOINT)
       {
          return getPerJoinPointAspect(def, advisor, joinpoint, ia);
       }
-      else if (def.getScope() == Scope.PER_CLASS_JOINPOINT)
+      else if (scope == Scope.PER_CLASS_JOINPOINT)
       {
          if (instance == null)
          {
