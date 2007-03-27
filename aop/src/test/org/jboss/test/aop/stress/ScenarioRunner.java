@@ -135,20 +135,20 @@ public class ScenarioRunner
 
    private void warmupScenario(Scenario[] scenarios) throws Exception
    {
-      ScenarioLoader loader = getLoader(0, scenarios);
+      ScenarioLoader loader = getLoader(0, scenarios, true);
       loader.start();
       loader.join();
    }
    
    public void executeScenarios(Scenario[] scenarios) throws Exception
    {
-      System.out.println("Starting run with Scenarios " + getScenarionNames(scenarios));
+      System.out.println("Starting run with Scenarios " + getScenarioNames(scenarios));
       long start = System.currentTimeMillis();
       
       ScenarioLoader[] loaders = new ScenarioLoader[threads];
       for (int thread = 0 ; thread < threads ; thread++)
       {
-         loaders[thread] = getLoader(thread, scenarios);
+         loaders[thread] = getLoader(thread, scenarios, false);
       }
       
       System.out.println("Starting threads...");
@@ -190,7 +190,7 @@ public class ScenarioRunner
    }
 
    
-   private ScenarioLoader getLoader(int thread, Scenario[] scenarios)
+   private ScenarioLoader getLoader(int thread, Scenario[] scenarios, boolean forWarmup)
    {
       int num = thread % scenarios.length;
       Scenario scenario = scenarios[num];
@@ -198,7 +198,7 @@ public class ScenarioRunner
       {
          scenario = new ScenarioLoggingDecorator(scenario);
       }
-      return new ScenarioLoader(scenario, thread);
+      return new ScenarioLoader(scenario, thread, forWarmup);
    }
    
    private int getSleepInterval()
@@ -214,7 +214,7 @@ public class ScenarioRunner
       }
    }
    
-   private String getScenarionNames(Scenario[] scenarios)
+   private String getScenarioNames(Scenario[] scenarios)
    {
       StringBuffer buf = new StringBuffer("[");
       for (int i = 0 ; i < scenarios.length ; i++)
@@ -235,18 +235,21 @@ public class ScenarioRunner
       Scenario scenario;
       int loop;
       ArrayList exceptions = new ArrayList();
+      boolean forWarmup;
       
-      ScenarioLoader(Scenario scenario, int thread)
+      ScenarioLoader(Scenario scenario, int thread, boolean forWarmup)
       {
          this.scenario = scenario;
          this.thread = thread;
+         this.forWarmup = forWarmup;
       }
       
       public void run()
       {
+         final int max = forWarmup ? warmup : loops;
          try
          {
-            while (loop++ < loops)
+            while (loop++ < max)
             {
                scenario.execute(thread, loop);
                Thread.sleep(getSleepInterval());
