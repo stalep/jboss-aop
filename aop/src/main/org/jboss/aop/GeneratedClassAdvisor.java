@@ -699,7 +699,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    }
 
    /**
-    * Optimization so that when we create class advisors we don't have to bind the method chains again 
+    * Optimization so that when we create class advisors we don't have to create the method tables again 
     */
    @Override
    protected void createMethodTables() throws Exception
@@ -716,5 +716,21 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
    }
    
+   /**
+    * Optimization so that when we create class advisors we don't have to create the field tables again 
+    */
+   @Override
+   protected void createFieldTable() throws Exception
+   {
+      GeneratedClassAdvisor parent = getParentAdvisor();
+      if (parent != null)
+      {
+         this.advisedFields = parent.advisedFields;
+      }
+      else
+      {
+         super.createFieldTable();
+      }
+   }
    
 }

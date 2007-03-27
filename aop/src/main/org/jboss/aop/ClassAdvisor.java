@@ -1384,7 +1384,7 @@ public class ClassAdvisor extends Advisor
    /**
     * Gets advised methods.
     */
-   private void createFieldTable() throws Exception
+   protected void createFieldTable() throws Exception
    {
       ArrayList fields = new ArrayList();
 
