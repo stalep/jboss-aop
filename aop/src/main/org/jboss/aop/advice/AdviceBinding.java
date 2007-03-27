@@ -25,10 +25,10 @@ import java.io.StringReader;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
@@ -54,7 +54,7 @@ public class AdviceBinding
    protected String cflowString;
 
    // not list because of redundancy caused by successive calls of ClassAdvisor.rebuildInterceptors
-   protected Collection advisors = new HashSet();
+   protected Map advisors = new WeakHashMap();
    protected InterceptorFactory[] interceptorFactories = new InterceptorFactory[0];
 
    public AdviceBinding() {}
@@ -155,21 +155,7 @@ public class AdviceBinding
       // we may be having in the future an Advisor per instance.
       synchronized (advisors)
       {
-         if (advisors.size() > 0)
-         {
-            Iterator it = advisors.iterator();
-            while (it.hasNext())
-            {
-               WeakReference ref = (WeakReference) it.next();
-               Object obj = ref.get();
-               if (obj == null) it.remove();
-               else if(obj.equals(advisor))
-               {
-                  return; // don't add duplicate advisor
-               }
-            }
-         }
-         advisors.add(new WeakReference(advisor));
+         advisors.put(advisor, Boolean.TRUE);
       }
       
    }
@@ -184,20 +170,7 @@ public class AdviceBinding
       ArrayList list = new ArrayList(advisors.size());
       synchronized (advisors)
       {
-         Iterator it = advisors.iterator();
-         while (it.hasNext())
-         {
-            WeakReference ref = (WeakReference) it.next();
-            Object advisor = ref.get();
-            if (advisor != null)
-            {
-               list.add(advisor);
-            }
-            else
-            {
-               it.remove();
-            }
-         }
+         list.addAll(advisors.keySet());
       }
       return list;
    }
@@ -206,17 +179,12 @@ public class AdviceBinding
    {
       synchronized (advisors)
       {
-         for (Iterator it = advisors.iterator(); it.hasNext();)
+         for (Iterator it = advisors.keySet().iterator(); it.hasNext();)
          {
-            WeakReference ref = (WeakReference) it.next();
-            Object obj = ref.get();
-            if (obj != null)
+            Advisor advisor = (Advisor) it.next();
+            if (advisor.getManager().isAdvisorRegistered(advisor))
             {
-               Advisor advisor = (Advisor) obj;
-               if (advisor.getManager().isAdvisorRegistered(advisor))
-               {
-                  advisor.removeAdviceBinding(this);
-               }
+               advisor.removeAdviceBinding(this);
             }
          }
          advisors.clear();
