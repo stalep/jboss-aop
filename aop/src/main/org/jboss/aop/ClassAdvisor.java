@@ -1446,7 +1446,7 @@ public class ClassAdvisor extends Advisor
       addDeclaredMethods(superclass);
    }
 
-   private void createMethodTables()
+   protected void createMethodTables()
    throws Exception
    {
       populateMethodTables(clazz.getSuperclass());

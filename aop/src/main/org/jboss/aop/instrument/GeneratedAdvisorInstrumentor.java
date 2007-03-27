@@ -105,6 +105,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       return genInstanceAdvisor;
    }
 
+   @Override
    public boolean transform(CtClass clazz, ClassAdvisor advisor)
    {
       try
@@ -144,6 +145,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       }
    }
 
+   @Override
    protected void intitialiseTransformers()
    {
       callerTransformer = new GeneratedAdvisorCallerTransformer(this, manager);
@@ -153,6 +155,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       methodExecutionTransformer = new GeneratedAdvisorMethodExecutionTransformer(this);
    }
 
+   @Override
    protected CtMethod createMixinInvokeMethod(CtClass clazz, CtClass mixinClass, String initializer, CtMethod method, long hash)
    throws CannotCompileException, NotFoundException, Exception
    {

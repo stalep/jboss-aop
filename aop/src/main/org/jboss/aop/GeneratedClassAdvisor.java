@@ -136,6 +136,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }      
    }
 
+   @Override
    protected void resolveMethodPointcut(MethodInterceptors newMethodInterceptors, AdviceBinding binding)
    {
       super.resolveMethodPointcut(newMethodInterceptors, binding);
@@ -155,6 +156,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       SecurityActions.setAccessible(mi.getAdvisedMethod());
    }
 
+   @Override
    protected MethodInterceptors initializeMethodChain()
    {
       //We have all the advised methods here, need to get all the others here too
@@ -192,6 +194,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       SecurityActions.setAccessible(ci.getConstructor());
    }
 
+   @Override
    protected ArrayList initializeConstructorChain()
    {
       if (super.initialized)
@@ -209,6 +212,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       constructionInfos.add(ci);
    }
 
+   @Override
    protected ArrayList initializeConstructionChain()
    {
       if (super.initialized)
@@ -228,6 +232,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       SecurityActions.setAccessible(fi.getAdvisedField());
    }
 
+   @Override
    protected ArrayList initializeFieldReadChain()
    {
       return mergeFieldInfos(fieldReadInfos, true);
@@ -240,6 +245,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       SecurityActions.setAccessible(fi.getAdvisedField());
    }
 
+   @Override
    protected ArrayList initializeFieldWriteChain()
    {
       return mergeFieldInfos(fieldWriteInfos, false);
@@ -290,6 +296,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       return newInfos;
    }
 
+   @Override
    protected void finalizeMethodChain(MethodInterceptors newMethodInterceptors)
    {
       TLongObjectHashMap newMethodInfos = new TLongObjectHashMap();
@@ -323,6 +330,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       
    }
 
+   @Override
    protected void finalizeFieldReadChain(ArrayList newFieldInfos)
    {
       for (int i = 0; i < newFieldInfos.size(); i++)
@@ -333,6 +341,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
    }
 
+   @Override
    protected void finalizeFieldWriteChain(ArrayList newFieldInfos)
    {
       for (int i = 0; i < newFieldInfos.size(); i++)
@@ -343,7 +352,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
    }
 
-
+   @Override
    protected void finalizeConstructorChain(ArrayList newConstructorInfos)
    {
       for (int i = 0; i < newConstructorInfos.size(); i++)
@@ -354,6 +363,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
    }
 
+   @Override
    protected void finalizeConstructionChain(ArrayList newConstructionInfos)
    {
       for (int i = 0; i < newConstructionInfos.size(); i++)
@@ -364,25 +374,28 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
    }
 
+   @Override
    protected void finalizeMethodCalledByMethodInterceptorChain(MethodByMethodInfo info)
    {
       MethodByMethodJoinPointGenerator generator = getJoinPointGenerator(info);
       finalizeChainAndRebindJoinPoint(info, generator);
    }
 
+   @Override
    protected void finalizeConCalledByMethodInterceptorChain(ConByMethodInfo info)
    {
       ConByMethodJoinPointGenerator generator = getJoinPointGenerator(info);
       finalizeChainAndRebindJoinPoint(info, generator);
    }
 
+   @Override
    protected void finalizeConCalledByConInterceptorChain(ConByConInfo info)
    {
       ConByConJoinPointGenerator generator = getJoinPointGenerator(info);
       finalizeChainAndRebindJoinPoint(info, generator);
    }
 
-
+   @Override
    protected void finalizeMethodCalledByConInterceptorChain(MethodByConInfo info)
    {
       //An extra level of indirection since we distinguish between callers of method depending on
@@ -531,6 +544,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
     * Override default behaviour of when a pointcut is matched, populate the factories since this
     * is what is needed for generating the optimized invocation method
     */
+   @Override
    protected void pointcutResolved(JoinPointInfo info, AdviceBinding binding, Joinpoint joinpoint)
    {
       ArrayList curr = info.getInterceptorChain();
@@ -566,6 +580,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       generator.rebindJoinpoint(info);
    }
 
+   @Override
    public String toString()
    {
       Class clazz = this.getClass();
@@ -605,6 +620,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
     * If this is an instance advisor, will check with parent class advisor if the aspect
     * is already registered. If so, we should use the one from the parent advisor
     */
+   @Override
    public Object getPerClassAspect(AspectDefinition def)
    {
       ClassAdvisor parentAdvisor = getParentAdvisor();
@@ -664,6 +680,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    /**
     * @see Advisor#chainOverridingForInheritedMethods()
     */
+   @Override
    public boolean chainOverridingForInheritedMethods()
    {
       return true;
@@ -679,6 +696,24 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          instance = getPerClassJoinpointAspect(def, joinpoint);
       }
       return instance;
+   }
+
+   /**
+    * Optimization so that when we create class advisors we don't have to bind the method chains again 
+    */
+   @Override
+   protected void createMethodTables() throws Exception
+   {
+      GeneratedClassAdvisor parent = getParentAdvisor();
+      if (parent != null)
+      {
+         this.unadvisedMethods = parent.unadvisedMethods;
+         this.advisedMethods = parent.advisedMethods;
+      }
+      else
+      {
+         super.createMethodTables();
+      }
    }
    
    
