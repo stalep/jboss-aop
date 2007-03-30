@@ -33,6 +33,7 @@ public class ConstructorCalledByConstructorJoinpoint implements Joinpoint
 {
    private final Constructor calling;
    private final Constructor called;
+   int hashCode;
 
    public ConstructorCalledByConstructorJoinpoint(Constructor calling, Constructor called)
    {
@@ -53,7 +54,11 @@ public class ConstructorCalledByConstructorJoinpoint implements Joinpoint
 
    public int hashCode()
    {
-      return calling.hashCode() + called.hashCode();
+      if (hashCode == 0)
+      {
+         hashCode = calling.hashCode() + called.hashCode();
+      }
+      return hashCode;
    }
 
    public Constructor getCalling()

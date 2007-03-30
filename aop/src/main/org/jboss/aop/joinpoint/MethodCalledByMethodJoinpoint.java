@@ -33,6 +33,7 @@ public class MethodCalledByMethodJoinpoint implements Joinpoint
 {
    private final Method calling;
    private final Method called;
+   int hashCode;
 
    public MethodCalledByMethodJoinpoint(Method calling, Method called)
    {
@@ -53,7 +54,11 @@ public class MethodCalledByMethodJoinpoint implements Joinpoint
 
    public int hashCode()
    {
-      return calling.hashCode() + called.hashCode();
+      if (hashCode == 0)
+      {
+         hashCode = calling.hashCode() + called.hashCode();
+      }
+      return hashCode;
    }
 
    public Method getCalling()

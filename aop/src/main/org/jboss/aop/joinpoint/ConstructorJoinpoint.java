@@ -32,6 +32,7 @@ import java.lang.reflect.Constructor;
 public class ConstructorJoinpoint implements Joinpoint
 {
    private final Constructor constructor;
+   int hashCode;
 
    public ConstructorJoinpoint(Constructor con)
    {
@@ -49,7 +50,11 @@ public class ConstructorJoinpoint implements Joinpoint
 
    public int hashCode()
    {
-      return constructor.hashCode();
+      if (hashCode == 0)
+      {
+         hashCode = constructor.hashCode();
+      }
+      return hashCode;
    }
 
    public Constructor getConstructor()

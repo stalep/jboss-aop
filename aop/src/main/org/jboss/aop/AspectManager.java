@@ -38,6 +38,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.WeakHashMap;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AdviceStack;
@@ -71,6 +72,7 @@ import org.jboss.aop.pointcut.PointcutInfo;
 import org.jboss.aop.pointcut.PointcutStats;
 import org.jboss.aop.pointcut.Typedef;
 import org.jboss.aop.pointcut.ast.ClassExpression;
+import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.util.collection.WeakValueHashMap;
 import org.jboss.util.loading.Translatable;
 import org.jboss.util.loading.Translator;
@@ -97,54 +99,57 @@ import javassist.scopedpool.ScopedClassPoolFactory;
 public class AspectManager
         implements Translator
 {
+   /** Read/Write lock to be used when lazy creating the collections */
+   ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-   // Attributes ---------------------------------------------------
+   /** Advisors registered with this manager/domain */
    protected final WeakHashMap advisors = new WeakHashMap();
+   
    /** A map of domains by loader repository, maintaned by the top level AspectManager */
-   protected final WeakHashMap scopedClassLoaderDomains = new WeakHashMap();
+   protected WeakHashMap scopedClassLoaderDomains = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
 
    /** A map of domains by class, maintaned by the top level AspectManager */
-   protected final WeakHashMap subDomainsPerClass = new WeakHashMap();
+   protected WeakHashMap subDomainsPerClass = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
    
    /** A map of domains by name */
-   protected final WeakValueHashMap subDomainsByName = new WeakValueHashMap();
+   protected WeakValueHashMap subDomainsByName = UnmodifiableEmptyCollections.EMPTY_WEAK_VALUE_HASHMAP;
 
    /** Each domain may have sub domains interested in changes happening in this manager/domain */
-   protected final WeakHashMap subscribedSubDomains = new WeakHashMap();
+   protected WeakHashMap subscribedSubDomains = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
 
    /** A queue for adding new subscribed subdomains to */
-   protected final WeakHashMap subscribedSubDomainsQueue = new WeakHashMap();
+   protected WeakHashMap subscribedSubDomainsQueue = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
    protected int subscribedDomainQueueRef;
 
-   protected final LinkedHashMap interfaceIntroductions = new LinkedHashMap();
-   protected final LinkedHashMap annotationIntroductions = new LinkedHashMap();
-   protected final LinkedHashMap annotationOverrides = new LinkedHashMap();
-   protected final LinkedHashMap bindings = new LinkedHashMap();
-   protected final LinkedHashMap typedefs = new LinkedHashMap();
-   protected final HashMap interceptorFactories = new HashMap();
-   protected final Hashtable classMetaDataLoaders = new Hashtable();
-   protected final HashMap interceptorStacks = new HashMap();
-   protected final HashMap declares = new HashMap();
-   protected final ConcurrentReaderHashMap cflowStacks = new ConcurrentReaderHashMap();
-   protected final ConcurrentReaderHashMap dynamicCFlows = new ConcurrentReaderHashMap();
-   protected final ConcurrentReaderHashMap aspectDefinitions = new ConcurrentReaderHashMap();
-   protected final ConcurrentReaderHashMap perVMAspects = new ConcurrentReaderHashMap();
+   protected LinkedHashMap interfaceIntroductions = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected LinkedHashMap annotationIntroductions =UnmodifiableEmptyCollections. EMPTY_LINKED_HASHMAP;
+   protected LinkedHashMap annotationOverrides = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected LinkedHashMap bindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected LinkedHashMap typedefs = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected HashMap interceptorFactories = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected HashMap classMetaDataLoaders = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected HashMap interceptorStacks = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected HashMap declares = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected ConcurrentReaderHashMap cflowStacks = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
+   protected ConcurrentReaderHashMap dynamicCFlows = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
+   protected ConcurrentReaderHashMap aspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
+   protected ConcurrentReaderHashMap perVMAspects = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
 
    /** class name prefixes to explicitly exclude unless contained in include. Maintained by top-level AspectManager */
-   protected final ArrayList exclude = new ArrayList();
+   protected ArrayList exclude = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
 
    /** class name prefixes to explicitly include, this overrides whatever was set in exclude. Maintained by top-level AspectManager */
-   protected final ArrayList include = new ArrayList();
+   protected ArrayList include = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
 
    /** A set of wildcard enabled classnames that will be ignored no matter if they have been included. Maintained by top-level AspectManager */
-   protected final ArrayList ignore = new ArrayList();
+   protected ArrayList ignore = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
 
    /** ClassExpressions built from ignore. Maintained by top-level AspectManager */
    protected ClassExpression[] ignoreExpressions = new ClassExpression[0];
 
-   protected final LinkedHashMap pointcuts = new LinkedHashMap();
+   protected LinkedHashMap pointcuts = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    // contains pointcuts-binding association info
-   protected final LinkedHashMap pointcutInfos = new LinkedHashMap();
+   protected LinkedHashMap pointcutInfos = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    // these fields represent whether there are certain pointcut types.
    // for performance reasons the transformers and binders can make a lot of us of this.
    protected boolean execution = false;
@@ -156,9 +161,9 @@ public class AspectManager
    protected boolean withincode = false;
    public static boolean classicOrder = false;
 
-   protected final LinkedHashMap classMetaData = new LinkedHashMap();
-   protected final HashMap containers = new HashMap();
-   protected final LinkedHashMap precedenceDefs = new LinkedHashMap();
+   protected LinkedHashMap classMetaData = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected HashMap containers = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected LinkedHashMap precedenceDefs = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    protected PrecedenceDefEntry[] sortedPrecedenceDefEntries;
    protected WeavingStrategy weavingStrategy;
 
@@ -223,6 +228,13 @@ public class AspectManager
                   AOPClassPoolRepository.getInstance().setPrune((new Boolean(pruneit)).booleanValue());
                }
                manager = new AspectManager();
+               //Initialise frequently used fields needed by the top-level manager
+               manager.scopedClassLoaderDomains = new WeakHashMap();
+               manager.subDomainsPerClass = new WeakHashMap();
+               manager.exclude = new ArrayList();
+               manager.include = new ArrayList();
+               manager.ignore = new ArrayList();
+
                AOPClassPoolRepository.getInstance().setAspectManager(manager);
 
                if (!verbose)
@@ -308,6 +320,7 @@ public class AspectManager
                   }
                   scopedManager.setInheritsBindings(true);
                   scopedManager.setInheritsDeclarations(true);
+                  
                   manager.scopedClassLoaderDomains.put(loaderRepository, scopedManager);
                }
             }
@@ -339,6 +352,7 @@ public class AspectManager
 
    public void addCFlowStack(CFlowStack stack)
    {
+      initCflowStacksMap();
       cflowStacks.put(stack.getName(), stack);
    }
 
@@ -364,6 +378,7 @@ public class AspectManager
     */
    public void addDynamicCFlow(String name, DynamicCFlowDefinition cflow)
    {
+      initDynamicCflowsMap();
       dynamicCFlows.put(name, cflow);
    }
 
@@ -421,6 +436,7 @@ public class AspectManager
     */
    public void addClassMetaDataLoader(String group, ClassMetaDataLoader loader)
    {
+      initClassMetaDataLoadersMap();
       classMetaDataLoaders.put(group, loader);
    }
 
@@ -530,6 +546,7 @@ public class AspectManager
    
    protected void addSubDomainByName(Domain domain)
    {
+      initSubDomainsByNameMap();
       subDomainsByName.put(domain.getDomainName(), domain);
    }
    
@@ -904,12 +921,13 @@ public class AspectManager
     */
    public void addInterceptorFactory(String name, InterceptorFactory factory)
    {
+      initInterceptorFactoriesMap();
       synchronized (interceptorFactories)
       {
          interceptorFactories.put(name, factory);
       }
    }
-
+   
    /**
     * Remove an interceptor factory that can be referenced by name.
     */
@@ -940,13 +958,13 @@ public class AspectManager
 
    public void addPrecedence(PrecedenceDef precedenceDef)
    {
+      initPrecedenceDefsMap();
       synchronized (precedenceDefs)
       {
          precedenceDefs.put(precedenceDef.getName(), precedenceDef);
       }
       forceResortPrecedenceDefs();
    }
-
 
    public void removePrecedence(String name)
    {
@@ -1005,6 +1023,7 @@ public class AspectManager
     */
    public void addAdviceStack(AdviceStack stack)
    {
+      initInerceptorStacksMap();
       synchronized (interceptorStacks)
       {
          interceptorStacks.put(stack.getName(), stack);
@@ -1128,6 +1147,7 @@ public class AspectManager
 
    public void addContainer(DomainDefinition def)
    {
+      initContainersMap();
       containers.put(def.getName(), def);
    }
 
@@ -1165,6 +1185,8 @@ public class AspectManager
    public synchronized void addPointcut(Pointcut pointcut)
    {
       removePointcut(pointcut.getName());
+      initPointcutsMap();
+      initPointcutInfosMap();
       synchronized (pointcuts)
       {
          pointcuts.put(pointcut.getName(), pointcut);
@@ -1333,10 +1355,14 @@ public class AspectManager
    {
       AdviceBinding removedBinding = internalRemoveBinding(binding.getName());
       Set affectedAdvisors = removedBinding == null? new HashSet(): new HashSet(removedBinding.getAdvisors());
+      initBindingsMap();
       synchronized (bindings)
       {
          bindings.put(binding.getName(), binding);
       }
+      
+      initPointcutsMap();
+      initPointcutInfosMap();
       synchronized (pointcuts)
       {
          Pointcut pointcut = binding.getPointcut();
@@ -1426,6 +1452,7 @@ public class AspectManager
 
       updateAdvisorsForAddedClassMetaData(meta);
 
+      initClassMetaDataMap();
       synchronized (classMetaData)
       {
          classMetaData.put(meta.getName(), meta);
@@ -1501,6 +1528,7 @@ public class AspectManager
    public synchronized void addInterfaceIntroduction(InterfaceIntroduction pointcut)
    {
       removeInterfaceIntroduction(pointcut.getName());
+      initInterfaceIntroductionsMap();
       synchronized (interfaceIntroductions)
       {
          interfaceIntroductions.put(pointcut.getName(), pointcut);
@@ -1527,6 +1555,7 @@ public class AspectManager
    {
       String name = pointcut.getOriginalAnnotationExpr() + pointcut.getOriginalExpression();
       removeAnnotationIntroduction(pointcut);
+      initAnnotationIntroductionsMap();
       synchronized (annotationIntroductions)
       {
          annotationIntroductions.put(name, pointcut);
@@ -1556,6 +1585,7 @@ public class AspectManager
    public synchronized void addDeclare(DeclareDef declare)
    {
       removeDeclare(declare.getName());
+      initDeclaresMap();
       synchronized (declares)
       {
          declares.put(declare.getName(), declare);
@@ -1623,6 +1653,7 @@ public class AspectManager
    public synchronized void addAnnotationOverride(AnnotationIntroduction pointcut)
    {
       String name = pointcut.getOriginalAnnotationExpr() + pointcut.getOriginalExpression();
+      initAnnotationOverridesMap();
       synchronized (annotationOverrides)
       {
          annotationOverrides.put(name, pointcut);
@@ -1712,6 +1743,7 @@ public class AspectManager
                ((AspectFactoryWithClassLoader)adef.getFactory()).pushScopedClassLoader(scopedClassLoader);
             }
             instance = adef.getFactory().createPerVM();
+            initPerVMAspectsMap();
             perVMAspects.put(def, instance);
          }
          finally
@@ -1730,8 +1762,10 @@ public class AspectManager
       removeAspectDefinition(def.getName());
       if (def.getScope() == Scope.PER_VM)
       {
+         initPerVMAspectsMap();
          perVMAspects.put(def.getName(), def);
       }
+      initAspectDefintitionsMap();
       aspectDefinitions.put(def.getName(), def);
    }
 
@@ -1764,6 +1798,7 @@ public class AspectManager
    public synchronized void addTypedef(Typedef def) throws Exception
    {
       removeTypedef(def.getName());
+      initTypedefsMap();
       synchronized (typedefs)
       {
          typedefs.put(def.getName(), def);
@@ -1870,6 +1905,7 @@ public class AspectManager
 
    public void setBindings(LinkedHashMap bindings)
    {
+      initBindingsMap();
       this.bindings.clear();
       this.bindings.putAll(bindings);
    }
@@ -1888,6 +1924,8 @@ public class AspectManager
     */
    public void subscribeSubDomain(Domain domain)
    {
+      initSubscribedSubDomainsMap();
+      initSubscribedSubDomainsQueueMap();
       synchronized (subscribedSubDomains)
       {
          subscribedSubDomainsQueue.put(domain, "Contents do not matter");
@@ -1929,6 +1967,7 @@ public class AspectManager
    private boolean copySubDomainsFromQueue(boolean increment)
    {
       boolean copied = false;
+      initSubscribedSubDomainsMap();
       synchronized (subscribedSubDomains)
       {
          if (!increment && subscribedDomainQueueRef > 0) subscribedDomainQueueRef--;
@@ -2014,4 +2053,424 @@ public class AspectManager
       for (int i = 0 ; i < indent ; i++) System.out.print(" ");
    }
 */
+   /**
+    * Lock for write
+    */
+   protected void lockWrite()
+   {
+//      StackTraceElement[] st = new Exception().getStackTrace();
+//      System.out.println("---> WL++" + lock.getReadLockCount() + " " + st[1]);
+      lock.writeLock().lock();
+   }
+
+   /**
+    * Unlock for write
+    */
+   protected void unlockWrite()
+   {
+//      StackTraceElement[] st = new Exception().getStackTrace();
+//      System.out.println("---> WL--" + lock.getReadLockCount() + " " + st[1]);
+      lock.writeLock().unlock();
+   }
+
+   private void initSubDomainsByNameMap()
+   {
+      if (subDomainsByName == UnmodifiableEmptyCollections.EMPTY_WEAK_VALUE_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (subDomainsByName == UnmodifiableEmptyCollections.EMPTY_WEAK_VALUE_HASHMAP)
+            {
+               subDomainsByName = new WeakValueHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   private void initSubscribedSubDomainsMap()
+   {
+      if (subscribedSubDomains == UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (subscribedSubDomains == UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP)
+            {
+               subscribedSubDomains = new WeakHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }      
+   }
+   
+   private void initSubscribedSubDomainsQueueMap()
+   {
+      if (subscribedSubDomainsQueue == UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (subscribedSubDomainsQueue == UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP)
+            {
+               subscribedSubDomainsQueue = new WeakHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   private void initInterfaceIntroductionsMap()
+   {
+      if (interfaceIntroductions == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (interfaceIntroductions == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+            {
+               interfaceIntroductions = new LinkedHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   private void initAnnotationIntroductionsMap()
+   {
+      if (annotationIntroductions == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (annotationIntroductions == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+            {
+               annotationIntroductions = new LinkedHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   private void initAnnotationOverridesMap()
+   {
+      if (annotationOverrides == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (annotationOverrides == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+            {
+               annotationOverrides = new LinkedHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+
+   private void initBindingsMap()
+   {
+      if (bindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (bindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+            {
+               bindings = new LinkedHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+
+   private void initTypedefsMap()
+   {
+      if (typedefs == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (typedefs == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+            {
+               typedefs = new LinkedHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+
+   private void initInterceptorFactoriesMap()
+   {
+      if (interceptorFactories == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (interceptorFactories == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
+            {
+               interceptorFactories = new HashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   private void initClassMetaDataLoadersMap()
+   {
+      if (classMetaDataLoaders == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (classMetaDataLoaders == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
+            {
+               classMetaDataLoaders = new HashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   private void initInerceptorStacksMap()
+   {
+      if (interceptorStacks == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (interceptorStacks == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
+            {
+               interceptorStacks = new HashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   
+   private void initDeclaresMap()
+   {
+      if (declares == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (declares == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
+            {
+               declares = new HashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   private void initCflowStacksMap()
+   {
+      if (cflowStacks == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (cflowStacks == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            {
+               cflowStacks = new ConcurrentReaderHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   private void initDynamicCflowsMap()
+   {
+      if (dynamicCFlows == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (dynamicCFlows == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            {
+               dynamicCFlows = new ConcurrentReaderHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   private void initAspectDefintitionsMap()
+   {
+      if (aspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (aspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            {
+               aspectDefinitions = new ConcurrentReaderHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   private void initPerVMAspectsMap()
+   {
+      if (perVMAspects == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (perVMAspects == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            {
+               perVMAspects = new ConcurrentReaderHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   private void initPointcutsMap()
+   {
+      if (pointcuts == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (pointcuts == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+            {
+               pointcuts = new LinkedHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   private void initPointcutInfosMap()
+   {
+      if (pointcutInfos == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (pointcutInfos == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+            {
+               pointcutInfos = new LinkedHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   
+   private void initClassMetaDataMap()
+   {
+      if (classMetaData == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (classMetaData == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+            {
+               classMetaData = new LinkedHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   private void initContainersMap()
+   {
+      if (containers == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (containers == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
+            {
+               containers = new HashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   private void initPrecedenceDefsMap()
+   {
+      if (precedenceDefs == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (precedenceDefs == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+            {
+               precedenceDefs = new LinkedHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+
 }

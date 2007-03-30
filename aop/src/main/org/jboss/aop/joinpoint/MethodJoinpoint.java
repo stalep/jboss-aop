@@ -32,6 +32,7 @@ import java.lang.reflect.Method;
 public class MethodJoinpoint implements Joinpoint
 {
    private final Method method;
+   int hashCode;
 
    public MethodJoinpoint(Method method)
    {
@@ -49,7 +50,11 @@ public class MethodJoinpoint implements Joinpoint
 
    public int hashCode()
    {
-      return method.hashCode();
+      if (hashCode == 0)
+      {
+         hashCode = method.hashCode();
+      }
+      return hashCode;
    }
 
    public Method getMethod()

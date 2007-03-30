@@ -32,6 +32,7 @@ import java.lang.reflect.Field;
 public class FieldJoinpoint implements Joinpoint
 {
    private final Field field;
+   int hashCode;
 
    public FieldJoinpoint(Field field)
    {
@@ -49,7 +50,11 @@ public class FieldJoinpoint implements Joinpoint
 
    public int hashCode()
    {
-      return field.hashCode();
+      if (hashCode == 0)
+      {
+         hashCode = field.hashCode();
+      }
+      return hashCode;
    }
 
    public Field getField()
