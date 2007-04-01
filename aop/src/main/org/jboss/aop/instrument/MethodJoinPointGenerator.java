@@ -21,6 +21,7 @@
   */
 package org.jboss.aop.instrument;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
@@ -34,6 +35,7 @@ import javassist.CtNewMethod;
 import javassist.NotFoundException;
 
 import org.jboss.aop.GeneratedClassAdvisor;
+import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.MethodInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
 import org.jboss.aop.joinpoint.MethodInvocation;
@@ -59,11 +61,19 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
          throw new RuntimeException(e);
       }
    }
+   
+   WeakReference returnType;
+   boolean hasTargetObject;
 
    public MethodJoinPointGenerator(GeneratedClassAdvisor advisor, MethodInfo info)
    {
-      super(advisor, info, getParameters((MethodInfo) info),
-            ((MethodInfo) info).getAdvisedMethod().getParameterTypes().length);
+      super(advisor, info, getParameters(info),
+            info.getAdvisedMethod().getParameterTypes().length);
+      if (!info.getUnadvisedMethod().getReturnType().equals(Void.TYPE))
+      {
+         returnType = new WeakReference(info.getUnadvisedMethod().getReturnType());
+      }
+      hasTargetObject = !Modifier.isStatic(info.getAdvisedMethod().getModifiers());
    }
    
    private static JoinPointParameters getParameters(MethodInfo info)
@@ -75,39 +85,43 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
       return JoinPointParameters.TARGET_ARGS;
    }
 
-   protected void initialiseJoinPointNames()
+   protected void initialiseJoinPointNames(JoinPointInfo info)
    {
-      joinpointClassName = getInfoClassName(
-               advisedMethodName(), 
-               methodHash());
+      MethodInfo minfo = (MethodInfo)info;
+      joinpointClassName = getGeneratedJoinPointClassName(
+               advisedMethodName(minfo), 
+               methodHash(minfo));
       
-      joinpointFieldName = getInfoFieldName(
-               advisedMethodName(), 
-               methodHash());
+      joinpointFieldName = getGeneratedJoinPointFieldName(
+               advisedMethodName(minfo), 
+               methodHash(minfo));
    }
    
-   private String advisedMethodName()
+   private String advisedMethodName(MethodInfo info)
    {
-      return ((MethodInfo)info).getAdvisedMethod().getName();
+      return info.getAdvisedMethod().getName();
    }
    
-   private long methodHash()
+   private long methodHash(MethodInfo info)
    {
-      return ((MethodInfo)info).getHash();
+      return info.getHash();
    }
       
    protected boolean isVoid()
    {
-      return ((MethodInfo)info).getUnadvisedMethod().getReturnType().equals(Void.TYPE);
+      return getReturnType() == null;
    }
 
    protected Class getReturnType()
    {
-      if (isVoid()) return null;
-      return ((MethodInfo)info).getUnadvisedMethod().getReturnType();
+      if (returnType == null)
+      {
+         return null;
+      }
+      return (Class)returnType.get();
    }
 
-   protected AdviceMethodProperties getAdviceMethodProperties(AdviceSetup setup)
+   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointInfo info, AdviceSetup setup)
    {
       Method method = ((MethodInfo)info).getAdvisedMethod();
       return new AdviceMethodProperties(
@@ -125,14 +139,14 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
 
    protected boolean hasTargetObject()
    {
-      return !Modifier.isStatic(((MethodInfo)info).getAdvisedMethod().getModifiers()); 
+      return hasTargetObject; 
    }
 
-   protected String getInfoName()
-   {
-      return MethodExecutionTransformer.getMethodInfoFieldName(
-            ((MethodInfo)info).getAdvisedMethod().getName(), ((MethodInfo)info).getHash());
-   }
+//   protected String getInfoName()
+//   {
+//      return MethodExecutionTransformer.getMethodInfoFieldName(
+//            ((MethodInfo)info).getAdvisedMethod().getName(), ((MethodInfo)info).getHash());
+//   }
 
    protected static CtClass createJoinpointBaseClass(
          GeneratedAdvisorInstrumentor instrumentor, 
@@ -144,31 +158,18 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
          String wrappedMethodName, 
          long hash) throws CannotCompileException, NotFoundException
    {
-      instrumentor.addJoinPointGeneratorFieldToGenAdvisor(
-            getJoinPointGeneratorFieldName(originalMethodName, hash));
-
       BaseClassGenerator factory = new BaseClassGenerator(instrumentor, advisedClass, targetMethod, wMethod, miname, originalMethodName, wrappedMethodName, hash);
       return factory.generate();
    }
 
-   protected String getJoinPointGeneratorFieldName()
-   {
-      return getJoinPointGeneratorFieldName(advisedMethodName(), methodHash());
-   }
-   
-   protected static String getInfoFieldName(String methodName, long hash)
+   protected static String getGeneratedJoinPointFieldName(String methodName, long hash)
    {
       return JOINPOINT_FIELD_PREFIX + MethodExecutionTransformer.getMethodNameHash(methodName, hash);
    }
 
-   private static String getInfoClassName(String methodName, long hash)
+   private static String getGeneratedJoinPointClassName(String methodName, long hash)
    {
       return JOINPOINT_CLASS_PREFIX + MethodExecutionTransformer.getMethodNameHash(methodName, hash);
-   }
-   
-   protected static String getJoinPointGeneratorFieldName(String methodName, long hash)
-   {
-      return GENERATOR_PREFIX + MethodExecutionTransformer.getMethodNameHash(methodName, hash);
    }
    
    private static class BaseClassGenerator
@@ -232,7 +233,7 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
       
       private CtClass setupClass()throws NotFoundException, CannotCompileException
       {
-         String className = getInfoClassName(originalMethodName, hash);
+         String className = getGeneratedJoinPointClassName(originalMethodName, hash);
          
          //Create inner joinpoint class in advised class, super class is MethodInvocation
          jp = TransformerCommon.makeNestedClass(advisedClass, className, true);

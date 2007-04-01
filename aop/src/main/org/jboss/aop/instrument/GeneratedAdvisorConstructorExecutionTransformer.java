@@ -76,7 +76,7 @@ public class GeneratedAdvisorConstructorExecutionTransformer extends
       CtClass genadvisor = ((GeneratedAdvisorInstrumentor)getInstrumentor()).getGenadvisor();
       CtField field = new CtField(
             joinpoint,
-            ConstructorJoinPointGenerator.getInfoFieldName(clazz.getSimpleName(), index),
+            ConstructorJoinPointGenerator.getGeneratedJoinPointFieldName(clazz.getSimpleName(), index),
             genadvisor);
       field.setModifiers(Modifier.PROTECTED);
       genadvisor.addField(field);
@@ -208,27 +208,27 @@ public class GeneratedAdvisorConstructorExecutionTransformer extends
 
       CtMethod innerWrapper = getInnerWrapperMethod(trans.getConstructor());
 
-      String infoName = ConstructorJoinPointGenerator.getInfoFieldName(
+      String joinpointName = ConstructorJoinPointGenerator.getGeneratedJoinPointFieldName(
             trans.getConstructor().getDeclaringClass().getSimpleName(),
             trans.getIndex());
 
-      String generatorName = ConstructorJoinPointGenerator.getJoinPointGeneratorFieldName(
+      String infoName = getConstructorInfoFieldName(            
             trans.getConstructor().getDeclaringClass().getSimpleName(),
             trans.getIndex());
 
       String code =
          "{" +
-         "   if (" + infoName + " == null && " + generatorName + " != null)" +
+         "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
          "   {" +
-         "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
+         "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
          "   }" +
-         "   if (" + infoName + " == null)" +
+         "   if (" + joinpointName + " == null)" +
          "   { " +
          "      return new " + trans.getClassName() + "($$); " +
          "   }" +
          "   else" +
          "   {" +
-         "      return " + infoName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+         "      return " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
          "   }" +
          "}";
 

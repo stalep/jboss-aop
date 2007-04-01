@@ -75,11 +75,15 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    //TODO These are only needed for the class advisor really
    //All joinpoint generators apart from field reads and constructions go in here
-   ConcurrentReaderHashMap joinPoinGenerators = new ConcurrentReaderHashMap();
+   private ConcurrentReaderHashMap joinPoinGenerators = new ConcurrentReaderHashMap();
    //Needs its own map to avoid crashing with the field write generators
-   ConcurrentReaderHashMap fieldReadJoinPoinGenerators = new ConcurrentReaderHashMap();
+   private ConcurrentReaderHashMap fieldReadJoinPoinGenerators = new ConcurrentReaderHashMap();
    //Needs its own map to avoid crashing with the constructor generators
-   ConcurrentReaderHashMap constructionJoinPointGenerators = new ConcurrentReaderHashMap();
+   private ConcurrentReaderHashMap constructionJoinPointGenerators = new ConcurrentReaderHashMap();
+   
+   ConcurrentReaderHashMap oldInfos = new ConcurrentReaderHashMap();
+   ConcurrentReaderHashMap oldFieldReadInfos = new ConcurrentReaderHashMap();
+   ConcurrentReaderHashMap oldConstructionInfos = new ConcurrentReaderHashMap();
 
    boolean initialisedSuperClasses; 
 
@@ -309,7 +313,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          newMethodInfos.put(keys[i], info);
 
          MethodJoinPointGenerator generator = getJoinPointGenerator(info);
-         finalizeChainAndRebindJoinPoint(info, generator);
+         finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
       }
       methodInterceptors = newMethodInfos;
       
@@ -321,7 +325,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
             MethodInfo info = (MethodInfo)it.next();
 
             MethodJoinPointGenerator generator = getJoinPointGenerator(info);
-            finalizeChainAndRebindJoinPoint(info, generator);
+            finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
          }
       }      
 
@@ -335,7 +339,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       {
          FieldInfo info = (FieldInfo)newFieldInfos.get(i);
          FieldJoinPointGenerator generator = getJoinPointGenerator(info);
-         finalizeChainAndRebindJoinPoint(info, generator);
+         finalizeChainAndRebindJoinPoint(oldFieldReadInfos, info, generator);
       }
    }
 
@@ -346,7 +350,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       {
          FieldInfo info = (FieldInfo)newFieldInfos.get(i);
          FieldJoinPointGenerator generator = getJoinPointGenerator(info);
-         finalizeChainAndRebindJoinPoint(info, generator);
+         finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
       }
    }
 
@@ -357,7 +361,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       {
          ConstructorInfo info = (ConstructorInfo) newConstructorInfos.get(i);
          ConstructorJoinPointGenerator generator = getJoinPointGenerator(info);
-         finalizeChainAndRebindJoinPoint(info, generator);
+         finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
       }
    }
 
@@ -368,7 +372,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       {
          ConstructionInfo info = (ConstructionInfo) newConstructionInfos.get(i);
          ConstructionJoinPointGenerator generator = getJoinPointGenerator(info);
-         finalizeChainAndRebindJoinPoint(info, generator);
+         finalizeChainAndRebindJoinPoint(oldConstructionInfos, info, generator);
       }
    }
 
@@ -376,21 +380,21 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    protected void finalizeMethodCalledByMethodInterceptorChain(MethodByMethodInfo info)
    {
       MethodByMethodJoinPointGenerator generator = getJoinPointGenerator(info);
-      finalizeChainAndRebindJoinPoint(info, generator);
+      finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
    }
 
    @Override
    protected void finalizeConCalledByMethodInterceptorChain(ConByMethodInfo info)
    {
       ConByMethodJoinPointGenerator generator = getJoinPointGenerator(info);
-      finalizeChainAndRebindJoinPoint(info, generator);
+      finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
    }
 
    @Override
    protected void finalizeConCalledByConInterceptorChain(ConByConInfo info)
    {
       ConByConJoinPointGenerator generator = getJoinPointGenerator(info);
-      finalizeChainAndRebindJoinPoint(info, generator);
+      finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
    }
 
    @Override
@@ -407,11 +411,18 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
 
       MethodByConJoinPointGenerator generator = getJoinPointGenerator(info);
-      finalizeChainAndRebindJoinPoint(info, generator);
+      finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
    }
 
    protected MethodJoinPointGenerator getJoinPointGenerator(MethodInfo info)
    {
+      GeneratedClassAdvisor parent = getParentAdvisor();
+      if (parent != null)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+      //We are the class advisor
       MethodJoinPointGenerator generator = (MethodJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
       if (generator == null)
       {
@@ -423,6 +434,13 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    protected FieldJoinPointGenerator getJoinPointGenerator(FieldInfo info)
    {
+      GeneratedClassAdvisor parent = getParentAdvisor();
+      if (parent != null)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+      //We are the class advisor
       if (info.isRead())
       {
          FieldJoinPointGenerator generator = (FieldJoinPointGenerator)fieldReadJoinPoinGenerators.get(info.getJoinpoint());
@@ -444,14 +462,63 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          return generator;
       }
    }
-
-   protected void test123()
+   
+   private JoinPointGenerator getJoinPointGenerator(JoinPointInfo info)
    {
-
+      GeneratedClassAdvisor parent = getParentAdvisor();
+      if (parent != null)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+      //We are the class advisor
+      if (info instanceof MethodInfo)
+      {
+         return getJoinPointGenerator((MethodInfo)info);
+      }
+      else if (info instanceof FieldInfo)
+      {
+         return getJoinPointGenerator((FieldInfo)info);
+      }
+      else if (info instanceof ConstructionInfo)
+      {
+         return getJoinPointGenerator((ConstructionInfo)info);
+      }
+      else if (info instanceof ConstructorInfo)
+      {
+         return getJoinPointGenerator((ConstructorInfo)info);
+      }
+      else if (info instanceof ConByConInfo)
+      {
+         return getJoinPointGenerator((ConByConInfo)info);
+      }
+      else if (info instanceof ConByMethodInfo)
+      {
+         return getJoinPointGenerator((ConByMethodInfo)info);
+      }
+      else if (info instanceof MethodByMethodInfo)
+      {
+         return getJoinPointGenerator((MethodByMethodInfo)info);
+      }
+      else if (info instanceof MethodByConInfo)
+      {
+         return getJoinPointGenerator((MethodByConInfo)info);
+      }
+      else
+      {
+         throw new RuntimeException("Invalid JoinPointInfo passed in: " + info.getClass().getName());
+      }
    }
 
    protected ConstructorJoinPointGenerator getJoinPointGenerator(ConstructorInfo info)
    {
+      GeneratedClassAdvisor parent = getParentAdvisor();
+      if (parent != null)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+      //We are the class advisor
       ConstructorJoinPointGenerator generator = (ConstructorJoinPointGenerator)constructionJoinPointGenerators.get(info.getJoinpoint());
       if (generator == null)
       {
@@ -463,6 +530,13 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    protected ConstructionJoinPointGenerator getJoinPointGenerator(ConstructionInfo info)
    {
+      GeneratedClassAdvisor parent = getParentAdvisor();
+      if (parent != null)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+      //We are the class advisor
       ConstructionJoinPointGenerator generator = (ConstructionJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
       if (generator == null)
       {
@@ -474,6 +548,14 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    protected MethodByMethodJoinPointGenerator getJoinPointGenerator(MethodByMethodInfo info)
    {
+      GeneratedClassAdvisor parent = getParentAdvisor();
+      if (parent != null)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+      //We are the class advisor
+
       //An extra level of indirection since we distinguish between callers of method depending on
       //where the called method is defined (sub/super interfaces)
       ConcurrentReaderHashMap map = (ConcurrentReaderHashMap)joinPoinGenerators.get(info.getJoinpoint());
@@ -496,6 +578,13 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    protected ConByMethodJoinPointGenerator getJoinPointGenerator(ConByMethodInfo info)
    {
+      GeneratedClassAdvisor parent = getParentAdvisor();
+      if (parent != null)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+      //We are the class advisor
       ConByMethodJoinPointGenerator generator = (ConByMethodJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
       if (generator == null)
       {
@@ -507,6 +596,13 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    protected ConByConJoinPointGenerator getJoinPointGenerator(ConByConInfo info)
    {
+      GeneratedClassAdvisor parent = getParentAdvisor();
+      if (parent != null)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+      //We are the class advisor
       ConByConJoinPointGenerator generator = (ConByConJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
       if (generator == null)
       {
@@ -518,6 +614,14 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    protected MethodByConJoinPointGenerator getJoinPointGenerator(MethodByConInfo info)
    {
+      GeneratedClassAdvisor parent = getParentAdvisor();
+      if (parent != null)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+      //We are the class advisor
+
       //An extra level of indirection since we distinguish between callers of method depending on
       //where the called method is defined (sub/super interfaces)
       ConcurrentReaderHashMap map = (ConcurrentReaderHashMap)joinPoinGenerators.get(info.getJoinpoint());
@@ -565,7 +669,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
    }
 
-   private void finalizeChainAndRebindJoinPoint(JoinPointInfo info, JoinPointGenerator generator)
+   private void finalizeChainAndRebindJoinPoint(Map oldInfos, JoinPointInfo info, JoinPointGenerator generator)
    {
       ArrayList list = info.getInterceptorChain();
       GeneratedAdvisorInterceptor[] factories = null;
@@ -575,7 +679,10 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
       info.setInterceptors(factories);
 
-      generator.rebindJoinpoint(info);
+      if (updateOldInfo(oldInfos, info))
+      {
+         generator.rebindJoinpoint(info);
+      }
    }
 
    @Override
@@ -731,4 +838,77 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
    }
    
+   /**
+    * Caches the old info and checks if the chains have been updated
+    */
+   private boolean updateOldInfo(Map oldInfos, JoinPointInfo newInfo)
+   {
+      JoinPointInfo oldInfo = (JoinPointInfo)oldInfos.get(newInfo.getJoinpoint());
+      if (oldInfo != null)
+      {
+         //We are not changing any of the bindings
+         if (oldInfo.equalChains(newInfo))
+         {
+            return false;
+         }
+      }
+      oldInfo = newInfo.copy();
+      oldInfos.put(newInfo.getJoinpoint(), oldInfo);
+      return true;
+   }
+
+   protected void generateJoinPointClass(MethodInfo info)
+   {
+      MethodJoinPointGenerator generator = getJoinPointGenerator(info);
+      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+   }
+
+   protected void generateJoinPointClass(FieldInfo info)
+   {
+      FieldJoinPointGenerator generator = getJoinPointGenerator(info);
+      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+   }
+
+   protected void generateJoinPointClass(ConstructorInfo info)
+   {
+      ConstructorJoinPointGenerator generator = getJoinPointGenerator(info);
+      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+   }
+
+   protected void generateJoinPointClass(ConstructionInfo info)
+   {
+      ConstructionJoinPointGenerator generator = getJoinPointGenerator(info);
+      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+   }
+
+   protected void generateJoinPointClass(MethodByMethodInfo info)
+   {
+      MethodByMethodJoinPointGenerator generator = getJoinPointGenerator(info);
+      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+   }
+
+   protected void generateJoinPointClass(ConByMethodInfo info)
+   {
+      ConByMethodJoinPointGenerator generator = getJoinPointGenerator(info);
+      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+   }
+
+   protected void generateJoinPointClass(ConByConInfo info)
+   {
+      ConByConJoinPointGenerator generator = getJoinPointGenerator(info);
+      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+   }
+
+   protected void generateJoinPointClass(MethodByConInfo info)
+   {
+      MethodByConJoinPointGenerator generator = getJoinPointGenerator(info);
+      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+   }
+   
+   protected void rebindJoinPointWithInstanceInformation(JoinPointInfo info)
+   {
+      JoinPointGenerator generator = getJoinPointGenerator(info);
+      generator.rebindJoinpoint(info);
+      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+   }
 }

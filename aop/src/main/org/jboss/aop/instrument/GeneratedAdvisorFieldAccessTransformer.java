@@ -136,7 +136,7 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       CtClass genadvisor = ((GeneratedAdvisorInstrumentor)instrumentor).getGenadvisor();
       CtField jpfield = new CtField(
             joinpoint,
-            FieldJoinPointGenerator.getInfoFieldName(field.getName(), true),
+            FieldJoinPointGenerator.getGeneratedJoinPointFieldName(field.getName(), true),
             genadvisor);
       jpfield.setModifiers(Modifier.PROTECTED);
       genadvisor.addField(jpfield);
@@ -175,7 +175,7 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       CtClass genadvisor = ((GeneratedAdvisorInstrumentor)instrumentor).getGenadvisor();
       CtField jpfield = new CtField(
             joinpoint,
-            FieldJoinPointGenerator.getInfoFieldName(field.getName(), false),
+            FieldJoinPointGenerator.getGeneratedJoinPointFieldName(field.getName(), false),
             genadvisor);
       jpfield.setModifiers(Modifier.PROTECTED);
       genadvisor.addField(jpfield);
@@ -256,23 +256,23 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
    {
       boolean isStatic = Modifier.isStatic(field.getModifiers());
       String code = null;
-      String infoName = FieldJoinPointGenerator.getInfoFieldName(field.getName(), true);
-      String generatorName = FieldJoinPointGenerator.getJoinPointGeneratorFieldName(field.getName(), true);
+      String joinpointName = FieldJoinPointGenerator.getGeneratedJoinPointFieldName(field.getName(), true);
+      String infoName = getFieldReadInfoFieldName(field.getName());
       if (isStatic)
       {
          code =
             "{" +
-            "   if (" + infoName + " == null && " + generatorName + " != null)" +
+            "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "   {" +
-            "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
+            "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
             "   }" +
-            "   if (" + infoName + " == null)" +
+            "   if (" + joinpointName + " == null)" +
             "   { " +
             "       return " + clazz.getName() + "." + field.getName() + ";" +
             "   }" +
             "   else" +
             "   {" +
-            "    " + MethodExecutionTransformer.getAopReturnStr(false) + infoName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "();" +
+            "    " + MethodExecutionTransformer.getAopReturnStr(false) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "();" +
             "   }" +
             "}";
       }
@@ -280,17 +280,17 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       {
          code =
             "{" +
-            "   if (" + infoName + " == null && " + generatorName + " != null)" +
+            "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "   {" +
-            "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
+            "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
             "   }" +
-            "   if (" + infoName + " == null)" +
+            "   if (" + joinpointName + " == null)" +
             "   { " +
             "       return ((" + clazz.getName() + ")$1)." + field.getName() + ";" +
             "   }" +
             "   else" +
             "   {" +
-            "    " + MethodExecutionTransformer.getAopReturnStr(false) + infoName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "((" + clazz.getName() + ")$1);" +
+            "    " + MethodExecutionTransformer.getAopReturnStr(false) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "((" + clazz.getName() + ")$1);" +
             "   }" +
             "}";
       }
@@ -303,23 +303,23 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
    {
       boolean isStatic = Modifier.isStatic(field.getModifiers());
       String code = null;
-      String infoName = FieldJoinPointGenerator.getInfoFieldName(field.getName(), false);
-      String generatorName = FieldJoinPointGenerator.getJoinPointGeneratorFieldName(field.getName(), false);
+      String joinpointName = FieldJoinPointGenerator.getGeneratedJoinPointFieldName(field.getName(), false);
+      String infoName = getFieldWriteInfoFieldName(field.getName());
       if (isStatic)
       {
          code =
             "{" +
-            "   if (" + infoName + " == null && " + generatorName + " != null)" +
+            "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "   {" +
-            "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
+            "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
             "   }" +
-            "   if (" + infoName + " == null)" +
+            "   if (" + joinpointName + " == null)" +
             "   { " +
             "   " + clazz.getName() + "." + field.getName() + " = $2;" +
             "   }" +
             "   else" +
             "   {" +
-            "   " + infoName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($2);" +
+            "   " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($2);" +
             "   }" +
             "}";
       }
@@ -327,17 +327,17 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       {
          code =
             "{" +
-            "   if (" + infoName + " == null && " + generatorName + " != null)" +
+            "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "   {" +
-            "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
+            "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
             "   }" +
-            "   if (" + infoName + " == null)" +
+            "   if (" + joinpointName + " == null)" +
             "   { " +
             "   ((" + clazz.getName() + ")$1)." + field.getName() + " = $2;" +
             "   }" +
             "   else" +
             "   {" +
-            "   " + MethodExecutionTransformer.getAopReturnStr(false) + infoName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "((" + clazz.getName() + ")$1, $2);" +
+            "   " + MethodExecutionTransformer.getAopReturnStr(false) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "((" + clazz.getName() + ")$1, $2);" +
             "   }" +
             "}";
       }
@@ -352,7 +352,6 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       //Just delegate to method in advisor
       boolean isStatic = Modifier.isStatic(field.getModifiers());
 
-      String code;
       String advisor = isStatic ?
             "((" + GeneratedAdvisorInstrumentor.getAdvisorFQN(clazz) + ")" + Instrumentor.HELPER_FIELD_NAME + ")" :
                "((" + GeneratedAdvisorInstrumentor.getAdvisorFQN(clazz) + ")((" + clazz.getName() + ")$1)." + GeneratedAdvisorInstrumentor.GET_CURRENT_ADVISOR + ")";

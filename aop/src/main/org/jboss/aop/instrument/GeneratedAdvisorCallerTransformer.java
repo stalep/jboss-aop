@@ -85,7 +85,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          CtClass genadvisor = getInstrumentor().getGenadvisor();
          CtField field = new CtField(
                joinpoint,
-               MethodByConJoinPointGenerator.getInfoFieldName(cd.callingIndex, cd.classname, cd.calledHash),
+               MethodByConJoinPointGenerator.getGeneratedJoinPointFieldName(cd.callingIndex, cd.classname, cd.calledHash),
                genadvisor);
          field.setModifiers(Modifier.PROTECTED);
          genadvisor.addField(field);
@@ -134,21 +134,21 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
             proceed = MethodExecutionTransformer.getAopReturnStr(cd.calledMethod) + cd.classname + "." + cd.calledMethod.getName() + "(" + getArguments(params.length, 1) + ");";
          }
 
-         String infoName = MethodByConJoinPointGenerator.getInfoFieldName(cd.callingIndex, cd.classname, cd.calledHash);
-         String generatorName = MethodByConJoinPointGenerator.getJoinPointGeneratorFieldName(cd.callingIndex, cd.classname, cd.calledHash);
+         String joinpointName = MethodByConJoinPointGenerator.getGeneratedJoinPointFieldName(cd.callingIndex, cd.classname, cd.calledHash);
+         String infoName = cd.callerInfoField;
          String code =
                "{" +
-               "   if (" + infoName + " == null && " + generatorName + " != null)" +
+               "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
                "   {" +
-               "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
+               "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
                "   }" +
-               "   if (" + infoName + " == null)" +
+               "   if (" + joinpointName + " == null)" +
                "   { " +
                "      " + proceed +
                "   }" +
                "   else" +
                "   {" +
-               "      return " + infoName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+               "      return " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
                "   }" +
                "}";
 
@@ -188,7 +188,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          CtClass genadvisor = getInstrumentor().getGenadvisor();
          CtField field = new CtField(
                joinpoint,
-               MethodByMethodJoinPointGenerator.getInfoFieldName(md.callingHash, md.classname, md.calledHash),
+               MethodByMethodJoinPointGenerator.getGeneratedJoinPointFieldName(md.callingHash, md.classname, md.calledHash),
                genadvisor);
          field.setModifiers(Modifier.PROTECTED);
          genadvisor.addField(field);
@@ -236,21 +236,21 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
             proceed = MethodExecutionTransformer.getAopReturnStr(md.calledMethod) + md.classname + "." + md.calledMethod.getName() + "(" + getArguments(params.length, hasCallingObject ? 1 : 0) +");";
          }
 
-         String infoName = MethodByMethodJoinPointGenerator.getInfoFieldName(md.callingHash, md.classname, md.calledHash);
-         String generatorName = MethodByMethodJoinPointGenerator.getJoinPointGeneratorFieldName(md.callingHash, md.classname, md.calledHash);
+         String joinpointName = MethodByMethodJoinPointGenerator.getGeneratedJoinPointFieldName(md.callingHash, md.classname, md.calledHash);
+         String infoName = md.callerInfoField;
          String code =
                "{" +
-               "   if (" + infoName + " == null && " + generatorName + " != null)" +
+               "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
                "   {" +
-               "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
+               "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
                "   }" +
-               "   if (" + infoName + " == null)" +
+               "   if (" + joinpointName + " == null)" +
                "   { " +
                "      " + proceed +
                "   }" +
                "   else" +
                "   {" +
-               "      " + MethodExecutionTransformer.getReturnStr(md.calledMethod) + infoName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+               "      " + MethodExecutionTransformer.getReturnStr(md.calledMethod) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
                "   }" +
                "}";
 
@@ -290,7 +290,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          CtClass genadvisor = getInstrumentor().getGenadvisor();
          CtField field = new CtField(
                joinpoint,
-               ConByMethodJoinPointGenerator.getInfoFieldName(cd.callingHash, cd.classname, cd.calledHash),
+               ConByMethodJoinPointGenerator.getGeneratedJoinPointFieldName(cd.callingHash, cd.classname, cd.calledHash),
                genadvisor);
          field.setModifiers(Modifier.PROTECTED);
          genadvisor.addField(field);
@@ -328,21 +328,21 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
             params = cd.calledConstructor.getParameterTypes();
          }
 
-         String infoName = ConByMethodJoinPointGenerator.getInfoFieldName(cd.callingHash, cd.classname, cd.calledHash);
-         String generatorName = ConByMethodJoinPointGenerator.getJoinPointGeneratorFieldName(cd.callingHash, cd.classname, cd.calledHash);
+         String joinpointName = ConByMethodJoinPointGenerator.getGeneratedJoinPointFieldName(cd.callingHash, cd.classname, cd.calledHash);
+         String infoName = cd.callerInfoField;
          StringBuffer code = new StringBuffer();
          code.append("{");
-         code.append("   if (" + infoName + " == null && " + generatorName + " != null)");
+         code.append("   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())");
          code.append("   {");
-         code.append("   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());");
+         code.append("      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");");
          code.append("   }");
-         code.append("   if (" + infoName + " == null)");
+         code.append("   if (" + joinpointName + " == null)");
          code.append("   { ");
          code.append("      return new " + cd.calledConstructor.getDeclaringClass().getName() + "(" + getArguments(params.length, hasCallingObject ? 1 : 0) + "); ");
          code.append("   }");
          code.append("   else");
          code.append("   {");
-         code.append("      return " + infoName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);");
+         code.append("      return " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);");
          code.append("   }");
          code.append("}");
 
@@ -382,7 +382,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          CtClass genadvisor = getInstrumentor().getGenadvisor();
          CtField field = new CtField(
                joinpoint,
-               ConByConJoinPointGenerator.getInfoFieldName(cd.callingIndex, cd.classname, cd.calledHash),
+               ConByConJoinPointGenerator.getGeneratedJoinPointFieldName(cd.callingIndex, cd.classname, cd.calledHash),
                genadvisor);
          field.setModifiers(Modifier.PROTECTED);
          genadvisor.addField(field);
@@ -409,21 +409,21 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          params[0] = callingClass;
          System.arraycopy(cd.calledConstructor.getParameterTypes(), 0, params, 1, originalLength);
          
-         String infoName = ConByConJoinPointGenerator.getInfoFieldName(cd.callingIndex, cd.classname, cd.calledHash);
-         String generatorName = ConByConJoinPointGenerator.getJoinPointGeneratorFieldName(cd.callingIndex, cd.classname, cd.calledHash);
+         String joinpointName = ConByConJoinPointGenerator.getGeneratedJoinPointFieldName(cd.callingIndex, cd.classname, cd.calledHash);
+         String infoName = cd.callerInfoField;
          String code =
                "{" +
-               "   if (" + infoName + " == null && " + generatorName + " != null)" +
+               "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
                "   {" +
-               "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
+               "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
                "   }" +
-               "   if (" + infoName + " == null)" +
+               "   if (" + joinpointName + " == null)" +
                "   { " +
                "      return new " + cd.calledConstructor.getDeclaringClass().getName() + "(" + getArguments(params.length, 1) + "); " +
                "   }" +
                "   else" +
                "   {" +
-               "      return " + infoName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+               "      return " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
                "   }" +
                "}";
 

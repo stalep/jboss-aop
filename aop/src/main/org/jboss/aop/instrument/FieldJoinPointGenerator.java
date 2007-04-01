@@ -21,6 +21,7 @@
   */
 package org.jboss.aop.instrument;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
@@ -49,8 +50,6 @@ import org.jboss.aop.util.ReflectToJavassist;
  */
 public class FieldJoinPointGenerator extends JoinPointGenerator
 {
-   public static final String WRITE_GENERATOR_PREFIX = GENERATOR_PREFIX + "w_";
-   public static final String READ_GENERATOR_PREFIX = GENERATOR_PREFIX + "r_";
    public static final String WRITE_JOINPOINT_FIELD_PREFIX = JOINPOINT_FIELD_PREFIX + "w_";
    public static final String READ_JOINPOINT_FIELD_PREFIX = JOINPOINT_FIELD_PREFIX + "r_";
    public static final String WRITE_JOINPOINT_CLASS_PREFIX = JOINPOINT_CLASS_PREFIX + "w_";
@@ -72,10 +71,21 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       }
    }
 
+   WeakReference returnType;
+   boolean read;
+   boolean hasTargetObject;
+   
    public FieldJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
       super(advisor, info, getParameters((FieldInfo) info),
             ((FieldInfo) info).isRead()? 0: 1);
+
+      if (read((FieldInfo)info))
+      {
+         read = true;
+         returnType = new WeakReference(((FieldInfo)info).getAdvisedField().getType());
+      }
+      hasTargetObject = !Modifier.isStatic(((FieldInfo)info).getAdvisedField().getModifiers());
    }
 
    private static JoinPointParameters getParameters(FieldInfo info)
@@ -87,73 +97,70 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       return JoinPointParameters.TARGET_ARGS;
    }
    
-   protected void initialiseJoinPointNames()
+   protected void initialiseJoinPointNames(JoinPointInfo info)
    {
+      FieldInfo finfo = (FieldInfo)info;
       joinpointClassName =
-         getInfoClassName(fieldName(), read());
+         getGeneratedJoinPointClassName(fieldName(finfo), read(finfo));
 
       joinpointFieldName =
-         getInfoFieldName(fieldName(), read());
+         getGeneratedJoinPointFieldName(fieldName(finfo), read(finfo));
    }
 
-   private String fieldName()
+   private String fieldName(FieldInfo info)
    {
-      return ((FieldInfo)info).getAdvisedField().getName();
+      return info.getAdvisedField().getName();
    }
 
-   private boolean read()
+   private boolean read(FieldInfo info)
    {
-      return ((FieldInfo)info).isRead();
+      return info.isRead();
    }
 
    protected boolean isVoid()
    {
-      return !((FieldInfo)info).isRead();
+      return !read;
    }
 
    protected Class getReturnType()
    {
-      if (!read())
+      if (returnType != null)
       {
-         return null;
+         return (Class)returnType.get();
       }
-      return ((FieldInfo)super.info).getAdvisedField().getType();
+      return null;
    }
 
-   protected AdviceMethodProperties getAdviceMethodProperties(AdviceSetup setup)
+   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointInfo info, AdviceSetup setup)
    {
-      Field field = ((FieldInfo)info).getAdvisedField();
+      FieldInfo finfo = (FieldInfo)info;
+      Field field = finfo.getAdvisedField();
       return new AdviceMethodProperties(
                setup.getAspectClass(),
                setup.getAdviceName(),
                info.getClass(),
-               (read()) ? READ_INVOCATION_TYPE : WRITE_INVOCATION_TYPE,
-               (read()) ? getReturnType() : Void.TYPE,
-               (read()) ? new Class[] {} : new Class[] {field.getType()},
+               (read(finfo)) ? READ_INVOCATION_TYPE : WRITE_INVOCATION_TYPE,
+               (read(finfo)) ? getReturnType() : Void.TYPE,
+               (read(finfo)) ? new Class[] {} : new Class[] {field.getType()},
                null,
                field.getDeclaringClass(),
                hasTargetObject());
    }
 
-   protected CtClass[] getJoinpointParameters() throws NotFoundException
-   {
-      if (isVoid()) return new CtClass[0];
-
-      CtClass type = ReflectToJavassist.fieldToJavassist(((FieldInfo)super.info).getAdvisedField()).getType();
-      return new CtClass[] {type};
-   }
+//   protected CtClass[] getJoinpointParameters() throws NotFoundException
+//   {
+//      if (isVoid()) return new CtClass[0];
+//
+//      CtClass type = ReflectToJavassist.fieldToJavassist(((FieldInfo)info).getAdvisedField()).getType();
+//      return new CtClass[] {type};
+//   }
 
    protected boolean hasTargetObject()
    {
-      return !Modifier.isStatic(((FieldInfo)info).getAdvisedField().getModifiers());
+      return hasTargetObject;
    }
 
-   protected String getJoinPointGeneratorFieldName()
-   {
-      return getJoinPointGeneratorFieldName(fieldName(), read());
-   }
-
-   protected static String getInfoFieldName(String fieldName, boolean read)
+   protected static String getGeneratedJoinPointFieldName(String fieldName, boolean read)
    {
       if (read)
       {
@@ -165,7 +172,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       }
    }
 
-   private static String getInfoClassName(String fieldName, boolean read)
+   private static String getGeneratedJoinPointClassName(String fieldName, boolean read)
    {
       if (read)
       {
@@ -177,18 +184,6 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       }
    }
 
-   public static String getJoinPointGeneratorFieldName(String fieldName, boolean read)
-   {
-      if (read)
-      {
-         return READ_GENERATOR_PREFIX + fieldName;
-      }
-      else
-      {
-         return WRITE_GENERATOR_PREFIX + fieldName;
-      }
-   }
-
    protected static CtClass createReadJoinpointBaseClass(
          GeneratedAdvisorInstrumentor instrumentor,
          CtClass advisedClass,
@@ -196,9 +191,6 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
          String finame,
          int index)throws NotFoundException, CannotCompileException
    {
-      instrumentor.addJoinPointGeneratorFieldToGenAdvisor(
-            getJoinPointGeneratorFieldName(advisedField.getName(), true));
-
       BaseClassGenerator factory = new ReadBaseClassGenerator(instrumentor, advisedClass, advisedField, finame, index);
       return factory.generate();
    }
@@ -210,9 +202,6 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
          String finame,
          int index)throws NotFoundException, CannotCompileException
    {
-      instrumentor.addJoinPointGeneratorFieldToGenAdvisor(
-            getJoinPointGeneratorFieldName(advisedField.getName(), false));
-
       BaseClassGenerator factory = new WriteBaseClassGenerator(instrumentor, advisedClass, advisedField, finame, index);
       return factory.generate();
    }
@@ -294,7 +283,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
 
       private CtClass setupClass()throws NotFoundException, CannotCompileException
       {
-         String className = getInfoClassName(advisedField.getName(), read);
+         String className = getGeneratedJoinPointClassName(advisedField.getName(), read);
 
          //Create inner joinpoint class in advised class, super class is
          CtClass superClass = (read) ? READ_INVOCATION_CT_TYPE : WRITE_INVOCATION_CT_TYPE;

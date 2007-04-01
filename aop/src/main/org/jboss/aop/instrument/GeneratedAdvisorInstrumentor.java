@@ -693,13 +693,9 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             "   copy.setInterceptors( " + INSTANCE_ADVISOR_MIXIN + ".getWrappers(copy.getInterceptors()) );" +
             "   " + updatedAdvicesFieldName + " = false;" +
             "   " + names.getJoinPointField().getName() + " = null;" +
-            "   if (" + names.getGeneratorField().getName() + " == null)" +
-            "   {" +
-            "      " + names.getGeneratorField().getName() + " = super.getJoinPointGenerator(" + names.getInfoFieldName() + ");" +
-            "   }" +
-            "   " + names.getGeneratorField().getName() + ".rebindJoinpoint(copy);" +
+//            "   " + names.getInfoFieldName() + ".setInterceptors(copy.getInterceptors());" +  //We need a way to make this "transient" 
+            "   super.rebindJoinPointWithInstanceInformation(copy);" +
             "}";
-
          instanceAdvisorMethod.insertBefore(code);
          genInstanceAdvisor.addMethod(instanceAdvisorMethod);
       }
@@ -790,26 +786,18 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       }
    }
 
-   protected void addJoinPointGeneratorFieldToGenAdvisor(String name) throws CannotCompileException, NotFoundException
-   {
-      CtField field = new CtField(forName(JoinPointGenerator.class.getName()), name, genadvisor);
-      genadvisor.addField(field);
-   }
-
    private static class GeneratedAdvisorNameExtractor
    {
       //TODO This kind of sucks. We need a better way to link names of wrapper methods, generators, infos and joinpoints
       String infoName;
       CtMethod wrapper;
       CtField joinPointField;
-      CtField generatorField;
 
-      private GeneratedAdvisorNameExtractor(String infoName, CtMethod wrapper, CtField joinPointField, CtField generatorField)
+      private GeneratedAdvisorNameExtractor(String infoName, CtMethod wrapper, CtField joinPointField)
       {
          this.infoName = infoName;
          this.wrapper = wrapper;
          this.joinPointField = joinPointField;
-         this.generatorField = generatorField;
       }
 
       private static GeneratedAdvisorNameExtractor extractNames(CtClass genadvisor, CtField infoField) throws NotFoundException
@@ -836,13 +824,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
                      FieldJoinPointGenerator.READ_JOINPOINT_FIELD_PREFIX + fieldName;
             CtField joinPointField = genadvisor.getDeclaredField(joinPointName);
 
-            String generatorName =
-               (isWrite) ?
-                     FieldJoinPointGenerator.WRITE_GENERATOR_PREFIX + fieldName :
-                        FieldJoinPointGenerator.READ_GENERATOR_PREFIX + fieldName;
-               CtField generatorField = genadvisor.getDeclaredField(generatorName);
-
-            return new GeneratedAdvisorNameExtractor(infoName, wrapper, joinPointField, generatorField);
+            return new GeneratedAdvisorNameExtractor(infoName, wrapper, joinPointField);
          }
          else if (infoField.getType().getName().equals(MethodInfo.class.getName()))
          {
@@ -856,10 +838,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             String joinPointName = JoinPointGenerator.JOINPOINT_FIELD_PREFIX + methodNameHash;
             CtField joinPointField = genadvisor.getDeclaredField(joinPointName);
 
-            String generatorName = JoinPointGenerator.GENERATOR_PREFIX + methodNameHash;
-            CtField generatorField = genadvisor.getDeclaredField(generatorName);
-
-            return new GeneratedAdvisorNameExtractor(infoName, wrapper, joinPointField, generatorField);
+            return new GeneratedAdvisorNameExtractor(infoName, wrapper, joinPointField);
          }
          else if (infoField.getType().getName().equals(ConByMethodInfo.class.getName()))
          {
@@ -873,10 +852,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             String joinPointName = ConByMethodJoinPointGenerator.JOINPOINT_FIELD_PREFIX + infoName.substring("aop$constructorCall_".length());
             CtField joinPointField = genadvisor.getDeclaredField(joinPointName);
 
-            String generatorName = ConByMethodJoinPointGenerator.GENERATOR_PREFIX + infoName.substring("aop$constructorCall_".length());
-            CtField generatorField = genadvisor.getDeclaredField(generatorName);
-
-            return new GeneratedAdvisorNameExtractor(infoName, wrapper, joinPointField, generatorField);
+            return new GeneratedAdvisorNameExtractor(infoName, wrapper, joinPointField);
          }
          else if (infoField.getType().getName().equals(MethodByMethodInfo.class.getName()))
          {
@@ -890,10 +866,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             String joinPointName = MethodByMethodJoinPointGenerator.JOINPOINT_FIELD_PREFIX + infoName.substring("aop$methodCall_".length());
             CtField joinPointField = genadvisor.getDeclaredField(joinPointName);
 
-            String generatorName = MethodByMethodJoinPointGenerator.GENERATOR_PREFIX + infoName.substring("aop$methodCall_".length());
-            CtField generatorField = genadvisor.getDeclaredField(generatorName);
-
-            return new GeneratedAdvisorNameExtractor(infoName, wrapper, joinPointField, generatorField);
+            return new GeneratedAdvisorNameExtractor(infoName, wrapper, joinPointField);
          }
 
          return null;
@@ -902,11 +875,6 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       public CtField getJoinPointField()
       {
          return joinPointField;
-      }
-
-      public CtField getGeneratorField()
-      {
-         return generatorField;
       }
 
       public CtMethod getWrapper()

@@ -21,6 +21,7 @@
   */
 package org.jboss.aop.instrument;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
@@ -48,7 +49,6 @@ import org.jboss.aop.util.ReflectToJavassist;
  */
 public class ConstructorJoinPointGenerator extends JoinPointGenerator
 {
-   public static final String GENERATOR_PREFIX = JoinPointGenerator.GENERATOR_PREFIX + "constructor_";
    public static final String JOINPOINT_CLASS_PREFIX = JoinPointGenerator.JOINPOINT_CLASS_PREFIX + "constructor_";
    public static final String JOINPOINT_FIELD_PREFIX = JoinPointGenerator.JOINPOINT_FIELD_PREFIX + "constructor_";
    private static final Class INVOCATION_TYPE = ConstructorInvocation.class;
@@ -65,34 +65,37 @@ public class ConstructorJoinPointGenerator extends JoinPointGenerator
       }
    }
 
+   WeakReference returnType;
 
    public ConstructorJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
       super(advisor, info, JoinPointParameters.ONLY_ARGS,
             ((ConstructorInfo) info).getConstructor().getParameterTypes().length);
+      returnType = new WeakReference(((ConstructorInfo)info).getConstructor().getDeclaringClass());
    }
 
 
-   protected void initialiseJoinPointNames()
+   protected void initialiseJoinPointNames(JoinPointInfo info)
    {
-      joinpointClassName = getInfoClassName(
-               classSimpleName(),
-               index());
+      ConstructorInfo cinfo = (ConstructorInfo)info;
+      joinpointClassName = getGeneratedJoinPointClassName(
+               classSimpleName(cinfo),
+               index(cinfo));
 
-      joinpointFieldName = getInfoFieldName(
-               classSimpleName(),
-               index());
+      joinpointFieldName = getGeneratedJoinPointFieldName(
+               classSimpleName(cinfo),
+               index(cinfo));
    }
 
-   private String classSimpleName()
+   private String classSimpleName(ConstructorInfo info)
    {
-      Constructor ctor = ((ConstructorInfo)info).getConstructor();
+      Constructor ctor = info.getConstructor();
       return Advisor.getSimpleName(ctor.getDeclaringClass());
    }
 
-   private int index()
+   private int index(ConstructorInfo info)
    {
-      return ((ConstructorInfo)info).getIndex();
+      return info.getIndex();
    }
 
    protected boolean isVoid()
@@ -102,10 +105,10 @@ public class ConstructorJoinPointGenerator extends JoinPointGenerator
 
    protected Class getReturnType()
    {
-      return ((ConstructorInfo)super.info).getConstructor().getDeclaringClass();
+      return (Class)returnType.get();
    }
 
-   protected AdviceMethodProperties getAdviceMethodProperties(AdviceSetup setup)
+   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointInfo info, AdviceSetup setup)
    {
       Constructor ctor = ((ConstructorInfo)info).getConstructor();
       return new AdviceMethodProperties(
@@ -130,31 +133,18 @@ public class ConstructorJoinPointGenerator extends JoinPointGenerator
          String ciname,
          int index)throws NotFoundException, CannotCompileException
    {
-      instrumentor.addJoinPointGeneratorFieldToGenAdvisor(
-            getJoinPointGeneratorFieldName(advisedClass.getSimpleName(), index));
-
       BaseClassGenerator generator = new BaseClassGenerator(instrumentor, advisedClass, advisedCtor, ciname, index);
       return generator.generate();
    }
 
-   protected String getJoinPointGeneratorFieldName()
-   {
-      return getJoinPointGeneratorFieldName(classSimpleName(), index());
-   }
-
-   protected static String getInfoFieldName(String className, int index)
+   protected static String getGeneratedJoinPointFieldName(String className, int index)
    {
       return JOINPOINT_FIELD_PREFIX + className + "_" + index;
    }
 
-   private static String getInfoClassName(String className, int index)
+   private static String getGeneratedJoinPointClassName(String className, int index)
    {
       return JOINPOINT_CLASS_PREFIX + className + "_" + index;
-   }
-
-   protected static String getJoinPointGeneratorFieldName(String className, int index)
-   {
-      return GENERATOR_PREFIX + className + "_" + index;
    }
 
    private static class BaseClassGenerator
@@ -203,7 +193,7 @@ public class ConstructorJoinPointGenerator extends JoinPointGenerator
 
       private CtClass setupClass()throws NotFoundException, CannotCompileException
       {
-         String className = getInfoClassName(advisedClass.getSimpleName(), index);
+         String className = getGeneratedJoinPointClassName(advisedClass.getSimpleName(), index);
 
          //Create inner joinpoint class in advised class, super class is ConstructorInvocation
          jp = TransformerCommon.makeNestedClass(advisedClass, className, true, Modifier.PUBLIC | Modifier.STATIC, INVOCATION_CT_TYPE);

@@ -387,6 +387,10 @@
          <param name="exclude" value="**/OverrideTestCase.class"/>
       </antcall>
       <antcall target="_run-javaagent-test" inheritRefs="true">
+         <param name="test" value="dynamicgenadvisor"/>
+         <param name="caller" value="javaagent-genadvisor-tests"/>
+      </antcall>
+      <antcall target="_run-javaagent-test" inheritRefs="true">
          <param name="test" value="nameddomain"/>
          <param name="caller" value="javaagent-genadvisor-tests"/>
       </antcall>

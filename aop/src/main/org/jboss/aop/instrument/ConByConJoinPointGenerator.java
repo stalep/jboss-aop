@@ -21,6 +21,7 @@
   */
 package org.jboss.aop.instrument;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
@@ -47,7 +48,6 @@ import org.jboss.aop.util.ReflectToJavassist;
  */
 public class ConByConJoinPointGenerator extends JoinPointGenerator
 {
-   public static final String GENERATOR_PREFIX = JoinPointGenerator.GENERATOR_PREFIX + "CByC_";
    public static final String JOINPOINT_CLASS_PREFIX = JoinPointGenerator.JOINPOINT_CLASS_PREFIX + "CByC_";
    public static final String JOINPOINT_FIELD_PREFIX = JoinPointGenerator.JOINPOINT_FIELD_PREFIX + "CByC_";
 
@@ -65,39 +65,43 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
       }
    }
 
+   private WeakReference returnType;
+
    public ConByConJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
       super(advisor, info, JoinPointParameters.ONLY_ARGS,
             ((ConByConInfo) info).getConstructor().getParameterTypes().length);
+      returnType = new WeakReference(((ConByConInfo)info).getCalledClass());
    }
 
-   protected void initialiseJoinPointNames()
+   protected void initialiseJoinPointNames(JoinPointInfo info)
    {
-      joinpointClassName = getInfoClassName(
-               callingIndex(),
-               calledClass(),
-               calledConHash());
+      ConByConInfo cinfo = (ConByConInfo)info;
+      joinpointClassName = getGeneratedJoinPointClassName(
+               callingIndex(cinfo),
+               calledClass(cinfo),
+               calledConHash(cinfo));
 
-      joinpointFieldName = getInfoFieldName(
-            callingIndex(),
-            calledClass(),
-            calledConHash());
+      joinpointFieldName = getGeneratedJoinPointFieldName(
+            callingIndex(cinfo),
+            calledClass(cinfo),
+            calledConHash(cinfo));
 
    }
 
-   private int callingIndex()
+   private int callingIndex(ConByConInfo info)
    {
-      return ((ConByConInfo)info).getCallingIndex();
+      return info.getCallingIndex();
    }
 
-   private String calledClass()
+   private String calledClass(ConByConInfo info)
    {
-      return ((ConByConInfo)info).getCalledClass().getName();
+      return info.getCalledClass().getName();
    }
 
-   private long calledConHash()
+   private long calledConHash(ConByConInfo info)
    {
-      return ((ConByConInfo)info).getCalledConHash();
+      return info.getCalledConHash();
    }
 
 
@@ -108,10 +112,10 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
 
    protected Class getReturnType()
    {
-      return ((ConByConInfo)info).getCalledClass();
+      return (Class)returnType.get();
    }
 
-   protected AdviceMethodProperties getAdviceMethodProperties(AdviceSetup setup)
+   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointInfo info, AdviceSetup setup)
    {
       Constructor ctor = ((ConByConInfo)info).getConstructor();
       AdviceMethodProperties properties = new AdviceMethodProperties(
@@ -159,34 +163,18 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
             long calledHash,
             String ciname) throws NotFoundException, CannotCompileException
    {
-      instrumentor.addJoinPointGeneratorFieldToGenAdvisor(
-            getJoinPointGeneratorFieldName(callingIndex, classname, calledHash));
-
       BaseClassGenerator generator = new BaseClassGenerator(instrumentor, callingClass, callingIndex, classname, targetCtor, calledHash, ciname);
       return generator.generate();
    }
 
-   protected String getJoinPointGeneratorFieldName()
-   {
-      return getJoinPointGeneratorFieldName(
-            callingIndex(),
-            calledClass(),
-            calledConHash());
-   }
-
-   protected static String getInfoClassName(int callingIndex, String classname, long calledHash)
+   protected static String getGeneratedJoinPointClassName(int callingIndex, String classname, long calledHash)
    {
       return JOINPOINT_CLASS_PREFIX + CallerTransformer.getUniqueInvocationFieldname(callingIndex, classname, calledHash);
    }
 
-   protected static String getInfoFieldName(int callingIndex, String classname, long calledHash)
+   protected static String getGeneratedJoinPointFieldName(int callingIndex, String classname, long calledHash)
    {
       return JOINPOINT_FIELD_PREFIX + CallerTransformer.getUniqueInvocationFieldname(callingIndex, classname, calledHash);
-   }
-
-   protected static String getJoinPointGeneratorFieldName(int callingIndex, String classname, long calledHash)
-   {
-      return GENERATOR_PREFIX + CallerTransformer.getUniqueInvocationFieldname(callingIndex, classname, calledHash);
    }
 
    private static class BaseClassGenerator
@@ -243,7 +231,7 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
 
       private CtClass setupClass()throws NotFoundException, CannotCompileException
       {
-         String className = getInfoClassName(callingIndex, targetClass.getName(), calledHash);
+         String className = getGeneratedJoinPointClassName(callingIndex, targetClass.getName(), calledHash);
 
          //Create inner joinpoint class in advised class, super class is ConstructorInvocation
          jp = TransformerCommon.makeNestedClass(callingClass, className, true, Modifier.PUBLIC | Modifier.STATIC, INVOCATION_CT_TYPE);

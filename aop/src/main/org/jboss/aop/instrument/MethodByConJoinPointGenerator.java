@@ -21,6 +21,7 @@
   */
 package org.jboss.aop.instrument;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 
 import javassist.CannotCompileException;
@@ -42,7 +43,6 @@ import org.jboss.aop.util.ReflectToJavassist;
 
 public class MethodByConJoinPointGenerator extends JoinPointGenerator
 {
-   public static final String GENERATOR_PREFIX = JoinPointGenerator.GENERATOR_PREFIX + "MByC_";
    public static final String JOINPOINT_CLASS_PREFIX = JoinPointGenerator.JOINPOINT_CLASS_PREFIX + "MByC_";
    public static final String JOINPOINT_FIELD_PREFIX = JoinPointGenerator.JOINPOINT_FIELD_PREFIX + "MByC_";
    private static final Class INVOCATION_TYPE = MethodCalledByConstructorInvocation.class;
@@ -59,10 +59,18 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
       }
    }
 
+   boolean hasTargetObject;
+   WeakReference returnType;
+   
    public MethodByConJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
       super(advisor, info, getParameters((MethodByConInfo) info),
             ((MethodByConInfo) info).getMethod().getParameterTypes().length);
+      if (!((MethodByConInfo)info).getMethod().getReturnType().equals(Void.TYPE))
+      {
+         returnType = new WeakReference(((MethodByConInfo)info).getMethod().getReturnType());         
+      }
+      hasTargetObject = !java.lang.reflect.Modifier.isStatic(((MethodByConInfo)info).getMethod().getModifiers());
    }
    
    private static JoinPointParameters getParameters(MethodByConInfo info)
@@ -74,47 +82,51 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
       return JoinPointParameters.TARGET_ARGS;
    }
 
-   protected void initialiseJoinPointNames()
+   protected void initialiseJoinPointNames(JoinPointInfo info)
    {
-      joinpointClassName = getInfoClassName(
-               callingIndex(),
-               calledClass(),
-               calledMethodHash());
+      MethodByConInfo minfo = (MethodByConInfo)info;
+      joinpointClassName = getGeneratedJoinPointClassName(
+               callingIndex(minfo),
+               calledClass(minfo),
+               calledMethodHash(minfo));
 
-      joinpointFieldName = getInfoFieldName(
-            callingIndex(),
-            calledClass(),
-            calledMethodHash());
+      joinpointFieldName = getGeneratedJoinPointFieldName(
+            callingIndex(minfo),
+            calledClass(minfo),
+            calledMethodHash(minfo));
    }
 
-   private int callingIndex()
+   private int callingIndex(MethodByConInfo info)
    {
-      return ((MethodByConInfo)info).getCallingIndex();
+      return info.getCallingIndex();
    }
 
-   private String calledClass()
+   private String calledClass(MethodByConInfo info)
    {
-      return ((MethodByConInfo)info).getCalledClass().getName();
+      return info.getCalledClass().getName();
    }
 
-   private long calledMethodHash()
+   private long calledMethodHash(MethodByConInfo info)
    {
-      return ((MethodByConInfo)info).getCalledMethodHash();
+      return info.getCalledMethodHash();
 
    }
 
    protected boolean isVoid()
    {
-      return ((MethodByConInfo)info).getMethod().getReturnType().equals(Void.TYPE);
+      return getReturnType() == null;
    }
 
    protected Class getReturnType()
    {
-      if (isVoid()) return null;
-      return ((MethodByConInfo)info).getMethod().getReturnType();
+      if (returnType == null)
+      {
+         return null;
+      }
+      return (Class)returnType.get();
    }
 
-   protected AdviceMethodProperties getAdviceMethodProperties(AdviceSetup setup)
+   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointInfo info, AdviceSetup setup)
    {
       Method method = ((MethodByConInfo)info).getMethod();
       return new AdviceMethodProperties(
@@ -143,7 +155,7 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
 
    protected boolean hasTargetObject()
    {
-      return !java.lang.reflect.Modifier.isStatic(((MethodByConInfo)info).getMethod().getModifiers());
+      return hasTargetObject;
    }
 
    protected static CtClass createJoinpointBaseClass(
@@ -155,31 +167,18 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
             long calledHash,
             String ciname) throws NotFoundException, CannotCompileException
    {
-      instrumentor.addJoinPointGeneratorFieldToGenAdvisor(
-            getJoinPointGeneratorFieldName(callingIndex, classname, calledHash));
-
       BaseClassGenerator generator = new BaseClassGenerator(instrumentor, callingClass, callingIndex, classname, targetMethod, calledHash, ciname);
       return generator.generate();
    }
 
-   protected String getJoinPointGeneratorFieldName()
-   {
-      return getJoinPointGeneratorFieldName(callingIndex(), calledClass(), calledMethodHash());
-   }
-
-   protected static String getInfoClassName(int callingIndex, String classname, long calledHash)
+   protected static String getGeneratedJoinPointClassName(int callingIndex, String classname, long calledHash)
    {
       return JOINPOINT_CLASS_PREFIX + CallerTransformer.getUniqueInvocationFieldname(callingIndex, classname, calledHash);
    }
 
-   protected static String getInfoFieldName(int callingIndex, String classname, long calledHash)
+   protected static String getGeneratedJoinPointFieldName(int callingIndex, String classname, long calledHash)
    {
       return JOINPOINT_FIELD_PREFIX + CallerTransformer.getUniqueInvocationFieldname(callingIndex, classname, calledHash);
-   }
-
-   protected static String getJoinPointGeneratorFieldName(int callingIndex, String classname, long calledHash)
-   {
-      return GENERATOR_PREFIX + CallerTransformer.getUniqueInvocationFieldname(callingIndex, classname, calledHash);
    }
 
    private static class BaseClassGenerator
@@ -242,7 +241,7 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
 
       private CtClass setupClass()throws NotFoundException, CannotCompileException
       {
-         String className = getInfoClassName(callingIndex, targetClass.getName(), calledHash);
+         String className = getGeneratedJoinPointClassName(callingIndex, targetClass.getName(), calledHash);
 
          //Create inner joinpoint class in advised class, super class is ConstructorInvocation
          jp = TransformerCommon.makeNestedClass(callingClass, className, true);

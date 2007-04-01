@@ -68,12 +68,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
 
    public static String getJoinPointFieldName(MethodTransformation trans)
    {
-      return MethodJoinPointGenerator.getInfoFieldName(trans.getOriginalName(), trans.getHash());
-   }
-
-   public static String getJoinPointGeneratorFieldName(MethodTransformation trans)
-   {
-      return MethodJoinPointGenerator.getJoinPointGeneratorFieldName(trans.getOriginalName(), trans.getHash());
+      return MethodJoinPointGenerator.getGeneratedJoinPointFieldName(trans.getOriginalName(), trans.getHash());
    }
 
    private void addJoinpoint(String miname, MethodTransformation trans)throws CannotCompileException, NotFoundException
@@ -302,21 +297,22 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
 
    private String createStaticAdvisorMethodBody(MethodTransformation trans)throws NotFoundException
    {
-      String infoName = getJoinPointFieldName(trans);
-      String generatorName = getJoinPointGeneratorFieldName(trans);
+      String joinpointName = getJoinPointFieldName(trans);
+      String infoName = getMethodInfoFieldName(trans.getOriginalName(), trans.getHash());
+
       String code =
          "{" +
-         "   if (" + infoName + " == null && " + generatorName + " != null)" +
+         "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
          "   {" +
-         "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
+         "       super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
          "   }" +
-         "   if (" + infoName + " == null)" +
+         "   if (" + joinpointName + " == null)" +
          "   { " +
          "      " + getReturnStr(trans.getWMethod()) + trans.getClazzName() + "." + trans.getWrappedName() +"($$);" +
          "   }" +
          "   else" +
          "   {" +
-         "    " + getAopReturnStr(trans.getWMethod()) + infoName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+         "    " + getAopReturnStr(trans.getWMethod()) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
          "   }" +
          "}";
 
@@ -325,21 +321,22 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
 
    private String createNonStaticAdvisorMethodBody(MethodTransformation trans, CtClass ga/*kill*/)throws NotFoundException
    {
-      String infoName = getJoinPointFieldName(trans);
-      String generatorName = getJoinPointGeneratorFieldName(trans);
+      String joinpointName = getJoinPointFieldName(trans);
+      String infoName = getMethodInfoFieldName(trans.getOriginalName(), trans.getHash());
+
       String code =
          "{" +
-         "   if (" + infoName + " == null && " + generatorName + " != null)" +
+         "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
          "   {" +
-         "   " + generatorName + "." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(this.getClass().getClassLoader());" +
+         "       super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
          "   }" +
-         "   if (" + infoName + " == null)" +
+         "   if (" + joinpointName + " == null)" +
          "   { " +
          "      " + getAopReturnStr(trans.getWMethod()) + "$1." + trans.getWrappedName() + "(" + getNonStaticJavasistParamString(trans.getWMethod().getParameterTypes().length) + ");" +
          "   }" +
          "   else" +
          "   {" +
-         "    " + getAopReturnStr(trans.getWMethod()) + infoName + "." + MethodJoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+         "    " + getAopReturnStr(trans.getWMethod()) + joinpointName + "." + MethodJoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
          "   }" +
          "}";
 
