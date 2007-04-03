@@ -2069,7 +2069,7 @@ public class AspectManager
       lock.writeLock().unlock();
    }
 
-   private void initSubDomainsByNameMap()
+   protected void initSubDomainsByNameMap()
    {
       if (subDomainsByName == UnmodifiableEmptyCollections.EMPTY_WEAK_VALUE_HASHMAP)
       {
@@ -2088,7 +2088,7 @@ public class AspectManager
       }
    }
    
-   private void initSubscribedSubDomainsMap()
+   protected void initSubscribedSubDomainsMap()
    {
       if (subscribedSubDomains == UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP)
       {
@@ -2107,7 +2107,7 @@ public class AspectManager
       }      
    }
    
-   private void initSubscribedSubDomainsQueueMap()
+   protected void initSubscribedSubDomainsQueueMap()
    {
       if (subscribedSubDomainsQueue == UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP)
       {
@@ -2126,7 +2126,7 @@ public class AspectManager
       }
    }
    
-   private void initInterfaceIntroductionsMap()
+   protected void initInterfaceIntroductionsMap()
    {
       if (interfaceIntroductions == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
@@ -2145,7 +2145,7 @@ public class AspectManager
       }
    }
    
-   private void initAnnotationIntroductionsMap()
+   protected void initAnnotationIntroductionsMap()
    {
       if (annotationIntroductions == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
@@ -2164,7 +2164,7 @@ public class AspectManager
       }
    }
    
-   private void initAnnotationOverridesMap()
+   protected void initAnnotationOverridesMap()
    {
       if (annotationOverrides == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
@@ -2183,7 +2183,7 @@ public class AspectManager
       }
    }
 
-   private void initBindingsMap()
+   protected void initBindingsMap()
    {
       if (bindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
@@ -2202,7 +2202,7 @@ public class AspectManager
       }
    }
 
-   private void initTypedefsMap()
+   protected void initTypedefsMap()
    {
       if (typedefs == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
@@ -2221,7 +2221,7 @@ public class AspectManager
       }
    }
 
-   private void initInterceptorFactoriesMap()
+   protected void initInterceptorFactoriesMap()
    {
       if (interceptorFactories == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
       {
@@ -2240,7 +2240,7 @@ public class AspectManager
       }
    }
    
-   private void initClassMetaDataLoadersMap()
+   protected void initClassMetaDataLoadersMap()
    {
       if (classMetaDataLoaders == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
       {
@@ -2259,7 +2259,7 @@ public class AspectManager
       }
    }
    
-   private void initInerceptorStacksMap()
+   protected void initInerceptorStacksMap()
    {
       if (interceptorStacks == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
       {
@@ -2279,7 +2279,7 @@ public class AspectManager
    }
    
    
-   private void initDeclaresMap()
+   protected void initDeclaresMap()
    {
       if (declares == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
       {
@@ -2298,7 +2298,7 @@ public class AspectManager
       }
    }
    
-   private void initCflowStacksMap()
+   protected void initCflowStacksMap()
    {
       if (cflowStacks == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
       {
@@ -2317,7 +2317,7 @@ public class AspectManager
       }
    }
    
-   private void initDynamicCflowsMap()
+   protected void initDynamicCflowsMap()
    {
       if (dynamicCFlows == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
       {
@@ -2336,7 +2336,7 @@ public class AspectManager
       }
    }
    
-   private void initAspectDefintitionsMap()
+   protected void initAspectDefintitionsMap()
    {
       if (aspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
       {
@@ -2355,7 +2355,7 @@ public class AspectManager
       }
    }
    
-   private void initPerVMAspectsMap()
+   protected void initPerVMAspectsMap()
    {
       if (perVMAspects == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
       {
@@ -2374,7 +2374,7 @@ public class AspectManager
       }
    }
    
-   private void initPointcutsMap()
+   protected void initPointcutsMap()
    {
       if (pointcuts == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
@@ -2393,7 +2393,7 @@ public class AspectManager
       }
    }
    
-   private void initPointcutInfosMap()
+   protected void initPointcutInfosMap()
    {
       if (pointcutInfos == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
@@ -2413,7 +2413,7 @@ public class AspectManager
    }
    
    
-   private void initClassMetaDataMap()
+   protected void initClassMetaDataMap()
    {
       if (classMetaData == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
@@ -2431,7 +2431,7 @@ public class AspectManager
          }
       }
    }
-   private void initContainersMap()
+   protected void initContainersMap()
    {
       if (containers == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
       {
@@ -2450,7 +2450,7 @@ public class AspectManager
       }
    }
    
-   private void initPrecedenceDefsMap()
+   protected void initPrecedenceDefsMap()
    {
       if (precedenceDefs == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
