@@ -2058,8 +2058,6 @@ public class AspectManager
     */
    protected void lockWrite()
    {
-//      StackTraceElement[] st = new Exception().getStackTrace();
-//      System.out.println("---> WL++" + lock.getReadLockCount() + " " + st[1]);
       lock.writeLock().lock();
    }
 
@@ -2068,8 +2066,6 @@ public class AspectManager
     */
    protected void unlockWrite()
    {
-//      StackTraceElement[] st = new Exception().getStackTrace();
-//      System.out.println("---> WL--" + lock.getReadLockCount() + " " + st[1]);
       lock.writeLock().unlock();
    }
 
