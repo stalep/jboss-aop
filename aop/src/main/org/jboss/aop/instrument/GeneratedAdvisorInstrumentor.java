@@ -72,6 +72,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
    private static final String INITIALISE_CONSTRUCTORS = "initialiseConstructors";
    private static final String INITIALISE_METHODS = "initialiseMethods";
    public static final String GET_CLASS_ADVISOR = "_getClassAdvisor";
+   private static final String DO_REBUILD_FOR_INSTANCE = "doRebuildForInstance";
 
    private static final String DECLARING_CLASS = "this.getClass().getDeclaringClass()";
 
@@ -319,27 +320,23 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
 
       implementInstanceAdvisorMethods();
 
-      String cvBody =
+      String drfiBody =
          "{" +
-         "   if (classAdvisor." + VERSION + " != super." + VERSION + ") " +
-         "   { " +
-         "      super." + VERSION + " = classAdvisor." + VERSION +";" +
-         "      internalRebuildInterceptors(); " +
-         "      if (" + INSTANCE_ADVISOR_MIXIN + ".hasInterceptors())" +
-         "      {" +
-         "          " + ADVICES_UPDATED + "();" +
-         "      }" +
-         "   } " +
+         "   internalRebuildInterceptors(); " +
+         "   if (" + INSTANCE_ADVISOR_MIXIN + ".hasInterceptors())" +
+         "   {" +
+         "       " + ADVICES_UPDATED + "();" +
+         "   }" +
          "}";
-      CtMethod checkVersion = CtNewMethod.make(
+      CtMethod doRebuildForInstance = CtNewMethod.make(
             Modifier.PROTECTED,
             CtClass.voidType,
-            CHECK_VERSION,
+            DO_REBUILD_FOR_INSTANCE,
             EMPTY_SIG,
             EMPTY_EXCEPTIONS,
-            cvBody,
+            drfiBody,
             genInstanceAdvisor);
-      genInstanceAdvisor.addMethod(checkVersion);
+      genInstanceAdvisor.addMethod(doRebuildForInstance);
 
       String body =
          "{" +

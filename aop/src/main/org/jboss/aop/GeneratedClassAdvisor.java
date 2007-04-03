@@ -134,6 +134,29 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       super.rebuildInterceptors();
    }
+
+   /**
+    * Callback for generated instance advisors to check if the version has been updates 
+    */
+   protected void checkVersion()
+   {
+      GeneratedClassAdvisor classAdvisor = getParentAdvisor();
+      if (classAdvisor != null)
+      {
+         if (classAdvisor.version != this.version)
+         {
+            doRebuildForInstance();
+         }
+      }
+   }
+
+   /**
+    * Will be overridden by generated instanceadvisor classes and perform a rebuild
+    */
+   protected void doRebuildForInstance()
+   {
+      
+   }
    
    protected void handleOverriddenMethods(AdviceBinding binding)
    {
