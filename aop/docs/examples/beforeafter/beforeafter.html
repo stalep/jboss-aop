@@ -1,0 +1,359 @@
+<html>
+<body>
+<p>
+<h2>Before and After Advices</h2>
+</p><p>
+<h4>Overview</h4>
+JBoss AOP provides several types of advices. The advices seen on the previous
+section, as well as JBoss AOP interceptors, provide around join point interception.
+In this example we introduce before and after advices, and compare their roles to
+around advices' role.
+</p><p>
+<h4>Writing Before/After Advices</h4>
+</p><p>
+Before and after advices are lightweight advices when compared to around advices.
+JBoss AOP invokes these advices before or after the joinpoint execution.
+</p><p>
+As we will see in the next <a href="../annotatedparam-return/annotatedparam-return.html">
+example</a>, these advices can have several different signatures. However, in our
+first example, we will use signatures that are closest to what has been shown on
+previous examples.
+   
+So, we introduce a before and after advices as being of the form:
+</p><p>
+<pre>
+public void &lt;any-method-name&gt;(@JoinPoint &lt;any Joinpoint type&gt;)
+</pre>
+</p><p>
+Differently from around advices and interceptors, throwing a <tt>Throwable</tt> is
+not necessary, because these advices do not wrap a joinpoint.
+</p><p>
+Instead of <tt>Invocation</tt> instances, before/after advices receive instances
+of <a href="../../misc/joinpoint.html"><tt>org.jboss.aop.IJoinpointInfo</tt> and
+subinterfaces</a> as parameters.
+</p><p>
+Besides this difference, one can notice the presence of parameter annotation <tt>
+&#64;org.jboss.aop.advice.annotation.JoinPoint</tt>. This is necessary because
+before/after advices can receive values with several semantic roles as parameters.
+As we will see <a href="../annotatedparam-return/annotatedparam-return.html">next</a>,
+this annotation is used to distinguish this parameter type from the other ones, so we 
+can achieve flexibility on the type, order and presence of advice parameters.
+</p><p>
+<h4>Binding Before/After Advices</h4>
+</p><p>
+To bind a before/after advice to a pointcut, you only need to declare an xml binding as
+follows (please, open up <tt>jboss-aop.xml</tt> to see this example):
+</p><p>
+<pre>
+&lt;bind pointcut="execution(public void $instanceof{Transaction}->run())"&gt;
+      &lt;before name="beforeAdvice" aspect="mypackage.MutexAspect"/&gt;
+      &lt;after name="afterAdvice" aspect="mypackage.MutexAspect"/&gt;
+&lt/bind&gt;
+</pre>
+</p><p>
+As you can see, you just need to declare a usual bind tag, and add to it 
+<tt>&lt;before&gt;</tt> and <tt>&lt;after&gt;</tt> tags for before and after advices
+respectively. Notice that we can mix interceptor declarations and around, before, and
+after advices declarations in a single binding.
+</p><p>
+   
+<h4>Around, Before and After Advices</h4>
+</p><p>
+
+As seen on previous sections, around advices wrap the joinpoint execution. An around
+advice replaces the joinpoint execution in the base system, and is responsible for
+forwarding execution to the joinpoint itself, as well as for returning a value to the
+base system.
+</p><p>
+Around advices can be composed by four parts at most: a before joinpoint execution
+block, a proceed to joinpoint step, an after joinpoint execution block, and, finally,
+a return value step. To see an example, consider this <tt>PER_VM</tt> scoped aspect:
+</p><p>
+<pre>
+public class SynchronizationAspect
+{
+   public Object aroundAdvice(Invocation invocation) throws Throwable
+   {
+      Object result;
+
+      // part 1: retrive lock before joinpoint execution
+      synchronized(this)
+      {
+         System.out.println("&gt;&gt;&gt; Retrieved concurrency lock");
+   
+         // part 2: proceed to joinpoint execution
+         result = invocation.invokeNext();
+   
+      // part 3: release lock after joinpoint execution
+         System.out.println("&lt;&lt;&lt; Releasing concurrency lock");
+      }
+   
+      // part 4: return result
+      return result;
+   }
+}
+</pre>
+</p><p>
+<tt>SynchronizationAspect</tt> synchronizes all intercepted joinpoints (in a
+concurrent programming application), avoiding that two or more intercepted joinpoints
+run at the same time.
+</p><p>
+As we can see, <tt>SynchronizationAspect.aroundAdvice()</tt> is composed of four
+steps:
+
+<list>
+   <li>retrieving a lock before the joinpoint execution, achieved by entering the
+      <tt>synchronized</tt> block;</li>
+   <li>proceeding to joinpoint execution;</li>
+   <li>releasing the lock after the joinpoint execution, achieved by exiting the
+      <tt>synchronized</tt> block;</li>
+   <li>and returning joinpoint result.</li>
+</list>
+
+</p><p>
+Notice that this advice does not alter joinpoint execution (the advice does not
+skip it) nor its return result (the advice could overwrite this value, but returns
+the joinpoint return value itself instead). Hence, we can say that the relevant part
+of it is only what is performed before and after the joinpoint (parts 1 and 3). To
+ilustrate the before/after concept, we wish to replace this single around advice
+by a couple of before/after advices. However, we cannot do that by using the
+previous example. A synchronized block cannot be splitten into two parts and still
+achieve the same effect. So, lets first replace this around advice by one that uses a
+mutex intead of a synchronized block:
+</p><p>
+<pre>
+public class MutexAspect
+{
+   private Object lock = new Object();
+   private boolean locked = false;   
+   
+   public Object aroundAdvice(Invocation invocation) throws Throwable
+   {
+      Object result;
+   
+      // part 1: retrive lock before joinpoint execution
+      synchronized(lock)
+      {
+         while (locked)
+         {
+            try
+            {
+               lock.wait();
+            }
+            catch(InterruptedException e)
+            {
+               Thread.currentThread().interrupt();
+               return; 
+            }
+         }
+         locked = true;
+         System.out.println("&gt;&gt;&gt; Retrieved concurrency lock");
+      }
+   
+      // part 2: proceed to joinpoint execution
+      result = invocation.invokeNext();
+   
+      // part 3: release lock after joinpoint execution
+      synchronized(lock)
+      {
+         locked = false;
+         lock.notify();
+         System.out.println("&lt;&lt;&lt; Releasing concurrency lock");
+      }
+      
+      // part 4: return result
+      return result;
+   }
+}
+</pre>         
+</p><p>
+
+As much as <tt>SynchronizedAspect</tt>, <tt>MutexAspect</tt> avoids simultaneous
+access to the intercepted joinpoint, and is also composed of the four steps
+(getting a lock, proceeding to joinpoint execution and releasing the lock).
+</p><p>
+However, we can easily split this around advice into two advices: one that retrieves
+the lock, and another one that releases it. We wish to run the first one before a
+joinpoint, and the other one, after it.
+</p><p>
+The example that follows is a copy of the previous one, except that, now, <tt>
+MutexAspect.aroundAdvice()</tt> has been splitten into <tt>MutexAspect.beforeAdvice()
+</tt> and <tt>MutexAspect.afterAdvice()</tt>:
+</p><p>
+<pre>
+public class MutexAspect
+{
+   private Object lock = new Object();
+   private boolean locked = false;   
+   
+   public void beforeAdvice(@JoinPoint Joinpoint joinPoint)
+   {
+      synchronized(lock)
+      {
+         while (locked)
+         {
+            try
+            {
+               lock.wait();
+            }
+            catch(InterruptedException e)
+            {
+               Thread.currentThread().interrupt();
+               return; 
+            }
+         }
+         locked = true;
+         System.out.println("&gt;&gt;&gt; Retrieved concurrency lock");
+      }
+   }
+   
+   public void afterAdvice(@JoinPoint Joinpoint joinPoint)
+   {
+      synchronized(lock)
+      {
+         locked = false;
+         lock.notify();
+         System.out.println("&lt;&lt;&lt; Releasing concurrency lock");
+      }
+   }
+}
+</pre>         
+</p><p>
+Notice that, in this version, parts 2 and 4 are gone (proceeding to joinpoint
+execution and returning its result). This is due to the fact that before and after
+advices don't wrap a joinpoint, they are just executed before or after it.
+
+</p><p>
+<h4>Around vs Before/After</h4>
+</p><p>
+As is shown in this example, around advices can generally be broken into two related
+before and after advices. The reverse is also true.
+However, there are some subtleties that can help you to choose one form or the
+other.
+</p><p>
+First of all, these are advantages of using around advices:
+</p><p>
+<list>
+<li>capability of replacing the entire joinpoint execution, by skipping the call to
+   <tt>Invocation.invokeNext() method</tt>;</li>
+<li>capability of skipping the invocation of subsequent around advices and
+   interceptors, by calling <tt>Invocation.invokeTarget()</tt> instead of
+   <tt>Invocation.invokeNext()</tt>;</li>
+<li>addition of meta-data, available on Invocation objects only.</li>
+</list>
+</p><p>
+Besides this list, there are aspects that cannot be implemented as a pair of before
+and after advices. An example would be the <tt>SynchronizedAspect</tt> shown before.
+A synchronized block cannot be broken into two blocks and achieve the
+same result as one single synchronized block. In the example, we wrote a similar,
+more complex aspect to ilustrate the before/after advice concept. In real
+applications, however, this aspect would not be replaced by a more complex one,
+unless this could bring advantages to the application.
+</p><p>
+When one needs one or more of the cited capabilities, or has an aspect that needs
+to be written as an around advice, we advise the use of around advices.
+</p><p>
+On the other hand, before and after advices also provide some advantages. A pair of
+related before/after advices:
+</p><p>
+<list>
+<li>is lightweight, when compared to around advices</li>
+<li>can be bound to different joinpoints. The before advice can be invoked before
+joinpoint A and after advice, after joinPoint B</li>   
+</list>
+</p><p>
+Regarding the second item in the list, notice that this can be extremely useful in
+the case of MutexAspect. Instead of controling the multi-threaded access to a single
+joinpoint, we could obtain the lock before a joinpoint, and release it later,
+after a different joinpoint execution. This allows the synchronization of a sequence
+of joinpoints as if they were a single unit.
+</p><p>
+Notice that replacing the joinpoint return value is not inherent to around advices
+and interceptors. An after advice can also return a value (for more on this, refer to
+<a href="../returnvalue/returnvalue.html">Return Value</a>).
+</p><p>
+<h4>Unrelated Before and After Advices</h4>
+</p><p>
+Despite the application of before and after advices shown in this example, these
+advices can also be used in an unrelated, independent manner.
+</p><p>
+An aspect whose code needs to run only before the joinpoint execution should contain
+only before advices. The same applies to an aspect that needs to execute after
+a joinpoint execution, regarding after advices. Furthermore, an aspect that provides
+functionalities that need to be run before a joinpoint execution, and functionalities
+that need to be run after, should contain a mix of unrelated before and after advices.
+</p><p>
+Examples of unrelated before and after advices will be shown in the next topics of
+this tutorial.
+</p><p>
+<h4>Applying MutexAspect</h4>
+</p><p>
+In our example, we apply <tt>MutexAspect</tt> to a classic example of sinchronization
+and concurrent programming application.
+</p><p>
+Suppose you have bank accounts and operations on accounts can be performed
+concurrently. If we don't synchronize those operations we can end up with an invalid
+account balance.
+</p><p>
+An example would be two operations on account <tt>A</tt>. Suppose one of them
+is a deposit of $30.00, while the other one is a withdrawal of $10.00. If these
+operations are run in an unsynchronized manner, like follows:
+</p><p>
+<list>
+<li>deposit: read balance: $50.00</li>
+<li>withdrawal: read balance: $50.00</li>
+<li>deposit: add $30.00</li>
+<li>withdrawal: subtract $10.00</li>
+<li>deposit: write final balance of $80.00</li>
+<li>withdrawal: write final balance of $40.00</li>
+</list>
+The final balance of the account would be $40.00, and the deposit of $50.00 would
+have been completely ignored, since its final balance has been overwritten by 
+the withdrawal operation.
+</p><p>
+<h4>Running</h4>
+</p><p>
+To compile and run:
+<pre>
+  $ ant
+</pre>
+It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:
+<pre>
+run:
+ [java] TRANSACTIONS
+     [java] ============
+     [java] Using context classloader sun.misc.Launcher$AppClassLoader@133056f to load aspect mypackage.MutexAspect
+     [java] Using context classloader sun.misc.Launcher$AppClassLoader@133056f to load aspect mypackage.MutexAspect
+     [java] &gt;&gt;&gt; Retrieved concurrency lock
+     [java] Depositing US$ 50.00 to account A
+     [java] &lt;&lt;&lt; Releasing concurrency lock
+     [java] &gt;&gt;&gt; Retrieved concurrency lock
+     [java] Transfering US$ 100.00 from account B to account C
+     [java] &lt;&lt;&lt; Releasing concurrency lock
+     [java] &gt;&gt;&gt; Retrieved concurrency lock
+     [java] Withdrawing US$ 10.00 from account A
+     [java] &lt;&lt;&lt; Releasing concurrency lock
+     [java] &gt;&gt;&gt; Retrieved concurrency lock
+     [java] Transfering US$ 89.11 from account C to account A
+     [java] &lt;&lt;&lt; Releasing concurrency lock
+     [java] &gt;&gt;&gt; Retrieved concurrency lock
+     [java] Depositing US$ 51.00 to account B
+     [java] &lt;&lt;&lt; Releasing concurrency lock
+     [java] &gt;&gt;&gt; Retrieved concurrency lock
+     [java] Withdrawing US$ 0.11 from account C
+     [java] &lt;&lt;&lt; Releasing concurrency lock
+     [java] &gt;&gt;&gt; Retrieved concurrency lock
+     [java] Withdrawing US$ 5.00 from account B
+     [java] &lt;&lt;&lt; Releasing concurrency lock
+
+     [java] FINAL BALANCE
+     [java] ===== =======
+     [java] A: US$ 159.11
+     [java] C: US$ 10.78
+     [java] B: -US$ 4.00
+
+</pre>
+</p><p>
+</p>
+</body>
+</html>
