@@ -87,6 +87,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    boolean initialisedSuperClasses; 
 
+   /**
+    * If protected, the generated subclasses cannot access it
+    */
+   public int version;
+
    protected GeneratedClassAdvisor(String classname)
    {
       //Generated advisors will not pass in an aspectmanager
@@ -112,6 +117,22 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
       
       manager.initialiseClassAdvisor(clazz, this);
+   }
+   
+   @Override
+   protected void rebuildInterceptors()
+   {
+      version++;
+      super.rebuildInterceptors();
+   }
+   
+   /**
+    * Callback for instance advisors to rebuild their interceptors when their
+    * version number is out of sync
+    */
+   protected void internalRebuildInterceptors()
+   {
+      super.rebuildInterceptors();
    }
    
    protected void handleOverriddenMethods(AdviceBinding binding)

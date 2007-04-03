@@ -74,7 +74,6 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
    public static final String GET_CLASS_ADVISOR = "_getClassAdvisor";
 
    private static final String DECLARING_CLASS = "this.getClass().getDeclaringClass()";
-   private static final String CONTAINER_CLASS = "this.getClass().getDeclaringClass()";
 
 
    private static final CtClass[] EMPTY_EXCEPTIONS = new CtClass[0];
@@ -211,40 +210,12 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       final CtClass untransformable = getClassPool().get("org.jboss.aop.instrument.Untransformable");
       genadvisor.addInterface(untransformable);
 
-      //Add version field
-      CtField version = new CtField(CtClass.intType, VERSION, genadvisor);
-      genadvisor.addField(version);
-
       //Add domain
       CtField domain = new CtField(forName("org.jboss.aop.Domain"), DOMAIN, genadvisor);
       domain.setModifiers(Modifier.PROTECTED);
       genadvisor.addField(domain);
       CtMethod getter = CtNewMethod.getter("getDomain", domain);
       genadvisor.addMethod(getter);
-
-      if (isBaseClass(clazz))
-      {
-         CtMethod rebuildInterceptors = CtNewMethod.make(
-               Modifier.PROTECTED,
-               CtClass.voidType,
-               "rebuildInterceptors",
-               EMPTY_SIG,
-               EMPTY_EXCEPTIONS,
-               "{" + VERSION + "++;super.rebuildInterceptors();}",
-               genadvisor);
-         genadvisor.addMethod(rebuildInterceptors);
-
-         //Will be called by instance advisors when version ids are out of sync
-         CtMethod internalRebuildInterceptors = CtNewMethod.make(
-               Modifier.PROTECTED,
-               CtClass.voidType,
-               "internalRebuildInterceptors",
-               EMPTY_SIG,
-               EMPTY_EXCEPTIONS,
-               "{super.rebuildInterceptors();}",
-               genadvisor);
-         genadvisor.addMethod(internalRebuildInterceptors);
-      }
 
       CtMethod initialiseMethods = CtNewMethod.make(
             Modifier.PROTECTED,
