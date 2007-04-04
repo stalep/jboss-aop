@@ -614,16 +614,8 @@ public class ClassAdvisor extends Advisor
             resolveConstructionPointcut(newConstructionInfos, binding);
          }
       }
-      finalizeMethodChain(newMethodInfos);
-      finalizeFieldReadChain(newFieldReadInfos);
-      finalizeFieldWriteChain(newFieldWriteInfos);
-      finalizeConstructorChain(newConstructorInfos);
-      finalizeConstructionChain(newConstructionInfos);
-      fieldReadInfos = (FieldInfo[]) newFieldReadInfos.toArray(new FieldInfo[newFieldReadInfos.size()]);
-      fieldWriteInfos = (FieldInfo[]) newFieldWriteInfos.toArray(new FieldInfo[newFieldWriteInfos.size()]);
-      constructorInfos = (ConstructorInfo[]) newConstructorInfos.toArray(new ConstructorInfo[newConstructorInfos.size()]);
-      constructionInfos = (ConstructionInfo[]) newConstructionInfos.toArray(new ConstructionInfo[newConstructionInfos.size()]);
 
+      finalizeChains(newMethodInfos, newFieldReadInfos, newFieldWriteInfos, newConstructorInfos, newConstructionInfos);
       populateInterceptorsFromInfos();
 
       doesHaveAspects = adviceBindings.size() > 0;
@@ -635,6 +627,19 @@ public class ClassAdvisor extends Advisor
       }
    }
 
+   protected void finalizeChains(MethodInterceptors newMethodInfos, ArrayList newFieldReadInfos, ArrayList newFieldWriteInfos, ArrayList newConstructorInfos, ArrayList newConstructionInfos)
+   {
+      finalizeMethodChain(newMethodInfos);
+      finalizeFieldReadChain(newFieldReadInfos);
+      finalizeFieldWriteChain(newFieldWriteInfos);
+      finalizeConstructorChain(newConstructorInfos);
+      finalizeConstructionChain(newConstructionInfos);
+      fieldReadInfos = (FieldInfo[]) newFieldReadInfos.toArray(new FieldInfo[newFieldReadInfos.size()]);
+      fieldWriteInfos = (FieldInfo[]) newFieldWriteInfos.toArray(new FieldInfo[newFieldWriteInfos.size()]);
+      constructorInfos = (ConstructorInfo[]) newConstructorInfos.toArray(new ConstructorInfo[newConstructorInfos.size()]);
+      constructionInfos = (ConstructionInfo[]) newConstructionInfos.toArray(new ConstructionInfo[newConstructionInfos.size()]);
+   }
+   
    private MethodByMethodInfo initializeCallerInterceptorsMap(long callingMethodHash, String calledClass, long calledMethodHash, Method callingMethod, Method calledMethod) throws Exception
    {
       HashMap calledClassesMap = (HashMap) methodCalledByMethodInterceptors.get(callingMethodHash);
@@ -1453,7 +1458,7 @@ public class ClassAdvisor extends Advisor
       addDeclaredMethods(clazz);
    }
 
-   private void createConstructorTables() throws Exception
+   protected void createConstructorTables() throws Exception
    {
       constructors = clazz.getDeclaredConstructors();
       methodCalledByConBindings = new HashMap[constructors.length];

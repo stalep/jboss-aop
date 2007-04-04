@@ -24,8 +24,10 @@ package org.jboss.aop;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AspectDefinition;
@@ -87,16 +89,25 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    boolean initialisedSuperClasses; 
 
+   private int version;
+   
    /**
-    * If protected, the generated subclasses cannot access it
+    * Different behaviour depending on if we are a class advisor or instance advisor
     */
-   public int version;
+   AdvisorStrategy advisorStrategy;
 
    protected GeneratedClassAdvisor(String classname)
    {
       //Generated advisors will not pass in an aspectmanager
       //This will be passed in via the initialise() method
       super(classname, null);
+      advisorStrategy = new ClassAdvisorStrategy(); 
+   }
+   
+   protected GeneratedClassAdvisor(String classname, GeneratedClassAdvisor parent)
+   {
+      super(classname, null);
+      advisorStrategy = new InstanceAdvisorStrategy(parent);
    }
 
    protected void initialise(Class clazz, AspectManager manager)
@@ -136,18 +147,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    }
 
    /**
-    * Callback for generated instance advisors to check if the version has been updates 
+    * Callback for generated instance advisors to check if the version has been updated 
     */
    protected void checkVersion()
    {
-      GeneratedClassAdvisor classAdvisor = getParentAdvisor();
-      if (classAdvisor != null)
-      {
-         if (classAdvisor.version != this.version)
-         {
-            doRebuildForInstance();
-         }
-      }
+      advisorStrategy.checkVersion();
    }
 
    /**
@@ -157,7 +161,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       
    }
-   
+
    protected void handleOverriddenMethods(AdviceBinding binding)
    {
       if (overriddenMethods != null && overriddenMethods.size() > 0)
@@ -185,8 +189,16 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    @Override
    protected void resolveMethodPointcut(MethodInterceptors newMethodInterceptors, AdviceBinding binding)
    {
-      super.resolveMethodPointcut(newMethodInterceptors, binding);
-      handleOverriddenMethods(binding);
+      GeneratedClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
+      if (classAdvisor == null)
+      {
+         //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
+         super.resolveMethodPointcut(newMethodInterceptors, binding);
+         handleOverriddenMethods(binding);
+      }
+      else
+      {
+      }
    }
 
    
@@ -343,37 +355,81 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    }
 
    @Override
+   protected void finalizeChains(MethodInterceptors newMethodInfos, ArrayList newFieldReadInfos, ArrayList newFieldWriteInfos, ArrayList newConstructorInfos, ArrayList newConstructionInfos)
+   {
+      ClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
+      if (classAdvisor != null)
+      {
+         //We are an instance advisor who has not resolved their own pointcuts, make sure that we set the bindings that are referenced
+         //so that they can be removed properly
+         //Make sure that all the adviceBindings for the class advisor are referenced from us
+         synchronized(this.adviceBindings)
+         {
+            this.adviceBindings.addAll(classAdvisor.adviceBindings);
+            for (Iterator it = this.adviceBindings.iterator() ; it.hasNext() ; )
+            {
+               AdviceBinding binding = (AdviceBinding)it.next();
+               binding.addAdvisor(this);
+            }
+         }
+      }
+      super.finalizeChains(newMethodInfos, newFieldReadInfos, newFieldWriteInfos, newConstructorInfos, newConstructionInfos);
+   }
+
+   @Override
    protected void finalizeMethodChain(MethodInterceptors newMethodInterceptors)
    {
-      TLongObjectHashMap newMethodInfos = new TLongObjectHashMap();
-
-      long[] keys = newMethodInterceptors.keys();
-      for (int i = 0; i < keys.length; i++)
+      ClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
+      if (classAdvisor != null)
       {
-         MethodMatchInfo matchInfo = newMethodInterceptors.getMatchInfo(keys[i]);
-         matchInfo.populateBindings();
-
-         MethodInfo info = matchInfo.getInfo();
-         newMethodInfos.put(keys[i], info);
-
-         MethodJoinPointGenerator generator = getJoinPointGenerator(info);
-         finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
-      }
-      methodInterceptors = newMethodInfos;
-      
-      //Handle the overridden methods
-      if (overriddenMethods != null && overriddenMethods.size() > 0)
-      {
-         for (Iterator it = overriddenMethods.iterator() ; it.hasNext() ; )
+         //We are an instance advisor with no own data influencing the chains, copy these from the parent advisor
+         long[] keys = newMethodInterceptors.keys();
+         for (int i = 0; i < keys.length; i++)
          {
-            MethodInfo info = (MethodInfo)it.next();
-
+            MethodInfo classMethodInfo = classAdvisor.getMethodInfo(keys[i]);
+            MethodMatchInfo matchInfo = newMethodInterceptors.getMatchInfo(keys[i]);
+            MethodInfo myMethodInfo = matchInfo.getInfo();
+            myMethodInfo.setInterceptorChain(classMethodInfo.getInterceptorChain());
+            myMethodInfo.setInterceptors(classMethodInfo.getInterceptors());
+            
+            if (updateOldInfo(oldInfos, myMethodInfo))
+            {
+               MethodJoinPointGenerator generator = getJoinPointGenerator(myMethodInfo);
+               generator.rebindJoinpoint(myMethodInfo);
+            }
+         }
+      }
+      else
+      {
+         //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
+         TLongObjectHashMap newMethodInfos = new TLongObjectHashMap();
+   
+         long[] keys = newMethodInterceptors.keys();
+         for (int i = 0; i < keys.length; i++)
+         {
+            MethodMatchInfo matchInfo = newMethodInterceptors.getMatchInfo(keys[i]);
+            matchInfo.populateBindings();
+   
+            MethodInfo info = matchInfo.getInfo();
+            newMethodInfos.put(keys[i], info);
+   
             MethodJoinPointGenerator generator = getJoinPointGenerator(info);
             finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
          }
-      }      
-
-      
+         methodInterceptors = newMethodInfos;
+         
+         //Handle the overridden methods
+         if (overriddenMethods != null && overriddenMethods.size() > 0)
+         {
+            for (Iterator it = overriddenMethods.iterator() ; it.hasNext() ; )
+            {
+               MethodInfo info = (MethodInfo)it.next();
+   
+               MethodJoinPointGenerator generator = getJoinPointGenerator(info);
+               finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
+            }
+         }      
+      }
    }
 
    @Override
@@ -458,64 +514,8 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
    }
 
-   protected MethodJoinPointGenerator getJoinPointGenerator(MethodInfo info)
-   {
-      GeneratedClassAdvisor parent = getParentAdvisor();
-      if (parent != null)
-      {
-         //We are an instance advisor, get the generator from the class advisor
-         return parent.getJoinPointGenerator(info);
-      }
-      //We are the class advisor
-      MethodJoinPointGenerator generator = (MethodJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
-      if (generator == null)
-      {
-         generator = new MethodJoinPointGenerator(this, info);
-         joinPoinGenerators.put(info.getJoinpoint(), generator);
-      }
-      return generator;
-   }
-
-   protected FieldJoinPointGenerator getJoinPointGenerator(FieldInfo info)
-   {
-      GeneratedClassAdvisor parent = getParentAdvisor();
-      if (parent != null)
-      {
-         //We are an instance advisor, get the generator from the class advisor
-         return parent.getJoinPointGenerator(info);
-      }
-      //We are the class advisor
-      if (info.isRead())
-      {
-         FieldJoinPointGenerator generator = (FieldJoinPointGenerator)fieldReadJoinPoinGenerators.get(info.getJoinpoint());
-         if (generator == null)
-         {
-            generator = new FieldJoinPointGenerator(this, info);
-            fieldReadJoinPoinGenerators.put(info.getJoinpoint(), generator);
-         }
-         return generator;
-      }
-      else
-      {
-         FieldJoinPointGenerator generator = (FieldJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
-         if (generator == null)
-         {
-            generator = new FieldJoinPointGenerator(this, info);
-            joinPoinGenerators.put(info.getJoinpoint(), generator);
-         }
-         return generator;
-      }
-   }
-   
    private JoinPointGenerator getJoinPointGenerator(JoinPointInfo info)
    {
-      GeneratedClassAdvisor parent = getParentAdvisor();
-      if (parent != null)
-      {
-         //We are an instance advisor, get the generator from the class advisor
-         return parent.getJoinPointGenerator(info);
-      }
-      //We are the class advisor
       if (info instanceof MethodInfo)
       {
          return getJoinPointGenerator((MethodInfo)info);
@@ -554,136 +554,44 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
    }
 
+   protected MethodJoinPointGenerator getJoinPointGenerator(MethodInfo info)
+   {
+      return advisorStrategy.getJoinPointGenerator(info);
+   }
+
+   protected FieldJoinPointGenerator getJoinPointGenerator(FieldInfo info)
+   {
+      return advisorStrategy.getJoinPointGenerator(info);
+   }
+   
    protected ConstructorJoinPointGenerator getJoinPointGenerator(ConstructorInfo info)
    {
-      GeneratedClassAdvisor parent = getParentAdvisor();
-      if (parent != null)
-      {
-         //We are an instance advisor, get the generator from the class advisor
-         return parent.getJoinPointGenerator(info);
-      }
-      //We are the class advisor
-      ConstructorJoinPointGenerator generator = (ConstructorJoinPointGenerator)constructionJoinPointGenerators.get(info.getJoinpoint());
-      if (generator == null)
-      {
-         generator = new ConstructorJoinPointGenerator(this, info);
-         constructionJoinPointGenerators.put(info.getJoinpoint(), generator);
-      }
-      return generator;
+      return advisorStrategy.getJoinPointGenerator(info);
    }
 
    protected ConstructionJoinPointGenerator getJoinPointGenerator(ConstructionInfo info)
    {
-      GeneratedClassAdvisor parent = getParentAdvisor();
-      if (parent != null)
-      {
-         //We are an instance advisor, get the generator from the class advisor
-         return parent.getJoinPointGenerator(info);
-      }
-      //We are the class advisor
-      ConstructionJoinPointGenerator generator = (ConstructionJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
-      if (generator == null)
-      {
-         generator = new ConstructionJoinPointGenerator(this, info);
-         joinPoinGenerators.put(info.getJoinpoint(), generator);
-      }
-      return generator;
+      return advisorStrategy.getJoinPointGenerator(info);
    }
 
    protected MethodByMethodJoinPointGenerator getJoinPointGenerator(MethodByMethodInfo info)
    {
-      GeneratedClassAdvisor parent = getParentAdvisor();
-      if (parent != null)
-      {
-         //We are an instance advisor, get the generator from the class advisor
-         return parent.getJoinPointGenerator(info);
-      }
-      //We are the class advisor
-
-      //An extra level of indirection since we distinguish between callers of method depending on
-      //where the called method is defined (sub/super interfaces)
-      ConcurrentReaderHashMap map = (ConcurrentReaderHashMap)joinPoinGenerators.get(info.getJoinpoint());
-      if (map == null)
-      {
-         map = new ConcurrentReaderHashMap();
-         joinPoinGenerators.put(info.getJoinpoint(), map);
-         map = (ConcurrentReaderHashMap)joinPoinGenerators.get(info.getJoinpoint());
-      }
-
-      MethodByMethodJoinPointGenerator generator = (MethodByMethodJoinPointGenerator)map.get(info.getCalledClass());
-      if (generator == null)
-      {
-         generator = new MethodByMethodJoinPointGenerator(this, info);
-         map.put(info.getCalledClass(), generator);
-         generator = (MethodByMethodJoinPointGenerator)map.get(info.getCalledClass());
-      }
-      return generator;
+      return advisorStrategy.getJoinPointGenerator(info);
    }
 
    protected ConByMethodJoinPointGenerator getJoinPointGenerator(ConByMethodInfo info)
    {
-      GeneratedClassAdvisor parent = getParentAdvisor();
-      if (parent != null)
-      {
-         //We are an instance advisor, get the generator from the class advisor
-         return parent.getJoinPointGenerator(info);
-      }
-      //We are the class advisor
-      ConByMethodJoinPointGenerator generator = (ConByMethodJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
-      if (generator == null)
-      {
-         generator = new ConByMethodJoinPointGenerator(this, info);
-         joinPoinGenerators.put(info.getJoinpoint(), generator);
-      }
-      return generator;
+      return advisorStrategy.getJoinPointGenerator(info);
    }
 
    protected ConByConJoinPointGenerator getJoinPointGenerator(ConByConInfo info)
    {
-      GeneratedClassAdvisor parent = getParentAdvisor();
-      if (parent != null)
-      {
-         //We are an instance advisor, get the generator from the class advisor
-         return parent.getJoinPointGenerator(info);
-      }
-      //We are the class advisor
-      ConByConJoinPointGenerator generator = (ConByConJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
-      if (generator == null)
-      {
-         generator = new ConByConJoinPointGenerator(this, info);
-         joinPoinGenerators.put(info.getJoinpoint(), generator);
-      }
-      return generator;
+      return advisorStrategy.getJoinPointGenerator(info);
    }
 
    protected MethodByConJoinPointGenerator getJoinPointGenerator(MethodByConInfo info)
    {
-      GeneratedClassAdvisor parent = getParentAdvisor();
-      if (parent != null)
-      {
-         //We are an instance advisor, get the generator from the class advisor
-         return parent.getJoinPointGenerator(info);
-      }
-      //We are the class advisor
-
-      //An extra level of indirection since we distinguish between callers of method depending on
-      //where the called method is defined (sub/super interfaces)
-      ConcurrentReaderHashMap map = (ConcurrentReaderHashMap)joinPoinGenerators.get(info.getJoinpoint());
-      if (map == null)
-      {
-         map = new ConcurrentReaderHashMap();
-         joinPoinGenerators.put(info.getJoinpoint(), map);
-         map = (ConcurrentReaderHashMap)joinPoinGenerators.get(info.getJoinpoint());
-      }
-
-      MethodByConJoinPointGenerator generator = (MethodByConJoinPointGenerator)map.get(info.getCalledClass());
-      if (generator == null)
-      {
-         generator = new MethodByConJoinPointGenerator(this, info);
-         map.put(info.getCalledClass(), generator);
-         generator = (MethodByConJoinPointGenerator)map.get(info.getCalledClass());
-      }
-      return generator;
+      return advisorStrategy.getJoinPointGenerator(info);
    }
 
    /**
@@ -748,22 +656,13 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       return PrecedenceSorter.applyPrecedence(interceptors, manager);
    }
 
-   GeneratedClassAdvisor parent;
-   /**
-    * Generated InstanceAdvisors will set this
-    */
-   protected void setParentAdvisor(GeneratedClassAdvisor parent)
-   {
-      this.parent = parent;
-   }
-
-   /**
-    * Generated instance advisors will override this and return the parent class advisor
-    */
-   protected GeneratedClassAdvisor getParentAdvisor()
-   {
-      return parent;
-   }
+//   /**
+//    * Generated instance advisors will override this and return the parent class advisor
+//    */
+//   protected GeneratedClassAdvisor getParentAdvisor()
+//   {
+//      return parent;
+//   }
 
    /**
     * If this is an instance advisor, will check with parent class advisor if the aspect
@@ -772,15 +671,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    @Override
    public Object getPerClassAspect(AspectDefinition def)
    {
-      ClassAdvisor parentAdvisor = getParentAdvisor();
-
-      if (parentAdvisor != null)
-      {
-         Object aspect = parentAdvisor.getPerClassAspect(def);
-         if (aspect != null) return aspect;
-      }
-
-      return super.getPerClassAspect(def);
+      return advisorStrategy.getPerClassAspect(def);
    }
 
    /**
@@ -789,26 +680,10 @@ public class GeneratedClassAdvisor extends ClassAdvisor
     */
    ConcurrentReaderHashMap perClassJoinpointAspectDefinitions = new ConcurrentReaderHashMap();
 
-   /**
-    * If this is an instance advisor, will check with parent class advisor if the aspect
-    * is already registered. If so, we should use the one from the parent advisor
-    */
+
    public Object getPerClassJoinpointAspect(AspectDefinition def, Joinpoint joinpoint)
    {
-      GeneratedClassAdvisor parentAdvisor = getParentAdvisor();
-
-      if (parentAdvisor != null)
-      {
-         Object aspect = parentAdvisor.getPerClassJoinpointAspect(def, joinpoint);
-         if (aspect != null)return aspect;
-      }
-
-      Map joinpoints = (Map) perClassJoinpointAspectDefinitions.get(def);
-      if (joinpoints != null)
-      {
-         return joinpoints.get(joinpoint);
-      }
-      return null;
+      return advisorStrategy.getPerClassJoinpointAspect(def, joinpoint);
    }
 
    public synchronized void addPerClassJoinpointAspect(AspectDefinition def, Joinpoint joinpoint)
@@ -847,41 +722,53 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       return instance;
    }
 
+   private GeneratedClassAdvisor getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices()
+   {
+      return advisorStrategy.getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
+   }
+   
    /**
-    * Optimization so that when we create class advisors we don't have to create the method tables again 
+    * Optimization so that when we create instance advisors we don't have to create the method tables again,
+    * they were already created for the class advisor 
     */
    @Override
    protected void createMethodTables() throws Exception
    {
-      GeneratedClassAdvisor parent = getParentAdvisor();
-      if (parent != null)
-      {
-         this.unadvisedMethods = parent.unadvisedMethods;
-         this.advisedMethods = parent.advisedMethods;
-      }
-      else
-      {
-         super.createMethodTables();
-      }
+      advisorStrategy.createMethodTables();
    }
    
    /**
-    * Optimization so that when we create class advisors we don't have to create the field tables again 
+    * Optimization so that when we create instance advisors we don't have to create the field tables again,
+    * they were already created for the class advisor 
     */
    @Override
    protected void createFieldTable() throws Exception
    {
-      GeneratedClassAdvisor parent = getParentAdvisor();
-      if (parent != null)
-      {
-         this.advisedFields = parent.advisedFields;
-      }
-      else
-      {
-         super.createFieldTable();
-      }
+      advisorStrategy.createFieldTable();
    }
    
+   /**
+    * Optimization so that when we create instance advisors we don't have to create the constructor tables again,
+    * they were already created for the class advisor 
+    */
+   @Override
+   protected void createConstructorTables() throws Exception
+   {
+      advisorStrategy.createConstructorTables();
+   }
+
+   @Override
+   public Set getPerInstanceAspectDefinitions()
+   {
+      return advisorStrategy.getPerInstanceAspectDefinitions();
+   }
+
+   @Override
+   public Map getPerInstanceJoinpointAspectDefinitions()
+   {
+      return advisorStrategy.getPerInstanceJoinpointAspectDefinitions();
+   }
+
    /**
     * Caches the old info and checks if the chains have been updated
     */
@@ -954,5 +841,339 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       JoinPointGenerator generator = getJoinPointGenerator(info);
       generator.rebindJoinpoint(info);
       generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+   }
+   
+   /**
+    * Encapsulates different behaviours depending on if this is an instance or class advisor
+    */
+   private interface AdvisorStrategy
+   {
+      void checkVersion();
+      MethodJoinPointGenerator getJoinPointGenerator(MethodInfo info);
+      FieldJoinPointGenerator getJoinPointGenerator(FieldInfo info);
+      ConstructorJoinPointGenerator getJoinPointGenerator(ConstructorInfo info);
+      ConstructionJoinPointGenerator getJoinPointGenerator(ConstructionInfo info);
+      MethodByMethodJoinPointGenerator getJoinPointGenerator(MethodByMethodInfo info);
+      ConByMethodJoinPointGenerator getJoinPointGenerator(ConByMethodInfo info);
+      ConByConJoinPointGenerator getJoinPointGenerator(ConByConInfo info);
+      MethodByConJoinPointGenerator getJoinPointGenerator(MethodByConInfo info);
+      Object getPerClassAspect(AspectDefinition def);
+      Object getPerClassJoinpointAspect(AspectDefinition def, Joinpoint joinpoint);
+      GeneratedClassAdvisor getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
+      void createMethodTables() throws Exception;
+      void createFieldTable() throws Exception;
+      void createConstructorTables() throws Exception;
+      Set getPerInstanceAspectDefinitions();
+      Map getPerInstanceJoinpointAspectDefinitions();
+   }
+   
+   private class ClassAdvisorStrategy implements AdvisorStrategy
+   {
+      GeneratedClassAdvisor parent;
+      public void checkVersion()
+      {
+         //The version is only has any significance for instance advisors
+      }
+
+      public MethodJoinPointGenerator getJoinPointGenerator(MethodInfo info)
+      {
+         MethodJoinPointGenerator generator = (MethodJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
+         if (generator == null)
+         {
+            generator = new MethodJoinPointGenerator(GeneratedClassAdvisor.this, info);
+            joinPoinGenerators.put(info.getJoinpoint(), generator);
+         }
+         return generator;
+      }
+
+      public FieldJoinPointGenerator getJoinPointGenerator(FieldInfo info)
+      {
+         if (info.isRead())
+         {
+            FieldJoinPointGenerator generator = (FieldJoinPointGenerator)fieldReadJoinPoinGenerators.get(info.getJoinpoint());
+            if (generator == null)
+            {
+               generator = new FieldJoinPointGenerator(GeneratedClassAdvisor.this, info);
+               fieldReadJoinPoinGenerators.put(info.getJoinpoint(), generator);
+            }
+            return generator;
+         }
+         else
+         {
+            FieldJoinPointGenerator generator = (FieldJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
+            if (generator == null)
+            {
+               generator = new FieldJoinPointGenerator(GeneratedClassAdvisor.this, info);
+               joinPoinGenerators.put(info.getJoinpoint(), generator);
+            }
+            return generator;
+         }
+      }
+      
+      public ConstructorJoinPointGenerator getJoinPointGenerator(ConstructorInfo info)
+      {
+         //We are the class advisor
+         ConstructorJoinPointGenerator generator = (ConstructorJoinPointGenerator)constructionJoinPointGenerators.get(info.getJoinpoint());
+         if (generator == null)
+         {
+            generator = new ConstructorJoinPointGenerator(GeneratedClassAdvisor.this, info);
+            constructionJoinPointGenerators.put(info.getJoinpoint(), generator);
+         }
+         return generator;
+      }
+
+      public ConstructionJoinPointGenerator getJoinPointGenerator(ConstructionInfo info)
+      {
+         ConstructionJoinPointGenerator generator = (ConstructionJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
+         if (generator == null)
+         {
+            generator = new ConstructionJoinPointGenerator(GeneratedClassAdvisor.this, info);
+            joinPoinGenerators.put(info.getJoinpoint(), generator);
+         }
+         return generator;
+      }
+
+      public MethodByMethodJoinPointGenerator getJoinPointGenerator(MethodByMethodInfo info)
+      {
+         //An extra level of indirection since we distinguish between callers of method depending on
+         //where the called method is defined (sub/super interfaces)
+         ConcurrentReaderHashMap map = (ConcurrentReaderHashMap)joinPoinGenerators.get(info.getJoinpoint());
+         if (map == null)
+         {
+            map = new ConcurrentReaderHashMap();
+            joinPoinGenerators.put(info.getJoinpoint(), map);
+            map = (ConcurrentReaderHashMap)joinPoinGenerators.get(info.getJoinpoint());
+         }
+
+         MethodByMethodJoinPointGenerator generator = (MethodByMethodJoinPointGenerator)map.get(info.getCalledClass());
+         if (generator == null)
+         {
+            generator = new MethodByMethodJoinPointGenerator(GeneratedClassAdvisor.this, info);
+            map.put(info.getCalledClass(), generator);
+            generator = (MethodByMethodJoinPointGenerator)map.get(info.getCalledClass());
+         }
+         return generator;
+      }
+
+      public ConByMethodJoinPointGenerator getJoinPointGenerator(ConByMethodInfo info)
+      {
+         ConByMethodJoinPointGenerator generator = (ConByMethodJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
+         if (generator == null)
+         {
+            generator = new ConByMethodJoinPointGenerator(GeneratedClassAdvisor.this, info);
+            joinPoinGenerators.put(info.getJoinpoint(), generator);
+         }
+         return generator;
+      }
+
+      public ConByConJoinPointGenerator getJoinPointGenerator(ConByConInfo info)
+      {
+         //We are the class advisor
+         ConByConJoinPointGenerator generator = (ConByConJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
+         if (generator == null)
+         {
+            generator = new ConByConJoinPointGenerator(GeneratedClassAdvisor.this, info);
+            joinPoinGenerators.put(info.getJoinpoint(), generator);
+         }
+         return generator;
+      }
+
+      public MethodByConJoinPointGenerator getJoinPointGenerator(MethodByConInfo info)
+      {
+         //An extra level of indirection since we distinguish between callers of method depending on
+         //where the called method is defined (sub/super interfaces)
+         ConcurrentReaderHashMap map = (ConcurrentReaderHashMap)joinPoinGenerators.get(info.getJoinpoint());
+         if (map == null)
+         {
+            map = new ConcurrentReaderHashMap();
+            joinPoinGenerators.put(info.getJoinpoint(), map);
+            map = (ConcurrentReaderHashMap)joinPoinGenerators.get(info.getJoinpoint());
+         }
+
+         MethodByConJoinPointGenerator generator = (MethodByConJoinPointGenerator)map.get(info.getCalledClass());
+         if (generator == null)
+         {
+            generator = new MethodByConJoinPointGenerator(GeneratedClassAdvisor.this, info);
+            map.put(info.getCalledClass(), generator);
+            generator = (MethodByConJoinPointGenerator)map.get(info.getCalledClass());
+         }
+         return generator;
+      }
+
+      public Object getPerClassAspect(AspectDefinition def)
+      {
+         return GeneratedClassAdvisor.super.getPerClassAspect(def);
+      }
+
+      public Object getPerClassJoinpointAspect(AspectDefinition def, Joinpoint joinpoint)
+      {
+         Map joinpoints = (Map) perClassJoinpointAspectDefinitions.get(def);
+         if (joinpoints != null)
+         {
+            return joinpoints.get(joinpoint);
+         }
+         return null;
+      }
+      
+      public GeneratedClassAdvisor getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices()
+      {
+         return null;
+      }
+      
+      public void createMethodTables() throws Exception
+      {
+         GeneratedClassAdvisor.super.createMethodTables();
+      }
+      
+      public void createFieldTable() throws Exception
+      {
+         GeneratedClassAdvisor.super.createFieldTable();
+      }
+
+      public void createConstructorTables() throws Exception
+      {
+         GeneratedClassAdvisor.super.createConstructorTables();
+      }
+      
+      public Set getPerInstanceAspectDefinitions()
+      {
+         return GeneratedClassAdvisor.super.getPerInstanceAspectDefinitions();
+      }
+
+      public Map getPerInstanceJoinpointAspectDefinitions()
+      {
+         return GeneratedClassAdvisor.super.getPerInstanceJoinpointAspectDefinitions();
+      }
+      
+   }
+   
+   private class InstanceAdvisorStrategy implements AdvisorStrategy 
+   {
+      GeneratedClassAdvisor parent;
+      
+      public InstanceAdvisorStrategy(GeneratedClassAdvisor parent)
+      {
+         this.parent = parent;
+         GeneratedClassAdvisor.this.version = parent.version;         
+      }
+      
+      public void checkVersion()
+      {
+         if (parent.version != GeneratedClassAdvisor.this.version)
+         {
+            doRebuildForInstance();
+         }
+      }
+      
+      public MethodJoinPointGenerator getJoinPointGenerator(MethodInfo info)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+
+      public FieldJoinPointGenerator getJoinPointGenerator(FieldInfo info)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+      
+      public ConstructorJoinPointGenerator getJoinPointGenerator(ConstructorInfo info)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+
+      public ConstructionJoinPointGenerator getJoinPointGenerator(ConstructionInfo info)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+
+      public MethodByMethodJoinPointGenerator getJoinPointGenerator(MethodByMethodInfo info)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+
+      public ConByMethodJoinPointGenerator getJoinPointGenerator(ConByMethodInfo info)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+
+      public ConByConJoinPointGenerator getJoinPointGenerator(ConByConInfo info)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+
+      public MethodByConJoinPointGenerator getJoinPointGenerator(MethodByConInfo info)
+      {
+         //We are an instance advisor, get the generator from the class advisor
+         return parent.getJoinPointGenerator(info);
+      }
+
+      /**
+       * This is an instance advisor, so we will check with parent class advisor if the aspect
+       * is already registered. If so, we should use the one from the parent advisor
+       */
+      public Object getPerClassAspect(AspectDefinition def)
+      {
+         Object aspect = parent.getPerClassAspect(def);
+         if (aspect != null) return aspect;
+         return GeneratedClassAdvisor.super.getPerClassAspect(def);
+      }
+
+      /**
+       * This is an instance advisor, so we will check with parent class advisor if the aspect
+       * is already registered. If so, we should use the one from the parent advisor
+       */
+      public Object getPerClassJoinpointAspect(AspectDefinition def, Joinpoint joinpoint)
+      {
+         Object aspect = parent.getPerClassJoinpointAspect(def, joinpoint);
+         if (aspect != null)return aspect;
+         return parent.getPerClassJoinpointAspect(def, joinpoint);
+      }
+
+      public GeneratedClassAdvisor getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices()
+      {
+         if (((Domain)getManager()).hasOwnDataWithEffectOnAdvices())
+         {
+            return null;
+         }
+         return parent;
+      }
+      
+      public void createMethodTables() throws Exception
+      {
+         GeneratedClassAdvisor.this.unadvisedMethods = parent.unadvisedMethods;
+         GeneratedClassAdvisor.this.advisedMethods = parent.advisedMethods;
+      }
+
+      public void createFieldTable() throws Exception
+      {
+         GeneratedClassAdvisor.this.advisedFields = parent.advisedFields;
+      }
+
+      public void createConstructorTables() throws Exception
+      {
+         GeneratedClassAdvisor.this.constructors = parent.constructors;
+         
+         methodCalledByConBindings = new HashMap[constructors.length];
+         methodCalledByConInterceptors = new HashMap[constructors.length];
+
+         conCalledByConBindings = new HashMap[constructors.length];
+         conCalledByConInterceptors = new HashMap[constructors.length];
+      }
+
+      public Set getPerInstanceAspectDefinitions()
+      {
+         return parent.getPerInstanceAspectDefinitions();
+      }
+
+      public Map getPerInstanceJoinpointAspectDefinitions()
+      {
+         return parent.getPerInstanceJoinpointAspectDefinitions();
+      }
    }
 }

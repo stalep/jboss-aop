@@ -85,7 +85,7 @@ public class Domain extends AspectManager
             sb.append(clazz.getName());
             sb.append("_");
             sb.append(System.identityHashCode(clazz.getClassLoader()));
-            
+
             if (forInstance)
             {
                GUID guid = new GUID();//Are these guys expensive to create?
@@ -97,7 +97,7 @@ public class Domain extends AspectManager
       });
       return name;
    }
-   
+
    /**
     * Inherits interceptor, aspect, advice stack definitions
     *
@@ -121,7 +121,7 @@ public class Domain extends AspectManager
       }
    }
 
-   
+
    public void removeBindings(ArrayList binds)
    {
       super.removeBindings(binds);
@@ -148,6 +148,11 @@ public class Domain extends AspectManager
       return super.getBindings();
    }
 
+   public boolean hasOwnBindings()
+   {
+      return super.bindings.size() > 0;
+   }
+
    public LinkedHashMap getPointcuts()
    {
       if (inheritsBindings)
@@ -167,6 +172,11 @@ public class Domain extends AspectManager
          }
       }
       return super.getPointcuts();
+   }
+
+   public boolean hasOwnPointcuts()
+   {
+      return super.pointcuts.size() > 0;
    }
 
    public LinkedHashMap getPointcutInfos()
@@ -218,7 +228,11 @@ public class Domain extends AspectManager
       }
 
       return super.getAnnotationIntroductions();
+   }
 
+   public boolean hasOwnAnnotationIntroductions()
+   {
+      return super.annotationIntroductions.size() > 0;
    }
 
    public List getAnnotationOverrides()
@@ -249,6 +263,11 @@ public class Domain extends AspectManager
       return super.getAnnotationOverrides();
    }
 
+   public boolean hasOwnAnnotationOverrides()
+   {
+      return super.annotationOverrides.size() > 0;
+   }
+
    public Map getInterfaceIntroductions()
    {
       if (inheritsBindings)
@@ -277,6 +296,12 @@ public class Domain extends AspectManager
       return super.getInterfaceIntroductions();
    }
 
+
+   public boolean hasOwnInterfaceIntroductions()
+   {
+      return super.annotationIntroductions.size() > 0;
+   }
+
    public Map getTypedefs()
    {
       if (inheritsBindings)
@@ -303,6 +328,12 @@ public class Domain extends AspectManager
          }
       }
       return super.getTypedefs();
+   }
+
+
+   public boolean hasOwnTypedefs()
+   {
+      return super.annotationIntroductions.size() > 0;
    }
 
    public Map getInterceptorStacks()
@@ -414,7 +445,7 @@ public class Domain extends AspectManager
             return map;
          }
       }
-      return super.getDynamicCFlows();   
+      return super.getDynamicCFlows();
    }
 
    public Map getPerVMAspects()
@@ -442,7 +473,7 @@ public class Domain extends AspectManager
             return map;
          }
       }
-      return super.getPerVMAspects();   
+      return super.getPerVMAspects();
    }
 
    public LinkedHashMap getPrecedenceDefs()
@@ -465,7 +496,12 @@ public class Domain extends AspectManager
       }
       return super.getPrecedenceDefs();
    }
-   
+
+   public boolean hasOwnPrecedenceDefs()
+   {
+      return super.precedenceDefs.size() > 0;
+   }
+
    public Map getClassMetaData()
    {
       if (inheritsBindings)
@@ -491,7 +527,24 @@ public class Domain extends AspectManager
             return map;
          }
       }
-      return super.getClassMetaData();   
+      return super.getClassMetaData();
+   }
+
+   public boolean hasOwnClassMetaData()
+   {
+      return super.classMetaData.size() > 0;
+   }
+
+   public boolean hasOwnDataWithEffectOnAdvices()
+   {
+      return hasOwnBindings() ||
+      hasOwnPointcuts() ||
+      hasOwnAnnotationIntroductions() ||
+      hasOwnAnnotationOverrides() ||
+      hasOwnInterfaceIntroductions() ||
+      hasOwnTypedefs() ||
+      hasOwnPrecedenceDefs() ||
+      hasOwnClassMetaData();
    }
 
    public InterceptorFactory getInterceptorFactory(String name)
@@ -568,7 +621,7 @@ public class Domain extends AspectManager
       if (factory != null) return factory;
       return parent.getTypedef(name);
    }
-   
+
    public DomainDefinition getContainer(String name)
    {
       DomainDefinition container = null;
@@ -583,14 +636,14 @@ public class Domain extends AspectManager
    }
 
 
-   
+
    /**
     * Find a pointcut of with a given name
     */
    public Pointcut getPointcut(String name)
    {
       Pointcut pointcut = null;
-      
+
       if (parentFirst)
       {
          pointcut = parent.getPointcut(name);
@@ -654,7 +707,7 @@ public class Domain extends AspectManager
 
 
    public DynamicCFlow getDynamicCFlow(String name)
-   {      
+   {
       if (inheritsBindings)
       {
          if (!parentFirst)
@@ -705,10 +758,10 @@ public class Domain extends AspectManager
             return loader;
          }
       }
-      
+
       return super.findClassMetaDataLoader(group);
    }
-  
+
    public Map<String, LifecycleCallbackBinding> getLifecycleBindings()
    {
       if (inheritsBindings)
@@ -729,7 +782,8 @@ public class Domain extends AspectManager
       }
       return super.getLifecycleBindings();
    }
-   
+
+
 
    //////////////////////////////////////////////////////////////////////////
    //Methods that should delegate to the top AspectManager
@@ -745,7 +799,7 @@ public class Domain extends AspectManager
    {
       return parent.getScopedClassLoaderDomains();
    }
-   
+
    /** Managed by the top-level aspect manager */
    protected Map getSubDomainsPerClass()
    {
@@ -775,7 +829,7 @@ public class Domain extends AspectManager
    {
       return parent.getIgnoreExpressions();
    }
-   
+
    public DynamicAOPStrategy getDynamicAOPStrategy()
    {
       return parent.getDynamicAOPStrategy();
@@ -830,5 +884,6 @@ public class Domain extends AspectManager
    {
       return parent.isSet();
    }
+
 
 }

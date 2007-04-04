@@ -343,7 +343,6 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
          "    super($2);" +
          "   " + INSTANCE_ADVISOR_MIXIN + " = new org.jboss.aop.GeneratedInstanceAdvisorMixin($1, $2);" +
          "   this.classAdvisor = $2;" +
-         "   super." + VERSION + " = classAdvisor." + VERSION + ";" +
          "}";
       CtConstructor ctor = CtNewConstructor.make(new CtClass[]{forName("java.lang.Object"), genadvisor}, new CtClass[0], body, genInstanceAdvisor);
       genInstanceAdvisor.addConstructor(ctor);
@@ -390,8 +389,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       //This is called by instance advisors
       String instanceBody =
          "{" +
-         "   super(\"" + clazz.getName() + "\"); " +
-         "   super.setParentAdvisor($1);" +
+         "   super(\"" + clazz.getName() + "\", $1); " +
          "   initialise($1.getDomain(), true);" +
          "}";
       CtConstructor ctorWithParentAdvisor = CtNewConstructor.make(new CtClass[]{genadvisor}, EMPTY_EXCEPTIONS, instanceBody, genadvisor);
@@ -402,7 +400,12 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       CtConstructor ctorForSubAdvisors = CtNewConstructor.make(new CtClass[]{forName("java.lang.String")}, new CtClass[0], "{super($1);}", genadvisor);
       genadvisor.addConstructor(ctorForSubAdvisors);
       ctorForSubAdvisors.setModifiers(Modifier.PROTECTED);
-   }
+
+      //This will be called by instance advisors for sub advisors   
+      CtConstructor ctorForSubAdvisorInstanceAdvisors = CtNewConstructor.make(new CtClass[]{forName("java.lang.String"), forName("org.jboss.aop.GeneratedClassAdvisor")}, new CtClass[0], "{super($1, $2);}", genadvisor);
+      genadvisor.addConstructor(ctorForSubAdvisorInstanceAdvisors);
+      ctorForSubAdvisorInstanceAdvisors.setModifiers(Modifier.PROTECTED);
+}
 
    protected CtClass getSuperClassAdvisor(CtClass superclass)throws NotFoundException
    {
