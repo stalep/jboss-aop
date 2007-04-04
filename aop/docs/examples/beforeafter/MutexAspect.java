@@ -23,7 +23,7 @@ package mypackage;
 
 import org.jboss.aop.advice.annotation.JoinPoint;
 
-import org.jboss.aop.MethodInfo;
+import org.jboss.aop.JoinPointInfo; 
 
 public class MutexAspect
 {
@@ -35,7 +35,7 @@ public class MutexAspect
       System.out.println("CONSTRUCTOR!!!!!");
    }
    
-   public void beforeAdvice(@JoinPoint MethodInfo joinPoint)
+   public void beforeAdvice(@JoinPoint JoinPointInfo joinPoint)
    {
       synchronized(lock)
       {
@@ -56,7 +56,7 @@ public class MutexAspect
       }
    }
    
-   public void afterAdvice(@JoinPoint MethodInfo joinPoint)
+   public void afterAdvice(@JoinPoint JoinPointInfo joinPoint)
    {
       synchronized(lock)
       {

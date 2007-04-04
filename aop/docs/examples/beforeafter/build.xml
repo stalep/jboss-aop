@@ -55,7 +55,6 @@
    <target name="run" depends="compile">
       <java fork="yes" failOnError="true" className="Driver">
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
-         <sysproperty key="jboss.aop.verbose" value="true"/>
          <classpath refid="classpath"/>
       </java>
    </target>
@@ -74,7 +73,6 @@
    <target name="run.50.instrumented" depends="compile50standalone">
       <java fork="yes" failOnError="true" className="Driver">
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
-         <sysproperty key="jboss.aop.verbose" value="true"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.GeneratedAdvisorInstrumentor"/>
          <jvmarg value="-javaagent:${aop50jar}"/>
          <classpath refid="classpath50"/>
