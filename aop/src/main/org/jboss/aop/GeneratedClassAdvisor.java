@@ -134,7 +134,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    protected void rebuildInterceptors()
    {
       version++;
-      super.rebuildInterceptors();
+      advisorStrategy.rebuildInterceptors();
    }
    
    /**
@@ -865,6 +865,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       void createConstructorTables() throws Exception;
       Set getPerInstanceAspectDefinitions();
       Map getPerInstanceJoinpointAspectDefinitions();
+      void rebuildInterceptors();
    }
    
    private class ClassAdvisorStrategy implements AdvisorStrategy
@@ -1045,11 +1046,17 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          return GeneratedClassAdvisor.super.getPerInstanceJoinpointAspectDefinitions();
       }
       
+      public void rebuildInterceptors()
+      {
+         version++;
+         GeneratedClassAdvisor.super.rebuildInterceptors();
+      }
    }
    
    private class InstanceAdvisorStrategy implements AdvisorStrategy 
    {
       GeneratedClassAdvisor parent;
+      boolean needsRebuild = true;
       
       public InstanceAdvisorStrategy(GeneratedClassAdvisor parent)
       {
@@ -1059,9 +1066,10 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       
       public void checkVersion()
       {
-         if (parent.version != GeneratedClassAdvisor.this.version)
+         if (needsRebuild || parent.version != GeneratedClassAdvisor.this.version)
          {
             doRebuildForInstance();
+            needsRebuild = false;
          }
       }
       
@@ -1174,6 +1182,20 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       public Map getPerInstanceJoinpointAspectDefinitions()
       {
          return parent.getPerInstanceJoinpointAspectDefinitions();
+      }
+
+      
+      public void rebuildInterceptors()
+      {
+         if (getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices() != null && GeneratedClassAdvisor.this.version != parent.version)
+         {
+            adviceBindings.clear();
+            needsRebuild = true;
+         }
+         else
+         {
+            GeneratedClassAdvisor.super.rebuildInterceptors();
+         }
       }
    }
 }

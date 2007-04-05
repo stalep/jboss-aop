@@ -1450,13 +1450,14 @@ public class AspectManager
    {
       removeClassMetaData(meta.getName());
 
-      updateAdvisorsForAddedClassMetaData(meta);
-
+      //Add the metadata before we update the advisors. Important for the generated instance advisors 
       initClassMetaDataMap();
       synchronized (classMetaData)
       {
          classMetaData.put(meta.getName(), meta);
       }
+
+      updateAdvisorsForAddedClassMetaData(meta);
    }
 
    protected void updateAdvisorsForAddedClassMetaData(ClassMetaDataBinding meta)
@@ -1481,10 +1482,13 @@ public class AspectManager
          boolean newSubscribers = true;
          while (newSubscribers)
          {
-            for (Iterator it = subscribedSubDomains.keySet().iterator() ; it.hasNext() ; )
+            if (subscribedSubDomains.size() > 0)
             {
-               Domain domain = (Domain)it.next();
-               domain.updateAdvisorsForAddedClassMetaData(meta);
+               for (Iterator it = subscribedSubDomains.keySet().iterator() ; it.hasNext() ; )
+               {
+                  Domain domain = (Domain)it.next();
+                  domain.updateAdvisorsForAddedClassMetaData(meta);
+               }
             }
             newSubscribers = copySubDomainsFromQueue(false);
          }

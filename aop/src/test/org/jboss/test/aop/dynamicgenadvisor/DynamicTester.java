@@ -196,6 +196,24 @@ public class DynamicTester extends AOPTestWithSetup
       assertTrue(Interceptions.isEmpty());
    }
 
+   public void testMethodExecutionWithInstanceAdvisorAccess() throws Exception
+   {
+      System.out.println("TEST METHOD WITH INSTANCEADVISOR ACCESS");
+      AdviceBinding binding = new AdviceBinding("execution(* org.jboss.test.aop.dynamicgenadvisor.POJO->someMethod(..))", null);
+      binding.addInterceptor(MetadataInterceptor.class);
+      AspectManager.instance().addBinding(binding);
+
+      POJO pojo = new POJO();
+      MetadataInterceptor.clear();
+      pojo.someMethod(123);
+      assertTrue(MetadataInterceptor.intercepted);
+      
+      MetadataInterceptor.clear();
+      AspectManager.instance().removeBinding(binding.getName());
+      pojo.someMethod(123);
+      assertFalse(MetadataInterceptor.intercepted);
+   }
+
    public void testFields() throws Exception
    {
       System.out.println("TEST FIELDS");
@@ -774,6 +792,7 @@ public class DynamicTester extends AOPTestWithSetup
       pojo.someMethod(123);
       pojo.i = 100;
       pojo.notPrepared();
+      assertTrue(MetadataInterceptor.intercepted);
       assertEquals(2, MetadataInterceptor.lastDefaultMetadata.size());
       assertEquals(2, MetadataInterceptor.lastClassMetadata.size());
       assertEquals(1, MetadataInterceptor.lastMethodMetadata.size());
@@ -884,6 +903,10 @@ public class DynamicTester extends AOPTestWithSetup
       assertEquals("someMethod", MetadataInterceptor.lastMethodMetadata.get(0));
       
       assertEquals("i", MetadataInterceptor.lastFieldMetadata.get(0));
+      
+      MetadataInterceptor.clear();
+      pojox.someMethod(123);
+      assertTrue(MetadataInterceptor.intercepted);
       
       AspectManager.instance().removeClassMetaData("DA");
       MetadataInterceptor.clear();
