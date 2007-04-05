@@ -22,15 +22,19 @@ public &lt;return-value&gt; &lt;any-method-name&gt;(@&lt;Annotation&gt; &lt;any 
 </pre>
 </p><p>
 This signature is  available for all kinds of advices in JBoss AOP (when running in
-the default generated advisor mode). Basicaly, it allows an advice to receive zero
-or more annotated parameters, in any order, and with any valid type.
+the generated advisor instrumentation mode). Besides this one, JBoss AOP supports the
+default around signature, introduced in the <a href="../aspect/aspect.html">Aspect
+example</a>. The default signature can only be used to write around advices, and is
+supported on all instrumentation modes.
 </p><p>
-Regarding the exception types, an advice is allowed to declare any exception in its
-signature. If the exception is declared in the joinpoint exceptions list (and if
-the joinpoint has an exception list), JBoss AOP rethrows the exception as is. If
-the exception is not part of the joinpoint exception list, JBoss AOP will wrap it in
-a <tt>RuntimeException</tt>. In both cases, the application would get the exception
-as if the joinpoint itself had thrown it.
+Basicaly, this signature allows an advice to receive zero or more annotated
+parameters, in any order, and with any valid type. Regarding the exception types, an
+advice is allowed to declare any exception in its signature. <tt>
+RuntimeException</tt>s are rethrown by JBoss AOP as is. The same goes for exceptions
+that are not runtime, if they are declared in the joinpoint exceptions list (
+supposing the joinpoint has an exception list). Otherwise, the exception will be
+wrapped in a <tt>RuntimeException</tt>. In all cases, the application would get the
+exception as if the joinpoint itself had thrown it.
 </p><p>
 A concrete example of this signature has been shown in the
 <a href="../beforeafter/beforeafter.html">before/after</a> example:
@@ -39,12 +43,11 @@ A concrete example of this signature has been shown in the
 public void beforeAdvice(@JoinPoint Joinpoint joinPoint)
 </pre>
 </p><p>
-As we can see, this advice receives one parameter, annotated with
+As we can see, this advice receives one parameter annotated with
 <tt>&#64;JoinPoint</tt>.
 </p><p>
-In the next topics we will see all parameter annotations that can be used by an
-advice. Notice that an empty parameter list is also valid, as in the following
-signatures:
+Next, we will see all parameter annotations that can be used by an advice. Notice
+that an empty parameter list is also valid, as in the following signatures:
 </p><p>
 <pre>
 public void beforeNoParameters()
@@ -63,8 +66,8 @@ argument, or its return value. In this example, we show all parameter annotation
 that can be used by before, after and around advices. These annotations are located
 in the <tt>org.jboss.aop.advice.annotation</tt> package.
 </p><p>
-The type of an annotated parameter can be chosen accordingly to the value it refers.
-For example, suppose you are intercepting a jointpoint with an argument of type
+The type of an annotated parameter can be chosen accordingly to the value it refers
+to. For example, suppose you are intercepting a jointpoint with an argument of type
 <tt>ArrayList&lt;String&gt;</tt>. Advices that refer to this argument as being of
 type <tt>ArrayList&lt;String&gt;</tt>, or <tt>Collection&lt;String&gt;</tt> or <tt>
 Object</tt> would all be considered correct. This is useful because you can access
@@ -73,9 +76,10 @@ can receive a super type like <tt>Object</tt> and refer to arguments of differen
 types when your advice is applied to different joinpoints.
 </p><p>
 Notice that, as a convention, we named the advices of this example after the names of
-parameter annotations. It is important to point that, as all previous examples, the
-name of advices can be chosen freely and JBoss AOP won't use these names to identify
-annotated parameters. The same applies to the names of advice parameters.
+parameter annotations. Besides, all advices names are prefixed with their types names
+(before advice names start with <tt>"before"</tt>, and so on). It is also important
+to point out that, as all previous examples, the name of advices can be chosen freely
+and JBoss AOP won't use these names to identify annotated parameters.
 </p><p>
 <h5>&#64;JoinPoint</h5>
 </p><p>
@@ -197,8 +201,8 @@ afterArg</tt> will contain the value of the single argument <tt>someMethod</tt>
 received, as it happens with <tt>beforeConstructorArg</tt> and <tt>
 aroundConstructorArg</tt> advices. But, when intercepting <tt>
 POJO.method(long,int,long,String)</tt>, JBoss AOP will automatically associate <tt>
-afterArg</tt> parameter with the parameter at index position <tt>1</tt>, which is the
-second <tt>POJO.method()</tt> parameter, of type <tt>int</tt>.
+afterArg</tt> parameter with the parameter at index position <tt>1</tt>, of type <tt>
+int</tt>.
 </p><p>
 Associating the <tt>int</tt> value is easy, because there is only one joinpoint
 argument of that type. The same doesn't apply to the following advice:
@@ -238,7 +242,7 @@ without knowing how many arguments there are, or their types. Using <tt>&#64;Arg
 </tt> instead of a list of <tt>&#64;Arg</tt> annotated parameters is useful when you
 need to change one or more joinpoint argument values. An example is the <tt>
 beforeArgs</tt> advice, that ovewrites two argument values of <tt>
-POJO.method(long,int,long,String)</tt> method execution:
+POJO.method(long,int,long,String)</tt> execution:
 </p><p>
 <pre>
 public void beforeArgs(@Args Object[] arguments)
@@ -250,9 +254,13 @@ public void beforeArgs(@Args Object[] arguments)
 }
 </pre>
 </p><p>
+Avoid using <tt>&#64;Arguments</tt> when none of those conditions apply. This
+parameter type can incur in the creation of an array and of wrapper objects (as is
+the case of argument 1 above). Besides, you have the extra cost of downcasting
+the arguments.
 <h4>Run the example</h4>
 </p><p>
-To compile and run:
+<b>THIS EXAMPLE REQUIRES JDK 1.5!!</b> To compile and run:
 <pre>
   $ ant
 </pre>
@@ -275,7 +283,7 @@ run:
 
      [java] Reading POJO->field value
      [java] =========================
-     [java] &gt;&gt;&gt; aroundArgs: arguments []
+     [java] &gt;&gt;&gt; aroundArgs: arguments null
      [java] &gt;&gt;&gt; aroundNoParameters
      [java] &gt;&gt;&gt; afterFieldReturn: Object text
      [java] &gt;&gt;&gt; afterNoParameters

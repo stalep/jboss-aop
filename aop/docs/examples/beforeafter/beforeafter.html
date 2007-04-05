@@ -14,7 +14,7 @@ around advices' role.
 Before and after advices are lightweight advices when compared to around advices.
 JBoss AOP invokes these advices before or after the joinpoint execution.
 </p><p>
-As we will see in the next <a href="../annotatedparam-return/annotatedparam-return.html">
+As we will see in the next <a href="../annotated-parameters/annotated-parameters.html">
 example</a>, these advices can have several different signatures. However, in our
 first example, we will use signatures that are closest to what has been shown on
 previous examples.
@@ -32,17 +32,17 @@ Instead of <tt>Invocation</tt> instances, before/after advices receive instances
 of <a href="../../misc/joinpoint.html"><tt>org.jboss.aop.IJoinpointInfo</tt> and
 subinterfaces</a> as parameters.
 </p><p>
-Besides this difference, one can notice the presence of parameter annotation <tt>
+Furthermore, one can notice the presence of the parameter annotation <tt>
 &#64;org.jboss.aop.advice.annotation.JoinPoint</tt>. This is necessary because
 before/after advices can receive values with several semantic roles as parameters.
-As we will see <a href="../annotatedparam-return/annotatedparam-return.html">next</a>,
+As we will see <a href="../annotated-parameters/annotated-parameters.html">next</a>,
 this annotation is used to distinguish this parameter type from the other ones, so we 
 can achieve flexibility on the type, order and presence of advice parameters.
 </p><p>
 <h4>Binding Before/After Advices</h4>
 </p><p>
 To bind a before/after advice to a pointcut, you only need to declare an xml binding as
-follows (please, open up <tt>jboss-aop.xml</tt> to see this example):
+follows (open up <tt>jboss-aop.xml</tt> to see this example):
 </p><p>
 <pre>
 &lt;bind pointcut="execution(public void $instanceof{Transaction}->run())"&gt;
@@ -53,7 +53,7 @@ follows (please, open up <tt>jboss-aop.xml</tt> to see this example):
 </p><p>
 As you can see, you just need to declare a usual bind tag, and add to it 
 <tt>&lt;before&gt;</tt> and <tt>&lt;after&gt;</tt> tags for before and after advices
-respectively. Notice that we can mix interceptor declarations and around, before, and
+respectively. We can also mix interceptor declarations and around, before, and
 after advices declarations in a single binding.
 </p><p>
    
@@ -75,20 +75,20 @@ public class SynchronizationAspect
    public Object aroundAdvice(Invocation invocation) throws Throwable
    {
       Object result;
-
-      // part 1: retrive lock before joinpoint execution
+      <font color="808080"> <i>
+      // part 1: retrive lock before joinpoint execution </i></font>
       synchronized(this)
       {
          System.out.println("&gt;&gt;&gt; Retrieved concurrency lock");
-   
-         // part 2: proceed to joinpoint execution
+         <font color="808080"> <i>
+         // part 2: proceed to joinpoint execution</i></font>
          result = invocation.invokeNext();
-   
-      // part 3: release lock after joinpoint execution
+      <font color="808080"> <i>
+      // part 3: release lock after joinpoint execution</i></font>
          System.out.println("&lt;&lt;&lt; Releasing concurrency lock");
       }
-   
-      // part 4: return result
+      <font color="808080"> <i>
+      // part 4: return result</i></font>
       return result;
    }
 }
@@ -107,7 +107,7 @@ steps:
    <li>proceeding to joinpoint execution;</li>
    <li>releasing the lock after the joinpoint execution, achieved by exiting the
       <tt>synchronized</tt> block;</li>
-   <li>and returning joinpoint result.</li>
+   <li>and returning the joinpoint result.</li>
 </list>
 
 </p><p>
@@ -115,7 +115,7 @@ Notice that this advice does not alter joinpoint execution (the advice does not
 skip it) nor its return result (the advice could overwrite this value, but returns
 the joinpoint return value itself instead). Hence, we can say that the relevant part
 of it is only what is performed before and after the joinpoint (parts 1 and 3). To
-ilustrate the before/after concept, we wish to replace this single around advice
+illustrate the before/after concept, we wish to replace this single around advice
 by a couple of before/after advices. However, we cannot do that by using the
 previous example. A synchronized block cannot be splitten into two parts and still
 achieve the same effect. So, lets first replace this around advice by one that uses a
@@ -130,8 +130,8 @@ public class MutexAspect
    public Object aroundAdvice(Invocation invocation) throws Throwable
    {
       Object result;
-   
-      // part 1: retrive lock before joinpoint execution
+      <font color="808080"> <i>      
+      // part 1: retrive lock before joinpoint execution</i></font>
       synchronized(lock)
       {
          while (locked)
@@ -149,19 +149,19 @@ public class MutexAspect
          locked = true;
          System.out.println("&gt;&gt;&gt; Retrieved concurrency lock");
       }
-   
-      // part 2: proceed to joinpoint execution
+      <font color="808080"> <i>
+      // part 2: proceed to joinpoint execution</i></font>
       result = invocation.invokeNext();
-   
-      // part 3: release lock after joinpoint execution
+      <font color="808080"> <i>
+      // part 3: release lock after joinpoint execution</i></font>
       synchronized(lock)
       {
          locked = false;
          lock.notify();
          System.out.println("&lt;&lt;&lt; Releasing concurrency lock");
       }
-      
-      // part 4: return result
+      <font color="808080"> <i>
+      // part 4: return result</i></font>
       return result;
    }
 }
@@ -172,7 +172,7 @@ As much as <tt>SynchronizedAspect</tt>, <tt>MutexAspect</tt> avoids simultaneous
 access to the intercepted joinpoint, and is also composed of the four steps
 (getting a lock, proceeding to joinpoint execution and releasing the lock).
 </p><p>
-However, we can easily split this around advice into two advices: one that retrieves
+Now we can easily split this around advice into two advices: one that retrieves
 the lock, and another one that releases it. We wish to run the first one before a
 joinpoint, and the other one, after it.
 </p><p>
@@ -231,7 +231,7 @@ before and after advices. The reverse is also true.
 However, there are some subtleties that can help you to choose one form or the
 other.
 </p><p>
-First of all, these are advantages of using around advices:
+First of all, these are features that are available only to around advices:
 </p><p>
 <list>
 <li>capability of replacing the entire joinpoint execution, by skipping the call to
@@ -242,16 +242,14 @@ First of all, these are advantages of using around advices:
 <li>addition of meta-data, available on Invocation objects only.</li>
 </list>
 </p><p>
-Besides this list, there are aspects that cannot be implemented as a pair of before
-and after advices. An example would be the <tt>SynchronizedAspect</tt> shown before.
-A synchronized block cannot be broken into two blocks and achieve the
+When you need one of those advanced features, you should use an around advice or
+interceptor. Besides, there are aspects that cannot be implemented as a
+pair of before and after advices. An example would be the <tt>SynchronizedAspect</tt>
+shown before. A synchronized block cannot be broken into two blocks and achieve the
 same result as one single synchronized block. In the example, we wrote a similar,
-more complex aspect to ilustrate the before/after advice concept. In real
+more complex aspect to illustrate the before/after advice concept. In real
 applications, however, this aspect would not be replaced by a more complex one,
 unless this could bring advantages to the application.
-</p><p>
-When one needs one or more of the cited capabilities, or has an aspect that needs
-to be written as an around advice, we advise the use of around advices.
 </p><p>
 On the other hand, before and after advices also provide some advantages. A pair of
 related before/after advices:
@@ -259,18 +257,20 @@ related before/after advices:
 <list>
 <li>is lightweight, when compared to around advices</li>
 <li>can be bound to different joinpoints. The before advice can be invoked before
-joinpoint A and after advice, after joinPoint B</li>   
+joinpoint A and the after advice, after joinPoint B</li>   
 </list>
 </p><p>
-Regarding the second item in the list, notice that this can be extremely useful in
-the case of MutexAspect. Instead of controling the multi-threaded access to a single
-joinpoint, we could obtain the lock before a joinpoint, and release it later,
-after a different joinpoint execution. This allows the synchronization of a sequence
-of joinpoints as if they were a single unit.
+Since they are more lighweight, prefer using a pair of before/after advices, unless
+you have a reason to do otherwise.
+Regarding the second item in the list, it can be extremely useful in the case of
+MutexAspect. Instead of controling the multi-threaded access to a single joinpoint,
+we could obtain the lock before a joinpoint, and release it later, after a different
+joinpoint execution. This allows the synchronization of a sequence of joinpoints as
+if they were a single unit.
 </p><p>
-Notice that replacing the joinpoint return value is not inherent to around advices
-and interceptors. An after advice can also return a value (for more on this, refer to
-<a href="../returnvalue/returnvalue.html">Return Value</a>).
+Lets remark that replacing the joinpoint return value is not a feature exclusive to around
+advices and interceptors. An after advice can also return a value (for more on this,
+refer to the <a href="../return-types/return-types.html">Return Types</a> example).
 </p><p>
 <h4>Unrelated Before and After Advices</h4>
 </p><p>
@@ -283,7 +283,7 @@ a joinpoint execution, regarding after advices. Furthermore, an aspect that prov
 functionalities that need to be run before a joinpoint execution, and functionalities
 that need to be run after, should contain a mix of unrelated before and after advices.
 </p><p>
-Examples of unrelated before and after advices will be shown in the next topics of
+Examples of unrelated before and after advices will be shown in the next examples of
 this tutorial.
 </p><p>
 <h4>Applying MutexAspect</h4>
@@ -313,14 +313,20 @@ the withdrawal operation.
 </p><p>
 <h4>Running</h4>
 </p><p>
-To compile and run:
+<b>THIS EXAMPLE REQUIRES JDK 1.5!!</b> To compile and run:
 <pre>
   $ ant
 </pre>
 It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:
 <pre>
 run:
- [java] TRANSACTIONS
+     [java] SETUP
+     [java] =====
+     [java] Creating account 'A' with initial balance of $30.0
+     [java] Creating account 'B' with initial balance of $50.0
+     [java] Creating account 'C' with initial balance of $0.0
+   
+     [java] TRANSACTIONS
      [java] ============
      [java] Using context classloader sun.misc.Launcher$AppClassLoader@133056f to load aspect mypackage.MutexAspect
      [java] Using context classloader sun.misc.Launcher$AppClassLoader@133056f to load aspect mypackage.MutexAspect
@@ -354,6 +360,8 @@ run:
 
 </pre>
 </p><p>
+You can add accounts and transactions to this example application by editing the
+<tt>input.txt</tt> file.
 </p>
 </body>
 </html>
