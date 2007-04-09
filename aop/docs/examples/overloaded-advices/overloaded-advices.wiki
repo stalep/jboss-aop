@@ -1,0 +1,226 @@
+!!!Overloaded Advices
+
+!Overview
+In previous examples, we have seen that JBoss AOP supports different types of advices
+and that those can have several signatures. In this example, we will show
+how to expand that flexibility by binding pointcuts to overloaded advices.
+
+!Overloaded Advices vs. Nested If-Else Statements
+
+Overloaded advices can be useful to avoid nested if-else statements.
+Look at this version of {{JoinPointAspect.aroundAdvice}}:
+
+{{{
+public void aroundAdvice(Invocation invocation) throws Throwable
+{
+   if (invocation instanceof ConstructorInvocation)
+   {
+      System.out.println(">>> aroundAdvice on constructor of class: " +
+            invocation.getConstructor().getDeclaringClass().getName());
+   }
+   else if (invocation instanceof MethodInvocation)
+   {
+      System.out.println(">>> aroundAdvice on method execution: " +
+            invocation.getMehod().getName());
+   }
+	else if (invocation instanceof FieldReadInvocation)
+   {
+      System.out.println(">>> aroundAdvice on field read: " +
+            invocation.getField().getName());
+   }
+   else if (invocation instanceof FieldWriteInvocation)
+   {
+      System.out.println(">>> aroundAdvice on field write: " +
+            invocation.getField().getName());
+      
+   }
+	return invocation.invokeNext();
+}
+
+___________________________
+
+<bind pointcut="all(POJO)">
+   <advice name="aroundAdvice" aspect="JoinPointAspect"/>
+</bind>
+}}}
+
+As you can see, {{aroundAdvice}} is a simple advice that logs constructor and method
+executions, field reads and field writes. Despite that, its implementation doesn't
+look so simple as a logging advice should be. This advice does a check on the
+{{invocation}} parameter type so it can display the correct message and access
+methods specific to the joinpoint type being intercepted. This can be avoided by
+overloading {{aroundAdvice}}, so that we have a version for each {{Invocation}} type:
+
+{{{
+public Object aroundAdvice(ConstructorInvocation invocation) throws Throwable
+{
+   System.out.println(">>> aroundAdvice on constructor of class: " +
+         invocation.getConstructor().getDeclaringClass().getName());
+   return invocation.invokeNext();
+}
+
+public Object aroundAdvice(MethodInvocation invocation) throws Throwable
+{
+   System.out.println(">>> aroundAdvice on method execution: " +
+         invocation.getMethod().getName());
+   return invocation.invokeNext();
+}
+   
+public Object aroundAdvice(FieldReadInvocation invocation) throws Throwable
+{ 
+   System.out.println(">>> aroundAdvice on field read: " +
+         invocation.getField().getName());
+   return invocation.invokeNext();
+}
+   
+public Object aroundAdvice(FieldWriteInvocation invocation) throws Throwable
+{
+   System.out.println(">>> aroundAdvice on field write: " +
+         invocation.getField().getName());
+   return invocation.invokeNext();
+}
+}}}
+
+The code above is much more cleaner, and now we can see more clearly that {{aroundAdvice}}
+just logs messages regarding the joinpoint being intercepted. Besides, using
+overloaded advices is more efficient than using nested if-else statements. JBoss AOP
+will call the correct advice version for each joinpoint type, avoiding the cost
+of checking the invocation type everytime this advice is invoked.
+
+This example could also be applied to another type of advice with minor changes:
+{{{
+public void otherTypeOfAdvice(@JoinPoint IConstructorInfo joinPoint)
+{
+   System.out.println(">>> otherTypeOfAdvice on constructor of class: " +
+         joinPoint.getConstructor().getDeclaringClass().getName());
+}
+
+public void otherTypeOfAdvice(@JoinPoint IMethodInfo joinPoint)
+{
+   System.out.println(">>> otherTypeOfAdvice on method execution: " +
+         joinPoint.getAdvisedMethod().getName());
+}
+   
+public void otherTypeOfAdvice(@JoinPoint IFieldInfo joinPoint)
+{
+   System.out.println(">>> otherTypeOfAdvice on field" +
+      (joinPoint.isRead()? "read: ": "write: ") +
+     joinPoint.getAdvisedField().getName());
+}
+
+___________________________
+
+<bind pointcut="all(POJO)">
+   <before name="otherTypeOfAdvice" aspect="JoinPointAspect"/>
+</bind>
+}}}
+
+Notice that {{IFieldInfo}} is used fro both field read and write joinpoints. The
+{{otherTypeOfAdvice}} advice is applied as a before advice in the example. However,
+it could have been applied as an after advice, or a finally advice. And it could
+also have been applied as an after-throwing advice if we added a {{@Thrown}}
+parameter to all overloaded versions of this advice.
+
+You can find the overloaded implementations of {{aroundAdvice}} and
+{{otherTypeOfAdvice}} in the {{JoinPointAspect.java}} file.
+
+! Mixing Different Parameters
+
+Besides the previous examples, you can write overloaded advices using different
+return types and annotated parameters. Look at the following overloaded advice:
+
+{{{
+public int overloadedAdvice(@Target POJO target)
+{
+   System.out.println(">>> overloadedAdvice: int(Target POJO)");
+   return 0;
+}
+
+public void overloadedAdvice(@JoinPoint IConstructorInfo joinPoint)
+{
+   System.out.println(">>> overloadedAdvice: (JoinPoint IConstructorInfo)");
+}
+
+public void overloadedAdvice(@Target Object target)
+{
+   System.out.println(">>> overloadedAdvice: (Target Object)");
+}
+
+public void overloadedAdvice(@JoinPoint ICallerMethodInfo joinPoint, @Caller Driver driver)
+{
+   System.out.println(">>> overloadedAdvice: (JoinPoint ICallerMethodInfo, Caller Driver)");
+}
+
+public void overloadedAdvice(@JoinPoint IJoinPointInfo joinPoint, @Arg String arg)
+{
+   System.out.println(">>> overloadedAdvice: JoinPoint IJoinPoint, Arg String");
+}
+}}}
+
+{{MixedParametersAspect.overloadedAdvice()}} has five different versions, and each one
+receives different parameter types. In that case, JBoss AOP will try to find the most
+appropriate version for each case.
+
+Run the example to see how this advice is applied to the different POJO joinpoints.
+
+To see all rules JBoss AOP uses to pick an overloaded advice version, please, read
+the corresponding chapter at the Reference Manual.
+
+!Run the example
+
+__THIS EXAMPLE REQUIRES JDK 1.5!!__ To compile and run:
+{{{
+  $ ant
+}}}
+It will javac the files and then run the AOPC precompiler to manipulate the bytecode,
+then finally run the example.  The output should read as follows:
+{{{
+run:
+
+     [java] Calling POJO constructor
+     [java] ========================
+     [java] >>> otherTypeOfAdvice on constructor of class: POJO
+     [java] >>> aroundAdvice on constructor of class: POJO
+     [java] >>> overloadedAdvice: (JoinPoint IConstructorInfo)
+
+     [java] Setting POJO->intField with 1751 value
+     [java] ======================================
+     [java] >>> otherTypeOfAdvice on fieldwrite: intField
+     [java] >>> aroundAdvice on field write: intField
+     [java] >>> overloadedAdvice: int(Target POJO)
+
+     [java] Reading POJO->intField value
+     [java] ============================
+     [java] >>> otherTypeOfAdvice on fieldread: intField
+     [java] >>> aroundAdvice on field read: intField
+     [java] >>> overloadedAdvice: int(Target POJO)
+
+     [java] Setting POJO->stringField with "text" value
+     [java] ===========================================
+     [java] >>> otherTypeOfAdvice on fieldwrite: stringField
+     [java] >>> aroundAdvice on field write: stringField
+     [java] >>> overloadedAdvice: JoinPoint IJoinPoint, Arg String
+
+     [java] Reading POJO->stringField value
+     [java] ===============================
+     [java] >>> otherTypeOfAdvice on fieldread: stringField
+     [java] >>> aroundAdvice on field read: stringField
+     [java] >>> overloadedAdvice: (Target Object)
+
+     [java] Calling POJO->voidMethod()
+     [java] ==========================
+     [java] >>> otherTypeOfAdvice on method execution: voidMethod
+     [java] >>> aroundAdvice on method execution: voidMethod
+     [java] RUNNING POJO->voidMethod()
+     [java] >>> overloadedAdvice: int(Target POJO)
+     [java] >>> overloadedAdvice: (JoinPoint ICallerMethodInfo, Caller Driver)
+
+     [java] Calling POJO->methodWithStringArg()
+     [java] ===================================
+     [java] >>> otherTypeOfAdvice on method execution: methodWithStringArg
+     [java] >>> aroundAdvice on method execution: methodWithStringArg
+     [java] RUNNING POJO->methodWithStringArg("stringArg")
+     [java] >>> overloadedAdvice: JoinPoint IJoinPoint, Arg String
+     [java] >>> overloadedAdvice: (JoinPoint ICallerMethodInfo, Caller Driver)
+}}} 
+
