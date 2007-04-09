@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aop>
+
+   <aspect class="Aspect" scope="PER_VM"/>
+
+   <bind pointcut="execution(* POJO->*(..))">
+      <throwing name="afterThrowing" aspect="Aspect"/>
+      <throwing name="afterThrowingInfo" aspect="Aspect"/>
+      <throwing name="afterThrowingArg" aspect="Aspect"/>
+      <throwing name="afterThrowingInfoArg" aspect="Aspect"/>
+   </bind>
+   
+</aop>
