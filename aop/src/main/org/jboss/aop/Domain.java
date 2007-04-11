@@ -30,9 +30,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AdviceStack;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.InterceptorFactory;
+import org.jboss.aop.advice.PrecedenceDef;
+import org.jboss.aop.introduction.AnnotationIntroduction;
+import org.jboss.aop.introduction.InterfaceIntroduction;
+import org.jboss.aop.metadata.ClassMetaDataBinding;
 import org.jboss.aop.metadata.ClassMetaDataLoader;
 import org.jboss.aop.microcontainer.lifecycle.LifecycleCallbackBinding;
 import org.jboss.aop.pointcut.CFlowStack;
@@ -56,6 +61,17 @@ public class Domain extends AspectManager
    protected boolean parentFirst;
    protected boolean inheritsDeclarations = true;
    protected boolean inheritsBindings = false;
+
+   //Calculating the size of the collections containing this information is timeconsuming, we
+   //only want to do this when adding/removing stuff
+   protected boolean hasOwnPointcuts;
+   protected boolean hasOwnBindings;
+   protected boolean hasOwnAnnotationIntroductions;
+   protected boolean hasOwnAnnotationOverrides;
+   protected boolean hasOwnInterfaceIntroductions;
+   protected boolean hasOwnTypedefs;
+   protected boolean hasOwnPrecedenceDefs;
+   protected boolean hasOwnClassMetaData;
 
    public Domain(AspectManager manager, String name, boolean parentFirst)
    {
@@ -121,12 +137,7 @@ public class Domain extends AspectManager
       }
    }
 
-
-   public void removeBindings(ArrayList binds)
-   {
-      super.removeBindings(binds);
-   }
-
+   @Override
    public LinkedHashMap getBindings()
    {
       if (inheritsBindings)
@@ -150,9 +161,32 @@ public class Domain extends AspectManager
 
    public boolean hasOwnBindings()
    {
-      return super.bindings.size() > 0;
+      return hasOwnBindings;
    }
 
+   @Override
+   public synchronized void addBinding(AdviceBinding binding)
+   {
+      hasOwnPointcuts = true;
+      hasOwnBindings = true;
+      super.addBinding(binding);
+   }
+   
+   @Override
+   public synchronized void removeBinding(String name)
+   {
+      super.removeBinding(name);
+      hasOwnBindings = bindings.size() > 0;
+   }
+   
+   @Override
+   public synchronized void removeBindings(ArrayList binds)
+   {
+      super.removeBindings(binds);
+      hasOwnBindings = bindings.size() > 0;
+      hasOwnPointcuts = bindings.size() > 0;
+   }
+   
    public LinkedHashMap getPointcuts()
    {
       if (inheritsBindings)
@@ -176,9 +210,24 @@ public class Domain extends AspectManager
 
    public boolean hasOwnPointcuts()
    {
-      return super.pointcuts.size() > 0;
+      return hasOwnPointcuts;
+   }
+     
+   @Override
+   public synchronized void addPointcut(Pointcut pointcut)
+   {
+      hasOwnPointcuts = true;
+      super.addPointcut(pointcut);
    }
 
+   @Override
+   public void removePointcut(String name)
+   {
+      super.removePointcut(name);
+      hasOwnPointcuts = pointcuts.size() > 0;
+   }
+
+   @Override
    public LinkedHashMap getPointcutInfos()
    {
       if (inheritsBindings)
@@ -200,6 +249,7 @@ public class Domain extends AspectManager
       return super.getPointcutInfos();
    }
 
+   @Override
    public List getAnnotationIntroductions()
    {
 
@@ -232,9 +282,24 @@ public class Domain extends AspectManager
 
    public boolean hasOwnAnnotationIntroductions()
    {
-      return super.annotationIntroductions.size() > 0;
+      return hasOwnAnnotationIntroductions;
    }
 
+   @Override
+   public synchronized void addAnnotationIntroduction(AnnotationIntroduction pointcut)
+   {
+      hasOwnAnnotationIntroductions = true;
+      super.addAnnotationIntroduction(pointcut);
+   }
+   
+   @Override
+   public void removeAnnotationIntroduction(AnnotationIntroduction pointcut)
+   {
+      super.removeAnnotationIntroduction(pointcut);
+      hasOwnAnnotationIntroductions = annotationIntroductions.size() > 0;
+   }
+   
+   @Override
    public List getAnnotationOverrides()
    {
       if (inheritsBindings)
@@ -265,9 +330,24 @@ public class Domain extends AspectManager
 
    public boolean hasOwnAnnotationOverrides()
    {
-      return super.annotationOverrides.size() > 0;
+      return hasOwnAnnotationOverrides;
    }
 
+   @Override
+   public synchronized void addAnnotationOverride(AnnotationIntroduction pointcut)
+   {
+      hasOwnAnnotationOverrides = true;
+      super.addAnnotationOverride(pointcut);
+   }
+
+   @Override
+   public void removeAnnotationOverride(AnnotationIntroduction pointcut)
+   {
+      super.removeAnnotationOverride(pointcut);
+      hasOwnAnnotationOverrides = annotationOverrides.size() > 0;
+   }
+   
+   @Override
    public Map getInterfaceIntroductions()
    {
       if (inheritsBindings)
@@ -296,12 +376,26 @@ public class Domain extends AspectManager
       return super.getInterfaceIntroductions();
    }
 
-
    public boolean hasOwnInterfaceIntroductions()
    {
-      return super.annotationIntroductions.size() > 0;
+      return hasOwnInterfaceIntroductions;
    }
 
+   @Override
+   public synchronized void addInterfaceIntroduction(InterfaceIntroduction pointcut)
+   {
+      hasOwnInterfaceIntroductions = true;
+      super.addInterfaceIntroduction(pointcut);
+   }
+   
+   @Override
+   public void removeInterfaceIntroduction(String name)
+   {
+      super.removeInterfaceIntroduction(name);
+      hasOwnInterfaceIntroductions = interfaceIntroductions.size() > 0;
+   }
+   
+   @Override
    public Map getTypedefs()
    {
       if (inheritsBindings)
@@ -333,7 +427,21 @@ public class Domain extends AspectManager
 
    public boolean hasOwnTypedefs()
    {
-      return super.annotationIntroductions.size() > 0;
+      return hasOwnTypedefs;
+   }
+
+   @Override
+   public synchronized void addTypedef(Typedef def) throws Exception
+   {
+      hasOwnTypedefs = true;
+      super.addTypedef(def);
+   }
+
+   @Override
+   public void removeTypedef(String name)
+   {
+      super.removeTypedef(name);
+      hasOwnTypedefs = typedefs.size() > 0;
    }
 
    public Map getInterceptorStacks()
@@ -476,6 +584,7 @@ public class Domain extends AspectManager
       return super.getPerVMAspects();
    }
 
+   @Override
    public LinkedHashMap getPrecedenceDefs()
    {
       if (inheritsDeclarations)
@@ -499,9 +608,24 @@ public class Domain extends AspectManager
 
    public boolean hasOwnPrecedenceDefs()
    {
-      return super.precedenceDefs.size() > 0;
+      return hasOwnPrecedenceDefs;
    }
 
+   @Override
+   public void addPrecedence(PrecedenceDef precedenceDef)
+   {
+      hasOwnPrecedenceDefs = true;
+      super.addPrecedence(precedenceDef);
+   }
+
+   @Override
+   public void removePrecedence(String name)
+   {
+      super.removePrecedence(name);
+      hasOwnPrecedenceDefs = precedenceDefs.size() > 0;
+   }
+
+   @Override
    public Map getClassMetaData()
    {
       if (inheritsBindings)
@@ -532,19 +656,33 @@ public class Domain extends AspectManager
 
    public boolean hasOwnClassMetaData()
    {
-      return super.classMetaData.size() > 0;
+      return hasOwnClassMetaData;
+   }
+
+   @Override
+   public void removeClassMetaData(String name)
+   {
+      super.removeClassMetaData(name);
+      hasOwnClassMetaData = classMetaData.size() > 0;
+   }
+
+   @Override
+   public void addClassMetaData(ClassMetaDataBinding meta)
+   {
+      hasOwnClassMetaData = true;
+      super.addClassMetaData(meta);
    }
 
    public boolean hasOwnDataWithEffectOnAdvices()
    {
-      return hasOwnBindings() ||
-      hasOwnPointcuts() ||
-      hasOwnAnnotationIntroductions() ||
-      hasOwnAnnotationOverrides() ||
-      hasOwnInterfaceIntroductions() ||
-      hasOwnTypedefs() ||
-      hasOwnPrecedenceDefs() ||
-      hasOwnClassMetaData();
+      return hasOwnBindings ||
+      hasOwnPointcuts ||
+      hasOwnAnnotationIntroductions ||
+      hasOwnAnnotationOverrides ||
+      hasOwnInterfaceIntroductions ||
+      hasOwnTypedefs ||
+      hasOwnPrecedenceDefs ||
+      hasOwnClassMetaData;
    }
 
    public InterceptorFactory getInterceptorFactory(String name)

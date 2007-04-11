@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.jboss.aop.util.reference.ConstructorPersistentReference;
 import org.jboss.aop.util.reference.MethodPersistentReference;
 import org.jboss.aop.util.reference.PersistentReference;
 
@@ -45,9 +46,10 @@ public class MethodHashing
    // Constants -----------------------------------------------------
    
    // Static --------------------------------------------------------
-   static Map hashMap = new WeakHashMap();
+   static Map methodHashesByName = new WeakHashMap();
 
    static Map methodHashesByClass = new WeakHashMap();
+   static Map constructorHashesByClass = new WeakHashMap();
 
    public static Method findMethodByHash(Class clazz, long hash) throws Exception
    {
@@ -85,15 +87,31 @@ public class MethodHashing
    
    public static Constructor findConstructorByHash(Class clazz, long hash) throws Exception
    {
-      Constructor[] cons = SecurityActions.getDeclaredConstructors(clazz);
-      for (int i = 0; i < cons.length; i++)
+      return findConstructorByHash(clazz, new Long(hash));
+   }
+   
+   public static Constructor findConstructorByHash(Class clazz, Long hash) throws Exception
+   {
+      Map hashes = getConstructorHashes(clazz);
+      ConstructorPersistentReference ref = (ConstructorPersistentReference)hashes.get(hash);
+      if (ref != null)
       {
-         if (constructorHash(cons[i]) == hash) return cons[i];
+         return ref.getConstructor();
       }
       if (clazz.getSuperclass() != null)
       {
-         return findConstructorByHash(clazz.getSuperclass(), hash);
+         return findConstructorByHash(clazz, hash);
       }
+      
+//      Constructor[] cons = SecurityActions.getDeclaredConstructors(clazz);
+//      for (int i = 0; i < cons.length; i++)
+//      {
+//         if (constructorHash(cons[i]) == hash) return cons[i];
+//      }
+//      if (clazz.getSuperclass() != null)
+//      {
+//         return findConstructorByHash(clazz.getSuperclass(), hash);
+//      }
       return null;
    }
 
@@ -187,7 +205,7 @@ public class MethodHashing
    */
    public static long calculateHash(Method method)
    {
-      Map methodHashes = (Map)hashMap.get(method.getDeclaringClass());
+      Map methodHashes = (Map)methodHashesByName.get(method.getDeclaringClass());
       
       if (methodHashes == null)
       {
@@ -195,9 +213,9 @@ public class MethodHashing
          
          // Copy and add
          WeakHashMap newHashMap = new WeakHashMap();
-         newHashMap.putAll(hashMap);
+         newHashMap.putAll(methodHashesByName);
          newHashMap.put(method.getDeclaringClass(), methodHashes);
-         hashMap = newHashMap;
+         methodHashesByName = newHashMap;
       }
       
       return ((Long)methodHashes.get(method.toString())).longValue();
@@ -250,12 +268,43 @@ public class MethodHashing
       HashMap map = new HashMap();
       for (int i = 0; i < methods.length; i++)
       {
-         Method method = methods[i];
          try
          {
-            long hash = methodHash(method);
+            long hash = methodHash(methods[i]);
             //Use Clebert's Persistent References so we don't get memory leaks
             map.put(new Long(hash), new MethodPersistentReference(methods[i], PersistentReference.REFERENCE_SOFT));
+         }
+         catch (Exception e)
+         {
+         }
+      }
+      
+      return map;
+   }
+   
+   private static Map getConstructorHashes(Class clazz)
+   {
+      Map constructorHashes = (Map)constructorHashesByClass.get(clazz);
+      if (constructorHashes == null)
+      {
+         constructorHashes = getConstructorHashMap(clazz);
+         constructorHashesByClass.put(clazz, constructorHashes);
+      }
+      return constructorHashes;
+   }
+
+   private static Map getConstructorHashMap(Class clazz)
+   {
+      // Create method hashes
+      Constructor[] constructors = SecurityActions.getDeclaredConstructors(clazz);
+      HashMap map = new HashMap();
+      for (int i = 0; i < constructors.length; i++)
+      {
+         try
+         {
+            long hash = constructorHash(constructors[i]);
+            //Use Clebert's Persistent References so we don't get memory leaks
+            map.put(new Long(hash), new ConstructorPersistentReference(constructors[i], PersistentReference.REFERENCE_SOFT));
          }
          catch (Exception e)
          {

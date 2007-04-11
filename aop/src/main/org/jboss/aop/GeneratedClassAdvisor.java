@@ -141,7 +141,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
     * Callback for instance advisors to rebuild their interceptors when their
     * version number is out of sync
     */
-   protected void internalRebuildInterceptors()
+   protected synchronized void internalRebuildInterceptors()
    {
       super.rebuildInterceptors();
    }
@@ -1281,7 +1281,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
 
       
-      public void rebuildInterceptors()
+      public synchronized void rebuildInterceptors()
       {
          if (getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices() != null && GeneratedClassAdvisor.this.version != parent.version)
          {

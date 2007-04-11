@@ -1438,6 +1438,11 @@ public class AspectManager
 
    public void removeClassMetaData(String name)
    {
+      internalRemoveClassMetaData(name);
+   }
+
+   public void internalRemoveClassMetaData(String name)
+   {
       synchronized (classMetaData)
       {
          ClassMetaDataBinding meta = (ClassMetaDataBinding) classMetaData.remove(name);
@@ -1448,7 +1453,7 @@ public class AspectManager
 
    public void addClassMetaData(ClassMetaDataBinding meta)
    {
-      removeClassMetaData(meta.getName());
+      internalRemoveClassMetaData(meta.getName());
 
       //Add the metadata before we update the advisors. Important for the generated instance advisors 
       initClassMetaDataMap();
@@ -1907,12 +1912,12 @@ public class AspectManager
       }
    }
 
-   public void setBindings(LinkedHashMap bindings)
-   {
-      initBindingsMap();
-      this.bindings.clear();
-      this.bindings.putAll(bindings);
-   }
+//   public void setBindings(LinkedHashMap bindings)
+//   {
+//      initBindingsMap();
+//      this.bindings.clear();
+//      this.bindings.putAll(bindings);
+//   }
 
    public void addSubDomainPerClass(Class clazz, Domain domain)
    {
