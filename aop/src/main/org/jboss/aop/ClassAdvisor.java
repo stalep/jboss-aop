@@ -425,7 +425,7 @@ public class ClassAdvisor extends Advisor
       doesHaveAspects = adviceBindings.size() > 0;
    }
 
-   private void resolveFieldPointcut(ArrayList newFieldInfos, AdviceBinding binding, boolean write)
+   protected void resolveFieldPointcut(ArrayList newFieldInfos, AdviceBinding binding, boolean write)
    {
       for (int i = 0; i < advisedFields.length; i++)
       {

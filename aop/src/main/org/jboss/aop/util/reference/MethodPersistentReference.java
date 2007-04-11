@@ -50,7 +50,6 @@ public class MethodPersistentReference extends ArgumentPersistentReference
 		if ((returnValue=internalGet())!=null) return returnValue;
 		
 		Method aMethod = getMappedClass().getDeclaredMethod(name,getArguments());
-		aMethod.setAccessible(true);
 		buildReference(aMethod);
 		return aMethod;
 	}

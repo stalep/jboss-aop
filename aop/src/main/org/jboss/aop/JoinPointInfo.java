@@ -156,4 +156,17 @@ public abstract class JoinPointInfo implements IJoinPointInfo
    {
       return null;
    }
+   
+   public void cloneChains(JoinPointInfo other)
+   {
+      interceptorChain = (ArrayList)other.interceptorChain.clone();
+      if (other.interceptors == null)
+      {
+         interceptors = null;
+      }
+      else
+      {
+         interceptors = other.interceptors.clone();
+      }
+   }
 }

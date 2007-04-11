@@ -30,6 +30,11 @@ public class Interceptions
 {
    private static ArrayList interceptions = new ArrayList();
    
+   public static void printInterceptions()
+   {
+      System.out.println(interceptions);
+   }
+   
    public static void clear()
    {
       interceptions.clear();

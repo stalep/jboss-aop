@@ -608,11 +608,14 @@ public class DynamicTester extends AOPTestWithSetup
       assertEquals(Interceptions.getFieldReadName("MyAspect", "POJO", "i"), Interceptions.get(2));
 
 
+      System.out.println("================> removing binding");
       getInstanceDomain(pojo1).removeBinding(nameA);
+
       
       Interceptions.clear();
       pojo1.i = 50;
       assertEquals(50, pojo1.i);
+      Interceptions.printInterceptions();
       assertEquals(2, Interceptions.size());
       assertEquals(Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), Interceptions.get(0));
       assertEquals(Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), Interceptions.get(1));

@@ -196,11 +196,41 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          super.resolveMethodPointcut(newMethodInterceptors, binding);
          handleOverriddenMethods(binding);
       }
-      else
+
+   }
+
+   @Override
+   protected void resolveFieldPointcut(ArrayList newFieldInfos, AdviceBinding binding, boolean write)
+   {
+      GeneratedClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
+      if (classAdvisor == null)
       {
+         //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
+         super.resolveFieldPointcut(newFieldInfos, binding, write);
       }
    }
 
+   @Override
+   protected void resolveConstructorPointcut(ArrayList newConstructorInfos, AdviceBinding binding)
+   {
+      GeneratedClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
+      if (classAdvisor == null)
+      {
+         //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
+         super.resolveConstructorPointcut(newConstructorInfos, binding);
+      }
+   }
+
+   @Override
+   protected void resolveConstructionPointcut(ArrayList newConstructionInfos, AdviceBinding binding)
+   {
+      GeneratedClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
+      if (classAdvisor == null)
+      {
+         //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
+         super.resolveConstructionPointcut(newConstructionInfos, binding);
+      }
+   }
    
    protected void addMethodInfo(MethodInfo mi)
    {
@@ -383,97 +413,137 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       if (classAdvisor != null)
       {
          //We are an instance advisor with no own data influencing the chains, copy these from the parent advisor
-         long[] keys = newMethodInterceptors.keys();
-         for (int i = 0; i < keys.length; i++)
-         {
-            MethodInfo classMethodInfo = classAdvisor.getMethodInfo(keys[i]);
-            MethodMatchInfo matchInfo = newMethodInterceptors.getMatchInfo(keys[i]);
-            MethodInfo myMethodInfo = matchInfo.getInfo();
-            myMethodInfo.setInterceptorChain(classMethodInfo.getInterceptorChain());
-            myMethodInfo.setInterceptors(classMethodInfo.getInterceptors());
-            
-            if (updateOldInfo(oldInfos, myMethodInfo))
-            {
-               MethodJoinPointGenerator generator = getJoinPointGenerator(myMethodInfo);
-               generator.rebindJoinpoint(myMethodInfo);
-            }
-         }
+         easyFinalizeMethodChainForInstance(classAdvisor, newMethodInterceptors);
       }
       else
       {
          //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
-         TLongObjectHashMap newMethodInfos = new TLongObjectHashMap();
-   
-         long[] keys = newMethodInterceptors.keys();
-         for (int i = 0; i < keys.length; i++)
+         fullWorkFinalizeMethodChain(newMethodInterceptors);
+      }
+   }
+
+   private void easyFinalizeMethodChainForInstance(ClassAdvisor classAdvisor, MethodInterceptors newMethodInterceptors)
+   {
+      long[] keys = newMethodInterceptors.keys();
+      for (int i = 0; i < keys.length; i++)
+      {
+         MethodInfo classMethodInfo = classAdvisor.getMethodInfo(keys[i]);
+         MethodMatchInfo matchInfo = newMethodInterceptors.getMatchInfo(keys[i]);
+         MethodInfo myMethodInfo = matchInfo.getInfo();
+         myMethodInfo.cloneChains(classMethodInfo);
+         
+         if (updateOldInfo(oldInfos, myMethodInfo))
          {
-            MethodMatchInfo matchInfo = newMethodInterceptors.getMatchInfo(keys[i]);
-            matchInfo.populateBindings();
+            MethodJoinPointGenerator generator = getJoinPointGenerator(myMethodInfo);
+            generator.rebindJoinpoint(myMethodInfo);
+         }
+      }
+   }
    
-            MethodInfo info = matchInfo.getInfo();
-            newMethodInfos.put(keys[i], info);
-   
+   private void fullWorkFinalizeMethodChain(MethodInterceptors newMethodInterceptors)
+   {
+      //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
+      TLongObjectHashMap newMethodInfos = new TLongObjectHashMap();
+
+      long[] keys = newMethodInterceptors.keys();
+      for (int i = 0; i < keys.length; i++)
+      {
+         MethodMatchInfo matchInfo = newMethodInterceptors.getMatchInfo(keys[i]);
+         matchInfo.populateBindings();
+
+         MethodInfo info = matchInfo.getInfo();
+         newMethodInfos.put(keys[i], info);
+
+         MethodJoinPointGenerator generator = getJoinPointGenerator(info);
+         finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
+      }
+      methodInterceptors = newMethodInfos;
+      
+      //Handle the overridden methods
+      if (overriddenMethods != null && overriddenMethods.size() > 0)
+      {
+         for (Iterator it = overriddenMethods.iterator() ; it.hasNext() ; )
+         {
+            MethodInfo info = (MethodInfo)it.next();
+
             MethodJoinPointGenerator generator = getJoinPointGenerator(info);
             finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
          }
-         methodInterceptors = newMethodInfos;
-         
-         //Handle the overridden methods
-         if (overriddenMethods != null && overriddenMethods.size() > 0)
-         {
-            for (Iterator it = overriddenMethods.iterator() ; it.hasNext() ; )
-            {
-               MethodInfo info = (MethodInfo)it.next();
-   
-               MethodJoinPointGenerator generator = getJoinPointGenerator(info);
-               finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
-            }
-         }      
-      }
+      }      
    }
 
    @Override
    protected void finalizeFieldReadChain(ArrayList newFieldInfos)
    {
-      for (int i = 0; i < newFieldInfos.size(); i++)
+      ClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
+      if (classAdvisor != null)
       {
-         FieldInfo info = (FieldInfo)newFieldInfos.get(i);
-         FieldJoinPointGenerator generator = getJoinPointGenerator(info);
-         finalizeChainAndRebindJoinPoint(oldFieldReadInfos, info, generator);
+         //We are an instance advisor with no own data influencing the chains, copy these from the parent advisor
+         easyFinalizeFieldChainForInstance(oldFieldReadInfos, classAdvisor.getFieldReadInfos(), newFieldInfos);
+      }
+      else
+      {
+         //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
+         fullWorkFinalizeFieldChain(oldFieldReadInfos, newFieldInfos);
       }
    }
 
    @Override
    protected void finalizeFieldWriteChain(ArrayList newFieldInfos)
    {
+      ClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
+      if (classAdvisor != null)
+      {
+         //We are an instance advisor with no own data influencing the chains, copy these from the parent advisor
+         easyFinalizeFieldChainForInstance(oldInfos, classAdvisor.getFieldWriteInfos(), newFieldInfos);
+      }
+      else
+      {
+         //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
+         fullWorkFinalizeFieldChain(oldInfos, newFieldInfos);
+      }
+   }
+
+   private void easyFinalizeFieldChainForInstance(Map oldFieldInfos, FieldInfo[] classFieldInfos, ArrayList newFieldInfos)
+   {
+      //We are an instance advisor with no own data influencing the chains, copy these from the parent advisor
+      if (newFieldInfos.size() > 0)
+      {
+         for (int i = 0; i < newFieldInfos.size(); i++)
+         {
+            FieldInfo myInfo = (FieldInfo)newFieldInfos.get(i);
+            myInfo.cloneChains(classFieldInfos[i]);
+            
+            if (updateOldInfo(oldFieldInfos, myInfo))
+            {
+               FieldJoinPointGenerator generator = getJoinPointGenerator(myInfo);
+               generator.rebindJoinpoint(myInfo);
+            }
+         }
+      }
+   }
+   
+   private void fullWorkFinalizeFieldChain(Map oldFieldInfos, ArrayList newFieldInfos)
+   {
+      //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
       for (int i = 0; i < newFieldInfos.size(); i++)
       {
          FieldInfo info = (FieldInfo)newFieldInfos.get(i);
          FieldJoinPointGenerator generator = getJoinPointGenerator(info);
-         finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
+         finalizeChainAndRebindJoinPoint(oldFieldInfos, info, generator);
       }
    }
-
+   
    @Override
    protected void finalizeConstructorChain(ArrayList newConstructorInfos)
    {
-      for (int i = 0; i < newConstructorInfos.size(); i++)
-      {
-         ConstructorInfo info = (ConstructorInfo) newConstructorInfos.get(i);
-         ConstructorJoinPointGenerator generator = getJoinPointGenerator(info);
-         finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
-      }
+      advisorStrategy.finalizeConstructorChain(newConstructorInfos);
    }
 
    @Override
    protected void finalizeConstructionChain(ArrayList newConstructionInfos)
    {
-      for (int i = 0; i < newConstructionInfos.size(); i++)
-      {
-         ConstructionInfo info = (ConstructionInfo) newConstructionInfos.get(i);
-         ConstructionJoinPointGenerator generator = getJoinPointGenerator(info);
-         finalizeChainAndRebindJoinPoint(oldConstructionInfos, info, generator);
-      }
+      advisorStrategy.finalizeConstructionChain(newConstructionInfos);
    }
 
    @Override
@@ -655,14 +725,6 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       return PrecedenceSorter.applyPrecedence(interceptors, manager);
    }
-
-//   /**
-//    * Generated instance advisors will override this and return the parent class advisor
-//    */
-//   protected GeneratedClassAdvisor getParentAdvisor()
-//   {
-//      return parent;
-//   }
 
    /**
     * If this is an instance advisor, will check with parent class advisor if the aspect
@@ -866,6 +928,10 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       Set getPerInstanceAspectDefinitions();
       Map getPerInstanceJoinpointAspectDefinitions();
       void rebuildInterceptors();
+      void resolveConstructorPointcut(ArrayList newConstructorInfos, AdviceBinding binding);
+      void resolveConstructionPointcut(ArrayList newConstructionInfos, AdviceBinding binding);
+      void finalizeConstructorChain(ArrayList newConstructorInfos);
+      void finalizeConstructionChain(ArrayList newConstructionInfos);
    }
    
    private class ClassAdvisorStrategy implements AdvisorStrategy
@@ -1051,6 +1117,36 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          version++;
          GeneratedClassAdvisor.super.rebuildInterceptors();
       }
+
+      public void resolveConstructorPointcut(ArrayList newConstructorInfos, AdviceBinding binding)
+      {
+         GeneratedClassAdvisor.this.resolveConstructorPointcut(newConstructorInfos, binding);
+      }
+
+      public void resolveConstructionPointcut(ArrayList newConstructionInfos, AdviceBinding binding)
+      {
+         GeneratedClassAdvisor.this.resolveConstructionPointcut(newConstructionInfos, binding);
+      }
+
+      public void finalizeConstructorChain(ArrayList newConstructorInfos)
+      {
+         for (int i = 0; i < newConstructorInfos.size(); i++)
+         {
+            ConstructorInfo info = (ConstructorInfo) newConstructorInfos.get(i);
+            ConstructorJoinPointGenerator generator = getJoinPointGenerator(info);
+            finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
+         }
+      }
+
+      public void finalizeConstructionChain(ArrayList newConstructionInfos)
+      {
+         for (int i = 0; i < newConstructionInfos.size(); i++)
+         {
+            ConstructionInfo info = (ConstructionInfo) newConstructionInfos.get(i);
+            ConstructionJoinPointGenerator generator = getJoinPointGenerator(info);
+            finalizeChainAndRebindJoinPoint(oldConstructionInfos, info, generator);
+         }
+      }
    }
    
    private class InstanceAdvisorStrategy implements AdvisorStrategy 
@@ -1196,6 +1292,26 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             GeneratedClassAdvisor.super.rebuildInterceptors();
          }
+      }
+
+      public void resolveConstructorPointcut(ArrayList newConstructorInfos, AdviceBinding binding)
+      {
+         //Since the instance already exists it makes no sense to have bindings for constructors
+      }
+
+      public void resolveConstructionPointcut(ArrayList newConstructionInfos, AdviceBinding binding)
+      {
+         //Since the instance already exists it makes no sense to have bindings for constructors         
+      }
+
+      public void finalizeConstructorChain(ArrayList newConstructorInfos)
+      {
+         //Since the instance already exists it makes no sense to have bindings for constructors
+      }
+
+      public void finalizeConstructionChain(ArrayList newConstructionInfos)
+      {
+         //Since the instance already exists it makes no sense to have bindings for constructors
       }
    }
 }
