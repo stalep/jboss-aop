@@ -43,42 +43,42 @@ public class PerInstanceTestCase extends ScenarioTest
       super(name);
    }
 
-//   public void testPerInstanceInterceptor() throws Exception
-//   {
-//      POJO pojo = new POJO();
-//      PerInstanceInterceptor.called = 0;
-//      pojo.method1();
-//      assertEquals(1, PerInstanceInterceptor.called);
-//      getRunner().executeScenario(new PerInstanceInterceptorScenario());
-//   }
-//   
-//   private class PerInstanceInterceptorScenario extends AbstractScenario
-//   {
-//      POJO pojo = new POJO();
-//      public void execute(int thread, int loop) throws Exception
-//      {
-//         pojo.method1();
-//      }
-//   }
-//
-//   public void testPerInstanceAspect() throws Exception
-//   {
-//      POJO pojo = new POJO();
-//      PerInstanceAspect.called = 0;
-//      pojo.method2();
-//      assertEquals(1, PerInstanceAspect.called);
-//      getRunner().executeScenario(new PerInstanceAspectScenario());
-//   }
-//   
-//   private class PerInstanceAspectScenario extends AbstractScenario
-//   {
-//      POJO pojo = new POJO();
-//      public void execute(int thread, int loop) throws Exception
-//      {
-//         pojo.method2();
-//      }
-//   }
-//
+   public void testPerInstanceInterceptor() throws Exception
+   {
+      POJO pojo = new POJO();
+      PerInstanceInterceptor.called = 0;
+      pojo.method1();
+      assertEquals(1, PerInstanceInterceptor.called);
+      getRunner().executeScenario(new PerInstanceInterceptorScenario());
+   }
+   
+   private class PerInstanceInterceptorScenario extends AbstractScenario
+   {
+      POJO pojo = new POJO();
+      public void execute(int thread, int loop) throws Exception
+      {
+         pojo.method1();
+      }
+   }
+
+   public void testPerInstanceAspect() throws Exception
+   {
+      POJO pojo = new POJO();
+      PerInstanceAspect.called = 0;
+      pojo.method2();
+      assertEquals(1, PerInstanceAspect.called);
+      getRunner().executeScenario(new PerInstanceAspectScenario());
+   }
+   
+   private class PerInstanceAspectScenario extends AbstractScenario
+   {
+      POJO pojo = new POJO();
+      public void execute(int thread, int loop) throws Exception
+      {
+         pojo.method2();
+      }
+   }
+
    public void testPerInstanceInterceptorRepeatInstantiation() throws Exception
    {
       POJO pojo = new POJO();
@@ -97,22 +97,22 @@ public class PerInstanceTestCase extends ScenarioTest
          pojo.method1();
       }
    }
-//
-//   public void testPerInstanceAspectRepeatInstantiation() throws Exception
-//   {
-//      POJO pojo = new POJO();
-//      PerInstanceAspect.called = 0;
-//      pojo.method2();
-//      assertEquals(1, PerInstanceAspect.called);
-//      getRunner().executeScenario(new PerInstanceAspectRepeatInstantiationScenario());
-//   }
-//   
-//   private class PerInstanceAspectRepeatInstantiationScenario extends AbstractScenario
-//   {
-//      public void execute(int thread, int loop) throws Exception
-//      {
-//         POJO pojo = new POJO();
-//         pojo.method2();
-//      }
-//   }
+
+   public void testPerInstanceAspectRepeatInstantiation() throws Exception
+   {
+      POJO pojo = new POJO();
+      PerInstanceAspect.called = 0;
+      pojo.method2();
+      assertEquals(1, PerInstanceAspect.called);
+      getRunner().executeScenario(new PerInstanceAspectRepeatInstantiationScenario());
+   }
+   
+   private class PerInstanceAspectRepeatInstantiationScenario extends AbstractScenario
+   {
+      public void execute(int thread, int loop) throws Exception
+      {
+         POJO pojo = new POJO();
+         pojo.method2();
+      }
+   }
 }
