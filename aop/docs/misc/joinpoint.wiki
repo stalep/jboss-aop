@@ -1,0 +1,16 @@
+!!!JoinPoint Hierarchy
+
+{{org.jboss.aop.joinpoint.JoinpointInfo}} is the base interface for a bunch of different subtypes.
+Depending on the type of joinpoint being intercepted (only by before, after and after
+throwing advices), a different JoinpointInfo subinterface is provided. All of the
+subinterfaces are in the {{org.jboss.aop.joinpoint}} package.
+
+|execution(method)|org.jboss.aop.joinpoint.IMethodInfo
+|get(field)|org.jboss.aop.joinpoint.IFieldInfo
+|set(field)|org.jboss.aop.joinpoint.IFieldInfo
+|execution(constructor)|org.jboss.aop.joinpoint.IConstructorInfo
+|call(method) AND withincode(method)|org.jboss.aop.joinpoint.IMethodByMethodInfo
+|call(method) AND withincode(constructor)|org.jboss.aop.joinpoint.IMethodByConInfo
+|call(constructor) AND withincode(constructor)|org.jboss.aop.joinpoint.IConByConInfo
+|call(constructor) AND withincode(method)|org.jboss.aop.joinpoint.IConByMethodInfo
+
