@@ -1,16 +1,18 @@
 <html>
 <body>
 <p>
-<h2>Aspects</h2>
+<h2>Aspects and Around Advices</h2>
 
 </p><p>
 <h4>Overview</h4>
 
-The Interceptor classes shown in previous examples are a little limiting in that you can only have one advice per class.  JBossAOP allows you to group advices into one Java class.  This is what JBossAOP calls an Aspect.  An Aspect is a collection of advices expressed as methods.  
+The Interceptor classes shown in previous examples are a little limiting in that you can only have one advice per class. JBossAOP allows you to group advices into one Java class.  This is what JBossAOP calls an Aspect.  An Aspect is a collection of advices expressed as methods.  
 </p><p>
 <h4>Writing an aspect</h4>
 
-An aspect class is a plain Java class. It does not have to inherit from anything, but it must have an empty constructor.  Each advice must follow this format:
+An aspect class is a plain Java class. It does not have to inherit from anything, but it must have an empty constructor. 
+JBoss AOP supports several types of advices. In this example, we will introduce the around advice and its default signature.
+Each around advice can follow this format:
 </p><p>
 <pre>
   public Object &lt;any-method-name&gt;(&lt;any Invocation type&gt;) Throwable
