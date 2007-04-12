@@ -5,15 +5,16 @@
 
 </p><p>
 <h4>Overview</h4>
+
 In generated advisor (default) mode, before, after and around advices can receive
 annotated parameters. The use of annotations provides maximum flexibility to the
 signature of advices, since an advice can receive only the values that are relevant
 to its execution. These parameters can be in any order and their type can be the type
 that is the most suitable to the advice functionality, according to the joinpoints it
 intercepts.
-
 </p><p>
 <h4>Annotated Parameter Signature</h4>
+
 </p><p>
 The annotated parameter signature is defined as:
 </p><p>
@@ -23,28 +24,27 @@ public &lt;return-value&gt; &lt;any-method-name&gt;(@&lt;Annotation&gt; &lt;any 
 </p><p>
 This signature is  available for all kinds of advices in JBoss AOP (when running in
 the generated advisor instrumentation mode). Besides this one, JBoss AOP supports the
-default around signature, introduced in the <a href="../aspect/aspect.html">Aspect
-example</a>. The default signature can only be used to write around advices, and is
-supported on all instrumentation modes.
+default around signature, introduced in the <a href="../aspect/aspect.html"">Aspect example</a>.
+The default signature can only be used to write around advices, and is supported on
+all instrumentation modes.
 </p><p>
 Basicaly, this signature allows an advice to receive zero or more annotated
 parameters, in any order, and with any valid type. Regarding the exception types, an
-advice is allowed to declare any exception in its signature. <tt>
-RuntimeException</tt>s are rethrown by JBoss AOP as is. The same goes for exceptions
+advice is allowed to declare any exception in its signature. <tt>RuntimeException</tt>s
+are rethrown by JBoss AOP as is. The same goes for exceptions
 that are not runtime, if they are declared in the joinpoint exceptions list (
 supposing the joinpoint has an exception list). Otherwise, the exception will be
 wrapped in a <tt>RuntimeException</tt>. In all cases, the application would get the
 exception as if the joinpoint itself had thrown it.
 </p><p>
-A concrete example of this signature has been shown in the
-<a href="../beforeafter/beforeafter.html">before/after</a> example:
+A concrete example of this signature has been shown in the <a href="../beforeafter/beforeafter.html">before/after</a> example:
 </p><p>
 <pre>
 public void beforeAdvice(@JoinPoint Joinpoint joinPoint)
 </pre>
 </p><p>
 As we can see, this advice receives one parameter annotated with
-<tt>&#64;JoinPoint</tt>.
+<tt>@JoinPoint</tt>.
 </p><p>
 Next, we will see all parameter annotations that can be used by an advice. Notice
 that an empty parameter list is also valid, as in the following signatures:
@@ -57,8 +57,9 @@ public Object aroundNoParameters() throws Throwable
 public void afterNoParameters()
 </pre>
 </p><p>
-
+</p><p>
 <h4>Parameter Annotations</h4>
+
 </p><p>
 JBoss AOP demands the use of parameter annotations to identify advice parameters.
 These parameters can represent several values, like the joinpoint target, a joinpoint
@@ -68,12 +69,12 @@ in the <tt>org.jboss.aop.advice.annotation</tt> package.
 </p><p>
 The type of an annotated parameter can be chosen accordingly to the value it refers
 to. For example, suppose you are intercepting a jointpoint with an argument of type
-<tt>ArrayList&lt;String&gt;</tt>. Advices that refer to this argument as being of
-type <tt>ArrayList&lt;String&gt;</tt>, or <tt>Collection&lt;String&gt;</tt> or <tt>
-Object</tt> would all be considered correct. This is useful because you can access
-specific operations and fields of the argument, without performing a cast, and yet you
-can receive a super type like <tt>Object</tt> and refer to arguments of different
-types when your advice is applied to different joinpoints.
+<tt>ArrayList&lt;String&gt;</tt>. Advices that refer to this argument as being of type
+<tt>ArrayList&lt;String&gt;</tt>, or <tt>Collection&lt;String&gt;</tt> or <tt>Object</tt> would all be
+considered correct. This is useful because you can access specific operations and
+fields of the argument, without performing a cast, and yet you can receive a super
+type like <tt>Object</tt> and refer to arguments of different types when your advice is
+applied to different joinpoints.
 </p><p>
 Notice that, as a convention, we named the advices of this example after the names of
 parameter annotations. Besides, all advices names are prefixed with their types names
@@ -81,13 +82,13 @@ parameter annotations. Besides, all advices names are prefixed with their types 
 to point out that, as all previous examples, the name of advices can be chosen freely
 and JBoss AOP won't use these names to identify annotated parameters.
 </p><p>
-<h5>&#64;JoinPoint</h5>
+<b>@JoinPoint</b>
 </p><p>
 This annotation is used on objects that represent a joinpoint. If the advice
 is an around advice, the type of this object belongs to the
 <a href="../../misc/invocation.html">Invocation class hierarchy</a>. On all other
-advices, joinpoints are represented by types of the <a href="../../misc/joinpoint.html">
-JoinPoint interface hierarchy</a>, as follows:
+advices, joinpoints are represented by types of the
+<a href="../../misc/joinpoint.html">JoinPoint interface hierarchy</a>, as follows:
 </p><p>
 <pre>
 public void beforeJoinPoint(@JoinPoint JoinPointInfo joinPointInfo)
@@ -102,8 +103,8 @@ Notice how <tt>beforeJoinPoint</tt> advice receives a parameter of the supertype
 specific type <tt>ConstructorInfo</tt>, valid only on constructor execution
 joinpoints.
 To see these and all other advice examples, open up the <tt>Aspect.java</tt> file.
-</p></p>
-<h5>&#64;Target</h5>
+</p><p>
+<b>@Target</b>
 </p><p>
 This annotation is used on parameters that refer to the joinpoint target. The
 joinpoint target is defined according to the joinpoint type. For example, the target
@@ -129,7 +130,7 @@ of type <tt>Object</tt>. Since <tt>POJO</tt> extends <tt>Object</tt>, this is
 perfectly valid, and useful when an advice intercepts joinpoints with different
 target types.
 </p><p>
-<h5>&#64;Caller</h5>
+<b>@Caller</b>
 </p><p>
 This annotation is used on parameters that refer to the caller object, during a call
 joinpoint interception. This should be used only on call joinpoints. If the call is
@@ -144,7 +145,7 @@ public Object aroundCaller(@Caller Driver target) throws Throwable
 public void afterCaller(@Caller Object target)
 </pre>
 </p><p>
-<h5>&#64;Return</h5>
+<b>@Return</b>
 </p><p>
 Use this annotation only on after advices, to refer to the joinpoint return value:
 </p><p>
@@ -154,7 +155,7 @@ public void afterFieldReturn(@Return Object joinPointReturn)
 public void afterMethodReturn(@Return boolean joinPointReturn)
 </pre>
 </p><p>
-<h5>&#64;Arg</h5>
+<b>@Arg</b>
 </p><p>
 This annotation is used to refer to a joinpoint argument. Since a joinpoint can
 receive more than one argument, this is the only annotation that can be used on more
@@ -170,7 +171,7 @@ public void afterArg(@Arg int argument)
 </pre>
 </p><p>
 When the joinpoint receives multiple arguments, JBoss AOP infers to which
-argument an <tt>&#64;Arg</tt> annotated parameter refers. In this example, both
+argument an <tt>@Arg</tt> annotated parameter refers. In this example, both
 <tt>beforeConstructorArg</tt> and <tt>aroundConstructorArg</tt> are applied to
 <tt>POJO</tt> constructor, whose unique argument is of type <tt>java.lang.String</tt>.
 So, the parameters of these advices will refer to this constructor argument.
@@ -196,13 +197,12 @@ public class POJO
 }
 </pre>
 </p><p>
-Wen intercepting <tt>POJO.someMethod(int)</tt> execution, the parameter of <tt>
-afterArg</tt> will contain the value of the single argument <tt>someMethod</tt>
-received, as it happens with <tt>beforeConstructorArg</tt> and <tt>
-aroundConstructorArg</tt> advices. But, when intercepting <tt>
-POJO.method(long,int,long,String)</tt>, JBoss AOP will automatically associate <tt>
-afterArg</tt> parameter with the parameter at index position <tt>1</tt>, of type <tt>
-int</tt>.
+Wen intercepting <tt>POJO.someMethod(int)</tt> execution, the parameter of <tt>afterArg</tt>
+will contain the value of the single argument <tt>someMethod</tt> received, as it happens
+with <tt>beforeConstructorArg</tt> and <tt>aroundConstructorArg</tt> advices. But, when
+intercepting <tt>POJO.method(long,int,long,String)</tt>, JBoss AOP will automatically
+associate <tt>afterArg</tt> parameter with the parameter at index position <tt>1</tt>, of type
+<tt>int</tt>.
 </p><p>
 Associating the <tt>int</tt> value is easy, because there is only one joinpoint
 argument of that type. The same doesn't apply to the following advice:
@@ -211,22 +211,21 @@ argument of that type. The same doesn't apply to the following advice:
 public void beforeMethodArg(@Arg long argument)
 </pre>
 </p><p>
-Given that <tt>POJO->method(long,int,long,String)</tt> has two arguments of type <tt>
-long</tt>, JBoss AOP will pick the first <tt>long</tt> typed argument. If you want to
-refer to the second <tt>long</tt> typed argument, in position <tt>2</tt>, you can use
-the optional <tt>&#64;Arg.index</tt> element as is shown below:
+Given that <tt>POJO-&gt;method(long,int,long,String)</tt> has two arguments of type <tt>long</tt>,
+JBoss AOP will pick the first <tt>long</tt> typed argument. If you want to refer to the
+second <tt>long</tt> typed argument, in position <tt>2</tt>, you can use the optional
+<tt>@Arg.index</tt> element as is shown below:
 </p><p>
 <pre>
 public void beforeMethodArg2(@Arg(index=2) long argument)
 </pre>
-This element can be set everytime JBoss AOP does not associate your <tt>&#64;Arg</tt>
+This element can be set everytime JBoss AOP does not associate your <tt>@Arg</tt>
 annotated parameter with the joinpoint argument you want to receive.
 </p><p>
-<h5>&#64;Arguments</h5>
+<b>@Arguments</b>
 </p><p>
-Finally, this annotation is used on advice parameters of type <tt>java.lang.Object[]
-</tt>, that contain the complete list of the joinpoint arguments.
-</p<p>
+Finally, this annotation is used on advice parameters of type &lt;tt&gt;java.lang.Object TODO ARRAY &lt;/tt&gt;, that contain the complete list of the joinpoint arguments.
+</p><p>
 Look at these examples:
 </p><p>
 <pre>
@@ -238,11 +237,10 @@ public void afterArgs(@Args Object[] arguments)
 </pre>
 </p><p>
 Use this annotation when you need a generic advice, that receives all arguments
-without knowing how many arguments there are, or their types. Using <tt>&#64;Arguments
-</tt> instead of a list of <tt>&#64;Arg</tt> annotated parameters is useful when you
-need to change one or more joinpoint argument values. An example is the <tt>
-beforeArgs</tt> advice, that ovewrites two argument values of <tt>
-POJO.method(long,int,long,String)</tt> execution:
+without knowing how many arguments there are, or their types. Using <tt>@Arguments
+</tt> instead of a list of <tt>@Arg</tt> annotated parameters is useful when you need to
+change one or more joinpoint argument values. An example is the <tt>beforeArgs</tt> advice,
+that ovewrites two argument values of <tt>POJO.method(long,int,long,String)</tt> execution:
 </p><p>
 <pre>
 public void beforeArgs(@Args Object[] arguments)
@@ -254,11 +252,11 @@ public void beforeArgs(@Args Object[] arguments)
 }
 </pre>
 </p><p>
-Avoid using <tt>&#64;Arguments</tt> when none of those conditions apply. This
+Avoid using <tt>@Arguments</tt> when none of those conditions apply. This
 parameter type can incur in the creation of an array and of wrapper objects (as is
 the case of argument 1 above). Besides, you have the extra cost of downcasting
 the arguments.
-<h4>Run the example</h4>
+&lt;h4&gt;Run the example&lt;/h4&gt;
 </p><p>
 <b>THIS EXAMPLE REQUIRES JDK 1.5!!</b> To compile and run:
 <pre>
@@ -275,58 +273,56 @@ run:
      [java] RUNNING new POJO("Driver")
      [java] &gt;&gt;&gt; afterJoinPoint: ConstructorInfo Constructor[constructor=public POJO(java.lang.String)]
 
-     [java] Setting POJO->field with "text" value
+     [java] Setting POJO-&gt;field with "text" value
      [java] =======================================
      [java] &gt;&gt;&gt; beforeJoinPoint: FieldInfo Field Write[field=public java.lang.Object POJO.field]
      [java] &gt;&gt;&gt; aroundTarget: POJO POJO@19209ea
      [java] &gt;&gt;&gt; aroundArgs: arguments [text]
 
-     [java] Reading POJO->field value
+     [java] Reading POJO-&gt;field value
      [java] =========================
      [java] &gt;&gt;&gt; aroundArgs: arguments null
      [java] &gt;&gt;&gt; aroundNoParameters
      [java] &gt;&gt;&gt; afterFieldReturn: Object text
      [java] &gt;&gt;&gt; afterNoParameters
 
-     [java] Calling POJO->method(int)
+     [java] Calling POJO-&gt;method(int)
      [java] =========================
      [java] &gt;&gt;&gt; aroundArgs: arguments [17]
-     [java] RUNNING POJO->method(17)
+     [java] RUNNING POJO-&gt;method(17)
      [java] &gt;&gt;&gt; afterArg: int 17
      [java] &gt;&gt;&gt; afterArgs: arguments [17]
 
-     [java] Calling POJO->method(long, int, long, String)
+     [java] Calling POJO-&gt;method(long, int, long, String)
      [java] =============================================
      [java] &gt;&gt;&gt; beforeMethodArg: long 20L
      [java] &gt;&gt;&gt; beforeMethodArg2: long 1000L
      [java] &gt;&gt;&gt; beforeArgs changing arguments: from [20, 2, 1000, Driver]
      [java]                                    to [20, -48, 1000, overridenString]
      [java] &gt;&gt;&gt; aroundArgs: arguments [20, -48, 1000, overridenString]
-     [java] RUNNING POJO->method(20L, -48, 1000L, "overridenString")
+     [java] RUNNING POJO-&gt;method(20L, -48, 1000L, "overridenString")
      [java] &gt;&gt;&gt; afterArg: int -48
      [java] &gt;&gt;&gt; afterArgs: arguments [20, -48, 1000, overridenString]
 
-     [java] Calling POJO->someMethod(int)
+     [java] Calling POJO-&gt;someMethod(int)
      [java] =============================
      [java] &gt;&gt;&gt; beforeNoParameters
-     [java] RUNNING POJO->someMethod()
+     [java] RUNNING POJO-&gt;someMethod()
      [java] &gt;&gt;&gt; afterMethodReturn: boolean true
      [java] &gt;&gt;&gt; afterArg: int 10
 
-     [java] Calling POJO->callMethod()
+     [java] Calling POJO-&gt;callMethod()
      [java] ==========================
      [java] &gt;&gt;&gt; aroundCaller: Driver null
      [java] &gt;&gt;&gt; aroundArgs: arguments []
-     [java] RUNNING POJO->callMethod()
+     [java] RUNNING POJO-&gt;callMethod()
      [java] &gt;&gt;&gt; beforeTarget: Object POJO@19209ea
      [java] &gt;&gt;&gt; beforeCaller: POJO POJO@19209ea
      [java] &gt;&gt;&gt; aroundJoinPoint: CallerInvocation JoinPoint_MByM__N_6287195452448676113POJO_N_1153034853916900765_8@f99ff5
-     [java] RUNNING POJO->calledMethod()
+     [java] RUNNING POJO-&gt;calledMethod()
      [java] &gt;&gt;&gt; afterTarget: POJO POJO@19209ea
      [java] &gt;&gt;&gt; afterCaller: Object POJO@19209ea
 </pre> 
-</p><p>
-</p><p>
 </p><p>
 </p>
 </body>

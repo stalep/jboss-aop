@@ -16,22 +16,22 @@ public void aroundAdvice(Invocation invocation) throws Throwable
    if (invocation instanceof ConstructorInvocation)
    {
       System.out.println(">>> aroundAdvice on constructor of class: " +
-            invocation.getConstructor().getDeclaringClass().getName());
+            (ConstructorInvocation) invocation).getConstructor().getDeclaringClass().getName());
    }
    else if (invocation instanceof MethodInvocation)
    {
       System.out.println(">>> aroundAdvice on method execution: " +
-            invocation.getMehod().getName());
+            ((MethodInvocation) invocation).getMethod().getName());
    }
 	else if (invocation instanceof FieldReadInvocation)
    {
       System.out.println(">>> aroundAdvice on field read: " +
-            invocation.getField().getName());
+            ((FieldReadInvocation) invocation).getField().getName());
    }
    else if (invocation instanceof FieldWriteInvocation)
    {
       System.out.println(">>> aroundAdvice on field write: " +
-            invocation.getField().getName());
+            ((FieldWriteInvocation) invocation).getField().getName());
       
    }
 	return invocation.invokeNext();
@@ -164,7 +164,7 @@ appropriate version for each case.
 Run the example to see how this advice is applied to the different POJO joinpoints.
 
 To see all rules JBoss AOP uses to pick an overloaded advice version, please, read
-the corresponding chapter at the Reference Manual.
+the corresponding chapter of the Reference Manual.
 
 !Run the example
 

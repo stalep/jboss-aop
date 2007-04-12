@@ -30,7 +30,7 @@ public class Driver
       POJO pojo = new POJO("Driver");
       
       System.out.println("\nSetting POJO->field with \"text\" value");
-      System.out.println("=======================================");
+      System.out.println("=====================================");
       pojo.field = "text";
       
       System.out.println("\nReading POJO->field value");

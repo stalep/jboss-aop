@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aop>
 
-   <aspect class="mypackage.MutexAspect" scope="PER_VM"/>
+   <aspect class="MutexAspect" scope="PER_VM"/>
    
    <bind pointcut="execution(public void $instanceof{Transaction}->run())">
-      <before name="beforeAdvice" aspect="mypackage.MutexAspect"/>
-      <after name="afterAdvice" aspect="mypackage.MutexAspect"/>
+      <before name="beforeAdvice" aspect="MutexAspect"/>
+      <after name="afterAdvice" aspect="MutexAspect"/>
    </bind>
 
 </aop>
