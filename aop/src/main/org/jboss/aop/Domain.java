@@ -46,7 +46,6 @@ import org.jboss.aop.pointcut.Pointcut;
 import org.jboss.aop.pointcut.PointcutStats;
 import org.jboss.aop.pointcut.Typedef;
 import org.jboss.aop.pointcut.ast.ClassExpression;
-import org.jboss.util.id.GUID;
 
 /**
  * Comment
@@ -72,6 +71,7 @@ public class Domain extends AspectManager
    protected boolean hasOwnTypedefs;
    protected boolean hasOwnPrecedenceDefs;
    protected boolean hasOwnClassMetaData;
+   private static int sequenceNumber;
 
    public Domain(AspectManager manager, String name, boolean parentFirst)
    {
@@ -104,9 +104,8 @@ public class Domain extends AspectManager
 
             if (forInstance)
             {
-               GUID guid = new GUID();//Are these guys expensive to create?
                sb.append("_");
-               sb.append(guid.toString());
+               sb.append(getNextSequenceNumber());
             }
             return sb.toString();
          }
@@ -114,6 +113,10 @@ public class Domain extends AspectManager
       return name;
    }
 
+   private synchronized static int getNextSequenceNumber()
+   {
+      return sequenceNumber++;
+   }
    /**
     * Inherits interceptor, aspect, advice stack definitions
     *
