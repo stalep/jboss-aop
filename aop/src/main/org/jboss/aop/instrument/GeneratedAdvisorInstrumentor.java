@@ -631,7 +631,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
                   infoClassName.equals(ConByMethodInfo.class.getName()) ||
                   infoClassName.equals(MethodByMethodInfo.class.getName()))
             {
-               String code = infoName + " = super.copyInfoFromClassAdvisor(((" + genadvisor.getName() + ")" + clazz.getName() + "." + GET_CLASS_ADVISOR + "())." + infoName + ");"
+               String code = infoName + " = super.copyInfoFromClassAdvisor(((" + genadvisor.getName() + ")" + clazz.getName() + "." + GET_CLASS_ADVISOR + "())." + infoName + ");";
                addCodeToInitialiseMethod(genInstanceAdvisor, code, INITIALISE_INFOS_FOR_INSTANCE);
             }
          }
