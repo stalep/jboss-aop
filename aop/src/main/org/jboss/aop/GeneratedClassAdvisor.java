@@ -42,6 +42,7 @@ import org.jboss.aop.instrument.FieldJoinPointGenerator;
 import org.jboss.aop.instrument.JoinPointGenerator;
 import org.jboss.aop.instrument.MethodByConJoinPointGenerator;
 import org.jboss.aop.instrument.MethodByMethodJoinPointGenerator;
+import org.jboss.aop.instrument.MethodExecutionTransformer;
 import org.jboss.aop.instrument.MethodJoinPointGenerator;
 import org.jboss.aop.joinpoint.FieldJoinpoint;
 import org.jboss.aop.joinpoint.Joinpoint;
@@ -112,23 +113,98 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    protected void initialise(Class clazz, AspectManager manager)
    {
-      super.setManager(manager);
-
-      //Make sure that we copy across per class and per joinpoint aspects from the old advisor if it exists
-      //Generated advisors get created when the class is first accessed (not loaded), meaning that there could be an exisiting advisor
-      //used for mathcing already when setting up the microcontainer.
-      Advisor existing = AspectManager.instance().getAnyAdvisorIfAdvised(clazz);
-      if (existing != null)
-      {
-         this.aspects = existing.aspects;
-         if (existing instanceof GeneratedClassAdvisor)
-         {
-            this.perClassJoinpointAspectDefinitions = ((GeneratedClassAdvisor)existing).perClassJoinpointAspectDefinitions;
-         }
-      }
-      
-      manager.initialiseClassAdvisor(clazz, this);
+      advisorStrategy.initialise(clazz, manager);
    }
+
+   /**
+    * Generated class advisor sub class will override
+    */
+   protected void initialiseCallers()
+   {
+   }
+
+   /**
+    * Generated instance advisor sub class will override
+    */
+   protected void initialiseInfosForInstance()
+   {
+      
+
+   }
+   
+   /**
+    * To be called by initialiseInfosForInstance() in the generated instance advisors
+    */
+   protected MethodInfo copyInfoFromClassAdvisor(MethodInfo info)
+   {
+      MethodInfo copy = (MethodInfo)info.copy();
+      copy.setAdvisor(this);
+      addMethodInfo(copy);
+      return copy;
+   }
+   
+   /**
+    * To be called by initialiseInfosForInstance() in the generated instance advisors
+    */
+   protected FieldInfo copyInfoFromClassAdvisor(FieldInfo info)
+   {
+      FieldInfo copy = (FieldInfo)info.copy();
+      copy.setAdvisor(this);
+      if (copy.isRead())
+      {
+         addFieldReadInfo(copy);
+      }
+      else
+      {
+         addFieldWriteInfo(copy);
+      }
+      return copy;
+   }
+
+   /**
+    * To be called by initialiseInfosForInstance() in the generated instance advisors
+    */
+   protected ConByConInfo copyInfoFromClassAdvisor(ConByConInfo info)
+   {
+      ConByConInfo copy = (ConByConInfo)info.copy();
+      copy.setAdvisor(this);
+//      addMethodInfo(copy);
+      return copy;
+   }
+
+   /**
+    * To be called by initialiseInfosForInstance() in the generated instance advisors
+    */
+   protected MethodByConInfo copyInfoFromClassAdvisor(MethodByConInfo info)
+   {
+      MethodByConInfo copy = (MethodByConInfo)info.copy();
+      copy.setAdvisor(this);
+//      addMethodInfo(copy);
+      return copy;
+   }
+
+   /**
+    * To be called by initialiseInfosForInstance() in the generated instance advisors
+    */
+   protected ConByMethodInfo copyInfoFromClassAdvisor(ConByMethodInfo info)
+   {
+      ConByMethodInfo copy = (ConByMethodInfo)info.copy();
+      copy.setAdvisor(this);
+//      addMethodInfo(copy);
+      return copy;
+   }
+   
+   /**
+    * To be called by initialiseInfosForInstance() in the generated instance advisors
+    */
+   protected MethodByMethodInfo copyInfoFromClassAdvisor(MethodByMethodInfo info)
+   {
+      MethodByMethodInfo copy = (MethodByMethodInfo)info.copy();
+      copy.setAdvisor(this);
+//      addMethodInfo(copy);
+      return copy;
+   }
+   
    
    @Override
    protected void rebuildInterceptors()
@@ -213,25 +289,25 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    @Override
    protected void resolveConstructorPointcut(ArrayList newConstructorInfos, AdviceBinding binding)
    {
-      GeneratedClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
-      if (classAdvisor == null)
-      {
-         //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
-         super.resolveConstructorPointcut(newConstructorInfos, binding);
-      }
+      advisorStrategy.resolveConstructorPointcut(newConstructorInfos, binding);
    }
 
    @Override
    protected void resolveConstructionPointcut(ArrayList newConstructionInfos, AdviceBinding binding)
    {
-      GeneratedClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
-      if (classAdvisor == null)
-      {
-         //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
-         super.resolveConstructionPointcut(newConstructionInfos, binding);
-      }
+      advisorStrategy.resolveConstructionPointcut(newConstructionInfos, binding);
    }
    
+   /**
+    * Generated class advisor sub class will override
+    */
+   protected void initialiseMethods()
+   {
+   }
+   
+   /**
+    * Called by initialiseMethods() in generated advisor sub classes
+    */
    protected void addMethodInfo(MethodInfo mi)
    {
       MethodInfo old = methodInfos.getMethodInfo(mi.getHash());
@@ -240,8 +316,8 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          overriddenMethods.add(old);
       }
       methodInfos.put(mi.getHash(), mi);
-      //If we do dynamic invokes the method will need to be accessible via reflection if private/protected
-      SecurityActions.setAccessible(mi.getAdvisedMethod());
+      
+      advisorStrategy.makeAccessibleMethod(mi);
    }
 
    @Override
@@ -275,6 +351,16 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    }
 
 
+   /**
+    * Generated class advisor sub class will override
+    */
+   protected void initialiseConstructors()
+   {
+   }
+
+   /**
+    * Called by initialiseConstructors() in generated advisor sub classes
+    */
    protected void addConstructorInfo(ConstructorInfo ci)
    {
       constructorInfos.add(ci);
@@ -282,6 +368,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       SecurityActions.setAccessible(ci.getConstructor());
    }
 
+   
+   protected void createInterceptorChains() throws Exception
+   {
+      advisorStrategy.createInterceptorChains();
+   }
+   
    @Override
    protected ArrayList initializeConstructorChain()
    {
@@ -295,6 +387,16 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       return constructorInfos;
    }
 
+   /**
+    * Generated class advisor sub class will override
+    */
+   protected void initialiseConstructions()
+   {
+   }
+
+   /**
+    * Called by initialiseConstructions() in generated advisor sub classes
+    */
    protected void addConstructionInfo(ConstructionInfo ci)
    {
       constructionInfos.add(ci);
@@ -313,11 +415,21 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       return constructionInfos;
    }
 
+   /**
+    * Generated class advisor sub class will override
+    */
+   protected void initialiseFieldReads()
+   {
+   }
+
+   /**
+    * Called by initialiseFieldReads() in generated advisor sub classes
+    */
    protected void addFieldReadInfo(FieldInfo fi)
    {
       fieldReadInfos.add(fi);
       //If we do dynamic invokes the field will need to be accessible via reflection
-      SecurityActions.setAccessible(fi.getAdvisedField());
+      advisorStrategy.makeAccessibleField(fi);
    }
 
    @Override
@@ -326,11 +438,21 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       return mergeFieldInfos(fieldReadInfos, true);
    }
 
+   /**
+    * Generated class advisor sub class will override
+    */
+   protected void initialiseFieldWrites()
+   {
+   }
+
+   /**
+    * Called by initialiseFieldWrites() in generated advisor sub classes
+    */
    protected void addFieldWriteInfo(FieldInfo fi)
    {
       fieldWriteInfos.add(fi);
       //If we do dynamic invokes the field will need to be accessible via reflection
-      SecurityActions.setAccessible(fi.getAdvisedField());
+      advisorStrategy.makeAccessibleField(fi);
    }
 
    @Override
@@ -910,7 +1032,9 @@ public class GeneratedClassAdvisor extends ClassAdvisor
     */
    private interface AdvisorStrategy
    {
+      void initialise(Class clazz, AspectManager manager);
       void checkVersion();
+      void createInterceptorChains() throws Exception;
       MethodJoinPointGenerator getJoinPointGenerator(MethodInfo info);
       FieldJoinPointGenerator getJoinPointGenerator(FieldInfo info);
       ConstructorJoinPointGenerator getJoinPointGenerator(ConstructorInfo info);
@@ -932,16 +1056,52 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       void resolveConstructionPointcut(ArrayList newConstructionInfos, AdviceBinding binding);
       void finalizeConstructorChain(ArrayList newConstructorInfos);
       void finalizeConstructionChain(ArrayList newConstructionInfos);
+      void makeAccessibleField(FieldInfo fi);
+      void makeAccessibleMethod(MethodInfo mi);
    }
    
    private class ClassAdvisorStrategy implements AdvisorStrategy
    {
       GeneratedClassAdvisor parent;
+
+      public void initialise(Class clazz, AspectManager manager)
+      {
+         initialiseMethods();
+         initialiseConstructors();
+         initialiseConstructions();
+         initialiseFieldReads();
+         initialiseFieldWrites();
+         
+         GeneratedClassAdvisor.super.setManager(manager);
+
+         //Make sure that we copy across per class and per joinpoint aspects from the old advisor if it exists
+         //Generated advisors get created when the class is first accessed (not loaded), meaning that there could be an exisiting advisor
+         //used for mathcing already when setting up the microcontainer.
+         Advisor existing = AspectManager.instance().getAnyAdvisorIfAdvised(clazz);
+         if (existing != null)
+         {
+            GeneratedClassAdvisor.this.aspects = existing.aspects;
+            if (existing instanceof GeneratedClassAdvisor)
+            {
+               GeneratedClassAdvisor.this.perClassJoinpointAspectDefinitions = ((GeneratedClassAdvisor)existing).perClassJoinpointAspectDefinitions;
+            }
+         }
+         
+         manager.initialiseClassAdvisor(clazz, GeneratedClassAdvisor.this);
+         
+         initialiseCallers();
+      }
+
       public void checkVersion()
       {
          //The version is only has any significance for instance advisors
       }
 
+      public void createInterceptorChains() throws Exception
+      {
+         GeneratedClassAdvisor.super.createInterceptorChains();
+      }
+      
       public MethodJoinPointGenerator getJoinPointGenerator(MethodInfo info)
       {
          MethodJoinPointGenerator generator = (MethodJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
@@ -1120,12 +1280,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
       public void resolveConstructorPointcut(ArrayList newConstructorInfos, AdviceBinding binding)
       {
-         GeneratedClassAdvisor.this.resolveConstructorPointcut(newConstructorInfos, binding);
+         GeneratedClassAdvisor.super.resolveConstructorPointcut(newConstructorInfos, binding);
       }
 
       public void resolveConstructionPointcut(ArrayList newConstructionInfos, AdviceBinding binding)
       {
-         GeneratedClassAdvisor.this.resolveConstructionPointcut(newConstructionInfos, binding);
+         GeneratedClassAdvisor.super.resolveConstructionPointcut(newConstructionInfos, binding);
       }
 
       public void finalizeConstructorChain(ArrayList newConstructorInfos)
@@ -1147,6 +1307,18 @@ public class GeneratedClassAdvisor extends ClassAdvisor
             finalizeChainAndRebindJoinPoint(oldConstructionInfos, info, generator);
          }
       }
+
+      public void makeAccessibleField(FieldInfo fi)
+      {
+         //If we do dynamic invokes the field will need to be accessible via reflection
+         SecurityActions.setAccessible(fi.getAdvisedField());
+      }
+      
+      public void makeAccessibleMethod(MethodInfo mi)
+      {
+         //If we do dynamic invokes the method will need to be accessible via reflection if private/protected
+         SecurityActions.setAccessible(mi.getAdvisedMethod());
+      }
    }
    
    private class InstanceAdvisorStrategy implements AdvisorStrategy 
@@ -1160,6 +1332,15 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          GeneratedClassAdvisor.this.version = parent.version;         
       }
       
+      public void initialise(Class clazz, AspectManager manager)
+      {
+         initialiseInfosForInstance();
+         
+         GeneratedClassAdvisor.super.setManager(manager);
+
+         manager.initialiseClassAdvisor(clazz, GeneratedClassAdvisor.this);
+      }
+
       public void checkVersion()
       {
          if (needsRebuild || parent.version != GeneratedClassAdvisor.this.version)
@@ -1169,6 +1350,19 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          }
       }
       
+      public void createInterceptorChains() throws Exception
+      {
+         if (GeneratedClassAdvisor.super.initialized)
+         {
+            GeneratedClassAdvisor.super.createInterceptorChains();
+         }
+         else
+         {
+            //Instance advisor copies the chains from the class advisor during its initialise stage 
+            GeneratedClassAdvisor.super.initialized = true;
+         }
+      }
+
       public MethodJoinPointGenerator getJoinPointGenerator(MethodInfo info)
       {
          //We are an instance advisor, get the generator from the class advisor
@@ -1312,6 +1506,16 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       public void finalizeConstructionChain(ArrayList newConstructionInfos)
       {
          //Since the instance already exists it makes no sense to have bindings for constructors
+      }
+
+      public void makeAccessibleField(FieldInfo fi)
+      {
+         //Do nothing, field was already made accessible in class advisor
+      }
+
+      public void makeAccessibleMethod(MethodInfo mi)
+      {
+         //Do nothing, field was already made accessible in class advisor
       }
    }
 }

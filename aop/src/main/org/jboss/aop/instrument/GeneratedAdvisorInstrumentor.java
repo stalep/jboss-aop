@@ -33,10 +33,12 @@ import javassist.NotFoundException;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassAdvisor;
+import org.jboss.aop.ConByConInfo;
 import org.jboss.aop.ConByMethodInfo;
 import org.jboss.aop.FieldInfo;
 import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.JoinPointInfo;
+import org.jboss.aop.MethodByConInfo;
 import org.jboss.aop.MethodByMethodInfo;
 import org.jboss.aop.MethodInfo;
 import org.jboss.aop.classpool.AOPClassPool;
@@ -56,12 +58,12 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
    public static final String GET_CURRENT_ADVISOR = GET_CURRENT_ADVISOR_NAME + "()";
 
    //field names in advisor
-//   private static final String ADVISED_CLASS = "advisedClass";
    private static final String DOMAIN = "domain";
    private static final String VERSION = "version";
    private static final String CHECK_VERSION = "checkVersion";
    private static final String ADVICES_UPDATED = "advicesUpdated";
    private static final String INSTANCE_ADVISOR_MIXIN = "instanceAdvisorMixin";
+   private static final String CLASS_ADVISOR = "classAdvisor";
 
    //method names in advisor or GeneratedClassAdvisor
    private static final String CREATE_INSTANCE_ADVISOR = "createInstanceAdvisor";
@@ -71,6 +73,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
    private static final String INITIALISE_CONSTRUCTIONS = "initialiseConstructions";
    private static final String INITIALISE_CONSTRUCTORS = "initialiseConstructors";
    private static final String INITIALISE_METHODS = "initialiseMethods";
+   private static final String INITIALISE_INFOS_FOR_INSTANCE = "initialiseInfosForInstance";
    public static final String GET_CLASS_ADVISOR = "_getClassAdvisor";
    private static final String DO_REBUILD_FOR_INSTANCE = "doRebuildForInstance";
 
@@ -305,7 +308,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       genInstanceAdvisor.addInterface(untransformable);
 
       //Add reference to parent advisor
-      CtField classAdvisor = new CtField(genadvisor, "classAdvisor", genInstanceAdvisor);
+      CtField classAdvisor = new CtField(genadvisor, CLASS_ADVISOR, genInstanceAdvisor);
       genInstanceAdvisor.addField(classAdvisor);
 
       CtMethod advicesUpdated = CtNewMethod.make(
@@ -347,6 +350,17 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       CtConstructor ctor = CtNewConstructor.make(new CtClass[]{forName("java.lang.Object"), genadvisor}, new CtClass[0], body, genInstanceAdvisor);
       genInstanceAdvisor.addConstructor(ctor);
 
+      //Create methods for quicker initialising of the infos when the instance advisor is created
+      CtMethod initialiseInfosForInstance = CtNewMethod.make(
+            Modifier.PROTECTED,
+            CtClass.voidType,
+            INITIALISE_INFOS_FOR_INSTANCE,
+            EMPTY_SIG,
+            EMPTY_EXCEPTIONS,
+            null,
+            genInstanceAdvisor);
+      genInstanceAdvisor.addMethod(initialiseInfosForInstance);
+
       return genInstanceAdvisor;
    }
 
@@ -357,13 +371,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
          "   String domainName = org.jboss.aop.Domain.getDomainName(" + DECLARING_CLASS + ", $2);" + 
          "   " + DOMAIN + "= new org.jboss.aop.GeneratedAdvisorDomain($1, domainName, " + DECLARING_CLASS + ", false); " +
          "   ((org.jboss.aop.Domain)" + DOMAIN + ").setInheritsBindings(true); " +
-         "   " + INITIALISE_METHODS + "();" +
-         "   " + INITIALISE_CONSTRUCTORS + "();" +
-         "   " + INITIALISE_CONSTRUCTIONS + "();" +
-         "   " + INITIALISE_FIELD_READS + "();" +
-         "   " + INITIALISE_FIELD_WRITES + "();" +
          "   super.initialise(" + DECLARING_CLASS + ", " + DOMAIN + ");" +
-         "   " + INITIALISE_CALLERS + "();" +
          "}";
 
          CtMethod initialise = CtNewMethod.make(
@@ -612,6 +620,20 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             String updatedJoinpointAdvicesName = addAdvicesUpdatedForJoinpointField(infoName);
             advicesUpdatedCode.append(updatedJoinpointAdvicesName + " = true;");
             addWrapperDelegatorMethodToInstanceAdvisor(names, updatedJoinpointAdvicesName);
+            
+            //Add code to the initialiseInfosForInstance to copy the infos from the super class
+            String infoClassName = fields[i].getType().getName();
+            if (
+                  infoClassName.equals(FieldInfo.class.getName()) || 
+                  infoClassName.equals(MethodInfo.class.getName()) ||
+                  infoClassName.equals(ConByConInfo.class.getName()) ||
+                  infoClassName.equals(MethodByConInfo.class.getName()) ||
+                  infoClassName.equals(ConByMethodInfo.class.getName()) ||
+                  infoClassName.equals(MethodByMethodInfo.class.getName()))
+            {
+               String code = infoName + " = super.copyInfoFromClassAdvisor(((" + genadvisor.getName() + ")" + clazz.getName() + "." + GET_CLASS_ADVISOR + "())." + infoName + ");"
+               addCodeToInitialiseMethod(genInstanceAdvisor, code, INITIALISE_INFOS_FOR_INSTANCE);
+            }
          }
 
          if (isBaseClass(superClass))
@@ -672,9 +694,9 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       }
    }
 
-   boolean initialisedMethods = false;
    protected void initaliseMethodInfo(String infoName, long hash, long unadvisedHash)throws NotFoundException
    {
+      //Add code to initialise info to class advisor
       String code =
          infoName + " = new " + MethodExecutionTransformer.METHOD_INFO_CLASS_NAME + "(" +
                "java.lang.Class.forName(\"" + clazz.getName() + "\")," +
@@ -682,11 +704,12 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
                unadvisedHash + "L, this);" +
          GeneratedClassAdvisor.ADD_METHOD_INFO + "(" + infoName + ");";
 
-      addCodeToInitialiseMethod(code, INITIALISE_METHODS);
+      addCodeToInitialiseMethod(genadvisor, code, INITIALISE_METHODS);
    }
 
    protected void initialiseFieldReadInfoField(String infoName, int index, String fieldName, long wrapperHash) throws NotFoundException
    {
+      //Add code to initialise info to class advisor
       String code =
          infoName + " = new " + FieldAccessTransformer.FIELD_INFO_CLASS_NAME + "(" +
             "java.lang.Class.forName(\"" + clazz.getName() + "\")," +
@@ -695,11 +718,12 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             wrapperHash + "L, this, true);" +
          GeneratedClassAdvisor.ADD_FIELD_READ_INFO + "(" + infoName + ");";
 
-      addCodeToInitialiseMethod(code, INITIALISE_FIELD_READS);
+      addCodeToInitialiseMethod(genadvisor, code, INITIALISE_FIELD_READS);
    }
 
    protected void initialiseFieldWriteInfoField(String infoName, int index, String fieldName, long wrapperHash) throws NotFoundException
    {
+      //Add code to initialise info to class advisor
       String code =
          infoName + " = new " + FieldAccessTransformer.FIELD_INFO_CLASS_NAME + "(" +
             "java.lang.Class.forName(\"" + clazz.getName() + "\")," +
@@ -708,11 +732,12 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             wrapperHash + "L, this, false);" +
          GeneratedClassAdvisor.ADD_FIELD_WRITE_INFO + "(" + infoName + ");";
 
-      addCodeToInitialiseMethod(code, INITIALISE_FIELD_WRITES);
+      addCodeToInitialiseMethod(genadvisor, code, INITIALISE_FIELD_WRITES);
    }
 
    protected void initialiseConstructorInfoField(String infoName, int index, long constructorHash, long wrapperHash) throws NotFoundException
    {
+      //Add code to initialise info to class advisor
       String code =
          infoName + " = new " + ConstructorExecutionTransformer.CONSTRUCTOR_INFO_CLASS_NAME + "(" +
             "java.lang.Class.forName(\"" + clazz.getName() + "\")," +
@@ -721,11 +746,12 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             constructorHash + "L, this);" +
          GeneratedClassAdvisor.ADD_CONSTRUCTOR_INFO + "(" + infoName + ");";
 
-      addCodeToInitialiseMethod(code, INITIALISE_CONSTRUCTORS);
+      addCodeToInitialiseMethod(genadvisor, code, INITIALISE_CONSTRUCTORS);
    }
 
    protected void initialiseConstructionInfoField(String infoName, int index, long constructorHash) throws NotFoundException
    {
+      //Add code to initialise info to class advisor
       String code =
          infoName + " = new " + ConstructionTransformer.CONSTRUCTION_INFO_CLASS_NAME + "(" +
             "java.lang.Class.forName(\"" + clazz.getName() + "\")," +
@@ -733,19 +759,19 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             constructorHash + "L, this);" +
          GeneratedClassAdvisor.ADD_CONSTRUCTION_INFO + "(" + infoName + ");";
 
-      addCodeToInitialiseMethod(code, INITIALISE_CONSTRUCTIONS);
-
+      addCodeToInitialiseMethod(genadvisor, code, INITIALISE_CONSTRUCTIONS);
    }
 
    protected void initialiseCallerInfoField(String infoName, String init)throws CannotCompileException, NotFoundException
    {
-      addCodeToInitialiseMethod(infoName + " = " + init + ";", INITIALISE_CALLERS);
+      //Add code to initialise info to class advisor
+      addCodeToInitialiseMethod(genadvisor, infoName + " = " + init + ";", INITIALISE_CALLERS);
    }
 
 
-   private void addCodeToInitialiseMethod(String code, String methodName) throws NotFoundException
+   private void addCodeToInitialiseMethod(CtClass clazz, String code, String methodName) throws NotFoundException
    {
-      CtMethod method = genadvisor.getDeclaredMethod(methodName);
+      CtMethod method = clazz.getDeclaredMethod(methodName);
       try
       {
          method.insertAfter(code);
@@ -835,6 +861,34 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             CtMethod wrapper = genadvisor.getDeclaredMethod(infoName);
 
             String joinPointName = MethodByMethodJoinPointGenerator.JOINPOINT_FIELD_PREFIX + infoName.substring("aop$methodCall_".length());
+            CtField joinPointField = genadvisor.getDeclaredField(joinPointName);
+
+            return new GeneratedAdvisorNameExtractor(infoName, wrapper, joinPointField);
+         }
+         else if (infoField.getType().getName().equals(ConByConInfo.class.getName()))
+         {
+            if (!infoName.startsWith("aop$constructorCall_con_"))
+            {
+               throw new RuntimeException("Bad ConByConInfo name: '" + infoName + "'");
+            }
+
+            CtMethod wrapper = genadvisor.getDeclaredMethod(infoName);
+
+            String joinPointName = ConByConJoinPointGenerator.JOINPOINT_FIELD_PREFIX + infoName.substring("aop$constructorCall_con_".length());
+            CtField joinPointField = genadvisor.getDeclaredField(joinPointName);
+
+            return new GeneratedAdvisorNameExtractor(infoName, wrapper, joinPointField);
+         }
+         else if (infoField.getType().getName().equals(MethodByConInfo.class.getName()))
+         {
+            if (!infoName.startsWith("aop$methodCall_con"))
+            {
+               throw new RuntimeException("Bad MethodByConInfo name: '" + infoName + "'");
+            }
+
+            CtMethod wrapper = genadvisor.getDeclaredMethod(infoName);
+
+            String joinPointName = MethodByConJoinPointGenerator.JOINPOINT_FIELD_PREFIX + infoName.substring("aop$methodCall_con_".length());
             CtField joinPointField = genadvisor.getDeclaredField(joinPointName);
 
             return new GeneratedAdvisorNameExtractor(infoName, wrapper, joinPointField);

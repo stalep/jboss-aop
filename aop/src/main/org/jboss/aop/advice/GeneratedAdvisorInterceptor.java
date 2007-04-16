@@ -510,6 +510,5 @@ public class GeneratedAdvisorInterceptor implements Interceptor
       {
          return invocation.invokeNext();
       }
-      
    }
 }

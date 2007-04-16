@@ -62,7 +62,7 @@ public abstract class JoinPointInfo implements IJoinPointInfo
          this.interceptors = new Interceptor[other.interceptors.length];
          System.arraycopy(other.interceptors, 0, this.interceptors, 0, other.interceptors.length);
       }
-      if (other.interceptorChain != null)this.interceptorChain = (ArrayList)interceptorChain.clone();
+      if (other.interceptorChain != null)this.interceptorChain.addAll(interceptorChain);
    }
 
    protected void clear()

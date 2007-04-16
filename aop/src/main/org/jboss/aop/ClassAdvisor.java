@@ -591,7 +591,7 @@ public class ClassAdvisor extends Advisor
       }
    }
 
-   private void createInterceptorChains() throws Exception
+   protected void createInterceptorChains() throws Exception
    {
       if (AspectManager.verbose) System.out.println("[debug] Creating chains for " + clazz + " " + ((clazz != null) ? clazz.getClassLoader() : null ));
       MethodInterceptors newMethodInfos = initializeMethodChain();
