@@ -1042,6 +1042,7 @@ public class ClassAdvisor extends Advisor
 
    public synchronized void addClassMetaData(ClassMetaDataBinding data)
    {
+      initClassMetaDataBindingsList();
       classMetaDataBindings.add(data);
       if (this.clazz == null) return;  // don't bind till later.
 
@@ -1454,6 +1455,7 @@ public class ClassAdvisor extends Advisor
    protected void createMethodTables()
    throws Exception
    {
+      initAdvisedMethodsMap();
       populateMethodTables(clazz.getSuperclass());
       addDeclaredMethods(clazz);
    }

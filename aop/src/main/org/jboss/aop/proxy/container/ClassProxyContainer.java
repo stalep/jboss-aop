@@ -83,6 +83,7 @@ public class ClassProxyContainer extends ClassContainer
 
    protected void createMethodMap()
    {
+      initAdvisedMethodsMap();
       //System.out.println("============================================ Create method map - " + this + " " + clazz.getName());
       try
       {

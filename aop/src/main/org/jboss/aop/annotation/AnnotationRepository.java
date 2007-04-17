@@ -29,8 +29,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.jboss.aop.annotation.factory.duplicate.AnnotationCreator;
+import org.jboss.aop.util.UnmodifiableEmptyCollections;
 
 import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 import javassist.CtMember;
@@ -44,9 +46,13 @@ import javassist.CtMember;
 public class AnnotationRepository
 {
    private static final String CLASS_ANNOTATION = "CLASS";
-   Map annotations = new ConcurrentReaderHashMap();
-   Map classAnnotations = new ConcurrentReaderHashMap();
-   Map disabledAnnotations = new ConcurrentReaderHashMap();
+   
+   /** Read/Write lock to be used when lazy creating the collections */
+   protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+
+   Map annotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
+   Map classAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
+   Map disabledAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
    
    public Map getAnnotations()
    {
@@ -60,11 +66,13 @@ public class AnnotationRepository
 
    public void addClassAnnotation(String annotation, String value)
    {
+      initClassAnnotationsMap();
       classAnnotations.put(annotation, value);
    }
 
    public void addClassAnnotation(Class annotation, Object value)
    {
+      initClassAnnotationsMap();
       classAnnotations.put(annotation.getName(), value);
    }
 
@@ -126,6 +134,7 @@ public class AnnotationRepository
       if (annotationList == null)
       {
          annotationList = new ArrayList();
+         initDisabledAnnotationsMap();
          disabledAnnotations.put(m,annotationList);
       }
       annotationList.add(annotation);
@@ -137,6 +146,7 @@ public class AnnotationRepository
       if (annotationList == null)
       {
          annotationList = new ArrayList();
+         initDisabledAnnotationsMap();
          disabledAnnotations.put(CLASS_ANNOTATION,annotationList);
       }
       annotationList.add(annotation);
@@ -200,6 +210,7 @@ public class AnnotationRepository
       if (map == null)
       {
          map = new HashMap();
+         initAnnotationsMap();
          annotations.put(m, map);
       }
       map.put(annotation.getName(), value);
@@ -211,6 +222,7 @@ public class AnnotationRepository
       if (map == null)
       {
          map = new HashMap();
+         initAnnotationsMap();
          annotations.put(m, map);
       }
       map.put(annotation, value);
@@ -249,8 +261,82 @@ public class AnnotationRepository
       if (set == null)
       {
          set = new HashSet();
+         initAnnotationsMap();
          annotations.put(m, set);
       }
       set.add(annotation);
+   }
+
+   /**
+    * Lock for write
+    */
+   protected void lockWrite()
+   {
+      lock.writeLock().lock();
+   }
+
+   /**
+    * Unlock for write
+    */
+   protected void unlockWrite()
+   {
+      lock.writeLock().unlock();
+   }
+
+   protected void initAnnotationsMap()
+   {
+      if (annotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (annotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            {
+               annotations = new ConcurrentReaderHashMap();;
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+
+   protected void initClassAnnotationsMap()
+   {
+      if (classAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (classAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            {
+               classAnnotations = new ConcurrentReaderHashMap();;
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+
+   protected void initDisabledAnnotationsMap()
+   {
+      if (disabledAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (disabledAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            {
+               disabledAnnotations = new ConcurrentReaderHashMap();;
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
    }
 }

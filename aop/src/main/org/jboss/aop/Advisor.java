@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -68,6 +69,7 @@ import org.jboss.aop.metadata.FieldMetaData;
 import org.jboss.aop.metadata.MethodMetaData;
 import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
+import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.metadata.spi.MetaData;
 import org.jboss.metadata.spi.signature.MethodSignature;
 import org.jboss.util.NestedRuntimeException;
@@ -120,29 +122,33 @@ public abstract class Advisor
       }
    }
 
+   /** Read/Write lock to be used when lazy creating the collections */
+   protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
    protected HashSet adviceBindings = new HashSet();
-   protected ArrayList interfaceIntroductions = new ArrayList();
-   protected ArrayList classMetaDataBindings = new ArrayList();
+   protected ArrayList interfaceIntroductions = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+   protected ArrayList classMetaDataBindings = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
    protected SimpleMetaData defaultMetaData = new SimpleMetaData();
    protected MethodMetaData methodMetaData = new MethodMetaData();
    protected FieldMetaData fieldMetaData = new FieldMetaData();
    protected SimpleMetaData classMetaData = new SimpleMetaData();
    protected ConstructorMetaData constructorMetaData = new ConstructorMetaData();
-   protected HashMap classAnnotations = new HashMap();
+   //Does not seem to be used
+   //protected HashMap classAnnotations = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
    protected AnnotationRepository annotations = new AnnotationRepository();
    protected boolean doesHaveAspects = false;
 
    protected String name;
    protected ConcurrentReaderHashMap aspects = new ConcurrentReaderHashMap();
    protected HashMap adviceInterceptors = new HashMap();
-   protected CopyOnWriteArraySet perInstanceAspectDefinitions = new CopyOnWriteArraySet();
-   protected ConcurrentReaderHashMap perInstanceJoinpointAspectDefinitions = new ConcurrentReaderHashMap();
+   protected CopyOnWriteArraySet perInstanceAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_COPYONWRITE_ARRAYSET;
+   protected ConcurrentReaderHashMap perInstanceJoinpointAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
 
    static Class cl = java.lang.String.class;
-   protected TLongObjectHashMap advisedMethods = new TLongObjectHashMap();
+   protected TLongObjectHashMap advisedMethods = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
    // The method signatures are sorted at transformation and load time to
    // make sure the tables line up.
+   //Common sense suggests that this should be lazily initialised for generated advisors, profiling shows that is a major performance hit...
    protected TLongObjectHashMap methodInterceptors = new TLongObjectHashMap();
    protected AspectManager manager;
    protected Class clazz = null;
@@ -644,6 +650,7 @@ public abstract class Advisor
 
    public synchronized void addInterfaceIntroduction(InterfaceIntroduction pointcut)
    {
+      initInterfaceIntroductionsList();      
       interfaceIntroductions.add(pointcut);
    }
 
@@ -666,6 +673,7 @@ public abstract class Advisor
 
    public void addPerInstanceAspect(AspectDefinition def)
    {
+      initPerInstanceAspectDefinitionsSet();
       perInstanceAspectDefinitions.add(def);
       def.registerAdvisor(this);
    }
@@ -688,6 +696,7 @@ public abstract class Advisor
       if (joinpoints == null)
       {
          joinpoints = new CopyOnWriteArraySet();
+         initPerInstanceJoinpointAspectDefinitionsMap();
          perInstanceJoinpointAspectDefinitions.put(def, joinpoints);
          def.registerAdvisor(this);
       }
@@ -1173,6 +1182,117 @@ public abstract class Advisor
          {
             removePerClassAspect(defs[i]);
             defs[i].unregisterAdvisor(this);
+         }
+      }
+   }
+   
+   /**
+    * Lock for write
+    */
+   protected void lockWrite()
+   {
+      lock.writeLock().lock();
+   }
+
+   /**
+    * Unlock for write
+    */
+   protected void unlockWrite()
+   {
+      lock.writeLock().unlock();
+   }
+
+   protected void initInterfaceIntroductionsList()
+   {
+      if (interfaceIntroductions == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         lockWrite();
+         try
+         {
+            if (interfaceIntroductions == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+            {
+               interfaceIntroductions = new ArrayList();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   protected void initClassMetaDataBindingsList()
+   {
+      if (classMetaDataBindings == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         lockWrite();
+         try
+         {
+            if (classMetaDataBindings == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+            {
+               classMetaDataBindings = new ArrayList();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   protected void initPerInstanceAspectDefinitionsSet()
+   {
+      if (perInstanceAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_COPYONWRITE_ARRAYSET)
+      {
+         lockWrite();
+         try
+         {
+            if (perInstanceAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_COPYONWRITE_ARRAYSET)
+            {
+               perInstanceAspectDefinitions = new CopyOnWriteArraySet();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   protected void initPerInstanceJoinpointAspectDefinitionsMap()
+   {
+      if (perInstanceJoinpointAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (perInstanceJoinpointAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            {
+               perInstanceJoinpointAspectDefinitions = new ConcurrentReaderHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+
+   protected void initAdvisedMethodsMap()
+   {
+      if (advisedMethods == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (advisedMethods == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP)
+            {
+               advisedMethods = new TLongObjectHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
          }
       }
    }

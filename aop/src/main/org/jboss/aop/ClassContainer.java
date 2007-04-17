@@ -125,6 +125,7 @@ public class ClassContainer extends Advisor
 
    public void addClassMetaData(ClassMetaDataBinding data)
    {
+      initClassMetaDataBindingsList();
       classMetaDataBindings.add(data);
       if (this.clazz == null) return;  // don't bind till later.
 
@@ -185,6 +186,7 @@ public class ClassContainer extends Advisor
 
    protected void createMethodMap()
    {
+      initAdvisedMethodsMap();
       try
       {
          Method[] declaredMethods = clazz.getMethods();
