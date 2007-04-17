@@ -81,7 +81,7 @@ public class InstrumentorFactory
          instrumentor = InstrumentorEnum.GENERATED_ADVISOR;
          if (AspectManager.verbose)
          {
-            System.out.println("[debug] Defaulting instrumentor to: " + instrumentor.getClass().getName());
+            System.out.println("[debug] Defaulting instrumentor to: " + getInstrumentorName());
          }
       }
    }
