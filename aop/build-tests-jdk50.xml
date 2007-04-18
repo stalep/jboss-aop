@@ -174,12 +174,12 @@
       </path>
 
       <path id="compatibility15.test.classpath">
-         <pathelement path="1.5.5.lib/concurrent.jar"/>
-         <pathelement path="1.5.5.lib/javassist.jar"/>
-         <pathelement path="1.5.5.lib/jboss-aop-jdk50.jar"/>
-         <pathelement path="1.5.5.lib/jboss-common.jar"/>
-         <pathelement path="1.5.5.lib/qdox.jar"/>
-         <pathelement path="1.5.5.lib/trove.jar"/>
+         <pathelement path="1.5.x.lib/concurrent.jar"/>
+         <pathelement path="1.5.x.lib/javassist.jar"/>
+         <pathelement path="1.5.x.lib/jboss-aop-jdk50.jar"/>
+         <pathelement path="1.5.x.lib/jboss-common.jar"/>
+         <pathelement path="1.5.x.lib/qdox.jar"/>
+         <pathelement path="1.5.x.lib/trove.jar"/>
 
          <path refid="jboss.test.classpath"/>
          <path refid="junit.junit.classpath"/>
@@ -189,10 +189,6 @@
          <path refid="library.classpath"/>
          <path refid="dependentmodule.classpath"/>
          <path refid="jboss.aop.classpath"/>
-      </path>
-
-      <path id="aopc15.task.classpath">
-         <path refid="compatibility15.test.classpath"/>
       </path>
 
       <path id="test.jrockit.classpath">
@@ -321,7 +317,7 @@
       <antcall target="non-optimized-precompiled-tests" inheritRefs="true"/>
 
       <delete dir="${build.tests.classes}"/>
-      <antcall target="precompiled-compatibitily-tests" inheritRefs="true"/>
+      <antcall target="precompiled-compatibility-tests" inheritRefs="true"/>
    </target>
 
    <target name="all-tests" depends="tests">
@@ -599,11 +595,82 @@
    <!-- TEST COMPATIBILITY WITH CODE WOVEN W AOP 1.5                                         -->
    <!-- ==================================================================================== -->
 
-   <target name="precompiled-compatibitily-tests" depends="compile-test-classes">
+   <target name="precompiled-compatibility-tests" depends="compile-test-classes">
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="postweavingmixins"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="callerargs"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="dotinpointcutname"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="precedence"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="reflection"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="callerscope"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="marshalling"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="constructortarget"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
       <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="basic"/>
-         <param name="caller" value="precompiled-compatibitlity-tests"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
       </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="instanceofintroduced"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="construction"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="constructortarget"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="field"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="scope"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="beanstyleconfig"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="perjoinpoint"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="extender"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      <!-- More functionality exists in this branch than in 1.5.x, so this test will fail.
+           The basic test checks main introduction cases anyway
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="introduction"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      -->
    </target>
 
    <target name="precompiled-test" depends="init">
@@ -639,7 +706,7 @@
          <or>
             <equals arg1="${caller}" arg2="precompiled-tests"/>
             <equals arg1="${caller}" arg2="precompiled-genadvisor-tests"/>
-            <equals arg1="${caller}" arg2="precompiled-compatibitlity-tests"/>
+            <equals arg1="${caller}" arg2="precompiled-compatibility-tests"/>
          </or>
       </condition>
       <condition property="optimized" value="false">
@@ -656,24 +723,14 @@
 
       <!-- The compatibility tests need another classpath for aopc -->
       <condition property="aopc.tests.classpath" value="compatibility15.test.classpath" else="test.classpath">
-         <equals arg1="${caller}" arg2="precompiled-compatibitlity-tests"/>
+         <equals arg1="${caller}" arg2="precompiled-compatibility-tests"/>
       </condition>
-      <condition property="aopc.task.classpath" value="aopc15.task.classpath" else="aopc.task.classpath">
-         <equals arg1="${caller}" arg2="precompiled-compatibitlity-tests"/>
+      <condition property="aopc.task.classpath" value="compatibility15.test.classpath" else="aopc.task.classpath">
+         <equals arg1="${caller}" arg2="precompiled-compatibility-tests"/>
       </condition>
 
       <echo>Compiling ${test} with optimized=${optimized} and instrumentor ${instrumentor}</echo>
-<!--
-      <echo>aopc.tests.classpath: ${aopc.tests.classpath}</echo>
-      <property name="x" refid="${aopc.tests.classpath}"/>
-      <echo>aopc.tests.classpath expanded: ${x}</echo>
 
-      <echo>aopc.task.classpath: ${aopc.task.classpath}</echo>
-      <property name="y" refid="${aopc.task.classpath}"/>
-      <echo>aopc.task.classpath expanded: ${y}</echo>
-
-      <echo>Classes: ${build.tests.classes}</echo>
--->
       <!-- aopc -->
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="${aopc.task.classpath}"/>
       <aopc optimized="${optimized}" compilerclasspathref="${aopc.task.classpath}">
