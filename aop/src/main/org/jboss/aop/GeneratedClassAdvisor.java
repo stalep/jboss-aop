@@ -368,7 +368,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       SecurityActions.setAccessible(ci.getConstructor());
    }
 
-   
+   @Override
    protected void createInterceptorChains() throws Exception
    {
       advisorStrategy.createInterceptorChains();
