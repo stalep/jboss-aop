@@ -100,7 +100,8 @@ public abstract class JoinPointGenerator
    private ThreadLocal<Set<Integer>> inconsistentTypeArgs;
    
    /**
-    * A cache of the generated joinpoint classes indexed by the interceptor chains for the info
+    * A cache of the generated joinpoint classes indexed by the interceptor chains for the info to 
+    * avoid having to generate a new class on every single rebind
     */
    private HashMap generatedJoinPointClassCache = new HashMap();
    
