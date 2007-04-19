@@ -4,7 +4,7 @@
   <parent>
     <groupId>jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>1</version>
+    <version>2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jboss-aop</artifactId>
@@ -31,7 +31,27 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <skip>true</skip>
+          <testFailureIgnore>true</testFailureIgnore>
+          <forkMode>always</forkMode>
+          <includes>
+            <include>org/jboss/test/aop/override/**/*TestCase.java</include>
+            <include>org/jboss/test/aop/override/**/*Tester.java</include>
+          </includes>
+          <excludes>
+            <exclude>**/GenAdvisorOverrideTestCase.java</exclude>
+            <exclude>org/jboss/test/aop/reflection/ReflectionAspectTester.java</exclude>
+            <exclude>org/jboss/test/aop/basic/POJOAspectTester.java</exclude>
+          </excludes>
+          <systemProperties>
+            <property>
+              <name>jboss.aop.path</name>
+              <value>/home/pgier/projects/aop/aop/src/resources/test/override/jboss-aop.xml</value>
+            </property>
+            <property>
+              <name>instrumentator</name>
+              <value>org.jboss.aop.instrument.ClassicInstrumentor</value>
+            </property>
+          </systemProperties>
         </configuration>
       </plugin>
     </plugins>
@@ -41,7 +61,16 @@
       <id>jboss</id>
       <name>JBoss Inc. Repository</name>
       <layout>default</layout>
-      <url>http://repository.jboss.com/maven2/</url>
+      <url>http://repository.jboss.org/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>jboss-snapshots</id>
+      <name>JBoss Inc. Repository</name>
+      <layout>default</layout>
+      <url>http://snapshots.jboss.org/maven2/</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -54,19 +83,29 @@
       <version>1.6.5</version>
     </dependency>
     <dependency>
+      <groupId>apache-xerces</groupId>
+      <artifactId>xml-apis</artifactId>
+      <version>2.7.1</version>
+    </dependency>
+    <dependency>
       <groupId>javassist</groupId>
       <artifactId>javassist</artifactId>
       <version>3.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>jboss</groupId>
-      <artifactId>jboss-dependency</artifactId>
+      <artifactId>jboss-container</artifactId>
       <version>2.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>jboss</groupId>
-      <artifactId>jboss-container</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <artifactId>jboss-common-core</artifactId>
+      <version>2.0.4.GA</version>
+    </dependency>
+    <dependency>
+      <groupId>jboss</groupId>
+      <artifactId>jboss-common-logging-spi</artifactId>
+      <version>2.0.4.GA</version>
     </dependency>
     <dependency>
       <groupId>jboss</groupId>
@@ -102,13 +141,4 @@
       <version>2.1.1</version>
     </dependency>
   </dependencies>
-  <distributionManagement>
-    <repository>
-      <id>cvs-file-repository</id>
-      <!-- Set maven.cvs.root in your maven/conf/settings.xml
-            See http://wiki.jboss.org/wiki/Wiki.jsp?page=JBossCommonProject
-            -->
-      <url>file://${maven.cvs.root}</url>
-    </repository>
-  </distributionManagement>
 </project>
