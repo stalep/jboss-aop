@@ -21,6 +21,7 @@
   */
 package org.jboss.aop.instrument;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.security.AccessController;
@@ -58,6 +59,7 @@ import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
 import org.jboss.aop.pointcut.ast.ClassExpression;
 import org.jboss.aop.util.JavassistUtils;
 import org.jboss.aop.util.ReflectToJavassist;
+import org.jboss.util.collection.temp.WeakValueHashMap;
 
 /**
  * Creates the Joinpoint invocation replacement classes used with Generated advisors
@@ -96,6 +98,11 @@ public abstract class JoinPointGenerator
    private Field joinpointField;
    private boolean initialised;
    private ThreadLocal<Set<Integer>> inconsistentTypeArgs;
+   
+   /**
+    * A cache of the generated joinpoint classes indexed by the interceptor chains for the info
+    */
+   private HashMap generatedJoinPointClassCache = new HashMap();
    
    protected JoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info,
          JoinPointParameters parameters, int argumentsSize)
@@ -184,6 +191,7 @@ public abstract class JoinPointGenerator
       {
          throw new RuntimeException("GeneratedAdvisor weaving in AOP 2.0.0.aplha5 and later is not compatible with that of previous versions");
       }
+      
       if (System.getSecurityManager() == null)
       {
          GenerateJoinPointClassAction.NON_PRIVILEGED.generateJoinPointClass(classloader, this, info);
@@ -207,13 +215,26 @@ public abstract class JoinPointGenerator
             classloader = Thread.currentThread().getContextClassLoader();
          }
 
-         AspectManager manager = AspectManager.instance();
-         //ClassPool pool = manager.findClassPool(Thread.currentThread().getContextClassLoader());
-         ClassPool pool = manager.findClassPool(classloader);
-         GeneratedClassInfo generatedClass = generateJoinpointClass(pool, info);
+         //Attempt to get the cached information so we don't have to recreate the class every time we rebind the joinpoint
+         String infoAdviceString = info.getAdviceString();
+         GeneratedClassInfo generatedClass = (GeneratedClassInfo)generatedJoinPointClassCache.get(infoAdviceString);
+         Class clazz = null;
+         if (generatedClass != null)
+         {
+            clazz = classloader.loadClass(generatedClass.getGenerated().getName());
+         }
          
-         ProtectionDomain pd = advisorClass.getProtectionDomain();
-         Class clazz = toClass(pool, generatedClass.getGenerated(), pd);
+         if (clazz == null)
+         {
+            //We need to do all the work again
+            AspectManager manager = AspectManager.instance();
+            ClassPool pool = manager.findClassPool(classloader);
+            generatedClass = generateJoinpointClass(pool, info);
+            
+            ProtectionDomain pd = advisorClass.getProtectionDomain();
+            clazz = toClass(pool, generatedClass.getGenerated(), pd);
+            generatedJoinPointClassCache.put(infoAdviceString, generatedClass);
+         }
          Object obj = instantiateClass(clazz, generatedClass.getAroundSetups(), info);
          
          joinpointField.set(info.getAdvisor(), obj);
@@ -244,7 +265,7 @@ public abstract class JoinPointGenerator
       catch (Exception e)
       {
          StringBuffer sb = new StringBuffer();
-         throw new RuntimeException(debugClass(sb, clazz).toString());
+         throw new RuntimeException(debugClass(sb, clazz).toString(), e);
       }
       
       for (int i = 0 ; i < aroundSetups.length ; i++)

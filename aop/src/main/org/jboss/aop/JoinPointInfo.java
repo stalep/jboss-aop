@@ -24,6 +24,7 @@ package org.jboss.aop;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+import org.jboss.aop.advice.GeneratedAdvisorInterceptor;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.IJoinPointInfo;
 import org.jboss.aop.joinpoint.Joinpoint;
@@ -39,6 +40,8 @@ public abstract class JoinPointInfo implements IJoinPointInfo
    protected volatile Joinpoint joinpoint;
    
    protected WeakReference clazz;
+   
+   private String adviceString;
 
    protected JoinPointInfo()
    {
@@ -123,6 +126,7 @@ public abstract class JoinPointInfo implements IJoinPointInfo
    }
 
    public void setInterceptorChain(ArrayList interceptorChain) {
+      adviceString = null;
       this.interceptorChain = interceptorChain;
    }
 
@@ -131,6 +135,7 @@ public abstract class JoinPointInfo implements IJoinPointInfo
    }
 
    public void setInterceptors(Interceptor[] interceptors) {
+      adviceString = null;
       this.interceptors = interceptors;
    }
 
@@ -168,5 +173,32 @@ public abstract class JoinPointInfo implements IJoinPointInfo
       {
          interceptors = other.interceptors.clone();
       }
+   }
+   
+   public String getAdviceString()
+   {
+      if (adviceString == null)
+      {
+         if (interceptors == null || interceptors.length == 0)
+         {
+            return "";
+         }
+         
+         StringBuffer buf = new StringBuffer();
+         for (int i = 0 ; i < interceptors.length ; i++)
+         {
+            if (i > 0)
+            {
+               buf.append(",");
+            }
+            
+            GeneratedAdvisorInterceptor icptr = (GeneratedAdvisorInterceptor)interceptors[i];
+            buf.append(icptr.getAdviceString());
+         }
+         
+         return buf.toString();
+      }
+      
+      return adviceString; 
    }
 }

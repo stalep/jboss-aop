@@ -477,6 +477,43 @@ public class GeneratedAdvisorInterceptor implements Interceptor
       throw new RuntimeException("Invocation type not handled " + invocation);
    }
    
+   String adviceString;
+   public String getAdviceString()
+   {
+      if (adviceString == null)
+      {
+         StringBuffer buf = new StringBuffer();
+         if (isAround())
+         {
+            buf.append("R");
+         }
+         else if (isBefore())
+         {
+            buf.append("B");
+         }
+         else if (isAfter())
+         {
+            buf.append("A");
+         }
+         else if (isThrowing())
+         {
+            buf.append("T");
+         }
+         else 
+         {
+            throw new RuntimeException("No such interceptor");
+         }
+         
+         buf.append("~#$%");
+         buf.append(getAspectClassName());
+         buf.append("->");
+         buf.append(getAdviceName());
+         adviceString = buf.toString();
+         
+      }
+      return adviceString;
+   }
+   
    private class GeneratedOnlyInterceptor implements Interceptor
    {
       String name;

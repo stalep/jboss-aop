@@ -59,11 +59,9 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
 
    //field names in advisor
    private static final String DOMAIN = "domain";
-   private static final String VERSION = "version";
    private static final String CHECK_VERSION = "checkVersion";
    private static final String ADVICES_UPDATED = "advicesUpdated";
    private static final String INSTANCE_ADVISOR_MIXIN = "instanceAdvisorMixin";
-   private static final String CLASS_ADVISOR = "classAdvisor";
 
    //method names in advisor or GeneratedClassAdvisor
    private static final String CREATE_INSTANCE_ADVISOR = "createInstanceAdvisor";
@@ -86,7 +84,6 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
    CtClass clazz;
    CtClass genadvisor;
    CtClass genInstanceAdvisor;
-
 
    public GeneratedAdvisorInstrumentor(AOPClassPool pool, AspectManager manager, JoinpointClassifier joinpointClassifier, DynamicTransformationObserver observer)
    {
@@ -307,10 +304,6 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       final CtClass untransformable = getClassPool().get("org.jboss.aop.instrument.Untransformable");
       genInstanceAdvisor.addInterface(untransformable);
 
-      //Add reference to parent advisor
-      CtField classAdvisor = new CtField(genadvisor, CLASS_ADVISOR, genInstanceAdvisor);
-      genInstanceAdvisor.addField(classAdvisor);
-
       CtMethod advicesUpdated = CtNewMethod.make(
             Modifier.PROTECTED,
             CtClass.voidType,
@@ -345,7 +338,6 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
          "{" +
          "    super($2);" +
          "   " + INSTANCE_ADVISOR_MIXIN + " = new org.jboss.aop.GeneratedInstanceAdvisorMixin($1, $2);" +
-         "   this.classAdvisor = $2;" +
          "}";
       CtConstructor ctor = CtNewConstructor.make(new CtClass[]{forName("java.lang.Object"), genadvisor}, new CtClass[0], body, genInstanceAdvisor);
       genInstanceAdvisor.addConstructor(ctor);
@@ -603,6 +595,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       boolean isSuper = false;
 
       StringBuffer advicesUpdatedCode = new StringBuffer();
+      StringBuffer initialiseInfosForInstanceCode = new StringBuffer();
 
       while (true)
       {
@@ -632,7 +625,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
                   infoClassName.equals(MethodByMethodInfo.class.getName()))
             {
                String code = infoName + " = super.copyInfoFromClassAdvisor(((" + genadvisor.getName() + ")" + clazz.getName() + "." + GET_CLASS_ADVISOR + "())." + infoName + ");";
-               addCodeToInitialiseMethod(genInstanceAdvisor, code, INITIALISE_INFOS_FOR_INSTANCE);
+               initialiseInfosForInstanceCode.append(code);
             }
          }
 
@@ -645,7 +638,13 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
          superClass = superClass.getSuperclass();
          superAdvisor = superAdvisor.getSuperclass();
       }
-
+      
+      if (initialiseInfosForInstanceCode.length() > 0)
+      {
+         initialiseInfosForInstanceCode.insert(0, genadvisor.getName() + " classAdvisor = (" + genadvisor.getName() + ")" + clazz.getName() + "." + GET_CLASS_ADVISOR + "();");
+      }
+      addCodeToInitialiseMethod(genInstanceAdvisor, initialiseInfosForInstanceCode.toString(), INITIALISE_INFOS_FOR_INSTANCE);
+      
       CtMethod advicesUpdated = genInstanceAdvisor.getDeclaredMethod(ADVICES_UPDATED);
       advicesUpdated.insertAfter(advicesUpdatedCode.toString());
    }
