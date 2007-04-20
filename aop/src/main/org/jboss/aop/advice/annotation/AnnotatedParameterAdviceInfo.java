@@ -22,6 +22,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
    // muttually exclusive context parameter rules
    private int[][] mutuallyExclusive;
    
+   private int[][] implication;
+   
    /**
     * Creates an annotated parameter advice info.
     * 
@@ -38,13 +40,15 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
     */
    public AnnotatedParameterAdviceInfo(AdviceMethodProperties properties,
          Method method, ParameterAnnotationRule[] rules,
-         ParameterAnnotationRule[] contextRules, int[][] mutuallyExclusive)
+         ParameterAnnotationRule[] contextRules, int[][] mutuallyExclusive,
+         int[][] implication)
       throws ParameterAnnotationRuleException
    {
       super(method, 0);
       this.paramTypes = createParameterAnnotationTypes(rules);
       this.contextParamTypes = createParameterAnnotationTypes(contextRules);
       this.mutuallyExclusive = mutuallyExclusive;
+      this.implication = implication;
       this.applyRules(properties);
    }
       
@@ -113,6 +117,31 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
                found = j;
             }
          }
+      }
+      
+      if (implication != null)
+      {
+    	  for (int i = 0; i < implication.length; i++)
+    	  {
+    		  ParameterAnnotationType implicator = paramTypes[implication[i][0]];
+    		  if (implicator.isSet())
+    		  {
+    			  for (int j = 1; j < implication[i].length; j++)
+    			  {
+    				  if (!paramTypes[implication[i][j]].isSet())
+    				  {
+    					  if (AspectManager.verbose)
+    	                  {
+    	                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - the use of parameter annotation ");
+    	                     AdviceMethodFactory.adviceMatchingMessage.append(paramTypes[implication[i][0]].rule.getAnnotation());
+    	                     AdviceMethodFactory.adviceMatchingMessage.append(" implies in the mandatory use of parameter annotation ");
+    	                     AdviceMethodFactory.adviceMatchingMessage.append(paramTypes[implication[i][j]].rule.getAnnotation());
+    	                  }
+    	                  return false;
+    				  }
+    			  }
+    		  }
+    	  }
       }
       return true;
    }
@@ -308,17 +337,6 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       public ParameterAnnotationType(ParameterAnnotationRule rule)
       {
          this.rule = rule;
-      }
-      
-      /**
-       * Indicates whether <code>parameterAnnotation</code> is of this type.
-       * 
-       * @param parameterAnnotation the parameter annotation
-       * @return <code>true</code> if parameter annotation is of this type
-       */
-      public final boolean applies(Annotation parameterAnnotation)
-      {
-         return parameterAnnotation.annotationType() == rule.getAnnotation();
       }
       
       /**

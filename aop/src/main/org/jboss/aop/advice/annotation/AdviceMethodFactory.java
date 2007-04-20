@@ -56,19 +56,19 @@ public class AdviceMethodFactory
     */
    public static final AdviceMethodFactory BEFORE = new AdviceMethodFactory (null,
          new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT},
-         ReturnType.VOID);
+         ReturnType.VOID, null);
    /**
     * Factory that selects advice methods for <i>after</i> interception.
     */
    public static final AdviceMethodFactory AFTER = new AdviceMethodFactory (null,
          new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT,
-         ParameterAnnotationRule.RETURN}, ReturnType.ANY);
+         ParameterAnnotationRule.RETURN}, ReturnType.ANY, null);
    /**
     * Factory that selects advice methods for <i>throwing</i> interception.
     */
    public static final AdviceMethodFactory THROWING = new AdviceMethodFactory (null,
          new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT,
-         ParameterAnnotationRule.THROWABLE}, ReturnType.VOID);
+         ParameterAnnotationRule.THROWABLE}, ReturnType.VOID, null);
    /**
     * Factory that selects advice methods for <i>aroung</i> interception.
     */
@@ -163,7 +163,7 @@ public class AdviceMethodFactory
             }
          },         
          new ParameterAnnotationRule[]{ParameterAnnotationRule.INVOCATION},
-         ReturnType.NOT_VOID);
+         ReturnType.NOT_VOID, null);
          
 
    static final short NOT_ASSIGNABLE_DEGREE = Short.MAX_VALUE;
@@ -210,6 +210,7 @@ public class AdviceMethodFactory
    private ReturnType returnType;
    private AdviceSignatureRule adviceSignatureRule;
    private ParameterAnnotationRule[] rules;
+   private int[][] implication;
    
    
    /**
@@ -223,13 +224,14 @@ public class AdviceMethodFactory
     *                            a value to overwrite the join point execution result.
     */
    private AdviceMethodFactory(AdviceSignatureRule adviceSignatureRule,
-         ParameterAnnotationRule[] rules, ReturnType returnType)
+         ParameterAnnotationRule[] rules, ReturnType returnType, int[][] implication)
    {
       this.adviceSignatureRule = adviceSignatureRule;
       this.rules = rules;
       this.returnType = returnType;
       this.adviceInfoCache = new HashMap
          <String, WeakHashMap<ParameterAnnotationRule[], Collection<AdviceInfo>>>();
+      this.implication = implication;
    }
    
    /**
@@ -376,7 +378,8 @@ public class AdviceMethodFactory
                {
                   // advice applies to annotated parameter rules
                   rankedAdvices.add(new AnnotatedParameterAdviceInfo(properties,
-                        methods[i], rules, contextRules, mutuallyExclusive));
+                        methods[i], rules, contextRules, mutuallyExclusive,
+                        implication));
                }catch (ParameterAnnotationRuleException pare)
                {
                   // no need to print messages -> 

@@ -30,6 +30,25 @@ import java.lang.annotation.RetentionPolicy;
  * Use this annotation on advice parameters that should contain values of 
  * advised joinpoint arguments.
  * 
+ * What are the arguments of a joinpoint depends on the type of the joinpoint itself.
+ * For instance, if the intercepted joinpoint is a method execution, its arguments
+ * are the method arguments.
+ * 
+ * If the optional <code>index</code> attribute is not defined, JBoss AOP will match
+ * the <code>@Arg</code> annotated parameter with the joinpoint argument closest with
+ * the closest type.
+ * 
+ * Look at the following example:
+ * 
+ * <code>
+ * </code>
+ * 
+ * In this scenario, JBoss AOP will match
+ * 
+ * To learn how JBoss AOP will match Arg annotated parameters with joinpoint
+ * arguments in more complex scenarios, please, refer to the Reference Manual
+ * documentation.
+ * 
  * @author Flavia Rainone
  */
 @Target (ElementType.PARAMETER) @Retention(RetentionPolicy.RUNTIME)
