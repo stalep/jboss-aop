@@ -68,7 +68,14 @@ public class AdviceMethodFactory
     */
    public static final AdviceMethodFactory THROWING = new AdviceMethodFactory (null,
          new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT,
-         ParameterAnnotationRule.THROWABLE}, ReturnType.VOID, null);
+         ParameterAnnotationRule.THROWN}, ReturnType.VOID, null);
+   /**
+    * Factory that selects advice methods for <i>finally</i> interception.
+    */
+   public static final AdviceMethodFactory FINALLY = new AdviceMethodFactory (null,
+         new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT,
+         ParameterAnnotationRule.THROWN, ParameterAnnotationRule.RETURN},
+         ReturnType.VOID, new int[][]{{2, 1}});
    /**
     * Factory that selects advice methods for <i>aroung</i> interception.
     */
@@ -210,7 +217,7 @@ public class AdviceMethodFactory
    private ReturnType returnType;
    private AdviceSignatureRule adviceSignatureRule;
    private ParameterAnnotationRule[] rules;
-   private int[][] implication;
+   private int[][] compulsory;
    
    
    /**
@@ -222,16 +229,19 @@ public class AdviceMethodFactory
     *                            this factory on the advice method matching.
     * @param returnType          indicates whether the queried advice methods can return
     *                            a value to overwrite the join point execution result.
+    * @param compulsory          a list of the annotated parameters whose use is
+    *                            compulsory only if the precondition annotation is
+    *                            present among the annotated parameters.
     */
    private AdviceMethodFactory(AdviceSignatureRule adviceSignatureRule,
-         ParameterAnnotationRule[] rules, ReturnType returnType, int[][] implication)
+         ParameterAnnotationRule[] rules, ReturnType returnType, int[][] compulsory)
    {
       this.adviceSignatureRule = adviceSignatureRule;
       this.rules = rules;
       this.returnType = returnType;
       this.adviceInfoCache = new HashMap
          <String, WeakHashMap<ParameterAnnotationRule[], Collection<AdviceInfo>>>();
-      this.implication = implication;
+      this.compulsory = compulsory;
    }
    
    /**
@@ -243,6 +253,7 @@ public class AdviceMethodFactory
     */
    public final AdviceMethodProperties findAdviceMethod(AdviceMethodProperties properties)
    {
+      System.out.println(">>>FINDING ADVICE " + properties.getAdviceName());
       if (AspectManager.verbose)
       {
          adviceMatchingMessage = new StringBuffer();
@@ -379,7 +390,7 @@ public class AdviceMethodFactory
                   // advice applies to annotated parameter rules
                   rankedAdvices.add(new AnnotatedParameterAdviceInfo(properties,
                         methods[i], rules, contextRules, mutuallyExclusive,
-                        implication));
+                        compulsory));
                }catch (ParameterAnnotationRuleException pare)
                {
                   // no need to print messages -> 

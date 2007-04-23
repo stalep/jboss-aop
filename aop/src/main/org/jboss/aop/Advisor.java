@@ -49,7 +49,6 @@ import javassist.CtMethod;
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.CFlowInterceptor;
-import org.jboss.aop.advice.GeneratedOnly;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.PrecedenceSorter;
@@ -770,7 +769,7 @@ public abstract class Advisor
    {
       for (int i = 0; i < factories.length; i++)
       {
-         if (factories[i] instanceof GeneratedOnly)
+         if (factories[i].getType().isGeneratedOnly())
          {
             throw new RuntimeException("Before/After/Throwing is only supported for Generated Advisors");
          }

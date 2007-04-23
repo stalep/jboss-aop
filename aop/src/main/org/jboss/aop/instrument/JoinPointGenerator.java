@@ -21,7 +21,6 @@
   */
 package org.jboss.aop.instrument;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.security.AccessController;
@@ -46,11 +45,11 @@ import javassist.NotFoundException;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.CallerConstructorInfo;
-import org.jboss.aop.ConByConInfo;
 import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.advice.AdviceType;
 import org.jboss.aop.advice.GeneratedAdvisorInterceptor;
 import org.jboss.aop.advice.Scope;
 import org.jboss.aop.advice.annotation.AdviceMethodFactory;
@@ -59,7 +58,6 @@ import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
 import org.jboss.aop.pointcut.ast.ClassExpression;
 import org.jboss.aop.util.JavassistUtils;
 import org.jboss.aop.util.ReflectToJavassist;
-import org.jboss.util.collection.temp.WeakValueHashMap;
 
 /**
  * Creates the Joinpoint invocation replacement classes used with Generated advisors
@@ -82,6 +80,7 @@ public abstract class JoinPointGenerator
    public static final String JOINPOINT_CLASS_PREFIX = "JoinPoint_";
    private static final String RETURN_VALUE = "ret";
    private static final String THROWABLE = "t";
+   private static final String THROWABLE_FOR_FINALLY = "throwableForFinally";
    protected static final String ARGUMENTS= "arguments";
    private static final String GET_ARGUMENTS= OptimizedBehaviourInvocations.GET_ARGUMENTS + "()";
    protected static final CtClass[] EMPTY_CTCLASS_ARRAY = new CtClass[0];
@@ -97,13 +96,15 @@ public abstract class JoinPointGenerator
    private String joinpointFqn;
    private Field joinpointField;
    private boolean initialised;
+   
    private ThreadLocal<Set<Integer>> inconsistentTypeArgs;
    
    /**
     * A cache of the generated joinpoint classes indexed by the interceptor chains for the info to 
     * avoid having to generate a new class on every single rebind
     */
-   private HashMap generatedJoinPointClassCache = new HashMap();
+   private HashMap<String, GeneratedClassInfo> generatedJoinPointClassCache =
+      new HashMap<String, GeneratedClassInfo>();
    
    protected JoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info,
          JoinPointParameters parameters, int argumentsSize)
@@ -209,6 +210,8 @@ public abstract class JoinPointGenerator
     */
    private void doGenerateJoinPointClass(ClassLoader classloader, JoinPointInfo info)
    {
+      
+      System.out.println("GENERATING JOINPOINT CLASS " + info);
       try
       {
          if (classloader  == null)
@@ -318,7 +321,7 @@ public abstract class JoinPointGenerator
          clazz.setSuperclass(superClass);
          addUntransformableInterface(pool, clazz);
   
-         AdviceSetupsByType setups = initialiseAdviceInfosAndAddFields(pool, clazz, newInfo);
+         AdviceSetups setups = initialiseAdviceInfosAndAddFields(pool, clazz, newInfo);
          
          createConstructors(pool, superClass, clazz, setups);
          createJoinPointInvokeMethod(
@@ -328,10 +331,10 @@ public abstract class JoinPointGenerator
                setups,
                newInfo);
   
-         createInvokeNextMethod(clazz, isVoid(), setups.getAroundSetups(), newInfo);
+         createInvokeNextMethod(clazz, isVoid(), setups, newInfo);
   
          overrideDispatchMethods(superClass, clazz, newInfo);
-         return new GeneratedClassInfo(clazz, setups.getAroundSetups());
+         return new GeneratedClassInfo(clazz, setups);
       }
       catch (NotFoundException e)
       {
@@ -417,7 +420,7 @@ public abstract class JoinPointGenerator
       }
    }
 
-   private AdviceSetupsByType initialiseAdviceInfosAndAddFields(ClassPool pool, CtClass clazz, JoinPointInfo info) throws ClassNotFoundException, NotFoundException, CannotCompileException
+   private AdviceSetups initialiseAdviceInfosAndAddFields(ClassPool pool, CtClass clazz, JoinPointInfo info) throws ClassNotFoundException, NotFoundException, CannotCompileException
    {
       HashMap<String, Integer> cflows = new HashMap<String, Integer>();
       AdviceSetup[] setups = new AdviceSetup[info.getInterceptors().length];
@@ -429,7 +432,7 @@ public abstract class JoinPointGenerator
          addCFlowFieldsAndGetters(pool, setups[i], clazz, cflows);
       }
    
-      return new AdviceSetupsByType(info, setups);
+      return new AdviceSetups(info, setups);
    }
    
    private void addAspectFieldAndGetter(ClassPool pool, CtClass clazz, AdviceSetup setup) throws NotFoundException, CannotCompileException
@@ -529,7 +532,7 @@ public abstract class JoinPointGenerator
       }
    }
    
-   private void createJoinPointInvokeMethod(CtClass superClass, CtClass clazz, boolean isVoid, AdviceSetupsByType setups, JoinPointInfo info) throws CannotCompileException, NotFoundException
+   private void createJoinPointInvokeMethod(CtClass superClass, CtClass clazz, boolean isVoid, AdviceSetups setups, JoinPointInfo info) throws CannotCompileException, NotFoundException
    {
       CtMethod superInvoke = superClass.getDeclaredMethod(INVOKE_JOINPOINT);
       String code = null;
@@ -555,10 +558,14 @@ public abstract class JoinPointGenerator
    }
    
    private String createJoinpointInvokeBody(CtClass joinpointClass,
-         AdviceSetupsByType setups, CtClass[] declaredExceptions, CtClass[] parameterTypes, JoinPointInfo info)throws NotFoundException
+         AdviceSetups setups, CtClass[] declaredExceptions, CtClass[] parameterTypes, JoinPointInfo info)throws NotFoundException
    {
+      AdviceCallStrategy defaultCall = DefaultAdviceCallStrategy.getInstance();
+      AdviceCallStrategy afterCall = AfterAdviceCallStrategy.getInstance();
+      
       StringBuffer code = new StringBuffer();
       code.append("{");
+
       if (!isVoid())
       {
          String ret = null;
@@ -576,10 +583,15 @@ public abstract class JoinPointGenerator
          }
          code.append("   " + ClassExpression.simpleType(getReturnType()) + "  " + RETURN_VALUE + " = " + ret + ";");
       }
+      
+      // declare the throwable in an outer variable (this is needed for finally)
+      code.append("Throwable ").append(THROWABLE).append(" = null;");
+      
+      
       code.append("   try");
       code.append("   {");
-      boolean argsFoundBefore = DefaultAdviceCallStrategy.getInstance().
-         addInvokeCode(this, setups.getBeforeSetups(), code, info);
+      boolean argsFoundBefore = defaultCall.
+         addInvokeCode(this, setups.getByType(AdviceType.BEFORE), code, info);
       
       // add around according to whether @Args were found before
       boolean joinPointCreated = addAroundInvokeCode(code, setups, joinpointClass,
@@ -587,13 +599,27 @@ public abstract class JoinPointGenerator
       
       // generate after code
       StringBuffer afterCode = new StringBuffer();
-      boolean argsFoundAfter = AfterAdviceCallStrategy.getInstance().addInvokeCode(
-            this, setups.getAfterSetups(), afterCode, info);
+      boolean argsFoundAfter = afterCall.addInvokeCode(this,
+            setups.getByType(AdviceType.AFTER), afterCode, info);
       afterCode.append("   }");
-      afterCode.append("   catch(java.lang.Throwable " + THROWABLE + ")");
+      afterCode.append("   catch(java.lang.Throwable throwable)");
       afterCode.append("   {");
-      argsFoundAfter = DefaultAdviceCallStrategy.getInstance().addInvokeCode(this,
-            setups.getThrowingSetups(), afterCode, info) || argsFoundAfter;
+      // store throwable in THROWABLE variable
+      afterCode.append(THROWABLE).append(" = ").append("throwable;");
+      argsFoundAfter = defaultCall.addInvokeCode(this,
+            setups.getByType(AdviceType.THROWING), afterCode, info) || argsFoundAfter;
+      
+      addHandleExceptionCode(afterCode, declaredExceptions);
+      afterCode.append("   }");
+      
+      AdviceSetup[] finallySetups = setups.getByType(AdviceType.FINALLY);
+      if (finallySetups!= null && finallySetups.length > 0)
+      {
+         afterCode.append("   finally {");
+         argsFoundAfter = afterCall.addInvokeCode(this, finallySetups, afterCode,
+               info) || argsFoundAfter;
+         afterCode.append("}");
+      }
       
       // if joinpoint has been created for around,
       // need to update arguments variable when this variable is used,
@@ -603,7 +629,6 @@ public abstract class JoinPointGenerator
       //   to update the variable value according to what is contained in joinpoint)
       if (joinPointCreated &&  (argsFoundAfter ||
             inconsistentTypeArgs.get().size() < joinPointArguments.size()))
-         // TODO ((argsFoundAfter || argsFoundBefore) && joinPointCreated) ||
       {
          code.append(ARGUMENTS);
          code.append(" = jp.").append(GET_ARGUMENTS).append(";");
@@ -612,14 +637,12 @@ public abstract class JoinPointGenerator
       
       // add after code
       code.append(afterCode.toString());
-      // finish code body
-      addHandleExceptionCode(code, declaredExceptions);
-      code.append("   }");
+      
       if (!isVoid())
       {
          code.append("   return " + RETURN_VALUE + ";");
       }
-      code.append("}");;
+      code.append("}");
       
       // declare arguments array if necessary
       if (argsFoundBefore || argsFoundAfter)
@@ -629,11 +652,11 @@ public abstract class JoinPointGenerator
       return code.toString();
    }
 
-   private boolean addAroundInvokeCode(StringBuffer code, AdviceSetupsByType setups,
+   private boolean addAroundInvokeCode(StringBuffer code, AdviceSetups setups,
          CtClass joinpointClass, boolean argsFoundBefore, CtClass[] parameterTypes)
    throws NotFoundException
    {
-      if (setups.getAroundSetups() != null)
+      if (setups.getByType(AdviceType.AROUND) != null)
       {
          StringBuffer aspects = new StringBuffer();
          StringBuffer cflows = new StringBuffer();
@@ -737,8 +760,9 @@ public abstract class JoinPointGenerator
       code.append("throw new java.lang.RuntimeException(t);");
    }
 
-   private void createInvokeNextMethod(CtClass jp, boolean isVoid, AdviceSetup[] aroundSetups, JoinPointInfo info) throws NotFoundException, CannotCompileException
+   private void createInvokeNextMethod(CtClass jp, boolean isVoid, AdviceSetups setups, JoinPointInfo info) throws NotFoundException, CannotCompileException
    {
+      AdviceSetup[] aroundSetups = setups.getByType(AdviceType.AROUND);
       if (aroundSetups == null) return;
       
       CtMethod method = jp.getSuperclass().getSuperclass().getDeclaredMethod("invokeNext");
@@ -779,7 +803,7 @@ public abstract class JoinPointGenerator
       return body.toString();
    }
    
-   private void createConstructors(ClassPool pool, CtClass superClass, CtClass clazz, AdviceSetupsByType setups) throws NotFoundException, CannotCompileException
+   private void createConstructors(ClassPool pool, CtClass superClass, CtClass clazz, AdviceSetups setups) throws NotFoundException, CannotCompileException
    {
       CtConstructor[] superCtors = superClass.getDeclaredConstructors();
       if (superCtors.length != 3 && superCtors.length != 2 && !this.getClass().equals(MethodJoinPointGenerator.class)
@@ -853,7 +877,7 @@ public abstract class JoinPointGenerator
     * This is the constructor that will be called by the GeneratedClassAdvisor, make sure it
     * initialises all the non-per-instance aspects
     */
-   private void createPublicConstructor(CtConstructor superCtor, CtClass clazz, AdviceSetupsByType setups)throws CannotCompileException, NotFoundException
+   private void createPublicConstructor(CtConstructor superCtor, CtClass clazz, AdviceSetups setups)throws CannotCompileException, NotFoundException
    {
       StringBuffer body = new StringBuffer();
       try
@@ -888,7 +912,7 @@ public abstract class JoinPointGenerator
     * make sure it copies across all the non-per-instance aspects
     */
    private void createProtectedConstructors(ClassPool pool, CtConstructor superCtor1,
-         CtConstructor superCtor2, CtClass clazz, AdviceSetupsByType setups)
+         CtConstructor superCtor2, CtClass clazz, AdviceSetups setups)
          throws CannotCompileException, NotFoundException
    {
       
@@ -1147,9 +1171,8 @@ public abstract class JoinPointGenerator
       String cflowString;
       ASTCFlowExpression cflowExpr;
       int cflowIndex;
-      boolean isBefore;
-      boolean isAfter;
-      boolean isThrowing;
+      AdviceType type;
+      
       AdviceMethodProperties adviceMethodProperties;
       
       AdviceSetup(int index, GeneratedAdvisorInterceptor ifw, JoinPointInfo info) throws ClassNotFoundException, NotFoundException
@@ -1171,9 +1194,7 @@ public abstract class JoinPointGenerator
          }
          aspectCtClass = ReflectToJavassist.classToJavassist(aspectClass);
 
-         isBefore = ifw.isBefore();
-         isAfter = ifw.isAfter();
-         isThrowing = ifw.isThrowing();
+         type = ifw.getType();
       }
       
       String getAdviceName()
@@ -1210,26 +1231,7 @@ public abstract class JoinPointGenerator
       String getAspectFieldName()
       {
          StringBuffer name = new StringBuffer();
-         if (isAround())
-         {
-            name.append("around");
-         }
-         else if (isBefore())
-         {
-            name.append("before");
-         }
-         else if (isAfter())
-         {
-            name.append("after");
-         }
-         else if (isThrowing())
-         {
-            name.append("throwing");
-         }
-         else
-         {
-            if (AspectManager.verbose) System.out.println("[warn] Unsupported type of advice");
-         }
+         name.append(type.getDescription());
          name.append(index + 1);
          return name.toString();
       }
@@ -1237,26 +1239,7 @@ public abstract class JoinPointGenerator
       String getAspectInitialiserName()
       {
          StringBuffer name = new StringBuffer();
-         if (isAround())
-         {
-            name.append("getAround");
-         }
-         else if (isBefore())
-         {
-            name.append("getBefore");
-         }
-         else if (isAfter())
-         {
-            name.append("getAfter");
-         }
-         else if (isThrowing())
-         {
-            name.append("getThrowing");
-         }
-         else
-         {
-            if (AspectManager.verbose) System.out.println("[warn] Unsupported type of advice");
-         }
+         name.append(type.getAccessor());
          name.append(index + 1);
          return name.toString();
       }
@@ -1306,24 +1289,9 @@ public abstract class JoinPointGenerator
          return (getCFlowString() != null && index == cflowIndex);
       }
 
-      boolean isAfter()
+      public AdviceType getType()
       {
-         return isAfter;
-      }
-
-      boolean isBefore()
-      {
-         return isBefore;
-      }
-
-      boolean isThrowing()
-      {
-         return isThrowing;
-      }
-      
-      boolean isAround()
-      {
-         return !isAfter && !isBefore && !isThrowing;
+         return this.type;
       }
 
       public AdviceMethodProperties getAdviceMethodProperties()
@@ -1342,10 +1310,10 @@ public abstract class JoinPointGenerator
       CtClass generated;
       AdviceSetup[] aroundSetups;
       
-      GeneratedClassInfo(CtClass generated, AdviceSetup[] aroundSetups)
+      GeneratedClassInfo(CtClass generated, AdviceSetups setups)
       {
          this.generated = generated;
-         this.aroundSetups = aroundSetups;
+         this.aroundSetups = setups.getByType(AdviceType.AROUND);
       }
       
       CtClass getGenerated()
@@ -1359,107 +1327,61 @@ public abstract class JoinPointGenerator
       }
    }
    
-   private class AdviceSetupsByType
+   private class AdviceSetups
    {
-      AdviceSetup[] allSetups; 
-      AdviceSetup[] beforeSetups;
-      AdviceSetup[] afterSetups;
-      AdviceSetup[] throwingSetups;
-      AdviceSetup[] aroundSetups;
-
-      AdviceSetupsByType(JoinPointInfo info, AdviceSetup[] setups)
+      AdviceSetup[] allSetups;
+      AdviceSetup[][] setups;
+      
+      AdviceSetups(JoinPointInfo info, AdviceSetup[] allSetups)
       {
-         allSetups = setups;
-         ArrayList<AdviceSetup> beforeAspects = null;
-         ArrayList<AdviceSetup> afterAspects = null;
-         ArrayList<AdviceSetup> throwingAspects = null;
-         ArrayList<AdviceSetup> aroundAspects = null;
-
-         for (int i = 0 ; i < setups.length ; i++)
+         this.allSetups = allSetups;
+         int length = AdviceType.values().length;
+         ArrayList<AdviceSetup>[] aspects = (ArrayList<AdviceSetup>[]) new ArrayList<?>[length];
+         for (int i = 0 ; i < allSetups.length ; i++)
          {
-            if (setups[i].isBefore())
+            
+            AdviceMethodProperties properties = getAdviceMethodProperties(info, allSetups[i]);
+            AdviceType type = allSetups[i].getType();
+            int index = type.ordinal();
+            if (aspects[index] == null)
             {
-               if (beforeAspects == null) beforeAspects = new ArrayList<AdviceSetup>();
-               
-               AdviceMethodProperties properties = AdviceMethodFactory.BEFORE.findAdviceMethod(getAdviceMethodProperties(info, setups[i]));
-               if (properties != null)
-               {
-                  setups[i].setAdviceMethodProperties(properties);
-                  beforeAspects.add(setups[i]);
-                  continue;
-               }
-            }
-            else if (setups[i].isAfter())
-            {
-               if (afterAspects == null) afterAspects = new ArrayList<AdviceSetup>();
-               AdviceMethodProperties properties = AdviceMethodFactory.AFTER.findAdviceMethod(getAdviceMethodProperties(info, setups[i]));
-               if (properties != null)
-               {
-                  setups[i].setAdviceMethodProperties(properties);
-                  afterAspects.add(setups[i]);
-                  continue;
-               }
-            }
-            else if (setups[i].isThrowing())
-            {
-               if (throwingAspects == null) throwingAspects = new ArrayList<AdviceSetup>();
-               AdviceMethodProperties properties = AdviceMethodFactory.THROWING.findAdviceMethod(getAdviceMethodProperties(info, setups[i]));
-               if (properties != null)
-               {
-                  setups[i].setAdviceMethodProperties(properties);
-                  throwingAspects.add(setups[i]);
-                  continue;
-               }
-            }
-            else
-            {
-               if (aroundAspects == null) aroundAspects = new ArrayList<AdviceSetup>();
-               AdviceMethodProperties properties = AdviceMethodFactory.AROUND.findAdviceMethod(getAdviceMethodProperties(info, setups[i]));
-               if (properties != null)
-               {
-                  setups[i].setAdviceMethodProperties(properties);
-                  aroundAspects.add(setups[i]);
-                  continue;
-               }
+               aspects[index] = new ArrayList<AdviceSetup>();
             }
             
-            if (AspectManager.verbose)
+            properties = type.getFactory().findAdviceMethod(properties);
+            if (properties != null)
             {
-               System.out.print("[warn] No matching advice called '" + setups[i].getAdviceName() + 
-                     "' could be found in " + setups[i].getAspectClass().getName() +
-                     " for joinpoint " + info + ":");
-               System.out.println(AdviceMethodFactory.getAdviceMatchingMessage());
+               allSetups[i].setAdviceMethodProperties(properties);
+               aspects[index].add(allSetups[i]);
             }
          }
-         beforeSetups = (beforeAspects == null) ? null : (AdviceSetup[])beforeAspects.toArray(new AdviceSetup[beforeAspects.size()]);
-         afterSetups = (afterAspects == null) ? null : (AdviceSetup[])afterAspects.toArray(new AdviceSetup[afterAspects.size()]);
-         throwingSetups = (throwingAspects == null) ? null : (AdviceSetup[])throwingAspects.toArray(new AdviceSetup[throwingAspects.size()]);
-         aroundSetups = (aroundAspects == null) ? null : (AdviceSetup[])aroundAspects.toArray(new AdviceSetup[aroundAspects.size()]);
+         
+         this.setups = new AdviceSetup[length][];
+         for (int i = 0; i < length; i++)
+         {
+            this.setups[i] = (aspects[i] == null)? null: (AdviceSetup[])
+                  aspects[i].toArray(new AdviceSetup[aspects[i].size()]);
+         }
       }
 
+      /**
+       * Returns the list of all advice setups, regardless of the advice type.
+       */
       public AdviceSetup[] getAllSetups()
       {
          return allSetups;
       }
       
-      public AdviceSetup[] getAfterSetups()
+      /**
+       * Returns the setups list corresponding to the advice type.
+       * 
+       * @param type the advice type
+       * 
+       * @return an array of <code>AdviceSetup</code> instances.
+       */
+      public AdviceSetup[] getByType(AdviceType type)
       {
-         return afterSetups;
-      }
-
-      public AdviceSetup[] getAroundSetups()
-      {
-         return aroundSetups;
-      }
-
-      public AdviceSetup[] getBeforeSetups()
-      {
-         return beforeSetups;
-      }
-
-      public AdviceSetup[] getThrowingSetups()
-      {
-         return throwingSetups;
+         return this.setups[type.ordinal()];
       }
    }
 
@@ -1532,8 +1454,7 @@ public abstract class JoinPointGenerator
            StringBuffer beforeCall, StringBuffer call, JoinPointGenerator generator, JoinPointInfo info) throws NotFoundException;
       
       private final boolean appendAdviceCall(AdviceSetup setup,
-            StringBuffer beforeCall, StringBuffer call,
-            boolean isAround, JoinPointGenerator generator) 
+            StringBuffer beforeCall, StringBuffer call, JoinPointGenerator generator) 
       {
          AdviceMethodProperties properties = setup.getAdviceMethodProperties();
          if (properties == null)
@@ -1634,85 +1555,6 @@ public abstract class JoinPointGenerator
          }
          return false;
       }
-      
-//      private final boolean appendParameters(StringBuffer code, final int arg,
-//            final Class adviceParam, boolean isAround,
-//            AdviceMethodProperties properties, JoinPointGenerator generator)
-//      {
-//         code.append("(");
-//         // In case of overloaded methods javassist sometimes seems to pick up the wrong method - use explicit casts to get hold of the parameters
-//         code.append(ClassExpression.simpleType(adviceParam));
-//         code.append(")");
-//         switch(arg)
-//         {
-//         case AdviceMethodProperties.INVOCATION_ARG:
-//            code.append("this");
-//            break;
-//         case AdviceMethodProperties.JOINPOINT_ARG:
-//            code.append(INFO_FIELD);
-//            break;
-//         case AdviceMethodProperties.RETURN_ARG:
-//            code.append(RETURN_VALUE);
-//            break;
-//         case AdviceMethodProperties.THROWABLE_ARG:
-//            code.append(THROWABLE);
-//            break;
-//         case AdviceMethodProperties.TARGET_ARG:
-//            if (!generator.parameters.hasTarget())
-//            {
-//               code.append("null");
-//            }
-//            else if (isAround)
-//            {
-//               code.append(TARGET_FIELD);
-//            }
-//            else
-//            {
-//               code.append('$');
-//               code.append(generator.parameters.getTargetIndex());
-//            }
-//            break;
-//         case AdviceMethodProperties.CALLER_ARG:
-//            if (!generator.parameters.hasCaller())
-//            {
-//               code.append("null");
-//            }
-//            else if (isAround)
-//            {
-//               code.append(CALLER_FIELD);
-//            }
-//            else
-//            {
-//               code.append('$');
-//               code.append(generator.parameters.getCallerIndex());
-//            }
-//            break;
-//         case AdviceMethodProperties.ARGS_ARG:
-//            if (isAround)
-//            {
-//               code.append(GET_ARGUMENTS);
-//            }
-//            else
-//            {
-//               code.append(ARGUMENTS);
-//            }
-//            // return true when args has been found; false otherwise
-//            return true;
-//         default:
-//            if (isAround)
-//            {
-//               code.append("this.arg");
-//               code.append(arg);
-//            }
-//            else 
-//            {
-//               //The parameter array is 1-based, and the invokeJoinPoint method may also take the target and caller objects
-//               code.append("$");
-//               code.append(arg + generator.parameters.getFirstArgIndex());
-//            }
-//         }
-//         return false;
-//      }
    }
    
    private static class AroundAdviceCallStrategy extends AdviceCallStrategy
@@ -1811,8 +1653,7 @@ public abstract class JoinPointGenerator
          call.append("   ");
          call.append(returnStr);
          call.append(" ");
-         boolean result = super.appendAdviceCall(setup, beforeCall, call, true,
-               generator);
+         boolean result = super.appendAdviceCall(setup, beforeCall, call, generator);
          
          if (!firstParamIsInvocation)
          {
@@ -1883,7 +1724,7 @@ public abstract class JoinPointGenerator
       public boolean appendAdviceCall(AdviceSetup setup, String key,
             StringBuffer beforeCall, StringBuffer call, JoinPointGenerator generator, JoinPointInfo info)
       {
-         return super.appendAdviceCall(setup, beforeCall, call, false, generator);
+         return super.appendAdviceCall(setup, beforeCall, call, generator);
       }
    }
    
@@ -1916,7 +1757,7 @@ public abstract class JoinPointGenerator
          {
             call.append(key);
          }
-         return super.appendAdviceCall(setup, beforeCall, call, false, generator);
+         return super.appendAdviceCall(setup, beforeCall, call, generator);
       }
    }
 
@@ -2097,6 +1938,5 @@ public abstract class JoinPointGenerator
             code.append("]");
          }
       }
-   }
-   
+   }  
 }

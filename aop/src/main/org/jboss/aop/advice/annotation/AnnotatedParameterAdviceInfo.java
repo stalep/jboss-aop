@@ -21,8 +21,10 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
    private ParameterAnnotationType contextParamTypes[];
    // muttually exclusive context parameter rules
    private int[][] mutuallyExclusive;
-   
-   private int[][] implication;
+   // compusloriness rules: for each subarray, the first element is the precondition;
+   // the following elements are the annotations whose use is compulsory given
+   // that precondition is present among the annotated parameters
+   private int[][] compulsory;
    
    /**
     * Creates an annotated parameter advice info.
@@ -34,6 +36,9 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
     *                          comply with
     * @param contextRules      second priority rules this method should comply with
     * @param mutuallyExclusive a list of mutually exclusive context parameter rules
+    * @param compulsory        a list of the annotated parameters whose use is
+    *                          compulsory only if the precondition annotation is
+    *                          present among the annotated parameters.
     * 
     * @throws ParameterAnnotationRuleException thrown when the advice method does not
     *         comply with a parameter annotation rule.
@@ -41,14 +46,14 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
    public AnnotatedParameterAdviceInfo(AdviceMethodProperties properties,
          Method method, ParameterAnnotationRule[] rules,
          ParameterAnnotationRule[] contextRules, int[][] mutuallyExclusive,
-         int[][] implication)
+         int[][] compulsory)
       throws ParameterAnnotationRuleException
    {
       super(method, 0);
       this.paramTypes = createParameterAnnotationTypes(rules);
       this.contextParamTypes = createParameterAnnotationTypes(contextRules);
       this.mutuallyExclusive = mutuallyExclusive;
-      this.implication = implication;
+      this.compulsory = compulsory;
       this.applyRules(properties);
    }
       
@@ -119,23 +124,24 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          }
       }
       
-      if (implication != null)
+      if (compulsory != null)
       {
-    	  for (int i = 0; i < implication.length; i++)
+    	  for (int i = 0; i < compulsory.length; i++)
     	  {
-    		  ParameterAnnotationType implicator = paramTypes[implication[i][0]];
-    		  if (implicator.isSet())
+    		  ParameterAnnotationType precondition = paramTypes[compulsory[i][0]];
+    		  if (precondition.isSet())
     		  {
-    			  for (int j = 1; j < implication[i].length; j++)
+    			  for (int j = 1; j < compulsory[i].length; j++)
     			  {
-    				  if (!paramTypes[implication[i][j]].isSet())
+    				  if (!paramTypes[compulsory[i][j]].isSet())
     				  {
     					  if (AspectManager.verbose)
     	                  {
-    	                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - the use of parameter annotation ");
-    	                     AdviceMethodFactory.adviceMatchingMessage.append(paramTypes[implication[i][0]].rule.getAnnotation());
-    	                     AdviceMethodFactory.adviceMatchingMessage.append(" implies in the mandatory use of parameter annotation ");
-    	                     AdviceMethodFactory.adviceMatchingMessage.append(paramTypes[implication[i][j]].rule.getAnnotation());
+    	                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - if parameter annotation ");
+    	                     AdviceMethodFactory.adviceMatchingMessage.append(precondition.rule.getAnnotation());
+    	                     AdviceMethodFactory.adviceMatchingMessage.append(" is used, the use of parameter annotation ");
+    	                     AdviceMethodFactory.adviceMatchingMessage.append(paramTypes[compulsory[i][j]].rule.getAnnotation());
+                             AdviceMethodFactory.adviceMatchingMessage.append(" is compulsory");
     	                  }
     	                  return false;
     				  }

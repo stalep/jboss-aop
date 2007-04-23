@@ -53,6 +53,11 @@ public class ScopedInterceptorFactory implements InterceptorFactory
    {
       return "invoke";
    }
+   
+   public AdviceType getType()
+   {
+      return AdviceType.AROUND;
+   }
 
    public boolean isDeployed()
    {

@@ -33,9 +33,9 @@ import java.util.ArrayList;
 public class AdviceStack
 {
    protected String name;
-   protected ArrayList interceptorFactories;
+   protected ArrayList<InterceptorFactory> interceptorFactories;
 
-   public AdviceStack(String name, ArrayList factories)
+   public AdviceStack(String name, ArrayList<InterceptorFactory> factories)
    {
       this.name = name;
       interceptorFactories = factories;
@@ -43,18 +43,18 @@ public class AdviceStack
 
    public String getName() { return name; }
 
-   public ArrayList getInterceptorFactories() { return interceptorFactories; }
+   public ArrayList<InterceptorFactory> getInterceptorFactories() { return interceptorFactories; }
 
 
    public Interceptor[] createInterceptors(Advisor advisor, Joinpoint jp)
    {
-      ArrayList interceptors = new ArrayList();
+      ArrayList<Interceptor> interceptors = new ArrayList<Interceptor>();
       for (int i = 0; i < interceptorFactories.size(); i++)
       {
          InterceptorFactory factory = (InterceptorFactory) interceptorFactories.get(i);
          if (factory.isDeployed()) interceptors.add(factory.create(advisor, jp));
       }
-      return (Interceptor[])interceptors.toArray(new Interceptor[interceptors.size()]);
+      return interceptors.toArray(new Interceptor[interceptors.size()]);
    }
 
    public Interceptor[] createInterceptors()

@@ -22,6 +22,7 @@
 package org.jboss.aop;
 
 import org.jboss.aop.advice.AdviceStack;
+import org.jboss.aop.advice.AdviceType;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.advice.InterceptorFactory;
@@ -439,6 +440,11 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
       public boolean isDeployed()
       {
          return true;
+      }
+
+      public AdviceType getType()
+      {
+         return AdviceType.AROUND;
       }
    }
 }

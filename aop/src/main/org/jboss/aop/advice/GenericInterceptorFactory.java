@@ -105,5 +105,9 @@ public class GenericInterceptorFactory implements InterceptorFactory
       
       return true;
    }
-}
 
+   public AdviceType getType()
+   {
+      return AdviceType.AROUND;
+   }
+}

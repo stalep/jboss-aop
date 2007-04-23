@@ -37,23 +37,61 @@ public class AdviceFactory implements InterceptorFactory
 {
    private String advice;
    private AspectDefinition aspect;
-
+   private AdviceType type;
+   
+   /**
+    * Creates a factory that generates advice interceptors.
+    * Use this constructor if you want to record an advice of the 
+    * (@link {@link AdviceType#AROUND default type}.
+    * 
+    * @param aspect     definition of the aspect that contains the advice method
+    * @param adviceName name of the advice method
+    */
    public AdviceFactory(AspectDefinition aspect, String adviceName)
+   {
+      this(aspect, adviceName, AdviceType.AROUND);
+   }
+   
+   /**
+    * Creates a factory that generates advice interceptors.
+    * Use this constructor if you want specify the advice type.
+    * 
+    * @param aspect     definition of the aspect that contains the advice method
+    * @param adviceName name of the advice method
+    * @param type       the type of the advice
+    */
+   public AdviceFactory(AspectDefinition aspect, String adviceName, AdviceType type)
    {
       this.aspect = aspect;
       this.advice = adviceName;
+      this.type = type;
    }
-
+   
+   /**
+    * Returns the definition of the aspect that contains this advice method.
+    */
    public AspectDefinition getAspect()
    {
       return aspect;
    }
 
+   /**
+    * Returns the name of the advice method.
+    */
    public String getAdvice()
    {
       return advice;
    }
 
+   /**
+    * Returns the type of the advice.
+    */
+   public AdviceType getType()
+   {
+      return type;
+   }
+   
+   
    public boolean isDeployed()
    {
       return aspect.isDeployed();

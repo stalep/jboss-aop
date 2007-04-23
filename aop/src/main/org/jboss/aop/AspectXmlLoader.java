@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -35,12 +36,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AdviceFactory;
 import org.jboss.aop.advice.AdviceStack;
-import org.jboss.aop.advice.AfterFactory;
+import org.jboss.aop.advice.AdviceType;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.AspectFactory;
 import org.jboss.aop.advice.AspectFactoryDelegator;
 import org.jboss.aop.advice.AspectFactoryWithClassLoader;
-import org.jboss.aop.advice.BeforeFactory;
 import org.jboss.aop.advice.DynamicCFlowDefinition;
 import org.jboss.aop.advice.GenericAspectFactory;
 import org.jboss.aop.advice.InterceptorFactory;
@@ -49,7 +49,6 @@ import org.jboss.aop.advice.PrecedenceDefEntry;
 import org.jboss.aop.advice.Scope;
 import org.jboss.aop.advice.ScopeUtil;
 import org.jboss.aop.advice.ScopedInterceptorFactory;
-import org.jboss.aop.advice.ThrowingFactory;
 import org.jboss.aop.introduction.AnnotationIntroduction;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.metadata.ClassMetaDataBinding;
@@ -225,24 +224,26 @@ public class AspectXmlLoader implements XmlLoader
       if (def == null) throw new RuntimeException("advice " + name + " cannot find aspect " + aspect);
       
       String tagName = element.getTagName();
-      
       AdviceFactory factory = null;
       if (tagName.equals("advice"))
       {
+         // default advice type
          factory = new AdviceFactory(def, name);
       }
-      else if (tagName.equals("before"))
+      else
       {
-         factory = new BeforeFactory(def, name);
+         AdviceType type = null;
+         try
+         {
+            type = Enum.valueOf(AdviceType.class, tagName.toUpperCase());
+         }
+         catch (IllegalArgumentException e)
+         {
+            throw new RuntimeException(" cannot find advice tag " + tagName);
+         }
+         factory = new AdviceFactory(def, name, type);
       }
-      else if (tagName.equals("after"))
-      {
-         factory = new AfterFactory(def, name);
-      }
-      else if (tagName.equals("throwing"))
-      {
-         factory = new ThrowingFactory(def, name);
-      }
+      
       manager.addInterceptorFactory(factory.getName(), factory);
       return factory;
    }

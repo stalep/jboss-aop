@@ -338,24 +338,9 @@ public class GeneratedAdvisorInterceptor implements Interceptor
       }
    }
    
-   public boolean isBefore()
+   public AdviceType getType()
    {
-      return factory instanceof BeforeFactory;
-   }
-   
-   public boolean isAfter()
-   {
-      return factory instanceof AfterFactory;
-   }
-   
-   public boolean isThrowing()
-   {
-      return factory instanceof ThrowingFactory;
-   }
-   
-   public boolean isAround()
-   {
-      return !isBefore() && !isAfter() && ! isThrowing(); 
+      return factory.getType();
    }
    
    public boolean isInterceptor()
@@ -425,9 +410,9 @@ public class GeneratedAdvisorInterceptor implements Interceptor
          {
             if (lazyInterceptor == null)
             {
-               if (factory instanceof GeneratedOnly)
+               if (factory.getType().isGeneratedOnly())
                {
-                  lazyInterceptor = new GeneratedOnlyInterceptor(factory.getName(), (GeneratedOnly)factory); 
+                  lazyInterceptor = new GeneratedOnlyInterceptor(factory.getName(), factory); 
                }
                else
                {
@@ -483,25 +468,25 @@ public class GeneratedAdvisorInterceptor implements Interceptor
       if (adviceString == null)
       {
          StringBuffer buf = new StringBuffer();
-         if (isAround())
+         switch(getType())
          {
-            buf.append("R");
-         }
-         else if (isBefore())
-         {
-            buf.append("B");
-         }
-         else if (isAfter())
-         {
-            buf.append("A");
-         }
-         else if (isThrowing())
-         {
-            buf.append("T");
-         }
-         else 
-         {
-            throw new RuntimeException("No such interceptor");
+            case AROUND:
+               buf.append("R");
+               break;
+            case BEFORE:
+               buf.append("B");
+               break;
+            case AFTER:
+               buf.append("A");
+               break;
+            case THROWING:
+               buf.append("T");
+               break;
+            case FINALLY:
+               buf.append("F");
+               break;
+            default:
+               throw new RuntimeException("No such interceptor");
          }
          
          buf.append("~#$%");
@@ -517,25 +502,13 @@ public class GeneratedAdvisorInterceptor implements Interceptor
    private class GeneratedOnlyInterceptor implements Interceptor
    {
       String name;
-      String type;
       
-      GeneratedOnlyInterceptor(String name, GeneratedOnly factory)
+      GeneratedOnlyInterceptor(String name, InterceptorFactory factory)
       {
          this.name = name;
-
-         if (factory instanceof BeforeFactory)
-         {
-            type = "before";
-         }
-         else if (factory instanceof AfterFactory)
-         {
-            type = "after";
-         }
-         else if (factory instanceof ThrowingFactory)
-         {
-            type = "throwing";
-         }
-         System.out.println("[warn] " + type + " interceptor:s'" + name + "' is ignored for dynamic invocation. Adding null GeneratedOnlyInterceptor in its place");
+         System.out.println("[warn] " + factory.getType().getDescription() +
+               " interceptor:s'" + name +
+               "' is ignored for dynamic invocation. Adding null GeneratedOnlyInterceptor in its place");
       }
       
       public String getName()
