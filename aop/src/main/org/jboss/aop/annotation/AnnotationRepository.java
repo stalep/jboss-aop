@@ -29,12 +29,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.jboss.aop.annotation.factory.duplicate.AnnotationCreator;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 import javassist.CtMember;
 
 /**
@@ -50,9 +50,9 @@ public class AnnotationRepository
    /** Read/Write lock to be used when lazy creating the collections */
    protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-   Map annotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
-   Map classAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
-   Map disabledAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
+   Map annotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   Map classAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   Map disabledAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
    
    public Map getAnnotations()
    {
@@ -285,14 +285,14 @@ public class AnnotationRepository
 
    protected void initAnnotationsMap()
    {
-      if (annotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      if (annotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
          lockWrite();
          try
          {
-            if (annotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            if (annotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               annotations = new ConcurrentReaderHashMap();;
+               annotations = new ConcurrentHashMap();;
             }
          }
          finally
@@ -304,14 +304,14 @@ public class AnnotationRepository
 
    protected void initClassAnnotationsMap()
    {
-      if (classAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      if (classAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
          lockWrite();
          try
          {
-            if (classAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            if (classAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               classAnnotations = new ConcurrentReaderHashMap();;
+               classAnnotations = new ConcurrentHashMap();;
             }
          }
          finally
@@ -323,14 +323,14 @@ public class AnnotationRepository
 
    protected void initDisabledAnnotationsMap()
    {
-      if (disabledAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      if (disabledAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
          lockWrite();
          try
          {
-            if (disabledAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            if (disabledAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               disabledAnnotations = new ConcurrentReaderHashMap();;
+               disabledAnnotations = new ConcurrentHashMap();;
             }
          }
          finally

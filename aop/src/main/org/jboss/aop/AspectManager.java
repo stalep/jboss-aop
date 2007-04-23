@@ -38,6 +38,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.WeakHashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.jboss.aop.advice.AdviceBinding;
@@ -76,7 +77,6 @@ import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.util.collection.WeakValueHashMap;
 import org.jboss.util.loading.Translatable;
 import org.jboss.util.loading.Translator;
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.scopedpool.ScopedClassPool;
@@ -130,10 +130,10 @@ public class AspectManager
    protected HashMap classMetaDataLoaders = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
    protected HashMap interceptorStacks = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
    protected HashMap declares = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
-   protected ConcurrentReaderHashMap cflowStacks = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
-   protected ConcurrentReaderHashMap dynamicCFlows = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
-   protected ConcurrentReaderHashMap aspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
-   protected ConcurrentReaderHashMap perVMAspects = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
+   protected ConcurrentHashMap cflowStacks = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   protected ConcurrentHashMap dynamicCFlows = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   protected ConcurrentHashMap aspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   protected ConcurrentHashMap perVMAspects = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
 
    /** class name prefixes to explicitly exclude unless contained in include. Maintained by top-level AspectManager */
    protected ArrayList exclude = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
@@ -2309,14 +2309,14 @@ public class AspectManager
    
    protected void initCflowStacksMap()
    {
-      if (cflowStacks == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      if (cflowStacks == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
          lockWrite();
          try
          {
-            if (cflowStacks == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            if (cflowStacks == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               cflowStacks = new ConcurrentReaderHashMap();
+               cflowStacks = new ConcurrentHashMap();
             }
          }
          finally
@@ -2328,14 +2328,14 @@ public class AspectManager
    
    protected void initDynamicCflowsMap()
    {
-      if (dynamicCFlows == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      if (dynamicCFlows == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
          lockWrite();
          try
          {
-            if (dynamicCFlows == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            if (dynamicCFlows == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               dynamicCFlows = new ConcurrentReaderHashMap();
+               dynamicCFlows = new ConcurrentHashMap();
             }
          }
          finally
@@ -2347,14 +2347,14 @@ public class AspectManager
    
    protected void initAspectDefintitionsMap()
    {
-      if (aspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      if (aspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
          lockWrite();
          try
          {
-            if (aspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            if (aspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               aspectDefinitions = new ConcurrentReaderHashMap();
+               aspectDefinitions = new ConcurrentHashMap();
             }
          }
          finally
@@ -2366,14 +2366,14 @@ public class AspectManager
    
    protected void initPerVMAspectsMap()
    {
-      if (perVMAspects == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      if (perVMAspects == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
          lockWrite();
          try
          {
-            if (perVMAspects == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            if (perVMAspects == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               perVMAspects = new ConcurrentReaderHashMap();
+               perVMAspects = new ConcurrentHashMap();
             }
          }
          finally

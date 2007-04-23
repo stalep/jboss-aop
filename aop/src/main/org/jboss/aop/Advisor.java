@@ -37,6 +37,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javassist.CtClass;
@@ -74,9 +76,6 @@ import org.jboss.metadata.spi.MetaData;
 import org.jboss.metadata.spi.signature.MethodSignature;
 import org.jboss.util.NestedRuntimeException;
 import org.jboss.util.NotImplementedException;
-
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
-import EDU.oswego.cs.dl.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
@@ -139,10 +138,10 @@ public abstract class Advisor
    protected boolean doesHaveAspects = false;
 
    protected String name;
-   protected ConcurrentReaderHashMap aspects = new ConcurrentReaderHashMap();
+   protected ConcurrentHashMap aspects = new ConcurrentHashMap();
    protected HashMap adviceInterceptors = new HashMap();
    protected CopyOnWriteArraySet perInstanceAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_COPYONWRITE_ARRAYSET;
-   protected ConcurrentReaderHashMap perInstanceJoinpointAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP;
+   protected ConcurrentHashMap perInstanceJoinpointAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
 
    static Class cl = java.lang.String.class;
    protected TLongObjectHashMap advisedMethods = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
@@ -1261,14 +1260,14 @@ public abstract class Advisor
    
    protected void initPerInstanceJoinpointAspectDefinitionsMap()
    {
-      if (perInstanceJoinpointAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+      if (perInstanceJoinpointAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
          lockWrite();
          try
          {
-            if (perInstanceJoinpointAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_READER_HASHMAP)
+            if (perInstanceJoinpointAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               perInstanceJoinpointAspectDefinitions = new ConcurrentReaderHashMap();
+               perInstanceJoinpointAspectDefinitions = new ConcurrentHashMap();
             }
          }
          finally

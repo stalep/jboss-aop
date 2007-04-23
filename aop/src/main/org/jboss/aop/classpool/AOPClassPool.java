@@ -24,10 +24,10 @@ package org.jboss.aop.classpool;
 import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.aop.AspectManager;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
@@ -41,9 +41,9 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 public class AOPClassPool extends ScopedClassPool
 {
    /** Classnames of classes that will be created - we do not want to look for these in other pools */
-   protected ConcurrentReaderHashMap generatedClasses = new ConcurrentReaderHashMap();
+   protected ConcurrentHashMap generatedClasses = new ConcurrentHashMap();
    
-   protected ConcurrentReaderHashMap localResources = new ConcurrentReaderHashMap();
+   protected ConcurrentHashMap localResources = new ConcurrentHashMap();
 
    static 
    {

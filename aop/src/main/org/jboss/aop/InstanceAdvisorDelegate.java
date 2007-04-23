@@ -27,12 +27,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.metadata.SimpleMetaData;
-
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 
 /**
  * Initialisation and getting of instance and joinpoint aspects needed by the various kinds of
@@ -122,7 +121,7 @@ public class InstanceAdvisorDelegate implements Serializable
          while (it.hasNext())
          {
             AspectDefinition def = (AspectDefinition) it.next();
-            ConcurrentReaderHashMap joins = new ConcurrentReaderHashMap();
+            ConcurrentHashMap joins = new ConcurrentHashMap();
             joinpointAspects.put(def, joins);
             Set joinpoints = (Set) jpAspects.get(def);
             Iterator jps = joinpoints.iterator();
@@ -198,7 +197,7 @@ public class InstanceAdvisorDelegate implements Serializable
                Map map = (Map) copy.get(def);
                if (map == null)
                {
-                  map = new ConcurrentReaderHashMap();
+                  map = new ConcurrentHashMap();
                }
                map.put(joinpoint, aspect);
                joinpointAspects = copy;

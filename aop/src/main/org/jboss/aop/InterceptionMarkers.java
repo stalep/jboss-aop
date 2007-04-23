@@ -21,7 +21,7 @@
 */ 
 package org.jboss.aop;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 
@@ -30,13 +30,13 @@ import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
  */
 public class InterceptionMarkers
 {
-   protected final ConcurrentReaderHashMap convertableReference = new ConcurrentReaderHashMap();
-   protected final ConcurrentReaderHashMap hasFieldInterception = new ConcurrentReaderHashMap();
-   protected final ConcurrentReaderHashMap hasConstructorInterception = new ConcurrentReaderHashMap();
+   protected final ConcurrentHashMap convertableReference = new ConcurrentHashMap();
+   protected final ConcurrentHashMap hasFieldInterception = new ConcurrentHashMap();
+   protected final ConcurrentHashMap hasConstructorInterception = new ConcurrentHashMap();
 
-   protected final ConcurrentReaderHashMap skipConvertableReference = new ConcurrentReaderHashMap();
-   protected final ConcurrentReaderHashMap skipFieldInterception = new ConcurrentReaderHashMap();
-   protected final ConcurrentReaderHashMap skipConstructorInterception = new ConcurrentReaderHashMap();
+   protected final ConcurrentHashMap skipConvertableReference = new ConcurrentHashMap();
+   protected final ConcurrentHashMap skipFieldInterception = new ConcurrentHashMap();
+   protected final ConcurrentHashMap skipConstructorInterception = new ConcurrentHashMap();
 
    public void addConstructionInterceptionMarker(String classname)
    {

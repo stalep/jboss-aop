@@ -96,10 +96,6 @@ public class ClassAdvisor extends Advisor
 
    //Information about con by method caller pointcuts, lazy initialized when needed
    private volatile ConByMethodData conByMethodData;
-//   // constructor caller pointcut support for methods calling constructors only
-//   protected TLongObjectHashMap conCalledByMethodBindings = new TLongObjectHashMap();
-//   protected HashMap backrefConCalledByMethodBindings = new HashMap();
-//   protected TLongObjectHashMap conCalledByMethodInterceptors = new TLongObjectHashMap();
 
    // caller pointcut support for constructors calling methods
    protected HashMap[] methodCalledByConBindings;

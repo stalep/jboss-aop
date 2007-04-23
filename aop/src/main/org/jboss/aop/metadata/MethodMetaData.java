@@ -25,12 +25,11 @@ import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.aop.util.PayloadKey;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
-
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 /**
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
@@ -39,7 +38,7 @@ import java.util.Map;
  */
 public class MethodMetaData implements MetaDataResolver
 {
-   Map methodMetaData = new ConcurrentReaderHashMap();
+   Map methodMetaData = new ConcurrentHashMap();
    HashMap inexactMatches;
 
    public boolean hasTag(String group)

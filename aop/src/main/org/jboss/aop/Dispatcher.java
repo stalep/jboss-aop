@@ -25,6 +25,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.InvocationResponse;
 import org.jboss.aop.joinpoint.MethodInvocation;
@@ -32,8 +34,6 @@ import org.jboss.aop.proxy.ClassProxy;
 import org.jboss.aop.proxy.ClassProxyFactory;
 import org.jboss.aop.proxy.Proxy;
 import org.jboss.aop.util.reference.MethodPersistentReference;
-
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 
 /**
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
@@ -46,7 +46,7 @@ public class Dispatcher
    public static final String OID = "OID";
    public static final Dispatcher singleton = new Dispatcher();
 
-   Map targetMap = new ConcurrentReaderHashMap();
+   Map targetMap = new ConcurrentHashMap();
 
 
    public boolean isRegistered(Object oid)

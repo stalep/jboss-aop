@@ -29,11 +29,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.jboss.util.collection.WeakValueHashMap;
-
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
-import EDU.oswego.cs.dl.util.concurrent.CopyOnWriteArraySet;
 
 
 /**
@@ -47,13 +46,13 @@ import EDU.oswego.cs.dl.util.concurrent.CopyOnWriteArraySet;
 public class UnmodifiableEmptyCollections
 {
    public static final LinkedHashMap EMPTY_LINKED_HASHMAP = new LockedLinkedHashMap();
-   public static final ConcurrentReaderHashMap EMPTY_CONCURRENT_READER_HASHMAP = new LockedConcurrentReaderHashMap();
    public static final HashMap EMPTY_HASHMAP = new LockedHashMap();
    public static final WeakHashMap EMPTY_WEAK_HASHMAP = new LockedWeakHashMap();
    public static final WeakValueHashMap EMPTY_WEAK_VALUE_HASHMAP = new LockedWeakValueHashMap();
    public static final ArrayList EMPTY_ARRAYLIST = new LockedArrayList();
    public static final CopyOnWriteArraySet EMPTY_COPYONWRITE_ARRAYSET = new LockedCopyOnWriteArraySet();
    public static final TLongObjectHashMap EMPTY_TLONG_OBJECT_HASHMAP = new LockedTLongObjectHashMap();
+   public static final ConcurrentHashMap EMPTY_CONCURRENT_HASHMAP = new LockedConcurrentHashMap();
 
    private static class LockedHashMap<K,V> extends HashMap<K,V>
    {
@@ -87,22 +86,6 @@ public class UnmodifiableEmptyCollections
       }
    }
 
-   private static class LockedConcurrentReaderHashMap extends ConcurrentReaderHashMap
-   {
-      private static final long serialVersionUID = 1L;
-
-      @Override
-      public Object put(Object arg0, Object arg1)
-      {
-         return super.put(arg0, arg1);
-      }
-      @Override
-      public synchronized void putAll(Map arg0)
-      {
-         super.putAll(arg0);
-      }
-   }
-   
    private static class LockedWeakHashMap<K,V> extends WeakHashMap<K,V>
    {
       private static final long serialVersionUID = 1L;
@@ -154,23 +137,22 @@ public class UnmodifiableEmptyCollections
       }
    }
    
-   private static class LockedCopyOnWriteArraySet extends CopyOnWriteArraySet
+   private static class LockedCopyOnWriteArraySet<E> extends CopyOnWriteArraySet<E>
    {
       private static final long serialVersionUID = 1L;
 
       @Override
-      public boolean add(Object arg0)
+      public boolean add(E arg0)
       {
-         return super.add(arg0);
+         throw new UnsupportedOperationException();
       }
 
       @Override
-      public boolean addAll(Collection arg0)
+      public boolean addAll(Collection<? extends E> arg0)
       {
-         return super.addAll(arg0);
+         throw new UnsupportedOperationException();
       }
    }
-
    
    private static class LockedTLongObjectHashMap extends TLongObjectHashMap
    {
@@ -181,4 +163,21 @@ public class UnmodifiableEmptyCollections
          throw new UnsupportedOperationException();
       }
    }
+   
+   private static class LockedConcurrentHashMap<K, V> extends ConcurrentHashMap<K, V>
+   {
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      public V put(K key, V value) 
+      {
+         throw new UnsupportedOperationException();
+      }
+      @Override
+      public void putAll(Map<? extends K, ? extends V> t) 
+      {
+         throw new UnsupportedOperationException();
+      }
+   }
+   
 }
