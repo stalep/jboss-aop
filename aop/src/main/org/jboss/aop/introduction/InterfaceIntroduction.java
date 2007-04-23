@@ -100,9 +100,9 @@ public class InterfaceIntroduction
    }
 
    protected String name;
-   protected ArrayList advisors = new ArrayList();
+   protected ArrayList<WeakReference<Advisor>> advisors = new ArrayList<WeakReference<Advisor>>();
    protected String[] interfaces;
-   protected ArrayList mixins = new ArrayList();
+   protected ArrayList<InterfaceIntroduction.Mixin> mixins = new ArrayList<InterfaceIntroduction.Mixin>();
    protected ClassExpression classExpr;
    protected ASTStart ast;
    
@@ -165,7 +165,7 @@ public class InterfaceIntroduction
       }
    }
 
-   public void setMixins(ArrayList mixins)
+   public void setMixins(ArrayList<InterfaceIntroduction.Mixin> mixins)
    {
       this.mixins = mixins;
    }
@@ -195,7 +195,7 @@ public class InterfaceIntroduction
       return interfaces;
    }
 
-   public ArrayList getMixins()
+   public ArrayList<InterfaceIntroduction.Mixin> getMixins()
    {
       return mixins;
    }
@@ -216,7 +216,7 @@ public class InterfaceIntroduction
    
    public void addAdvisor(Advisor advisor)
    {
-      advisors.add(new WeakReference(advisor));
+      advisors.add(new WeakReference<Advisor>(advisor));
       advisor.addInterfaceIntroduction(this);
    }
 
@@ -224,8 +224,7 @@ public class InterfaceIntroduction
    {
       for (int i = 0; i < advisors.size(); i++)
       {
-         WeakReference ref = (WeakReference) advisors.get(i);
-         Advisor advisor = (Advisor) ref.get();
+         Advisor advisor = advisors.get(i).get();
          if (advisor != null)
             advisor.removeInterfaceIntroduction(this);
       }

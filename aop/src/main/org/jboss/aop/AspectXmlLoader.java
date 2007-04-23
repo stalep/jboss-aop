@@ -86,9 +86,12 @@ public class AspectXmlLoader implements XmlLoader
    protected int counter;
    protected String defaultBaseName;
    protected AspectManager manager;
-   protected ArrayList bindings = new ArrayList();
-   protected ArrayList factories = new ArrayList();
-   protected ArrayList aspects = new ArrayList();
+   // list of binding names
+   protected ArrayList<String> bindings = new ArrayList<String>();
+   // list of factory names
+   protected ArrayList<String> factories = new ArrayList<String>();
+   // list of aspect names
+   protected ArrayList<String> aspects = new ArrayList<String>();
 
    public AspectXmlLoader()
    {
@@ -274,8 +277,8 @@ public class AspectXmlLoader implements XmlLoader
             throw new RuntimeException(cflow, e);  //To change body of catch statement use Options | File Templates.
          }
       }
-      ArrayList interceptors = loadInterceptors(element);
-      InterceptorFactory[] inters = (InterceptorFactory[]) interceptors.toArray(new InterceptorFactory[interceptors.size()]);
+      ArrayList<InterceptorFactory> interceptors = loadInterceptors(element);
+      InterceptorFactory[] inters = interceptors.toArray(new InterceptorFactory[interceptors.size()]);
       Pointcut p = null;
       try
       {
@@ -304,7 +307,7 @@ public class AspectXmlLoader implements XmlLoader
    {
       String name = getName(element, "precedence");
 
-      ArrayList precedenceEntries = new ArrayList();
+      ArrayList<PrecedenceDefEntry> precedenceEntries = new ArrayList<PrecedenceDefEntry>();
       NodeList children2 = element.getChildNodes();
       for (int j = 0; j < children2.getLength(); j++)
       {
@@ -345,14 +348,14 @@ public class AspectXmlLoader implements XmlLoader
          }
       }
 
-      PrecedenceDefEntry[] entries = (PrecedenceDefEntry[]) precedenceEntries.toArray(new PrecedenceDefEntry[precedenceEntries.size()]);
+      PrecedenceDefEntry[] entries = precedenceEntries.toArray(new PrecedenceDefEntry[precedenceEntries.size()]);
       manager.addPrecedence(new PrecedenceDef(name, entries));
    }
 
 
-   private ArrayList loadInterceptors(Element element) throws Exception
+   private ArrayList<InterceptorFactory> loadInterceptors(Element element) throws Exception
    {
-      ArrayList interceptors = new ArrayList();
+      ArrayList<InterceptorFactory> interceptors = new ArrayList<InterceptorFactory>();
       NodeList children2 = element.getChildNodes();
       for (int j = 0; j < children2.getLength(); j++)
       {
@@ -509,7 +512,7 @@ public class AspectXmlLoader implements XmlLoader
 
    public void deployInterceptorStack(Element element) throws Exception
    {
-      ArrayList interceptors = loadInterceptors(element);
+      ArrayList<InterceptorFactory> interceptors = loadInterceptors(element);
       String name = element.getAttribute("name");
       AdviceStack stack = new AdviceStack(name, interceptors);
       manager.addAdviceStack(stack);
@@ -753,13 +756,13 @@ public class AspectXmlLoader implements XmlLoader
       if (intfs != null)
       {
          StringTokenizer tokenizer = new StringTokenizer(intfs, ",");
-         ArrayList interfaces = new ArrayList();
+         ArrayList<String> interfaces = new ArrayList<String>();
          while (tokenizer.hasMoreTokens())
          {
             String intf = tokenizer.nextToken().trim();
             if (!intf.equals("")) interfaces.add(intf);
          }
-         ifaces = (String[]) interfaces.toArray(new String[interfaces.size()]);
+         ifaces = interfaces.toArray(new String[interfaces.size()]);
       }
 
       InterfaceIntroduction pcut = null;
@@ -793,13 +796,13 @@ public class AspectXmlLoader implements XmlLoader
 
             intfs = XmlHelper.getUniqueChildContent(mixin, "interfaces");
             StringTokenizer tokenizer = new StringTokenizer(intfs, ",");
-            ArrayList interfaces = new ArrayList();
+            ArrayList<String> interfaces = new ArrayList<String>();
             while (tokenizer.hasMoreTokens())
             {
                String intf = tokenizer.nextToken().trim();
                if (!intf.equals("")) interfaces.add(intf);
             }
-            ifaces = (String[]) interfaces.toArray(new String[interfaces.size()]);
+            ifaces = interfaces.toArray(new String[interfaces.size()]);
             pcut.getMixins().add(new InterfaceIntroduction.Mixin(classname, ifaces, construction, isTransient));
          }
       }
@@ -972,14 +975,14 @@ public class AspectXmlLoader implements XmlLoader
       DomainDefinition def = manager.getContainer(name);
       if (def == null) throw new RuntimeException("Unable to undeploy container: " + name);
       AspectManager push = manager;
-      ArrayList oldFactories = factories;
-      ArrayList oldAspects = aspects;
-      ArrayList oldBindings = bindings;
+      ArrayList<String> oldFactories = factories;
+      ArrayList<String> oldAspects = aspects;
+      ArrayList<String> oldBindings = bindings;
       try
       {
-         factories = new ArrayList();
-         aspects = new ArrayList();
-         bindings = new ArrayList();
+         factories = new ArrayList<String>();
+         aspects = new ArrayList<String>();
+         bindings = new ArrayList<String>();
          manager = def.getManager();
          undeployTopElements(element);
          bulkUndeploy();
