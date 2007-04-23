@@ -15,6 +15,20 @@
   <build>
     <sourceDirectory>src/main/</sourceDirectory>
     <testSourceDirectory>src/test/</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>docs</directory>
+        <includes>
+          <include>jboss-aop_1_0.dtd</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/etc</directory>
+        <includes>
+          <include>jbossorg-eula.txt</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -30,28 +44,52 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>override</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <skip>false</skip>
+              <includes>
+                <include>org/jboss/test/aop/override/**/*TestCase.java</include>
+                <include>org/jboss/test/aop/override/**/*Tester.java</include>
+              </includes>
+              <excludes>
+                <exclude>**/GenAdvisorOverrideTestCase.java</exclude>
+                <exclude>org/jboss/test/aop/reflection/ReflectionAspectTester.java</exclude>
+                <exclude>org/jboss/test/aop/basic/POJOAspectTester.java</exclude>
+              </excludes>
+              <systemProperties>
+                <property>
+                  <name>jboss.aop.path</name>
+                  <value>/home/pgier/projects/aop/aop/src/resources/test/override/jboss-aop.xml</value>
+                </property>
+                <property>
+                  <name>instrumentator</name>
+                  <value>org.jboss.aop.instrument.ClassicInstrumentor</value>
+                </property>
+              </systemProperties>
+            </configuration>
+          </execution>
+          <execution>
+            <id>advice</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>org/jboss/test/aop/advice/**/*TestCase.java</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
         <configuration>
           <testFailureIgnore>true</testFailureIgnore>
           <forkMode>always</forkMode>
-          <includes>
-            <include>org/jboss/test/aop/override/**/*TestCase.java</include>
-            <include>org/jboss/test/aop/override/**/*Tester.java</include>
-          </includes>
-          <excludes>
-            <exclude>**/GenAdvisorOverrideTestCase.java</exclude>
-            <exclude>org/jboss/test/aop/reflection/ReflectionAspectTester.java</exclude>
-            <exclude>org/jboss/test/aop/basic/POJOAspectTester.java</exclude>
-          </excludes>
-          <systemProperties>
-            <property>
-              <name>jboss.aop.path</name>
-              <value>/home/pgier/projects/aop/aop/src/resources/test/override/jboss-aop.xml</value>
-            </property>
-            <property>
-              <name>instrumentator</name>
-              <value>org.jboss.aop.instrument.ClassicInstrumentor</value>
-            </property>
-          </systemProperties>
+          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>
