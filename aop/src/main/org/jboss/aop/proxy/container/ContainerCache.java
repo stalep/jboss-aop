@@ -212,9 +212,12 @@ public class ContainerCache
       }
 
       Class proxiedClass = classAdvisor.getClazz();
-      Class clazz = (proxiedClass != null) ? proxiedClass : Object.class;
+      if (proxiedClass == null)
+      {
+         proxiedClass = Object.class;
+      }
       String[] introducedNames = getClassNames(interfaces);
-      InterfaceIntroduction intro = new InterfaceIntroduction("Introduction" + counter++, clazz.getName(), introducedNames);
+      InterfaceIntroduction intro = new InterfaceIntroduction("Introduction" + counter++, proxiedClass.getName(), introducedNames);
 
       if (mixinLength > 0)
       {
