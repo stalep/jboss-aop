@@ -41,20 +41,20 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       System.out.println("=== TESING SIMPLE");
       POJO pojo = new POJO();
       
-      System.out.println("* Calling method with error=false");
+      System.out.println("* Calling method1 with error=false");
       SimpleAspect.clear();
-      assertEquals(1, pojo.method(false));
+      assertEquals(1, pojo.method1(false));
       assertTrue(SimpleAspect.before);
       assertTrue(SimpleAspect.around);
       assertTrue(SimpleAspect.after);
       assertFalse(SimpleAspect.throwing);
       
       
-      System.out.println("* Calling method with error=true");
+      System.out.println("* Calling method1 with error=true");
       SimpleAspect.clear();
       try
       {
-         pojo.method(true);
+         pojo.method1(true);
          assertFalse("Should not get here", true);
       }
       catch(TestException e) 
@@ -66,6 +66,40 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       assertTrue(SimpleAspect.around);
       assertFalse(SimpleAspect.after);
       assertTrue(SimpleAspect.throwing);
+   }
+   
+   public void testSimpleWithFinally() throws Exception
+   {
+      System.out.println("=== TESING SIMPLE WITH FINALLY");
+      POJO pojo = new POJO();
+      
+      System.out.println("* Calling method2 with error=false");
+      SimpleAspect.clear();
+      assertEquals(1, pojo.method2(false));
+      assertTrue(SimpleAspect.before);
+      assertTrue(SimpleAspect.around);
+      assertTrue(SimpleAspect.after);
+      assertFalse(SimpleAspect.throwing);
+      assertTrue(SimpleAspect.finallyAdvice);
+      
+      
+      System.out.println("* Calling method2 with error=true");
+      SimpleAspect.clear();
+      try
+      {
+         pojo.method2(true);
+         assertFalse("Should not get here", true);
+      }
+      catch(TestException e) 
+      {
+         assertSame(e, SimpleAspect.exception);
+      }
+      
+      assertTrue(SimpleAspect.before);
+      assertTrue(SimpleAspect.around);
+      assertFalse(SimpleAspect.after);
+      assertTrue(SimpleAspect.throwing);
+      assertTrue(SimpleAspect.finallyAdvice);
    }
 
    public void testArgs() throws Exception
@@ -110,12 +144,12 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       assertFalse(SimpleAspect.throwing);
       
 
-      System.out.println("* Testing method(boolean) with exception");
+      System.out.println("* Testing method1(boolean) with exception");
       ArgsAspect.clear();
       SimpleAspect.clear();
       try
       {
-         pojo.method(true);
+         pojo.method1(true);
          throw new RuntimeException("TestException not thrown");
       }
       catch (TestException e)
@@ -131,10 +165,10 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       assertFalse(SimpleAspect.after);
       assertTrue(SimpleAspect.throwing);
 
-      System.out.println("* Testing method(boolean)");
+      System.out.println("* Testing method1(boolean)");
       ArgsAspect.clear();
       SimpleAspect.clear();
-      pojo.method(false);
+      pojo.method1(false);
       assertNull(ArgsAspect.before);
       assertNull(ArgsAspect.after);
       assertNull(ArgsAspect.throwing);

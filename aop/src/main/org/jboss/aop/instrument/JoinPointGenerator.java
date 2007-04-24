@@ -80,7 +80,6 @@ public abstract class JoinPointGenerator
    public static final String JOINPOINT_CLASS_PREFIX = "JoinPoint_";
    private static final String RETURN_VALUE = "ret";
    private static final String THROWABLE = "t";
-   private static final String THROWABLE_FOR_FINALLY = "throwableForFinally";
    protected static final String ARGUMENTS= "arguments";
    private static final String GET_ARGUMENTS= OptimizedBehaviourInvocations.GET_ARGUMENTS + "()";
    protected static final CtClass[] EMPTY_CTCLASS_ARRAY = new CtClass[0];
@@ -1351,6 +1350,13 @@ public abstract class JoinPointGenerator
             {
                allSetups[i].setAdviceMethodProperties(properties);
                aspects[index].add(allSetups[i]);
+            }
+            else if (AspectManager.verbose)
+            {
+               System.out.print("[warn] No matching advice called '" + allSetups[i].getAdviceName() + 
+                     "' could be found in " + allSetups[i].getAspectClass().getName() +
+                     " for joinpoint " + info + ":");
+               System.out.println(AdviceMethodFactory.getAdviceMatchingMessage());
             }
          }
          

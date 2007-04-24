@@ -219,31 +219,21 @@ public class AspectXmlLoader implements XmlLoader
       factories.add(factory);
    }
 
-   public InterceptorFactory deployAdvice(Element element) throws Exception
+   public InterceptorFactory deployAdvice(Element element, AdviceType type) throws Exception
    {
       String name = element.getAttribute("name");
       String aspect = element.getAttribute("aspect");
       AspectDefinition def = manager.getAspectDefinition(aspect);
       if (def == null) throw new RuntimeException("advice " + name + " cannot find aspect " + aspect);
       
-      String tagName = element.getTagName();
       AdviceFactory factory = null;
-      if (tagName.equals("advice"))
+      if (type == null)
       {
-         // default advice type
+         // use default advice type
          factory = new AdviceFactory(def, name);
       }
       else
       {
-         AdviceType type = null;
-         try
-         {
-            type = Enum.valueOf(AdviceType.class, tagName.toUpperCase());
-         }
-         catch (IllegalArgumentException e)
-         {
-            throw new RuntimeException(" cannot find advice tag " + tagName);
-         }
          factory = new AdviceFactory(def, name, type);
       }
       
@@ -383,9 +373,31 @@ public class AspectXmlLoader implements XmlLoader
                if (stack == null) throw new Exception("there is no <stack> defined for name: " + name);
                interceptors.addAll(stack.getInterceptorFactories());
             }
-            else if (tag2.equals("advice") || tag2.equals("before") || tag2.equals("after") || tag2.equals("throwing"))
+            else
             {
-               InterceptorFactory factory = deployAdvice(interceptorElement);
+               AdviceType type = null;
+               if (!tag2.equals("advice"))
+               {
+                  try
+                  {
+                     type = Enum.valueOf(AdviceType.class, tag2.toUpperCase());
+                  }
+                  catch (IllegalArgumentException e)
+                  {
+                     StringBuffer message = new StringBuffer();
+                     message.append("unexpected tag inside binding:");
+                     message.append(tag2);
+                     message.append("\n should be one of: \'interceptor\', \'interceptor-ref\', \'advice\', \'");
+                     for(AdviceType adviceType: AdviceType.values())
+                     {
+                        message.append(adviceType.getDescription());
+                        message.append("\', \'");
+                     }
+                     message.append("stack-ref\'");
+                     throw new RuntimeException(message.toString());
+                  }
+               }
+               InterceptorFactory factory = deployAdvice(interceptorElement, type);
                interceptors.add(factory);
             }
          }

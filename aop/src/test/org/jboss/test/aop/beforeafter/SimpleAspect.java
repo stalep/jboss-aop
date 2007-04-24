@@ -38,6 +38,7 @@ public class SimpleAspect
    public static boolean around;
    public static boolean after;
    public static boolean throwing;
+   public static boolean finallyAdvice;
    public static Throwable exception;
    
    public static void clear()
@@ -46,6 +47,7 @@ public class SimpleAspect
       around = false;
       after = false;
       throwing = false;
+      finallyAdvice = false;
       POJO.joinPointRun = false;
    }
    
@@ -80,5 +82,12 @@ public class SimpleAspect
       System.out.println("SimpleAspect.throwing");
       exception = t;
       throwing = true;
+   }
+   
+   public void finallyAdvice()
+   {
+      System.out.println("SimpleAspect.finallyAdvice");
+      finallyAdvice = true;
+      Assert.assertTrue(POJO.joinPointRun);
    }
 }

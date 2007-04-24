@@ -68,13 +68,13 @@ public class AdviceMethodFactory
     */
    public static final AdviceMethodFactory THROWING = new AdviceMethodFactory (null,
          new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT,
-         ParameterAnnotationRule.THROWN}, ReturnType.VOID, null);
+         ParameterAnnotationRule.MANDATORY_THROWN}, ReturnType.VOID, null);
    /**
     * Factory that selects advice methods for <i>finally</i> interception.
     */
    public static final AdviceMethodFactory FINALLY = new AdviceMethodFactory (null,
          new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT,
-         ParameterAnnotationRule.THROWN, ParameterAnnotationRule.RETURN},
+         ParameterAnnotationRule.OPTIONAL_THROWN, ParameterAnnotationRule.RETURN},
          ReturnType.VOID, new int[][]{{2, 1}});
    /**
     * Factory that selects advice methods for <i>aroung</i> interception.

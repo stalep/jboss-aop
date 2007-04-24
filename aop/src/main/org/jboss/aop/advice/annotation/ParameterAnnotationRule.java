@@ -76,10 +76,17 @@ enum ParameterAnnotationRule
    /**
     * Rule for parameter annotation {@link Thrown}.
     */
-   THROWN (
-         Thrown.class, Throwable.class, AdviceMethodProperties.THROWABLE_ARG, 50, true,
-         true),
+   OPTIONAL_THROWN (
+         Thrown.class, Throwable.class, AdviceMethodProperties.THROWABLE_ARG, 50,
+         false, true),
    
+   /**
+    * Rule for parameter annotation {@link Thrown}.
+    */
+   MANDATORY_THROWN (
+         Thrown.class, Throwable.class, AdviceMethodProperties.THROWABLE_ARG, 50,
+         true, true),
+         
    /**
     * Rule for parameter annotation {@link Return}.
     */

@@ -50,7 +50,15 @@ public class POJO
       joinPointRun = true;
    }
 
-   public int method(boolean error)throws TestException
+   public int method1(boolean error)throws TestException
+   {
+      joinPointRun = true;
+      if (error) throw new TestException();
+      
+      return 1;
+   }
+   
+   public int method2(boolean error)throws TestException
    {
       joinPointRun = true;
       if (error) throw new TestException();
