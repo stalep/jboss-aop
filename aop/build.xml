@@ -83,7 +83,6 @@
          <path refid="trove.classpath"/>
          <path refid="xdoclet.xdoclet.classpath"/>
          <path refid="apache.ant.classpath"/>
-         <path refid="oswego.concurrent.classpath"/>
          <path refid="junit.junit.classpath"/>
          <path refid="jboss.profiler.jvmti.classpath"/>
          <path refid="jboss/common.core.classpath"/>
@@ -464,11 +463,6 @@
       <copy todir="${build.lib}" filtering="no">
          <fileset dir="${trove.lib}">
             <include name="trove.jar"/>
-         </fileset>
-      </copy>
-      <copy todir="${build.lib}" filtering="no">
-         <fileset dir="${oswego.concurrent.lib}">
-            <include name="concurrent.jar"/>
          </fileset>
       </copy>
       <copy todir="${build.lib}" filtering="no">
