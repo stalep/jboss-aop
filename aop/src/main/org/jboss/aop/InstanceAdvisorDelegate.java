@@ -82,13 +82,19 @@ public class InstanceAdvisorDelegate implements Serializable
       if (getClassAdvisor() == null) return;
       if (aspects != null) return; // doublecheck I know, but I don't want to do synchronization if not needed
       //ClassAdvisor cadvisor = (ClassAdvisor) classAdvisor;
-      Set defs = getClassAdvisor().getPerInstanceAspectDefinitions();
       if (instanceAdvisor instanceof Advisor)
       {
          Advisor ia = (Advisor)instanceAdvisor;
          Set instanceDefs = ia.getPerInstanceAspectDefinitions();
-         defs.addAll(instanceDefs);
+         if (instanceDefs.size() > 0)
+         {
+            for (Iterator it = instanceDefs.iterator() ; it.hasNext() ; )
+            {
+               ia.addPerInstanceAspect((AspectDefinition)it.next());
+            }
+         }
       }
+      Set defs = getClassAdvisor().getPerInstanceAspectDefinitions();
       if (defs.size() > 0)
       {
          aspects = new WeakHashMap();
@@ -106,14 +112,23 @@ public class InstanceAdvisorDelegate implements Serializable
    {
       if (getClassAdvisor() == null) return;
       if (joinpointAspects != null) return; // doublecheck I know, but I don't want to do synchronization if not needed
-      Map jpAspects = getClassAdvisor().getPerInstanceJoinpointAspectDefinitions();
       if (instanceAdvisor instanceof Advisor)
       {
          Advisor ia = (Advisor)instanceAdvisor;
          Map instanceJpAspects = ia.getPerInstanceJoinpointAspectDefinitions();
-         jpAspects.putAll(instanceJpAspects);
+         
+         if (instanceJpAspects.size() > 0)
+         {
+            for (Iterator it = instanceJpAspects.keySet().iterator() ; it.hasNext() ; )
+            {
+               AspectDefinition def = (AspectDefinition) it.next();
+               Set joinpoints = (Set)instanceJpAspects.get(def);
+               ia.addPerInstanceJoinpointAspect(joinpoints, def);
+            }
+         }
       }
       
+      Map jpAspects = getClassAdvisor().getPerInstanceJoinpointAspectDefinitions();
       if (jpAspects.size() > 0)
       {
          joinpointAspects = new WeakHashMap();

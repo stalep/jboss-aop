@@ -701,6 +701,19 @@ public abstract class Advisor
       joinpoints.add(joinpoint);
    }
 
+   void addPerInstanceJoinpointAspect(Set joinpoints, AspectDefinition def)
+   {
+      initPerInstanceJoinpointAspectDefinitionsMap();
+      Set setJoinpoints = (Set) perInstanceJoinpointAspectDefinitions.get(def);
+      if (setJoinpoints == null)
+      {
+         setJoinpoints = new CopyOnWriteArraySet();
+         perInstanceJoinpointAspectDefinitions.put(def, setJoinpoints);
+         def.registerAdvisor(this);
+      }
+      setJoinpoints.addAll(joinpoints);
+   }
+   
    public void removePerInstanceJoinpointAspect(AspectDefinition def)
    {
       perInstanceJoinpointAspectDefinitions.remove(def);
