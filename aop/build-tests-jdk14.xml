@@ -95,7 +95,7 @@
          <path refid="xdoclet.xdoclet.classpath"/>
        </path>
 
-      <!-- 
+      <!--
             Settable in local.properties:
                -jrockit.home: location of JRockit JVM
                -jdk14.executable: Full path to a JDK 1.4 java.exe (Needed for the JDK 1.4 tests)
@@ -103,7 +103,7 @@
                -debug: if set, -Djboss.aop.debug.classes=true for the tests; otherwise it is false
        -->
       <property file="local.properties"/>
-      
+
       <condition property="jboss.aop.debug.classes" value="true">
          <isset property="debug"/>
       </condition>
@@ -506,10 +506,6 @@
          <param name="caller" value="non-optimized-precompiled-tests"/>
          <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
       </antcall>
-      <antcall target="_run-precompiled-test" inheritRefs="true">
-         <param name="test" value="nameddomain"/>
-         <param name="caller" value="non-optimized-precompiled-tests"/>
-      </antcall>
 
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-tests" inheritRefs="true">
@@ -517,6 +513,13 @@
          <param name="test-target" value="_run-precompiled-test"/>
       </antcall>
 
+   </target>
+
+   <target name="non-optimized-precompiled-test" depends="retroweave">
+      <antcall  target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="${test}"/>
+         <param name="caller" value="non-optimized-precompiled-tests"/>
+      </antcall>
    </target>
 
    <!-- ==================================================================================== -->
@@ -553,16 +556,20 @@
          <param name="caller" value="precompiled-genadvisor-tests"/>
          <param name="exclude" value="**/OverrideTestCase.class"/>
       </antcall>
+      <antcall target="_run-bootclasspath-test" inheritRefs="true">
+         <param name="test" value="nameddomain"/>
+         <param name="caller" value="precompiled-genadvisor-tests"/>
+      </antcall>
    </target>
 
-   <target name="precompiled-test" depends="init">
+   <target name="precompiled-test" depends="retroweave">
       <antcall  target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="${test}"/>
          <param name="caller" value="precompiled-tests"/>
       </antcall>
    </target>
 
-   <target name="precompiled-genadvisor-test" depends="init">
+   <target name="precompiled-genadvisor-test" depends="retroweave">
       <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="args"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
