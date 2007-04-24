@@ -253,7 +253,6 @@ public class AdviceMethodFactory
     */
    public final AdviceMethodProperties findAdviceMethod(AdviceMethodProperties properties)
    {
-      System.out.println(">>>FINDING ADVICE " + properties.getAdviceName());
       if (AspectManager.verbose)
       {
          adviceMatchingMessage = new StringBuffer();

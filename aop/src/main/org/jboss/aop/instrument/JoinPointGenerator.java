@@ -210,8 +210,6 @@ public abstract class JoinPointGenerator
     */
    private void doGenerateJoinPointClass(ClassLoader classloader, JoinPointInfo info)
    {
-      
-      System.out.println("GENERATING JOINPOINT CLASS " + info);
       try
       {
          if (classloader  == null)
