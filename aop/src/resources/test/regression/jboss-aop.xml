@@ -165,4 +165,9 @@
    <bind pointcut="call(void org.jboss.test.aop.regression.jbaop336callnpe.Log->overwriteFile(java.lang.String))">
       <interceptor-ref name="org.jboss.test.aop.regression.jbaop336callnpe.LogInterceptor"/>
    </bind>
+   
+   <bind pointcut="all(org.jboss.test.aop.regression.jbaop398.POJO)">
+      <interceptor class="org.jboss.test.aop.regression.jbaop398.SimpleInterceptor"/>
+   </bind>
+   
 </aop>
