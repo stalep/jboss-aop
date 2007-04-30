@@ -19,23 +19,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.jboss.test.aop.regression.jbaop398;
+package org.jboss.test.aop.regression.jbaop398nosuchfield;
 
-import org.jboss.aop.advice.Interceptor;
-import org.jboss.aop.joinpoint.Invocation;
 
-public class SimpleInterceptor implements Interceptor
+public class POJO
 {
-   public static boolean intercepted = false;
+   private static String org = "Fail";
    
-   public String getName()
+   public int method()
    {
-      return this.getClass().getName();
+      return 0;
    }
-
-   public Object invoke(Invocation invocation) throws Throwable
-   {
-      intercepted = true;
-      return invocation.invokeNext();
-   }  
 }
