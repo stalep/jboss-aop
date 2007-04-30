@@ -47,7 +47,7 @@
       <componentref name="dom4j" version="1.6.1jboss"/>
       <componentref name="javassist" version="3.5.0.GA"/>
       <componentref name="jboss/backport-concurrent" version="2.1.0.GA"/>
-      <componentref name="jboss/common-core" version="2.0.1.GA"/>
+      <componentref name="jboss/common-core" version="2.2.0.snapshot"/>
       <componentref name="jboss/common-logging-jdk" version="2.0.2.GA"/>
       <componentref name="jboss/common-logging-log4j" version="2.0.2.GA"/>
       <componentref name="jboss/common-logging-spi" version="2.0.2.GA"/>
