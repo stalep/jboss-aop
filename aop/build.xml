@@ -57,7 +57,7 @@
     -->
 
    <target name="configure" unless="configure.disable">
-      <property name="aop.version" value="jboss-aop-2.0.0.alpha3"/>
+      <property name="aop.version" value="jboss-aop-snapshot"/>
       <property name="aop.title" value="JBoss AOP Framework"/>
 
       <!-- =================== -->
@@ -494,6 +494,7 @@
             <include name="docs/**/*.css"/>
             <include name="docs/examples/**"/>
             <exclude name="docs/**/CVS/**"/>
+            <exclude name="docs/**/.svn/**"/>
             <exclude name="docs/**/*.wiki"/>
          </zipfileset>
          <zipfileset dir="." prefix="${aop.version}">
@@ -505,6 +506,7 @@
             <include name="src/resources/test/**/*.xml"/>
             <include name="src/resources/bin/**/*"/>
             <include name="src/resources/xdoclet/META-INF/*.xml"/>
+            <exclude name="src/**/.svn/**"/>
             <exclude name="src/**/CVS/**"/>
          </zipfileset>
          <zipfileset file="src/build.xml" prefix="${aop.version}"/>
