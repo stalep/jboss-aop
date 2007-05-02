@@ -24,6 +24,7 @@ package org.jboss.test.aop.beforeafterArgs;
 import junit.framework.Assert;
 
 import org.jboss.aop.advice.annotation.Target;
+import org.jboss.aop.advice.annotation.Thrown;
 import org.jboss.aop.joinpoint.CurrentInvocation;
 
 /**
@@ -39,10 +40,16 @@ public class TargetAspect
    static boolean around2 = false;
    static boolean after1 = false;
    static boolean after2 = false;
- 
+   static boolean throwing1 = false;
+   static boolean throwing2 = false;
+   static boolean finally1 = false;
+   static boolean finally2 = false;
+
    static Object before2Target = null;
    static Object around2Target = null;
    static Object after2Target = null;
+   static Object throwing1Target = null;
+   static Object finally2Target = null;
    
    public static void clear()
    {
@@ -52,9 +59,16 @@ public class TargetAspect
       around2 = false;
       after1 = false;
       after2 = false;
+      throwing1 = false;
+      throwing2 = false;
+      finally1 = false;
+      finally2 = false;
+      
       before2Target = null;
       around2Target = null;
       after2Target = null;
+      throwing1Target = null;
+      finally2Target = null;
    }
    
    public void before1()
@@ -101,5 +115,37 @@ public class TargetAspect
    {
       after2 = true;
       after2Target = target;
+   }
+   
+   public void throwing1(@Thrown Throwable thrown, @Target TargetCallerPOJO target)
+   {
+      throwing1 = true;
+      throwing1Target = target;
+   }
+   
+   public void throwing2(@Thrown Throwable thrown)
+   {
+      throwing2 = true;
+   }
+   
+   public void throwing3(@Thrown Throwable thrown, @Target String target)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void finally1()
+   {
+      finally1 = true;
+   }
+   
+   public void finally2(@Target Object target)
+   {
+      finally2 = true;
+      finally2Target = target;
+   }
+   
+   public void finally3(@Target double target)
+   {
+      Assert.fail("This advice should never be executed");
    }
 }

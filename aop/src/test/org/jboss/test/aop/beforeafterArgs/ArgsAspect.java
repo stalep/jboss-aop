@@ -71,6 +71,11 @@ public class ArgsAspect
    static boolean throwing = false;
    static Object[] throwingArgs = null;
    
+   static boolean finally1 = false;
+   static Object[] finally1Args = null;
+   static boolean finally3 = false;
+   static Object[] finally3Args = null;
+   
    public static void clear()
    {
       before1 = false;
@@ -106,6 +111,11 @@ public class ArgsAspect
       
       throwing = false;
       throwingArgs = null;
+      
+      finally1 = false;
+      finally1Args = null;
+      finally3 = false;
+      finally3Args = null;
    }
    
    public void before1()
@@ -236,5 +246,23 @@ public class ArgsAspect
    {
       throwing = true;
       throwingArgs = arguments;
+   }
+   
+   public void finally1(@Args Object[] arguments)
+   {
+      finally1 = true;
+      finally1Args = arguments;
+   }
+   
+   public void finally2(@Args int arguments)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void finally3(@Args Object[] arguments)
+   {
+      finally3 = true;
+      arguments[0]="finally3";
+      finally3Args = arguments;
    }
 }

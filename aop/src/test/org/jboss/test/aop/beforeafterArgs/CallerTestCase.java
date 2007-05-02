@@ -62,41 +62,116 @@ public class CallerTestCase extends AOPTestWithSetup
    
    public void test1() throws Exception
    {
-      pojo.method3();
-      assertAllAdvices(pojo);
+      pojo.method5();
+      assertAllAdvices(pojo, false);
    }
    
    public void test2() throws Exception
    {
-      pojo.method4();
-      assertAllAdvices(pojo);
+      boolean thrown = false;
+      try
+      {
+         pojo.method6();
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(pojo, thrown);
    }
    
    public void test3() throws Exception
    {
-      pojo.method5();
-      assertAllAdvices(pojo);
+      pojo.method7();
+      assertAllAdvices(pojo,false);
    }
    
    public void test4() throws Exception
    {
-      TargetCallerPOJO.method6();
-      assertAllAdvices(null);
+      pojo.method8();
+      assertAllAdvices(pojo, false);
    }
    
    public void test5() throws Exception
    {
-      TargetCallerPOJO.method7();
-      assertAllAdvices(null);
+      boolean thrown = false;
+      try
+      {
+         pojo.method9();
+      }
+      catch(POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(pojo, thrown);
    }
    
    public void test6() throws Exception
    {
-      TargetCallerPOJO.method8();
-      assertAllAdvices(null);
+      boolean thrown = false;
+      try
+      {
+         pojo.method10();
+      }
+      catch(POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(pojo, thrown);
    }
    
-   public void assertAllAdvices(Object caller)
+   public void test7() throws Exception
+   {
+      TargetCallerPOJO.method11();
+      assertAllAdvices(null, false);
+   }
+   
+   public void test8() throws Exception
+   {
+      TargetCallerPOJO.method12();
+      assertAllAdvices(null, false);
+   }
+   
+   public void test9() throws Exception
+   {
+      TargetCallerPOJO.method13();
+      assertAllAdvices(null, false);
+   }
+   
+   public void test10() throws Exception
+   {
+      boolean thrown = false;
+      try
+      {
+         TargetCallerPOJO.method14();
+      }
+      catch(POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(null, thrown);
+   }
+   
+   public void test11() throws Exception
+   {
+      boolean thrown = false;
+      try
+      {
+         TargetCallerPOJO.method15();
+      }
+      catch(POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(null, thrown);
+   }
+   
+   public void assertAllAdvices(Object caller, boolean error)
    {
       assertTrue(CallerAspect.before1);
       assertTrue(CallerAspect.before2);
@@ -104,12 +179,29 @@ public class CallerTestCase extends AOPTestWithSetup
       assertTrue(CallerAspect.around1);
       assertTrue(CallerAspect.around2);
       assertTrue(CallerAspect.around4);
-      assertTrue(CallerAspect.after1);
-      assertTrue(CallerAspect.after2);
+      assertEquals(!error, CallerAspect.after1);
+      assertEquals(!error, CallerAspect.after2);
+      assertEquals(error, CallerAspect.throwing1);
+      assertEquals(error, CallerAspect.throwing3);
+      assertTrue(CallerAspect.finally1);
+      assertTrue(CallerAspect.finally2);
+      assertTrue(CallerAspect.finally4);
+      
       assertSame(caller, CallerAspect.before2Caller);
       assertSame(CallerAspect.before2Caller, CallerAspect.before3Caller);
       assertSame(CallerAspect.before3Caller, CallerAspect.around2Caller);
       assertSame(CallerAspect.around2Caller, CallerAspect.around4Caller);
-      assertSame(CallerAspect.around4Caller, CallerAspect.after2Caller);
+      if (error)
+      {
+         assertSame(CallerAspect.around4Caller, CallerAspect.throwing3Caller);
+         assertNull(CallerAspect.after2Caller);
+      }
+      else
+      {
+         assertSame(CallerAspect.around4Caller, CallerAspect.after2Caller);
+         assertNull(CallerAspect.throwing3Caller);
+      }
+      assertSame(CallerAspect.around4Caller, CallerAspect.finally1Caller);
+      assertSame(CallerAspect.finally1Caller, CallerAspect.finally4Caller);
    }
 }

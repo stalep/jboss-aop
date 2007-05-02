@@ -43,6 +43,8 @@ public class JoinPointAspect
    static JoinPointInfo afterJoinPointInfo = null;
    static String throwingAdvice = null;
    static JoinPointInfo throwingJoinPointInfo = null;
+   static String finallyAdvice = null;
+   static JoinPointInfo finallyJoinPointInfo = null;
    
    public static void clear()
    {
@@ -52,6 +54,8 @@ public class JoinPointAspect
       afterJoinPointInfo = null;
       throwingAdvice = null;
       throwingJoinPointInfo = null;
+      finallyAdvice = null;
+      finallyJoinPointInfo = null;
    }
    
    public void before1()
@@ -138,5 +142,28 @@ public class JoinPointAspect
    {
       throwingAdvice = "throwing5";
       throwingJoinPointInfo = joinPointInfo;
+   }
+   
+
+   public void finally1(@JoinPoint FieldInfo joinPointInfo)
+   {
+      finallyAdvice = "finally1";
+      finallyJoinPointInfo = joinPointInfo;
+   }
+   
+   public void finally2()
+   {
+      finallyAdvice = "finally2";
+   }
+   
+   public void finally3(@JoinPoint Object joinPointInfo)
+   {
+      finallyAdvice = "finally3";
+      finallyJoinPointInfo = (JoinPointInfo) joinPointInfo;
+   }
+   
+   public void finally4(@JoinPoint ConstructorInfo joinPointInfo)
+   {
+      Assert.fail("This advice should never be executed");
    }
 }

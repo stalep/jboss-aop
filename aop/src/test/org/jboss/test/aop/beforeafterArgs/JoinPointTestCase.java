@@ -69,6 +69,11 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNull(JoinPointAspect.beforeJoinPointInfo);
       assertEquals("after1", JoinPointAspect.afterAdvice);
       assertNotNull(JoinPointAspect.afterJoinPointInfo);
+      assertNull(JoinPointAspect.throwingAdvice);
+      assertNull(JoinPointAspect.throwingJoinPointInfo);
+      assertNull(JoinPointAspect.finallyAdvice);
+      assertNull(JoinPointAspect.finallyJoinPointInfo);
+      
       assertTrue(JoinPointAspect.afterJoinPointInfo instanceof FieldInfo);
       FieldInfo fieldInfo = (FieldInfo) JoinPointAspect.afterJoinPointInfo;
       assertEquals("number", fieldInfo.getAdvisedField().getName());
@@ -82,7 +87,13 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNotNull(JoinPointAspect.beforeJoinPointInfo);
       assertNull(JoinPointAspect.afterAdvice);
       assertNull(JoinPointAspect.afterJoinPointInfo);
+      assertNull(JoinPointAspect.throwingAdvice);
+      assertNull(JoinPointAspect.throwingJoinPointInfo);
+      assertEquals("finally1", JoinPointAspect.finallyAdvice);
+      assertNotNull(JoinPointAspect.finallyJoinPointInfo);
       
+      assertSame(JoinPointAspect.beforeJoinPointInfo,
+            JoinPointAspect.finallyJoinPointInfo);
       assertTrue(JoinPointAspect.beforeJoinPointInfo instanceof FieldInfo);
       FieldInfo fieldInfo = (FieldInfo) JoinPointAspect.beforeJoinPointInfo;
       assertEquals("text", fieldInfo.getAdvisedField().getName());
@@ -96,6 +107,11 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNull(JoinPointAspect.beforeJoinPointInfo);
       assertEquals("after5", JoinPointAspect.afterAdvice);
       assertNotNull(JoinPointAspect.afterJoinPointInfo);
+      assertNull(JoinPointAspect.throwingAdvice);
+      assertNull(JoinPointAspect.throwingJoinPointInfo);
+      assertNull(JoinPointAspect.finallyAdvice);
+      assertNull(JoinPointAspect.finallyJoinPointInfo);
+      
       assertTrue(JoinPointAspect.afterJoinPointInfo instanceof FieldInfo);
       FieldInfo fieldInfo = (FieldInfo) JoinPointAspect.afterJoinPointInfo;
       assertEquals("text", fieldInfo.getAdvisedField().getName());
@@ -109,6 +125,11 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNotNull(JoinPointAspect.beforeJoinPointInfo);
       assertEquals("after3", JoinPointAspect.afterAdvice);
       assertNull(JoinPointAspect.afterJoinPointInfo);
+      assertNull(JoinPointAspect.throwingAdvice);
+      assertNull(JoinPointAspect.throwingJoinPointInfo);
+      assertNull(JoinPointAspect.finallyAdvice);
+      assertNull(JoinPointAspect.finallyJoinPointInfo);
+      
       assertTrue(JoinPointAspect.beforeJoinPointInfo instanceof MethodInfo);
       assertEquals("method1", ((MethodInfo) JoinPointAspect.beforeJoinPointInfo).
             getAdvisedMethod().getName());
@@ -123,6 +144,9 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNotNull(JoinPointAspect.afterJoinPointInfo);
       assertNull(JoinPointAspect.throwingAdvice);
       assertNull(JoinPointAspect.throwingJoinPointInfo);
+      assertNull(JoinPointAspect.finallyAdvice);
+      assertNull(JoinPointAspect.finallyJoinPointInfo);
+      
       assertSame(JoinPointAspect.beforeJoinPointInfo, JoinPointAspect.afterJoinPointInfo);
       assertTrue(JoinPointAspect.beforeJoinPointInfo instanceof MethodInfo);
       assertEquals("method2", ((MethodInfo) JoinPointAspect.beforeJoinPointInfo).
@@ -148,6 +172,9 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNull(JoinPointAspect.afterJoinPointInfo);
       assertEquals("throwing1", JoinPointAspect.throwingAdvice);
       assertNotNull(JoinPointAspect.throwingJoinPointInfo);
+      assertNull(JoinPointAspect.finallyAdvice);
+      assertNull(JoinPointAspect.finallyJoinPointInfo);
+      
       assertSame(JoinPointAspect.beforeJoinPointInfo,
             JoinPointAspect.throwingJoinPointInfo);
       assertTrue(JoinPointAspect.beforeJoinPointInfo instanceof MethodInfo);
@@ -168,12 +195,18 @@ public class JoinPointTestCase extends AOPTestWithSetup
       }
       assertTrue(exceptionThrown);
       
-      assertNull(JoinPointAspect.beforeAdvice);
-      assertNull(JoinPointAspect.beforeJoinPointInfo);
+      assertEquals("before4", JoinPointAspect.beforeAdvice);
+      assertNotNull(JoinPointAspect.beforeJoinPointInfo);
       assertNull(JoinPointAspect.afterAdvice);
       assertNull(JoinPointAspect.afterJoinPointInfo);
       assertNull(JoinPointAspect.throwingAdvice);
       assertNull(JoinPointAspect.throwingJoinPointInfo);
+      assertEquals("finally2", JoinPointAspect.finallyAdvice);
+      assertNull(JoinPointAspect.finallyJoinPointInfo);
+      
+      assertTrue(JoinPointAspect.beforeJoinPointInfo instanceof MethodInfo);
+      assertEquals("method3", ((MethodInfo) JoinPointAspect.beforeJoinPointInfo).
+            getAdvisedMethod().getName());
    }
    
    public void test8() throws POJOException
@@ -195,6 +228,11 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNull(JoinPointAspect.afterJoinPointInfo);
       assertEquals("throwing3", JoinPointAspect.throwingAdvice);
       assertNotNull(JoinPointAspect.throwingJoinPointInfo);
+      assertEquals("finally3", JoinPointAspect.finallyAdvice);
+      assertNotNull(JoinPointAspect.finallyJoinPointInfo);
+      
+      assertSame(JoinPointAspect.throwingJoinPointInfo,
+            JoinPointAspect.finallyJoinPointInfo);
       assertTrue(JoinPointAspect.throwingJoinPointInfo instanceof MethodInfo);
       assertEquals("method4", ((MethodInfo) JoinPointAspect.throwingJoinPointInfo).
             getAdvisedMethod().getName());
@@ -219,6 +257,8 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNull(JoinPointAspect.afterJoinPointInfo);
       assertEquals("throwing4", JoinPointAspect.throwingAdvice);
       assertNull(JoinPointAspect.throwingJoinPointInfo);
+      assertNull(JoinPointAspect.finallyAdvice);
+      assertNull(JoinPointAspect.finallyJoinPointInfo);
    }
    
    public void test10() throws POJOException
@@ -240,6 +280,9 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNull(JoinPointAspect.afterJoinPointInfo);
       assertEquals("throwing5", JoinPointAspect.throwingAdvice);
       assertNotNull(JoinPointAspect.throwingJoinPointInfo);
+      assertNull(JoinPointAspect.finallyAdvice);
+      assertNull(JoinPointAspect.finallyJoinPointInfo);
+      
       assertTrue(JoinPointAspect.throwingJoinPointInfo instanceof MethodInfo);
       assertEquals("method6", ((MethodInfo) JoinPointAspect.throwingJoinPointInfo).
             getAdvisedMethod().getName());

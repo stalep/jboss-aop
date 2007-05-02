@@ -33,42 +33,52 @@ import org.jboss.aop.advice.annotation.Thrown;
  */
 public class ThrownAspect
 {
-
-   public static String advice;
-   public static Throwable thrown;
-   public static int thrownNumber;
+   // as a convention, the number of the thrown exception should never be 0, so we
+   // can identify when the number hasn't been set in ThrownAspect, and when it has
+   
+   public static String throwingAdvice;
+   public static Throwable throwingThrown;
+   public static int throwingNumber;
+   public static String finallyAdvice;
+   public static Throwable finallyThrown;
+   public static int finallyNumber;
+   
    
    public static void clear()
    {
-      advice = null;
-      thrown = null;
-      thrownNumber = 0;
+      throwingAdvice = null;
+      throwingThrown = null;
+      throwingNumber = 0;
+      finallyAdvice = null;
+      finallyThrown = null;
+      finallyNumber = 0;
    }
    
    public void throwing1()
    {
-      advice = "throwing1";
+      throwingAdvice = "throwing1";
    }
    
    public void throwing2(@Thrown Throwable throwable, @Arg int i)
    {
-      advice = "throwing2";
-      thrownNumber = i;
-      thrown = throwable;
+      throwingAdvice = "throwing2";
+      throwingNumber = i;
+      throwingThrown = throwable;
+      ((POJOException) throwable).number = throwingNumber + 1;
    }
    
    public void throwing3(@Thrown Exception exception)
    {
-      advice = "throwing3";
-      thrownNumber = ((POJOException) exception).number;
-      thrown = exception;
+      throwingAdvice = "throwing3";
+      throwingNumber = ((POJOException) exception).number;
+      throwingThrown = exception;
    }
    
    public void throwing4(@Thrown POJOException pojoException, @Arg int i)
    {
-      advice = "throwing4";
-      thrownNumber = i;
-      thrown = pojoException;
+      throwingAdvice = "throwing4";
+      throwingNumber = i;
+      throwingThrown = pojoException;
    }
    
    public void throwing5(@Thrown RuntimeException runtimeException)
@@ -76,13 +86,59 @@ public class ThrownAspect
       Assert.fail("This advice should never be executed");
    }
    
-   public void throwing6(Throwable throwable)
+   public void throwing6(@Thrown Throwable throwable)
+   {
+      // exception isn't thrown by joinpoint
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void throwing7(Throwable throwable)
    {
       Assert.fail("This advice should never be executed");
    }
    
-   public void throwing7(@Arg int i)
+   public void throwing8(@Arg int i)
    {
       Assert.fail("This advice should never be executed");
+   }
+   
+   public void finally1(@Thrown Throwable throwable)
+   {
+      finallyAdvice = "finally1";
+      finallyThrown = throwable;
+      finallyNumber = ((POJOException) throwable).number;
+      ((POJOException) throwable).number = finallyNumber + 1;
+   }
+   
+   public void finally2()
+   {
+      finallyAdvice = "finally2";
+   }
+   
+   public void finally3(@Thrown POJOException throwable)
+   {
+      finallyAdvice = "finally3";
+      finallyThrown = throwable;
+      finallyNumber = throwable.number;
+   }
+ 
+   public void finally4(@Arg int i, @Thrown Throwable throwable)
+   {
+      finallyAdvice = "finally4";
+      finallyThrown = throwable;
+      finallyNumber = i;
+   }
+   
+   public void finally5(@Thrown Object throwable)
+   {
+      finallyAdvice = "finally5";
+      finallyThrown = (Throwable) throwable;
+      finallyNumber = ((POJOException) throwable).number;
+   }
+   
+   public void finally6(@Thrown Throwable throwable)
+   {
+      finallyAdvice = "finally6";
+      finallyThrown = throwable;
    }
 }

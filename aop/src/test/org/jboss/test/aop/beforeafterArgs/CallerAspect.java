@@ -24,6 +24,7 @@ package org.jboss.test.aop.beforeafterArgs;
 import junit.framework.Assert;
 
 import org.jboss.aop.advice.annotation.Caller;
+import org.jboss.aop.advice.annotation.Thrown;
 import org.jboss.aop.joinpoint.CurrentInvocation;
 
 /**
@@ -41,12 +42,20 @@ public class CallerAspect
    static boolean around4 = false;
    static boolean after1 = false;
    static boolean after2 = false;
- 
+   static boolean throwing1 = false;
+   static boolean throwing3 = false;
+   static boolean finally1 = false;
+   static boolean finally2 = false;
+   static boolean finally4 = false;
+   
    static Object before2Caller = null;
    static Object before3Caller = null;
    static Object around2Caller = null;
    static Object around4Caller = null;
    static Object after2Caller = null;
+   static Object throwing3Caller = null;
+   static Object finally1Caller = null;
+   static Object finally4Caller = null;
    
    public static void clear()
    {
@@ -58,11 +67,19 @@ public class CallerAspect
       around4 = false;
       after1 = false;
       after2 = false;
+      throwing1 = false;
+      throwing3 = false;
+      finally1 = false;
+      finally2 = false;
+      finally4 = false;
       before2Caller = null;
       before3Caller = null;
       around2Caller = null;
       around4Caller = null;
       after2Caller = null;
+      throwing3Caller = null;
+      finally1Caller = null;
+      finally4Caller = null;
    }
 
    
@@ -128,5 +145,43 @@ public class CallerAspect
    public void after3(@Caller TargetCallerPOJO2 caller)
    {
       Assert.fail("This advice should never be executed");
+   }
+   
+   public void throwing1(@Thrown Throwable throwable)
+   {
+      throwing1 = true;
+   }
+   
+   public void throwing2(@Caller String caller, @Thrown Throwable throwable)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void throwing3(@Caller Object caller, @Thrown Throwable throwable)
+   {
+      throwing3 = true;
+      throwing3Caller = caller;
+   }
+   
+   public void finally1(@Caller TargetCallerPOJO caller)
+   {
+      finally1 = true;
+      finally1Caller = caller;
+   }
+   
+   public void finally2()
+   {
+      finally2 = true;
+   }
+   
+   public void finally3(@Caller ArgTestCase caller)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void finally4(@Caller Object caller)
+   {
+      finally4 = true;
+      finally4Caller = caller;
    }
 }

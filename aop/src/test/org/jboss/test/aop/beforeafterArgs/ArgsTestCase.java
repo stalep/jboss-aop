@@ -66,6 +66,7 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertTrue(ArgsAspect.before1);
       assertTrue(ArgsAspect.before2);
       assertTrue(ArgsAspect.before3);
+      
       assertSame(ArgsAspect.before2Args, ArgsAspect.before3Args);
       assertEquals(0, ArgsAspect.before2Args.length);
       
@@ -82,6 +83,8 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertFalse(ArgsAspect.around2);
       assertFalse(ArgsAspect.around3);
       assertFalse(ArgsAspect.throwing);
+      assertFalse(ArgsAspect.finally1);
+      assertFalse(ArgsAspect.finally3);
    }
    
    public void test2()
@@ -90,9 +93,11 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertTrue(ArgsAspect.before1);
       assertTrue(ArgsAspect.before2);
       assertTrue(ArgsAspect.before3);
+      
       assertSame(ArgsAspect.before2Args, ArgsAspect.before3Args);
       assertEquals(1, ArgsAspect.before2Args.length);
       assertEquals("test2", ArgsAspect.before2Args[0]);
+      
       assertFalse(ArgsAspect.before6);
       assertFalse(ArgsAspect.before7);
       assertFalse(ArgsAspect.before8);
@@ -106,6 +111,8 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertFalse(ArgsAspect.around2);
       assertFalse(ArgsAspect.around3);
       assertFalse(ArgsAspect.throwing);
+      assertFalse(ArgsAspect.finally1);
+      assertFalse(ArgsAspect.finally3);
    }
    
    public void test3()
@@ -113,10 +120,13 @@ public class ArgsTestCase extends AOPTestWithSetup
       pojo.field2 = "test3";
       assertTrue(ArgsAspect.before6);
       assertTrue(ArgsAspect.after6);
+      assertTrue(ArgsAspect.finally3);
+      
       assertNotNull(ArgsAspect.before6Args);
       assertSame(ArgsAspect.before6Args, ArgsAspect.after6Args);
+      assertSame(ArgsAspect.after6Args, ArgsAspect.finally3Args);
       assertEquals(1, ArgsAspect.before6Args.length);
-      assertEquals("after6", ArgsAspect.before6Args[0]);
+      assertEquals("finally3", ArgsAspect.before6Args[0]);
       
       assertFalse(ArgsAspect.before1);
       assertFalse(ArgsAspect.before2);
@@ -132,6 +142,7 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertFalse(ArgsAspect.around2);
       assertFalse(ArgsAspect.around3);
       assertFalse(ArgsAspect.throwing);
+      assertFalse(ArgsAspect.finally1);
       
       assertEquals("before6", pojo.field2);
    }
@@ -139,10 +150,12 @@ public class ArgsTestCase extends AOPTestWithSetup
    public void test4()
    {
       pojo.field3 = 10;
+      
       assertTrue(ArgsAspect.around3);
       assertTrue(ArgsAspect.after1);
       assertTrue(ArgsAspect.after2);
       assertTrue(ArgsAspect.after3);
+      
       assertNotNull(ArgsAspect.around3Args);
       assertEquals(1, ArgsAspect.around3Args.length);
       assertEquals(10, ArgsAspect.around3Args[0]);
@@ -163,6 +176,8 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertFalse(ArgsAspect.around1);
       assertFalse(ArgsAspect.around2);
       assertFalse(ArgsAspect.throwing);
+      assertFalse(ArgsAspect.finally1);
+      assertFalse(ArgsAspect.finally3);
    }
    
    public void test5()
@@ -176,10 +191,13 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertTrue(ArgsAspect.after1);
       assertTrue(ArgsAspect.after2);
       assertTrue(ArgsAspect.after3);
+      assertTrue(ArgsAspect.finally1);
+      
       assertNotNull(ArgsAspect.before2Args);
       assertSame(ArgsAspect.before2Args, ArgsAspect.before3Args);
       assertSame(ArgsAspect.before2Args, ArgsAspect.after2Args);
       assertSame(ArgsAspect.before2Args, ArgsAspect.after3Args);
+      assertSame(ArgsAspect.before2Args, ArgsAspect.finally1Args);
       assertEquals(0, ArgsAspect.before2Args.length);
       
       assertFalse(ArgsAspect.after6);
@@ -191,6 +209,7 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertFalse(ArgsAspect.around1);
       assertFalse(ArgsAspect.around2);
       assertFalse(ArgsAspect.throwing);
+      assertFalse(ArgsAspect.finally3);
    }
    
    public void test6()
@@ -204,11 +223,15 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertTrue(ArgsAspect.after1);
       assertTrue(ArgsAspect.after2);
       assertTrue(ArgsAspect.after3);
+      assertTrue(ArgsAspect.finally1);
+      
       assertNotNull(ArgsAspect.before2Args);
       assertSame(ArgsAspect.before2Args, ArgsAspect.before3Args);
       assertSame(ArgsAspect.before2Args, ArgsAspect.around3Args);
       assertSame(ArgsAspect.around3Args, ArgsAspect.after2Args);
       assertSame(ArgsAspect.before2Args, ArgsAspect.after3Args);
+      assertSame(ArgsAspect.before2Args, ArgsAspect.finally1Args);
+      
       assertEquals(1, ArgsAspect.before2Args.length);
       assertEquals(false, ((Boolean) ArgsAspect.before2Args[0]).booleanValue());
       
@@ -221,22 +244,27 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertFalse(ArgsAspect.around1);
       assertFalse(ArgsAspect.around2);
       assertFalse(ArgsAspect.throwing);
+      assertFalse(ArgsAspect.finally3);
    }
    
    public void test7()
    {
-      pojo.method1("test6", 6, true, null);
+      pojo.method1("test7", 7, true, null);
       
       assertTrue(ArgsAspect.before3);
       assertTrue(ArgsAspect.after3);
       assertNotNull(ArgsAspect.before3Args);
+      
       assertSame(ArgsAspect.before3Args, ArgsAspect.after3Args);
       assertEquals(4, ArgsAspect.before3Args.length);
-      assertEquals("test6", ArgsAspect.before3Args[0]);
-      assertEquals(6, ((Integer) ArgsAspect.before3Args[1]).intValue());
+      
+      assertEquals("test7", ArgsAspect.before3Args[0]);
+      assertEquals(7, ((Integer) ArgsAspect.before3Args[1]).intValue());
       assertEquals(true, ((Boolean) ArgsAspect.before3Args[2]).booleanValue());
       assertNull(ArgsAspect.before3Args[3]);
+      
       System.out.println("AROUND ARGS: " + ArgsAspect.around3Args);
+      
       assertFalse(ArgsAspect.before1);
       assertFalse(ArgsAspect.before2);
       assertFalse(ArgsAspect.before6);
@@ -251,14 +279,54 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertFalse(ArgsAspect.around2);
       assertFalse(ArgsAspect.around3);
       assertFalse(ArgsAspect.throwing);
+      assertFalse(ArgsAspect.finally1);
+      assertFalse(ArgsAspect.finally3);
    }
    
    public void test8()
    {
-      pojo.method2("test7", 0, false, null);
+      pojo.method2("test8", 8, true, null);
+      
+      assertTrue(ArgsAspect.before3);
+      assertTrue(ArgsAspect.after3);
+      assertTrue(ArgsAspect.finally1);
+      
+      assertNotNull(ArgsAspect.before3Args);
+      assertSame(ArgsAspect.before3Args, ArgsAspect.after3Args);
+      assertSame(ArgsAspect.after3Args, ArgsAspect.finally1Args);
+      
+      assertEquals(4, ArgsAspect.before3Args.length);
+      assertEquals("test8", ArgsAspect.before3Args[0]);
+      assertEquals(8, ((Integer) ArgsAspect.before3Args[1]).intValue());
+      assertEquals(true, ((Boolean) ArgsAspect.before3Args[2]).booleanValue());
+      assertNull(ArgsAspect.before3Args[3]);
+      
+      System.out.println("AROUND ARGS: " + ArgsAspect.around3Args);
+      
+      assertFalse(ArgsAspect.before1);
+      assertFalse(ArgsAspect.before2);
+      assertFalse(ArgsAspect.before6);
+      assertFalse(ArgsAspect.before7);
+      assertFalse(ArgsAspect.before8);
+      assertFalse(ArgsAspect.after1);
+      assertFalse(ArgsAspect.after2);
+      assertFalse(ArgsAspect.after6);
+      assertFalse(ArgsAspect.after7);
+      assertFalse(ArgsAspect.after8);
+      assertFalse(ArgsAspect.around1);
+      assertFalse(ArgsAspect.around2);
+      assertFalse(ArgsAspect.around3);
+      assertFalse(ArgsAspect.throwing);
+      assertFalse(ArgsAspect.finally3);
+   }
+   
+   public void test9()
+   {
+      pojo.method3("test9", 0, false, null);
+      
       assertTrue(ArgsAspect.before7);
-      assertTrue(ArgsAspect.after7);
       assertTrue(ArgsAspect.around1);
+      assertTrue(ArgsAspect.after7);
       
       assertNotNull(ArgsAspect.before7Args);
       assertSame(ArgsAspect.before7Args, ArgsAspect.after7Args);
@@ -285,14 +353,55 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertFalse(ArgsAspect.around2);
       assertFalse(ArgsAspect.around3);
       assertFalse(ArgsAspect.throwing);
+      assertFalse(ArgsAspect.finally1);
+      assertFalse(ArgsAspect.finally3);
    }
    
-   public void test9()
+   public void test10()
+   {
+      pojo.method4("test10", 0, false, null);
+      
+      assertTrue(ArgsAspect.before7);
+      assertTrue(ArgsAspect.around1);
+      assertTrue(ArgsAspect.after7);
+      assertTrue(ArgsAspect.finally1);
+      
+      assertNotNull(ArgsAspect.before7Args);
+      assertSame(ArgsAspect.before7Args, ArgsAspect.around1Args);
+      assertSame(ArgsAspect.around1Args, ArgsAspect.after7Args);
+      assertSame(ArgsAspect.after7Args, ArgsAspect.finally1Args);
+      
+      assertEquals(4, ArgsAspect.before7Args.length);
+      assertEquals("after7", ArgsAspect.before7Args[0]);
+      assertEquals(14, ((Integer) ArgsAspect.before7Args[1]).intValue());
+      assertEquals(false, ((Boolean) ArgsAspect.before7Args[2]).booleanValue());
+      
+      assertNotNull(ArgsAspect.before7Args[3]);
+      assertEquals(1, ((ArgsPOJO[]) ArgsAspect.before7Args[3]).length);
+      assertNull(((ArgsPOJO[]) ArgsAspect.before7Args[3])[0]);
+      
+      assertFalse(ArgsAspect.before1);
+      assertFalse(ArgsAspect.before2);
+      assertFalse(ArgsAspect.before3);
+      assertFalse(ArgsAspect.before6);
+      assertFalse(ArgsAspect.before8);
+      assertFalse(ArgsAspect.after1);
+      assertFalse(ArgsAspect.after2);
+      assertFalse(ArgsAspect.after3);
+      assertFalse(ArgsAspect.after6);
+      assertFalse(ArgsAspect.after8);
+      assertFalse(ArgsAspect.around2);
+      assertFalse(ArgsAspect.around3);
+      assertFalse(ArgsAspect.throwing);
+      assertFalse(ArgsAspect.finally3);
+   }
+   
+   public void test11()
    {
       boolean exceptionThrown = false;
       try
       {
-         pojo.method3((short) 0, 100);
+         pojo.method5((short) 0, 100);
       }
       catch(POJOException e)
       {
@@ -301,6 +410,7 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertTrue(exceptionThrown);
       
       assertTrue(ArgsAspect.throwing);
+      
       assertNotNull(ArgsAspect.throwingArgs);
       assertEquals(2, ArgsAspect.throwingArgs.length);
       assertEquals(0, ((Short) ArgsAspect.throwingArgs[0]).shortValue());
@@ -321,14 +431,56 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertFalse(ArgsAspect.around1);
       assertFalse(ArgsAspect.around2);
       assertFalse(ArgsAspect.around3);
+      assertFalse(ArgsAspect.finally1);
+      assertFalse(ArgsAspect.finally3);
    }
    
-   public void test10()
+   public void test12()
    {
       boolean exceptionThrown = false;
       try
       {
-         pojo.method4();
+         pojo.method6((short) 5, 112);
+      }
+      catch(POJOException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      
+      assertTrue(ArgsAspect.throwing);
+      assertTrue(ArgsAspect.finally1);
+      
+      assertNotNull(ArgsAspect.throwingArgs);
+      assertSame(ArgsAspect.throwingArgs, ArgsAspect.finally1Args);
+      assertEquals(2, ArgsAspect.throwingArgs.length);
+      assertEquals(5, ((Short) ArgsAspect.throwingArgs[0]).shortValue());
+      assertEquals(112, ((Long) ArgsAspect.throwingArgs[1]).longValue());
+      
+      assertFalse(ArgsAspect.before1);
+      assertFalse(ArgsAspect.before2);
+      assertFalse(ArgsAspect.before3);
+      assertFalse(ArgsAspect.before6);
+      assertFalse(ArgsAspect.before7);
+      assertFalse(ArgsAspect.before8);
+      assertFalse(ArgsAspect.after1);
+      assertFalse(ArgsAspect.after2);
+      assertFalse(ArgsAspect.after3);
+      assertFalse(ArgsAspect.after6);
+      assertFalse(ArgsAspect.after7);
+      assertFalse(ArgsAspect.after8);
+      assertFalse(ArgsAspect.around1);
+      assertFalse(ArgsAspect.around2);
+      assertFalse(ArgsAspect.around3);
+      assertFalse(ArgsAspect.finally3);
+   }
+   
+   public void test13()
+   {
+      boolean exceptionThrown = false;
+      try
+      {
+         pojo.method7();
       } catch (POJOException e)
       {
          exceptionThrown = true;
@@ -361,5 +513,50 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertFalse(ArgsAspect.after8);
       assertFalse(ArgsAspect.around1);
       assertFalse(ArgsAspect.around3);
+      assertFalse(ArgsAspect.finally1);
+      assertFalse(ArgsAspect.finally3);
+   }
+   
+   public void test14()
+   {
+      boolean exceptionThrown = false;
+      try
+      {
+         pojo.method8();
+      } catch (POJOException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      assertTrue(ArgsAspect.finally1);
+      
+      assertTrue(ArgsAspect.before8);
+      assertTrue(ArgsAspect.around2);
+      assertTrue(ArgsAspect.throwing);
+      
+      assertNotNull(ArgsAspect.before8Args);
+      assertSame(ArgsAspect.before8Args, ArgsAspect.around2Args);
+      assertSame(ArgsAspect.around2Args, ArgsAspect.throwingArgs);
+      assertSame(ArgsAspect.throwingArgs, ArgsAspect.finally1Args);
+      
+      assertEquals(2, ArgsAspect.before8Args.length);
+      assertEquals((short) -8, ((Short) ArgsAspect.before8Args[0]).shortValue());
+      assertEquals((long) 8, ((Long) ArgsAspect.before8Args[1]).longValue());
+      
+      assertFalse(ArgsAspect.before1);
+      assertFalse(ArgsAspect.before2);
+      assertFalse(ArgsAspect.before3);
+      assertFalse(ArgsAspect.before6);
+      assertFalse(ArgsAspect.before7);
+      assertFalse(ArgsAspect.after1);
+      assertFalse(ArgsAspect.after2);
+      assertFalse(ArgsAspect.after3);
+      assertFalse(ArgsAspect.after6);
+      assertFalse(ArgsAspect.after7);
+      // after 8 is not called due to the exception thrown
+      assertFalse(ArgsAspect.after8);
+      assertFalse(ArgsAspect.around1);
+      assertFalse(ArgsAspect.around3);
+      assertFalse(ArgsAspect.finally3);
    }
 }

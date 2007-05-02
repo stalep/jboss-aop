@@ -81,7 +81,12 @@ public class ReturnPOJO
       return new SuperValue(11);
    }
    
-   public Object method12() throws POJOException
+   public SubValue method12() throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public SubValue method13() throws POJOException
    {
       throw new POJOException();
    }

@@ -55,6 +55,9 @@ public class ArgAspect
    static boolean after4 = false;
    static boolean after6 = false;
    
+   static boolean finally1 = false;
+   static boolean finally2 = false;
+   
    static int before1X = 0;
    static int before2X = 0;
    static int before3Q = 0;
@@ -71,6 +74,9 @@ public class ArgAspect
    static int after4Q = 0;
    static Object[] after6Args = null;
    
+   static int finally1X = 0;
+   static Object[] finally2Args = null;
+   
    static boolean beforeInterface1 = false;
    static boolean beforeInterface2 = false;
    static boolean beforeInterface3 = false;
@@ -83,11 +89,15 @@ public class ArgAspect
    static boolean throwingInterface1 = false;
    static boolean throwingInterface2 = false;
    static boolean throwingInterface3 = false;
+   static boolean finallyInterface1 = false;
+   static boolean finallyInterface2 = false;
+   static boolean finallyInterface3 = false;
    
    static boolean beforeInverted1 = false;
    static boolean aroundInverted1 = false;
    static boolean afterInverted1 = false;
    static boolean throwingInverted1 = false;
+   static boolean finallyInverted1 = false;
    
    public static void clear()
    {
@@ -102,6 +112,8 @@ public class ArgAspect
       after1 = false;
       after4 = false;
       after6 = false;
+      finally1 = false;
+      finally2 = false;
       
       before1X = 0;
       before2X = 0;
@@ -115,6 +127,8 @@ public class ArgAspect
       after4X = 0;
       after4Q = 0;
       after6Args = null;
+      finally1X = 0;
+      finally2Args = null;
       
       beforeInterface1 = false;
       beforeInterface2 = false;
@@ -128,11 +142,15 @@ public class ArgAspect
       throwingInterface1 = false;
       throwingInterface2 = false;
       throwingInterface3 = false;
+      finallyInterface1 = false;
+      finallyInterface2 = false;
+      finallyInterface3 = false;
       
       beforeInverted1 = false;
       aroundInverted1 = false;
       afterInverted1 = false;
       throwingInverted1 = false;
+      finallyInverted1 = false;
    }
    
    public void before1(@Arg(index=0) int x)
@@ -147,10 +165,10 @@ public class ArgAspect
       before2X = x;
    }
    
-   public void before3(@Arg(index=4) int y)
+   public void before3(@Arg(index=4) int q)
    {
       before3 = true;
-      before3Q = y;
+      before3Q = q;
    }
    
    public void before4(@Args Object[] arguments)
@@ -163,11 +181,11 @@ public class ArgAspect
       }
    }
    
-   public void before5(@Arg int x, @Arg int y)
+   public void before5(@Arg int x, @Arg int q)
    {
       before5 = true;
       before5X = x;
-      before5Q = y;
+      before5Q = q;
    }
    
    public int around1(@Arg int x, @Arg double y, @Arg float z, @Arg String str, @Arg long q)
@@ -248,7 +266,25 @@ public class ArgAspect
    public void after6(@Args Object[] args)
    {
       after6 = true;
+      args[0] = Integer.valueOf(((Integer) args[0]).intValue() - 1);
       after6Args = args;
+   }
+   
+   public void finally1(@Arg int x)
+   {
+      finally1 = true;
+      finally1X = x;
+   }
+   
+   public void finally2(@Args Object[] args)
+   {
+      finally2 = true;
+      finally2Args = args;
+   }
+   
+   public void finally3(@Arg Collection arg)
+   {
+      Assert.fail("This advice should never be executed");
    }
    
    public void beforeInterface1(@Arg Interface param)
@@ -356,6 +392,31 @@ public class ArgAspect
       Assert.fail("This advice should never be executed");
    }
    
+   public void finallyInterface1(@Arg Interface param)
+   {
+      finallyInterface1 = true;
+   }
+   
+   public void finallyInterface2(@Arg SuperInterface param)
+   {
+      finallyInterface2 = true;
+   }
+   
+   public void finallyInterface3(@Arg Object param)
+   {
+      finallyInterface3 = true;
+   }
+   
+   public void finallyInterface4(@Arg Implementor param)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void finallyInterface5(@Arg SubInterface param)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
    public void beforeInvertedArgs1(@Arg Object arg2, @Arg (index = 0) String arg1)
    {
       beforeInverted1 = true;
@@ -398,6 +459,17 @@ public class ArgAspect
    }
    
    public void throwingInvertedArgs2(@Arg (index = 0) Object arg2,
+         @Arg (index = 0) String arg1)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void finallyInvertedArgs1(@Arg Object arg2, @Arg (index = 0) String arg1)
+   {
+      finallyInverted1 = true;
+   }
+   
+   public void finallyInvertedArgs2(@Arg (index = 0) Object arg2,
          @Arg (index = 0) String arg1)
    {
       Assert.fail("This advice should never be executed");

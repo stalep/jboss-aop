@@ -30,7 +30,13 @@ package org.jboss.test.aop.beforeafterArgs;
 public class TargetCallerPOJO
 {
    public TargetCallerPOJO(){}
+   
    public TargetCallerPOJO(int x){}
+   
+   public TargetCallerPOJO(int x, String y) throws POJOException
+   {
+      throw new POJOException();
+   }
    
    public int field1;
    public static int field2;
@@ -38,41 +44,94 @@ public class TargetCallerPOJO
    public void method1(){}
    public static void method2(){}
    
-   public void method3(){
-      new TargetCallerPOJO2(3);
-   }
-   
-   public void method4()
+   public void method3() throws POJOException
    {
-      TargetCallerPOJO2 pojo2 = new TargetCallerPOJO2();
-      pojo2.method1();
+      throw new POJOException();
    }
    
+   public static void method4() throws POJOException
+   {
+      throw new POJOException();
+   }
+      
    public void method5()
    {
-      TargetCallerPOJO2.method2();
-   }
-   
-   public static void method6(){
       new TargetCallerPOJO2(3);
    }
    
-   public static void method7()
+   public void method6() throws POJOException
    {
-      TargetCallerPOJO2 pojo2 = new TargetCallerPOJO2();
-      pojo2.method1();
+      new TargetCallerPOJO2(3, "method6");
    }
    
-   public static void method8()
+   public void method7()
    {
-      TargetCallerPOJO2.method2();
+      TargetCallerPOJO2 pojo2 = new TargetCallerPOJO2();
+      pojo2.method1_();
+   }
+   
+   public void method8()
+   {
+      TargetCallerPOJO2.method2_();
+   }
+   
+   public void method9() throws POJOException
+   {
+      TargetCallerPOJO2 pojo2 = new TargetCallerPOJO2();
+      pojo2.method3_();
+   }
+   
+   public void method10() throws POJOException
+   {
+      TargetCallerPOJO2.method4_();
+   }
+   
+   public static void method11(){
+      new TargetCallerPOJO2(3);
+   }
+   
+   public static void method12()
+   {
+      TargetCallerPOJO2 pojo2 = new TargetCallerPOJO2();
+      pojo2.method1_();
+   }
+   
+   public static void method13()
+   {
+      TargetCallerPOJO2.method2_();
+   }
+   
+   public static void method14() throws POJOException
+   {
+      TargetCallerPOJO2 pojo2 = new TargetCallerPOJO2();
+      pojo2.method3_();
+   }
+   
+   public static void method15() throws POJOException
+   {
+      TargetCallerPOJO2.method4_();
    }
 }
 
 class TargetCallerPOJO2 extends TargetCallerPOJO
 {
    public TargetCallerPOJO2(){}
+   
    public TargetCallerPOJO2(int x){}
-   public void method1(){}
-   public static void method2(){}
+   
+   public TargetCallerPOJO2(int x, String y) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method1_(){}
+   public static void method2_(){}
+   public void method3_() throws POJOException
+   {
+      throw new POJOException();
+   }
+   public static void method4_() throws POJOException
+   {
+      throw new POJOException();
+   }
 }

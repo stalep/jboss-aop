@@ -63,126 +63,276 @@ public class TargetTestCase extends AOPTestWithSetup
    public void test1()
    {
       new TargetCallerPOJO(1);
-      assertStaticAdvices();
+      assertStaticAdvices(false);
    }
-
    
    public void test2()
    {
-      pojo.field1 = 0;
-      assertAllAdvices();
-      assertTarget(pojo);
+      boolean thrown = false;
+      try
+      {
+         new TargetCallerPOJO(1, "test2");
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertStaticAdvices(thrown);
    }
-   
+
    public void test3()
    {
-      int test = pojo.field1;
-      assertAllAdvices();
-      assertTarget(pojo);
+      pojo.field1 = 0;
+      assertAllAdvices(false);
+      assertTarget(pojo, false);
    }
    
    public void test4()
    {
-      TargetCallerPOJO.field2 = 5;
-      assertAllAdvices();
-      assertTarget(null);
+      int test = pojo.field1;
+      assertAllAdvices(false);
+      assertTarget(pojo, false);
    }
    
    public void test5()
    {
-      int test = TargetCallerPOJO.field2;
-      assertAllAdvices();
-      assertTarget(null);
+      TargetCallerPOJO.field2 = 5;
+      assertAllAdvices(false);
+      assertTarget(null, false);
    }
    
    public void test6()
    {
-      pojo.method1();
-      assertAllAdvices();
-      assertTarget(pojo);
+      int test = TargetCallerPOJO.field2;
+      assertAllAdvices(false);
+      assertTarget(null, false);
    }
    
    public void test7()
    {
-      TargetCallerPOJO.method2();
-      assertAllAdvices();
-      assertTarget(null);
+      pojo.method1();
+      assertAllAdvices(false);
+      assertTarget(pojo, false);
    }
    
    public void test8()
    {
-      pojo.method3();
-      assertStaticAdvices();
+      TargetCallerPOJO.method2();
+      assertAllAdvices(false);
+      assertTarget(null, false);
    }
    
    public void test9()
    {
-      pojo.method4();
-      assertAllAdvices();
-      assertTarget();
+      boolean thrown = false;
+      try
+      {
+         pojo.method3();
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(thrown);
+      assertTarget(pojo, thrown);
    }
    
    public void test10()
    {
-      pojo.method5();
-      assertAllAdvices();
-      assertTarget(null);
+      boolean thrown = false;
+      try
+      {
+         TargetCallerPOJO.method4();
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(thrown);
+      assertTarget(null, thrown);
    }
    
    public void test11()
    {
-      TargetCallerPOJO.method6();
-      assertStaticAdvices();
+      pojo.method5();
+      assertStaticAdvices(false);
    }
    
    public void test12()
    {
-      TargetCallerPOJO.method7();
-      assertAllAdvices();
-      assertTarget();
+      boolean thrown = false;
+      try
+      {
+         pojo.method6();
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertStaticAdvices(thrown);
    }
    
    public void test13()
    {
-      TargetCallerPOJO.method8();
-      assertAllAdvices();
-      assertTarget(null);
+      pojo.method7();
+      assertAllAdvices(false);
+      assertTarget(false);
    }
    
-   private void assertAllAdvices()
+   public void test14()
+   {
+      pojo.method8();
+      assertAllAdvices(false);
+      assertTarget(null, false);
+   }
+   
+   public void test15()
+   {
+      boolean thrown = false;
+      try
+      {
+         pojo.method9();
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(thrown);
+      assertTarget(thrown);
+   }
+   
+   public void test16()
+   {
+      boolean thrown = false;
+      try
+      {
+         pojo.method10();
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(thrown);
+      assertTarget(null, thrown);
+   }
+   
+   public void test17()
+   {
+      TargetCallerPOJO.method11();
+      assertStaticAdvices(false);
+   }
+   
+   public void test18()
+   {
+      TargetCallerPOJO.method12();
+      assertAllAdvices(false);
+      assertTarget(false);
+   }
+   
+   public void test19()
+   {
+      TargetCallerPOJO.method13();
+      assertAllAdvices(false);
+      assertTarget(null, false);
+   }
+   
+   public void test20()
+   {
+      boolean thrown = false;
+      try
+      {
+         TargetCallerPOJO.method14();
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(thrown);
+      assertTarget(thrown);
+   }
+   
+   public void test21()
+   {
+      boolean thrown = false;
+      try
+      {
+         TargetCallerPOJO.method15();
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(thrown);
+      assertTarget(null, thrown);
+   }
+   
+   private void assertAllAdvices(boolean error)
    {
       assertTrue(TargetAspect.before1);
       assertTrue(TargetAspect.before2);
       assertTrue(TargetAspect.around1);
       assertTrue(TargetAspect.around2);
-      assertTrue(TargetAspect.after1);
-      assertTrue(TargetAspect.after2);
+      assertEquals(!error, TargetAspect.after1);
+      assertEquals(!error, TargetAspect.after2);
+      assertEquals(error, TargetAspect.throwing1);
+      assertEquals(error, TargetAspect.throwing2);
+      assertTrue(TargetAspect.finally1);
+      assertTrue(TargetAspect.finally2);
    }
    
-   private void assertTarget()
+   private void assertTarget(boolean error)
    {
       assertNotNull(TargetAspect.before2Target);
-      assertSame(TargetAspect.before2Target, TargetAspect.around2Target);
-      assertSame(TargetAspect.around2Target, TargetAspect.after2Target);
+      assertSameTarget(error);
    }
    
-   private void assertTarget(Object target)
+   private void assertTarget(Object target, boolean error)
    {
       assertSame(target, TargetAspect.before2Target);
-      assertSame(TargetAspect.before2Target, TargetAspect.around2Target);
-      assertSame(TargetAspect.around2Target, TargetAspect.after2Target);
+      assertSameTarget(error);
    }
    
-   private void assertStaticAdvices()
+   private void assertSameTarget(boolean error)
+   {
+      assertSame(TargetAspect.before2Target, TargetAspect.around2Target);
+      if (error)
+      {
+         assertSame(TargetAspect.around2Target, TargetAspect.throwing1Target);
+         assertNull(TargetAspect.after2Target);
+      }
+      else
+      {
+         assertSame(TargetAspect.around2Target, TargetAspect.after2Target);
+         assertNull(TargetAspect.throwing1Target);
+      }
+      assertSame(TargetAspect.around2Target, TargetAspect.finally2Target);
+   }
+   
+   private void assertStaticAdvices(boolean error)
    {
       assertTrue(TargetAspect.before1);
       assertFalse(TargetAspect.before2);
       assertTrue(TargetAspect.around1);
       assertFalse(TargetAspect.around2);
-      assertTrue(TargetAspect.after1);
+      assertEquals(!error, TargetAspect.after1);
       assertFalse(TargetAspect.after2);
+      assertFalse(TargetAspect.throwing1);
+      assertEquals(error, TargetAspect.throwing2);
+      assertTrue(TargetAspect.finally1);
+      assertFalse(TargetAspect.finally2);
+      
       assertNull(TargetAspect.before2Target);
       assertNull(TargetAspect.around2Target);
       assertNull(TargetAspect.after2Target);
+      assertNull(TargetAspect.throwing1Target);
+      assertNull(TargetAspect.finally2Target);
    }
 }

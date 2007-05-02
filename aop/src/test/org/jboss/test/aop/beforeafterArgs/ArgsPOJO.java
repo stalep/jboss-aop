@@ -73,32 +73,58 @@ public class ArgsPOJO
       return x + (int) y * 7 + (int) z + q;
    }
    
+   public int bunch8(int x, double y, float z, int q)
+   {
+      return x + (int) y * 8 + (int) z + q;
+   }
+   
+   public int bunch9(int x, double y, float z, int q)
+   {
+      return x + (int) y * 9 + (int) z + q;
+   }
+   
    public void method1(String param1, int param2, boolean param3, ArgsPOJO[] param4)
    {}
    
    public void method2(String param1, int param2, boolean param3, ArgsPOJO[] param4)
    {}
    
-   public void method3(short param1, long param2) throws POJOException
+   public void method3(String param1, int param2, boolean param3, ArgsPOJO[] param4)
+   {}
+   
+   public void method4(String param1, int param2, boolean param3, ArgsPOJO[] param4)
+   {}
+   
+   public void method5(short param1, long param2) throws POJOException
    {
       throw new POJOException();
    }
    
-   public void method4() throws POJOException
-   {
-      this.method3((short) -4, (long) 4);
-   }
-   
-   public void method5(Interface param) throws POJOException {}
-   
-   public void method6(Interface param) throws POJOException
+   public void method6(short param1, long param2) throws POJOException
    {
       throw new POJOException();
    }
    
-   public void method7(String param1, Collection param2) {}
+   public void method7() throws POJOException
+   {
+      this.method5((short) -4, (long) 4);
+   }
    
-   public void method8(String param1, Collection param2) throws POJOException
+   public void method8() throws POJOException
+   {
+      this.method6((short) -4, (long) 4);
+   }
+   
+   public void method9(Interface param) throws POJOException {}
+   
+   public void method10(Interface param) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method11(String param1, Collection param2) {}
+   
+   public void method12(String param1, Collection param2) throws POJOException
    {
       throw new POJOException();
    }

@@ -28,6 +28,9 @@ package org.jboss.test.aop.beforeafterArgs;
  */
 public class ThrownPOJO
 {
+   // as a convention, the number of the thrown exception should never be 0, so we
+   // can identify when the number hasn't been set in ThrownAspect, and when it has
+   
    public void method1(int i) throws POJOException
    {
       throw new POJOException(i);
@@ -53,7 +56,9 @@ public class ThrownPOJO
       throw new POJOException(i);
    }
    
-   public void method6() throws POJOException
+   public void method6() throws POJOException { }
+   
+   public void method7() throws POJOException
    {
       throw new POJOException(6);
    }

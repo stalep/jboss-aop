@@ -26,6 +26,7 @@ import junit.framework.Assert;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Return;
+import org.jboss.aop.advice.annotation.Thrown;
 import org.jboss.aop.joinpoint.Invocation;
 
 /**
@@ -39,6 +40,9 @@ public class ReturnAspect
    public static Object aroundReturn = null;
    public static String afterAdvice = null;
    public static Object afterReturn = null;
+   public static String finallyAdvice = null;
+   public static Object finallyReturn = null;
+   public static Object finallyThrown = null;
    
    public static void clear()
    {
@@ -46,6 +50,8 @@ public class ReturnAspect
       aroundReturn = null;
       afterAdvice = null;
       afterReturn = null;
+      finallyAdvice = null;
+      finallyReturn = null;
    }
    
    public void before(@Return Object object)
@@ -132,6 +138,12 @@ public class ReturnAspect
       return new SuperValue(110);
    }
 
+   public Object around12(Invocation invocation) throws Throwable
+   {
+      aroundAdvice = "around12";
+      aroundReturn = invocation.invokeNext();
+      return new SuperValue(120);
+   }
    
    public void after1(@org.jboss.aop.advice.annotation.JoinPoint JoinPointInfo info) throws Exception
    {
@@ -202,5 +214,100 @@ public class ReturnAspect
       afterAdvice = "after11";
       afterReturn = returnedValue;
       return new SubValue(1100);
+   }
+   
+   public SubValue after12(@Return SubValue returnedValue)
+   {
+      // intercepted method throws an exception, and should go directly to finally
+      Assert.fail("This advice should never be executed");
+      return new SubValue(0);
+   }
+   
+   public void finally1()
+   {
+      finallyAdvice = "finally1";
+   }
+   
+   public void finally2(@Return String returnedValue)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public String finally3(@Return Object returnedValue, @Thrown Throwable thrown)
+   {
+      finallyAdvice = "finally3";
+      finallyReturn = returnedValue;
+      finallyThrown = thrown;
+      return finallyAdvice;
+   }
+   
+   public String finally4(@Thrown Throwable thrown, @Return String returnedValue)
+   {
+      finallyAdvice = "finally4";
+      finallyReturn = returnedValue;
+      finallyThrown = thrown;
+      return finallyAdvice;
+   }
+   
+   public String finally5(@Return int returnedValue, @Thrown Throwable thrown)
+   {
+      Assert.fail("This advice should never be executed");
+      return null;
+   }
+   
+   public Object finally6(@Return Object returnedValue, @Thrown Throwable thrown)
+   {
+      finallyAdvice = "finally6";
+      finallyReturn = returnedValue;
+      finallyThrown = thrown;
+      return finallyAdvice;
+   }
+   
+   public void finally7(@Return Object returnedValue, @Thrown Throwable thrown)
+   {
+      finallyAdvice = "finally7";
+      finallyReturn = returnedValue;
+      finallyThrown = thrown;
+   }
+   
+   public SubValue finally8()
+   {
+      finallyAdvice = "finally8";
+      return new SubValue(8000);
+   }
+   
+   public SuperValue finally9() throws Throwable
+   {
+      Assert.fail("This advice should never be executed");
+      return null;
+   }
+   
+   public SubValue finally10(@Return SuperValue returnedValue, @Thrown Throwable thrown) throws Throwable
+   {
+      finallyAdvice = "finally10";
+      finallyReturn = returnedValue;
+      finallyThrown = thrown;
+      return new SubValue(10000);
+   }
+   
+   public SubValue finally11(@Return SuperValue returnedValue, @Thrown Throwable thrown) throws Throwable
+   {
+      finallyAdvice = "finally11";
+      finallyReturn = returnedValue;
+      finallyThrown = thrown;
+      return new SubValue(11000);
+   }
+   
+   public SubValue finally12(@Return SuperValue returnedValue, @Thrown Throwable thrown)
+   {
+      finallyAdvice = "finally12";
+      finallyReturn = returnedValue;
+      finallyThrown = thrown;
+      return new SubValue(12000);
+   }
+   
+   public SubValue finally13()
+   {
+      return new SubValue(13);
    }
 }
