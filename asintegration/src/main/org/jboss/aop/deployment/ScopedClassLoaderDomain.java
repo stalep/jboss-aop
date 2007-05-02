@@ -22,6 +22,7 @@
 package org.jboss.aop.deployment;
 
 import java.lang.ref.WeakReference;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.Domain;
@@ -31,7 +32,6 @@ import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
 import org.jboss.mx.loading.LoaderRepository;
 import org.jboss.mx.loading.RepositoryClassLoader;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 
 /**
  * A domain that is used for scoped classloaders
@@ -44,8 +44,8 @@ public class ScopedClassLoaderDomain extends Domain
    
    WeakReference loader;
    boolean parentDelegation;
-   ConcurrentReaderHashMap myPerVMAspects = new ConcurrentReaderHashMap();
-   ConcurrentReaderHashMap notMyPerVMAspects = new ConcurrentReaderHashMap();
+   ConcurrentHashMap myPerVMAspects = new ConcurrentHashMap();
+   ConcurrentHashMap notMyPerVMAspects = new ConcurrentHashMap();
    InterceptionMarkers interceptionMarkers = new InterceptionMarkers();
    
    public ScopedClassLoaderDomain(ClassLoader loader, String name, boolean parentDelegation, AspectManager manager, boolean parentFirst)
