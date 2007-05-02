@@ -230,7 +230,7 @@
 
       <mkdir dir="${build.lib}"/>
 
-      <!-- Build jboss-aspect-deployer-jdk50.jar -->
+      <!-- Build jboss-aspect-deployer.jar for jboss 5 -->
       <jar destfile="${build.lib}/jboss-aop-deployer.jar" manifest="${build.etc}/default.mf"
          update="${jar.update}" index="${jar.index}">
          <fileset dir="${build.classes}">
@@ -240,6 +240,7 @@
          </fileset>
       </jar>
    	
+      <!-- Build jboss-aop-as4deployer.jar for Jboss 4 with JDK 5 -->
    	<jar destfile="${build.lib}/jboss-aop-as4-deployer.jar" manifest="${build.etc}/default.mf"
          update="${jar.update}" index="${jar.index}">
          <fileset dir="${build.classes}">
@@ -285,7 +286,7 @@
    <target name="jars14" depends="retrotranslate">
       <mkdir dir="${build.lib}"/>
 
-      <!-- Build jboss-aspect-deployer-jdk50.jar -->
+      <!-- Build jboss-aop-as4deployer.jar for Jboss 4 with JDK 1.4 -->
       <jar destfile="${build.lib}/jboss-aop-as4-deployer-jdk14.jar" manifest="${build.etc}/default.mf"
          update="${jar.update}" index="${jar.index}">
          <fileset dir="${build.classes.retro}">
