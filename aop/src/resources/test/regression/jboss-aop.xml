@@ -153,9 +153,9 @@
    <bind pointcut="execution(* org.jboss.test.aop.regression.jbaop279native.POJO->nativeMethod())">
       <interceptor class="org.jboss.test.aop.regression.jbaop279native.ReturningInterceptor"/>
    </bind>
-   
+
    <prepare expr="all(org.jboss.test.aop.regression.jbaop316annotationsinwrapperonly.POJO)"/>
-   
+
    <interceptor class="org.jboss.test.aop.regression.jbaop336callnpe.LogInterceptor" scope="PER_INSTANCE"/>
 
    <bind pointcut="call(org.jboss.test.aop.regression.jbaop336callnpe.Log->new(java.lang.String))">
@@ -165,4 +165,10 @@
    <bind pointcut="call(void org.jboss.test.aop.regression.jbaop336callnpe.Log->overwriteFile(java.lang.String))">
       <interceptor-ref name="org.jboss.test.aop.regression.jbaop336callnpe.LogInterceptor"/>
    </bind>
+
+<!-- Comment out config for test until what appears to be an error in javassist has been fixed, since it otherwise breaks the test runs
+   <bind pointcut="all(org.jboss.test.aop.regression.jbaop398nosuchfield.POJO)">
+     <interceptor class="org.jboss.test.aop.regression.jbaop398nosuchfield.SimpleInterceptor" scope="PER_VM" />
+  </bind>
+-->
 </aop>

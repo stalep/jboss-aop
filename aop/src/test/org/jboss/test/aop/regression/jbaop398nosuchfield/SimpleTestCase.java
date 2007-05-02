@@ -48,6 +48,7 @@ public class SimpleTestCase extends AOPTestWithSetup
 
    public void test()
    {
+      if (true) throw new RuntimeException("Weaving for this test has been disabled in regression/jboss-aop.xml, since weaving this class breaks the test run. Awaiting a fix in javassist");
       POJO pojo = new POJO();
       assertTrue(SimpleInterceptor.intercepted);
       SimpleInterceptor.intercepted = false;
