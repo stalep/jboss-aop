@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry excluding="org/jboss/aop/hook/JRockitClassPreProcessor.java|org/jboss/aop/hook/JRockitPluggableClassPreProcessor.java" kind="src" path="src/main"/>
 	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="lib" path="/thirdparty/oswego-concurrent/lib/concurrent.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/dom4j/lib/dom4j.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/trove/lib/trove.jar"/>
 	<classpathentry kind="lib" path="/tools/lib/ant.jar"/>
@@ -16,7 +15,7 @@
 	<classpathentry kind="lib" path="/thirdparty/javassist/lib/javassist.jar" sourcepath="/javassist"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-container.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/test/lib/jboss-test.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/jboss/common-core/lib/jboss-common-core.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/common-core/lib/jboss-common-core.jar" sourcepath="/thirdparty/jboss/common-core/lib/jboss-common-core-sources.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/apache-log4j/lib/log4j.jar"/>
 	<classpathentry kind="lib" path="src/resources"/>
 	<classpathentry kind="output" path="output/eclipse-classes"/>
