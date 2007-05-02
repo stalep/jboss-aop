@@ -50,6 +50,7 @@ public class ArgsAspect
       before = null;
       after = null;
       throwing = null;
+      exception = null;
       POJO.joinPointRun = false;
    }
    
@@ -152,24 +153,21 @@ public class ArgsAspect
       Assert.assertTrue(POJO.joinPointRun);
    }
    
-   public Throwable throwing(@Thrown Throwable t, @Arg int i)
+   public void throwing(@Thrown Throwable t, @Arg int i)
    {
       throwing = "throwing1";
       exception = t;
-      return t;
    }
    
-   public Throwable throwing(@JoinPoint MethodInfo mjp, @Thrown Throwable t)
+   public void throwing(@JoinPoint MethodInfo mjp, @Thrown Throwable t)
    {
       throwing = "throwing2";
       exception = t;
-      return t;
    }
    
-   public Throwable throwing(@JoinPoint MethodInfo mjp, @Thrown Throwable t, @Arg int i)
+   public void throwing(@JoinPoint MethodInfo mjp, @Thrown Throwable t, @Arg int i)
    {
       throwing = "throwing3";
       exception = t;
-      return t;
    }
 }
