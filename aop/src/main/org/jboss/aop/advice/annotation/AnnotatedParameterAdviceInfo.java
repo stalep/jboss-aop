@@ -97,6 +97,18 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
                }
                return false;
             }
+            break;
+         case VOID:
+            if (method.getReturnType()!= void.class)
+            {
+               if (AspectManager.verbose)
+               {
+                  AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - '");
+                  AdviceMethodFactory.adviceMatchingMessage.append(method);
+                  AdviceMethodFactory.adviceMatchingMessage.append("' must return void");
+               }
+               return false;
+            }
       }
       
       for (int i = 0; i < mutuallyExclusive.length; i++)
