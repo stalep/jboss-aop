@@ -75,7 +75,7 @@ public class AdviceMethodFactory
    public static final AdviceMethodFactory FINALLY = new AdviceMethodFactory (null,
          new ParameterAnnotationRule[]{ParameterAnnotationRule.JOIN_POINT,
          ParameterAnnotationRule.OPTIONAL_THROWN, ParameterAnnotationRule.RETURN},
-         ReturnType.VOID, new int[][]{{2, 1}});
+         ReturnType.ANY, new int[][]{{2, 1}});
    /**
     * Factory that selects advice methods for <i>aroung</i> interception.
     */
