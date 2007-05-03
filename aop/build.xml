@@ -57,8 +57,6 @@
     -->
 
    <target name="configure" unless="configure.disable">
-      <property name="aop.version" value="jboss-aop-snapshot"/>
-      <property name="aop.title" value="JBoss AOP Framework"/>
 
       <!-- =================== -->
       <!-- Basic Configuration -->
@@ -67,7 +65,6 @@
       <!-- Module name(s) & version -->
       <property name="module.name" value="aop"/>
       <property name="module.Name" value="JBoss AOP"/>
-      <property name="module.version" value="2.0.0.alpha3"/>
 
       <!-- ========= -->
       <!-- Libraries -->
@@ -435,52 +432,45 @@
    <!-- ================================================================== -->
 
    <target name="dist" depends="javadocs, init">
+<!--      
       <fail unless="JROCKIT_API_AVAILABLE">
          To build a distribution you must have a version of JRockit available and set the jrockit.home property.
       </fail>
 
-      <copy todir="${build.lib}" filtering="no">
-         <fileset dir="${jboss/common.core.lib}">
-            <include name="jboss-common-core.jar"/>
+      <copy todir="${output.root}/bin" filtering="no">
+         <fileset dir="${source.res}">
+            <include name="**/*"/>
          </fileset>
       </copy>
-      <copy todir="${build.lib}" filtering="no">
-         <fileset dir="${jboss.jbossretro.lib}">
-            <include name="jbossretro.jar"/>
-            <include name="jbossretro-rt.jar"/>
-         </fileset>
-      </copy>
-      <copy todir="${build.lib}" filtering="no">
-         <fileset dir="${jboss/backport.concurrent.lib}">
-            <include name="jboss-backport-concurrent.jar"/>
-         </fileset>
-      </copy>
-      <copy todir="${build.lib}" filtering="no">
-         <fileset dir="${javassist.lib}">
-            <include name="javassist.jar"/>
-         </fileset>
-      </copy>
-      <copy todir="${build.lib}" filtering="no">
-         <fileset dir="${trove.lib}">
-            <include name="trove.jar"/>
-         </fileset>
-      </copy>
-      <copy todir="${build.lib}" filtering="no">
-         <fileset dir="${qdox.qdox.lib}">
-            <include name="qdox.jar"/>
-         </fileset>
-      </copy>
-      <copy todir="${build.lib}" filtering="no">
-         <fileset dir="${junit.junit.lib}">
-            <include name="junit.jar"/>
-         </fileset>
-      </copy>
-      <copy todir="docs" filtering="no">
-         <fileset dir="output">
+      <copy todir="${output.root}/docs/aspect-framework" filtering="no">
+         <fileset dir="docs">
             <include name="api/**"/>
+            <include name="**/*.html"/>
+            <include name="**/*.pdf"/>
+            <include name="**/*.jpg"/>
+            <include name="**/*.pdf"/>
+            <include name="**/*.css"/>
+            <include name="examples/**"/>
+            <exclude name="**/CVS/**"/>
+            <exclude name="**/.svn/**"/>
+            <exclude name="**/*.wiki"/>
          </fileset>
       </copy>
-      <delete file="jboss-aop-dist.zip"/>
+
+      <copy todir="${output.root}/src/aspect-framework" filtering="no">
+         <fileset dir="src">
+            <include name="main/**/*.java"/>
+            <include name="main/**/*.jjt"/>
+            <include name="test/**/*.java"/>
+            <include name="resources/test/**/*.xml"/>
+            <include name="resources/bin/**/*"/>
+            <exclude name="**/.svn/**"/>
+            <exclude name="**/CVS/**"/>
+         </fileset>
+      </copy>
+    -->  
+<!--
+   <delete file="jboss-aop-dist.zip"/>
       <zip zipfile="jboss-aop-dist.zip">
          <zipfileset dir="${build.lib}" prefix="${aop.version}">
             <include name="*.jar"/>
@@ -512,13 +502,16 @@
          <zipfileset file="src/build.xml" prefix="${aop.version}"/>
          <zipfileset file ="${source.etc}/jbossorg-eula.txt"/>
       </zip>
+      -->
    </target>
 
    <target name="install"
       description="Install the structure for a release."
-      depends="all, _buildmagic:install:default"/>
+      depends="all, _buildmagic:install:default, dist"/>
 
-   <target name="release" depends="install"/>
+   <target name="release" depends="install">
+      <echo>RELEASE</echo>  
+   </target>
 
    <target name="release-zip"
       description="Builds a ZIP distribution."

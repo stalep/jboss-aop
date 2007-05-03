@@ -11,6 +11,11 @@
   <property name="buildmagic.ant15.baseversion" value="1.5"/>
   <property name="buildmagic.ant16.baseversion" value="1.6"/>
 
+  <!-- Set the version of the release here -->
+  <property name="aop.version" value="jboss-aop-snapshot"/>
+  <property name="aop.title" value="JBoss AOP Framework"/>
+  <property name="module.version" value="j${aop.version}"/>
+
   <!--
      | Add new conditions for other supported Ant versions when they
      | become avaialble.
@@ -44,6 +49,8 @@
   <property name="project.build" value="${project.root}/build"/>
   <property name="project.tools" value="${project.root}/tools"/>
   <property name="project.thirdparty" value="${project.root}/thirdparty"/>
+  <property name="project.release" value="${project.build}/output/${aop.version}"/>
+
 
   <!-- Setup the module environment. -->
   <property name="module.root" value="${basedir}"/>
@@ -293,24 +300,6 @@ to build define build-bypass.disabled=true.
 <!-- ================================================================== -->
 
 <target name="_buildmagic:install:default" depends="init">
-  <!-- Copy the output directory to the install directory -->
-  <mkdir dir="${install.root}"/>
-  <copy todir="${install.root}" filtering="no">
-    <fileset dir="${module.output}">
-      <include name="**/*"/>
-      <exclude name="build-marker"/>
-      <exclude name="classes/**"/>
-      <exclude name="eclipse-classes*/**"/>
-      <exclude name="etc/**"/>
-      <exclude name="gen-src/**"/>
-      <exclude name="mbean-marker"/>
-      <exclude name="resources/**"/>
-      <exclude name="${install.id}/**"/>
-      <exclude name="${install.id}.zip"/>
-      <exclude name="${install.id}.tar"/>
-      <exclude name="${install.id}.tgz"/>
-    </fileset>
-  </copy>
 </target>
 
 <!-- ================================================================== -->

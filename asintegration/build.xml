@@ -55,8 +55,6 @@
       &modules;
 
       <!-- Module name(s) & version -->
-      <property name="aop.version" value="jboss-aop-anapshot"/>
-      <property name="aop.title" value="JBoss AOP Framework"/>
       <property name="aspects.title" value="JBoss Application Server integration"/>
 
       <property name="module.name" value="asintegration"/>
@@ -343,7 +341,8 @@
    <!-- Install & Release                                                  -->
    <!-- ================================================================== -->
 
-   <!-- target name="dist" depends="javadocs, init">
+   <target name="dist" depends="javadocs, init">
+    <!--  
       <delete file="${aop.version}.zip"/>
       <copy todir="docs" filtering="no">
          <fileset dir="output">
@@ -458,8 +457,33 @@
             <exclude name="**/CVS/**"/>
          </zipfileset>
       </zip>
-   </target-->
+      -->  
+   </target>
 
+   <target name="install"
+      description="Install the structure for a release."
+      depends="all, _buildmagic:install:default, dist"/>
+
+   <target name="release" depends="install">
+   </target>
+
+   <target name="release-zip"
+      description="Builds a ZIP distribution."
+      depends="release"/>
+
+   <target name="release-tar"
+      description="Builds a TAR distribution."
+      depends="release"/>
+
+   <target name="release-tgz"
+      description="Builds a TAR-GZ distribution."
+      depends="release"/>
+
+   <target name="release-all"
+      description="Builds a distribution for each archive type."
+      depends="release-zip, release-tgz"/>
+
+   
    <!-- ================================================================== -->
    <!-- Misc.                                                              -->
    <!-- ================================================================== -->
