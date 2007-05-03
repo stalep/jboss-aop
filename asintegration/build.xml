@@ -236,6 +236,7 @@
             <include name="org/jboss/aop/deploy*/**"/>
             <exclude name="org/jboss/aop/deployers/JBossAspectLibrary.class"/>
          </fileset>
+         <fileset file ="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
       </jar>
    	
       <!-- Build jboss-aop-as4deployer.jar for Jboss 4 with JDK 5 -->
@@ -246,6 +247,7 @@
             <include name="org/jboss/aop/deploy*/**"/>
             <exclude name="org/jboss/aop/deployers/*.class"/>
          </fileset>
+         <fileset file ="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
    	</jar>
 
     <!--  
@@ -292,6 +294,7 @@
             <include name="org/jboss/aop/deploy*/**"/>
             <exclude name="org/jboss/aop/deployers/*.class"/>
          </fileset>
+         <fileset file ="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
       </jar>
 
     <!--  
