@@ -74,6 +74,18 @@ enum ParameterAnnotationRule
    },
    
    /**
+    * Rule for parameter annotation {@link Return}.
+    */
+   RETURN (
+         Return.class, null, AdviceMethodProperties.RETURN_ARG, 50, false, true)
+   {
+      public Object getAssignableFrom(AdviceMethodProperties properties)
+      {
+         return properties.getJoinpointReturnType();
+      }
+   },
+   
+   /**
     * Rule for parameter annotation {@link Thrown}.
     */
    OPTIONAL_THROWN (
@@ -86,18 +98,6 @@ enum ParameterAnnotationRule
    MANDATORY_THROWN (
          Thrown.class, Throwable.class, AdviceMethodProperties.THROWABLE_ARG, 50,
          true, true),
-         
-   /**
-    * Rule for parameter annotation {@link Return}.
-    */
-   RETURN (
-         Return.class, null, AdviceMethodProperties.RETURN_ARG, 50, false, true)
-   {
-      public Object getAssignableFrom(AdviceMethodProperties properties)
-      {
-         return properties.getJoinpointReturnType();
-      }
-   },
       
    /**
     * Rule for parameter annotation {@link Arg}.
