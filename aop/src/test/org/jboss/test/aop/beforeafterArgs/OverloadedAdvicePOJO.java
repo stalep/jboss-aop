@@ -58,4 +58,9 @@ public class OverloadedAdvicePOJO
    {
       throw new POJOException();
    }
+   
+   public String method5(int arg1, long arg2) throws POJOException
+   {
+      return "method5";
+   }
 }

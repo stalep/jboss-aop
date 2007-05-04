@@ -436,6 +436,131 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       assertEquals("Throwable,Object", OverloadedThrowingAspect.throwing38);
    }
    
+   public void testFinally() throws Exception
+   {
+      // clear all relevant aspect fields
+      OverloadedFinallyAspect.clear();
+      
+      // execute the join point
+      assertEquals("finally69", pojo.method5(0, 1));
+      
+      // check aspect fields
+      assertEquals("void,MethodInfo,String,Throwable,int,long",
+            OverloadedFinallyAspect.finally1);
+      assertEquals("void,MethodInfo,String,Serializable,int,long",
+            OverloadedFinallyAspect.finally2);
+      assertEquals("void,MethodInfo,CharSequence,Throwable,int,long",
+            OverloadedFinallyAspect.finally3);
+      assertEquals("String,MethodInfo,String,Throwable,int",
+            OverloadedFinallyAspect.finally4);
+      assertEquals("void,MethodInfo,String,Throwable,long",
+            OverloadedFinallyAspect.finally5);
+      assertEquals("String,MethodInfo,String,Serializable,long",
+            OverloadedFinallyAspect.finally6);
+      assertEquals("void,MethodInfo,String,Serializable,int",
+            OverloadedFinallyAspect.finally7);
+      assertEquals("Object,MethodInfo,CharSequence,Throwable,int",
+            OverloadedFinallyAspect.finally8);
+      assertEquals("void,MethodInfo,CharSequence,Throwable,long",
+            OverloadedFinallyAspect.finally9);
+      assertEquals("void,MethodInfo,String,Throwable,Object[]",
+            OverloadedFinallyAspect.finally10);
+      assertEquals("void,MethodInfo,String,Throwable,Object",
+            OverloadedFinallyAspect.finally11);
+      assertEquals("void,MethodInfo,String,Serializable,Object[]",
+            OverloadedFinallyAspect.finally12);
+      assertEquals("void,MethodInfo,String,Serializable,Object",
+            OverloadedFinallyAspect.finally13);
+      assertEquals("void,MethodInfo,CharSequence,Throwable,Object[]",
+            OverloadedFinallyAspect.finally14);
+      assertEquals("void,MethodInfo,CharSequence,Throwable,Object",
+            OverloadedFinallyAspect.finally15);
+      assertEquals("void,MethodInfo,String,Throwable",
+            OverloadedFinallyAspect.finally16);
+      assertEquals("void,MethodInfo,String,Serializable",
+            OverloadedFinallyAspect.finally17);
+      assertEquals("void,MethodInfo,CharSequence,Throwable",
+            OverloadedFinallyAspect.finally18);
+      assertEquals("void,MethodInfo,Throwable,int,long",
+            OverloadedFinallyAspect.finally19);
+      assertEquals("void,MethodInfo,Serializable,int,long",
+            OverloadedFinallyAspect.finally20);
+      assertEquals("Object,MethodInfo,Throwable,long",
+            OverloadedFinallyAspect.finally21);
+      assertEquals("void,MethodInfo,Throwable,int",
+            OverloadedFinallyAspect.finally22);
+      assertEquals("String,MethodInfo,Serializable,int",
+            OverloadedFinallyAspect.finally23);
+      assertEquals("Object,MethodInfo,Serializable,long",
+            OverloadedFinallyAspect.finally24);
+      assertEquals("void,MethodInfo,Throwable,Object[]",
+            OverloadedFinallyAspect.finally25);
+      assertEquals("void,MethodInfo,Throwable,Object",
+            OverloadedFinallyAspect.finally26);
+      assertEquals("void,MethodInfo,Serializable,Object[]",
+            OverloadedFinallyAspect.finally27);
+      assertEquals("void,MethodInfo,Serializable,Object",
+            OverloadedFinallyAspect.finally28);
+      assertEquals("void,MethodInfo,Throwable", OverloadedFinallyAspect.finally29);
+      assertEquals("void,MethodInfo,Serializable",
+            OverloadedFinallyAspect.finally30);
+      assertEquals("void,MethodInfo,int,long", OverloadedFinallyAspect.finally31);
+      assertEquals("String,MethodInfo,long", OverloadedFinallyAspect.finally32);
+      assertEquals("Object,MethodInfo,int", OverloadedFinallyAspect.finally33);
+      assertEquals("void,MethodInfo,Object[]", OverloadedFinallyAspect.finally34);
+      assertEquals("void,MethodInfo,Object", OverloadedFinallyAspect.finally35);
+      assertEquals("void,MethodInfo", OverloadedFinallyAspect.finally36);
+      assertEquals("void,String,Throwable,int,long",
+            OverloadedFinallyAspect.finally37);
+      assertEquals("void,String,Serializable,int,long",
+            OverloadedFinallyAspect.finally38);
+      assertEquals("void,CharSequence,Throwable,int,long",
+            OverloadedFinallyAspect.finally39);
+      assertEquals("String,String,Throwable,int", OverloadedFinallyAspect.finally40);
+      assertEquals("void,String,Throwable,long", OverloadedFinallyAspect.finally41);
+      assertEquals("String,String,Serializable,long",
+            OverloadedFinallyAspect.finally42);
+      assertEquals("void,String,Serializable,int",
+            OverloadedFinallyAspect.finally43);
+      assertEquals("Object,CharSequence,Throwable,int",
+            OverloadedFinallyAspect.finally44);
+      assertEquals("void,CharSequence,Throwable,long",
+            OverloadedFinallyAspect.finally45);
+      assertEquals("void,String,Throwable,Object[]",
+            OverloadedFinallyAspect.finally46);
+      assertEquals("void,String,Throwable,Object",
+            OverloadedFinallyAspect.finally47);
+      assertEquals("void,String,Serializable,Object[]",
+            OverloadedFinallyAspect.finally48);
+      assertEquals("void,String,Serializable,Object",
+            OverloadedFinallyAspect.finally49);
+      assertEquals("void,CharSequence,Throwable,Object[]",
+            OverloadedFinallyAspect.finally50);
+      assertEquals("void,CharSequence,Throwable,Object",
+            OverloadedFinallyAspect.finally51);
+      assertEquals("void,String,Throwable", OverloadedFinallyAspect.finally52);
+      assertEquals("void,String,Serializable", OverloadedFinallyAspect.finally53);
+      assertEquals("void,CharSequence,Throwable", OverloadedFinallyAspect.finally54);
+      assertEquals("void,Throwable,int,long", OverloadedFinallyAspect.finally55);
+      assertEquals("void,Serializable,int,long", OverloadedFinallyAspect.finally56);
+      assertEquals("Object,Throwable,long", OverloadedFinallyAspect.finally57);
+      assertEquals("void,Throwable,int", OverloadedFinallyAspect.finally58);
+      assertEquals("String,Serializable,int", OverloadedFinallyAspect.finally59);
+      assertEquals("Object,Serializable,long", OverloadedFinallyAspect.finally60);
+      assertEquals("void,Throwable,Object[]", OverloadedFinallyAspect.finally61);
+      assertEquals("void,Throwable,Object", OverloadedFinallyAspect.finally62);
+      assertEquals("void,Serializable,Object[]", OverloadedFinallyAspect.finally63);
+      assertEquals("void,Serializable,Object", OverloadedFinallyAspect.finally64);
+      assertEquals("void,Throwable", OverloadedFinallyAspect.finally65);
+      assertEquals("void,Serializable", OverloadedFinallyAspect.finally66);
+      assertEquals("void,int,long", OverloadedFinallyAspect.finally67);
+      assertEquals("String,long", OverloadedFinallyAspect.finally68);
+      assertEquals("Object,int", OverloadedFinallyAspect.finally69);
+      assertEquals("void,Object[]", OverloadedFinallyAspect.finally70);
+      assertEquals("void,Object", OverloadedFinallyAspect.finally71);
+      assertEquals("void", OverloadedFinallyAspect.finally72);
+   }
+   
    public void testBeforeCall()
    {
       // clear all relevant aspect fields
