@@ -757,9 +757,10 @@
   	<aspect class="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeCallAspect" scope="PER_VM"/>
   	<aspect class="org.jboss.test.aop.beforeafterArgs.OverloadedAroundCallAspect" scope="PER_VM"/>
   	<aspect class="org.jboss.test.aop.beforeafterArgs.OverloadedAfterCallAspect" scope="PER_VM"/>
+   <aspect class="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect" scope="PER_VM"/>
   	
-  	<bind pointcut="call(* org.jboss.test.aop.beforeafterArgs.OverloadedAdvicePOJO->method3(int))">
-  	   <before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeCallAspect"/>
+   <bind pointcut="call(* org.jboss.test.aop.beforeafterArgs.OverloadedAdvicePOJO->method3(int))">
+      <before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeCallAspect"/>
   	   <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeCallAspect"/>
   	   <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeCallAspect"/>
   	   <before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedBeforeCallAspect"/>
@@ -832,7 +833,7 @@
   	   <advice name="around26" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundCallAspect"/>
   	   <advice name="around27" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundCallAspect"/>
   	   <advice name="around28" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundCallAspect"/>
-  	   <advice name="around29" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundCallAspect"/>
+      <advice name="around29" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundCallAspect"/>
   	   <advice name="around30" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundCallAspect"/>
   	   <advice name="around31" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundCallAspect"/>
   	   <advice name="around32" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAroundCallAspect"/>
@@ -900,6 +901,68 @@
       <after name="after48" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAfterCallAspect"/>
       <after name="after49" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAfterCallAspect"/>
       <after name="after50" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedAfterCallAspect"/>
+      <finally name="finally1" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally4" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally5" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally6" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally7" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally8" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally9" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally10" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally11" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally12" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally13" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally14" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally15" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally16" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally17" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally18" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally19" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally20" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally21" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally22" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally23" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally24" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally25" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally26" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally27" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally28" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally29" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally30" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally31" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally32" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally33" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally34" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally35" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally36" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally37" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally38" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally39" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally40" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally41" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally42" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally43" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally44" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally45" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally46" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally47" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally48" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally49" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally50" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally51" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally52" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally53" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally54" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally55" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally56" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally57" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally58" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally59" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally60" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally61" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
+      <finally name="finally62" aspect="org.jboss.test.aop.beforeafterArgs.OverloadedFinallyCallAspect"/>
   	</bind>
   	
   	<aspect class="org.jboss.test.aop.beforeafterArgs.OverloadedThrowingCallAspect" scope="PER_VM"/>
