@@ -229,7 +229,8 @@
       <mkdir dir="${build.lib}"/>
 
       <!-- Build jboss-aspect-deployer.jar for jboss 5 -->
-      <jar destfile="${build.lib}/jboss-aop-deployer.jar" manifest="${build.etc}/default.mf"
+    <!-- TODO I would like to call this  jboss-aop-deployer.jar instead, and update name in appserver trunk -->
+      <jar destfile="${build.lib}/jboss-aop-deployer-jdk50.jar" manifest="${build.etc}/default.mf"
          update="${jar.update}" index="${jar.index}">
          <fileset dir="${build.classes}">
             <!-- Include everything else -->
