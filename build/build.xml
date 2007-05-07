@@ -206,8 +206,9 @@
 	   description="Builds the default release structure."
       depends="modules-release"
 	   >
+   	<!--
       <delete dir="${project.release}"/>
-
+-->
       <delete dir="output/temp"/>
       <mkdir dir="output/temp"/>
 
@@ -327,6 +328,8 @@
       <copy todir="${project.release}/lib-50" file="${jboss-logging-spi.location}"/>
       <copy todir="${project.release}/lib-50" file="${log4j.location}"/>
       <copy todir="${project.release}/lib-50" file="${trove.location}"/>
+      <copy todir="${project.release}/lib-50/retro" file="${jboss-backport-concurrent.location}"/>
+      <copy todir="${project.release}/lib-50/retro" file="${jbossretro.location}"/>
 
       <!-- The JDK 1.4 libs -->
       <copy todir="${project.release}/lib-14" file="${aop.14.location}"/>
@@ -341,8 +344,6 @@
       <copy todir="${project.release}/lib-14" file="${log4j.location}"/>
       <copy todir="${project.release}/lib-14" file="${qdox.location}"/>
       <copy todir="${project.release}/lib-14" file="${trove.location}"/>
-      <copy todir="${project.release}/lib-14/retro" file="${jboss-backport-concurrent.location}"/>
-      <copy todir="${project.release}/lib-14/retro" file="${jbossretro.location}"/>
 
       <!-- The JBoss 4.0.x libs for JDK 1.4 (JBoss 4.2.0 needs JDK 5)-->
 
