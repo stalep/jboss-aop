@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="build-common" default="compile">
+   <target name="usage">
+      <echo>Run one of the following targets:</echo>
+      <echo> ant run.aopc.50          Run with compile-time weaving with JDK 5</echo>
+      <echo> ant run.loadtime.50      Run with loadtime weaving with JDK 5</echo>
+   </target>
+
+   <target name="prepare">
+      <property name="jboss.aop.root" value="../../../.."/>
+      <property name="jboss.aop.lib14" value="${jboss.aop.root}/lib-14"/>
+      <property name="jboss.aop.lib50" value="${jboss.aop.root}/lib-50"/>
+
+      <path id="jboss.aop.classpath14">
+         <fileset dir="${jboss.aop.lib14}">
+            <include name="*.jar"/>
+         </fileset>
+      </path>
+
+      <path id="jboss.aop.classpath50">
+         <fileset dir="${jboss.aop.lib50}">
+            <include name="*.jar"/>
+         </fileset>
+      </path>
+
+      <property name="aop50jar" value="${jboss.aop.lib50}/jboss-aop-jdk50.jar"/>
+
+      <path id="classpath50">
+         <path refid="jboss.aop.classpath50"/>
+         <pathelement path="."/>
+      </path>
+
+      <path id="classpath14">
+         <path refid="jboss.aop.classpath14"/>
+         <pathelement path="."/>
+      </path>
+
+      <delete>
+         <fileset dir="." includes="**/*.class"/>
+      </delete>
+   </target>
+
+   <target name="compile50" depends="prepare">
+      <javac srcdir="."
+         destdir="."
+         debug="on"
+         deprecation="on"
+         optimize="off"
+         includes="**">
+        <classpath refid="classpath50"/>
+      </javac>
+   </target>
+
+   <target name="compile14" depends="prepare">
+      <javac srcdir="."
+         destdir="."
+         debug="on"
+         deprecation="on"
+         optimize="off"
+         includes="**">
+        <classpath refid="classpath14"/>
+      </javac>
+   </target>
+
+   <target name="aopc50" depends="compile50">
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath50"/>
+      <aopc compilerclasspathref="classpath50" classpathref="classpath50" verbose="true">
+         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
+         <sysproperty key="jboss.aop.verbose" value="true"/>
+         <classpath path="."/>
+         <src path="."/>
+         <aoppath path="jboss-aop.xml"/>
+      </aopc>
+   </target>
+
+   <target name="aopc14" depends="compile14">
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath14"/>
+      <aopc compilerclasspathref="classpath14" classpathref="classpath14" verbose="true">
+         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
+         <sysproperty key="jboss.aop.verbose" value="true"/>
+         <classpath path="."/>
+         <src path="."/>
+         <aoppath path="jboss-aop.xml"/>
+      </aopc>
+   </target>
+
+   <target name="run.aopc.14" depends="aopc14">
+      <java fork="yes" failOnError="true" className="Driver">
+         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
+         <classpath refid="classpath14"/>
+      </java>
+   </target>
+
+   <target name="create-classloader-hook14" depends="prepare">
+      <!-- Create the classloader hook -->
+      <mkdir dir="jboss.aop.lib14/jdk14hook"/>
+      <java fork="yes" classname="org.jboss.aop.hook.GenerateInstrumentedClassLoader">
+         <classpath>
+            <path refid="jboss.aop.classpath14"/>
+         </classpath>
+         <arg value="jboss.aop.lib14/jdk14hook"/>
+      </java>
+   </target>
+
+   <target name="run.loadtime.14" depends="compile14, create-classloader-hook14">
+      <path id="bootclasspath">
+         <pathelement location="jboss.aop.lib14/jdk14hook"/>
+         <path refid="jboss.aop.classpath14"/>
+      </path>
+      <property name="bootclasspath" refid="bootclasspath"/>
+
+      <java fork="yes" failOnError="true" className="Driver">
+         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
+         <jvmarg value="-Xbootclasspath/p:${bootclasspath}"/>
+         <classpath path="."/>
+      </java>
+   </target>
+</project>

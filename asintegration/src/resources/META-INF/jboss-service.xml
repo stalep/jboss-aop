@@ -43,10 +43,9 @@
        <attribute name="Instrumentor">org.jboss.aop.instrument.ClassicInstrumentor</attribute>
       -->
    </mbean>
-<!--
+
    <mbean code="org.jboss.aop.deployment.AspectDeployer"
       name="jboss.aop:service=AspectDeployer">
       <depends>jboss.system:service=MainDeployer</depends>
    </mbean>
--->
 </server>
