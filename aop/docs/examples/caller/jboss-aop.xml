@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<aop>
 
-<project default="run" name="JBoss/AOP">
-   <import file="../examples-build.xml"/>
-</project>
+   <bind pointcut="call(int java.util.ArrayList->size()) AND withincode(void Driver->caller())">
+       <interceptor class="CallerInterceptor1"/>
+   </bind>
+
+   <bind pointcut="call(int java.util.ArrayList->size()) AND withincode(* Driver->*(..)) AND !withincode(void Driver->caller())">
+       <interceptor class="CallerInterceptor2"/>
+   </bind>
+
+   <bind pointcut="call(java.util.ArrayList->new()) AND within(Driver)">
+       <interceptor class="CallerInterceptor1"/>
+   </bind>
+
+</aop>
