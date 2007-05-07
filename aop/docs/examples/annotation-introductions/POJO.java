@@ -21,28 +21,22 @@
 */
 public class POJO
 {
-   /**
-    * @@trace 
-    * @@single ("hello world")
-    */
-   public POJO() 
+   @trace
+   @single ("hello world")
+   public POJO()
    {
       System.out.println("empty constructor");
    }
 
-   /**
-    * @@trace 
-    * @@single ("hello world")
-    */
+   @trace
+   @single ("hello world")
    public void someMethod()
    {
       System.out.println("someMethod");
    }
 
-   /**
-    * @@trace 
-    * @@single ("hello world")
-    */
+   @trace
+   @single ("hello world")
    public int field;
 }
 

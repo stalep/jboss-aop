@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="build-common" default="usage">
+   <!--
+      Note that this build file is not runnable on its own. It is included from each
+      example's build.xml. Also, all paths are relative to the example sub-folders,
+      rather than from this parent folder
+   -->
+
    <target name="usage">
       <echo>Run one of the following targets:</echo>
       <echo> ant run.aopc.50          Run with compile-time weaving with JDK 5</echo>
@@ -8,7 +14,9 @@
       <echo> ant run.loadtime.14      Run with loadtime weaving with JDK 1.4</echo>
    </target>
 
-   <target name="prepare">
+   <target name="_prepare"
+      description="Set up the common paths and properties needed later">
+
       <property name="jboss.aop.root" value="../../../.."/>
       <property name="jboss.aop.lib14" value="${jboss.aop.root}/lib-14"/>
       <property name="jboss.aop.lib50" value="${jboss.aop.root}/lib-50"/>
@@ -21,6 +29,13 @@
 
       <path id="jboss.aop.classpath50">
          <fileset dir="${jboss.aop.lib50}">
+            <include name="*.jar"/>
+         </fileset>
+      </path>
+
+      <path id="jboss.retro.classpath">
+         <path refid="jboss.aop.classpath50"/>
+         <fileset dir="${jboss.aop.lib50}/retro">
             <include name="*.jar"/>
          </fileset>
       </path>
@@ -40,9 +55,14 @@
       <delete>
          <fileset dir="." includes="**/*.class"/>
       </delete>
+
+      <property file="../examples.properties"/>
    </target>
 
-   <target name="compile50" depends="prepare">
+
+   <target name="_compile50" depends="_prepare"
+      description="Compile the sources with JDK 5">
+
       <javac srcdir="."
          destdir="."
          debug="on"
@@ -53,7 +73,10 @@
       </javac>
    </target>
 
-   <target name="compile14" depends="prepare">
+
+   <target name="_compile14" depends="_prepare"
+      description="Compile the sources with JDK 1.4">
+
       <javac srcdir="."
          destdir="."
          debug="on"
@@ -64,7 +87,23 @@
       </javac>
    </target>
 
-   <target name="aopc50" depends="compile50">
+
+   <target name="_retro" depends="_compile50"
+      description="Translate JDK 5 class files so they are runnable with JDK 1.4">
+
+      <taskdef name="retro" classname="org.jboss.ant.tasks.retro.Retro" classpathref="jboss.retro.classpath"/>
+
+      <retro compilerclasspathref="jboss.retro.classpath" destdir=".">
+         <classpath refid="jboss.retro.classpath"/>
+         <classpath path="."/>
+         <src path="."/>
+      </retro>
+   </target>
+
+
+   <target name="_aopc50" depends="_compile50"
+      description="Compile-time weave the classes (JDK 5) using a jboss-aop.xml file">
+
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath50"/>
 
       <aopc compilerclasspathref="classpath50" classpathref="classpath50" verbose="true">
@@ -76,7 +115,25 @@
       </aopc>
    </target>
 
-   <target name="aopc14" depends="compile14">
+
+   <target name="_aopc50.annotated" depends="_compile50"
+      description="Compile-time weave the classes (JDK 5) using annotations to configure">
+
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath50"/>
+
+      <aopc compilerclasspathref="classpath50" classpathref="classpath50" verbose="true">
+         <sysproperty key="jboss.aop.class.path" value="."/>
+         <sysproperty key="jboss.aop.verbose" value="true"/>
+         <classpath path="."/>
+         <src path="."/>
+         <aopclasspath path="."/>
+      </aopc>
+   </target>
+
+
+   <target name="_aopc14" depends="_compile14"
+      description="Compile-time weave the classes (JDK 1.4) using a jboss-aop.xml file">
+
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath14"/>
 
       <aopc compilerclasspathref="classpath14" classpathref="classpath14" verbose="true">
@@ -88,32 +145,58 @@
       </aopc>
    </target>
 
-   <target name="run.aopc.50" depends="aopc50">
-      <java fork="yes" failOnError="true" className="Driver">
-         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
-         <classpath refid="classpath50"/>
-      </java>
+
+   <target name="_aopc14.annotated" depends="_compile14"
+      description="Compile-time weave the classes (JDK 1.4) using annotations to configure">
+
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath14"/>
+
+      <aopc compilerclasspathref="classpath14" classpathref="classpath14" verbose="true">
+         <sysproperty key="jboss.aop.class.path" value="."/>
+         <sysproperty key="jboss.aop.verbose" value="true"/>
+         <classpath path="."/>
+         <src path="."/>
+         <aopclasspath path="."/>
+      </aopc>
    </target>
 
-   <target name="run.aopc.14" depends="aopc14">
-      <java fork="yes" failOnError="true" className="Driver">
+
+   <target name="_aopc14.retro" depends="_retro"
+      description="Compile-time weave the retroed classes (JDK 1.4) using a jboss-aop.xml file">
+
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath14"/>
+
+      <aopc compilerclasspathref="classpath14" classpathref="classpath14" verbose="true">
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
-         <classpath refid="classpath50"/>
-      </java>
+         <sysproperty key="jboss.aop.verbose" value="true"/>
+         <classpath path="."/>
+         <src path="."/>
+         <aoppath path="jboss-aop.xml"/>
+      </aopc>
    </target>
 
-   <target name="run.loadtime.50" depends="compile50">
-      <java fork="yes" failOnError="true" className="Driver">
-         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
-         <jvmarg value="-javaagent:${aop50jar}"/>
-         <classpath refid="classpath50"/>
-      </java>
+
+   <target name="_aopc14.retro.annotated" depends="_retro"
+      description="Compile-time weave the retroed classes (JDK 1.4) using annotations to configure">
+
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath14"/>
+
+      <aopc compilerclasspathref="classpath14" classpathref="classpath14" verbose="true">
+         <sysproperty key="jboss.aop.class.path" value="."/>
+         <sysproperty key="jboss.aop.verbose" value="true"/>
+         <classpath path="."/>
+         <src path="."/>
+         <aopclasspath path=""/>
+      </aopc>
    </target>
 
-   <target name="create-classloader-hook14" depends="prepare">
+
+   <target name="_create-classloader-hook14" depends="_prepare"
+      description="Create the woven classloader for JDK 1.4 loadtime weaving">
+
       <!-- Create the classloader hook -->
       <mkdir dir="jboss.aop.lib14/jdk14hook"/>
-      <java fork="yes" classname="org.jboss.aop.hook.GenerateInstrumentedClassLoader">
+      <java fork="yes" classname="org.jboss.aop.hook.GenerateInstrumentedClassLoader" jvm="">
          <classpath>
             <path refid="jboss.aop.classpath14"/>
          </classpath>
@@ -121,9 +204,100 @@
       </java>
    </target>
 
-   <target name="run.loadtime.14" depends="compile14, create-classloader-hook14">
+   <target name="_setup.java14" depends="_prepare">
+
+      <available file="${jdk14.java}" property="correct.jdk14"/>
+      <fail unless="correct.jdk14" message="You should modify jdk14.java in ../examples.properties to point to a JDK 1.4 executable. '${jdk14.java}' is not a valid location"/>
+   </target>
+
+   <!-- These are the main targets to be used -->
+
+   <target name="_run.aopc.50" depends="_aopc50"
+      description="Run the example using compile-time weaving on JDK 5, using a jboss-aop.xml file">
+
+      <java fork="yes" failOnError="true" className="Driver">
+         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
+         <classpath refid="classpath50"/>
+      </java>
+   </target>
+
+
+   <target name="_run.aopc.50.annotated" depends="_aopc50.annotated"
+      description="Run the example using compile-time weaving on JDK 5, using annotations to configure">
+
+      <java fork="yes" failOnError="true" className="Driver">
+         <sysproperty key="jboss.aop.class.path" value="."/>
+         <classpath refid="classpath50"/>
+      </java>
+   </target>
+
+
+   <target name="_run.aopc.14" depends="_aopc14"
+      description="Run the example using compile-time weaving on JDK 1.4, using a jboss-aop.xml file">
+
+      <java fork="yes" failOnError="true" className="Driver">
+         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
+         <classpath refid="classpath14"/>
+      </java>
+   </target>
+
+
+   <target name="_run.aopc.14.retro" depends="_aopc14.retro, _setup.java14"
+      description="Run the example using compile-time weaving on JDK 1.4, having compiled the classes using JDK 5 and jboss retro, using a jboss-aop.xml file">
+
+      <java fork="yes" failOnError="true" className="Driver" jvm="${jdk14.java}">
+         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
+         <classpath refid="classpath14"/>
+      </java>
+   </target>
+
+
+   <target name="_run.aopc.14.retro.annotated" depends="_aopc14.retro.annotated, _setup.java14"
+      description="Run the example using compile-time weaving on JDK 1.4, having compiled the classes using JDK 5 and jboss retro, using annotations to configure">
+
+      <java fork="yes" failOnError="true" className="Driver" jvm="${jdk14.java}">
+         <sysproperty key="jboss.aop.class.path" value="."/>
+         <classpath refid="classpath14"/>
+      </java>
+   </target>
+
+
+   <target name="_run.loadtime.50" depends="_compile50"
+      description="Run the example using loadtime-time weaving on JDK 5, using a jboss-aop.xml file">
+
+      <java fork="yes" failOnError="true" className="Driver">
+         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
+         <jvmarg value="-javaagent:${aop50jar}"/>
+         <classpath refid="classpath50"/>
+      </java>
+   </target>
+
+
+   <target name="_run.loadtime.50.annotated" depends="_compile50"
+      description="Run the example using loadtime-time weaving on JDK 5, using annotations to configure">
+
+      <java fork="yes" failOnError="true" className="Driver">
+         <sysproperty key="jboss.aop.class.path" value="."/>
+         <jvmarg value="-javaagent:${aop50jar}"/>
+         <classpath refid="classpath50"/>
+      </java>
+   </target>
+
+
+   <target name="_run.loadtime.14" depends="_compile14"
+      description="Run the example using loadtime-time weaving on JDK 1.4, using a jboss-aop.xml file">
+
+      <!-- Create the classloader hook -->
+      <mkdir dir="jboss.aop.lib14/jdk14hook"/>
+      <java fork="yes" classname="org.jboss.aop.hook.GenerateInstrumentedClassLoader">
+         <classpath>
+            <path refid="jboss.aop.classpath14"/>
+         </classpath>
+         <arg value="${jboss.aop.lib14}/jdk14hook"/>
+      </java>
+
       <path id="bootclasspath">
-         <pathelement location="jboss.aop.lib14/jdk14hook"/>
+         <pathelement location="${jboss.aop.lib14}/jdk14hook"/>
          <path refid="jboss.aop.classpath14"/>
       </path>
       <property name="bootclasspath" refid="bootclasspath"/>
@@ -134,4 +308,56 @@
          <classpath path="."/>
       </java>
    </target>
+
+
+   <target name="_run.loadtime.14.retro" depends="_retro, _setup.java14"
+      description="Run the example using loadtime-time weaving on JDK 1.4, having compiled the classes using JDK 5 and jboss retro, using a jboss-aop.xml file">
+
+      <!-- Create the classloader hook -->
+      <mkdir dir="jboss.aop.lib14/jdk14hook"/>
+      <java fork="yes" classname="org.jboss.aop.hook.GenerateInstrumentedClassLoader" jvm="${jdk14.java}">
+         <classpath>
+            <path refid="jboss.aop.classpath14"/>
+         </classpath>
+         <arg value="${jboss.aop.lib14}/jdk14hook"/>
+      </java>
+
+      <path id="bootclasspath">
+         <pathelement location="${jboss.aop.lib14}/jdk14hook"/>
+         <path refid="jboss.aop.classpath14"/>
+      </path>
+      <property name="bootclasspath" refid="bootclasspath"/>
+
+      <java fork="yes" failOnError="true" className="Driver" jvm="${jdk14.java}">
+         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
+         <jvmarg value="-Xbootclasspath/p:${bootclasspath}"/>
+         <classpath path="."/>
+      </java>
+   </target>
+
+   <target name="_run.loadtime.14.retro.annotated" depends="_retro, _setup.java14"
+      description="Run the example using loadtime-time weaving on JDK 1.4, having compiled the classes using JDK 5 and jboss retro, using annotations">
+
+      <!-- Create the classloader hook -->
+      <mkdir dir="jboss.aop.lib14/jdk14hook"/>
+      <java fork="yes" classname="org.jboss.aop.hook.GenerateInstrumentedClassLoader" jvm="${jdk14.java}">
+         <classpath>
+            <path refid="jboss.aop.classpath14"/>
+         </classpath>
+         <arg value="${jboss.aop.lib14}/jdk14hook"/>
+      </java>
+
+      <path id="bootclasspath">
+         <pathelement location="${jboss.aop.lib14}/jdk14hook"/>
+         <path refid="jboss.aop.classpath14"/>
+      </path>
+      <property name="bootclasspath" refid="bootclasspath"/>
+
+      <java fork="yes" failOnError="true" className="Driver" jvm="${jdk14.java}">
+         <sysproperty key="jboss.aop.class.path" value="."/>
+         <jvmarg value="-Xbootclasspath/p:${bootclasspath}"/>
+         <classpath path="."/>
+      </java>
+   </target>
+
 </project>

@@ -20,4 +20,8 @@
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
 
-public interface trace {}
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
+public @interface trace {}
