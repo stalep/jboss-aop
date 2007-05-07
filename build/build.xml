@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE project [
    <!ENTITY buildmagic SYSTEM "../tools/etc/buildmagic/buildmagic.ent">
-   <!ENTITY libraries SYSTEM "../thirdparty/libraries.ent">
 ]>
 
 <!-- ====================================================================== -->
@@ -15,7 +14,7 @@
 
 <!-- $Id: build.xml 56876 2006-09-15 00:11:10Z scott.stark@jboss.org $ -->
 
-<project default="main" name="JBossAOP/Build">
+<project default="release" name="JBossAOP/Build">
 
   <!-- ================================================================== -->
   <!-- Setup                                                              -->
@@ -192,200 +191,21 @@
            value="${project.root}/${_module.name}/output"/>
    </target>
 
-  <!-- ================================================================== -->
-  <!-- Install & Release                                                  -->
-  <!-- ================================================================== -->
+   <!-- ================================================================== -->
+   <!-- Install & Release                                                  -->
+   <!-- ================================================================== -->
 
-  <target name="install"
+   <target name="install"
 	  description="Install the structure for a release."
      depends="init"
      >
-  </target>
+   </target>
 
    <target name="release"
 	   description="Builds the default release structure."
       depends="modules-release"
 	   >
-   	<!--
-      <delete dir="${project.release}"/>
--->
-      <delete dir="output/temp"/>
-      <mkdir dir="output/temp"/>
-
-      <!-- ==================================================  -->
-      <!--           Add the files from 'aop'                  -->
-      <!-- ==================================================  -->
-
-      <copy todir="${project.release}/bin" filtering="no">
-         <fileset dir="${project.root}/aop/src/resources/bin">
-            <include name="**/*"/>
-         </fileset>
-      </copy>
-
-      <copy todir="${project.release}/docs/aspect-framework" filtering="no">
-         <fileset dir="${project.root}/aop/docs">
-            <include name="api/**"/>
-            <include name="**/*.html"/>
-            <include name="**/*.pdf"/>
-            <include name="**/*.jpg"/>
-            <include name="**/*.pdf"/>
-            <include name="**/*.css"/>
-            <include name="examples/**"/>
-            <exclude name="**/CVS/**"/>
-            <exclude name="**/.svn/**"/>
-            <exclude name="**/*.wiki"/>
-            <exclude name="reference/**"/>
-         </fileset>
-         <fileset dir="${project.root}/aop/docs/reference/build">
-            <include name="**"/>
-         </fileset>
-      </copy>
-
-      <copy todir="${project.release}/src/aspect-framework" filtering="no">
-         <fileset dir="${project.root}/aop/src">
-            <include name="main/**/*.java"/>
-            <include name="main/**/*.jjt"/>
-            <include name="test/**/*.java"/>
-            <include name="resources/test/**/*.xml"/>
-            <include name="resources/bin/**/*"/>
-            <exclude name="**/.svn/**"/>
-            <exclude name="**/CVS/**"/>
-         </fileset>
-      </copy>
-
-      <!-- ==================================================  -->
-      <!-- Add the files from 'asintegration'                  -->
-      <!-- ==================================================  -->
-
-      <copy todir="${project.release}/docs/aspect-deployer" filtering="no">
-         <fileset dir="${project.root}/asintegration/output">
-            <include name="api/**"/>
-         </fileset>
-      </copy>
-
-      <copy todir="${project.release}/src/aspect-deployer" filtering="no">
-         <fileset dir="${project.root}/asintegration/src">
-            <include name="main/**/*.java"/>
-            <include name="etc/**"/>
-            <include name="resources/**"/>
-            <exclude name="**/.svn/**"/>
-            <exclude name="**/CVS/**"/>
-         </fileset>
-      </copy>
-
-      <!-- ==================================================  -->
-      <!-- Now pull everything together                        -->
-      <!-- ==================================================  -->
-
-
-      &libraries;
-
-     <!-- TODO Do I need to include ant, junit, jboss-test? -->
-
-      <property name="aop.50.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50.jar"/>
-      <property name="aop.14.location" value="${project.root}/aop/output/lib/jboss-aop.jar"/>
-      <property name="aop.aspect-library-beans.location" value="${project.root}/asintegration/src/resources/META-INF/jboss-aspect-library-beans.xml"/>
-      <property name="aop.base-aop.location" value="${project.root}/asintegration/src/etc/base-aop.xml"/>
-      <property name="aop.as4-deployer.location" value="${project.root}/asintegration/output/lib/jboss-aop-as4-deployer.jar"/>
-      <property name="aop.as4-deployer-jdk14.location" value="${project.root}/asintegration/output/lib/jboss-aop-as4-deployer-jdk14.jar"/>
-      <!-- TODO I would like to call this  jboss-aop-deployer.jar instead, and update name in appserver trunk -->
-      <property name="aop.as5-deployer.location" value="${project.root}/asintegration/output/lib/jboss-aop-deployer-jdk50.jar"/>
-      <property name="aop.jrockit-pluggable-instrumentor.location" value="${project.root}/aop/output/lib/jrockit-pluggable-instrumentor.jar"/>
-      <property name="aop.pluggable-instrumentor.location" value="${project.root}/aop/output/lib/pluggable-instrumentor.jar"/>
-      <property name="aop.jdk14-pluggable-instrumentor.location" value="${project.root}/aop/output/lib/jdk14-pluggable-instrumentor.jar"/>
-      <property name="aop.readme-as4.location" value="${project.root}/asintegration/src/etc/ReadMe-AS4.txt"/>
-      <property name="aop.readme-as5.location" value="${project.root}/asintegration/src/etc/ReadMe-AS5.txt"/>
-      <property name="aop.jboss-service.location" value="${project.root}/asintegration/src/resources/META-INF/jboss-service.xml"/>
-
-      <property name="javassist.location" value="${javassist.javassist.lib}/javassist.jar"/>
-      <property name="jboss-backport-concurrent.location" value="${jboss/backport.concurrent.lib}/jboss-backport-concurrent.jar"/>
-      <property name="jboss-common-core.location" value="${jboss/common.core.lib}/jboss-common-core.jar"/>
-      <property name="jboss-common-core14.location" value="${jboss/common.core.14.lib}/jboss-common-core-jdk14.jar"/>
-      <property name="jboss-logging-log4j.location" value="${jboss/common.logging.log4j.lib}/jboss-logging-log4j.jar"/>
-      <property name="jboss-logging-spi.location" value="${jboss/common.logging.spi.lib}/jboss-logging-spi.jar"/>
-      <property name="jboss-container.location" value="${jboss.microcontainer.lib}/jboss-container.jar"/>
-      <property name="jboss-container14.location" value="${jboss.microcontainer14.lib}/jboss-container14.jar"/>
-      <property name="jbossretro.location" value="${jboss.jbossretro.lib}/jbossretro.jar"/>
-      <property name="jbossretro-rt.location" value="${jboss.jbossretro.lib}/jbossretro-rt.jar"/>
-      <property name="log4j.location" value="${apache.log4j.lib}/log4j.jar"/>
-      <property name="qdox.location" value="${qdox.qdox.lib}/qdox.jar"/>
-      <property name="trove.location" value="${trove.trove.lib}/trove.jar"/>
-
-      <!-- TODO We used to need common-softvalue-hashmap.jar but I cannot find any occurences in the code any more -->
-
-      <!-- Copy across the eula -->
-      <copy todir="${project.release}" file="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
-
-      <!-- The JDK 5 libs -->
-      <copy todir="${project.release}/lib-50" file="${aop.50.location}"/>
-      <copy todir="${project.release}/lib-50" file="${project.root}/aop/output/lib/jboss-aop-jdk50-client.jar"/>
-      <copy todir="${project.release}/lib-50" file="${aop.jrockit-pluggable-instrumentor.location}"/>
-      <copy todir="${project.release}/lib-50" file="${aop.pluggable-instrumentor.location}"/>
-      <copy todir="${project.release}/lib-50" file="${javassist.location}"/>
-      <copy todir="${project.release}/lib-50" file="${jboss-common-core.location}"/>
-      <copy todir="${project.release}/lib-50" file="${jboss-container.location}"/>
-      <copy todir="${project.release}/lib-50" file="${jboss-logging-log4j.location}"/>
-      <copy todir="${project.release}/lib-50" file="${jboss-logging-spi.location}"/>
-      <copy todir="${project.release}/lib-50" file="${log4j.location}"/>
-      <copy todir="${project.release}/lib-50" file="${trove.location}"/>
-      <copy todir="${project.release}/lib-50/retro" file="${jboss-backport-concurrent.location}"/>
-      <copy todir="${project.release}/lib-50/retro" file="${jbossretro.location}"/>
-
-      <!-- The JDK 1.4 libs -->
-      <copy todir="${project.release}/lib-14" file="${aop.14.location}"/>
-      <copy todir="${project.release}/lib-14" file="${aop.jdk14-pluggable-instrumentor.location}"/>
-      <copy todir="${project.release}/lib-14" file="${javassist.location}"/>
-      <copy todir="${project.release}/lib-14" file="${jboss-backport-concurrent.location}"/>
-      <copy todir="${project.release}/lib-14" file="${jboss-common-core14.location}"/>
-      <copy todir="${project.release}/lib-14" file="${jboss-container14.location}"/>
-      <copy todir="${project.release}/lib-14" file="${jboss-logging-log4j.location}"/>
-      <copy todir="${project.release}/lib-14" file="${jboss-logging-spi.location}"/>
-      <copy todir="${project.release}/lib-14" file="${jbossretro-rt.location}"/>
-      <copy todir="${project.release}/lib-14" file="${log4j.location}"/>
-      <copy todir="${project.release}/lib-14" file="${qdox.location}"/>
-      <copy todir="${project.release}/lib-14" file="${trove.location}"/>
-
-      <!-- The JBoss 4.0.x libs for JDK 1.4 (JBoss 4.2.0 needs JDK 5)-->
-
-      <copy file="${aop.jboss-service.location}" tofile="output/temp/jboss-service-jdk4.xml" filtering="true">
-         <filterset>
-            <filter token="SERVICE_NAME" value="org.jboss.aop.deployment.AspectManagerService"/>
-         </filterset>
-      </copy>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.14.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.as4-deployer-jdk14.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/" file="${aop.base-aop.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/" file="${aop.readme-as4.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-backport-concurrent.location}"/><!-- TODO figure out for what versions of jboss this is necessary, and if it exists in other locations -->
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${javassist.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jbossretro.location}"/><!-- TODO figure out for what versions of jboss this is necessary, and if it exists in other locations -->
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${trove.location}"/>
-      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/META-INF/jboss-service.xml" file="output/temp/jboss-service-jdk4.xml"/>
-
-      <!-- The JBoss 4.0.x and 4.2.0x libs for JDK 5 -->
-      <copy file="${aop.jboss-service.location}" tofile="output/temp/jboss-service-jdk50.xml" filtering="true">
-         <filterset>
-            <filter token="SERVICE_NAME" value="org.jboss.aop.deployment.AspectManagerServiceJDK5"/>
-         </filterset>
-      </copy>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${project.root}/aop/output/lib/jboss-aop-jdk50.jar"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.as4-deployer.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/" file="${aop.base-aop.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/" file="${aop.readme-as4.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${javassist.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${trove.location}"/>
-      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/META-INF/jboss-service.xml" file="output/temp/jboss-service-jdk50.xml"/>
-
-      <!-- The JBoss 5 libs for JDK 5 (JBoss 5 needs JDK 5) -->
-      <copy todir="${project.release}/jboss-50-install/lib" file="${aop.50.location}"/>
-      <copy todir="${project.release}/jboss-50-install/lib" file="${aop.as5-deployer.location}"/>
-      <copy todir="${project.release}/jboss-50-install" file="${aop.readme-as4.location}"/>
-      <copy todir="${project.release}/jboss-50-install/lib" file="${javassist.location}"/>
-      <copy todir="${project.release}/jboss-50-install/lib" file="${trove.location}"/>
-      <copy tofile="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer/base-aspects.xml" file="${aop.base-aop.location}"/>
-      <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer/META-INF/" file="${aop.aspect-library-beans.location}"/>
-
-
+      <ant antfile="build-release.xml" target="release"/>
   </target>
 
   <target name="release-zip"
