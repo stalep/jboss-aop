@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="build-common" default="compile">
+<project name="build-common" default="usage">
    <target name="usage">
       <echo>Run one of the following targets:</echo>
       <echo> ant run.aopc.50          Run with compile-time weaving with JDK 5</echo>
       <echo> ant run.loadtime.50      Run with loadtime weaving with JDK 5</echo>
+      <echo> ant run.aopc.14          Run with compile-time weaving with JDK 1.4</echo>
+      <echo> ant run.loadtime.14      Run with loadtime weaving with JDK 1.4</echo>
    </target>
 
    <target name="prepare">
