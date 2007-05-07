@@ -396,10 +396,6 @@
       <path id="bootclasspath">
          <pathelement location="${build.bootclasspath}"/>
          <path refid="test.classpath"/>
-         <!--
-         <path refid="apache.ant.classpath"/>
-         <pathelement location="${apache.ant.lib}/ant-junit.jar"/>
-         <pathelement location="${apache.ant.lib}/ant-launcher.jar"/>-->
       </path>
       <property name="bootclasspath" refid="bootclasspath"/>
 
