@@ -64,6 +64,7 @@
 
    <target name="aopc50" depends="compile50">
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath50"/>
+
       <aopc compilerclasspathref="classpath50" classpathref="classpath50" verbose="true">
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
          <sysproperty key="jboss.aop.verbose" value="true"/>
@@ -75,6 +76,7 @@
 
    <target name="aopc14" depends="compile14">
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath14"/>
+
       <aopc compilerclasspathref="classpath14" classpathref="classpath14" verbose="true">
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
          <sysproperty key="jboss.aop.verbose" value="true"/>
@@ -84,10 +86,25 @@
       </aopc>
    </target>
 
+   <target name="run.aopc.50" depends="aopc50">
+      <java fork="yes" failOnError="true" className="Driver">
+         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
+         <classpath refid="classpath50"/>
+      </java>
+   </target>
+
    <target name="run.aopc.14" depends="aopc14">
       <java fork="yes" failOnError="true" className="Driver">
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
-         <classpath refid="classpath14"/>
+         <classpath refid="classpath50"/>
+      </java>
+   </target>
+
+   <target name="run.loadtime.50" depends="compile50">
+      <java fork="yes" failOnError="true" className="Driver">
+         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
+         <jvmarg value="-javaagent:${aop50jar}"/>
+         <classpath refid="classpath50"/>
       </java>
    </target>
 
