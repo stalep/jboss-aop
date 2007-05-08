@@ -20,4 +20,4 @@
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
 
-public interface trace {}
+public interface trace extends org.jboss.lang.Annotation {}

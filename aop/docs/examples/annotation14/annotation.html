@@ -1,16 +1,20 @@
 <html>
 <body>
 <p>
-<h2>JDK 1.5 Annotations with JDK 1.4</h2>
+<h2>JDK 5 Annotations with JDK 1.4</h2>
 
-</p><p>
+</p>
+<p><i><b>This topic has been deprecated in favour of using JBoss Retro as discussed in <a href="../annotation/annotation.html#ann14">annotations in JDK 1.4</a>.
+It does however exist for users for who compiling things with JDK 5 is NOT an option.</b></i></p>
+
 <h4>Overview</h4>
 
-JDK 1.5 has a new interesting feature called annotations.  It allows you to specify xdoclet like tags right in the Java language just as you can with C#.  These tags are typesafe and access to them is available at compile time, load-time, and run-time.  See <a href="http://www.jcp.org/en/jsr/detail?id=175">JSR-175</a> for more detail.  JBossAOP since beta2 does support JDK1.5 annotations
+<p>
+JDK 5 has a new interesting feature called annotations.  It allows you to specify xdoclet like tags right in the Java language just as you can with C#.  These tags are typesafe and access to them is available at compile time, load-time, and run-time.  See <a href="http://www.jcp.org/en/jsr/detail?id=175">JSR-175</a> for more detail.  JBossAOP since beta2 does support JDK 5 annotations
 </p><p>
 A good way to visualize metadata is to think of classnames, method names, field names, and constructor signatures as nouns, and annotations/metadata as adjectives.  You can declare advice/interceptor bindings like:  All @Remotable objects should register with a dispatcher whenever they are constructed.  Any method marked @transactional begin/commit/rollback a transaction at the start and end of the method.  Or even any field, method, constructor marked @traceable, do tracing.  It kinda lets the application developer give hints to the aspect developer.  If you think about it another way, combining annotations and AOP allows you to plug in new Java keywords.  Kinda like C pre-processor macros on steroids.  Macros that are typesafe and checked by the compiler and unlike Major League Baseball players, it will always be legal for you to use these steroids in your applications.
 </p><p>
-So, what good are JDK 1.5 annotations if you're using a JDK 1.4 compiler????  Well, JBoss AOP has an annotation compiler for JDK 1.4 that can convert typed annotations from doclet tags and embed them in your class files.  This bytecode manipulation is compatible with JDK 1.5.
+So, what good are JDK 5 annotations if you're using a JDK 1.4 compiler????  Well, JBoss AOP has an annotation compiler for JDK 1.4 that can convert typed annotations from doclet tags and embed them in your class files.  This bytecode manipulation is compatible with JDK 5.
 </p><p>
 <h4>Example code</h4>
 
@@ -18,11 +22,11 @@ The example code declares annotations via doclets within POJO.java.  single.java
 </p><p>
 <h4>Implementing annotations</h4>
 
-Open up complex.java.  You'll see that it is a regular interface.  This is our annotation implementation and is the same as JDK 1.5 except <i>@interface</i> is replaced with a plain interface.
+Open up complex.java.  You'll see that it is a regular interface.  This is our annotation implementation and is the same as JDK 5 except <i>@interface</i> is replaced with a plain interface. One <b>difference from AOP 1.x</b> is that the interfaces defining the annotations must now extend <i>org.jboss.lang.Annotation</i>, this is because JBoss Retro is now the primary mechanism for using <a href="../annotation/annotation.html#ann14">annotations in JDK 1.4</a>.
 </p><p>
 complex.java
 <pre>
-public interface complex
+public interface complex extends org.jboss.lang.Annotation
 {
    char ch();
    String string();
@@ -37,15 +41,16 @@ public interface complex
    Class clazz();
 }
 </pre>
-</p><p>
+</p>
+<p></p>
 <h4>Declaring annotations</h4>
 
-Open up POJO.java.  This is the source file for where our annotations will be declared.  The syntax is exactly the same as JDK 1.5 annotations except that they are embedded as doclet tags and you use a double at sign '@@'.  
+Open up POJO.java.  This is the source file for where our annotations will be declared.  The syntax is exactly the same as JDK 5 annotations except that they are embedded as doclet tags and you use a double at sign '@@'.
 <b>IMPORTANT NOTE</b> You must have a space after the tag name otherwise you will get a compilation error.  This is the quirkiness of the QDox doclet compiler.
 </p><p>
 <pre>
    /**
-    * @@trace 
+    * @@trace
     * @@single ("hello world")
     * @@complex (ch='a', string="hello world", flt=5.5, dbl=6.6, shrt=5, lng=6, integer=7, bool=true, annotation=@single("hello"), array={"hello", "world"}, clazz=java.lang.String)
     */
@@ -73,7 +78,7 @@ For the annotation compiler to run, it has two requires:
 </ol>
 
 </p><p>
-The bytecode manipulations done to annotated classes are compatible with JDK 1.5.  So, if you rewrite your JDk 1.4 annotations interfaces (changing the keyword interface to @interface), the annotated classes can be used with both JDK 1.4 and 1.5.  I was going to ship an implementation of java.lang.annotation.Annotation and force JDK 1.4 annotation interfaces to implement this (and thus be fully binary compatible), but the Java license forbids you to distribute anything under the java.lang package. :(  Oh well.
+The bytecode manipulations done to annotated classes are compatible with JDK 5.  So, if you rewrite your JDk 1.4 annotations interfaces (changing the keyword interface to @interface), the annotated classes can be used with both JDK 1.4 and 5.  I was going to ship an implementation of java.lang.annotation.Annotation and force JDK 1.4 annotation interfaces to implement this (and thus be fully binary compatible), but the Java license forbids you to distribute anything under the java.lang package. :(  Oh well.
 </p><p>
 </p><p>
 <h4>Annotations in pointcut expressions</h4>
@@ -90,7 +95,7 @@ The above states that for any field, constructor, or method tagged as @trace, ap
 </p><p>
 <h4>Accessing annotations at runtime</h4>
 
-The org.jboss.aop.annotation.AnnotationElement is an abstraction to obtain annotations at runtime.  It works with both JDK 1.4 and JDK 1.5 so you can write portable code.  The TraceInterceptor shows how to access annotations.
+The org.jboss.aop.annotation.AnnotationElement is an abstraction to obtain annotations at runtime.  It works with both JDK 1.4 and JDK 5 so you can write portable code.  The TraceInterceptor shows how to access annotations.
 </p><p>
 <pre>
          complex c = (complex)AnnotationElement.getAnyAnnotation(((MethodInvocation)invocation).getMethod(), complex.class);

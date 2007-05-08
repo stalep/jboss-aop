@@ -1,20 +1,29 @@
 <html>
 <body>
 <p>
-<h2>Annotations for JDK 1.5</h2>
+<h2>Annotations for JDK 5</h2>
 
 </p><p>
-<h4>Overview</h4>
+<h3>Overview</h3>
 
-JDK 1.5 has a new interesting feature called annotations.  It allows you to specify xdoclet like tags right in the Java language just as you can with C#.  These tags are typesafe and access to them is available at compile time, load-time, and run-time.  See <a href="http://www.jcp.org/en/jsr/detail?id=175">JSR-175</a> for more detail.  JBossAOP since beta2 does support JDK1.5 annotations
+JDK 5 has a new interesting feature called annotations.  It allows you to specify xdoclet like tags right in the Java language just as you can with C#.  These tags are typesafe and access to them is available at compile time, load-time, and run-time.  See <a href="http://www.jcp.org/en/jsr/detail?id=175">JSR-175</a> for more detail.  JBossAOP since beta2 does support JDK 5 annotations
 </p><p>
 A good way to visualize metadata is to think of classnames, method names, field names, and constructor signatures as nouns, and annotations/metadata as adjectives.  You can declare advice/interceptor bindings like:  All @Remotable objects should register with a dispatcher whenever they are constructed.  Any method marked @transactional begin/commit/rollback a transaction at the start and end of the method.  Or even any field, method, constructor marked @traceable, do tracing.  It kinda lets the application developer give hints to the aspect developer.  If you think about it another way, combining annotations and AOP allows you to plug in new Java keywords.  Kinda like C pre-processor macros on steroids.  Macros that are typesafe and checked by the compiler and unlike Major League Baseball players, it will always be legal for you to use these steroids in your applications.
 </p><p>
-<h4>Example code</h4>
+
+<a name="ann14"/>
+<h3>Annotations for JDK 1.4</h3>
+<p>Although not supported in JDK 1.4, JBoss AOP allows you a few ways to use annotations with JDK 5.
+One way is as shown in the the
+<a href="../valid_targets_annotated.html"/>annotated examples guide</a> whereby you code your classes using
+JDK 5, and transform your classes into JDK 1.4 bytecode using JBoss Retro. Another way is to use the annotation
+compiled, as shown in <a href="../annotation14/annotation.html">JDK 5 Annotations with JDK 1.4</a>.</p>
+
+<h3>Example code</h3>
 
 The example code applies 2 separate interceptors via tags supplied in a Java source file.  One of the interceptors is a tracing interceptor that is trigger by a @trace annotation, the other is B2B functionality that will bill/charge a user for each access of the api.  This is also triggered by an annotation.
 </p><p>
-<h4>Declaring annotations</h4>
+<h3>Declaring annotations</h3>
 
 Open up POJO.java.  This is the source file for where our annotations will be declared.
 </p><p>
@@ -25,13 +34,13 @@ Open up POJO.java.  This is the source file for where our annotations will be de
       System.out.println("someMethod");
    }
 </pre>
-In the above example, we are declaring someMethod() to be traced and billable.  Don't forget!  At least with JDK 1.5 beta, you must compile your Java source files with 1.5 source to have annotations compile.
+In the above example, we are declaring someMethod() to be traced and billable.
 <pre>
-$ javac -source 1.5 MyFile.java
+$ javac MyFile.java
 </pre>
 </p><p>
 </p><p>
-<h4>Annotations in pointcut expressions</h4>
+<h3>Annotations in pointcut expressions</h3>
 
 Annotations can be referenced by an '@' sign in pointcut expressions.  They can only be used in the class expressions for a method, field, or constructor for execution and caller pointcuts.  They can also be used in substitute for 'new' in constructor land, and for a method or field name.  Take a look at jboss-aop.xml
 </p><p>
@@ -56,10 +65,12 @@ The first binding above says that for every constructor tagged as @billable appl
 </p><p>
 The above states that for any field, constructor, or method tagged as @trace, apply the TraceInterceptor.
 </p><p>
-<h4>Running</h4>
+
+
+<h3>Running</h3>
 
 <p>
-<b>THIS EXAMPLE REQUIRES JDK 1.5!! For other options, please look at the
+<b>THIS EXAMPLE REQUIRES JDK 5!! For other options, please look at the
 <a href="../valid_targets_annotated.html"/>annotated examples guide</a></b> To compile and run:</p>
 <pre>
   $ run.aopc.50

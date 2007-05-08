@@ -19,7 +19,7 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
-public interface complex
+public interface complex extends org.jboss.lang.Annotation
 {
    char ch();
    String string();
