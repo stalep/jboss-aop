@@ -20,7 +20,6 @@
       <property name="jboss.server.config" value="all" />
 
       <available file="${jboss.dir}" property="jboss.exists" type="dir"/>
-      <echo>xx ${jboss.exists} xx</echo>
       <fail unless="jboss.exists" message="${jboss.dir} does not exist. Modify 'jboss.dir' in build.xml to be a valid root of a jboss installation"/>
 
       <echo>===========================================================</echo>
