@@ -131,7 +131,7 @@ $ java -cp=&lt;classpath as described above&gt; com.blah.MyMainClass
 $ run-precompiled classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] \
       com.blah.MyMainClass [args...]
             </programlisting>
-            For JDK 1.5:
+            For JDK 5:
             <programlisting>
 $ run-precompiled15 classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] \
       com.blah.MyMainClass [args...]
@@ -243,7 +243,7 @@ $ java -cp=&lt;classpath as described above&gt; -javaagent:jboss-aop-jdk50.jar \
             <para>
             In the /bin folder of the distribution we have provided batch/script files to make
             this easier. It includes all the aop libs for you, so you just have to worry
-            about your files. The usage for JDK 1.5 is:
+            about your files. The usage for JDK 5 is:
                <programlisting>
 $ run-load15 classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] \
       com.blah.MyMainClass [args...]

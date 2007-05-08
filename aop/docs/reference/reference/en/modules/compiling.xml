@@ -7,18 +7,18 @@
       <para>
          JBoss AOP works by instrumenting the classes you want to run. This means
          that modifications to the bytecode are made in order to add extra information
-         to the classes to hook into the AOP library.  JBoss AOP allows for two types 
+         to the classes to hook into the AOP library.  JBoss AOP allows for two types
          of instrumentation
          <itemizedlist>
             <listitem>
-               Precompiled - The classes are instrumented in a separate aop compilation 
+               Precompiled - The classes are instrumented in a separate aop compilation
                step before they are run.
             </listitem>
             <listitem>
                Loadtime - The classes are instrumented when they are first loaded.
             </listitem>
          </itemizedlist>
-         This chapter describes the steps you need to take to precompile your classes 
+         This chapter describes the steps you need to take to precompile your classes
          with the aop precompiler.
       </para>
    </sect1>
@@ -87,7 +87,7 @@
          JDK 5.0 if your classes do not use JDK 5.0 style annotations and enums:
          <programlisting><![CDATA[
       <!--                  JDK version 1.4.2                         -->
-      <!-- Do not include this if using JDK 1.5 with annotations!!!!  -->
+      <!-- Do not include this if using JDK 5 with annotations!!!!  -->
 
       <path id="jboss.aop.classpath">
          <pathelement path="../../../jboss-aop.jar"/>
@@ -230,9 +230,9 @@
                XML deployment descriptors.
                <para/>
                Report generation works on the instrumented classes, so to get valid data in your
-               report, you have to to make two passes with <literal>aopc</literal>. First 
-               you run <literal>aopc</literal> with <literal>report="false"</literal> to 
-               instrument the classes, and then you run <literal>aopc</literal> with 
+               report, you have to to make two passes with <literal>aopc</literal>. First
+               you run <literal>aopc</literal> with <literal>report="false"</literal> to
+               instrument the classes, and then you run <literal>aopc</literal> with
                <literal>report="true"</literal> to generate the report.
          </listitem>
          <listitem>
@@ -274,14 +274,14 @@
             </programlisting>
          </listitem>
          <listitem>
-            <literal>maxsrc</literal> - The ant task expands any directories in 
+            <literal>maxsrc</literal> - The ant task expands any directories in
                <literal>src</literal> to list all class files, when creating the parameters
                for the java command that actually performs the compilation. On some operating
-               systems there is a limit to the length of vaid command lines. The default value 
+               systems there is a limit to the length of vaid command lines. The default value
                for <literal>maxsrc</literal> is 1000. If the total length of all the files used
                is greater than <literal>maxsrc</literal>, a temporary file listing the files
-               to be transformed is used and passed in to the java command instead. If you have 
-               problems running the <literal>aopc</literal> task, try setting this value to 
+               to be transformed is used and passed in to the java command instead. If you have
+               problems running the <literal>aopc</literal> task, try setting this value to
                a value smaller than 1000.
           </listitem>
       </itemizedlist>
@@ -312,7 +312,7 @@
             JBoss AOP will browse all classes in this path to see if they are annotated.
             The property can have one or files it points to delimited by the operating
             systems specific classpath delimiter (';' on windows, ':' on unix). Note for this to
-            have effect with JDK 1.4, you first have to run the annotation compiler with 
+            have effect with JDK 1.4, you first have to run the annotation compiler with
             bytecode=true.
       </para>
       <para>
@@ -331,13 +331,13 @@ $java -classpath ... [-Djboss.aop.path=...] [-Djboss.aop.class.path=...] \
 $ aopc &lt;classpath&gt; [-aoppath ...] [-aopclasspath ...] [-report] [-verbose] \
       &lt;class files or directories&gt;+
          </programlisting>
-         And for JDK 1.5:
+         And for JDK 5:
          <programlisting>
 $ aopc15 &lt;classpath&gt; [-aoppath ...] [-aopclasspath ...] [-report] [-verbose] \
       &lt;class files or directories&gt;+
          </programlisting>
       </para>
-      <para>         
+      <para>
          <itemizedlist>
             <listitem>
                <literal>classpath</literal> - path to your classes and any jars your code depends on

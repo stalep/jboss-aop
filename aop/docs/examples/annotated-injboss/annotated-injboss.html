@@ -8,14 +8,14 @@ This example is exactly the same as the <a href="../injboss/aopInJbossPackaging.
 </p><p>
 <b>To run these examples you must edit build.xml and set the jboss.dir to where JBoss is. The server configuration used in this example is 'all', so you must start JBoss with 'run -c all'. </b>
 </p><p>
-<h3> JDK 1.5</h3>
+<h3> JDK 5</h3>
 
-JDK 1.5 must be used for this example, this involves:
+JDK 5 must be used for this example, this involves:
 <ul>
 <li>deleting JBOSS_HOME/server/all/jboss-aop.deployer</li>
 <li>copying jboss-40-install/jboss-aop-jdk50.deployer from the AOP distribution into the JBOSS_HOME/server/all/ folder</li>
 <li>using JDK 5.0 when you run JBoss</li>
-<li>building the example with JDK 1.5</li>
+<li>building the example with JDK 5</li>
 </ul>
 </p><p>
 <h3>Interceptors and bindings</h3>
@@ -24,10 +24,10 @@ Instead of defining out interceptors and bindings via XML, they are defined via 
 </p><p>
 <pre>
 @InterceptorDef
-@Bind (pointcut="org.jboss.injbossaop.lib.SimpleInterceptor.valueConstructors OR 
-	org.jboss.injbossaop.lib.SimpleInterceptor.valueMessage OR 
-	org.jboss.injbossaop.lib.SimpleInterceptor.service OR 
-	org.jboss.injbossaop.lib.SimpleInterceptor.sessionValue OR 
+@Bind (pointcut="org.jboss.injbossaop.lib.SimpleInterceptor.valueConstructors OR
+	org.jboss.injbossaop.lib.SimpleInterceptor.valueMessage OR
+	org.jboss.injbossaop.lib.SimpleInterceptor.service OR
+	org.jboss.injbossaop.lib.SimpleInterceptor.sessionValue OR
 	org.jboss.injbossaop.lib.SimpleInterceptor.mbeans")
 public class SimpleInterceptor implements Interceptor
 {
