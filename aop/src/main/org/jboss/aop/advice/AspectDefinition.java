@@ -21,7 +21,6 @@
   */
 package org.jboss.aop.advice;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;

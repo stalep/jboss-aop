@@ -21,25 +21,13 @@
   */
 package org.jboss.aop.instrument;
 
-import java.util.Iterator;
 
 import javassist.CannotCompileException;
-import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtMethod;
-import javassist.Modifier;
 import javassist.NotFoundException;
-import javassist.expr.MethodCall;
-import javassist.expr.NewExpr;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassAdvisor;
-import org.jboss.aop.instrument.CallerTransformer.ConByConDetail;
-import org.jboss.aop.instrument.CallerTransformer.ConByMethodDetail;
-import org.jboss.aop.instrument.CallerTransformer.ConstructorDetail;
-import org.jboss.aop.instrument.CallerTransformer.MethodDetail;
-import org.jboss.aop.pointcut.Pointcut;
 
 /**
  * Comment

@@ -22,13 +22,7 @@
 package org.jboss.aop.instrument;
 
 import javassist.CannotCompileException;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtMethod;
-import javassist.Modifier;
 import javassist.NotFoundException;
-
-import org.jboss.aop.AspectManager;
 
 /**
  * Comment

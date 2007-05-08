@@ -21,9 +21,11 @@
   */
 package org.jboss.aop.pointcut;
 
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
+
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
-import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.pointcut.ast.ASTCall;
 import org.jboss.aop.pointcut.ast.ASTConstructor;
 import org.jboss.aop.pointcut.ast.ASTField;
@@ -34,9 +36,6 @@ import org.jboss.aop.pointcut.ast.ASTStart;
 import org.jboss.aop.pointcut.ast.ASTWithin;
 import org.jboss.aop.pointcut.ast.ASTWithincode;
 import org.jboss.aop.pointcut.ast.Node;
-
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
 
 /**
  * Comment

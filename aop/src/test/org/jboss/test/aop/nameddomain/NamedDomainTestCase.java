@@ -31,12 +31,9 @@ import org.jboss.aop.Advised;
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.AspectXmlLoader;
-import org.jboss.aop.Domain;
 import org.jboss.aop.InstanceAdvisor;
-import org.jboss.aop.proxy.ClassProxyFactory;
 import org.jboss.aop.proxy.container.AOPProxyFactoryParameters;
 import org.jboss.aop.proxy.container.AspectManaged;
-import org.jboss.aop.proxy.container.ContainerProxyFactory;
 import org.jboss.aop.proxy.container.GeneratedAOPProxyFactory;
 import org.jboss.test.aop.AOPTestWithSetup;
 

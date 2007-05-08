@@ -22,7 +22,6 @@
 package org.jboss.aop.pointcut;
 
 import org.jboss.aop.Advisor;
-import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.pointcut.ast.ASTAll;
 import org.jboss.aop.pointcut.ast.ASTAllParameter;
 import org.jboss.aop.pointcut.ast.ASTAndCFlow;

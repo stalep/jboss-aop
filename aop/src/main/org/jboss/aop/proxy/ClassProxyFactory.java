@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassAdvisor;

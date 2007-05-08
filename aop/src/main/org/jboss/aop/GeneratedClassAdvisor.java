@@ -21,6 +21,8 @@
   */
 package org.jboss.aop;
 
+import gnu.trove.TLongObjectHashMap;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,8 +34,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AspectDefinition;
-import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.GeneratedAdvisorInterceptor;
+import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.PrecedenceSorter;
 import org.jboss.aop.instrument.ConByConJoinPointGenerator;
 import org.jboss.aop.instrument.ConByMethodJoinPointGenerator;
@@ -43,14 +45,11 @@ import org.jboss.aop.instrument.FieldJoinPointGenerator;
 import org.jboss.aop.instrument.JoinPointGenerator;
 import org.jboss.aop.instrument.MethodByConJoinPointGenerator;
 import org.jboss.aop.instrument.MethodByMethodJoinPointGenerator;
-import org.jboss.aop.instrument.MethodExecutionTransformer;
 import org.jboss.aop.instrument.MethodJoinPointGenerator;
 import org.jboss.aop.joinpoint.FieldJoinpoint;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodJoinpoint;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
-
-import gnu.trove.TLongObjectHashMap;
 
 /**
  * Comment

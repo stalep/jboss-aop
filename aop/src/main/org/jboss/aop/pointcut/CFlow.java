@@ -30,11 +30,7 @@ import org.jboss.aop.pointcut.ast.ParseException;
 import org.jboss.aop.pointcut.ast.PointcutExpressionParser;
 import org.jboss.aop.pointcut.ast.SimpleNode;
 
-import java.io.InputStream;
 import java.io.StringReader;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 
 /**
  * Comment

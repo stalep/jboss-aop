@@ -22,7 +22,6 @@
 package org.jboss.test.aop.stress.methodinvocation;
 
 import org.jboss.test.aop.stress.AbstractScenario;
-import org.jboss.test.aop.stress.Scenario;
 import org.jboss.test.aop.stress.ScenarioTest;
 
 /**

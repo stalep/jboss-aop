@@ -22,9 +22,6 @@
 package org.jboss.aop.instrument;
 
 import javassist.CtConstructor;
-import javassist.Modifier;
-
-import org.jboss.aop.AspectManager;
 
 /**
  * Comment

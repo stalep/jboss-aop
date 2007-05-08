@@ -21,12 +21,17 @@
   */
 package org.jboss.test.aop.jdk15annotated;
 
-import org.jboss.aop.*;
+import org.jboss.aop.Aspect;
+import org.jboss.aop.Bind;
+import org.jboss.aop.PointcutDef;
 import org.jboss.aop.Prepare;
-import org.jboss.aop.pointcut.Pointcut;
-import org.jboss.aop.pointcut.CFlowStack;
 import org.jboss.aop.advice.Scope;
-import org.jboss.aop.joinpoint.*;
+import org.jboss.aop.joinpoint.ConstructorInvocation;
+import org.jboss.aop.joinpoint.FieldReadInvocation;
+import org.jboss.aop.joinpoint.FieldWriteInvocation;
+import org.jboss.aop.joinpoint.Invocation;
+import org.jboss.aop.joinpoint.MethodInvocation;
+import org.jboss.aop.pointcut.Pointcut;
 
 /**
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>

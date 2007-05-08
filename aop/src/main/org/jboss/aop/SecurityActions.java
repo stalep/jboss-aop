@@ -22,7 +22,6 @@
 package org.jboss.aop;
 
 import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;

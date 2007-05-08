@@ -21,7 +21,6 @@
   */
 package org.jboss.test.aop.jdk15annotated;
 
-import org.jboss.aop.Prepare;
 /**
  *
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>

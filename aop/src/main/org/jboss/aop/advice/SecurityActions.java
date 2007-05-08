@@ -30,8 +30,6 @@ import org.jboss.util.propertyeditor.ClassArrayEditor;
 import org.jboss.util.propertyeditor.IntArrayEditor;
 import org.jboss.util.propertyeditor.StringArrayEditor;
 
-import javassist.CtClass;
-
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>

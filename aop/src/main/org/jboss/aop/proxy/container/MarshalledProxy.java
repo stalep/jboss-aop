@@ -24,9 +24,7 @@ package org.jboss.aop.proxy.container;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
-import org.jboss.aop.AspectManager;
 import org.jboss.aop.InstanceAdvisor;
-import org.jboss.aop.proxy.ProxyMixin;
 
 /**
  * 

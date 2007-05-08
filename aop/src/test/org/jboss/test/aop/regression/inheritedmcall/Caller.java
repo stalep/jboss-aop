@@ -23,8 +23,6 @@ package org.jboss.test.aop.regression.inheritedmcall;
 
 import junit.framework.Assert;
 
-import org.jboss.test.aop.AOPTestWithSetup;
-
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>

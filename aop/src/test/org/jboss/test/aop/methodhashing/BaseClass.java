@@ -21,7 +21,6 @@
 */ 
 package org.jboss.test.aop.methodhashing;
 
-import org.jboss.reflect.spi.PrimitiveInfo;
 
 /**
  * 

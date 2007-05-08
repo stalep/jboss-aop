@@ -21,23 +21,23 @@
   */
 package org.jboss.aop.metadata;
 
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.NotFoundException;
-import org.jboss.aop.Advisor;
-import org.jboss.aop.ClassAdvisor;
-import org.jboss.aop.expressions.ConstructorExpression;
-import org.jboss.aop.util.XmlHelper;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import javassist.CtConstructor;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.NotFoundException;
+
+import org.jboss.aop.Advisor;
+import org.jboss.aop.expressions.ConstructorExpression;
+import org.jboss.aop.util.XmlHelper;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * <description>

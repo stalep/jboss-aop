@@ -43,7 +43,6 @@ import org.jboss.aop.annotation.factory.duplicate.ast.ASTString;
 import org.jboss.aop.annotation.factory.duplicate.ast.AnnotationParserVisitor;
 import org.jboss.aop.annotation.factory.duplicate.ast.SimpleNode;
 
-import java.util.Iterator;
 import java.util.Set;
 
 /**

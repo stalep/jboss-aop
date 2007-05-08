@@ -21,20 +21,13 @@
   */
 package org.jboss.aop.instrument;
 
-import java.util.Iterator;
-import java.util.List;
 
 import javassist.CannotCompileException;
-import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
-import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
-
-import org.jboss.aop.ClassAdvisor;
-import org.jboss.aop.instrument.OptimizedFieldAccessTransformer.OptimizedFieldAccessExprEditor;
 
 /**
  * Comment

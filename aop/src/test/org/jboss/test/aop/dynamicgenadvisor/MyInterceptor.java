@@ -21,7 +21,6 @@
   */
 package org.jboss.test.aop.dynamicgenadvisor;
 
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

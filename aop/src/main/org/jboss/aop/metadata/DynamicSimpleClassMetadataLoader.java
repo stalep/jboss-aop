@@ -21,8 +21,6 @@
   */
 package org.jboss.aop.metadata;
 
-import java.util.Date;
-
 /**
  * An extension of SimpleClassMetadataLoader, allowing us to add metadata without resorting to XML.
  * Intention is for dynamically adding metadata at runtime

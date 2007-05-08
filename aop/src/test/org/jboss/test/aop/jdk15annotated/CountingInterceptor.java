@@ -21,12 +21,6 @@
   */
 package org.jboss.test.aop.jdk15annotated;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
-import org.jboss.aop.joinpoint.FieldReadInvocation;
-import org.jboss.aop.joinpoint.FieldWriteInvocation;
-import org.jboss.aop.joinpoint.MethodInvocation;
 
 /**
  *

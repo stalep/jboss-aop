@@ -21,8 +21,6 @@
   */
 package org.jboss.aop.advice;
 
-import java.lang.reflect.Modifier;
-
 import org.jboss.aop.Advisor;
 import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.GeneratedClassAdvisor;

@@ -21,12 +21,11 @@
   */
 package org.jboss.aop.util;
 
-import org.jboss.aop.AspectManager;
-
 import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.CtMethod;
 import javassist.NotFoundException;
+
+import org.jboss.aop.AspectManager;
 
 /**
  * Comment

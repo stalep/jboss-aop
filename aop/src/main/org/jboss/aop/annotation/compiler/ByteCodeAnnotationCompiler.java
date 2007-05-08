@@ -24,7 +24,6 @@ package org.jboss.aop.annotation.compiler;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;

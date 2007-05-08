@@ -32,7 +32,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.WeakHashMap;
 
 /**
  * Holds an object instance's metadata and attached interceptors

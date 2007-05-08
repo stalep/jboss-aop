@@ -21,7 +21,6 @@
   */
 package org.jboss.test.aop.jdk15annotated;
 
-import org.jboss.aop.Precedence;
 import org.jboss.aop.PrecedenceInterceptor;
 /**
  *

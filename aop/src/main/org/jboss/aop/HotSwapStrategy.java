@@ -38,7 +38,6 @@ import javassist.CtClass;
 import javassist.CtField;
 import javassist.NotFoundException;
 
-import org.jboss.aop.SecurityActions.SetAccessibleAction;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.instrument.DynamicTransformationObserver;
 import org.jboss.aop.instrument.HotSwapper;

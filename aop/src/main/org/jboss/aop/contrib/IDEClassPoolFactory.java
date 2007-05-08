@@ -34,7 +34,6 @@ import javassist.scopedpool.ScopedClassPool;
 import javassist.scopedpool.ScopedClassPoolFactory;
 import javassist.scopedpool.ScopedClassPoolRepository;
 
-import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassPool;
 
 /**
