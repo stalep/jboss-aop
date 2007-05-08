@@ -28,7 +28,7 @@ public class SynchronizedAspect
    {
       Object result;
 
-      // part 1: retrive lock before joinpoint execution
+      // part 1: retrieve lock before joinpoint execution
       synchronized(this)
       {
          System.out.println("&gt;&gt;&gt; Retrieved concurrency lock");

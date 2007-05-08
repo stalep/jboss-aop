@@ -5,17 +5,19 @@
 
 </p><p>
 <h4>Overview</h4>
+
 Around and after advices can return values and overwrite the joinpoint value. In
 this example we show how to do that.
 </p><p>
 <h4>Default Signature</h4>
+
 </p><p>
 This signature, for around advices only, demands a <tt>java.lang.Object</tt> return
 type.
-Notice that this signature is valid for any joipoints, no matter whether it has a
+Notice that this signature is valid for any joipoint, no matter whether it has a
 return value, and, if it does, whether this value is primitive or not (a wrapper
 object is expected if the joinpoint returns a primitive value).
-<p>
+</p><p>
 An example of this signature is <tt>Aspect.aroundDefaultSignature()</tt> advice:
 </p><p>
 <pre>
@@ -26,23 +28,24 @@ Open up <tt>jboss-aop.xml</tt> and verify that this advice is applied to
 a method that returns a primitive value, a method that returns a non-primitive value,
 and a <tt>void</tt> method.
 </p><p>
-
+</p><p>
 <h4>Annotated-Parameter Signature</h4>
 
 </p><p>
+</p><p>
 In this signature, return types are safely checked. Differently than the default
 signature, an advice can't return an invalid typed value. For example, by declaring
-to return <tt>java.lang.Object</tt> when the joinpoint return type is <tt>
-java.util.Collection</tt>, an advice could return a <tt>java.lang.String</tt> value
-(this would result in a <tt>RuntimeException</tt>).
+to return <tt>java.lang.Object</tt> when the joinpoint return type is
+<tt>java.util.Collection</tt>, an advice could return a <tt>java.lang.String</tt> value (this
+would result in a <tt>RuntimeException</tt>).
 When using annotated-parameter signature, this code wouldn't compile.
 In that case, an advice could, however, return a <tt>java.util.List</tt> typed value,
 since this class is a subtype of the joinpoint return type.
 </p><p>
-
-<h5>Around Advices</h5>
-
-When using an annotated-parameter signature, around advices are obligated to return
+</p><p>
+<b>Around Advices</b>
+</p><p>
+When using an annotated-parameter signature, around advices are obliged to return
 a value. This is pretty much the same as with the default signature. However, here
 it must return a value with the same type as the joinpoint return value, or a subtype.
 Notice that, if the joinpoint return type is <tt>void</tt>, the around advice should
@@ -73,12 +76,12 @@ public ArrayList aroundArrayList(@JoinPoint MethodInvocation invocation) throws 
 }
 </pre>
 </p><p>
-This advice intercepts a method whose return type is <tt>java.util.List</tt> and, so,
-its return type is valid. It wouldn't be valid if it was a superclass of <tt>
-java.util.List</tt>, like <tt>java.util.Collection</tt>. This avoids the advice
-returning a <tt>java.util.Vector</tt>, for example, when the joinpoint return value
-is expected to be of type <tt>java.util.List</tt>.
-</p></p>
+This advice intercepts a method whose return type is <tt>java.util.List</tt> and, so, its
+return type is valid. It wouldn't be valid if it was a superclass of
+<tt>java.util.List</tt>, like <tt>java.util.Collection</tt>. This avoids the advice returning a
+<tt>java.util.Vector</tt>, for example, when the joinpoint return value is expected to be
+of type <tt>java.util.List</tt>.
+</p><p>
 Finally, take a look at <tt>aroundVoid</tt>:
 </p><p>
 <pre>
@@ -93,11 +96,11 @@ values. This is the case of <tt>void POJO.doNothing()</tt> method execution, and
 would also be the case of a <tt>void</tt> method call, or a field read/write
 joinpoint.
 </p><p>
-
-<h5>After Advices</h5>
-
 </p><p>
-Different than around advices, after advices are not forced to return a value.
+<b>After Advices</b>
+</p><p>
+</p><p>
+Differently from around advices, after advices are not forced to return a value.
 They should return it only when they intend to replace the joinpoint value.
 </p><p>
 Let's take a look at a few examples;
@@ -110,7 +113,7 @@ public int afterOverwriteReturnValue(@Return int returnValue)
 }
 </pre>
 </p><p>
-This advice is applied to a joinpoit that returns an <tt>int</tt> value. Notice that it
+This advice is applied to a joinpoint that returns an <tt>int</tt> value. Notice that it
 receives the value returned by the joinpoint (or by an advice that has executed
 before this one, if there are other advices involved), and returns one fifith of its
 value.
@@ -127,7 +130,7 @@ public List afterUnmodifiableList(@Return List returnValue)
 </p><p>
 Intercepts <tt>POJO.getList()</tt> method, that returns a <tt>java.util.List</tt>
 object. The same return type is used by this advice, that overwrites the joinpoint
-return value with an unmodified version of the original list.
+return value with an unmodifiable version of the original list.
 </p><p>
 Since after advices are not enforced to return values, <tt>afterVoid</tt> advice, of
 type <tt>void</tt>, can be used to intercept any joinpoint, no matter wheter the
@@ -140,8 +143,9 @@ public void afterVoid()
 }
 </pre>
 </p><p>
-
+</p><p>
 <h4>Run the example</h4>
+
 </p><p>
 <b>THIS EXAMPLE REQUIRES JDK 1.5!!</b> To compile and run:
 <pre>
@@ -151,39 +155,37 @@ It will javac the files and then run the AOPC precompiler to manipulate the byte
 then finally run the example.  The output should read as follows:
 <pre>
 run:
-     [java] Calling POJO->getIntValue()
+     [java] Calling POJO-&gt;getIntValue()
      [java] ===========================
      [java] &gt;&gt;&gt; aroundDefaultSignature...
      [java] &gt;&gt;&gt; aroundAnnotatedParam...
-     [java] RUNNING POJO->getIntValue(): return 10
+     [java] RUNNING POJO-&gt;getIntValue(): return 10
      [java] &lt;&lt;&lt; aroundAnnotatedParam: returning 5000
      [java] &lt;&lt;&lt; aroundDefaultSignature: returning invocation.invokeNext()
      [java] &gt;&gt;&gt; afterOverwriteReturnValue: returning 5000/5
      [java] &gt;&gt;&gt; afterVoid
      [java] RECEIVED type:int value:1000
 
-     [java] Calling POJO->getList()
+     [java] Calling POJO-&gt;getList()
      [java] =======================
      [java] &gt;&gt;&gt; aroundDefaultSignature...
-     [java] RUNNING POJO->getList(): return [this, "element2"]
+     [java] RUNNING POJO-&gt;getList(): return [this, "element2"]
      [java] &lt;&lt;&lt; aroundDefaultSignature: returning invocation.invokeNext()
      [java] &gt;&gt;&gt; afterUnmodifiableList: returning list transformed as UnmodifiableList
      [java] &gt;&gt;&gt; afterVoid
      [java] RECEIVED type:class java.util.Collections$UnmodifiableRandomAccessList value:[POJO@152544e, element2]
 
-     [java] Calling POJO->doNothing()
+     [java] Calling POJO-&gt;doNothing()
      [java] =========================
      [java] &gt;&gt;&gt; aroundDefaultSignature...
      [java] &gt;&gt;&gt; aroundVoid...
-     [java] RUNNING POJO->doNothing()
+     [java] RUNNING POJO-&gt;doNothing()
      [java] &lt;&lt;&lt; aroundVoid
      [java] &lt;&lt;&lt; aroundDefaultSignature: returning invocation.invokeNext()
      [java] &gt;&gt;&gt; afterVoid
      [java] RECEIVED nothing
 
 </pre> 
-</p><p>
-</p><p>
 </p><p>
 </p>
 </body>

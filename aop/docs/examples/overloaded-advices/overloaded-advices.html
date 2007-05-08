@@ -51,11 +51,12 @@ ___________________________
 </pre>
 </p><p>
 As you can see, <tt>aroundAdvice</tt> is a simple advice that logs constructor and method
-executions, field reads and field writes. Despite that, its implementation doesn't
+executions, field reads and field writes. Despite that, its implementation does not
 look so simple as a logging advice should be. This advice does a check on the
 <tt>invocation</tt> parameter type so it can display the correct message and access
-methods specific to the joinpoint type being intercepted. This can be avoided by
-overloading <tt>aroundAdvice</tt>, so that we have a version for each <tt>Invocation</tt> type:
+methods that are specific to the joinpoint type being intercepted. This can be
+avoided by overloading <tt>aroundAdvice</tt>, so that we have a version for each
+<tt>Invocation</tt> type:
 </p><p>
 <pre>
 public Object aroundAdvice(ConstructorInvocation invocation) throws Throwable
@@ -121,7 +122,7 @@ ___________________________
 &lt;/bind&gt;
 </pre>
 </p><p>
-Notice that <tt>IFieldInfo</tt> is used fro both field read and write joinpoints. The
+Notice that <tt>IFieldInfo</tt> is used for both field read and write joinpoints. The
 <tt>otherTypeOfAdvice</tt> advice is applied as a before advice in the example. However,
 it could have been applied as an after advice, or a finally advice. And it could
 also have been applied as an after-throwing advice if we added a <tt>@Thrown</tt>
@@ -165,7 +166,7 @@ public void overloadedAdvice(@JoinPoint IJoinPointInfo joinPoint, @Arg String ar
 </pre>
 </p><p>
 <tt>MixedParametersAspect.overloadedAdvice()</tt> has five different versions, and each one
-receives different parameter types. In that case, JBoss AOP will try to find the most
+receives different parameter types. In this scenario, JBoss AOP will select the most
 appropriate version for each case.
 </p><p>
 Run the example to see how this advice is applied to the different POJO joinpoints.

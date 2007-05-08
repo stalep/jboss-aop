@@ -22,16 +22,16 @@ these advices can have several different signatures. However, in our
 first example, we will use signatures that are closest to what has been shown on
 previous examples.
    
-So, we introduce a before and after advices as being of the form:
+So, we introduce before and after advices as being of the form:
 </p><p>
 <pre>
 public void &lt;any-method-name&gt;(@JoinPoint &lt;any Joinpoint type&gt;)
 </pre>
 </p><p>
-Differently from around advices and interceptors, throwing a <tt>Throwable</tt> is
-not necessary, because these advices do not wrap a joinpoint.
+Differently from around advices and interceptors, throwing a <tt>java.lang.Throwable</tt>
+is not necessary, because these advices do not wrap a joinpoint.
 </p><p>
-Instead of <tt>Invocation</tt> instances, before/after advices receive instances
+Instead of <a href="../../misc/invocation.html"><tt>Invocation</tt></a> instances, before/after advices receive instances
 of <a href="../../misc/joinpoint.html"><tt>org.jboss.aop.IJoinpointInfo</tt> and subinterfaces</a>
 as parameters.
 </p><p>
@@ -79,7 +79,7 @@ public class SynchronizationAspect
    {
       Object result;
 
-      // part 1: retrive lock before joinpoint execution
+      // part 1: retrieve lock before joinpoint execution
       synchronized(this)
       {
          System.out.println("&gt;&gt;&gt; Retrieved concurrency lock");
@@ -131,7 +131,7 @@ public class MutexAspect
    {
       Object result;
 
-      // part 1: retrive lock before joinpoint execution
+      // part 1: retrieve lock before joinpoint execution
       synchronized(lock)
       {
          while (locked)
@@ -169,13 +169,15 @@ public class MutexAspect
 </p><p>
 As much as <tt>SynchronizedAspect</tt>, <tt>MutexAspect</tt> avoids simultaneous
 access to the intercepted joinpoint, and is also composed of the four steps
-(getting a lock, proceeding to joinpoint execution and releasing the lock).
+(getting a lock, proceeding to joinpoint execution, releasing the lock, and returning
+a result).
 </p><p>
 Now we can easily split this around advice into two advices: one that retrieves
 the lock, and another one that releases it. We wish to run the first one before a
 joinpoint, and the other one, after it.
 </p><p>
-The example that follows is a copy of the previous one, except that, now, <tt>MutexAspect.aroundAdvice()</tt> has been splitten into <tt>MutexAspect.beforeAdvice()
+The example that follows is a copy of the previous one, except for that, now,
+<tt>MutexAspect.aroundAdvice()</tt> has been splitten into <tt>MutexAspect.beforeAdvice()
 </tt> and <tt>MutexAspect.afterAdvice()</tt>:
 </p><p>
 <pre>
@@ -291,13 +293,13 @@ Suppose you have bank accounts and operations on accounts can be performed
 concurrently. If we don't synchronize those operations we can end up with an invalid
 account balance.
 </p><p>
-An example would be two operations on account <tt>A</tt>. Suppose one of them
-is a deposit of $30.00, while the other one is a withdrawal of $10.00. If these
-operations are run in an unsynchronized manner, like follows:
+An example would be two operations on account <tt>A</tt>. One of them is a $30.00 deposit,
+while the other one is a $10.00 withdrawal. If these operations are run in an
+unsynchronized manner, like follows:
 </p><p>
 <ul>
-<li> deposit: read balance: $50.00</li>
-<li> withdrawal: read balance: $50.00</li>
+<li> deposit: read initial balance $50.00</li>
+<li> withdrawal: read initial balance $50.00</li>
 <li> deposit: add $30.00</li>
 <li> withdrawal: subtract $10.00</li>
 <li> deposit: write final balance of $80.00</li>

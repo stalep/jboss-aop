@@ -7,21 +7,24 @@
 <h4>Overview</h4>
 
 Besides before, after and around advices, you can also write after-throwing advices.
-These advices intercept joinpoints throwing an exception. In this example, we will see
-how to write that type of advices.
+These advices intercept joinpoints throwing an exception. In this example, we will
+see how to write that type of advices, and when they are executed.
 </p><p>
 <h4>Writing After Throwing Advices</h4>
 
 </p><p>
 </p><p>
-After-throwing advices are written using the annotated parameter signature.
+After-throwing advices are written using the
+<a href="../annotated-parameters/annotated-parameters.html">annotated parameter signature</a>.
 The only difference is that these advices feature an additional annotated parameter:
 <tt>@Thrown</tt>. This mandatory parameter will hold the thrown exception.
 So, an after-throwing advice should be of the form:
 </p><p>
 <pre>
-public void &lt;any-method-name&gt;(@Thrown Throwable arg0, @&lt;Annotation&gt; &lt;any type&gt; arg1, @&lt;Annotation&gt; &lt;any type&gt; arg1, ... , @&lt;Annotation&gt; &lt;any type&gt; argN) throws &lt;Exception1&gt;,&lt;Exception2&gt;,...,&lt;ExceptionN&gt;
+public void &lt;any-method-name&gt;(@&lt;Annotation&gt; &lt;any type&gt; arg0, @&lt;Annotation&gt; &lt;any type&gt; arg1, ... @Thrown Throwable argi, ...  @&lt;Annotation&gt; &lt;any type&gt; argN) throws &lt;Exception1&gt;,&lt;Exception2&gt;,...,&lt;ExceptionN&gt;
 </pre>
+</p><p>
+Where 0 &lt;= i &lt;= N.
 </p><p>
 <h4>Binding After Throwing Advices</h4>
 
@@ -35,7 +38,7 @@ in a binding xml declaration, as in the following example:
 &lt;/bind&gt;
 </pre>
 </p><p>
-Differently from other advice types, after-throwing advices aren't called everytime
+Differently from other advice types, after-throwing advices are not called everytime
 an intercepted joinpoint gets executed. On the contrary, after-throwing advices are
 invoked only when the joinpoint throws an exception. So, in the binding example
 above, this means that <tt>afterThrowing</tt> will be invoked only after a <tt>POJO</tt> method

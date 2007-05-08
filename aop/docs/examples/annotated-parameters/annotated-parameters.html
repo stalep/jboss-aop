@@ -10,7 +10,7 @@ In generated advisor (default) mode, before, after and around advices can receiv
 annotated parameters. The use of annotations provides maximum flexibility to the
 signature of advices, since an advice can receive only the values that are relevant
 to its execution. These parameters can be in any order and their type can be the type
-that is the most suitable to the advice functionality, according to the joinpoints it
+that is most suitable to the advice functionality, according to the joinpoints it
 intercepts.
 </p><p>
 <h4>Annotated Parameter Signature</h4>
@@ -32,8 +32,8 @@ Basicaly, this signature allows an advice to receive zero or more annotated
 parameters, in any order, and with any valid type. Regarding the exception types, an
 advice is allowed to declare any exception in its signature. <tt>RuntimeException</tt>s
 are rethrown by JBoss AOP as is. The same goes for exceptions
-that are not runtime, if they are declared in the joinpoint exceptions list (
-supposing the joinpoint has an exception list). Otherwise, the exception will be
+that are not runtime, if they are declared in the joinpoint exceptions list
+(supposing the joinpoint has an exception list). Otherwise, the exception will be
 wrapped in a <tt>RuntimeException</tt>. In all cases, the application would get the
 exception as if the joinpoint itself had thrown it.
 </p><p>
@@ -64,8 +64,8 @@ public void afterNoParameters()
 JBoss AOP demands the use of parameter annotations to identify advice parameters.
 These parameters can represent several values, like the joinpoint target, a joinpoint
 argument, or its return value. In this example, we show all parameter annotations
-that can be used by before, after and around advices. These annotations are located
-in the <tt>org.jboss.aop.advice.annotation</tt> package.
+that can be used by before, after and around advices to identify those values. These
+annotations are located in the <tt>org.jboss.aop.advice.annotation</tt> package.
 </p><p>
 The type of an annotated parameter can be chosen accordingly to the value it refers
 to. For example, suppose you are intercepting a jointpoint with an argument of type
@@ -76,9 +76,9 @@ fields of the argument, without performing a cast, and yet you can receive a sup
 type like <tt>Object</tt> and refer to arguments of different types when your advice is
 applied to different joinpoints.
 </p><p>
-Notice that, as a convention, we named the advices of this example after the names of
+As a convention, we named the advices of this example after the names of
 parameter annotations. Besides, all advices names are prefixed with their types names
-(before advice names start with <tt>"before"</tt>, and so on). It is also important
+(before advice names start with <tt>"before"</tt>, and so on). But it is important
 to point out that, as all previous examples, the name of advices can be chosen freely
 and JBoss AOP won't use these names to identify annotated parameters.
 </p><p>
@@ -111,8 +111,8 @@ joinpoint target is defined according to the joinpoint type. For example, the ta
 of a method execution is the object whose method is being executed. On a call
 joinpoint, the target is the object whose method is being called. On a field access
 joinpoint, the target is the object that contains the field. Notice that not all
-joinpoints have a target. Static method executions and calls, and static field reads
-and writes don't have a target.
+joinpoints have a target; namelly: static method executions and calls, static field
+reads and writes, and constructor executions and calls.
 </p><p>
 Examples of usage of this annotation follow:
 </p><p>
@@ -204,8 +204,9 @@ intercepting <tt>POJO.method(long,int,long,String)</tt>, JBoss AOP will automati
 associate <tt>afterArg</tt> parameter with the parameter at index position <tt>1</tt>, of type
 <tt>int</tt>.
 </p><p>
-Associating the <tt>int</tt> value is easy, because there is only one joinpoint
-argument of that type. The same doesn't apply to the following advice:
+Associating the <tt>int</tt> value to to an argument of
+<tt>POJO.method(long,int,long,String)</tt> is easy, because there is only one joinpoint
+argument of that type. The same does not apply to the following advice:
 </p><p>
 <pre>
 public void beforeMethodArg(@Arg long argument)
@@ -238,7 +239,7 @@ public void afterArgs(@Args Object[] arguments)
 </p><p>
 Use this annotation when you need a generic advice, that receives all arguments
 without knowing how many arguments there are, or their types. Using <tt>@Arguments
-</tt> instead of a list of <tt>@Arg</tt> annotated parameters is useful when you need to
+</tt> instead of a list of <tt>@Arg</tt> annotated parameters is also useful when you need to
 change one or more joinpoint argument values. An example is the <tt>beforeArgs</tt> advice,
 that ovewrites two argument values of <tt>POJO.method(long,int,long,String)</tt> execution:
 </p><p>
@@ -256,7 +257,13 @@ Avoid using <tt>@Arguments</tt> when none of those conditions apply. This
 parameter type can incur in the creation of an array and of wrapper objects (as is
 the case of argument 1 above). Besides, you have the extra cost of downcasting
 the arguments.
-&lt;h4&gt;Run the example&lt;/h4&gt;
+</p><p>
+Needless to say, extreme care is needed when changing the arguments array. If an
+argument value is overriden with one of a different type, an error will be thrown.
+</p><p>
+</p><p>
+<h3>Run the example</h3>
+
 </p><p>
 <b>THIS EXAMPLE REQUIRES JDK 1.5!!</b> To compile and run:
 <pre>
