@@ -3,10 +3,13 @@
    'ct' = compile time AOP instrumentation
    'lt' = load time AOP instrumentation
 -->
-<project default="help" name="AOP in JBoss example" basedir=".">
-   <target name="prepare">
+<project default="usage" name="AOP in JBoss example" basedir=".">
+
+   <import file="../examples-build.xml"/>
+
+   <target name="prepare" depends="_prepare">
       <!-- Set jboss.dir property to root of your JBoss distribution -->
-      <property name="jboss.dir" value="C:/jboss-4.0"/>
+      <property name="jboss.dir" value="C:/temp/jboss-4.0.5.GA"/>
         <!--
            Set jboss.server.config property to either default or all.
               if you set this to default, JBoss should be started with
@@ -15,6 +18,10 @@
                  run -c all
         -->
       <property name="jboss.server.config" value="all" />
+
+      <available file="${jboss.dir}" property="jboss.exists" type="dir"/>
+      <echo>xx ${jboss.exists} xx</echo>
+      <fail unless="jboss.exists" message="${jboss.dir} does not exist. Modify 'jboss.dir' in build.xml to be a valid root of a jboss installation"/>
 
       <echo>===========================================================</echo>
       <echo>YOUR JBOSS DISTRIBUTION ROOT IS: ${jboss.dir}</echo>
@@ -60,34 +67,9 @@
          <pathelement path="${jboss.dir}/server/default/lib/jboss-j2ee.jar"/>
       </path>
 
-      <property name="jboss.aop.root" value="../../../.."/>
-      <property name="jboss.aop.lib" value="${jboss.aop.root}/lib"/>
-      <property name="jboss.aop.lib50" value="${jboss.aop.root}/lib-50"/>
-
-      <path id="jboss.aop.classpath">
-         <fileset dir="${jboss.aop.lib}">
-            <include name="*.jar"/>
-         </fileset>
-      </path>
-      <echo message="${jboss.aop.lib}"/>
-      <echo message="${jboss.aop.lib}"/>
-
-      <path id="jboss.aop.classpath50">
-         <fileset dir="${jboss.aop.lib50}">
-            <include name="*.jar"/>
-         </fileset>
-      </path>
-
       <path id="classpath">
-         <path refid="jboss.aop.classpath"/>
+         <path refid="jboss.aop.classpath14"/>
          <path refid="jboss.classpath"/>
-         <pathelement path="."/>
-      </path>
-
-      <property name="aop50jar" value="${jboss.aop.lib50}/jboss-aop-jdk50.jar"/>
-
-      <path id="classpath50">
-         <path refid="jboss.aop.classpath50"/>
          <pathelement path="."/>
       </path>
 
@@ -98,7 +80,7 @@
       <mkdir dir="${lib.dir}"/>
       <mkdir dir="${basic.web.out.dir}"/>
       <mkdir dir="${ear.web.out.dir}"/>
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath14"/>
    </target>
 
    <target name="compile" depends="prepare">
@@ -368,14 +350,14 @@
       <sleep seconds="10"/>
    </target>
 
-   <target name="help" depends="">
+   <target name="usage" depends="">
       <echo>
          Run 'ant deploy-basic-lt-war',
          'ant deploy-basic-lt-war-in-sar',
          'ant deploy-basic-lt-war-in-jar',
          'ant deploy-ear' or
          'ant deploy-ear-aop' or
-         'deploy-example-lt-sar'
+         'ant deploy-example-lt-sar'
          to deploy to JBoss for loadtime AOP
       </echo>
    </target>
