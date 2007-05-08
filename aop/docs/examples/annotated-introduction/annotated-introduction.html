@@ -21,7 +21,7 @@ You declare the introductions within a class that has been annotated with <tt>@A
    {
       @Introduction (target=POJO.class, interfaces={java.io.Serializable.class})
       public static Object noInterfacesPOJOIntro;
-   
+
       ...
    }
 
@@ -33,7 +33,7 @@ Basically, you just annotate any field within the aspect with <tt>@Introduction<
 </p><p>
 <h4>Mixins</h4>
 
-You declare the mixins in much the same way as you declare introductions. Again, it must be done within a class that has been annotated with <tt>@Aspect</tt> or <tt>@InterceptorDef</tt>. 
+You declare the mixins in much the same way as you declare introductions. Again, it must be done within a class that has been annotated with <tt>@Aspect</tt> or <tt>@InterceptorDef</tt>.
 <pre>
    import org.jboss.aop.Mixin;
 
@@ -60,7 +60,7 @@ The <tt>target</tt> attribute for <tt>@Introduction</tt> and <tt>@Mixin</tt> tak
    public class MyAspect
    {
       ...
-      
+
       @Introduction (typeExpression="class(POJO3) OR class(POJO4)", interfaces={java.io.Serializable.class})
       public static Object withTypeExpression;
    }
@@ -69,15 +69,15 @@ The <tt>target</tt> attribute for <tt>@Introduction</tt> and <tt>@Mixin</tt> tak
 </p><p>
 <h4>Running the example</h4>
 
-</p><p>
+<p>
+<b>THIS EXAMPLE REQUIRES JDK 1.5!! For other options, please look at the
+<a href="../valid_targets_annotated.html"/>annotated examples guide</a></b> To compile and run:</p>
 <pre>
-$ ant
+  $ run.aopc.50
 </pre>
-</p><p>
-The output should be:
-</p><p>
+<p>It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:</p>
 <pre>
-run:
+_run.aopc.50:
      [java] --- POJO ---
      [java] deserialized pojo.stuff: hello world
      [java] --- POJO2 ---

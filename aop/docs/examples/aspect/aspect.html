@@ -6,11 +6,11 @@
 </p><p>
 <h4>Overview</h4>
 
-The Interceptor classes shown in previous examples are a little limiting in that you can only have one advice per class. JBossAOP allows you to group advices into one Java class.  This is what JBossAOP calls an Aspect.  An Aspect is a collection of advices expressed as methods.  
+The Interceptor classes shown in previous examples are a little limiting in that you can only have one advice per class. JBossAOP allows you to group advices into one Java class.  This is what JBossAOP calls an Aspect.  An Aspect is a collection of advices expressed as methods.
 </p><p>
 <h4>Writing an aspect</h4>
 
-An aspect class is a plain Java class. It does not have to inherit from anything, but it must have an empty constructor. 
+An aspect class is a plain Java class. It does not have to inherit from anything, but it must have an empty constructor.
 JBoss AOP supports several types of advices. In this example, we will introduce the around advice and its default signature.
 Each around advice can follow this format:
 </p><p>
@@ -18,7 +18,7 @@ Each around advice can follow this format:
   public Object &lt;any-method-name&gt;(&lt;any Invocation type&gt;) Throwable
 </pre>
 </p><p>
-You can also <a href="../overloaded-advices/overloaded-advices.html">overload methods</a>.  
+You can also <a href="../overloaded-advices/overloaded-advices.html">overload methods</a>.
 </p><p>
 <h4>Scope and XML definitions</h4>
 
@@ -57,17 +57,19 @@ The above binding states that whenever a POJO or POJO2's constructor get's invok
    &lt;/bind&gt;
 </pre>
 </p><p>
-The final two bindings intercept field and method access of POJO and POJO2.  
+The final two bindings intercept field and method access of POJO and POJO2.
 </p><p>
 <h4>Run the example</h4>
 
-To compile and run:
+<p>
+<b>THIS EXAMPLE REQUIRES JDK 1.5!! For other options, please look at the
+<a href="../valid_targets_not_annotated.html"/>non-annotated examples guide</a></b> To compile and run:</p>
 <pre>
-  $ ant
+  $ run.aopc.50
 </pre>
-It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should read as follows:
+<p>It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:</p>
 <pre>
-run:
+_run.aopc.50:
      [java] ---- POJO ---
      [java] AspectPerVM.constructorAdvice accessing: public POJO()
      [java] AspectPerClass.constructorAdvice accessing: public POJO()
@@ -102,7 +104,7 @@ run:
      [java] POJO2 perClass stats: 1 1 1 1
      [java] pojo perInstance stats: 1 1 1
      [java] pojo2 perInstance stats: 1 1 1
-</pre> 
+</pre>
 </p><p>
 </p><p>
 </p><p>

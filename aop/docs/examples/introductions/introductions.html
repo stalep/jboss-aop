@@ -90,14 +90,15 @@ Exception in thread "main" java.io.NotSerializableException: POJO
 </p><p>
 This is expected because POJO is not serializable.  Now run it with introductions.
 </p><p>
+<b>THIS EXAMPLE REQUIRES JDK 1.5!! For other options, please look at the
+<a href="../valid_targets_not_annotated.html"/>non-annotated examples guide</a></b> To compile and run:</p>
 <pre>
-$ ant
+  $ run.aopc.50
 </pre>
-</p><p>
-The output should be:
-</p><p>
+<p>It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:</p>
 <pre>
-run:
+_run.aopc.50:
+
      [java] --- POJO ---
      [java] deserialized pojo.stuff: hello world
      [java] --- POJO2 ---

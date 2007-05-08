@@ -33,13 +33,15 @@ The binding references these named pointcuts in a boolean expression.  So the ab
 
 Running the example you'll see composition in action
 </p><p>
-To compile and run:
+<p>
+<b>THIS EXAMPLE REQUIRES JDK 1.5!! For other options, please look at the
+<a href="../valid_targets_not_annotated.html"/>non-annotated examples guide</a></b> To compile and run:</p>
 <pre>
-  $ ant
+  $ run.aopc.50
 </pre>
-It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should read as follows:
+<p>It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:</p>
 <pre>
-run:
+_run.aopc.50:
      [java] --- new POJO(); ---
      [java] &lt;&lt;&lt; Entering SimpleInterceptor for: org.jboss.aop.joinpoint.ConstructorInvocation
      [java] empty constructor

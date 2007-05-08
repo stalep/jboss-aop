@@ -13,23 +13,23 @@ You can configure aspects/interceptors by passing in parameters when you define 
 	      &lt;attribute name="Attr1"&gt;aa&lt;/attribute&gt;
 	      &lt;attribute name="Attr2"&gt;1&lt;/attribute&gt;
 	   &lt;/interceptor&gt;
-	   
+
 	   &lt;aspect class="ConfigAspectPerVm" scope="PER_VM"&gt;
 	      &lt;attribute name="Attr"&gt;aspect,per,vm&lt;/attribute&gt;
 	   &lt;/aspect&gt;
-	   
+
 	   &lt;aspect class="ConfigAspectPerClass" scope="PER_CLASS"&gt;
 	      &lt;attribute name="Attr"&gt;aspect,per,class&lt;/attribute&gt;
 	   &lt;/aspect&gt;
-	    
+
 	   &lt;aspect class="ConfigAspectPerInstance" scope="PER_INSTANCE"&gt;
 	      &lt;attribute name="Attr"&gt;aspect,per,instance&lt;/attribute&gt;
 	   &lt;/aspect&gt;
-	    
+
 	   &lt;aspect class="ConfigAspectPerJoinpoint" scope="PER_JOINPOINT"&gt;
 	      &lt;attribute name="Attr"&gt;aspect,per,joinpoint&lt;/attribute&gt;
 	   &lt;/aspect&gt;
-	    
+
 	   ...
    &lt;aop&gt;
 </pre>
@@ -42,25 +42,25 @@ The name attribute is used to indicate which property you want to set, and the c
 	   String attr1;
 	   int attr2;
 	   ...
-	
+
 	   public void setAttr1(String s)
 	   {
 	      attr1 = s;
 	      System.out.println("setAttr1: " + s);
 	   }
-	      
+
 	   public void setAttr2(int i)
 	   {
 	      attr2 = i;
 	      System.out.println("setAttr2: " + i);
 	   }
 	   ...
-   }   
- 
+   }
+
    public class ConfigAspectPerVm
    {
       String[] attr1;
-      
+
       ...
       public void setAttr(String[] attr1)
       {
@@ -80,11 +80,11 @@ A similar scheme to what is outlined above is used for injecting information abo
 <pre>
 &lt;aop&gt;
    &lt;interceptor class="ConfigInterceptor" scope="PER_CLASS"&gt;
-   
+
       ...
       &lt;advisor-attribute name="MyAdvisor"/&gt;
       &lt;instance-advisor-attribute name="MyInstanceAdvisor"/&gt;
-      &lt;joinpoint-attribute name="MyJoinpoint"/&gt;  
+      &lt;joinpoint-attribute name="MyJoinpoint"/&gt;
    &lt;/interceptor&gt;
 
 &lt;aop&gt;
@@ -109,12 +109,12 @@ The setters used by ConfigInterceptor are shown here:
       {
          this.advisor = advisor;
       }
-   
+
       public void setMyInstanceAdvisor(InstanceAdvisor instanceAdvisor)
       {
          this.instanceAdvisor = instanceAdvisor;
       }
-   
+
       public void setMyJoinpoint(Joinpoint jp)
       {
          this.jp = jp;
@@ -146,13 +146,15 @@ Whether an Advisor, InstanceAdvisor or Joinpoint exists for an aspect/intercepto
 </p><p>
 <h4>Running</h4>
 
-To compile and run:
+<p>
+<b>THIS EXAMPLE REQUIRES JDK 1.5!! For other options, please look at the
+<a href="../valid_targets_not_annotated.html"/>non-annotated examples guide</a></b> To compile and run:</p>
 <pre>
-  $ ant
+  $ run.aopc.50
 </pre>
-It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should read as follows:
+<p>It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:</p>
 <pre>
-run:
+_run.aopc.50:
      [java] --- new POJO(); ---
      [java] setAttr1: aa
      [java] setAttr2: 1

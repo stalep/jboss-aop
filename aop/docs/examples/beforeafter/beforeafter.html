@@ -21,7 +21,7 @@ As we will see in the next <a href="../annotated-parameters/annotated-parameters
 these advices can have several different signatures. However, in our
 first example, we will use signatures that are closest to what has been shown on
 previous examples.
-   
+
 So, we introduce before and after advices as being of the form:
 </p><p>
 <pre>
@@ -38,7 +38,7 @@ as parameters.
 Furthermore, one can notice the presence of the parameter annotation <tt>@org.jboss.aop.advice.annotation.JoinPoint</tt>. This is necessary because
 before/after advices can receive values with several semantic roles as parameters.
 As we will see <a href="../annotated-parameters/annotated-parameters.html">next</a>,
-this annotation is used to distinguish this parameter type from the other ones, so we 
+this annotation is used to distinguish this parameter type from the other ones, so we
 can achieve flexibility on the type, order and presence of advice parameters.
 </p><p>
 <h3>Binding Before/After Advices</h3>
@@ -54,12 +54,12 @@ follows (open up <tt>jboss-aop.xml</tt> to see this example):
 &lt;/bind&gt;
 </pre>
 </p><p>
-As you can see, you just need to declare a usual bind tag, and add to it 
+As you can see, you just need to declare a usual bind tag, and add to it
 <tt>&lt;before&gt;</tt> and <tt>&lt;after&gt;</tt> tags for before and after advices
 respectively. We can also mix interceptor declarations and around, before, and
 after advices declarations in a single binding.
 </p><p>
-   
+
 <h3>Around, Before and After Advices</h3>
 
 </p><p>
@@ -125,8 +125,8 @@ mutex intead of a synchronized block:
 public class MutexAspect
 {
    private Object lock = new Object();
-   private boolean locked = false;   
-   
+   private boolean locked = false;
+
    public Object aroundAdvice(Invocation invocation) throws Throwable
    {
       Object result;
@@ -143,7 +143,7 @@ public class MutexAspect
             catch(InterruptedException e)
             {
                Thread.currentThread().interrupt();
-               return; 
+               return;
             }
          }
          locked = true;
@@ -184,8 +184,8 @@ The example that follows is a copy of the previous one, except for that, now,
 public class MutexAspect
 {
    private Object lock = new Object();
-   private boolean locked = false;   
-   
+   private boolean locked = false;
+
    public void beforeAdvice(@JoinPoint Joinpoint joinPoint)
    {
       synchronized(lock)
@@ -199,14 +199,14 @@ public class MutexAspect
             catch(InterruptedException e)
             {
                Thread.currentThread().interrupt();
-               return; 
+               return;
             }
          }
          locked = true;
          System.out.println("&gt;&gt;&gt; Retrieved concurrency lock");
       }
    }
-   
+
    public void afterAdvice(@JoinPoint Joinpoint joinPoint)
    {
       synchronized(lock)
@@ -217,7 +217,7 @@ public class MutexAspect
       }
    }
 }
-</pre>         
+</pre>
 </p><p>
 Notice that, in this version, parts 2 and 4 are gone (proceeding to joinpoint
 execution and returning its result). This is due to the fact that before and after
@@ -307,25 +307,28 @@ unsynchronized manner, like follows:
 </ul>
 </p><p>
 The final balance of the account would be $40.00, and the deposit of $50.00 would
-have been completely ignored, since its final balance has been overwritten by 
+have been completely ignored, since its final balance has been overwritten by
 the withdrawal operation.
 </p><p>
 <h3>Running</h3>
 
 </p><p>
-<b>THIS EXAMPLE REQUIRES JDK 1.5!!</b> To compile and run:
+<p>
+<b>THIS EXAMPLE REQUIRES JDK 1.5!! For other options, please look at the
+<a href="../valid_targets_annotated.html"/>annotated examples guide</a></b> To compile and run:</p>
 <pre>
-  $ ant
+  $ run.aopc.50
 </pre>
-It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:
+<p>It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:</p>
 <pre>
-run:
+_run.aopc.50:
+
      [java] SETUP
      [java] =====
      [java] Creating account 'A' with initial balance of $30.0
      [java] Creating account 'B' with initial balance of $50.0
      [java] Creating account 'C' with initial balance of $0.0
-   
+
      [java] TRANSACTIONS
      [java] ============
      [java] Using context classloader sun.misc.Launcher$AppClassLoader@133056f to load aspect mypackage.MutexAspect

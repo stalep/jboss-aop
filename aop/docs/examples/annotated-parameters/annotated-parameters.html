@@ -24,7 +24,7 @@ public &lt;return-value&gt; &lt;any-method-name&gt;(@&lt;Annotation&gt; &lt;any 
 </p><p>
 This signature is  available for all kinds of advices in JBoss AOP (when running in
 the generated advisor instrumentation mode). Besides this one, JBoss AOP supports the
-default around signature, introduced in the <a href="../aspect/aspect.html"">Aspect example</a>.
+default around signature, introduced in the <a href="../aspect/aspect.html">Aspect example</a>.
 The default signature can only be used to write around advices, and is supported on
 all instrumentation modes.
 </p><p>
@@ -182,17 +182,17 @@ executions:
 public class POJO
 {
    ...
-   
+
    public boolean someMethod(int argument)
    {
       ...
    }
-   
+
    public void method(long arg0, int arg1, long arg2, String arg3)
    {
       ...
    }
-   
+
    ...
 }
 </pre>
@@ -264,15 +264,15 @@ argument value is overriden with one of a different type, an error will be throw
 </p><p>
 <h3>Run the example</h3>
 
-</p><p>
-<b>THIS EXAMPLE REQUIRES JDK 1.5!!</b> To compile and run:
+<p>
+<b>THIS EXAMPLE REQUIRES JDK 1.5!! For other options, please look at the
+<a href="../valid_targets_annotated.html"/>annotated examples guide</a></b> To compile and run:</p>
 <pre>
-  $ ant
+  $ run.aopc.50
 </pre>
-It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should read as follows:
+<p>It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:</p>
 <pre>
-run:
-
+_run.aopc.50:
      [java] Calling POJO constructor
      [java] ========================
      [java] &gt;&gt;&gt; beforeConstructorArg: Object "Driver"
@@ -329,7 +329,7 @@ run:
      [java] RUNNING POJO-&gt;calledMethod()
      [java] &gt;&gt;&gt; afterTarget: POJO POJO@19209ea
      [java] &gt;&gt;&gt; afterCaller: Object POJO@19209ea
-</pre> 
+</pre>
 </p><p>
 </p>
 </body>

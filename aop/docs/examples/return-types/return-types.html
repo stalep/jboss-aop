@@ -146,15 +146,15 @@ public void afterVoid()
 </p><p>
 <h4>Run the example</h4>
 
-</p><p>
-<b>THIS EXAMPLE REQUIRES JDK 1.5!!</b> To compile and run:
+<p>
+<b>THIS EXAMPLE REQUIRES JDK 1.5!! For other options, please look at the
+<a href="../valid_targets_annotated.html"/>annotated examples guide</a></b> To compile and run:</p>
 <pre>
-  $ ant
+  $ run.aopc.50
 </pre>
-It will javac the files and then run the AOPC precompiler to manipulate the bytecode,
-then finally run the example.  The output should read as follows:
+<p>It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:</p>
 <pre>
-run:
+_run.aopc.50:
      [java] Calling POJO-&gt;getIntValue()
      [java] ===========================
      [java] &gt;&gt;&gt; aroundDefaultSignature...
@@ -185,7 +185,7 @@ run:
      [java] &gt;&gt;&gt; afterVoid
      [java] RECEIVED nothing
 
-</pre> 
+</pre>
 </p><p>
 </p>
 </body>

@@ -20,13 +20,13 @@ You define precedence in a separate class annotated with @Precedence
    @Precedence
    public class Precedence1
    {
-   
+
       @PrecedenceInterceptor
       public static SimpleInterceptor precedenceInterceptor1;
-  
+
       @PrecedenceInterceptor
       public static SimpleInterceptor2 precedenceInterceptor2;
-   }   
+   }
 </pre>
 </p><p>
 The @PrecedenceInterceptor is used to annotate fields where the type is an interceptor, and the orderings within the class define the relative sort order for the precedence. In other words this class defines that
@@ -71,26 +71,28 @@ overall precedence entry, so that:
 </p><p>
 <pre>
   SimpleInterceptor
-		comes before      
+		comes before
   SimpleInterceptor2
-		comes before      
+		comes before
   TestAspect.advice
-		comes before      
+		comes before
   SimpleInterceptor3
-		comes before      
+		comes before
   TestAspect.otherAdvice
 </pre>
 </p><p>
 </p><p>
 <h4>Run the example</h4>
 
-To compile and run:
+<p>
+<b>THIS EXAMPLE REQUIRES JDK 1.5!! For other options, please look at the
+<a href="../valid_targets_annotated.html"/>annotated examples guide</a></b> To compile and run:</p>
 <pre>
-  $ ant
+  $ run.aopc.50
 </pre>
-It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should read as follows:
+<p>It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:</p>
 <pre>
-run:
+_run.aopc.50:
      [java] --- new POJO(); ---
      [java] &lt;&lt;&lt; Entering SimpleInterceptor type: POJO0OptimizedConstructorInvocation
      [java] &lt;&lt;&lt; Entering SimpleInterceptor2 type: POJO0OptimizedConstructorInvocation
