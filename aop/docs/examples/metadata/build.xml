@@ -1,52 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project default="run" name="JBoss/AOP">
-   <target name="prepare">
-      <property name="jboss.aop.root" value="../../../.."/>
-      <property name="jboss.aop.lib" value="${jboss.aop.root}/lib"/>
-      <property name="jboss.aop.lib50" value="${jboss.aop.root}/lib-50"/>
+<project default="usage" name="JBoss/AOP">
 
-      <path id="jboss.aop.classpath">
-         <fileset dir="${jboss.aop.lib}">
-            <include name="*.jar"/>
-         </fileset>
-      </path>
+   <import file="../examples-build.xml"/>
 
-      <path id="jboss.aop.classpath50">
-         <fileset dir="${jboss.aop.lib50}">
-            <include name="*.jar"/>
-         </fileset>
-      </path>
-
-      <path id="classpath">
-         <path refid="jboss.aop.classpath"/>
-         <pathelement path="."/>
-      </path>
-
-      <property name="aop50jar" value="${jboss.aop.lib50}/jboss-aop-jdk50.jar"/>
-
-      <path id="classpath50">
-         <path refid="jboss.aop.classpath50"/>
-         <pathelement path="."/>
-      </path>
-
-      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
-   </target>
-
-   <target name="compile" depends="prepare">
-      <annotationc compilerclasspathref="classpath" classpathref="classpath" output="metadata-aop.xml" xml="true">
+   <target name="annotationc" depends="_prepare">
+      <!-- The annotation compiler only exists in the jdk 1.4 dist -->
+      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath14"/>
+      <annotationc compilerclasspathref="classpath14" classpathref="classpath14" output="metadata-aop.xml" xml="true">
          <src path="."/>
       </annotationc>
-      <javac srcdir="."
-         destdir="."
-         debug="on"
-         deprecation="on"
-         optimize="off"
-         includes="**">
-         <classpath refid="classpath"/>
-      </javac>
-      <aopc compilerclasspathref="classpath" classpathref="classpath" verbose="true">
+   </target>
+
+   <target name="aopc50" depends="_compile50, annotationc">
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath50"/>
+
+      <aopc compilerclasspathref="classpath50" classpathref="classpath50" verbose="true">
          <classpath path="."/>
          <src path="."/>
          <aoppath>
@@ -54,35 +23,65 @@
             <pathelement path="metadata-aop.xml"/>
          </aoppath>
       </aopc>
+
    </target>
 
-   <target name="run" depends="compile">
-      <java fork="yes" failOnError="true" className="Driver">
-         <sysproperty key="jboss.aop.path" value="metadata-aop.xml${path.separator}jboss-aop.xml"/>
-         <classpath refid="classpath"/>
-      </java>
-   </target>
+   <target name="aopc14" depends="_compile14, annotationc">
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath14"/>
 
-   <target name="compile50standalone" depends="prepare">
-      <annotationc compilerclasspathref="classpath" classpathref="classpath" output="metadata-aop.xml" xml="true">
+      <aopc compilerclasspathref="classpath50" classpathref="classpath14" verbose="true">
+         <classpath path="."/>
          <src path="."/>
-      </annotationc>
-      <javac srcdir="."
-         destdir="."
-         debug="on"
-         deprecation="on"
-         optimize="off"
-         includes="**">
-         <classpath refid="classpath50"/>
-      </javac>
+         <aoppath>
+            <pathelement path="jboss-aop.xml"/>
+            <pathelement path="metadata-aop.xml"/>
+         </aoppath>
+      </aopc>
+
    </target>
 
-   <target name="run.50.instrumented" depends="compile50standalone">
+   <target name="run.aopc.50" depends="aopc50">
       <java fork="yes" failOnError="true" className="Driver">
          <sysproperty key="jboss.aop.path" value="metadata-aop.xml${path.separator}jboss-aop.xml"/>
-         <jvmarg value="-javaagent:${aop50jar}"/>
          <classpath refid="classpath50"/>
       </java>
    </target>
 
+   <target name="run.loadtime.50" depends="_compile50, annotationc">
+      <java fork="yes" failOnError="true" className="Driver">
+         <sysproperty key="jboss.aop.path" value="metadata-aop.xml${path.separator}jboss-aop.xml"/>
+         <classpath refid="classpath50"/>
+         <jvmarg value="-javaagent:${aop50jar}"/>
+      </java>
+   </target>
+
+   <target name="run.aopc.14" depends="aopc14">
+      <java fork="yes" failOnError="true" className="Driver">
+         <sysproperty key="jboss.aop.path" value="metadata-aop.xml${path.separator}jboss-aop.xml"/>
+         <classpath refid="classpath14"/>
+      </java>
+   </target>
+
+   <target name="run.loadtime.14" depends="_compile14, annotationc">
+      <!-- Create the classloader hook -->
+      <mkdir dir="jboss.aop.lib14/jdk14hook"/>
+      <java fork="yes" classname="org.jboss.aop.hook.GenerateInstrumentedClassLoader">
+         <classpath>
+            <path refid="jboss.aop.classpath14"/>
+         </classpath>
+         <arg value="${jboss.aop.lib14}/jdk14hook"/>
+      </java>
+
+      <path id="bootclasspath">
+         <pathelement location="${jboss.aop.lib14}/jdk14hook"/>
+         <path refid="jboss.aop.classpath14"/>
+      </path>
+      <property name="bootclasspath" refid="bootclasspath"/>
+
+      <java fork="yes" failOnError="true" className="Driver">
+         <sysproperty key="jboss.aop.path" value="metadata-aop.xml${path.separator}jboss-aop.xml"/>
+         <jvmarg value="-Xbootclasspath/p:${bootclasspath}"/>
+         <classpath path="."/>
+      </java>
+   </target>
 </project>
