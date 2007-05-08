@@ -20,9 +20,9 @@ joinpoint throws an exception, all after advices are skipeed while advices of
 after-throwing type will be invoked.
 </p><p>
 Finally advices are a mixture of after advices and after-throwing advices.
-As is the case of both advices, finally advices are also invoked after the joinpoint
-execution. But finally advices are the only type of advice that is invoked after
-joinpoint execution independently of its outcome. Since finally advices are invoked
+As in the case of both advices, finally advices are also invoked after the joinpoint
+execution. But finally advices are invoked after
+joinpoint execution independently of the outcome. Since finally advices are invoked
 from inside a finally block, they will always be executed.
 </p><p>
 To understand better this mechanism, refer to the following:
@@ -31,7 +31,7 @@ To understand better this mechanism, refer to the following:
 0   try
 1   {
 2      call before advices
-3      call around advices
+3      call around advices -> joinpoint
 4      call after advices
 6   }
 7   catch(Throwable t)
@@ -91,8 +91,8 @@ released by the after advice:
 public class MutexAspect
 {
    private Object lock = new Object();
-   private boolean locked = false;   
-   
+   private boolean locked = false;
+
    public void beforeAdvice(@JoinPoint Joinpoint joinPoint)
    {
       synchronized(lock)
@@ -106,14 +106,14 @@ public class MutexAspect
             catch(InterruptedException e)
             {
                Thread.currentThread().interrupt();
-               return; 
+               return;
             }
          }
          locked = true;
          System.out.println("&gt;&gt;&gt; Retrieved concurrency lock");
       }
    }
-   
+
    public void afterAdvice(@JoinPoint Joinpoint joinPoint)
    {
       synchronized(lock)
@@ -130,7 +130,7 @@ ___________________________
    &lt;before name="beforeAdvice" aspect="MutexAspect"/&gt;
    &lt;after name="afterAdvice" aspect="MutexAspect"/&gt;
 &lt;/bind&gt;
-</pre>         
+</pre>
 </p><p>
 </p><p>
 But after advices are not assured to be executed always. If an exception is thrown
@@ -144,8 +144,8 @@ one thread. Replacing the after advice in the example above is simple:
 public class MutexAspect
 {
    private Object lock = new Object();
-   private boolean locked = false;   
-   
+   private boolean locked = false;
+
    public void beforeAdvice(@JoinPoint JoinPointInfo joinPoint)
    {
       synchronized(lock)
@@ -159,14 +159,14 @@ public class MutexAspect
             catch(InterruptedException e)
             {
                Thread.currentThread().interrupt();
-               return; 
+               return;
             }
          }
          locked = true;
          System.out.println("&gt;&gt;&gt; Retrieved concurrency lock");
       }
    }
-   
+
    public void finallyAdvice(@JoinPoint JoinPointInfo joinPoint)
    {
       synchronized(lock)
@@ -186,7 +186,7 @@ ___________________________
 
 </pre>
 </p><p>
-To illustrate the finally mechanism, we changed slightly the bank application, by
+To illustrate the finally mechanism, we slightly changed the bank application, by
 throwing an exception when a transaction results in an negative balance.
 </p><p>
 </p><p>
@@ -194,7 +194,7 @@ throwing an exception when a transaction results in an negative balance.
 
 </p><p>
 In the same way as other advices, finally advices can receive annotated-parameters.
-The semantics of those parameters has been explained in the
+The semantics of those parameters have been explained in the
 <a href="../annotated-parameters/annotated-parameters.html">annotated-parameters</a> and
 <a href="../after-throwing/after-throwing.html">after-throwing</a> examples.
 </p><p>
@@ -224,13 +224,18 @@ throws a <tt>NoSuchAccountException</tt> if the account name is invalid. It prin
 message telling whether <tt>Bank.getAccount(String)</tt> threw an exception, which
 happened only if <tt>thrownException</tt> is not null.
 </p><p>
-A second consideration we need to make is that, if a finally advice receives a
-@Return parameter, the use of @Thrown is compulsory. This is so because the
-@Thrown parameter indicates the validity of the @Return parameter. This way, if the 
-joinpoint being  intercepted returns normally, @Thrown parameter value will be <tt>null</tt>
-and the @Return parameter will contain the joinpoint return value, as expected. If
-the joinpoint throws an exception, @Thrown parameter will contain the exception and
-the @Return value will invalid.
+A second consideration we need to make is that, <i>if a finally advice receives a
+@Return parameter, the use of @Thrown is compulsory</i>. This is so because the
+@Thrown parameter indicates the validity of the @Return parameter. This way:
+
+<ul>
+<li><i>if the
+joinpoint being  intercepted returns normally</i> - the @Thrown parameter value will be <tt>null</tt>
+and the @Return parameter will contain the joinpoint return value, as expected.</li>
+<li><i>If
+the joinpoint throws an exception</i> - the @Thrown parameter will contain the exception and
+the the @Return value will invalid.</li>
+</ul>
 </p><p>
 The following advice also intercepts <tt>Bank.getAccount(String)</tt> method execution,
 but this time it prints the result if no exception has been thrown.
@@ -264,11 +269,12 @@ ___________________________
 </p><p>
 <b>THIS EXAMPLE REQUIRES JDK 1.5!!</b> To compile and run:
 <pre>
-  $ ant
+  $ run.aopc.50
 </pre>
 It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:
 <pre>
-run:
+_run.aopc.50:
+
      [java] SETUP
      [java] =====
      [java] Creating account 'A' with initial balance of $30.0
