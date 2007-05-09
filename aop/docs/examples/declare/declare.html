@@ -4,7 +4,7 @@
 <h2> Declare Error/Warning</h2>
 
 </p><p>
-JBoss AOP can be used to enforce certain architectural constraints. The sample application in this example consists of a "business layer" (i.e <tt>Driver.java</tt>) which can call the "dao layer" (i.e. <tt>VehicleDAO</tt> and its subclasses <tt>MotorbikeDAO</tt> and <tt>CarDAO</tt>). 
+JBoss AOP can be used to enforce certain architectural constraints. The sample application in this example consists of a "business layer" (i.e <tt>Driver.java</tt>) which can call the "dao layer" (i.e. <tt>VehicleDAO</tt> and its subclasses <tt>MotorbikeDAO</tt> and <tt>CarDAO</tt>).
 </p><p>
 <tt>VehicleDAO</tt> is an abstract class, and in our architecture for this small application we want to make sure that:
 <ul>
@@ -12,7 +12,7 @@ JBoss AOP can be used to enforce certain architectural constraints. The sample a
 <li>The dao layer classes should not call back to the business layer classes (i.e. <tt>XXXDAO</tt> should not call <tt>Driver</tt>)</li>
 </ul>
 </p><p>
-JBoss AOP allows you to check for this at instrumentation time, so if you are running precompiled AOP, the checks will be done at the aopc stage. If you are using loadtime AOP the checks will be performed when the class is first loaded. 
+JBoss AOP allows you to check for this at instrumentation time, so if you are running precompiled AOP, the checks will be done at the aopc stage. If you are using loadtime AOP the checks will be performed when the class is first loaded.
 </p><p>
 Two new XML tags are used for this <tt>declare-warning</tt> and <tt>declare-error</tt>, the only difference between them is that <tt>declare-error</tt> will throw an exception, causing execution to stop, while <tt>declare-warning</tt> prints out a warning message and continues as normal. Here is the jboss-aop.xml file used for this example:
 <pre>
@@ -20,13 +20,13 @@ Two new XML tags are used for this <tt>declare-warning</tt> and <tt>declare-erro
 &lt;aop&gt;
    &lt;declare-warning expr="class($instanceof{VehicleDAO}) AND !has(public void *-&gt;save())"&gt;
       All VehicleDAO subclasses must override the save() method.
-   &lt;/declare-warning&gt; 
+   &lt;/declare-warning&gt;
    &lt;declare-warning expr="call(Driver-&gt;new(..)) AND within(*DAO)"&gt;
       DAO classes should not access the Driver class
-   &lt;/declare-warning&gt; 
+   &lt;/declare-warning&gt;
    &lt;declare-warning expr="call(* Driver-&gt;*(..)) AND withincode(* *DAO-&gt;*())"&gt;
       DAO classes should not access the Driver class
-   &lt;/declare-warning&gt; 
+   &lt;/declare-warning&gt;
 &lt;/aop&gt;
 </pre>
 </p><p>
@@ -36,29 +36,23 @@ Two new XML tags are used for this <tt>declare-warning</tt> and <tt>declare-erro
 <li>The third  <tt>declare-warning</tt> tag specifies that no method on any of the the DAO classes can call the Driver methods. This condition is broken in our example by the fact that <tt>CarDAO.save()</tt> tries to call a method on the <tt>Driver</tt> class</li>
 </ul>
 </p><p>
-For pointcut expressions, only caller side pointcut expressions will work (so you cannot use <tt>all</tt>, <tt>execution</tt>, <tt>field</tt>, <tt>set</tt> or <tt>get</tt>). 
+For pointcut expressions, only caller side pointcut expressions will work (so you cannot use <tt>all</tt>, <tt>execution</tt>, <tt>field</tt>, <tt>set</tt> or <tt>get</tt>).
 </p><p>
 <h4>Run the example compile-time instrumented</h4>
 
 </p><p>
 Now if you run the example:
 </p><p>
-To compile and run:
+To compile and run with JDK 5:
 <pre>
-  $ ant
+  $ ant run.aopc.50
 </pre>
+</p><p>
+(To run with JDK use $ ant run.aopc.14 as shown in the <a href="../valid_targets_not_annotated.html"/>non-annotated examples guide</a>.)
 </p><p>
 It will generate the following output
 <pre>
-$ ant
-Buildfile: build.xml
-
-prepare:
-
-compile40standalone:
-    [javac] Compiling 1 source file to C:\cygwin\home\Kab\cvs\jboss-head\aop\docs\examples\declare
-
-compile:
+_aopc50:
      [aopc] WARNING: declare-warning condition
      [aopc]     'call(Driver-&gt;new(..)) AND within(*DAO)'
      [aopc] was broken for constructor call: CarDAO.save()V calls Driver.new()V
@@ -75,9 +69,7 @@ compile:
      [aopc]     All VehicleDAO subclasses must override the save() method.
 
 
-
-
-run:
+_run.aopc.50:
      [java] ---- Start ----
      [java] Car DAO save
 
@@ -90,48 +82,36 @@ Note that when using compile time instrumentation the warnings are generated dur
 </p><p>
 <h4>Run the example load-time instrumented</h4>
 
-</p><p>
-If you are running jdk 1.4 use:
+</p
+<p>
+To run with JDK 5:
 </p><p>
 <pre>
-  $ ant run.40.instrumented
+  $ ant run.loadtime.50
 </pre>
-</p><p>
-If you are running jdk 1.4 use:
-</p><p>
+<p>
+(To run with JDK use $ ant run.loadtime.14 as shown in the <a href="../valid_targets_not_annotated.html"/>non-annotated examples guide</a>.)
+</p>
+</p>
 <pre>
-  $ ant run.50.instrumented
-</pre>
-</p><p>
-<pre>
-Buildfile: build.xml
-
-prepare:
-
-compile40standalone:
-
-run.40.instrumented:
+_run.loadtime.50:
      [java] ---- Start ----
      [java] WARNING: declare-warning condition
-     [java]     'call(Driver-&gt;new(..)) AND within(*DAO)'
+     [java]     'call(Driver->new(..)) AND within(*DAO)'
      [java] was broken for constructor call: CarDAO.save()V calls Driver.new()V
      [java]     DAO classes should not access the Driver class
 
      [java] WARNING: declare-warning condition
-     [java]     'call(* Driver-&gt;*(..)) AND withincode(* *DAO-&gt;save())'
+     [java]     'call(* Driver->*(..)) AND withincode(* *DAO->save())'
      [java] was broken for method call:CarDAO.save()V calls Driver.method()V
      [java]     DAO classes should not access the Driver class
 
      [java] Car DAO save
      [java] WARNING: declare-warning condition
-     [java]     'class($instanceof{VehicleDAO}) AND !has(public void *-&gt;save())'
+     [java]     'class($instanceof{VehicleDAO}) AND !has(public void *->save())'
      [java] was broken for class MotorbikeDAO
-     [java]     All VehicleDAO subclasses must override the save() method.
+     [java]     All VehicleDAO subclasses must override
 
-
-
-
-BUILD SUCCESSFUL
 </pre>
 Note that now the warnings are displayed when running the application, as the classes are transformed when loaded.
 </p><p>
@@ -143,13 +123,13 @@ If we replace all the <tt>declare-warning</tt> occurances with <tt>declare-error
 &lt;aop&gt;
    &lt;declare-error expr="class($instanceof{VehicleDAO}) AND !has(public void *-&gt;save())"&gt;
       All VehicleDAO subclasses must override the save() method.
-   &lt;/declare-error&gt; 
+   &lt;/declare-error&gt;
    &lt;declare-error expr="call(Driver-&gt;new(..)) AND within(*DAO)"&gt;
       DAO classes should not access the Driver class
-   &lt;/declare-error&gt; 
+   &lt;/declare-error&gt;
    &lt;declare-error expr="call(* Driver-&gt;*(..)) AND withincode(* *DAO-&gt;save())"&gt;
       DAO classes should not access the Driver class
-   &lt;/declare-error&gt; 
+   &lt;/declare-error&gt;
 &lt;/aop&gt;
 </pre>
 </p><p>
@@ -157,13 +137,9 @@ If we replace all the <tt>declare-warning</tt> occurances with <tt>declare-error
 
 When running precompiled we get:
 <pre>
-Buildfile: build.xml
-
-prepare:
-
-compile40standalone:
-
-compile:
+$ ant run.aopc.50
+....
+_aopc50:
      [aopc] ERROR: declare-error condition
      [aopc]     'call(Driver-&gt;new(..)) AND within(*DAO)'
      [aopc] was broken for constructor call: CarDAO.save()V calls Driver.new()V
@@ -193,14 +169,11 @@ See how the compiler stops at the first error and execution stops.
 
 When running with loadtime transformations we get:
 <pre>
-$ ant run.40.instrumented
-Buildfile: build.xml
+$ ant run.loadtime.50
 
-prepare:
+...
 
-compile40standalone:
-
-run.40.instrumented:
+_run.loadtime.50:
      [java] ---- Start ----
      [java] ERROR: declare-error condition
      [java]     'call(Driver-&gt;new(..)) AND within(*DAO)'
@@ -242,7 +215,7 @@ run.40.instrumented:
 
 BUILD FAILED
 </pre>
-Again you can see how the first broken condition causes execution to stop.
+Again you can see how the first broken condition causes execution to stop. (To run with JDK use $ ant run.loadtime.14 as shown in the <a href="../valid_targets_not_annotated.html"/>non-annotated examples guide</a>.)
 </p>
 </body>
 </html>

@@ -106,9 +106,8 @@
 
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath50"/>
 
-      <aopc compilerclasspathref="classpath50" classpathref="classpath50" verbose="true">
+      <aopc compilerclasspathref="classpath50" classpathref="classpath50">
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
-         <sysproperty key="jboss.aop.verbose" value="true"/>
          <classpath path="."/>
          <src path="."/>
          <aoppath path="jboss-aop.xml"/>
@@ -121,9 +120,8 @@
 
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath50"/>
 
-      <aopc compilerclasspathref="classpath50" classpathref="classpath50" verbose="true">
+      <aopc compilerclasspathref="classpath50" classpathref="classpath50">
          <sysproperty key="jboss.aop.class.path" value="."/>
-         <sysproperty key="jboss.aop.verbose" value="true"/>
          <classpath path="."/>
          <src path="."/>
          <aopclasspath path="."/>
@@ -136,9 +134,8 @@
 
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath14"/>
 
-      <aopc compilerclasspathref="classpath14" classpathref="classpath14" verbose="true">
+      <aopc compilerclasspathref="classpath14" classpathref="classpath14">
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
-         <sysproperty key="jboss.aop.verbose" value="true"/>
          <classpath path="."/>
          <src path="."/>
          <aoppath path="jboss-aop.xml"/>
@@ -151,9 +148,8 @@
 
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath14"/>
 
-      <aopc compilerclasspathref="classpath14" classpathref="classpath14" verbose="true">
+      <aopc compilerclasspathref="classpath14" classpathref="classpath14">
          <sysproperty key="jboss.aop.class.path" value="."/>
-         <sysproperty key="jboss.aop.verbose" value="true"/>
          <classpath path="."/>
          <src path="."/>
          <aopclasspath path="."/>
@@ -166,9 +162,8 @@
 
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath14"/>
 
-      <aopc compilerclasspathref="classpath14" classpathref="classpath14" verbose="true">
+      <aopc compilerclasspathref="classpath14" classpathref="classpath14">
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
-         <sysproperty key="jboss.aop.verbose" value="true"/>
          <classpath path="."/>
          <src path="."/>
          <aoppath path="jboss-aop.xml"/>
@@ -181,9 +176,8 @@
 
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath14"/>
 
-      <aopc compilerclasspathref="classpath14" classpathref="classpath14" verbose="true">
+      <aopc compilerclasspathref="classpath14" classpathref="classpath14">
          <sysproperty key="jboss.aop.class.path" value="."/>
-         <sysproperty key="jboss.aop.verbose" value="true"/>
          <classpath path="."/>
          <src path="."/>
          <aopclasspath path=""/>
