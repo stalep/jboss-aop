@@ -201,28 +201,22 @@
      >
    </target>
 
-   <target name="release"
-	   description="Builds the default release structure."
+   <target name="release-output"
+      description="Builds the default release structure."
       depends="modules-release"
-	   >
+      >
       <ant antfile="build-release.xml" target="release"/>
   </target>
 
-  <target name="release-zip"
-	  description="Builds a ZIP distribution."
-	  depends="release, _buildmagic:release:zip"/>
+   <target name="release"
+      description="Builds the default release structure."
+      depends="clean, release-output"
+      >
+      <ant antfile="build-release.xml" target="release"/>
 
-  <target name="release-tar"
-	  description="Builds a TAR distribution."
-	  depends="release, _buildmagic:release:tar"/>
+      <!-- TODO create zip file -->
+  </target>
 
-  <target name="release-tgz"
-	  description="Builds a TAR-GZ distribution."
-	  depends="release, _buildmagic:release:tgz"/>
-
-  <target name="release-all"
-	  description="Builds a distribution for each archive type."
-	  depends="release-zip, release-tgz"/>
 
   <!-- ================================================================== -->
   <!-- Source Archives                                                    -->

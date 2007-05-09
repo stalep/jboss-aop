@@ -7,9 +7,6 @@
    <target name="release"
 	   description="Builds the default release structure."
 	   >
-
-      <delete dir="${project.release}"/>
-
       <delete dir="output/temp"/>
       <mkdir dir="output/temp"/>
 
