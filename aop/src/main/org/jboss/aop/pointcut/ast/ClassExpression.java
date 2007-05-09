@@ -163,9 +163,4 @@ public class ClassExpression
       }
       return ret.getName();
    }
-   
-   public static void main(String[] args)
-   {
-      System.out.println(simpleType(Float.TYPE));
-   }
 }
