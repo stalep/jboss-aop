@@ -4,7 +4,7 @@
 <h2> Annotated Declare Error/Warning</h2>
 
 </p><p>
-The principles behind declare error/warning, and the example used here is exactly the same as in the <a href="../declare/declare.html">XML</a> example. But the errors/warnings are declared differently using annotations. 
+The principles behind declare error/warning, and the example used here is exactly the same as in the <a href="../declare/declare.html">XML</a> example. But the errors/warnings are declared differently using annotations.
 </p><p>
 <h3> Declaring warnings</h3>
 
@@ -62,74 +62,73 @@ You declare an error in the same way as a warning, but you use the <tt>@DeclareE
 </p><p>
 Now if you run the example:
 </p><p>
-To compile and run:
+To compile and run with JDK 5:
 <pre>
-  $ ant
+  $ ant run.aopc.50
 </pre>
 </p><p>
 It will generate the following output
 <pre>
-Buildfile: build.xml
-
-prepare:
-
-compile:
+_aopc50.annotated:
      [aopc] WARNING: declare-warning condition
-     [aopc]     'call(Driver-&gt;new(..)) AND within(*DAO)'
+     [aopc]     'call(Driver->new(..)) AND within(*DAO)'
      [aopc] was broken for constructor call: CarDAO.save()V calls Driver.new()V
      [aopc]     DAO classes should not access the Driver class
 
      [aopc] WARNING: declare-warning condition
-     [aopc]     'call(* Driver-&gt;*(..)) AND withincode(* *DAO-&gt;save())'
+     [aopc]     'call(* Driver->*(..)) AND withincode(* *DAO->save())'
      [aopc] was broken for method call:CarDAO.save()V calls Driver.method()V
      [aopc]     DAO classes should not access the Driver class
 
      [aopc] WARNING: declare-warning condition
-     [aopc]     'class($instanceof{VehicleDAO}) AND !has(public void *-&gt;save())'
+     [aopc]     'class($instanceof{VehicleDAO}) AND !has(public void *->save())'
      [aopc] was broken for class MotorbikeDAO
      [aopc]     All VehicleDAO subclasses must override the save() method.
 
-run:
+     [aopc] Build Successful: 438 ms
+
+_run.aopc.50.annotated:
      [java] ---- Start ----
      [java] Car DAO save
-
-BUILD SUCCESSFUL
 </pre>
 </p><p>
-Note that when using compile time instrumentation the warnings are generated during the aopc phase.
+Note that when using compile time instrumentation the warnings are generated during the aopc phase. <p>
+(To run with JDK 1.4 use $ ant run.aopc.14 as shown in the <a href="../valid_targets_annotated.html"/>annotated examples guide</a>.)
+</p>
 </p><p>
 <h4>Run the example load-time instrumented</h4>
 
 </p><p>
+Run the example with JDK 5:
+</p>
 <pre>
-  $ ant run.50.instrumented
+  $ ant run.loadtime.50
 </pre>
 </p><p>
+It will generate the following output
+</p>
 <pre>
-run.50.instrumented:
+_run.loadtime.50.annotated:
      [java] ---- Start ----
      [java] WARNING: declare-warning condition
-     [java]     'call(Driver-&gt;new(..)) AND within(*DAO)'
+     [java]     'call(Driver->new(..)) AND within(*DAO)'
      [java] was broken for constructor call: CarDAO.save()V calls Driver.new()V
      [java]     DAO classes should not access the Driver class
 
      [java] WARNING: declare-warning condition
-     [java]     'call(* Driver-&gt;*(..)) AND withincode(* *DAO-&gt;save())'
+     [java]     'call(* Driver->*(..)) AND withincode(* *DAO->save())'
      [java] was broken for method call:CarDAO.save()V calls Driver.method()V
      [java]     DAO classes should not access the Driver class
 
      [java] Car DAO save
      [java] WARNING: declare-warning condition
-     [java]     'class($instanceof{VehicleDAO}) AND !has(public void *-&gt;save())'
+     [java]     'class($instanceof{VehicleDAO}) AND !has(public void *->save())'
      [java] was broken for class MotorbikeDAO
      [java]     All VehicleDAO subclasses must override the save() method.
 
-
-
-
-BUILD SUCCESSFUL
 </pre>
 Note that now the warnings are displayed when running the application, as the classes are transformed when loaded.
+(To run with JDK 1.4 use $ ant run.aopc.14 as shown in the <a href="../valid_targets_annotated.html"/>annotated examples guide</a>.)
 </p><p>
 <h3>Declaring errors</h3>
 
@@ -154,15 +153,14 @@ public class DeclareAspect
 </p><p>
 <h3>declare-error precompiled</h3>
 
-When running precompiled we get:
+When running precompiled with JDK 5 we get:
 <pre>
-$ ant
+$ ant run.aopc.50
 Buildfile: build.xml
 
-prepare:
+...
 
-compile:
-    [javac] Compiling 5 source files to C:\cygwin\home\Kab\cvs\jboss-head\aop\docs\examples\annotated-declare
+_aopc50.annotated:
      [aopc] ERROR: declare-error condition
      [aopc]     'call(Driver-&gt;new(..)) AND within(*DAO)'
      [aopc] was broken for constructor call: CarDAO.save()V calls Driver.new()V
@@ -210,20 +208,16 @@ compile:
 </pre>
 </p><p>
 See how the compiler stops at the first error and execution stops.
+(To run with JDK 1.4 use $ ant run.aopc.14 as shown in the <a href="../valid_targets_annotated.html"/>annotated examples guide</a>.)
 </p><p>
 <h3>DeclareError loadtime</h3>
 
-When running with loadtime transformations we get:
+When running with loadtime transformations with JDK 5 we get:
 <pre>
-$ ant run.50.instrumented
-Buildfile: build.xml
+$ ant run.loadtime.50
+...
 
-prepare:
-
-compile50standalone:
-    [javac] Compiling 5 source files to C:\cygwin\home\Kab\cvs\jboss-head\aop\docs\examples\annotated-declare
-
-run.50.instrumented:
+_run.loadtime.50.annotated:
      [java] ---- Start ----
      [java] ERROR: declare-error condition
      [java]     'call(Driver-&gt;new(..)) AND within(*DAO)'
@@ -268,6 +262,7 @@ run.50.instrumented:
 
 </pre>
 Again you can see how the first broken condition causes execution to stop.
+(To run with JDK 1.4 use $ ant run.aopc.14 as shown in the <a href="../valid_targets_annotated.html"/>annotated examples guide</a>.)
 </p>
 </body>
 </html>
