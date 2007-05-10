@@ -210,9 +210,13 @@
 
    <target name="release"
       description="Builds the default release structure."
-      depends="clean, release-output"
+      depends="init"
       >
       <ant antfile="build-release.xml" target="release"/>
+   	
+   	<jar destfile="${project.release}.jar" basedir="${project.release}"/>
+   	<move file="${project.release}.jar" todir="${module.output}/lib"/>
+   
 
       <!-- TODO create zip file -->
   </target>
@@ -297,6 +301,10 @@
   <target name="set.proxy" if="hasproxy" depends="check.proxy">
     <echo>Proxy is set to ${proxy.host}:${proxy.port}</echo>
     <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}"/>
+  </target>
+	
+  <target name="aop.reference.docs" depends="init" description="Builds the reference manual for JBoss AOP that should be part of ths distribution">
+     <ant antfile="build.xml" dir="../aop/docs/reference"/>
   </target>
 
 </project>
