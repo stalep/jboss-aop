@@ -16,14 +16,14 @@ When intercepting a joinpoint, one can write after and after-throwing advices
 to perform an interception after the joinpoint execution. However, the execution
 of these advices is not assured. If the joinpoint executes normally, an after advice
 will be invoked, but the after-throwing one will not. On the other hand, when the
-joinpoint throws an exception, all after advices are skipeed while advices of
+joinpoint throws an exception, all after advices are skipped while advices of
 after-throwing type will be invoked.
 </p><p>
-Finally advices are a mixture of after advices and after-throwing advices.
-As in the case of both advices, finally advices are also invoked after the joinpoint
-execution. But finally advices are invoked after
-joinpoint execution independently of the outcome. Since finally advices are invoked
-from inside a finally block, they will always be executed.
+Finally advices are a mixture of after and after-throwing advices. As in the case of
+both advices, finally advices are also invoked after the joinpoint execution. But
+finally advices are invoked after joinpoint execution independently of its outcome.
+Since finally advices are invoked from inside a finally block, they will always be
+executed.
 </p><p>
 To understand better this mechanism, refer to the following:
 <pre>
@@ -62,7 +62,7 @@ block executed.
 <h2> Writing Finally Advices</h2>
 
 </p><p>
-Finally advices must follow the annotated-parameters, signature:
+Finally advices must follow the annotated-parameters signature:
 <pre>
 public &lt;return-value&gt; &lt;any-method-name&gt;(@&lt;Annotation&gt; &lt;any type&gt; arg0, @&lt;Annotation&gt; &lt;any type&gt; arg1, ... , @&lt;Annotation&gt; &lt;any type&gt; argN) throws &lt;Exception1&gt;,&lt;Exception2&gt;,...,&lt;ExceptionN&gt;
 </pre>
@@ -73,19 +73,19 @@ To bind a finally advice, just use the finally tag as below:
 </p><p>
 <pre>
 &lt;bind pointcut="execution(* POJO-&gt;*(..))"&gt;
-      &lt;throwing name="finallyAdvice" aspect="Aspect"/&gt;
+      &lt;finally name="finallyAdvice" aspect="Aspect"/&gt;
 &lt;/bind&gt;
 </pre>
 </p><p>
 <h2> Mutex Example Revisited</h2>
 
 </p><p>
-Let's revisit the first example of
+To illustrate the usability of finally advices, lets revisit the example of
 <a href="../beforeafter/beforeafter.html">before/after advices</a>. In that example, we wrote
 a <tt>MutexAspect</tt> to assure that several concurrent bank transactions could be run in
 a synchronized manner. The <tt>MutexAspect</tt> was composed by a pair of related
 before/after advices. The before advice would retrieve the mutex lock, that would be
-released by the after advice:
+later released by the after advice:
 </p><p>
 <pre>
 public class MutexAspect
@@ -136,7 +136,7 @@ ___________________________
 But after advices are not assured to be executed always. If an exception is thrown
 during a transaction execution, the after advice will not be invoked, impeding the
 lock from being released, and locking the other threads. To avoid that situation, we
-should replace the after advice by a finally advice. Differently from the first, the
+should replace <tt>afterAdvice</tt> by a finally advice. Differently from the first, the
 finally advice will be executed always, avoiding a deadlock caused by an exception in
 one thread. Replacing the after advice in the example above is simple:
 </p><p>
@@ -186,7 +186,7 @@ ___________________________
 
 </pre>
 </p><p>
-To illustrate the finally mechanism, we slightly changed the bank application, by
+To show the finally mechanism in action, we slightly changed the bank application, by
 throwing an exception when a transaction results in an negative balance.
 </p><p>
 </p><p>
