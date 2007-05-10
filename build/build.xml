@@ -216,9 +216,6 @@
    	
    	<jar destfile="${project.release}.jar" basedir="${project.release}"/>
    	<move file="${project.release}.jar" todir="${module.output}/lib"/>
-   
-
-      <!-- TODO create zip file -->
   </target>
 
 
