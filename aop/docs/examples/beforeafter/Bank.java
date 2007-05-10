@@ -46,27 +46,28 @@ public class Bank
    }
    
    public Transaction getDepositTransaction(String accountName)
+      throws NoSuchAccountException
    {
       return new Deposit(getAccount(accountName));
    }
    
    public Transaction getWithdrawalTransaction(String accountName)
+      throws NoSuchAccountException
    {
       return new Withdrawal(getAccount(accountName));
    }
    
    public Transaction getWireTransferTransaction(String fromAccountName,
-         String toAccountName)
+         String toAccountName) throws NoSuchAccountException
    {
       return new WireTransfer(getAccount(fromAccountName), getAccount(toAccountName));
    }
    
-   private Account getAccount(String name)
+   private Account getAccount(String name) throws NoSuchAccountException
    {
       if (!accounts.containsKey(name))
       {
-         System.err.println("Account named '" + name + "' does not exist.");
-         System.exit(1);
+         throw new NoSuchAccountException("Account named '" + name + "' does not exist.");
       }
       return accounts.get(name);
    }

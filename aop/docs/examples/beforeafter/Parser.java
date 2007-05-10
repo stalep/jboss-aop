@@ -62,41 +62,47 @@ public class Parser
          // read first string
          String accountName = readAccountName(line, "an operation");
          Transaction transaction = null;
-         
-         // if first string contains a transfer (A->B, for example)
-         int transferIndex = accountName.indexOf("->");
-         if (transferIndex != -1)
+         try
          {
-            // create wire transfer
-            String fromAccountName = accountName.substring(0, transferIndex);
-            String toAccountName = accountName.substring(transferIndex + 2);
-            transaction = bank.getWireTransferTransaction(fromAccountName, toAccountName);
-         }
-         else
-         {
-            // create deposit or withdrawal
-            switch(line.charAt(++index))
+            // if first string contains a transfer (A->B, for example)
+            int transferIndex = accountName.indexOf("->");
+            if (transferIndex != -1)
             {
-               case '+':
-                  transaction = bank.getDepositTransaction(accountName);
-                  break;
-               case '-':
-                  transaction = bank.getWithdrawalTransaction(accountName);
-                  break;
-               default:
-                  System.err.println("Unexpected character at line " + lineNumber +
-                  ". Should be \'+\' or \'-\', to indicate deposit and withdrawal transactions, respectively.");
-               System.exit(1);
-
+               // create wire transfer
+               String fromAccountName = accountName.substring(0, transferIndex);
+               String toAccountName = accountName.substring(transferIndex + 2);
+               transaction = bank.getWireTransferTransaction(fromAccountName, toAccountName);
             }
+            else
+            {
+               // create deposit or withdrawal
+               switch(line.charAt(++index))
+               {
+                  case '+':
+                     transaction = bank.getDepositTransaction(accountName);
+                     break;
+                  case '-':
+                     transaction = bank.getWithdrawalTransaction(accountName);
+                     break;
+                  default:
+                     System.err.println("Unexpected character at line " + lineNumber +
+                     ". Should be \'+\' or \'-\', to indicate deposit and withdrawal transactions, respectively.");
+                  System.exit(1);
+               }
+            }
+            // read and set transaction amount
+            double amount = readAmount(line);
+            transaction.setAmount(amount);
+            
+            // add transaction to collection
+            transactions.add(transaction);
+         }
+         catch(NoSuchAccountException e)
+         {
+            System.out.println("ERROR invalid transaction: " + e.getMessage());
          }
          
-         // read and set transaction amount
-         double amount = readAmount(line);
-         transaction.setAmount(amount);
          
-         // add transaction to collection
-         transactions.add(transaction);
          
          lineNumber ++;
          line = reader.readLine().trim();
