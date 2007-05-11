@@ -479,7 +479,39 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
             In both groups there is a specific type for each joinpoint type. The type of bean corresponding to each joinpoint type can be seen
             in <xref linkend="joinpointtypes"/>. All beans are in the package <literal>org.jboss.aop.joinpoint</literal>.
          </para>
-         
+      </sect2>
+      <sect2 id="contextvalues" revision="1">
+         <title>Context Values</title>
+         <para>
+            According to the type of the joinpoint, there are specific context values available.
+         </para>
+         <para>
+            The context values are:
+         </para>
+         <itemizedlist>
+            <listitem>
+               return value: joinpoints like a constructor execution or a non-void method call, have a return value.
+            </listitem>
+            <listitem>
+            	arguments: the arguments of a constructor or method execution joinpoint are the arguments received
+               by the constructor or method. Similarly, the arguments of a call are the arguments received by the
+               method or constructor being called.
+            </listitem>
+            <listitem>
+               target: the target object of a joinpoint varies according to the joinpoint type. For method
+               executions and calls, it refers to the object whose method is being executed (available only
+               on non-static methods). For field reads and writes, it refers to the object that contains that
+               field.
+            </listitem>
+            <listitem>
+               caller: the caller object is available only on call joinpoints, and it refers to the object
+               whose method or constructor is performing the call (notice the caller object is not available if
+               the call is inside a static method).
+            </listitem>
+         </itemizedlist>
+         <para>
+            <xref linkend="joinpointtypes"/> shows what context values may be available depending on the joinpoint type.
+         </para>
          <table frame="topbot" id="joinpointtypes">
             <title>
               Joinpoint Types Table
