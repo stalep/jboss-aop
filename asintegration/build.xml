@@ -79,25 +79,6 @@
       <!-- Configure modules -->
       <path id="dependentmodule.classpath">
          <path refid="jboss.aop.classpath"/>
-         <!--path refid="beanshell.beanshell.classpath"/-->
-         <!--path refid="jboss.remoting.classpath"/-->
-         <!--path refid="apache.xerces.classpath"/-->
-      	<!--
-	      <path refid="jboss.common.core.classpath"/>
-   	   <path refid="jboss.common.logging.spi.classpath"/>
-      	<path refid="jboss.common.logging.log4j.classpath"/>
-	      <path refid="jboss.common.logging.jdk.classpath"/>
-         <path refid="jboss.j2ee.classpath"/>
-         <path refid="jboss.j2se.classpath"/>
-         <path refid="jboss.jmx.classpath"/>
-         <path refid="jboss.system.classpath"/>
-         <path refid="jboss.systemjmx.classpath"/>
-         <path refid="jboss.security.classpath"/>
-         <path refid="jboss.security.spi.classpath"/>
-         <path refid="jboss.j2se.classpath"/>
-         <path refid="jboss.system.classpath"/>
-         <path refid="jboss.cluster.classpath"/>
-         <path refid="jboss.transaction.classpath"/>-->
       </path>
 
       <!-- ===== -->
@@ -158,6 +139,7 @@
          <path refid="jboss.jbossretro.classpath"/>
          <path refid="jboss/backport.concurrent.classpath"/>
       </path>
+
    </target>
 
 
@@ -207,7 +189,7 @@
             <pathelement path="${build.classes}"/>
          </classpath>
          <src path="${build.classes}"/>
-      </retro>      
+      </retro>
    </target>
 
 
@@ -235,11 +217,10 @@
          <fileset dir="${build.classes}">
             <!-- Include everything else -->
             <include name="org/jboss/aop/deploy*/**"/>
-            <exclude name="org/jboss/aop/deployers/JBossAspectLibrary.class"/>
          </fileset>
          <fileset file ="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
       </jar>
-   	
+
       <!-- Build jboss-aop-as4deployer.jar for Jboss 4 with JDK 5 -->
    	<jar destfile="${build.lib}/jboss-aop-as4-deployer.jar" manifest="${build.etc}/default.mf"
          update="${jar.update}" index="${jar.index}">
@@ -250,41 +231,10 @@
          </fileset>
          <fileset file ="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
    	</jar>
-
-    <!--  
-      <mkdir dir="${build.meta.inf}"/>
-      <copy file="${source.resources}/META-INF/jboss-service.xml" todir="${build.meta.inf}" filtering="true">
-         <filterset>
-            <filter token="SERVICE_NAME" value="org.jboss.aop.deployment.AspectManagerServiceJDK5"/>
-         </filterset>
-      </copy>
-      <jar destfile="${build.lib}/jboss-aop-jdk50.deployer" manifest="${build.etc}/default.mf"
-         update="${jar.update}" index="${jar.index}">
-         <fileset file="${build.lib}/jboss-aspect-library-jdk50.jar"/>
-         <fileset file="${jboss.aop.lib}/jboss-aop-jdk50.jar"/>
-         <fileset file="src/etc/base-aop.xml"/>
-         <fileset file="${trove.lib}/trove.jar"/>
-         <fileset dir="${module.output}">
-            <include name="META-INF/jboss-service.xml"/>
-         </fileset>
-      </jar>
-
-   	<copy file="src/etc/base-aop.xml" tofile="${build.meta.inf}/base-aspects.xml"/>
-      <jar destfile="${build.lib}/jboss-aop-jboss5.deployer" manifest="${build.etc}/default.mf"
-         update="${jar.update}" index="${jar.index}">
-         <fileset file="${build.lib}/jboss-aspect-library-jdk50.jar"/>
-         <fileset file="${build.meta.inf}/base-aspects.xml"/>
-         <fileset dir="${source.resources}">
-            <include name="META-INF/jboss-aspect-library-beans.xml"/>
-         </fileset>
-      </jar>
-      <delete dir="${build.meta.inf}"/>
--->
-      
    </target>
 
 
-   <target name="jars14" depends="retrotranslate">
+   <target name="jars14" depends="retrotranslate, source-jar">
       <mkdir dir="${build.lib}"/>
 
       <!-- Build jboss-aop-as4deployer.jar for Jboss 4 with JDK 1.4 -->
@@ -298,31 +248,19 @@
          <fileset file ="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
       </jar>
 
-    <!--  
-      <mkdir dir="${build.meta.inf}"/>
-      <copy file="${source.resources}/META-INF/jboss-service.xml" todir="${build.meta.inf}" filtering="true">
-         <filterset>
-            <filter token="SERVICE_NAME" value="org.jboss.aop.deployment.AspectManagerService"/>
-         </filterset>
-      </copy>
-      <jar destfile="${build.lib}/jboss-aop.deployer" manifest="${build.etc}/default.mf"
-         update="${jar.update}" index="${jar.index}">
-         <fileset file="${build.lib}/jboss-aspect-library.jar"/>
-         <fileset file="${jboss.aop.lib}/jboss-aop.jar"/>
-         <fileset file="src/etc/base-aop.xml"/>
-         <fileset file="${javassist.lib}/javassist.jar"/>
-         <fileset file="${trove.lib}/trove.jar"/>
-         <fileset dir="${module.output}" >
-            <include name="META-INF/jboss-service.xml"/>
-         </fileset>
-      </jar>
-      <delete dir="${build.meta.inf}"/>
-   -->
       <!-- Generate checksums -->
       <call target="_default:compile-checksums"/>
 
    </target>
 
+   <target name="source-jar" depends="init">
+      <mkdir dir="${build.lib}"/>
+      <jar destfile="${build.lib}/jboss-asintegration-src.zip"
+         manifest="${build.etc}/default.mf">
+         <fileset dir="${source.java}">
+         </fileset>
+      </jar>
+   </target>
 
    <!-- ================================================================== -->
    <!-- Cleaning                                                           -->
@@ -371,7 +309,7 @@
       description="Builds a distribution for each archive type."
       depends="release-zip, release-tgz"/>
 
-   
+
    <!-- ================================================================== -->
    <!-- Misc.                                                              -->
    <!-- ================================================================== -->
