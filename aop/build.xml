@@ -439,7 +439,7 @@
       depends="all, _buildmagic:install:default, dist"/>
 
    <target name="release" depends="install">
-      <echo>RELEASE</echo>  
+      <echo>RELEASE</echo>
    </target>
 
    <target name="release-zip"
@@ -492,44 +492,6 @@
    <target name="help"
       description="Show this help message."
       depends="_buildmagic:help:standard"/>
-
-   <target name="update-repository"
-      description="Copies the jars to the snapshot in the repository. The version can be overridden with the -Dversion=1.2.3 property">
-      <property file="local.properties"/>
-      <fail unless="repository.home">repository.home must be set in a local.properties file</fail>
-
-      <condition property="ver" value="snapshot" else="${version}">
-         <not>
-            <isset property="version"/>
-         </not>
-      </condition>
-      <echo>${ver}</echo>
-
-      <property name="aop15.dir" value="${repository.home}/jboss/aop/${ver}/lib"/>
-      <property name="aop14.dir" value="${repository.home}/jboss/aop14/${ver}/lib"/>
-
-      <mkdir dir="${aop15.dir}"/>
-      <mkdir dir="${aop14.dir}"/>
-
-      <copy todir="${aop15.dir}">
-         <fileset dir="output/lib">
-            <include name="jboss-aop-jdk50-client.jar"/>
-            <include name="jboss-aop-jdk50.jar"/>
-            <include name="jboss-aop-src.zip"/>
-            <include name="jrockit-pluggable-instrumentor.jar"/>
-            <include name="pluggable-instrumentor.jar"/>
-            <include name="jboss-aop-src.zip"/>
-         </fileset>
-      </copy>
-      <copy todir="${aop14.dir}">
-         <fileset dir="output/lib">
-            <include name="jboss-aop.jar"/>
-            <include name="jdk14-pluggable-instrumentor.jar"/>
-            <include name="jrockit-pluggable-instrumentor.jar"/>
-            <include name="jboss-aop-src.zip"/>
-         </fileset>
-      </copy>
-   </target>
 
    <target name="create-eclipse-test-agent" depends="compile-etc">
       <jar jarfile="${build.lib}/eclipse-agent.jar"

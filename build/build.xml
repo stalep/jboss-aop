@@ -14,7 +14,7 @@
 
 <!-- $Id: build.xml 56876 2006-09-15 00:11:10Z scott.stark@jboss.org $ -->
 
-<project default="release" name="JBossAOP/Build">
+<project default="main" name="JBossAOP/Build">
 
   <!-- ================================================================== -->
   <!-- Setup                                                              -->
@@ -64,6 +64,9 @@
     <property name="module.name" value="jboss"/>
     <property name="module.Name" value="JBossMC Build"/>
     <property name="module.version" value="${version.major}.${version.minor}.${version.revision}${version.tag}"/>
+
+    <!-- Defines repository.home -->
+    <property file="local.properties"/>
 
     <!-- ============== -->
     <!-- Modules/Groups -->
@@ -213,7 +216,7 @@
       depends="init"
       >
       <ant antfile="build-release.xml" target="release"/>
-   	
+
    	<jar destfile="${project.release}.jar" basedir="${project.release}"/>
    	<move file="${project.release}.jar" todir="${module.output}/lib"/>
   </target>
@@ -299,10 +302,57 @@
     <echo>Proxy is set to ${proxy.host}:${proxy.port}</echo>
     <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}"/>
   </target>
-	
+
   <target name="aop.reference.docs" depends="init" description="Builds the reference manual for JBoss AOP that should be part of ths distribution">
      <ant antfile="build.xml" dir="../aop/docs/reference"/>
   </target>
+
+   <target name="update-repository"
+      description="Copies the jars to the snapshot in the repository. The version can be overridden with the -Dversion=1.2.3 property">
+      <property file="local.properties"/>
+      <fail unless="repository.home">repository.home must be set in a local.properties file</fail>
+
+      <condition property="ver" value="snapshot" else="${version}">
+         <not>
+            <isset property="version"/>
+         </not>
+      </condition>
+      <echo>${ver}</echo>
+
+      <property name="aop15.dir" value="${repository.home}/jboss/aop/${ver}/lib"/>
+      <property name="aop14.dir" value="${repository.home}/jboss/aop14/${ver}/lib"/>
+
+      <mkdir dir="${aop15.dir}"/>
+      <mkdir dir="${aop14.dir}"/>
+
+      <copy todir="${aop15.dir}">
+         <fileset dir="../aop/output/lib">
+            <include name="jboss-aop-jdk50-client.jar"/>
+            <include name="jboss-aop-jdk50.jar"/>
+            <include name="jboss-aop-src.zip"/>
+            <include name="jrockit-pluggable-instrumentor.jar"/>
+            <include name="pluggable-instrumentor.jar"/>
+            <include name="jboss-aop-src.zip"/>
+         </fileset>
+         <fileset dir="../asintegration/output/lib">
+            <include name="jboss-aop-as4-deployer.jar"/>
+            <include name="jboss-aop-deployer-jdk50.jar"/>
+            <include name="${build.lib}/jboss-asintegration-src.zip"/>
+         </fileset>
+      </copy>
+      <copy todir="${aop14.dir}">
+         <fileset dir="../aop/output/lib">
+            <include name="jboss-aop.jar"/>
+            <include name="jdk14-pluggable-instrumentor.jar"/>
+            <include name="jrockit-pluggable-instrumentor.jar"/>
+            <include name="jboss-aop-src.zip"/>
+         </fileset>
+         <fileset dir="../asintegration/output/lib">
+            <include name="jboss-aop-as4-deployer-jdk14.jar"/>
+            <include name="${build.lib}/jboss-asintegration-src.zip"/>
+         </fileset>
+      </copy>
+   </target>
 
 </project>
 
