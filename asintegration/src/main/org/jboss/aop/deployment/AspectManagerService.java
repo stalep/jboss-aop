@@ -170,6 +170,7 @@ public class AspectManagerService
       {
          return;
       }
+      baseAop(baseXml);
    }
 
    public void baseAop(String xml)
