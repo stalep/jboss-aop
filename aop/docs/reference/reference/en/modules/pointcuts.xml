@@ -1,6 +1,17 @@
 <chapter id="pointcuts">
 
-   <title>Pointcut and Type Expressions</title>
+   <title>Joinpoint and Pointcut Expressions</title>
+   <para>
+      The pointcut language is a tool that allows joinpoint matching. A pointcut expression determines in
+      which joinpoint executions of the base system an advice should be invoked.
+   </para>
+   <para>
+      In this Chapter, we will explore the syntax of pointcut expressions.
+   </para>
+   <para>
+      We will also see the API used to represent a matched joinpoint during advice execution,
+      and how this relates to pointcut expression constructs.
+   </para>
 
    <sect1 id="pointcuts-wilcards" revision="1">
       <title>Wildcards</title>
@@ -431,6 +442,157 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
       <programlisting>class(org.pkg.*) OR has(* *->@Tx(..)) AND !class($instanceof{org.foo.Bar})</programlisting>
    </sect1>
 
+   <sect1 id="joinpoints" revision="1">
+      <title>Joinpoints</title>
+      <para>
+         After getting acquainted with all pointcut constructs, let's see how this reflects on the API
+         available to advices during their execution.
+      </para>
+      
+      <sect2 id="beans" revision="1">
+         <title>Joinpoint Beans</title>
+         <para>
+            JBoss AOP provides JoinPoint Beans, so that an advice can access all information regarding a joinpoint during
+            its execution. This information consists of context values, explained in the next subsection, and of reflection
+            objects (<literal>java.lang.reflection</literal>). The reflection objects describe the joinpoint being intercepted 
+            like a <literal>java.lang.Method</literal> for a method execution joinpoint).
+         </para>
+         <para>
+            There are two groups of beans. The first one is the <literal>Invocation</literal> beans group. All classes of this group are
+            subclasses of <literal>org.jboss.aop.joinpoint.Invocation</literal>. The <literal>Invocation</literal> class was presented in
+            <xref linkend="implementing" endterm="ch02short"/> as a runtime encapsulation of a joinpoint. An <literal>Invocation</literal> object also contains
+            an interceptor chain, where all advices and interceptors that intercept the joinpoint are stored. Invocation beans provide
+            the <literal>invokeNext()</literal> method, responsible for proceeding execution to the next advice in the interceptor chain
+            (if there is an advice that has not started execution yet) or to the joinpoint itself (if all advices contained in the interceptor
+            chain have already started running). We will see more on this in the next chapter.
+         </para>
+         <para>
+            The other group of beans contains only information regarding the joinpoint itself, and are called the <literal>
+            JoinPointInfo</literal> group. All beans of this group are defined in interfaces, with <literal>
+            org.jboss.joinpoint.IJoinPointInfo</literal> being their common superinterface.
+         </para>
+         <para>
+            The <literal>Invocation</literal> objects are available only to around advices. All other types of advices can use the
+            <literal>JoinPointInfo Beans</literal> to access joinpoint specific data.
+         </para>
+         <para>
+            In both groups there is a specific type for each joinpoint type. The type of bean corresponding to each joinpoint type can be seen
+            in <xref linkend="joinpointtypes"/>. All beans are in the package <literal>org.jboss.aop.joinpoint</literal>.
+         </para>
+         
+         <table frame="topbot" id="joinpointtypes">
+            <title>
+              Joinpoint Types Table
+            </title>
+            <tgroup align="center" cols="8" rowsep="1" colsep="1">
+               <colspec colname="c1" colwidth="2*"/>
+               <colspec colname="c2" colwidth="2*"/>
+               <colspec colname="c3" colwidth="2*"/>
+               <colspec colname="c4" colwidth="2*"/>
+               <colspec colname="c5" colwidth="1*"/>
+               <colspec colname="c6" colwidth="1*"/>
+               <colspec colname="c7" colwidth="1*"/>
+               <colspec colname="c8" colwidth="1*"/>
+               <spanspec spanname="thirdheader" namest="c3" nameend="c4"/>
+               <spanspec spanname="fourthheader" namest="c5" nameend="c8"/>
+               <thead>
+                  <row>
+                     <entry morerows="1">Joinpoint</entry>
+                     <entry morerows="1">Pointcut Construct</entry>
+                     <entry spanname="thirdheader">Bean</entry>
+                     <entry spanname="fourthheader">ContextValues</entry>
+                  </row>
+                  <row>
+                     <entry>Invocation</entry>
+                     <entry>IJoinpointInfo</entry>
+                     <entry>Target</entry>
+                     <entry>Caller</entry>
+                     <entry>Arguments</entry>
+                     <entry>Return Value</entry>
+                  </row>
+               </thead>
+               <tbody>
+                  <row>
+                     <entry>field read</entry>
+                     <entry><literal>read</literal>, <literal>field</literal>, <literal>all</literal></entry>
+                     <entry><literal>FieldReadInvocation</literal></entry>
+                     <entry><literal>IFieldInfo</literal></entry>
+                     <entry>Yes</entry>
+                     <entry>No</entry>
+                     <entry>No</entry>
+                     <entry>Yes</entry>
+                  </row>
+                  <row>
+                     <entry>field write</entry>
+                     <entry><literal>write</literal>, <literal>field</literal>, <literal>all</literal></entry>
+                     <entry><literal>FieldWriteInvocation</literal></entry>
+                     <entry><literal>IFieldInfo</literal></entry>
+                     <entry>Yes</entry>
+                     <entry>No</entry>
+                     <entry>Yes</entry>
+                     <entry>No</entry>
+                  </row>
+                  <row>
+                     <entry>method execution</entry>
+                     <entry><literal>execution</literal>, <literal>all</literal></entry>
+                     <entry><literal>MethodInvocation</literal></entry>
+                     <entry><literal>IMethodInfo</literal></entry>
+                     <entry>Yes</entry>
+                     <entry>No</entry>
+                     <entry>Yes</entry>
+                     <entry>Yes</entry>
+                  </row>
+                  <row>
+                     <entry>constructor execution</entry>
+                     <entry><literal>execution</literal></entry>
+                     <entry><literal>ConstructorInvocation</literal></entry>
+                     <entry><literal>IConstructorInfo</literal></entry>
+                     <entry>No</entry>
+                     <entry>No</entry>
+                     <entry>Yes</entry>
+                     <entry>Yes</entry>
+                  </row>
+                  <row>
+                     <entry>construction</entry>
+                     <entry><literal>construction</literal></entry>
+                     <entry><literal>ConstructionInvocation</literal></entry>
+                     <entry><literal>IConstructorInfo</literal></entry>
+                     <entry>Yes</entry>
+                     <entry>No</entry>
+                     <entry>Yes</entry>
+                     <entry>No</entry>
+                  </row>
+                  <row>
+                     <entry>method call</entry>
+                     <entry><literal>call</literal>, <literal>within</literal>, <literal>withincode</literal></entry>
+                     <entry><literal>MethodCalledByConstructorInvocation</literal>, <literal>MethodCalledByMethodInvocation</literal></entry>
+                     <entry><literal>IMethodByConInfo</literal>, <literal>IMethodByMethodInfo</literal></entry>
+                     <entry>Yes</entry>
+                     <entry>Yes</entry>
+                     <entry>Yes</entry>
+                     <entry>Yes</entry>
+                  </row>
+                  <row>
+                     <entry>constructor call</entry>
+                     <entry><literal>call</literal>, <literal>within</literal>, <literal>withincode</literal></entry>
+                     <entry><literal>ConstructorCalledByConstructorInvocation</literal>, <literal>ConstructorCalledByMethodInvocation</literal></entry>
+                     <entry><literal>IConByConInfo</literal>, <literal>IConByMethodInfo</literal></entry>
+                     <entry>Yes</entry>
+                     <entry>Yes</entry>
+                     <entry>Yes</entry>
+                     <entry>Yes</entry>
+                  </row>
+               </tbody>
+            </tgroup>
+            The first column shows the joinpoint type. The second column shows which pointcut constructs can identify a joinpoint of that type.
+            <literal>has</literal> and <literal>hasfield</literal> are additional constructs, and therefore are not shown in this table. The
+            third column shows the specific type of joinpoint bean class that is used to represent that joinpoint. This column is split into two:
+            one for the <literal>Invocation</literal> beans, the other one for the <literal>JoinPointInfo</literal> ones. The fourth column is
+            composed of four subcolumns, and it shows the context values avaialble for each joinpoint type. Notice that, on some of these values,
+            there are additional restrictions for their availability. Like, for example, there is no target on a static method execution.
+         </table>
+      </sect2>
+   </sect1>
 
 </chapter>
 

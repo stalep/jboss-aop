@@ -1,7 +1,8 @@
 <chapter id="implementing">
 
    <title>Implementing Aspects</title>
-   <sect1 id="impl-overview" revisiion="1">
+   <titleabbrev id="ch02short">Chapter 2</titleabbrev>
+   <sect1 id="impl-overview" revision="1">
       <title>Overview</title>
       <para>
          JBoss AOP is a 100% pure Java framework.  All your AOP constructs are defined as pure Java classes and
@@ -9,7 +10,7 @@
       </para>
 
    </sect1>
-   <sect1 id="impl-invocation" revision="1">
+<!--   <sect1 id="impl-invocation" revision="1">
       <title>Invocation Object</title>
       <para>
          Invocation objects are the runtime encapsulation of their joinpoint.  They contain runtime information of
@@ -118,7 +119,7 @@
             </tgroup>
          </table>
       </sect2>
-   </sect1>
+   </sect1> -->
    <sect1 id="impl-aspect" revision="1">
       <title>Aspect Class</title>
       <para>
@@ -138,8 +139,8 @@
       <para>
          The example above is of an advice
          <literal>trace</literal> that traces calls to any type of joinpoint.
-         Notice that
-         <literal>invocation.invokeNext()</literal> is used to drive the advice chain.  It either calls
+         Notice that <literal>Invocation</literal> objects are the runtime encapsulation of joinpoints.
+         The method <literal>invocation.invokeNext()</literal> is used to drive the advice chain.  It either calls
          the next advice in the chain, or does the actual method or constructor invocation.
       </para>
 
@@ -158,7 +159,7 @@
            code or no other advice will be called, and the actual method, field, or constructor invocation will not
            happen.
       </para>
-      <para>
+<!--      <para>
          Method names can be overloaded for different invocation types.  For instance, let's
          say you wanted to have a different trace advice for each invocation type.  You can specify the same method
          name "trace" and just overload it with the concreate invocation type.
@@ -181,9 +182,31 @@
          System.out.println("Leaving constructor: " + invocation.getConstructor()");
       }
    }
-}]]></programlisting>
+}]]></programlisting> -->
+      <para>
+          JBoss AOP provides five types of advice: before, around, after and after-throwing.
+         The advice sginature above is the default one for an around advice. Advices types,
+         signature rules and overloading will be covered in <xref linkend="advices"/>.
+      </para>
    </sect1>
-
+   <sect1 id="impl-interceptor" revision="1">
+      <title>Interceptors</title>
+      <para>
+         Interceptors are a special type of aspect that contains only one advice. This advice has it
+         signature defined by an interface, <literal>org.jboss.aop.advice.Interceptor</literal>:
+      </para>
+      <programlisting><![CDATA[public interface Interceptor
+{
+   public String getName();
+   
+   public Object invoke(Invocation invocation) throws Throwable;
+}]]></programlisting>
+      <para>
+         The method <literal>invoke(Invocation)</literal> is the unique advice contained in an interceptor.
+         The method <literal>getName()</literal> is used for identification in the JBoss AOP framework.
+         So, this method must return a name that is unique in the whole system (per instance?).
+      </para>
+   </sect1>
    <sect1 id="impl-invocation3" revision="1">
       <title>Resolving Annotations</title>
       <para>
