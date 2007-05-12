@@ -549,7 +549,7 @@
          <param name="caller" value="precompiled-genadvisor-tests"/>
          <param name="exclude" value="**/OverrideTestCase.class"/>
       </antcall>
-      <antcall target="_run-bootclasspath-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="nameddomain"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
