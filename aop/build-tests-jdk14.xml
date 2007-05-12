@@ -79,17 +79,12 @@
       &modules;
       <!-- The combined library classpath - we don't want everything included here since some of these tests use the -Xbootclasspath/p: option-->
       <path id="library.classpath">
-         <!--path refid="apache.ant.classpath"/-->
          <path refid="apache.log4j.classpath"/>
          <path refid="javassist.classpath"/>
          <path refid="jboss.profiler.jvmti.classpath"/>
-         <path refid="jboss/common.core.classpath"/>
          <path refid="jboss/common.logging.log4j.classpath"/>
          <path refid="jboss/common.logging.jdk.classpath"/>
          <path refid="jboss/common.logging.spi.classpath"/>
-         <!--<path refid="jboss.microcontainer.classpath"/>-->
-         <!--path refid="jboss.test14.classpath"/-->
-          <!--path refid="junit.junit.classpath"/-->
          <path refid="qdox.classpath"/>
          <path refid="trove.classpath"/>
          <path refid="xdoclet.xdoclet.classpath"/>
@@ -169,6 +164,7 @@
          <path refid="thirdparty.classpath"/>
          <path refid="jboss.test14.classpath"/>
          <path refid="jboss.microcontainer.classpath"/>
+         <path refid="jboss/common.core.classpath"/>
          <pathelement path="${build.lib}/jboss-aop-jdk50.jar"/>
          <path refid="junit.junit.classpath"/>
       </path>
@@ -184,6 +180,7 @@
          <path refid="jboss/backport.concurrent.classpath"/>
          <pathelement path="${jboss.jbossretro.lib}/jbossretro-rt.jar"/>
          <path refid="jboss.microcontainer14.classpath"/>
+         <path refid="jboss/common.core.14.classpath"/>
       </path>
 
       <path id="jboss.aop.retro.classpath">
