@@ -1,6 +1,6 @@
-* If installing in a version before JBoss 4.0.4, you should leave javassist.jar and common-softvaluehashmap.jar in place in this folder.
+* If installing in a version before JBoss 4.0.4, you should leave javassist.jar in place in this folder.
 
-*If installing in jboss 4.0.4 or later, the classes contained in javassist.jar and common-softvaluehashmap.jar will already be available,
+*If installing in jboss 4.0.4 or later, the classes contained in javassist.jar will already be available,
 and you should do the following to avoid versioning conflicts:
 -move javassist.jar to ../../lib/javassist.jar
 
@@ -9,3 +9,11 @@ server version. If you are upgrading from JBoss AOP 1.5.x, you should remove the
 contained therein from your jboss-aspect-library(-jdk50).jar:
 -org.jboss.aop
 -org.jboss.aop.deployment
+
+* The ant build.xml contained in this folder automates these tasks for you. Set the root of the jboss installation
+and the server configuration you wish to patch in the jboss.properties file.
+
+* If you are deploying the jdk 1.4 deployer and upgrading from JDK 1.5, we need to modify the interfaces 
+specifying the simulated annotations in jboss-aspect-library.jar. The build.xml file does this 
+as part of the install step.
+

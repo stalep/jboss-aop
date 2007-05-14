@@ -174,29 +174,34 @@
       <copy todir="${project.release}/lib-14" file="${qdox.location}"/>
       <copy todir="${project.release}/lib-14" file="${trove.location}"/>
 
-      <!-- The JBoss 4.0.x libs for JDK 1.4 (JBoss 4.2.0 needs JDK 5)-->
+      <!-- The JBoss 4.0.x libs for JDK 1.4 (JBoss 4.2.x needs JDK 5)-->
 
       <copy file="${aop.jboss-service.location}" tofile="output/temp/jboss-service-jdk4.xml" filtering="true">
          <filterset>
             <filter token="SERVICE_NAME" value="org.jboss.aop.deployment.AspectManagerService"/>
          </filterset>
       </copy>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="../aop/src/etc/annotations.txt"/>
+      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/build.xml" file="../asintegration/src/etc/jboss-40-install-jboss-aop-jdk14-build.xml"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="../asintegration/src/etc/jboss.properties"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.14.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.as4-deployer-jdk14.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/" file="${aop.readme-as4.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-backport-concurrent.location}"/><!-- TODO figure out for what versions of jboss this is necessary, and if it exists in other locations -->
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-container-metadata-spi14.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${javassist.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jbossretro.location}"/><!-- TODO figure out for what versions of jboss this is necessary, and if it exists in other locations -->
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jbossretro-rt.location}"/><!-- TODO figure out for what versions of jboss this is necessary, and if it exists in other locations -->
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${trove.location}"/>
       <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/META-INF/jboss-service.xml" file="output/temp/jboss-service-jdk4.xml"/>
 
-      <!-- The JBoss 4.0.x and 4.2.0x libs for JDK 5 -->
+      <!-- The JBoss 4.0.x and 4.2.x libs for JDK 5 -->
       <copy file="${aop.jboss-service.location}" tofile="output/temp/jboss-service-jdk50.xml" filtering="true">
          <filterset>
             <filter token="SERVICE_NAME" value="org.jboss.aop.deployment.AspectManagerServiceJDK5"/>
          </filterset>
       </copy>
+      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/build.xml" file="../asintegration/src/etc/jboss-40-install-jboss-aop-jdk50-build.xml"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="../asintegration/src/etc/jboss.properties"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${project.root}/aop/output/lib/jboss-aop-jdk50.jar"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.as4-deployer.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/" file="${aop.readme-as4.location}"/>

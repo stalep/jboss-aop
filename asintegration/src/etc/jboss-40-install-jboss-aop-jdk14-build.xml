@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="install" name="JBoss/AOP Application Server installation">
+
+   <target name="setup">
+      <!-- ========================================= -->
+      <!-- Set the jboss root and server config here -->
+      <!-- ========================================= -->
+      <property file="jboss.properties"/>
+
+      <!-- The rest are automatic -->
+      <property name="jboss.config.dir" value="${jboss.home}/server/${jboss.config}"/>
+
+      <available file="${jboss.home}" property="jboss.exists" type="dir"/>
+      <fail unless="jboss.exists" message="${jboss.home} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+
+      <available file="${jboss.config.dir}" property="config.exists" type="dir"/>
+      <fail unless="config.exists" message="${jboss.config.dir} does not exist. Modify 'jboss.config' in build.xml to be a valid server configuration"/>
+
+      <property name="deploy.dir" value="${jboss.config.dir}/deploy"/>
+
+      <!-- An existing AOP 1.5.x installation will have a deployer named as follows -->
+      <property name="aop15.deployer" value="${deploy.dir}/jboss-aop.deployer"/>
+      <available file="${aop15.deployer}" property="aop15.deployer.exists" type="dir"/>
+
+      <!-- An existing AOP 2.x installation will have a deployer named as follows -->
+      <property name="aop2.deployer" value="${deploy.dir}/jboss-aop-jdk14.deployer"/>
+      <available file="${aop2.deployer}" property="aop2.deployer.exists" type="dir"/>
+
+      <fail message="Neither ${jdk14.deployer} (JBoss AOP 2.0) nor ${aop2.deployer} exist.">
+         <condition>
+            <and>
+               <not><isset property="aop15.deployer.exists"/></not>
+               <not><isset property="aop2.deployer.exists"/></not>
+            </and>
+         </condition>
+      </fail>
+
+   </target>
+
+   <target name="init-has-aop15-deployer" depends="setup" if="aop15.deployer.exists">
+      <property name="aspect.deployer" value="${aop15.deployer}"/>
+   </target>
+
+   <target name="init-has-aop2-deployer" depends="setup" if="aop2.deployer.exists">
+      <property name="aspect.deployer" value="${aop2.deployer}"/>
+   </target>
+
+   <target name="init" depends="init-has-aop15-deployer, init-has-aop2-deployer">
+      <property name="aspect.library" value="${aspect.deployer}/jboss-aspect-library.jar"/>
+      <available file="${aspect.library}" property="library.exists"/>
+      <fail unless="library.exists" message="${aspect.library} does not exist."/>
+
+      <property name="old.deployer" value="${jboss.config.dir}/deploy/jboss-aop.deployer.bak"/>
+      <available file="${old.deployer}" property="old.deployer.exists"/>
+
+      <property name="lib.javassist" value="${jboss.config.dir}/lib/javassist.jar"/>
+      <available file="${lib.javassist}" property="jboss.post.4.0.4"/>
+      <property name="bak.javassist" value="${jboss.config.dir}/lib/javassist.bak"/>
+      <available file="${bak.javassist}" property="javassist.bak.exists"/>
+   </target>
+
+   <target name="prepare=aspect-library" depends="init">
+      <delete file="jboss-aspect-library.jar"/>
+      <tempfile property="temp.dir" prefix="aop"/>
+      <mkdir dir="${temp.dir}"/>
+      <unjar src="${aspect.library}" dest="${temp.dir}"/>
+
+      <!-- Get rid of the files that exist in jboss-aop-as4-deplyer.jar -->
+      <delete dir="${temp.dir}/org/jboss/aop"/>
+
+      <jar destfile="jboss-aspect-library.jar" basedir="${temp.dir}" manifest="${temp.dir}/META-INF/MANIFEST.MF"/>
+
+      <delete dir="${temp.dir}"/>
+   </target>
+
+   <target name="backup" depends="prepare=aspect-library" unless="old.deployer.exists">
+      <echo>Backing up existing aop deployer to ${old.deployer}</echo>
+      <copy todir="${old.deployer}">
+         <fileset dir="${aspect.deployer}"/>
+      </copy>
+      <delete dir="${aspect.deployer}"/>
+   </target>
+
+   <target name="install.deployer" depends="backup">
+      <copy todir="${deploy.dir}">
+         <fileset dir="..">
+            <include name="jboss-aop-jdk14.deployer/**/*.jar"/>
+            <include name="jboss-aop-jdk14.deployer/META-INF/*"/>
+            <exclude name="build.xml"/>
+            <exclude name="jboss.properties"/>
+         </fileset>
+      </copy>
+      <copy todir="${deploy.dir}/jboss-aop-jdk14.deployer" file="${old.deployer}/base-aop.xml"/>
+
+      <antcall target="make-annotations-compatible">
+         <param name="jar" value="${deploy.dir}/jboss-aop-jdk14.deployer/jboss-aspect-library.jar"/>
+         <param name="input" value="annotations.txt"/>
+      </antcall>
+   </target>
+
+   <target name="make-annotations-compatible" depends="init">
+      <!--
+         The name of the jar file whose JDK 1.4 interfaces defining annotations we want to weave to
+         be usable with JBoss Retro
+      -->
+      <fail unless="jar" message="You need to specify a jar file"/>
+
+      <!--
+         The file containing the names of the classes to weave
+      -->
+      <fail unless="input" message="You need to specify a file listing all the interfaces"/>
+
+
+      <tempfile property="temp.dir" prefix="aop"/>
+      <unjar src="${jar}" dest="${temp.dir}"/>
+
+      <java classname="org.jboss.aop.util.ForceInterfaceToImplementAnnotation">
+         <classpath>
+            <pathelement path="jboss-aop.jar"/>
+            <pathelement path="javassist.jar"/>
+            <pathelement path="jbossretro-rt.jar"/>
+         </classpath>
+
+         <arg value="${temp.dir}"/>
+         <arg value="${input}"/>
+      </java>
+
+      <jar destfile="${jar}" basedir="${temp.dir}" manifest="${temp.dir}/META-INF/MANIFEST.MF"/>
+      <delete dir="${temp.dir}"/>
+   </target>
+
+   <target name="backup.javassist.post.4.0.4" depends="init" unless="javassist.bak.exists">
+      <move file="${lib.javassist}" tofile="${bak.javassist}"/>
+   </target>
+
+   <target name="install.post.4.0.4" depends="install.deployer, backup.javassist.post.4.0.4" if="jboss.post.4.0.4">
+      <delete file="${aspect.deployer}/javassist.jar"/>
+      <copy file="javassist.jar" tofile="${lib.javassist}" overwrite="true"/>
+   </target>
+
+   <target name="install" depends="install.post.4.0.4"/>
+</project>
