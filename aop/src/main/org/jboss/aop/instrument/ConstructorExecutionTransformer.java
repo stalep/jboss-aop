@@ -37,6 +37,8 @@ import javassist.NotFoundException;
 
 import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.pointcut.Pointcut;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -46,6 +48,8 @@ import org.jboss.aop.pointcut.Pointcut;
  */
 public abstract class ConstructorExecutionTransformer implements CodeConversionObserver
 {
+   private static final Logger logger = AOPLogger.getLogger(ConstructorExecutionTransformer.class);
+   
    protected static final String CONSTRUCTOR_INFO_CLASS_NAME = "org.jboss.aop.ConstructorInfo";
    
    protected Instrumentor instrumentor;
@@ -392,7 +396,7 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
       }
       catch (CannotCompileException e)
       {
-        System.out.println(code);
+        logger.error("Cannot compile " + code);
         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
       }
    }
@@ -416,7 +420,7 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
       }
       catch (CannotCompileException e)
       {
-        System.out.println(code);
+        logger.error("Cannot compile " + code);
         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
       }
    }

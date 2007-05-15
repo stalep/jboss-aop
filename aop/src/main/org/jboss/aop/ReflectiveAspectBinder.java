@@ -47,6 +47,8 @@ import org.jboss.aop.pointcut.AnnotationMatcher;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
 import org.jboss.aop.proxy.container.InstanceProxyContainer;
 import org.jboss.aop.util.Advisable;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 import org.jboss.util.MethodHashing;
 
 /**
@@ -329,7 +331,6 @@ public class ReflectiveAspectBinder
             List<LifecycleCallbackDefinition> boundCallbacks = binding.getLifecycleCallbacks();
             for (LifecycleCallbackDefinition callback : boundCallbacks)
             {
-               System.out.println("=====> Adding lifecycle " + callback + ":" + state);
                callbacks.add(callback);
             }
          }

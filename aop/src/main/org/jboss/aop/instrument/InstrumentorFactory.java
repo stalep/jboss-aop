@@ -25,6 +25,8 @@ import java.lang.reflect.Constructor;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassPool;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -34,6 +36,8 @@ import org.jboss.aop.classpool.AOPClassPool;
  */
 public class InstrumentorFactory 
 {
+   private static final Logger logger = AOPLogger.getLogger(InstrumentorFactory.class);
+   
    protected static InstrumentorEnum instrumentor; 
    
    protected static Constructor otherInstrumentorConstructor;
@@ -42,9 +46,9 @@ public class InstrumentorFactory
    
    public static void initialise(String property)
    {
-      if (AspectManager.verbose)
+      if (AspectManager.verbose && logger.isDebugEnabled())
       {
-         System.out.println("[debug] Passed in instrumentor: " + property);
+         logger.debug("Passed in instrumentor: " + property);
       }
       
       if (property != null)
@@ -79,9 +83,9 @@ public class InstrumentorFactory
       else
       {
          instrumentor = InstrumentorEnum.GENERATED_ADVISOR;
-         if (AspectManager.verbose)
+         if (AspectManager.verbose && logger.isDebugEnabled())
          {
-            System.out.println("[debug] Defaulting instrumentor to: " + getInstrumentorName());
+            logger.debug("Defaulting instrumentor to: " + getInstrumentorName());
          }
       }
    }

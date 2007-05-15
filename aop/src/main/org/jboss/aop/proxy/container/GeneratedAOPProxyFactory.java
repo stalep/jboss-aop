@@ -26,6 +26,8 @@ import java.lang.reflect.Constructor;
 import org.jboss.aop.Advised;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.instrument.Untransformable;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  *
@@ -34,6 +36,7 @@ import org.jboss.aop.instrument.Untransformable;
  */
 public class GeneratedAOPProxyFactory implements AOPProxyFactory
 {
+   private static final Logger logger = AOPLogger.getLogger(GeneratedAOPProxyFactory.class);
    /**
     * Create a proxy
     *
@@ -53,8 +56,8 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
       params.setObjectAsSuperClass(true);
       params.setTarget(target);
       Object proxy = proxyFactory.createAdvisedProxy(params);
-      if( AspectManager.verbose )
-         System.out.println("[debug] Created proxy: "+proxy.getClass()+"@"+System.identityHashCode(proxy)+" target: "+target.getClass());
+      if( AspectManager.verbose  && logger.isDebugEnabled())
+         logger.debug("Created proxy: "+proxy.getClass()+"@"+System.identityHashCode(proxy)+" target: "+target.getClass());
       return interfaceClass.cast(proxy);
    }
 

@@ -24,6 +24,8 @@ package org.jboss.aop.advice;
 import java.lang.ref.WeakReference;
 
 import org.jboss.aop.AspectManager;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * Helper class to be able to set the classloader needed for loading up the aspects in the aspectfactories 
@@ -32,6 +34,7 @@ import org.jboss.aop.AspectManager;
  */
 public abstract class AspectFactoryWithClassLoaderSupport implements AspectFactory, AspectFactoryWithClassLoader
 {
+   private static final Logger logger = AOPLogger.getLogger(AspectFactoryWithClassLoaderSupport.class);
    private WeakReference loader;
    
    /** If a scoped classloader with no parent delegation redefines the class, we need to make sure that that class is pushed on the stack */
@@ -81,12 +84,12 @@ public abstract class AspectFactoryWithClassLoaderSupport implements AspectFacto
       if (cl == null)
       {
          ClassLoader tcl = Thread.currentThread().getContextClassLoader(); 
-         if (AspectManager.verbose) System.out.println("Using context classloader " + tcl + " to load aspect " + name);
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Using context classloader " + tcl + " to load aspect " + name);
          return tcl.loadClass(name);
       }
       else
       {
-         if (AspectManager.verbose) System.out.println("Using scoped classloader " + cl + " to load aspect " + name);
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Using scoped classloader " + cl + " to load aspect " + name);
          return cl.loadClass(name);
       }
    }

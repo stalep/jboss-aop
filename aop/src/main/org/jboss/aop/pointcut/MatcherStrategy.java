@@ -28,6 +28,8 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.annotation.AnnotationElement;
 import org.jboss.aop.pointcut.ast.ClassExpression;
 import org.jboss.aop.proxy.container.ClassProxyContainer;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * Strategy to allow for different handling for the pointcut matchers for different types of advisor 
@@ -37,6 +39,8 @@ import org.jboss.aop.proxy.container.ClassProxyContainer;
  */
 public abstract class MatcherStrategy
 {
+   private static final Logger logger = AOPLogger.getLogger(MatcherStrategy.class);
+   
    private final static MatcherStrategy ADVISOR_MATCHER_STRATEGY = new AdvisorMatcherStrategy();
    private final static MatcherStrategy PROXY_MATCHER_STRATEGY = new ProxyMatcherStrategy();
    
@@ -69,7 +73,7 @@ public abstract class MatcherStrategy
          {
             if (AspectManager.verbose)
             {
-               System.out.println("[warn] The annotation @" + sub + " referenced in one of your pointcut expressions can not be found");
+               logger.warn("The annotation @" + sub + " referenced in one of your pointcut expressions can not be found");
             }
             return false;
          }

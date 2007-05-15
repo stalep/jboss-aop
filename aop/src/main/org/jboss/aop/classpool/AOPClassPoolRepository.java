@@ -34,6 +34,8 @@ import java.util.Map;
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.instrument.Instrumentor;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 import javassist.ClassPool;
 import javassist.scopedpool.ScopedClassPool;
@@ -49,6 +51,8 @@ import javassist.scopedpool.ScopedClassPoolRepositoryImpl;
  */
 public class AOPClassPoolRepository implements ScopedClassPoolRepository
 {
+   private static final Logger logger = AOPLogger.getLogger(AOPClassPoolRepository.class);
+   
    private final static AOPClassPoolRepository instance = new AOPClassPoolRepository();
    
    /** The classes per classppol */
@@ -215,11 +219,11 @@ public class AOPClassPoolRepository implements ScopedClassPoolRepository
                   }
                   catch(NoSuchFieldException e)
                   {
-                     System.out.println("[warn] Error unsetting advisor for " + advisedClass.getName() + " " + e);
+                     logger.warn("Error unsetting advisor for " + advisedClass.getName() + " " + e);
                   }
                   catch(IllegalAccessException e)
                   {
-                     System.out.println("[warn] Error unsetting advisor for " + advisedClass.getName() + " " + e);
+                     logger.warn("Error unsetting advisor for " + advisedClass.getName() + " " + e);
                   }
                }
             }

@@ -25,6 +25,8 @@ package org.jboss.aop;
 import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.aop.instrument.Instrumentor;
 import org.jboss.aop.instrument.InstrumentorFactory;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 import javassist.ByteArrayClassPath;
 import javassist.ClassPool;
@@ -41,7 +43,9 @@ import javassist.NotFoundException;
  */
 public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 
-	private boolean verbose = AspectManager.verbose;
+   private static final Logger logger = AOPLogger.getLogger(SuperClassesFirstWeavingStrategy.class);
+   
+   private boolean verbose = AspectManager.verbose;
 	public static final String AOP_PACKAGE = Advised.class.getPackage().getName();
 
    public byte[] translate(AspectManager manager, String className, ClassLoader loader, byte[] classfileBuffer) throws Exception
@@ -147,13 +151,13 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 
 			if (info.getClass().isArray())
 			{
-				if (verbose) System.out.println("[cannot compile] isArray: " + info.getClassName());
+				if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, isArray: " + info.getClassName());
 				pool.flushClass(info.getClassName());
 				return null;
 			}
 			if (info.getClazz().isInterface())
 			{
-				if (verbose) System.out.println("[cannot compile] isInterface: " + info.getClassName());
+				if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, isInterface: " + info.getClassName());
 				//pool.flushClass(info.getClassName());
 				info.getClazz().prune();
 				return null;
@@ -162,7 +166,7 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 			{
 				if(isAdvised(pool, info.getClazz()))
 					return null;
-				if (verbose) System.out.println("[warning] isFrozen: " + info.getClassName() + " " + info.getClazz().getClassPool());
+				if (verbose && logger.isDebugEnabled()) logger.debug("warning, isFrozen: " + info.getClassName() + " " + info.getClazz().getClassPool());
 				if (!isLoadedClass)
 				{
 					info = obtainCtClassInfo(pool, info.getClassName(), null);
@@ -185,7 +189,7 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 
 				if (!Instrumentor.isTransformable(info.getClazz()))
 				{
-					if (verbose) System.out.println("[cannot compile] implements Untransformable: " + info.getClassName());
+					if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, implements Untransformable: " + info.getClassName());
 					//Flushing the generated invocation classes breaks things further down the line
 					//pool.flushClass(info.getClassName());
 					return null;

@@ -84,7 +84,6 @@ public class ClassProxyContainer extends ClassContainer
    protected void createMethodMap()
    {
       initAdvisedMethodsMap();
-      //System.out.println("============================================ Create method map - " + this + " " + clazz.getName());
       try
       {
          Method[] declaredMethods = clazz.getMethods();
@@ -105,7 +104,6 @@ public class ClassProxyContainer extends ClassContainer
                {
                   // this is a mixin method or a proxy method
                }
-               //System.out.println("--------> Adding method " + method);
                advisedMethods.put(hash, method);
             }
          }
@@ -148,7 +146,6 @@ public class ClassProxyContainer extends ClassContainer
             if (advisedMethods.get(hash) == null)
             {
                advisedMethods.put(hash, ifaceMethods[k]);
-               //System.out.println("--------> Adding method " + ifaceMethods[k]);
             }
          }
       }

@@ -71,6 +71,8 @@ import org.jboss.aop.pointcut.ast.ASTStart;
 import org.jboss.aop.pointcut.ast.PointcutExpressionParser;
 import org.jboss.aop.pointcut.ast.TypeExpressionParser;
 import org.jboss.aop.util.MethodHashing;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -80,6 +82,8 @@ import org.jboss.aop.util.MethodHashing;
  */
 public class AspectAnnotationLoader
 {
+   
+   private static final Logger logger = AOPLogger.getLogger(AspectAnnotationLoader.class);
    //TODO: We need something to undeploy everything...
 
    protected AspectManager manager;
@@ -126,7 +130,7 @@ public class AspectAnnotationLoader
 
    public void deployClassFile(ClassFile cf) throws Exception
    {
-      if (AspectManager.verbose) System.out.println("[debug] Looking for aspects in: " + cf.getName());
+      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Looking for aspects in: " + cf.getName());
       AnnotationsAttribute visible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
       if (visible != null)
       {
@@ -185,7 +189,7 @@ public class AspectAnnotationLoader
    
    public void undeployClassFile(ClassFile cf) throws Exception
    {
-      if (AspectManager.verbose) System.out.println("[debug] Looking for aspects in: " + cf.getName());
+      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Looking for aspects in: " + cf.getName());
       AnnotationsAttribute visible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
       if (visible != null)
       {
@@ -210,7 +214,7 @@ public class AspectAnnotationLoader
       javassist.bytecode.annotation.Annotation info = visible.getAnnotation(Aspect.class.getName());
       if (info != null)
       {
-         if (AspectManager.verbose) System.out.println("[debug] Found @Aspect in: " + cf.getName());
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("[debug] Found @Aspect in: " + cf.getName());
          Aspect aspect = (Aspect) AnnotationProxy.createProxy(info, Aspect.class);
          Scope scope = aspect.scope();
          
@@ -253,7 +257,7 @@ public class AspectAnnotationLoader
       javassist.bytecode.annotation.Annotation info = visible.getAnnotation(Aspect.class.getName());
       if (info != null)
       {
-         if (AspectManager.verbose) System.out.println("[debug] Undeploying @Aspect in: " + cf.getName());
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Undeploying @Aspect in: " + cf.getName());
          manager.removeAspectDefinition(cf.getName());
 
          undeployAspectMethodBindings(cf);
@@ -266,7 +270,7 @@ public class AspectAnnotationLoader
       javassist.bytecode.annotation.Annotation info = visible.getAnnotation(InterceptorDef.class.getName());
       if (info != null)
       {
-         if (AspectManager.verbose) System.out.println("[debug] Found @InterceptorDef in: " + cf.getName());
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Found @InterceptorDef in: " + cf.getName());
          Aspect aspect = (Aspect) AnnotationProxy.createProxy(info, Aspect.class);
          Scope scope = aspect.scope();
 
@@ -316,7 +320,7 @@ public class AspectAnnotationLoader
       javassist.bytecode.annotation.Annotation info = visible.getAnnotation(InterceptorDef.class.getName());
       if (info != null)
       {
-         if (AspectManager.verbose) System.out.println("[debug] Undeploying @InterceptorDef in: " + cf.getName());
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Undeploying @InterceptorDef in: " + cf.getName());
          AnnotationProxy.createProxy(info, Aspect.class);
 
          manager.removeAspectDefinition(cf.getName());
@@ -331,7 +335,7 @@ public class AspectAnnotationLoader
       javassist.bytecode.annotation.Annotation info = visible.getAnnotation(DynamicCFlowDef.class.getName());
       if (info != null)
       {
-         if (AspectManager.verbose) System.out.println("[debug] Found @DynamicCFlowDef in: " + cf.getName());
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Found @DynamicCFlowDef in: " + cf.getName());
          AnnotationProxy.createProxy(info, DynamicCFlowDef.class);
 
          String name = cf.getName();
@@ -358,7 +362,7 @@ public class AspectAnnotationLoader
       javassist.bytecode.annotation.Annotation info = visible.getAnnotation(DynamicCFlowDef.class.getName());
       if (info != null)
       {
-         if (AspectManager.verbose) System.out.println("[debug] Undeploying @DynamicCFlowDef in: " + cf.getName());
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Undeploying @DynamicCFlowDef in: " + cf.getName());
          String name = cf.getName();
          manager.removeDynamicCFlow(name);
       }
@@ -370,7 +374,7 @@ public class AspectAnnotationLoader
       javassist.bytecode.annotation.Annotation info = visible.getAnnotation(Prepare.class.getName());
       if (info != null)
       {
-         if (AspectManager.verbose) System.out.println("[debug] Found top-level @Prepare in: " + cf.getName());
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Found top-level @Prepare in: " + cf.getName());
          Prepare prepare = (Prepare) AnnotationProxy.createProxy(info, Prepare.class);
 
          String name = cf.getName() + "." + visible.getName();
@@ -399,7 +403,7 @@ public class AspectAnnotationLoader
       javassist.bytecode.annotation.Annotation info = visible.getAnnotation(Precedence.class.getName());
       if (info != null)
       {
-         if (AspectManager.verbose) System.out.println("[debug] Found top-level @Precedence in: " + cf.getName());
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Found top-level @Precedence in: " + cf.getName());
          
          ArrayList entries = new ArrayList();
          Iterator fields = cf.getFields().iterator();

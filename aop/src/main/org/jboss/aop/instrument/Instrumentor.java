@@ -42,6 +42,9 @@ import org.jboss.aop.util.Advisable;
 import org.jboss.aop.util.CtConstructorComparator;
 import org.jboss.aop.util.CtFieldComparator;
 import org.jboss.aop.util.JavassistMethodHashing;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
+
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CodeConverter;
@@ -77,6 +80,8 @@ import javassist.bytecode.MethodInfo;
  */
 public abstract class Instrumentor
 {
+   private static final Logger logger = AOPLogger.getLogger(Instrumentor.class);
+   
    /**
     * Package of AOP classes.
     */
@@ -306,7 +311,7 @@ public abstract class Instrumentor
                }
                else
                {
-                  if (AspectManager.verbose)System.out.println("[warn] " + msg);
+                  if (AspectManager.verbose)logger.warn(msg);
                }
             }
             // If another interface of this mixin has a duplicate method, then its ok, but don't re-add
@@ -395,10 +400,10 @@ public abstract class Instrumentor
       while (it.hasNext())
       {
          AnnotationIntroduction introduction = (AnnotationIntroduction) it.next();
-         if (AspectManager.verbose) System.out.println("**** " + introduction.getOriginalAnnotationExpr() + " invisible: " + introduction.isInvisible() + " expr: " + introduction.getOriginalExpression());
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("**** " + introduction.getOriginalAnnotationExpr() + " invisible: " + introduction.isInvisible() + " expr: " + introduction.getOriginalExpression());
          if (introduction.matches(advisor, clazz))
          {
-            if (AspectManager.verbose) System.out.println(introduction.getAnnotation() + " binds to " + clazz.getName());
+            if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug(introduction.getAnnotation() + " binds to " + clazz.getName());
             javassist.bytecode.annotation.Annotation info = AnnotationInfoCreator.createAnnotationInfo(classPool, clazz.getClassFile2().getConstPool(), introduction.getAnnotation());
             if (introduction.isInvisible())
             {
@@ -685,7 +690,7 @@ public abstract class Instrumentor
       try
       {
          if (shouldNotTransform(clazz)) return false;
-         if (AspectManager.verbose) System.out.println("[trying to transform] " + clazz.getName());
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("trying to transform " + clazz.getName());
          
          DeclareChecker.checkDeclares(manager, clazz, advisor);
 
@@ -742,7 +747,7 @@ public abstract class Instrumentor
             processedClasses.add(clazz);
          }
          
-         if (AspectManager.verbose) System.out.println("[debug] was " + clazz.getName() + " converted: " + (basicsSet || converted));
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("was " + clazz.getName() + " converted: " + (basicsSet || converted));
 
          if (basicsSet || converted)
          {

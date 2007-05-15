@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.joinpoint.MethodJoinpoint;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * 
@@ -34,6 +36,8 @@ import org.jboss.aop.pointcut.PointcutMethodMatch;
  */
 class MethodMatchInfo
 {
+   private static final Logger logger = AOPLogger.getLogger(MethodMatchInfo.class);
+   
    Advisor advisor;
    MethodInfo info;
    ArrayList bindings;
@@ -103,14 +107,14 @@ class MethodMatchInfo
    
    private void overridePopulateBindings(ArrayList applicableBindings)
    {
-      if (AspectManager.verbose) System.out.println("[debug] populate bindings for " + info.getAdvisedMethod() + " all bindings");
+      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("populate bindings for " + info.getAdvisedMethod() + " all bindings");
       int size = bindings.size();
       int minMatchLevel = 1000000;
       for (int i = 0 ; i < size ; i++)
       {
          AdviceBinding binding = (AdviceBinding)bindings.get(i);
          PointcutMethodMatch match = (PointcutMethodMatch)pointcutMethodMatches.get(i);
-         if (AspectManager.verbose) System.out.println("[debug] " + match.getMatchLevel() + " " + match.getMatchedClass().getName() + " " + binding.getPointcut().getExpr() + " : " + binding.getInterceptorFactories().length);
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug(match.getMatchLevel() + " " + match.getMatchedClass().getName() + " " + binding.getPointcut().getExpr() + " : " + binding.getInterceptorFactories().length);
          
          if (minMatchLevel > match.getMatchLevel() && !match.isInstanceOf())
          {
@@ -118,7 +122,7 @@ class MethodMatchInfo
          }
       }
 
-      if (AspectManager.verbose) System.out.println("[debug] populate bindings for " + info.getAdvisedMethod() + " actual bindings");
+      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("populate bindings for " + info.getAdvisedMethod() + " actual bindings");
       for (int i = 0 ; i < size ; i++)
       {
          AdviceBinding binding = (AdviceBinding)bindings.get(i);
@@ -126,7 +130,7 @@ class MethodMatchInfo
          
          if (match.isInstanceOf() || match.getMatchLevel() == minMatchLevel)
          {
-            if (AspectManager.verbose) System.out.println("[debug] " + match.getMatchLevel() + " " + match.getMatchedClass().getName() + " " + binding.getPointcut().getExpr() + " : " + binding.getInterceptorFactories().length);
+            if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug(match.getMatchLevel() + " " + match.getMatchedClass().getName() + " " + binding.getPointcut().getExpr() + " : " + binding.getInterceptorFactories().length);
             applyBinding(applicableBindings, binding);
          }
       }

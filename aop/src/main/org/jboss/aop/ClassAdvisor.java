@@ -67,6 +67,8 @@ import org.jboss.aop.util.ConstructorComparator;
 import org.jboss.aop.util.FieldComparator;
 import org.jboss.aop.util.MethodHashing;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 import org.jboss.util.NotImplementedException;
 
 /**
@@ -83,6 +85,8 @@ import org.jboss.util.NotImplementedException;
  */
 public class ClassAdvisor extends Advisor
 {
+   private static final Logger logger = AOPLogger.getLogger(ClassAdvisor.class);
+   
    /**
     * Suffix added to unadvised methods.
     */
@@ -590,7 +594,7 @@ public class ClassAdvisor extends Advisor
 
    protected void createInterceptorChains() throws Exception
    {
-      if (AspectManager.verbose) System.out.println("[debug] Creating chains for " + clazz + " " + ((clazz != null) ? clazz.getClassLoader() : null ));
+      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Creating chains for " + clazz + " " + ((clazz != null) ? clazz.getClassLoader() : null ));
       MethodInterceptors newMethodInfos = initializeMethodChain();
       ArrayList newFieldReadInfos = initializeFieldReadChain();
       ArrayList newFieldWriteInfos = initializeFieldWriteChain();
@@ -603,7 +607,7 @@ public class ClassAdvisor extends Advisor
          while (it.hasNext())
          {
             AdviceBinding binding = (AdviceBinding) it.next();
-            if (AspectManager.verbose) System.out.println("[debug] iterate binding " + binding.getName() + " " + binding.getPointcut().getExpr());
+            if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName() + " " + binding.getPointcut().getExpr());
             resolveMethodPointcut(newMethodInfos, binding);
             resolveFieldPointcut(newFieldReadInfos, binding, false);
             resolveFieldPointcut(newFieldWriteInfos, binding, true);
@@ -1405,9 +1409,9 @@ public class ClassAdvisor extends Advisor
    throws Throwable
    {
       MethodInfo info = (MethodInfo) methodInterceptors.get(methodHash);
-      if (info == null)
+      if (info == null && logger.isDebugEnabled())
       {
-         System.out.println("info is null for hash: " + methodHash + " of " + clazz.getName());
+         logger.debug("info is null for hash: " + methodHash + " of " + clazz.getName());
       }
       return invokeMethod(instanceAdvisor, target, methodHash, arguments, info);
    }

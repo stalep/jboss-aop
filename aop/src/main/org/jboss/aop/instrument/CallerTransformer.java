@@ -29,6 +29,9 @@ import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.pointcut.Pointcut;
 import org.jboss.aop.util.Advisable;
 import org.jboss.aop.util.JavassistMethodHashing;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
+
 import javassist.CannotCompileException;
 import javassist.CtBehavior;
 import javassist.CtClass;
@@ -48,6 +51,8 @@ import javassist.expr.NewExpr;
 
 public abstract class CallerTransformer
 {
+   private static final Logger logger = AOPLogger.getLogger(CallerTransformer.class);
+   
    public static final String CON_BY_CON_INFO_CLASS_NAME = org.jboss.aop.ConByConInfo.class.getName();
    public static final String CON_BY_METHOD_INFO_CLASS_NAME = org.jboss.aop.ConByMethodInfo.class.getName();
    public static final String METHOD_BY_CON_INFO_CLASS_NAME = org.jboss.aop.MethodByConInfo.class.getName();
@@ -79,7 +84,7 @@ public abstract class CallerTransformer
    {
       if (!advisor.getManager().isWithin() && !advisor.getManager().isCall() && !advisor.getManager().isWithincode())
       {
-         if (AspectManager.verbose) System.out.println("[debug] There are no caller pointcuts!");
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("There are no caller pointcuts!");
          return false;
       }
       CallerExprEditor expr = callerExprEditorFactory(advisor, clazz);
@@ -315,8 +320,6 @@ public abstract class CallerTransformer
       {
          try
          {
-            //System.out.println("XXX Call " + call.getMethodName() + " " + call.getMethod().getSignature() + " from " + callingClass.getName() + " - " + call.where().getName());
-            
             String classname = call.getClassName();
             String methodName = call.getMethodName();
             if (ClassAdvisor.isWithoutAdvisement(methodName)
@@ -326,7 +329,6 @@ public abstract class CallerTransformer
             || !Instrumentor.isTransformable(callingClass)
             )
             {
-               //System.out.println("XXX RETURNING");
                return;
             }
 
@@ -348,7 +350,7 @@ public abstract class CallerTransformer
                }
                else
                {
-                  if (AspectManager.verbose) System.out.println("[debug] MethodCall does not match: " + p.getExpr());
+                  if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("MethodCall does not match: " + p.getExpr());
                }
             }
             if (hasPointcut)
@@ -456,8 +458,7 @@ public abstract class CallerTransformer
          }
          catch (Exception ex)
          {
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
+            logger.error(ex.getMessage());
             throw new CannotCompileException(ex);
          }
       }

@@ -32,6 +32,8 @@ import javassist.Modifier;
 import javassist.NotFoundException;
 
 import org.jboss.aop.classpool.AOPClassPool;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -41,6 +43,7 @@ import org.jboss.aop.classpool.AOPClassPool;
  */
 public class OptimizedCallerInvocations extends OptimizedBehaviourInvocations
 {
+   private static final Logger logger = AOPLogger.getLogger(OptimizedBehaviourInvocations.class);
 
    protected static String createOptimizedMethodCalledByConInvocationClass(
          Instrumentor instrumentor, 
@@ -225,7 +228,7 @@ public class OptimizedCallerInvocations extends OptimizedBehaviourInvocations
       }
       catch (CannotCompileException e)
       {
-         System.out.println(copyCode);
+         logger.error(copyCode);
          throw e;
       }
       copy.setModifiers(copyTemplate.getModifiers());

@@ -36,6 +36,8 @@ import org.jboss.aop.pointcut.PointcutExpression;
 import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
 import org.jboss.aop.pointcut.ast.ParseException;
 import org.jboss.aop.pointcut.ast.PointcutExpressionParser;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -45,6 +47,8 @@ import org.jboss.aop.pointcut.ast.PointcutExpressionParser;
  */
 public class AdviceBinding
 {
+   private static final Logger logger = AOPLogger.getLogger(AdviceBinding.class);
+   
    private static volatile long counter = 0;
 
    protected String name;
@@ -149,7 +153,7 @@ public class AdviceBinding
 
    public void addAdvisor(Advisor advisor)
    {
-      if (AspectManager.verbose) System.out.println("[debug] added advisor: " + advisor.getName() + " from binding: " + name);
+      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("added advisor: " + advisor.getName() + " from binding: " + name);
       // Don't hold a direct reference to an advisor because of undeploy and redeploy.  Use WeakRefrences because
       // we may be having in the future an Advisor per instance.
       synchronized (advisors)

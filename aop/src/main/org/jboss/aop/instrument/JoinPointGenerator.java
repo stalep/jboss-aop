@@ -58,6 +58,8 @@ import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
 import org.jboss.aop.pointcut.ast.ClassExpression;
 import org.jboss.aop.util.JavassistUtils;
 import org.jboss.aop.util.ReflectToJavassist;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * Creates the Joinpoint invocation replacement classes used with Generated advisors
@@ -67,6 +69,8 @@ import org.jboss.aop.util.ReflectToJavassist;
  */
 public abstract class JoinPointGenerator
 {
+   private static final Logger logger = AOPLogger.getLogger(JoinPointGenerator.class);
+   
    public static final String INFO_FIELD = "info";
    public static final String INVOKE_JOINPOINT = "invokeJoinpoint";
    public static final String INVOKE_TARGET = "invokeTarget";
@@ -1076,7 +1080,7 @@ public abstract class JoinPointGenerator
       
       if (superDispatches.length > 2)
       {
-         if (AspectManager.verbose) System.out.println("[warn] - Too many dispatch() methods found in " + superClass.getName());
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Too many dispatch() methods found in " + superClass.getName());
       }
       
       for (int i = 0 ; i < superDispatches.length ; i++)
@@ -1353,10 +1357,9 @@ public abstract class JoinPointGenerator
             }
             else if (AspectManager.verbose)
             {
-               System.out.print("[warn] No matching advice called '" + allSetups[i].getAdviceName() + 
+               logger.warn("No matching advice called '" + allSetups[i].getAdviceName() + 
                      "' could be found in " + allSetups[i].getAspectClass().getName() +
-                     " for joinpoint " + info + ":");
-               System.out.println(AdviceMethodFactory.getAdviceMatchingMessage());
+                     " for joinpoint " + info + ":" + AdviceMethodFactory.getAdviceMatchingMessage());
             }
          }
          

@@ -31,6 +31,8 @@ import javassist.Modifier;
 import javassist.NotFoundException;
 
 import org.jboss.aop.util.JavassistMethodHashing;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -41,7 +43,8 @@ import org.jboss.aop.util.JavassistMethodHashing;
 public class GeneratedAdvisorConstructorExecutionTransformer extends
       ConstructorExecutionTransformer
 {
-
+   private static final Logger logger = AOPLogger.getLogger(GeneratedAdvisorConstructorExecutionTransformer.class);
+   
    public GeneratedAdvisorConstructorExecutionTransformer(Instrumentor instrumentor)
    {
       super(instrumentor);
@@ -144,7 +147,7 @@ public class GeneratedAdvisorConstructorExecutionTransformer extends
       }
       catch (CannotCompileException e)
       {
-        System.out.println(innerCode);
+        logger.error(innerCode);
         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
       }
 
@@ -155,7 +158,7 @@ public class GeneratedAdvisorConstructorExecutionTransformer extends
       }
       catch(CannotCompileException e)
       {
-         System.out.println(outerDelegatingBody(constructor));
+         logger.error(outerDelegatingBody(constructor));
          throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
       }
 

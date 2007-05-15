@@ -63,20 +63,16 @@ public class AOPTransformer implements ClassFileTransformer
    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException
    {
       className = className.replace('/', '.');
-      //System.out.println("<<< loading " + className);
       try
       {
          if (classBeingRedefined != null || isNonAdvisableClassName(className))
          {
-            //System.out.println(" ignoring");
             return null;
          }
-         //System.out.println(" transforming");
          return aspectTransform(className, loader, classBeingRedefined, protectionDomain, classfileBuffer);
       }
       finally
       {
-         //System.out.println("finished " + className + ">>>");
       }
    }
 

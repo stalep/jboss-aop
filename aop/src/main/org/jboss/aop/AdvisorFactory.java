@@ -29,6 +29,8 @@ import javassist.CtClass;
 import org.jboss.aop.instrument.GeneratedAdvisorInstrumentor;
 import org.jboss.aop.instrument.InstrumentorEnum;
 import org.jboss.aop.instrument.InstrumentorFactory;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * 
@@ -38,7 +40,8 @@ import org.jboss.aop.instrument.InstrumentorFactory;
  */
 public class AdvisorFactory
 {
-   
+   private static final Logger logger = AOPLogger.getLogger(AdvisorFactory.class);
+
    protected static final int CLASS = 1;
    protected static final int OTHER_ADVISOR = 1000; //The jrockit aop advisor is in another jar which we should not depend on
    protected static int advisor = 0;
@@ -51,9 +54,9 @@ public class AdvisorFactory
    
    public static void initialise(String property)
    {
-      if (AspectManager.verbose)
+      if (AspectManager.verbose && logger.isDebugEnabled())
       {
-         System.out.println("[debug] Passed in advisor: " + property);
+         logger.debug("Passed in advisor: " + property);
       }
 
       if(property != null)
@@ -81,9 +84,9 @@ public class AdvisorFactory
       }
       else
       {
-         if (AspectManager.verbose)
+         if (AspectManager.verbose  && logger.isDebugEnabled())
          {
-            System.out.println("[debug] Defaulting advisor to: " + ClassAdvisor.class.getName());
+            logger.debug("[debug] Defaulting advisor to: " + ClassAdvisor.class.getName());
          }
          advisor = CLASS;
       }

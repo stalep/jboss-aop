@@ -30,6 +30,8 @@ import javassist.NotFoundException;
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.pointcut.Pointcut;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * This joinpoint classifier is anaware of differences between <code>
@@ -46,7 +48,7 @@ import org.jboss.aop.pointcut.Pointcut;
  */
 public class JoinpointSimpleClassifier extends JoinpointClassifier
 {
-
+   private static final Logger logger = AOPLogger.getLogger(JoinpointSimpleClassifier.class);
    /**
     * Classifies the execution of a joinpoint. The joinpoint being classified
     * is identified by <code>matcher</code>.
@@ -64,16 +66,16 @@ public class JoinpointSimpleClassifier extends JoinpointClassifier
 
          if (joinpointMatcher.matches(pointcut, advisor, member))
          {
-            if (AspectManager.verbose)
+            if (AspectManager.verbose && logger.isDebugEnabled())
             {
-               System.out.println("[debug] " + member + " matches pointcut: " + pointcut.getExpr());
+               logger.debug(member + " matches pointcut: " + pointcut.getExpr());
             }
             return JoinpointClassification.WRAPPED;
          }
       }
-      if (AspectManager.verbose)
+      if (AspectManager.verbose && logger.isDebugEnabled())
       {
-         System.out.println("[debug] " + member + " matches no pointcuts");
+         logger.debug(member + " matches no pointcuts");
       }
       return JoinpointClassification.NOT_INSTRUMENTED;
    }

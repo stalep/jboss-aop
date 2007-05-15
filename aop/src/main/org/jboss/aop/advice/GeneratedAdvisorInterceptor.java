@@ -49,6 +49,8 @@ import org.jboss.aop.joinpoint.MethodCalledByMethodJoinpoint;
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.aop.joinpoint.MethodJoinpoint;
 import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * Special interceptor wrapping the interceptor factory, so that generated advisors have 
@@ -64,6 +66,7 @@ import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
  */
 public class GeneratedAdvisorInterceptor implements Interceptor
 {
+   private static final Logger logger = AOPLogger.getLogger(GeneratedAdvisorInterceptor.class);
    private InterceptorFactory factory;
    private volatile Object instance; 
    private String cflowString;
@@ -240,9 +243,9 @@ public class GeneratedAdvisorInterceptor implements Interceptor
          if (instance == null)
          {
             //Used by JoinPointGenerator at code generation time
-            if (AspectManager.verbose)
+            if (AspectManager.verbose && logger.isDebugEnabled())
             {
-               System.out.println("[info] Calling create on PER_JOINPOINT scoped AspectFactory with no InstanceAdvisor as part of setup");
+               logger.debug("Calling create on PER_JOINPOINT scoped AspectFactory with no InstanceAdvisor as part of setup");
             }
             
             if (joinpoint instanceof FieldJoinpoint)
@@ -273,9 +276,9 @@ public class GeneratedAdvisorInterceptor implements Interceptor
       if (ia == null)
       {
          //Used by JoinPointGenerator at code generation time
-         if (AspectManager.verbose)
+         if (AspectManager.verbose && logger.isDebugEnabled())
          {
-            System.out.println("[info] Calling create on PER_INSTANCE scoped AspectFactory with no InstanceAdvisor as part of setup");
+            logger.debug("Calling create on PER_INSTANCE scoped AspectFactory with no InstanceAdvisor as part of setup");
          }
          return def.getFactory().createPerInstance(advisor, ia);
       }
@@ -506,7 +509,7 @@ public class GeneratedAdvisorInterceptor implements Interceptor
       GeneratedOnlyInterceptor(String name, InterceptorFactory factory)
       {
          this.name = name;
-         System.out.println("[warn] " + factory.getType().getDescription() +
+         logger.warn(factory.getType().getDescription() +
                " interceptor:s'" + name +
                "' is ignored for dynamic invocation. Adding null GeneratedOnlyInterceptor in its place");
       }

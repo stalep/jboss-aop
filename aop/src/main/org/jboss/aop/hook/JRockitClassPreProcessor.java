@@ -31,32 +31,30 @@ public class JRockitClassPreProcessor implements ClassPreProcessor{
 
    static
    {
-      //pre-load necessary classes 
+      //pre-load necessary classes
       Class clazz = JDK14TransformerManager.class;
       clazz = AspectManager.class;
    }
-   
+
    public JRockitClassPreProcessor()
    {
       ClassLibrary lib = JVMFactory.getJVM().getClassLibrary();
       lib.setClassPreProcessor(this);
    }
 
-   public byte[] preProcess(ClassLoader loader, String classname, byte[] bytes) 
+   public byte[] preProcess(ClassLoader loader, String classname, byte[] bytes)
    {
       classname = classname.replace('/', '.');
-      //System.out.println("---" + classname);
       if (JDK14TransformerManager.isNonAdvisableClassName(classname))
       {
          return bytes;
       }
-      //System.out.println("Transform");
-      
-      try 
+
+      try
       {
          return AspectManager.instance().translate(classname, loader, bytes);
-      } 
-      catch (Exception e) 
+      }
+      catch (Exception e)
       {
          throw new RuntimeException(e);
       }

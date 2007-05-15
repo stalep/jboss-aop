@@ -32,6 +32,8 @@ import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.joinpoint.Joinpoint;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -44,6 +46,8 @@ import org.w3c.dom.NodeList;
  */
 public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
 {
+   private static final Logger logger = AOPLogger.getLogger(GenericAspectFactory.class);
+   
    final static Class[] ADVISOR_INJECTOR_SIGNATURE = new Class[]{Advisor.class};
    final static Class[] INSTANCE_ADVISOR_INJECTOR_SIGNATURE = new Class[]{InstanceAdvisor.class};
    final static Class[] JOINPOINT_INJECTOR_SIGNATURE = new Class[]{Joinpoint.class};
@@ -275,9 +279,9 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
    {
       if (advisor == null)
       {
-         if (AspectManager.verbose)
+         if (AspectManager.verbose && logger.isDebugEnabled())
          {
-            System.out.println("[warn] Ignoring attempt to set advisor attribute on PER_VM scoped aspect/interceptor: " + classname);
+            logger.debug("Ignoring attempt to set advisor attribute on PER_VM scoped aspect/interceptor: " + classname);
          }
          return;
       }
@@ -298,9 +302,9 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
    {
       if (jp == null)
       {
-         if (AspectManager.verbose)
+         if (AspectManager.verbose && logger.isDebugEnabled())
          {
-            System.out.println("[warn] Ignoring attempt to set joinpoint attribute on aspect/interceptor: " + classname + " which is not scoped PER_JOINPOINT");
+            logger.debug("Ignoring attempt to set joinpoint attribute on aspect/interceptor: " + classname + " which is not scoped PER_JOINPOINT");
          }
          return;
       }
@@ -321,9 +325,9 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
    {
       if (instanceAdvisor == null)
       {
-         if (AspectManager.verbose)
+         if (AspectManager.verbose && logger.isDebugEnabled())
          {
-            System.out.println("[warn] Ignoring attempt to set instance advisor attribute on aspect/interceptor: " + classname + " which is not scoped PER_INSTANCE or PER_JOINPOINT");
+            logger.debug("Ignoring attempt to set instance advisor attribute on aspect/interceptor: " + classname + " which is not scoped PER_INSTANCE or PER_JOINPOINT");
          }
          return;
       }

@@ -24,6 +24,8 @@ package org.jboss.aop;
 import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.aop.instrument.Instrumentor;
 import org.jboss.aop.instrument.InstrumentorFactory;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 import javassist.ByteArrayClassPath;
 import javassist.CtClass;
@@ -38,6 +40,8 @@ import javassist.NotFoundException;
  */
 public class ClassicWeavingStrategy extends WeavingStrategySupport
 {
+   private static final Logger logger = AOPLogger.getLogger(ClassicWeavingStrategy.class);
+   
 	private boolean verbose = AspectManager.verbose;
     /**
      * This is the translate version that was always there
@@ -72,19 +76,19 @@ public class ClassicWeavingStrategy extends WeavingStrategySupport
           }
           if (clazz.isArray())
           {
-             if (verbose) System.out.println("[cannot compile] isArray: " + className);
+             if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, isArray: " + className);
              pool.flushClass(className);
              return null;
           }
           if (clazz.isInterface())
           {
-             if (verbose) System.out.println("[cannot compile] isInterface: " + className);
+             if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, isInterface: " + className);
              pool.flushClass(className);
              return null;
           }
           if (clazz.isFrozen())
           {
-             if (verbose) System.out.println("[warning] isFrozen: " + className);
+             if (verbose && logger.isDebugEnabled()) logger.debug("warning, isFrozen: " + className);
              clazz.defrost();
           }
 
@@ -97,7 +101,7 @@ public class ClassicWeavingStrategy extends WeavingStrategySupport
 
           if (!Instrumentor.isTransformable(clazz))
           {
-             if (verbose) System.out.println("[cannot compile] implements Untransformable: " + className);
+             if (verbose && logger.isDebugEnabled()) logger.debug("[cannot compile] implements Untransformable: " + className);
              pool.flushClass(className);
              return null;
           }

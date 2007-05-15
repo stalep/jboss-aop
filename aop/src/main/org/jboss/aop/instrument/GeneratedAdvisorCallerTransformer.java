@@ -32,6 +32,8 @@ import javassist.NotFoundException;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassAdvisor;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * Used with the GeneratedClassAdvisor
@@ -41,6 +43,8 @@ import org.jboss.aop.ClassAdvisor;
  */
 public class GeneratedAdvisorCallerTransformer extends CallerTransformer
 {
+   private static final Logger logger = AOPLogger.getLogger(GeneratedAdvisorCallerTransformer.class);
+   
    public GeneratedAdvisorCallerTransformer(Instrumentor instrumentor, AspectManager manager)
    {
       super(instrumentor, manager, true, new GeneratedAdvisorCallerInfoAdder(instrumentor));
@@ -165,7 +169,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          }
          catch(CannotCompileException e)
          {
-            System.out.println("Error for " + cd.callingIndex + " code:" + code);
+            logger.error("Error for " + cd.callingIndex + " code:" + code);
             throw e;
          }
       }
@@ -268,7 +272,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          }
          catch(CannotCompileException e)
          {
-            System.out.println("Error for " + md.where + " code:" + code);
+            logger.error("Error for " + md.where + " code:" + code);
             throw e;
          }
       }
@@ -359,7 +363,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          }
          catch(CannotCompileException e)
          {
-            System.out.println("Error for " + cd.where + ": code:" + code);
+            logger.error("Error for " + cd.where + ": code:" + code);
             throw e;
          }
       }
@@ -440,7 +444,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          }
          catch(CannotCompileException e)
          {
-            System.out.println("Error for " + cd.callingIndex + " code:" + code);
+            logger.error("Error for " + cd.callingIndex + " code:" + code);
             throw e;
          }
       }
@@ -470,7 +474,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          }
          catch(CannotCompileException e)
          {
-            System.out.println("Error for " + cd.con + " code:" + replaced);
+            logger.error("Error for " + cd.con + " code:" + replaced);
             throw e;
          }
       }
@@ -518,7 +522,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          }
          catch(CannotCompileException e)
          {
-            System.out.println("Error for " + md.where + " code:" + replaced);
+            logger.error("Error for " + md.where + " code:" + replaced);
             throw e;
          }
       }
@@ -549,7 +553,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          }
          catch(CannotCompileException e)
          {
-            System.out.println("Error for " + cd.where + " code:" + replaced);
+            logger.error("Error for " + cd.where + " code:" + replaced);
             throw e;
          }
       }
@@ -569,7 +573,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          }
          catch(CannotCompileException e)
          {
-            System.out.println("Error for " + cd.callingIndex + " code:" + replaced);
+            logger.error("Error for " + cd.callingIndex + " code:" + replaced);
             throw e;
          }
       }

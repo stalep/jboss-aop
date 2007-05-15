@@ -41,6 +41,8 @@ import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.aop.joinpoint.MethodJoinpoint;
 import org.jboss.aop.util.ReflectToJavassist;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -50,6 +52,8 @@ import org.jboss.aop.util.ReflectToJavassist;
  */
 public class PerVmAdvice
 {
+   private static final Logger logger = AOPLogger.getLogger(PerVmAdvice.class);
+   
    private static long counter = 0;
 
    public static synchronized Interceptor generateOptimized(Joinpoint joinpoint, AspectManager manager, String adviceName, AspectDefinition a) throws Exception
@@ -258,7 +262,7 @@ public class PerVmAdvice
       }
       catch(CannotCompileException e)
       {
-         System.out.println(invokeBody);
+         logger.error("Could not compile " + invokeBody);
          throw e;
       }
       invoke.setModifiers(javassist.Modifier.PUBLIC);

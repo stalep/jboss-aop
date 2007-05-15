@@ -55,6 +55,7 @@ public class DeclareChecker
             if (declare.getWarning())
             {
                sb.insert(0, "WARNING: declare-warning");
+               //System.out.println is ok here - want to guarantee that it works even if people have screwed up their logging config
                System.out.println(sb.toString());
             }
             else
@@ -130,6 +131,7 @@ public class DeclareChecker
             if (declare.getWarning())
             {
                sb.insert(0, "WARNING: declare-warning");
+               //System.out.println is ok here - want to guarantee that it works even if people have screwed up their logging config
                System.out.println(sb.toString());
             }
             else

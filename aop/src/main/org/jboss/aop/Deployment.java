@@ -21,6 +21,8 @@
   */
 package org.jboss.aop;
 
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 import org.jboss.util.file.ArchiveBrowser;
 import org.jboss.util.file.ClassFileFilter;
 
@@ -39,6 +41,8 @@ import java.util.StringTokenizer;
  */
 public class Deployment
 {
+   private static final Logger logger = AOPLogger.getLogger(Deployment.class);
+   
    public static boolean searchClasspath = true;
 
    public static void deploy()
@@ -65,7 +69,7 @@ public class Deployment
    {
       String search = System.getProperty("jboss.aop.search.classpath", null);
       if (search != null) searchClasspath = (new Boolean(search)).booleanValue();
-      if (AspectManager.verbose) System.out.println("[debug] jboss.aop.search.classpath: '" + search + "' " + searchClasspath);
+      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("jboss.aop.search.classpath: '" + search + "' " + searchClasspath);
       if (searchClasspath)
       {
          try
@@ -74,7 +78,7 @@ public class Deployment
             while (en.hasMoreElements())
             {
                URL url = (URL) en.nextElement();
-               if (AspectManager.verbose) System.out.println("[deploying] " + url);
+               if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("deploying  " + url);
                AspectXmlLoader.deployXML(url);
             }
          }
@@ -93,10 +97,10 @@ public class Deployment
       String path = System.getProperty("jboss.aop.class.path", null);
       if (path == null)
       {
-         if (AspectManager.verbose) System.out.println("[debug] jboss.aop.class.path is NULL");
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("jboss.aop.class.path is NULL");
          return;
       }
-      if (AspectManager.verbose) System.out.println("[debug] jboss.aop.class.path: " + path);
+      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("jboss.aop.class.path: " + path);
       StringTokenizer t = new StringTokenizer(path, File.pathSeparator);
       while (t.hasMoreTokens())
       {
@@ -130,14 +134,14 @@ public class Deployment
    public static void preconfigThroughSystemProperty()
    {
       String path = System.getProperty("jboss.aop.path", null);
-      if (AspectManager.verbose) System.out.println("[debug] jboss.aop.path: " + path);
+      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("jboss.aop.path: " + path);
       if (path == null) return;
       StringTokenizer t = new StringTokenizer(path, File.pathSeparator);
       int j = 0;
       while (t.hasMoreTokens())
       {
          String token = t.nextToken();
-         if (AspectManager.verbose) System.out.println("jboss.aop.path[" + j + "]: " + token);
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("jboss.aop.path[" + j + "]: " + token);
          File f = new File(token);
          try
          {
@@ -175,7 +179,7 @@ public class Deployment
    private static void deployXmlFile(File f) throws Exception
    {
       URL url = f.toURL();
-      if (AspectManager.verbose) System.out.println("[deploying] " + url);
+      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("deploying " + url);
       AspectXmlLoader.deployXML(url);
    }
 }

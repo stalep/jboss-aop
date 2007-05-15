@@ -32,6 +32,8 @@ import javassist.NotFoundException;
 
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.aop.util.JavassistToReflect;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -41,6 +43,8 @@ import org.jboss.aop.util.JavassistToReflect;
  */
 public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
 {
+   private static final Logger logger = AOPLogger.getLogger(OptimizedBehaviourInvocations.class);
+   
    /**
     * Name of method that enforces consistency between the values contained in typed
     * argument fields and those contained in arguments array.
@@ -149,7 +153,7 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
       }
       catch (CannotCompileException e)
       {
-         System.out.println(sb.toString());
+         logger.error(sb.toString());
          throw e;
       }
       dispatch.setModifiers(in.getModifiers());
@@ -189,7 +193,7 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
       }
       catch(CannotCompileException e)
       {
-         System.out.println(code.toString());
+         logger.error(code.toString());
          throw e;
       }
       setArguments.setModifiers(template.getModifiers());
@@ -239,7 +243,7 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
          }
          catch(CannotCompileException e)
          {
-            System.out.println(code.toString());
+            logger.error(code.toString());
             throw e;
          }
          
@@ -294,7 +298,7 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
       }
       catch(CannotCompileException e)
       {
-         System.out.println(code.toString());
+         logger.error(code.toString());
          throw e;
       }
       assureArgsConsistency.setModifiers(javassist.Modifier.FINAL);

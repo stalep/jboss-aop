@@ -38,6 +38,8 @@ import org.jboss.aop.util.Advisable;
 import org.jboss.aop.util.ConstructorComparator;
 import org.jboss.aop.util.FieldComparator;
 import org.jboss.aop.util.MethodHashing;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -47,6 +49,8 @@ import org.jboss.aop.util.MethodHashing;
  */
 public class ClassContainer extends Advisor
 {
+   private static final Logger logger = AOPLogger.getLogger(ClassContainer.class);
+   
    private boolean chainOverridingForInheritedMethods;
    
    public ClassContainer(String name, AspectManager manager)
@@ -249,7 +253,7 @@ public class ClassContainer extends Advisor
             while (it.hasNext())
             {
                AdviceBinding binding = (AdviceBinding) it.next();
-               if (AspectManager.verbose) System.out.println("iterate binding " + binding.getName());
+               if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName());
                resolveMethodPointcut(newMethodInfos, binding);
                resolveConstructorPointcut(newConstructorInfos, binding);
             }

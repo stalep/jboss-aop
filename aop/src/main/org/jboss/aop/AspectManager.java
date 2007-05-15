@@ -73,6 +73,8 @@ import org.jboss.aop.pointcut.PointcutStats;
 import org.jboss.aop.pointcut.Typedef;
 import org.jboss.aop.pointcut.ast.ClassExpression;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 import org.jboss.util.collection.WeakValueHashMap;
 import org.jboss.util.loading.Translatable;
 import org.jboss.util.loading.Translator;
@@ -98,6 +100,8 @@ import javassist.scopedpool.ScopedClassPoolFactory;
 public class AspectManager
         implements Translator
 {
+   private static final Logger logger = AOPLogger.getLogger(AspectManager.class);
+   
    /** Read/Write lock to be used when lazy creating the collections */
    ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -312,9 +316,9 @@ public class AspectManager
                if (scopedManager == null)
                {
                   scopedManager = scopedCLHelper.getScopedClassLoaderDomain(scopedClassLoader, manager);
-                  if (verbose)
+                  if (verbose && logger.isDebugEnabled())
                   {
-                     System.out.println("Created domain " + scopedManager + " for scoped deployment on: " +
+                     logger.debug("Created domain " + scopedManager + " for scoped deployment on: " +
                            loadingClassLoader + "; identifying scoped ucl: " + scopedClassLoader);
                   }
                   scopedManager.setInheritsBindings(true);
@@ -1236,7 +1240,7 @@ public class AspectManager
       }
       else
       {
-         if (verbose) System.out.println("[debug] Setting all pointcut stats to true");
+         if (verbose && logger.isDebugEnabled()) logger.debug("Setting all pointcut stats to true");
          // can't be sure so set all
          execution = true;
          construction = true;
@@ -1312,7 +1316,7 @@ public class AspectManager
             AdviceBinding binding = (AdviceBinding) bindings.get(binds.get(i));
             if (binding == null)
             {
-               System.out.println("[warn] AspectManager.removeBindings() no binding found with name " + binds.get(i));
+               logger.debug("AspectManager.removeBindings() no binding found with name " + binds.get(i));
                continue;
             }
             ArrayList ads = binding.getAdvisors();
@@ -1389,7 +1393,6 @@ public class AspectManager
    {
       synchronized (advisors)
       {
-         //System.out.println("******* addBinding to possibly this many advisors: " + advisors.size());
          Collection keys = advisors.keySet();
          if (keys.size() > 0)
          {
@@ -1401,15 +1404,15 @@ public class AspectManager
 
                if (binding.getPointcut().softMatch(advisor))
                {
-                  if (AspectManager.verbose)
-                     System.out.println("[debug] softmatch succeeded for : " + advisor.getName() + " " + binding + " " + binding.getPointcut().getExpr());
+                  if (AspectManager.verbose && logger.isDebugEnabled())
+                     logger.debug("softmatch succeeded for : " + advisor.getName() + " " + binding + " " + binding.getPointcut().getExpr());
                   advisor.newBindingAdded();
                   //affectedAdvisors.remove(advisor);
                }
                else
                {
-                  if (AspectManager.verbose)
-                     System.out.println("[debug] softmatch failed for : " + advisor.getName() + " " + binding + " " + binding.getPointcut().getExpr());
+                  if (AspectManager.verbose && logger.isDebugEnabled())
+                     logger.debug("softmatch failed for : " + advisor.getName() + " " + binding + " " + binding.getPointcut().getExpr());
                }
             }
          }
@@ -1673,7 +1676,6 @@ public class AspectManager
    {
       synchronized (advisors)
       {
-         //System.out.println("******* addBinding to possibly this many advisors: " + advisors.size());
          Iterator it = advisors.keySet().iterator();
          while (it.hasNext())
          {

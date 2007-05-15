@@ -43,6 +43,8 @@ import javassist.bytecode.ClassFile;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.Deployment;
 import org.jboss.aop.instrument.TransformationException;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.logging.Logger;
 
 /**
  * takes jar or class files and adds needed jboss bytecode
@@ -52,6 +54,7 @@ import org.jboss.aop.instrument.TransformationException;
  */
 public class Compiler
 {
+   private static final Logger logger = AOPLogger.getLogger(Compiler.class);
    private FileFilter classFileFilter = new FileFilter()
    {
       public boolean accept(File pathname)
