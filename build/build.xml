@@ -213,7 +213,7 @@
 
    <target name="release"
       description="Builds the default release structure."
-      depends="init"
+      depends="init, clean, modules-release"
       >
       <ant antfile="build-release.xml" target="release"/>
 
