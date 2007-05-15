@@ -78,20 +78,20 @@ public class SynchronizationAspect
    public Object aroundAdvice(Invocation invocation) throws Throwable
    {
       Object result;
-
-      // part 1: retrieve lock before joinpoint execution
+      <font color="808080"> <i>
+      // part 1: retrieve lock before joinpoint execution</i></font>
       synchronized(this)
       {
          System.out.println("&gt;&gt;&gt; Retrieved concurrency lock");
-
-         // part 2: proceed to joinpoint execution
+         <font color="808080"> <i>
+         // part 2: proceed to joinpoint execution</i></font>
          result = invocation.invokeNext();
-
-      // part 3: release lock after joinpoint execution
+      <font color="808080"> <i>
+      // part 3: release lock after joinpoint execution</i></font>
          System.out.println("&lt;&lt;&lt; Releasing concurrency lock");
       }
-
-      // part 4: return result
+      <font color="808080"> <i>
+      // part 4: return result</i></font>
       return result;
    }
 }
@@ -130,8 +130,8 @@ public class MutexAspect
    public Object aroundAdvice(Invocation invocation) throws Throwable
    {
       Object result;
-
-      // part 1: retrieve lock before joinpoint execution
+      <font color="808080"> <i>
+      // part 1: retrieve lock before joinpoint execution</i></font>
       synchronized(lock)
       {
          while (locked)
@@ -149,19 +149,19 @@ public class MutexAspect
          locked = true;
          System.out.println("&gt;&gt;&gt; Retrieved concurrency lock");
       }
-
-      // part 2: proceed to joinpoint execution
+      <font color="808080"> <i>
+      // part 2: proceed to joinpoint execution</i></font>
       result = invocation.invokeNext();
-
-      // part 3: release lock after joinpoint execution
+      <font color="808080"> <i>
+      // part 3: release lock after joinpoint execution</i></font>
       synchronized(lock)
       {
          locked = false;
          lock.notify();
          System.out.println("&lt;&lt;&lt; Releasing concurrency lock");
       }
-
-      // part 4: return result
+      <font color="808080"> <i>
+      // part 4: return result</i></font>
       return result;
    }
 }
