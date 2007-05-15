@@ -986,6 +986,7 @@ public class OneAspect
          </sect3>
          
          <sect3 id="adv-overlannotparamreturn" revision="1">
+            <title>Return Types</title>
             <para>
                For annotated parameters typed around advices, there is a third rule, which is the return type. This rule
                also applies to after and finally advices. If the joinpoint has a non-void return type, the assignability
