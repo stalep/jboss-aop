@@ -3,7 +3,7 @@
    <title>Installing</title>
 
    <para>
-         This section defines how to install JBoss AOP standalone, within JBoss 4.0 and within JBoss 3.2.6
+         This section defines how to install JBoss AOP standalone, within JBoss 4.0.x, JBoss 4.2.x and within JBoss 5.x
    </para>
 
    <mediaobject>
@@ -21,68 +21,87 @@
 
       <para>
          There's nothing really to install if you're running outside the JBoss application server.  If you are using
-         JDK 1.4.x, use the libraries under the
-         <literal>lib/</literal> directory to build your JBoss AOP applications.
-         If you're using JDK 5.0, use the libraries under
-         <literal>lib-50/</literal>.
+         JDK 1.4.x, use the libraries under the <literal>lib-14/</literal> directory to build your JBoss AOP applications.
+         If you're using JDK 5.0, use the libraries under <literal>lib-50/</literal>.
       </para>
    </sect1>
 
-   <sect1 id="installing-jboss40" revision="1">
-      <title>Installing with JBoss 4.x Application Server</title>
+   <sect1 id="installing-jboss40-jdk50" revision="1">
+      <title>Installing with JBoss 4.0.x amd JBoss 4.2.x Application Server for JDK 5</title>
 
       <para>
-         To install JBoss AOP in JBoss 4.x Application Server:
+         To install JBoss AOP in JBoss 4.0.x or JBoss 4.2.x Application Server: with JDK 5, there is an ant build script to
+         install into the application server. It lives in <literal>jboss-40-install/jboss-aop-jdk50.deployer/build.xml</literal>.
+         Modify <literal>jboss-40-install/jboss-aop-jdk50.deployer/jboss.properties</literal>  to point to the the root of your
+         JBoss installation and specify the application server configuration you want to upgrade. These are the steps taken by
+         the ant script:
       </para>
       <orderedlist spacing="compact">
          <listitem>
-             Delete
-            <literal>jboss-aop.deployer</literal> file or directory from the existing JBoss Application Server distribution
-             under
-            <literal><![CDATA[server/<config-name>/deploy]]></literal>
+             Back up the existing <literal>jboss-40-install/jboss-aop-jdk50.deployer</literal> to
+            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer.bak]]></literal>
          </listitem>
          <listitem>
-            From the JBoss AOP distribution, from the
-            <literal>jboss-40-install</literal> directory copy
-            <literal>jboss-aop.deployer/</literal>
-            or
-            <literal>jboss-aop-jdk50.deployer</literal> to the JBoss Application Server distribution
-            under
-            <literal><![CDATA[server/<config-name>/deploy]]></literal> depending on which JDK you are running with.
+             Copy the files from <literal>jboss-40-install/jboss-aop-jdk50.deployer</literal> over the files that already
+             exist in your existing JBoss Application Server distribution under
+            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer]]></literal>
+         </listitem>
+         <listitem>
+            In JBoss 4.0.4.GA and later, move <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/javassist.jar]]></literal>
+            to <literal><![CDATA[server/<config-name>/lib/javassist.jar]]></literal>.
+         </listitem>
+         <listitem>
+            If you NOT upgrading from a previous AOP 2 distribution, open up
+            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-aspect-library-jdk50.jar]]></literal> and
+            delete all classes and subpackages under <literal>org.jboss.aop</literal>. (In AOP 2.0 we changed the packaging, these
+            classes now exist inside <![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-aop-as4-deployer.jar]]>
          </listitem>
       </orderedlist>
-
    </sect1>
 
-   <sect1 id="installing-jboss32" revision="1">
-      <title>Installing with JBoss 3.2.6 Application Server</title>
+   <sect1 id="installing-jboss40-jdk14" revision="1">
+      <title>Installing with JBoss 4.0.x Application Server for JDK 1.4</title>
 
       <para>
-         JBoss AOP only works with JBoss Application Server 3.2.6RC1+ and only with the precompiler.  Load-time AOP is not supported
-         at this time for JBoss 3.2.x application server.  To install JBoss AOP to JBoss Application Server, copy all jars in the
-         <literal>jboss-32-install/</literal> or <literal>jboss-32-install-jdk5</literal> directory to the
-         <literal><![CDATA[server/<config-name>/lib]]></literal> depending on what version of the JDK you use.
+         To install JBoss AOP in JBoss 4.0.x with JDK 1.4 (JBoss 4.2.x requires JDK 5), there is an ant build script to
+         install into the application server. It lives in <literal>jboss-40-install/jboss-aop-jdk14.deployer/build.xml</literal>.
+         Modify <literal>jboss-40-install/jboss-aop-jdk14.deployer/jboss.properties</literal>  to point to the the root of your
+         JBoss installation and specify the application server configuration you want to upgrade. These are the steps taken by
+         the ant script:
       </para>
       <orderedlist spacing="compact">
          <listitem>
-             copy all jars in the
-            <literal>jboss-32-install/</literal> or <literal>jboss-32-install-jdk5</literal> directory to the
-            <literal><![CDATA[server/<config-name>/lib]]></literal>
+             Back up the existing <literal>jboss-40-install/jboss-aop.deployer</literal> (if upgrading from AOP 1.x)
+             or <literal>jboss-40-install/jboss-aop-jdk14.deployer</literal> (if upgrading from AOP 2.x) to
+            <literal><![CDATA[server/<config-name>/deploy/jboss-aop.deployer.bak]]></literal>
          </listitem>
          <listitem>
-            Copy
-            <literal>etc/base-aop.xml</literal> to the JBoss Application Server distribution
-            under
-            <literal><![CDATA[server/<config-name>/deploy]]></literal>.
+             Copy the files from <literal>jboss-40-install/jboss-aop-jdk14.deployer</literal> to
+            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer]]></literal>
          </listitem>
          <listitem>
-            Edit
-            <literal><![CDATA[server/<config-name>/conf/jboss-service.xml]]></literal> to add the appropriate
-            configuration defined in section 10.2 "JBoss Application Server".
+            In JBoss 4.0.4.GA and later, move <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/javassist.jar]]></literal>
+            to <literal><![CDATA[server/<config-name>/lib/javassist.jar]]></literal>
+         </listitem>
+         <listitem>
+            If you NOT upgrading from a previous AOP 2 distribution, copy the
+            <literal><![CDATA[server/<config-name>/deploy/jboss-aop.deployer.bak/jboss-aspect-library.jar]]></literal> to
+            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk14.deployer/jboss-aspect-library.jar]]></literal> and
+            delete all classes and subpackages under <literal>org.jboss.aop</literal>. (In AOP 2.0 we changed the packaging, these
+            classes now exist inside <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk14.deployer/jboss-aop-as4-deployer.jar]]></literal>. The
+            script also makes the jdk 1.4 annotations compatible with how they are simulated in JBoss AOP 2.x.
          </listitem>
       </orderedlist>
-
    </sect1>
 
+   <sect1 id="installing-jboss5-jdk5" revision="1">
+      <title>Installing with JBoss Application Server 5</title>
+      <para>
+         JBoss 5 is not released yet, this section will be modified when the packaging is finalised, but all you should need to do is
+         copy the contents of the <literal>jboss-50-install/lib</literal> directory into
+         <literal>$JBOSS_ROOT/lib</literal>, and copy the contents of the <literal>jboss-50-install/jboss-aop-jboss5.deployer</literal>
+         folder into <literal><![CDATA[$JBOSS_ROOT/server/<config-name>/deployers/jboss-aop-jboss5.deployer]]></literal>
+      </para>
+   </sect1>
 </chapter>
 

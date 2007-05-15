@@ -582,7 +582,7 @@ $ create-pluggable-jboss-classloader.sh
          </para>
          <para>
             Next, you need to copy
-            the jdk14-pluggable-instrumentor.jar from the lib/ directory of your JBoss AOP
+            the jdk14-pluggable-instrumentor.jar from the lib-14/ directory of your JBoss AOP
             distribution to the bin/ directory of your JBoss application server installation.  Next edit
             run.sh or run.bat (depending on what OS you're on) and add the following to the JAVA_OPTS environment
             variable
@@ -656,7 +656,7 @@ set JAVA_OPTS=%JAVA_OPTS% -Dprogram.name=%PROGNAME% \
          needed because sometimes a JBoss deployment will not have all the classes a class references.
       </para>
          <para>
-            The next step is to copy the pluggable-instrumentor.jar from the lib-50 directory of your JBoss AOP
+            The next step is to copy the pluggable-instrumentor.jar from the lib-50/ directory of your JBoss AOP
             distribution to the bin/ directory of your JBoss AOP application server installation.  Next edit
             run.sh or run.bat (depending on what OS you're on) and add the following to the JAVA_OPTS environment
             variable
@@ -718,7 +718,7 @@ set JAVA_OPTS=%JAVA_OPTS% -Dprogram.name=%PROGNAME% -javaagent:pluggable-instrum
          needed because sometimes a JBoss deployment will not have all the classes a class references.
       </para>
          <para>
-            The next step is to copy the jrockit-pluggable-instrumentor.jar from the lib directory of your JBoss AOP
+            The next step is to copy the jrockit-pluggable-instrumentor.jar from the lib-50/ directory of your JBoss AOP
             distribution to the bin/ directory of your JBoss AOP application server installation.  Next edit
             run.sh or run.bat (depending on what OS you're on) and add the following to the JAVA_OPTS and
             JBOSS_CLASSPATH environment variables
@@ -740,154 +740,6 @@ JBOSS_CLASSPATH="$JBOSS_CLASSPATH:jrockit-pluggable-instrumentor.jar"
 
    <!-- 4.0 and jrockit - end -->
 
-   <!-- 3.2.4 -->
-   <sect2 id="jboss325" revision="1">
-      <title>JBoss Application Server 3.2.x and JDK 1.4</title>
-      <para>
-         JBoss AOP can also work with JBoss 3.2.7 (maybe 3.2.6) and higher in the JBoss 3.2 series.  Look in the
-         Installing chapter on how to install the JAR files.
-      </para>
-      <para>
-         After installing, you need to modify the
-         <literal>jboss-3.2.7/server/xxx/conf/jboss-service.xml</literal>
-         file to add these mbean definitions.  They are similar to the 4.0 release, but notice the '32' added to the
-         class name.
-      </para>
-      <programlisting>
-         <![CDATA[      <mbean code="org.jboss.aop.deployment.AspectManagerService32"
-         name="jboss.aop:service=AspectManager">
-         <attribute name="EnableLoadtimeWeaving">false</attribute>
-         <!-- only relevant when EnableLoadtimeWeaving is true -->
-         <attribute name="SuppressTransformationErrors">true</attribute>
-         <attribute name="Prune">true</attribute>
-         <attribute name="Include">org.jboss.test</attribute>
-         <attribute name="Exclude">org.jboss.</attribute>
-         <attribute name="Optimized">true</attribute>
-         <attribute name="Verbose">false</attribute>
-      </mbean>
-
-      <mbean code="org.jboss.aop.deployment.AspectDeployer32"
-         name="jboss.aop:service=AspectDeployer">
-      </mbean>
-      ]]></programlisting>
-      <para>
-         Also, copy the
-         <literal>base-aop.xml</literal> file into the server/xxx/deploy/ directory if you want to
-         use any of JBoss Aspects.
-      </para>
-      <para>
-         Follow the same steps to enable loadtime weaving as those for JDK 1.4 and JBoss 4.x.
-      </para>
-      </sect2>
-
-   <sect2>
-      <title>JBoss 3.2.x and JDK 5</title>
-      <para>
-         You can use the JDK 5 -javaagent stuff if you like with JBoss 3.2.x.
-      </para>
-   <para>
-      To use JDK 5 loadtime with JBoss 3.2.x make sure you follow the directions in the 'Installing' chapter.
-   </para>
-   <para>
-      If you want to do load-time
-      transformations with JBoss 3.2.7 and JDK 5, there are two steps you must take.
-   </para>
-      <para>
-         After installing, you need to modify the
-         <literal>jboss-3.2.7/server/xxx/conf/jboss-service.xml</literal>
-         file to add these mbean definitions.  They are similar to the 4.0 release, but notice the '32' added to the
-         class name.
-      </para>
-      <programlisting>
-         <![CDATA[      <mbean code="org.jboss.aop.deployment.AspectManagerService32JDK5"
-         name="jboss.aop:service=AspectManager">
-         <attribute name="EnableLoadtimeWeaving">false</attribute>
-         <!-- only relevant when EnableLoadtimeWeaving is true -->
-         <attribute name="SuppressTransformationErrors">true</attribute>
-         <attribute name="Prune">true</attribute>
-         <attribute name="Include">org.jboss.test</attribute>
-         <attribute name="Exclude">org.jboss.</attribute>
-         <attribute name="Optimized">true</attribute>
-         <attribute name="Verbose">false</attribute>
-      </mbean>
-
-      <mbean code="org.jboss.aop.deployment.AspectDeployer32"
-         name="jboss.aop:service=AspectDeployer">
-      </mbean>
-      ]]></programlisting>
-      <para>
-         Also, copy the
-         <literal>base-aop.xml</literal> file into the server/xxx/deploy/ directory if you want to
-         use any of JBoss Aspects.
-      </para>
-   <para>
-      By default, JBoss application server will not do load-time bytecode manipulation
-      of AOP files. You can turn load-time weaving the same way you do for JBoss 4.
-   </para>
-      <para>
-         The next step is to copy the pluggable-instrumentor.jar from the lib-50 directory of your JBoss AOP
-         distribution to the bin/ directory of your JBoss AOP application server installation.  Next edit
-         run.sh or run.bat (depending on what OS you're on) and add the following to the JAVA_OPTS environment
-         variable
-      </para>
-      <programlisting>
-set JAVA_OPTS=%JAVA_OPTS% -Dprogram.name=%PROGNAME% -javaagent:pluggable-instrumentor.jar
-      </programlisting>
-      <para>
-         After modifying JAVA_OPTS and setting the EnableLoadtimeWeaving to true, then you should be ready to go.
-      </para>
-   </sect2>
-
-   <sect2>
-      <title>JBoss 3.2.x and JRockit</title>
-      <para>
-         You can use the JRockit classloader integration if you like with JBoss 3.2.x. If you are using JRockit 1.4.2
-         this is the only way to achieve loadtime transformations.
-      </para>
-      <para>
-         If you want to do load-time
-         transformations with JBoss 3.2.7 and JRockit, there are two steps you must take.
-      </para>
-      <para>
-         After installing, you need to modify the
-         <literal>jboss-3.2.7/server/xxx/conf/jboss-service.xml</literal>
-         file to add these mbean definitions.  They are similar to the 4.0 release, but notice the '32' added to the
-         class name. Note that the <literal>code</literal> attribute of the AspectManager mbean must be
-         <literal>org.jboss.aop.deployment.AspectManagerService</literal>
-         as that is what works with the JRockit special hooks.
-      </para>
-      <programlisting>
-         <![CDATA[      <mbean code="org.jboss.aop.deployment.AspectManagerService32"
-         name="jboss.aop:service=AspectManager">
-         <attribute name="EnableLoadtimeWeaving">false</attribute>
-         <!-- only relevant when EnableLoadtimeWeaving is true -->
-         <attribute name="SuppressTransformationErrors">true</attribute>
-         <attribute name="Prune">true</attribute>
-         <attribute name="Include">org.jboss.test</attribute>
-         <attribute name="Exclude">org.jboss.</attribute>
-         <attribute name="Optimized">true</attribute>
-         <attribute name="Verbose">false</attribute>
-      </mbean>
-
-      <mbean code="org.jboss.aop.deployment.AspectDeployer32"
-         name="jboss.aop:service=AspectDeployer">
-      </mbean>
-      ]]></programlisting>
-      <para>
-         Also, copy the
-         <literal>base-aop.xml</literal> file into the server/xxx/deploy/ directory if you want to
-         use any of JBoss Aspects.
-      </para>
-   <para>
-      By default, JBoss application server will not do load-time bytecode manipulation
-      of AOP files. You can turn load-time on weaving the same way you do for JBoss 4.
-   </para>
-      <para>
-         The next step is to copy the jrockit-pluggable-instrumentor.jar from the lib directory of your JBoss AOP
-         distribution to the bin/ directory of your JBoss AOP application server installation and to modify your run.sh/bat file
-         as mentioned in "JBoss 4.x and JRockit".
-      </para>
-   </sect2>
    <sect2>
       <title>Improving Loadtime Performance in a JBoss AS Environment</title>
       <para>
