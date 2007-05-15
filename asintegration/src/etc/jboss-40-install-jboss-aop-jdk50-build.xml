@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project default="install" name="JBoss/AOP Application Server installation" description="Ant file to patch an existing JBoss 4 instance with AOP 2.0">
+<project default="install" name="JBoss/AOP Application Server installation">
 
    <target name="init">
       <!-- ========================================= -->
