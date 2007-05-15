@@ -1,0 +1,1227 @@
+<chapter id="advices">
+   <title>Advices</title>
+   <para>
+      Advices are aspect methods that are invoked during specific joinpoint executions.
+   </para>
+   <para>
+      JBoss AOP provides four types of advice.
+   </para>
+   <para>
+      The default one is the around advice, and it can be used on all execution modes.
+      This advice wraps the joinpoint, in a way that it replaces the joinpoint execution in
+      the base system, and is responsible for proceeding execution to the joinpoint.
+   </para>
+   <para>
+      Besides around advices, you can write advices that, instead of wrapping the joinpoint,
+      are executed before or after it. In this category, JBoss AOP provides before, after,
+      after-throwing and finally advices. These advices are available only when using the generated
+      advisor mode (this is the default mode in JBoss AOP, to learn how to select another weaving mode,
+      refer to Chapter X).
+   </para>
+   <para>
+      The next sections will explain in detail the binding and signature rules for JBoss AOP advices.
+   </para>
+   
+   <sect1 id="adv-around" revision="1">
+      <title>Around Advices</title>
+      
+      <para>
+         An around advice can follow this template:
+      </para>
+      <programlisting>
+<![CDATA[public Object [advice name]([Invocation] invocation) throws Throwable
+{
+   try{
+      // do something before joinpoint execution
+      ...
+      // execute the joinpoint and get its return value
+      Object returnValue = invocation.invokeNext();
+      // do something after joinpoint has executed successfully ...
+      // return a value
+      return returnValue;
+   }
+   catch(Exception e)
+   {
+      //handle any exceptions arising from calling the joinpoint
+      throw e;
+   }
+   finally
+   {
+      //Take some action once the joinpoint has completed successfully or not
+   }
+}]]></programlisting>
+      <para>
+         In the template above, <emphasis>Invocation</emphasis> refers to one of the <link linkend="pointcuts-typetable">Invocation beans</link>,
+         and can be the class
+         <classname>org.jboss.aop.joinpoint.Invocation</classname> or one of its subtypes.
+      </para>
+      <para>
+         Since an around advice wraps a joinpoint, it must proceed execution to the joinpoint itself during its execution.
+         This can be done by calling the method <literal>invokeNext()</literal> on <literal>invocation</literal>. This method will
+         proceed execution to the next around advice of that joinpoint. At the end of this chain this <literal>invokeNext()</literal>
+         will proceed to the joinpoint itself. The value returned by the around advice will replace the joinpoint return value in the base system.
+      </para>
+      <para>
+         For example, in the case where there are two around advices bound to a joinpoint, the first around advice will
+         trigger the second around advice by calling <literal>invokeNext()</literal>. The second advice will trigger
+         the joinpoint execution by calling the same method. As a result of the <literal>invokeNext()</literal> execution,
+         the second advice will receive the joinpoint return value. The value returned by this second advice will be received
+         as a result by the first around advice. Finally, the value returned by this advice will replace the joinpoint
+         return value in the base system execution. Normally though, around advices will simply return whatever value
+         the joinpoint returned! This is shown in the preceding template example.
+      </para>
+      <para>
+         If an around advice wants to completely replace the joinpoint execution, it can skip the call to <literal>invokeNext()</literal>.
+         This will also skip execution of any subsequent around advices in the chain. As a third alternative, the around advice can
+         call the method <literal>invokeTarget()</literal> instead of <literal>invokeNext()</literal>. This method will invoke 
+         the target joinpoint directly, skipping any subsequent advices.
+      </para>
+      <para>
+         The presence of the <literal>Invocation</literal> parameter is optional. If an around advice does not
+         have this parameter, it can replace the call to <literal>invokeNext()</literal> with a call to
+         <literal>org.jboss.aop.joinpoint.CurrentInvocation.proceed()</literal>.
+      </para>
+      <para>
+         The signature described before is the default around advice signature rule. In addition to it,
+         the around advice signature can also be of this form (only in generated advisor mode):
+      </para>
+      <programlisting><![CDATA[public [return type] [advice name]([annotated parameter],[annotated parameter],...[annotated parameter]) throws Throwable]]></programlisting>
+      <para>
+         This signature is joinpoint dependent. The return type of the advice must be a type assignable to the the return
+         type of the joinpoint to be intercepted (i.e. be the same type; a subclass, if the return type is class; or a
+         subinterface or an implementing class, if the return type is an interface). In case the joinpoint being intercepted
+         does not have a return type, this advice return type must be <literal>void</literal>.
+      </para>
+      <para>
+         An around advice can have zero or more annotated parameters. The annotated parameters will be covered in detail in
+         <xref linkend="adv-annotatedparameters"/>.
+      </para>
+      <para>
+         Finally, JBoss AOP also features a special type of around advice: <literal>Interceptor</literal>. An interceptor class implements
+         <literal>org.jboss.aop.Interceptor</literal>, and is described in <xref linkend="impl-interceptor"/>.
+      </para>
+   </sect1>
+   
+   <sect1 id="adv-batf" revision="1">
+      <title>Before/After/After-Throwing/Finally Advices</title>
+      
+      <para>
+         These advices are more lightweight in the JBoss AOP framework, since they do not wrap a joinpoint,
+         avoiding the creation of the <literal>Invocation</literal> objects per joinpoint execution.
+      </para>
+      <para>
+         Instead of <literal>Invocation</literal> objects, JBoss AOP provides <link linkend="pointcuts-typetable">JoinPointInfo beans</link>
+         for these advices. As described in <xref linkend="pointcuts-beans"/>, these beans contain all information regarding a joinpoint,
+         like an <literal>Invocation</literal> would do. However, since <literal>IJoinPointInfo</literal> objects are not used on around
+         advice types, they do not provide proceeding methods, like <literal>invokeNext()</literal>. They also do not allow you to
+         attach metadata for a particular invocation.
+      </para>
+      <para>
+         The rules for before, after, after-throwing and finally advices are quite similar. All of them can have zero or more
+         annotated advice parameters in their signature, which will be described in the next subsection.
+      </para>
+   
+      <sect2 id="adv-beforesignature" revision="1">
+         <title>Before Advice Signature</title>
+         <para>
+            A before advice is executed before the joinpoint. The signature for a before advice must be of this form:
+         </para>
+         <programlisting><![CDATA[public void [advice name]([annotated parameter], [annotated parameter],...[annotated parameter])]]></programlisting>
+      </sect2>
+   
+      <sect2 id="adv-aftersignature" revision="1">
+         <title>After Advice Signature</title>
+         <para>
+            Since an after advice is executed after a joinpoint, it can return a value to replace the joinpoint return value
+            in the base system. So, they can follow one of these signatures:
+         </para>
+         <programlisting><![CDATA[public void [advice name]([annotated parameter], [annotated parameter],...[annotated parameter])
+
+public [return type] [advice name]([annotated parameter], [annotated parameter],...[annotated parameter])]]></programlisting>
+         <para>
+            In the first signature, the after advice does not overwrite the joinpoint return value.
+            On the other hand, when using the second signature, the after advice return value will replace
+            the joinpoint return value. As with around advices, this return type must be assignable to
+            the joinpoint return type.
+         </para>
+      </sect2>
+      <sect2 id="adv-throwingsignature" revision="1">
+         <title>After-Throwing Advice Signature</title>
+         <para>
+            The fourth type of advice provided by JBoss AOP is the after-throwing type. This advice is invoked only
+            after the execution of a joinpoint that has thrown a <literal>java.lang.Throwable</literal> or one of its subtypes. 
+         </para>
+         <para>
+            The signature of such an advice is the same as the one for before advices:
+         </para>
+         <programlisting><![CDATA[public void [advice name]([annotated parameter], [annotated parameter],...[annotated parameter])]]></programlisting>
+         <para>
+            Different from the other advice types, an after-throwing advice has a mandatory annotated parameter. This parameter
+            is the exception thrown by the joinpoint execution, as we will see in the next subsection.
+         </para>
+      </sect2>
+      <sect2 id="adv-finallysignature" revision="1">
+         <title>Finally Advice Signature</title>
+         <para>
+            Lastly, JBoss AOP provides the finally advice type. It is invoked from inside a finally block, after the joinpoint execution.
+         </para>
+         <para>
+            This advice is the only one that is called after a joinpoint execution in a deterministic way. Calls to after and after-throwing
+            advices take place depending on the joinpoint execution outcome. After advices are not called when the joinpoint execution
+            terminates abruptly with an exception. After-throwing ones, on the other hand, are not called when the joinpoint execution
+            returns normally, since no exception is thrown this time. So, if an advice needs to be run no matter what is the outcome
+            of the joinpoint, it should be a finally advice.
+         </para>
+         <para>
+            Pretty much as after advices, finally advices can follow one of the signatures below:
+         </para>
+         <programlisting><![CDATA[public void [advice name]([annotated parameter], [annotated parameter],...[annotated parameter])
+
+public [return type] [advice name]([annotated parameter], [annotated parameter],...[annotated parameter])]]></programlisting>
+         <para>
+            The last signature shows that finally advices can also overwrite the joinpoint execution return value by
+            returning a value themselves. But notice that this return value will not be received by the base system if
+            an exception has been thrown. However, it is easy to know whether this condition is met, by making use of annotated parameters.
+         </para>
+      </sect2>
+   </sect1>
+   
+   <sect1 id="adv-annotatedparameters" revision="1">
+      <title>Annotated Advice Parameters</title>
+      
+      <para>
+         This section lists the annotated parameters that can be used on JBoss AOP advices (available only in generated advisor
+         execution mode). <xref linkend="adv-annotparamtable"/> lists all annotations and their semantics.
+      </para>
+      <para>
+         Except for the <literal>@JoinPoint</literal> annotation, used to refer to joinpoint beans, all other annotations are used on
+         parameters that contain joinpoint context values.
+      </para>
+      <para>
+         Notice that the types of annotated parameters are dependent on the joinpoint being intercepted by the advice.
+      </para>
+      <para>
+         JBoss AOP will accept any type that is assignable from the type referred by that parameter, as shown in the
+         <emphasis>Type Assignable From</emphasis> column of table X. For example, for a joinpoint whose target is of type
+         <literal>POJO</literal>, the annotated parameter that receives the target must be of <literal>POJO</literal> type,
+         one of <literal>POJO</literal>'s superclasses, or one of the interfaces implemented by <literal>POJO</literal>.
+      </para>
+      <para>
+         Regarding the type of joinpoint bean parameters, the rules are the same for the default signature of around advices
+         (without annotations). For example, an around advice that intercepts a method execution, can receive either a
+         <literal>MethodInvocation</literal>, or an <literal>Invocation</literal> (the complete list of joinpoint beans
+         and their relationship with joinpoint types was shown in <xref linkend="pointcuts-typetable">in a previously seen table</xref>).
+         As already explained, around advices use <literal>Invocation</literal> instances, while the other advices use
+         <literal>IJoinPointInfo</literal> objects.
+      </para>
+      <para>
+         Notice also that only one annotated parameter can be mandatory: <literal>@Thrown</literal>. This will be
+         further explained in <xref linkend="adv-thrown"/>.
+      </para>
+      <para>
+         Except for <literal>@Arg</literal>, all annotations are single-enforced, i.e., there must be at most only
+         one advice parameter with that annotation per advice.
+      </para>
+      <table frame="topbot" id="adv-annotparamtable">
+         <title>Annotated Parameters Table</title>
+         
+         <tgroup align="center" cols="9" rowsep="1" colsep="1">
+            <colspec colname="annotation" colwidth="1.1*"/>
+            <colspec colname="semantics" colwidth="1.2*"/>
+            <colspec colname="typeassign" colwidth="1.3*"/>
+            <colspec colname="mandatory" colwidth="1*"/>
+            <colspec colname="beforeAdv" colwidth="0.5*"/>
+            <colspec colname="aroundAdv" colwidth="0.7*"/>
+            <colspec colname="afterAdv" colwidth="0.6*"/>
+            <colspec colname="throwingAdv" colwidth="0.7*"/>
+            <colspec colname="finallyAdv" colwidth="0.5*"/>
+            <spanspec spanname="advices" namest="beforeAdv" nameend="finallyAdv"/>
+            <thead>
+               <row>
+                  <entry morerows="1">Annotation</entry>
+                  <entry morerows="1">Semantics</entry>
+                  <entry morerows="1">Type assignable from</entry>
+                  <entry morerows="1">Mandatory</entry>
+                  <entry spanname="advices">Advice type</entry>
+               </row>
+               <row>
+                  <entry>Before</entry>
+                  <entry>Around</entry>
+                  <entry>After</entry>
+                  <entry>After-Throwing</entry>
+                  <entry>Finally</entry>
+               </row>
+            </thead>
+            <tbody>
+               <row>
+                  <entry morerows="1"><literal>@JoinPoint</literal></entry>
+                  <entry morerows="1"><link linkend="pointcuts-beans">JoinPoint bean</link></entry>
+                  <entry>Joinpoint invocation type</entry>
+                  <entry>No</entry>
+                  <entry>No</entry>
+                  <entry>Yes</entry>
+                  <entry>No</entry>
+                  <entry>No</entry>
+                  <entry>No</entry>
+               </row>
+               <row>
+                  <entry>Joinpoint info</entry>
+                  <entry>No</entry>
+                  <entry>Yes</entry>
+                  <entry>No</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+               </row>
+               <row>
+                  <entry><literal>@Target</literal></entry>
+                  <entry>Joinpoint target</entry>
+                  <entry>Joinpoint target type</entry>
+                  <entry>No</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+               </row>
+               <row>
+                  <entry><literal>@Caller</literal></entry>
+                  <entry>Joinpoint caller</entry>
+                  <entry>JoinPoint caller type (only for call joinpoints)</entry>
+                  <entry>No</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+               </row>
+               <row>
+                  <entry><literal>@Thrown</literal></entry>
+                  <entry>Joinpoint thrown exception</entry>
+                  <entry><literal>Throwable</literal></entry>
+                  <entry align="left">Yes:
+                     <para>- for after-throwing advices</para>
+                     <para>- for finally advices only if <literal>@Return</literal> is present</para>
+                     <para>No: otherwise</para>
+                  </entry>
+                  <entry>No</entry>
+                  <entry>No</entry>
+                  <entry>No</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+               </row>
+               <row>
+                  <entry><literal>@Return</literal></entry>
+                  <entry>Joinpoint return value</entry>
+                  <entry>JoinPoint return type</entry>
+                  <entry>No</entry>
+                  <entry>No</entry>
+                  <entry>No</entry>
+                  <entry>Yes</entry>
+                  <entry>No</entry>
+                  <entry>Yes</entry>
+               </row>
+               <row>
+                  <entry><literal>@Arg</literal></entry>
+                  <entry>One of the joinpoint arguments</entry>
+                  <entry>JoinPoint argument type</entry>
+                  <entry>No</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+               </row>
+               <row>
+                  <entry><literal>@Args</literal></entry>
+                  <entry>All joinpoint arguments</entry>
+                  <entry><literal>Object[]</literal></entry>
+                  <entry>No</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+                  <entry>Yes</entry>
+               </row>
+            </tbody>
+         </tgroup>
+         The first column shows the annotation to be used for each parameter type. All annotations are
+         from the <literal>org.jboss.aop.advice.annotation</literal> package. The column <emphasis>Semantics</emphasis>
+         shows what value each annotated parameter represents. The third column shows from which type the parameter
+         type must be assignable (notice that <literal>Throwable</literal> and <literal>Object[]</literal> belong to
+         <literal>java.lang</literal> package). The Mandatory column indicates whether that value must be present in
+         order for the advice to be considered valid. Finally, the Advice Type column shows for which advice types that
+         parameter is allowed.
+      </table>
+      <para>
+         Due to the fact that most of these parameters represent context values, their availability depends on the joinpoint
+         type. If an advice receives as a parameter a context value that is not available during a joinpoint execution, the
+         parameter value will be null. The exception to this rule is @Return. If an advice has this parameter, it will not
+         intercept joinpoints that don’t have a return value.
+      </para>
+      <para>
+         The only exception to this rule is <literal>@Args</literal> on field read joinpoints. Such an advice will be called
+         with an empty arguments array, in that case.
+      </para>
+      
+      <sect2 id="adv-thrown">
+         <title>@Thrown annotated parameter</title>
+         <para>
+            As shown in <xref linkend="adv-annotparamtable"/>, the presence of a <literal>@Thrown</literal> annotated parameter
+            can be mandatory depending on the advice type and its parameters.
+         </para>
+         <para>
+            This annotation is available only for after-throwing and finally advices. For after-throwing advices this parameter
+            is always mandatory:
+         </para>
+         <programlisting><![CDATA[public class Aspect
+{
+   public void throwing1(@Thrown Throwable thrownException)
+   {
+      ...
+   }
+
+   public void throwing2()
+   {
+      ...
+   }
+}
+
+
+<aop>
+   <aspect class="Aspect"/>
+   <bind pointcut="...">
+      <throwing aspect="Aspect" name="throwing1"/>
+      <throwing aspect="Aspect" name="throwing2"/>
+   </bind>
+</aop>]]></programlisting>
+         <para>
+            The advice <literal>throwing1</literal> follows this rule; advice <literal>throwing2</literal>,
+            on the other hand, is invalid, because it does not contain the mandatory <literal>@Thrown</literal>
+            annotated parameter.
+         </para>
+         <para>
+            For finally advices, the <literal>@Thrown</literal> annotation is compulsory only if a
+            <literal>@Return</literal> annotated parameter is present. This way, a finally advice can identify
+            whether the return value is valid or not. If the <literal>@Thrown</literal> parameter is
+            <literal>null</literal>, it means that the joinpoint returned normally and that the value contained in
+            the <literal>@Return</literal> annotated-parameter is valid. Otherwise, the value contained in
+            <literal>@Return</literal> annotated parameter must be ignored (it will be <literal>null</literal> if
+            the return type is not primitive, <literal>0</literal> if it is a primitive number or <literal>false</literal>
+            if it is boolean). If the finally advice does not receive the joinpoint return value, the use of the
+            <literal>@Thrown</literal> annotated parameter is optional and, as expected, its value will be
+            <literal>null</literal> if the joinpoint being intercepted did not throw an exception. Take a look at the
+            next example:
+         </para>
+         <programlisting><![CDATA[public class Aspect
+{
+   public void finally1(@Thrown Throwable thrownException)
+   {
+      ...
+   }
+
+   public void finally2()
+   {
+      ...
+   }
+
+   public void finally3(@Return int returnedValue, @Thrown Throwable thrownException)
+   {
+      if (thrownException == null)
+
+      {
+
+         //We returned normally, the @Return parameter is valid
+
+         int i = returnedValue;
+
+      }
+
+      else
+
+      {
+
+         //An exception happened while invoking the target joinpoint
+
+         //The return value is invalid
+
+      }
+
+    }
+
+   public void finally4(@Return int returnedValue)
+   {
+      ...
+   }
+
+}
+
+
+<aop>
+   <aspect class="Aspect"/>
+   <bind pointcut="execution(public int *->*(..))">
+      <finally aspect="Aspect" name="finally1"/>
+      <finally aspect="Aspect" name="finally2"/>
+
+      <finally aspect="Aspect" name="finally3"/>
+
+      <finally aspect="Aspect" name="finally4"/>
+
+   </bind>
+</aop>]]></programlisting>
+         <para>
+            This example binds four finally advices to the execution of all public methods that return an int value.
+         </para>
+         <para>
+            The presence of <literal>@Thrown</literal> is not mandatory in advices <literal>finally1()</literal>
+            and <literal>finally2()</literal>, because they do not have a <literal>@Return</literal> annotated parameter.
+            Hence, both advices are valid. Besides, <literal>finally1()</literal> will receive a non-null exception only
+            when the joinpoint being intercepted throws an exception.
+         </para>
+         <para>
+            For advice method <literal>finally3()</literal> the presence of a <literal>@Thrown</literal> annotated parameter
+            is mandatory because this advice also has a <literal>@Return</literal> annotated parameter. If an exception
+            happens when invoking the target joinpoint, this advice will receive a non-null <literal>@Thrown</literal> parameter,
+            meaning that the <literal>@Return</literal> annotated parameter is invalid. If the joinpoint completes normally,
+            the <literal>@Thrown</literal> annotated parameter will be <literal>null</literal> and the <literal>@Return</literal>
+            annotated parameter will contain the return value of the target joinpoint.
+         </para>
+         <para>
+            The <literal>finally4()</literal> advice is invalid, it contains a <literal>@Return</literal> parameter, but has no
+            <literal>@Thrown</literal> annotated parameter. Finally advices require a <literal>@Thrown</literal> parameter if a
+            <literal>@Return</literal> annotated parameter is present.
+         </para>
+      </sect2>
+      <sect2 id="adv-joinpointargs" revision="1">
+         <title>JoinPoint Arguments</title>
+         <para>
+            As we saw, an advice can receive the joinpoint arguments as annotated parameters. This can be achieved with the use of
+            two different annotations: <literal>@Arg</literal> and <literal>@Args</literal>.
+         </para>
+         <para>
+            There is a great difference between these two approaches, though. With <literal>@Arg</literal>, each parameter is equivalent
+            to a single joinpoint parameter. With <literal>@Args</literal>, one single parameter, of type <literal>Object[]</literal>,
+            receives an array containing all joinpoint arguments. This last possibility is more generic than the first one, since it can be
+            used independently of the joinpoint argument types. Plus, it allows changes to the argument values. Any changes performed on
+            the values of this array will be perpetuated to the joinpoint execution. However, the use of <literal>@Args</literal> parameters
+            on a join point interception means the arguments array needs creation. The same happens with the use of
+            <literal>getArguments()</literal> and <literal>setArguments()</literal> methods on <literal>Invocation</literal> classes. So the
+            use of <literal>@Arg</literal> annotated parameters is more lightweight, and should be used whenever there is no need to changing
+            the joinpoint arguments.
+         </para>
+         <para>
+            When using <literal>@Arg</literal> annotated parameters, the types of these parameters depend on the joinpoint being intercepted.
+            Not all the target joinpoint arguments need to be included as parameters to the advice method. An advice can receive only the
+            argument values that are relevant to its execution.
+         </para>
+         <para>
+            Given all the possibilities in the usage of <literal>@Arg</literal>, JBoss AOP will match the advice parameters with the
+            joinpoint ones, to infer to which joinpoint argument each advice parameter refers to. This matching process consists of
+            the following steps:
+         </para>
+         <itemizedlist>
+            <listitem><para>
+               Each advice parameter will be matched to the first unmatched joinpoint argument that has the same type. This is done
+               in the order that the advice parameters appear in the advice method.
+            </para></listitem>
+            <listitem><para>
+               If any advice parameter is left unmatched, we proceed to an additional step. Each advice parameter will be matched to
+               the first unmatched joinpoint argument that is assignable to it. This is done in the order that the advice parameters
+               appear in the advice method declaration.
+            </para></listitem>
+         </itemizedlist>
+         <para>
+            To illustrate this mechanism, consider the following scenario:
+         </para>
+         <programlisting><![CDATA[public class POJO
+{
+    void method(Collection arg0,  List arg1, int arg2, String arg3){}
+}
+
+
+<aop>
+   <aspect class="MyAspect"/>
+   <bind pointcut="execution(* POJO->method(..))">
+      <before aspect="MyAspect" name="advice"/>
+   </bind>
+</aop>]]></programlisting>
+         <para>
+            The example above shows a xml-declared binding. We will use examples with those to illustrate
+            signature concepts from now on. Detailed syntax of xml bindings is shown in <xref linkend="xml"/>.
+         </para>
+         <para>
+            Class <literal>POJO</literal> is a plain java old object that contains only one method.
+            When calling this method, we want to trigger <literal>MyAspet.advice()</literal> before this
+            method is called. <literal>POJO.method()</literal> receives four distinct arguments, all of them
+            can be available to an advice by using <literal>@Arg</literal> annotated parameters. If
+            <literal>MyAspect.advice()</literal> has the following signature:
+         </para>
+         <programlisting><![CDATA[public class MyAspect
+{
+   public void advice(@Arg Collection param0, @Arg List param1, @Arg int param2, @Arg String param3)
+   {
+      ...
+   }
+}]]></programlisting>
+         <para>
+            <literal>MyAspect.advice()</literal> parameters will be trivially matched to <literal>POJO.method()</literal> arguments
+            as follows:
+         </para>
+         <programlisting>
+param0 &larr; arg0
+param1 &larr; arg1
+param2 &larr; arg2
+param3 &larr; arg3
+         </programlisting>
+         <para>
+            The matching outcome will be the same if <literal>MyAspect.advice()</literal> signature changes slightly in the following
+            manner, since <literal>Collection</literal> is assignable from <literal>List</literal> for <literal>param2</literal>:
+         </para>
+         <programlisting><![CDATA[public class MyAspect
+{
+   public void advice (@Arg Collection param0, @Arg Collection param1, @Arg int param2, @Arg String param3)
+   {
+      ...
+   }
+}]]></programlisting>
+         <para>
+            If <literal>MyAspect.advice()</literal> receives only one parameter, of type <literal>java.lang.Object</literal>:
+         </para>
+         <programlisting><![CDATA[public class MyAspect
+{
+   public void advice(@Arg Object param0)
+   {
+      ...
+   }
+}]]></programlisting>
+         <para>
+            The parameter matching outcome will be:
+         </para>
+         <programlisting>
+param0 &larr; arg0
+         </programlisting>
+         <para>
+            Since there is no joinpoint argument of type <literal>Object</literal>, we proceed to the additional
+            matching step in this case. Because <literal>arg0</literal> is the first unmatched argument that is assignable
+            to <literal>Object</literal>, we assign this argument to <literal>param0</literal>.
+         </para>
+         <para>
+            Notice that JBoss AOP will match all parameters correctly if we invert the order of parameters:
+         </para>
+         <programlisting><![CDATA[public class MyAspect
+{
+   public void advice(@Arg int param2, @Arg Collection param0, @Arg String param3, @Arg List param1)
+   {
+      ...
+   }
+}]]></programlisting>
+         <para>
+            If one writes an advice whose unique parameter is a <literal>Collection</literal>, and we want to refer
+            to the second joinpoint argument:
+         </para>
+         <programlisting><![CDATA[public class MyAspect
+{
+   public void advice (@Arg Collection param1)
+   {
+      ...
+   }
+}]]></programlisting>
+         <para>
+            It will not work as desired. JBoss AOP will assign <literal>arg0</literal> to <literal>param1</literal>:
+         </para>
+         <programlisting>
+param1 &larr; arg0
+         </programlisting>
+         <para>
+            In cases like this, it is possible to enforce the correct matching of joinpoint arguments and
+            advice parameters. The annotation <literal>@Arg</literal> has an attribute, index, whose purpose
+            is to define the index of the argument to which that parameter refers.
+         </para>
+         <para>
+            So, in this case, the <literal>MyAspect.advice()</literal> parameter list below:
+         </para>
+         <programlisting><![CDATA[public class MyAspect
+{
+   public void advice (@Arg(index=1) Collection param1)
+   {
+      ...
+   }
+}]]></programlisting>
+         <para>
+            Will have the desired matching, which is:
+         </para>
+         <programlisting>
+param1 &larr; arg1
+         </programlisting>
+         <para>
+            In the example just shown in this section, <literal>MyAspect.advice()</literal> was a before advice,
+            but the same rules are used for all advices using <literal>@Arg</literal> annotated parameters.
+         </para>
+      </sect2>
+   </sect1>
+   
+   <sect1 id="adv-overloaded" revision="1">
+      <title>Overloaded Advices</title>
+      <para>
+         Method names can be overloaded for interception in different joinpoint scenarios. For instance, let's
+         say you wanted to have a different trace advice for each invocation type. You can specify the same method
+         name <literal>trace</literal> and just overload it with the concrete invocation type.
+      </para>
+      <programlisting><![CDATA[public class AroundAspect
+{
+   public Object trace(MethodInvocation invocation) throws Throwabl
+   {
+      try
+      {
+         System.out.println("Entering method: " + invocation.getMethod()");
+         return invocation.invokeNext(); // proceed to next advice or actual call
+      }
+      finally
+      {
+         System.out.println("Leaving method: " + invocation.getMethod()");
+      }
+   }
+   
+   public Object trace(ConstructorInvocation invocation) throws Throwable
+   {
+      try
+      {
+         System.out.println("Entering constructor: " + invocation.getConstructor()");
+         return invocation.invokeNext(); // proceed to next advice or actual call
+      }
+      finally
+      {
+         System.out.println("Leaving constructor: " + invocation.getConstructor()");
+      }
+   }
+}]]></programlisting>
+      <para>
+         As you can see, the selection of the advice method is very dynamic. JBoss AOP will select
+         the most appropriate advice method for each joinpoint interception. For the following setup:
+      </para>
+      <programlisting><![CDATA[class POJO
+{
+   public POJO(){}
+   public someMethod(){}
+}
+
+<aop>
+   <aspect class="AroundAspect"/>
+   <bind pointcut="all(POJO)">
+      <advice aspect="AroundAspect" name="trace"/>
+   </bind>
+</aop>]]></programlisting>
+      <para>
+         When calling POJO’s constructor:
+      </para>
+      <programlisting>pojo.someMethod();</programlisting>
+      <para>
+         JBoss AOP will call the <literal>trace()</literal> method taking a
+         <literal>ConstructorInvocation</literal>, and when calling:
+      </para>
+      <programlisting>pojo.someMethod();</programlisting>
+      <para>
+         JBoss AOP will call the <literal>trace()</literal> method taking a <literal>MethodInvocation</literal>.
+      </para>
+      <para>
+         This examples shows that JBoss AOP will select the most appropriate advice method for each
+         joinpoint interception. The capability of selecting overloaded advices is available for all
+         types of advices. And its impact in the system performance is minimal since this selection
+         is done once.
+      </para>
+      <para>
+         In this section, we will describe every rule JBoss AOP uses to select an advice method when this one
+         is overloaded.
+      </para>
+      
+      <sect2 id="adv-overlannotparam" revision="1">
+         <title>Annotated-parameter Signature</title>
+         <para>
+            Let's start with the selection of advices when all of them use the annotated-parameter signature.
+            As we will see later, very similar rules are used for selecting advices with the default signature.
+         </para>
+         <para>
+            The process of selection of advices that follow the annotated-parameter signature depends on the
+            priority of each kind of parameter:
+         </para>
+         <anchor id="annotparampriority"/>
+         <informalequation id="equation"><literal>@JoinPoint</literal> &gt; <literal>@Target</literal> &gt;
+            <literal>@Caller</literal> &gt; <literal>@Throwable</literal> = <literal>@Return</literal> &gt;
+            <literal>@Arg</literal> &gt; <literal>@Args</literal></informalequation>
+         <para>
+            This priority is used in two different criteria:
+         </para>
+         <itemizedlist>
+            <listitem><para>
+               presence of the annotated parameter
+            </para></listitem>
+            <listitem><para>
+               assignability degree of the annotation parameter
+            </para></listitem>
+         </itemizedlist>
+
+         <sect3 id="adv-overlannotparampresence" revision="1">
+            <title>Presence priority</title>
+            <para>
+               This rule is quite simple, it means that an advice that receives only a joinpoint bean
+               <literal>(@JoinPoint)</literal> as its parameter will have a higher priority than another advice
+               that receives all other annotated parameters available (notice we are following the
+               <link linkend="annotparampriority">annotation priority order</link> just described).
+            </para>
+            <para>
+               In other words, the first <literal>OneAspect.after()</literal> advice method will be chosen when
+               calling <literal>POJO.someMethod()</literal> in this example:
+            </para>
+            <programlisting><![CDATA[public class POJO
+{
+   String someMethod(String s){}
+}
+
+<aop>
+   <aspect class="OneAspect"/>
+   <bind pointcut="execution(* POJO->someMethod(..))">
+      <after aspect="OneAspect" name="after"/>
+   </bind>
+</aop>
+
+
+public class OneAspect
+{
+   public void after(@JoinPoint MethodJoinPoint mjp){} //1
+   public String after(@Target POJO pojo, @Return String ret, @Arg String arg0){} //2
+}]]></programlisting>
+            <para>
+               Again in the following example, the first <literal>OneAspect.after()</literal> advice method
+               will be chosen when calling <literal>POJO.someMethod()</literal>. The first <literal>after()</literal>
+               advice method’s highest priority parameter is <literal>@Target</literal>, the second advice parameter’s
+               highest priority parameter is <literal>@Return</literal>, and <literal>@Target</literal> has a higher
+               priority than <literal>@Return</literal>:
+            </para>
+            <programlisting><![CDATA[public class POJO
+{
+   String someMethod(String s){}
+}
+
+<aop>
+   <aspect class="OneAspect"/>
+   <bind pointcut="execution(* POJO->someMethod(..))">
+      <after aspect="OneAspect" name="after"/>
+   </bind>
+</aop>
+
+
+public class OneAspect
+{
+   public void after(@Target POJO pojo){} //1
+   public String after(@Return String ret, @Arg String arg0){} //2
+}]]></programlisting>
+            <para>
+               In cases where the highest priority annotated parameter of two advice methods is
+               the same, we move on to the next highest priority annotated parameter of both advices.
+               In the following scenario, both <literal>OneAspect.after()</literal> methods have the
+               <literal>@JoinPoint</literal> parameter as the highest priority parameter. The first one
+               has a <literal>@Target</literal> as its second-highest priority parameter while the second
+               one has <literal>@Return</literal> as its second-highest priority parameter. Since
+               <literal>@Target</literal> has a higher priority than <literal>@Return</literal>, the first
+               <literal>OneAspect.after()</literal> is chosen for <literal>POJO.someMethod()</literal>.
+            </para>
+            <programlisting><![CDATA[public class POJO
+{
+   String someMethod(String s){}
+}
+
+<aop>
+   <aspect class="OneAspect"/>
+   <bind pointcut="execution(* POJO->someMethod(..))">
+      <after aspect="OneAspect" name="after"/>
+   </bind>
+</aop>
+
+
+public class OneAspect
+{
+   public void after(@JoinPoint MethodJoinPoint mjp, @Target POJO pojo){} //1
+   public String after(@JoinPoint MethodJoinPoint mjp, @Return String ret){} //2
+}]]></programlisting>
+            <para>
+               In the next example, the first <literal>OneAspect.before()</literal> advice is chosen
+               over the second one when calling <literal>POJO.someMethod()</literal>. The reason is that,
+               all else being equal, the first one matches more parameters:.
+            </para>
+            <programlisting><![CDATA[public class POJO
+{
+   String someMethod(String s, int i){}
+}
+
+<aop>
+   <aspect class="OneAspect"/>
+   <bind pointcut="execution(* POJO->someMethod(..))">
+      <before aspect="OneAspect" name="before"/>
+   </bind>
+</aop>
+
+
+public class OneAspect
+{
+   public void before(@Arg String s, @Arg int i){} //1
+   public String before(@Arg String s){} //2
+}]]></programlisting>
+            <para>
+               If the priority of annotated parameters using the presence criterion is the same
+               on more than one advice, the next criterion, the assignability degree, is used.
+            </para>
+         </sect3>
+         
+         <sect3 id="adv-overlannotparamdegree" revision="1">
+            <title>Assignability Degree</title>
+            <para>
+               The assignability degree rule will select the advice with the lowest assignability
+               degree on the highest priority parameter. The assignability degree is simply the distance
+               in the class hierarchy between the parameter type, and the type it must be assignable from.
+            </para>
+            <para>
+               As an example, let us look at the following class hierarchy:
+            </para>
+            <programlisting><![CDATA[public interface POJOInterface{}
+
+public class POJOSuperClass extends java.lang.Object{}
+
+public class POJO extends POJOSuperClass implements POJOInterface
+{
+   void method(){}
+}]]></programlisting>
+            <para>
+               And this advice binding:
+            </para>
+            <programlisting><![CDATA[<aop>
+   <aspect class="OneAspect"/>
+   <bind pointcut="execution(* POJO->method(..))">
+      <before aspect="OneAspect" name="before"/>
+   </bind>
+</aop>
+
+public class OneAspect
+{
+   public void before(@Target POJO target){} //1
+   public void before(@Target POJOInterface target){} //2
+   public void before(@Target POJOSuperClass target){} //3
+   public void before(@Target Object target){} //4
+}]]></programlisting>
+            <para>
+               With <literal>POJO</literal> as the target of a joinpoint, the parameter list fo
+               the first <literal>OneAspect.before()</literal> advice method has an assignability degree
+               0 on <literal>@Target</literal>.
+            </para>
+            <para>
+               The parameter lists for the second and third <literal>OneAspect.before()</literal> advice
+               methods both have an assignability degree of 1 for <literal>@Target</literal>, since it takes
+               one step through the hierarchy to reach the desired type, <literal>POJO</literal>.
+            </para>
+            <para>
+               Finally, the parameter list for the fourth <literal>OneAspect.before()</literal> advice method
+               has an assignability degree of 2 on <literal>@Target</literal>.
+            </para>
+            <para>
+               Hence, JBoss AOP will select the first advice in the example above, since it has the lowest
+               asignability degree on <literal>@Target</literal>.
+            </para>
+            <para>
+               The assignability degree rule is, similarly to the presence rule, applied on the highest priority
+               annotated parameter, which is <literal>@JoinPoint</literal>. In case there is a match using this
+               criteria (i.e., either both advices lack a <literal>@JoinPoint</literal> annotated parameter, or
+               they both have the same type on the <literal>@JoinPoint</literal> parameter), we move to the next
+               highest priority annotated parameter, which is <literal>@Target</literal>. The same rule is applied
+               until we can find an advice with the highest priority.
+            </para>
+            <para>
+               Notice that the assignability degree of an advice on <literal>@Arg</literal> is the sum of the
+               assignability degree on all <literal>@Arg</literal> parameters. In the following scenario:
+            </para>
+            <programlisting><![CDATA[public class POJO
+{
+   public void method(POJO argument0, String argument1, int argument2)
+}
+
+
+<aop>
+   <aspect class="OneAspect"/>
+   <bind pointcut="execution(* POJO->method(..))">
+      <before aspect="OneAspect" name="before"/>
+   </bind>
+</aop>
+
+
+public class OneAspect
+{
+   public void before(@Arg POJO p, @Arg String s, @Arg int i){} //1
+   public void before(@Arg POJOSuperClass p, @Arg String s, @Arg int i){} //2
+   public void before(@Arg POJO p, @Arg Object s, @Arg int i){} //3
+   public void before(@Arg Object p, @Arg Object s, @Arg int i){} //4
+}]]></programlisting>
+            <para>
+               The first advice has assignability degree of 0 (for <literal>POJO</literal>) + 0
+               (for <literal>String</literal>) + 0 (for <literal>int</literal>). Notice how primitive
+               types don’t have superclasses, and, hence, have always a 0 value of assinability degree.
+            </para>
+            <para>
+               The second advice has a larger assignability degree, since <literal>POJOSuperClass</literal> is
+               the superclass of <literal>POJO</literal>, <literal>@Arg POJOSuperClass p</literal> has
+               assignability degree of 1. Hence, this advice assignability degree on <literal>@Arg</literal> is:
+               1 + 0 + 0 = 1.
+            </para>
+            <para>
+               The third one also has an assignability degree of 1, since <literal>Object</literal> is the superclass
+               of <literal>String</literal>.
+            </para>
+            <para>
+               Finally, the last advice has assignability degree of 3 on <literal>@Arg</literal>. The first parameter,
+               <literal>@Arg Object p</literal>, refers to <literal>POJO</literal> and has assignability degree of 2.
+               The second one, assignability degree of 1, since it refers to <literal>String</literal>. And, since
+               <literal>@Arg int</literal> refers to the <literal>int</literal> argument of <literal>POJO.method()</literal>,
+               we have 2 + 1 + 0 = 3.
+            </para>
+            <para>
+               In the above example, JBoss AOP would select the first advice to intercept <literal>POJO.method()</literal> execution.
+            </para>
+         </sect3>
+         
+         <sect3 id="adv-overlannotparamreturn" revision="1">
+            <para>
+               For annotated parameters typed around advices, there is a third rule, which is the return type. This rule
+               also applies to after and finally advices. If the joinpoint has a non-void return type, the assignability
+               degree of the advice return type is analyzed, pretty much in the same way we do with annotated parameters.
+               So, for overloaded around advices, these three criteria are applied:
+            </para>
+            <itemizedlist>
+               <listitem><para>presence of annotated parameter</para></listitem>
+               <listitem><para>assignability degree of annotated parameter</para></listitem>
+               <listitem><para>assignability degree of return type</para></listitem>
+            </itemizedlist>
+            <para>
+               If two advices have the same ranking on the first two criteria, we check their return types
+               and pick the advice with the lowest assignability degree:
+            </para>
+            <programlisting><![CDATA[public class POJO
+{
+   public Collection method(int arg0, boolean arg1, short arg2) {…}
+}
+
+
+<aop>
+   <aspect class="OneAspect"/>
+   <bind pointcut="execution(* POJO->method(..))">
+      <advice aspect="OneAspect" name="around"/>
+   </bind>
+</aop>
+
+
+public class OneAspect
+{
+   public Collection around(@JoinPoint Invocation inv, @Arg int param0) throws Throwable
+   {...} //1
+
+   public List around(@JoinPoint Invocation inv, @Arg boolean param1) throws Throwable
+   {...} //2
+
+}]]></programlisting>
+            <para>
+               In OneAspect above, we have two around advices. Both of them are equal when compared
+               using the presence criteria. When comparing them using the assignability of annotated
+               parameter, both of them have the same degrees on <literal>@JoinPoint</literal> and on
+               <literal>@Arg</literal> parameters. In this case, we will compare their return type
+               assignability degree.
+            </para>
+            <para>
+               Notice that, when it comes to return types, it is the return type that must be assignable
+               to the joinpoint type, and not the contrary. This is due to the fact that JBoss AOP will
+               assign the advice return value to the joinpoint return result in the base system. Hence,
+               in the example above, the caller of <literal>POJO.method()</literal> expects a
+               <literal>Collection</literal> return value. So, it is ok to receive either a
+               <literal>Collection</literal> from the first advice, as the more specific type
+               <literal>List</literal> from the second advice. But JBoss AOP will complain if your advice
+               returns an <literal>Object</literal> (<literal>Object</literal> return type is allowed only
+               in the default signature; here we are discussing the annotated-parameter signature), because
+               we can’t give an <literal>Object</literal> to the base system when it is expecting a
+               <literal>Collection</literal>.
+            </para>
+            <para>
+               So, in the above example, the first advice has an assignability degree of 0 on the return type,
+               becase it takes 0 steps in the hierarchy to go from Collection to <literal>Collection</literal>.
+               In the second advice, this value is 1, because it takes 1 step to go from <literal>List</literal>
+               to <literal>Collection</literal>. JBoss AOP would select the first advice.
+            </para>
+            <para>
+               On overloaded after and finally advices, we also have a return type rule. But, since the return type
+               is optional (these advices can return a value, but is not enforced to it), we have a total of four rules
+               for this advice:
+            </para>
+            <itemizedlist>
+               <listitem><para>presence of annotated parameter</para></listitem>
+               <listitem><para>assignability degree of annotated parameter</para></listitem>
+               <listitem><para>presence of non-void return type</para></listitem>
+               <listitem><para>assignability degree of return value type</para></listitem>
+            </itemizedlist>
+            <para>
+               The third rule, presence of non-void return type, states that JBoss AOP will give preference to an
+               after advice that returns a value:
+            </para>
+            <programlisting><![CDATA[<aop>
+   <aspect class="OneAspect"/>
+   <bind pointcut="execution(* POJO->method(..))">
+      <after aspect="OneAspect" name="around"/>
+   </bind>
+</aop>
+
+
+public class OneAspect
+{
+   public Collection after(@Arg int param0) {...} //1
+   public List after(@Arg boolean param1) { ... } //2
+   public void after(@Arg short param2) { ... }   //3
+}]]></programlisting>
+            <para>
+               Considering the same <literal>POJO</literal> class defined previously (with
+               <literal>public void method(int, boolean, short)</literal>), all three overloade
+               versions of <literal>OneAspect.after()</literal> advice wil be considered equivalent
+               in the first two criteria. Hence, we move to the third rule, that states that
+               JBoss AOP prefers an after advice that returns a value over another one that is
+               <literal>void</literal>. So, in the example above, the third advice is ruled out,
+               and JBoss AOP still has two advices to select. Moving to the next rule, he assignability
+               degree of the return type, we have the same result as the
+               <literal>OneAspect.around()</literal> advice: the first one has a 0 degree, and the second
+               one, a 1 degree value. As a conclusion of these degrees, JBoss AOP will select the first
+               advice, with the lowest return assignability degree.
+            </para>
+         </sect3>
+         
+         <sect3 id="adv-overlannotparammatch" revision="1">
+            <title>A Match</title>
+            <para>
+               Notice that, iIf JBoss AOP cannot find an advice with highest priority, it just selects one
+               of the methods arbitrarily. This would be the case of the following advice method scenario:
+            </para>
+            <programlisting><![CDATA[public class POJO
+{
+   public void method(int arg0, long arg1) {…}
+}
+
+
+<aop>
+   <aspect class="OneAspect"/>
+   <bind pointcut="execution(* POJO->method(..))">
+      <before aspect="OneAspect" name="before"/>
+   </bind>
+</aop>
+
+
+public class OneAspect
+{
+   public void advice(@Arg int arg0) {}
+   public void advice(@Arg long arg1) {}
+}]]></programlisting>
+         </sect3>
+         
+         <sect3 id="adv-overlannotparamlowest" revision="1">
+            <title>Lowest Priority</title>
+            <para>
+               There are exceptions for the rules we’ve seen. Advices with one or more of the following
+               characteristics will be considered lowest priority, regardless of any other criteria:
+            </para>
+            <itemizedlist>
+               <listitem><para>an advice that receives <literal>@Target</literal> parameter to intercept a joinpoint with no target available</para></listitem>
+               <listitem><para>an advice that receives <literal>@Caller</literal> parameter to intercept a joinpoint with no caller available</para></listitem>
+               <listitem><para>an advice that receives <literal>@Arg</literal> parameter to intercept a field read joinpoint</para></listitem>
+            </itemizedlist>
+         </sect3>
+      </sect2>
+      
+      <sect2 id="adv-overldefaultsignature" revision="1">
+         <title>Default Signature</title>
+         <para>
+            For the default around advice signature (i.e., without annotated parameters), there is only one parameter
+            to analyze, the invocation. So, the priority rules are very simple:
+         </para>
+         <itemizedlist>
+            <listitem><para>presence of the invocation parameter</para></listitem>
+            <listitem><para>assignability degree of the invocation parameter.</para></listitem>
+         </itemizedlist>
+         <para>
+            Lets revisit the example given in the beginning of this section, in augmented version:
+         </para>
+         <programlisting><![CDATA[class POJO
+{
+   public int field;
+   public POJO(){}
+   public someMethod(){}
+}
+
+
+public class OneAspect
+{
+   public Object trace(MethodInvocation invocation) throws Throwable {...} //1
+   public Object trace(ConstructorInvocation invocation) throws Throwable {...} //2
+   public Object trace(Invocation invocation) throws Throwable {...} //3
+   public Object trace() throws Throwable {...} //4
+}
+
+
+<aop>
+   <aspect class="OneAspect"/>
+   <bind pointcut="all(POJO)">
+      <advice aspect="OneAspect" name="trace"/>
+   </bind>
+</aop>]]></programlisting>
+         <para>
+            The fourth advice above will never be called, considering the presence rule. It is the only
+            one that lacks the <literal>Invocation</literal> parameter, and would be called only if all
+            others were considered invalid in a scenario, which won’t happen in this example. By ruling
+            out this advice with the presence rule, all other advices are equivalent: the invocation parameter
+            is present in all of them. So, we need to move on to the assignability degree rule to select
+            one of them. However, the assignability degree needs to be calculated accordingly to the joinpoint
+            being intercepted. JBoss AOP needs to evaluate each joinpoint type to be intercepted to do the
+            correct selection for each case.
+         </para>
+         <para>
+            Consider the interception of the constructor of <literal>POJO</literal>. In that case, the first advice
+            is considered invalid, becase a <literal>MethodInvocation</literal> is not assignable from the invocation
+            type that JBoss AOP will provide, <literal>ConstrucorInvocation</literal>. We are now left with the second
+            and third advices. The second one has assignability degree of 0 on the invocation type. The third one,
+            assignability degree of 1 (it takes one step in the hierarchy to go fom <literal>ConstructorInvocation</literal>
+            to <literal>Invocation</literal>). So, in this case, JBoss AOP will select the second advice, because it
+            is the valid advice with the lower assignability degree on the invocation.
+         </para>
+         <para>
+            Similary, to intercept the execution of <literal>POJO.someMethod()</literal>, JBoss AOP will consider the second
+            advice invalid, because it is supposed to receive an invocation whose type is assignable from
+            <literal>MethodInvocation</literal>. Since the first advice has an assignability degree of 0 on the
+            invocation, and the third one, assignability degree of 1, JBoss AOP will select the first one.
+         </para>
+         <para>
+            Given that <literal>Invocation</literal> will always be the super class of the expected invocation type,
+            JBoss AOP will select this advice, whose assignability degree will always be 1, only when the other two
+            advices are invalid. That would be the case of a field read, where the invocation type is
+            <literal>FieldReadInvocation</literal>.
+         </para>
+      </sect2>
+      
+      <sect2 id="adv-overldiffsign" revision="1">
+         <title>Mixing Different Signatures</title>
+         <para>
+            Finally, when we mix default signature methods with annotated parameter ones, an advice in one of the forms:
+         </para>
+         <programlisting><![CDATA[public Object [advice name]([Invocation] invocation) throws Throwable
+
+public Object [advice name]([Invocation] invocation) throws Throwable
+
+public Object [advice name]() throws Throable]]></programlisting>
+         <para>
+            Has the highest priority over all annotated-parameter advices. If there is more than one with
+            the default signature, the criteria described in the previous section will be used to select one of them..
+         </para>
+         <para>
+            Notice that mixing different signatures is possible only with around advices, since only these ones
+            can follow the default signature.
+         </para>
+      </sect2>
+   </sect1>
+</chapter>

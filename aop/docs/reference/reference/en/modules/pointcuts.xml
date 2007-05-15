@@ -442,14 +442,14 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
       <programlisting>class(org.pkg.*) OR has(* *->@Tx(..)) AND !class($instanceof{org.foo.Bar})</programlisting>
    </sect1>
 
-   <sect1 id="joinpoints" revision="1">
+   <sect1 id="pointcuts-joinpoints" revision="1">
       <title>Joinpoints</title>
       <para>
          After getting acquainted with all pointcut constructs, let's see how this reflects on the API
          available to advices during their execution.
       </para>
       
-      <sect2 id="beans" revision="1">
+      <sect2 id="pointcuts-beans" revision="1">
          <title>Joinpoint Beans</title>
          <para>
             JBoss AOP provides JoinPoint Beans, so that an advice can access all information regarding a joinpoint during
@@ -477,10 +477,10 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
          </para>
          <para>
             In both groups there is a specific type for each joinpoint type. The type of bean corresponding to each joinpoint type can be seen
-            in <xref linkend="joinpointtypes"/>. All beans are in the package <literal>org.jboss.aop.joinpoint</literal>.
+            in <xref linkend="pointcuts-typetable"/>. All beans are in the package <literal>org.jboss.aop.joinpoint</literal>.
          </para>
       </sect2>
-      <sect2 id="contextvalues" revision="1">
+      <sect2 id="pointcuts-contextvalues" revision="1">
          <title>Context Values</title>
          <para>
             According to the type of the joinpoint, there are specific context values available.
@@ -510,9 +510,9 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
             </listitem>
          </itemizedlist>
          <para>
-            <xref linkend="joinpointtypes"/> shows what context values may be available depending on the joinpoint type.
+            <xref linkend="pointcuts-typetable"/> shows what context values may be available depending on the joinpoint type.
          </para>
-         <table frame="topbot" id="joinpointtypes">
+         <table frame="topbot" id="pointcuts-typetable">
             <title>
               Joinpoint Types Table
             </title>

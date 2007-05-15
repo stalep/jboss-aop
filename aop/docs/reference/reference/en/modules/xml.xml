@@ -117,7 +117,7 @@
 <!ATTLIST pluggable-pointcut name CDATA #REQUIRED>
 <!ATTLIST pluggable-pointcut class CDATA #REQUIRED>
 
-<!ELEMENT bind (interceptor|interceptor-ref|stack-ref|advice)+>
+<!ELEMENT bind (interceptor|interceptor-ref|stack-ref|advice|before|around|after|throwing|finally)+>
 <!ATTLIST bind name CDATA #IMPLIED>
 <!ATTLIST bind pointcut CDATA #REQUIRED>
 <!ATTLIST bind cflow CDATA #IMPLIED>
@@ -399,12 +399,17 @@
    <sect1 id="xml-bind" revision="1">
       <title>bind</title>
       <programlisting><![CDATA[<bind pointcut="execution(void Foo->bar())">
-     <interceptor-ref name="org.jboss.MyInterceptor/>
-     <advice name="trace" aspect="org.jboss.MyAspect"/>
+      <interceptor-ref name="org.jboss.MyInterceptor/>
+      <before name="beforeAdvice" aspect="org.jboss.MyAspect"/>
+      <around name="aroundAdvice" aspect="org.jboss.MyAspect"/>
+      <after name="afterAdvice" aspect="org.jboss.MyAspect"/>
+      <throwing name="throwingAdvice" aspect="org.jboss.MyAspect"/>
+      <finally name="finallyAdvice" aspect="org.jboss.MyAspect"/>
+      <advice name="trace" aspect="org.jboss.MyAspect"/>
 </bind>]]></programlisting>
       <para>
-         In the above example, the MyInterceptor interceptor and the trace method of the MyAspect class will be executed
-         when the Foo.bar method is invoked.
+         In the above example, the <literal>MyInterceptor</literal> interceptor and several advice methods
+         of the <literal>MyAspect</literal> class will be executed when the <literal>Foo.bar</literal> method is invoked.
       </para>
       <variablelist spacing="compact">
          <varlistentry>
@@ -429,14 +434,21 @@
             </listitem>
          </varlistentry>
          <varlistentry>
+            <term>before, around, after, throwing and finally</term>
+            <listitem>
+               <para>
+               All these tags take a
+                  <literal>name</literal> attribute that should map to an advice of the specified type within
+               the aspect class.  The <literal>aspect</literal> attribute should be the name of the aspect definition.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
             <term>advice</term>
             <listitem>
                <para>
-               The
-                  <literal>advice</literal> tag takes a
-                  <literal>name</literal> attribute that should map to a method within
-               the aspect class.  The
-                  <literal>aspect</literal> attribute should be the name of the aspect definition.
+                  The same as the previous, except for the fact that doesn't specify the type of the advice. This
+                  tag selects the default advice type, around, and is hence equivalent to the tag <literal>around</literal>.
                </para>
             </listitem>
          </varlistentry>

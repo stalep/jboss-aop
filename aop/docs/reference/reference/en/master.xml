@@ -5,6 +5,7 @@
 <!ENTITY terms                  SYSTEM "modules/terms.xml">
 <!ENTITY implementing           SYSTEM "modules/implementing.xml">
 <!ENTITY pointcuts              SYSTEM "modules/pointcuts.xml">
+<!ENTITY advices                SYSTEM "modules/advices.xml">
 <!ENTITY xml                    SYSTEM "modules/xml.xml">
 <!ENTITY annotated              SYSTEM "modules/annotated.xml">
 <!ENTITY dynamic                SYSTEM "modules/dynamic.xml">
@@ -89,6 +90,8 @@
 
    &pointcuts;
 
+   &advices;
+   
    &xml;
 
    &annotated;
