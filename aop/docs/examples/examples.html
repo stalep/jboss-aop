@@ -12,38 +12,81 @@ This directory contains sample programs to test drive JBossAOP. They should prob
 </p><p>
 The XML examples give a fuller coverage of the features of the AOP framework
 </p><p>
+<b>Starting up</b>
+</p><p>
+These examples are introductory and their goal is to start you up using JBoss AOP.
 <ul>
 <li> <a href="method-execution/methodexecution.html">Method execution</a></li>
 <li> <a href="field-execution/field.html">Field execution</a></li>
 <li> <a href="constructor-execution/constructor.html">Constructor execution</a></li>
 <li> <a href="all/all.html">The all syntax</a></li>
-<li> <a href="stacks/stacks.html">Stacks</a></li>
 <li> <a href="caller/caller.html">Caller pointcuts</a></li>
-<li> <a href="instanceof/instanceof.html">Instanceof</a></li>
-<li> <a href="implements/implements.html">Implements</a></li>
-<li> <a href="annotation/annotation.html">JDK 5 Annotations</a></li>
-<li> <a href="annotation14/annotation.html">JDK 5 Annotations with JDK 1.4</a></li>
-<li> <a href="metadata/metadata.html">JBoss AOP metadata</a></li>
-<li> <a href="cflow/cflow.html">Control flow</a></li>
-<li> <a href="dynamic_cflow/cflow.html">Dynamic control flow</a></li>
-<li> <a href="composition/composition.html">Compositional and named pointcuts</a></li>
+</ul>
+</p><p>
+<b>Aspects and Advices</b>
+</p><p>
+JBoss AOP provides five types of advices in total. We will start with the around ones,
+in the first part of this section, and them move to the other types.
+</p><p>
+<i>&nbsp;&nbsp;&nbsp;&nbsp;Around Advices and Interceptors (Simple)</i>
+<ul>
+<li> <a href="method-execution/methodexecution.html">Interceptors</a></li>
 <li> <a href="aspect/aspect.html">Aspects and around advices</a></li>
+</ul>
+<i>&nbsp;&nbsp;&nbsp;&nbsp;Typed Advices (Advanced)</i>
+<ul>
 <li> <a href="beforeafter/beforeafter.html">Before and after advices</a></li>
 <li> <a href="annotated-parameters/annotated-parameters.html">Annotated advice parameters</a></li>
 <li> <a href="return-types/return-types.html">Advice return types</a></li>
 <li> <a href="after-throwing/after-throwing.html">After-throwing advices</a></li>
 <li> <a href="finally/finally.html">Finally advices</a></li>
 <li> <a href="overloaded-advices/overloaded-advices.html">Overloaded advices</a></li>
+</ul>
+</p><p>
+<b>Other Pointcut Constructs</b>
+</p><p>
+In "Start Up" section, we have seen the main pointcut constructs. The following examples
+complete the list by showing all other features JBoss AOP provides in its pointcut language.
+<ul>
+<li> <a href="instanceof/instanceof.html">Instanceof</a></li>
+<li> <a href="implements/implements.html">Implements</a></li>
+<li> <a href="cflow/cflow.html">Control flow</a></li>
+<li> <a href="dynamic_cflow/cflow.html">Dynamic control flow</a></li>
+<li> <a href="composition/composition.html">Compositional and named pointcuts</a></li>
+<li> <a href="stacks/stacks.html">Stacks</a></li>
+<li> <a href="ioc_with_has/has.html">The has and hasfield operator</a></li>
+<li> <a href="typedef/typedef.html">Typedefs</a></li>
+</ul>
+</p><p>
+<b>Annotations and MetaData</b>
+</p><p>
+You can access metadata and annotations from advices. In the next few examples
+we will show you how to do this.
+<ul>
+<li> <a href="annotation/annotation.html">JDK 1.5 Annotations</a></li>
+<li> <a href="metadata/metadata.html">JBoss AOP metadata</a></li>
+<li> <a href="annotation14/annotation.html">JDK 1.5 Annotations with JDK 1.4</a></li>
+</ul>
+</p><p>
+<b>Advanced Features</b>
+</p><p>
+This sections covers the JBoss AOP advanced features, like introduction of interfaces,
+mixins and annotations, for example.
+<ul>
 <li> <a href="precedence/precedence.html">Interceptor precedence</a></li>
 <li> <a href="introductions/introductions.html">Introductions</a></li>
 <li> <a href="annotation-introductions/annotation.html">Annotation introductions</a></li>
 <li> <a href="dynamic-aop/dynamic.html">Dynamic AOP</a></li>
-<li> <a href="packaging/packaging.html">Packaging</a></li>
-<li> <a href="ioc_with_has/has.html">The has and hasfield operator</a></li>
-<li> <a href="typedef/typedef.html">Typedefs</a></li>
-<li> <a href="injboss/aopInJbossPackaging.html">Packaging for JBoss</a></li>
 <li> <a href="beanstyleconf/config.html">JavaBean-style config of aspects</a></li>
 <li> <a href="declare/declare.html">Declare error/warning</a></li>
+</ul>
+</p><p>
+<b>Packaging and Running</b>
+</p><p>
+These examples will start you up in running JBoss AOP standalone and with JBoss AS.
+<ul>
+<li> <a href="packaging/packaging.html">Standalone with META-INF/jboss-aop.xml</a></li>
+<li> <a href="injboss/aopInJbossPackaging.html">Packaging for JBoss</a></li>
 </ul>
 </p><p>
 <h3> Annotation examples</h3>
