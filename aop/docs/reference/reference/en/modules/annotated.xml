@@ -7,17 +7,17 @@
    <para>
          JDK 5.0 has introduced a new concept called annotations. Annotations can be
          used as an alternative to XML for configuring classes for AOP. For backward compatibility
-         with JDK 1.4.2 JBoss AOP uses an annotation compiler allowing you to create the same annotations
-         in javadoc style comments.
+         with JDK 1.4.2 <!-- JBoss AOP uses an annotation compiler allowing you to create the same annotations
+         in javadoc style comments. -->, refer to XXX.
    </para>
-   <para>
+<!--   <para>
          The JDK 5 form has been used for the declarations of each annotation type shown below. For
          clarity both types of annotations are shown in the usage examples contained in this chapter.
          A point worth mentioning is that in JDK 5 annotations are part of language and can thus
          be imported, so that just the classname can be used. In JDK 1.4.2 the annotations are not
          part of "Java" so fully qualified classnames are needed. To keep things short and sweet
          the listings only import classes that are new for each listing.
-   </para>
+   </para> -->
 
    <!-- *********************************** Aspect ******************************** -->
 
@@ -59,10 +59,10 @@
       PER_VM, PER_CLASS, PER_INSTANCE, PER_JOINPOINT
    }
          </programlisting>
-         See the "XML Bindings" chapter for a description of the various scopes.
+         See <xref linkend="xml-aspect2"/> for a description of the various scopes.
       </para>
       <para>
-         In JDK 5 we use the @Aspect annotation as follows:
+         We use the @Aspect annotation as follows:
          <programlisting>
    package com.mypackage;
 
@@ -77,24 +77,9 @@
    }
 
          </programlisting>
-         And in JDK 1.4.2:
-         <programlisting>
-   package com.mypackage;
-
-   /**
-    * @@Aspect (scope = Scope.PER_VM)
-    */
-   public class MyAspect
-   {
-      public Object myAdvice(Invocation invocation)
-      {
-         return invocation.invokeNext();
-      }
-   }
-         </programlisting>
       </para>
       <para>
-         The name of the class (in this case com.mypackage.MyAspect) gets used as the
+         The name of the class (in this case <literal>com.mypackage.MyAspect</literal>) gets used as the
          internal name of the aspect. The equivalent using XML configuration would be:
          <programlisting>
             &lt;aop&gt;
@@ -137,7 +122,7 @@
       <sect2 id="annotated-interceptor-interceptor" revision="1">
          <title>Interceptor Example</title>
          <para>
-            In JDK 5 we use the
+            We use the
             <literal>@InterceptorDef</literal> annotation to mark
             an Interceptor as follows:
             <programlisting>
@@ -158,7 +143,7 @@
    }
 
             </programlisting>
-         And in JDK 1.4.2:
+<!--         And in JDK 1.4.2:
             <programlisting>
    package com.mypackage;
 
@@ -173,10 +158,10 @@
          return invocation.invokeNext();
       }
    }
-            </programlisting>
+            </programlisting> -->
          </para>
          <para>
-         The name of the class (in this case com.mypackage.MyInterceptor) gets used as the
+         The name of the class (in this case <literal>com.mypackage.MyInterceptor</literal>) gets used as the
          class name of the interceptor. The equivalent using XML configuration would be:
             <programlisting>
                &lt;aop&gt;
@@ -205,7 +190,7 @@
    }
             </programlisting>
          </para>
-         <para>
+<!--         <para>
             And in JDK 1.4.2:
             <programlisting>
    package com.mypackage;
@@ -229,7 +214,7 @@
                &lt;interceptor factory="com.mypackage.MyInterceptorFactory" scope="PER_VM"/&gt;
                &lt;/aop&gt;
             </programlisting>
-         </para>
+         </para> -->
       </sect2>
    </sect1>
 
@@ -263,7 +248,7 @@ public @interface PointcutDef
       </para>
       <para>
          An example of an aspect class containing a named pointcut which it references from
-         a bindng's pointcut expression in JDK 5:
+         a bindng's pointcut expression:
          <programlisting>
    package com.mypackage;
 
@@ -287,7 +272,7 @@ public @interface PointcutDef
          outside the class they are declared in (if the annotated fields are declared
          public of course!).
       </para>
-      <para>
+<!--      <para>
          The same example in JDK 1.4.2:
          <programlisting>
    package com.mypackage;
@@ -311,7 +296,7 @@ public @interface PointcutDef
       }
    }
          </programlisting>
-      </para>
+      </para> -->
       <para>
          Using XML configuration this would be:
          <programlisting>
@@ -380,7 +365,7 @@ public @interface Bind
          <programlisting>&lt;name of the Interceptor/AspectFactory implementation class&gt;</programlisting>
       </para>
       <para>
-         An example of a binding using an advice method in an aspect class in JDK 5:
+         An example of a binding using an advice method in an aspect class:
          <programlisting>
    package com.mypackage;
 
@@ -407,9 +392,10 @@ public @interface Bind
 
    }
          </programlisting>
+      </para>
          <para>
          </para>
-         And in JDK 1.4.2:
+<!--         And in JDK 1.4.2:
          <programlisting>
    package com.mypackage;
 
@@ -441,7 +427,7 @@ public @interface Bind
       }
    }
          </programlisting>
-      </para>
+      </para> -->
          The equivalent using XML configuration would be:
       <programlisting>
          &lt;aop&gt;
@@ -524,8 +510,7 @@ public @interface Bind
          but not both.
       </para>
       <para>
-         This is how to use
-         <literal>@Introduction</literal> in JDK 5:
+         This is how to use this annotation:
          <programlisting>
    package com.mypackage;
 
@@ -539,7 +524,7 @@ public @interface Bind
       public static Object pojoNoInterfacesIntro;
    }
          </programlisting>
-         And in JDK 1.4.2:
+<!--         And in JDK 1.4.2:
          <programlisting>
    package com.mypackage;
 
@@ -557,7 +542,7 @@ public @interface Bind
          </programlisting>
 
          Notice the slight difference in the JDK 1.4.2 annotation, the class values don't have
-         the ".class" suffix.
+         the ".class" suffix. -->
       </para>
       <para>
          This means make
@@ -641,7 +626,7 @@ public @interface Bind
       </para>
       <para>
          An example aspect using
-         <literal>@Mixin</literal> in JDK 5:
+         <literal>@Mixin</literal> follows:
          <programlisting>
    package com.mypackage;
 
@@ -657,7 +642,7 @@ public @interface Bind
       }
    }
          </programlisting>
-         Here's the JDK 1.4.2 version:
+<!--         Here's the JDK 1.4.2 version:
          <programlisting>
    package com.mypackage;
 
@@ -677,7 +662,7 @@ public @interface Bind
           return new ExternalizableMixin(pojo);
       }
    }
-         </programlisting>
+         </programlisting>-->
       </para>
       <para>
          Since this is slightly more complex than the previous examples we have seen, the
@@ -721,7 +706,6 @@ public @interface Bind
       }
    }
       </programlisting>
-
       <para>
          This has the same effect as the following XML configuration:
          <programlisting>
@@ -767,7 +751,7 @@ public @interface Bind
       </para>
       <para>
          To use
-         <literal>@Prepare</literal> in JDK 5:
+         <literal>@Prepare</literal> follow this example:
          <programlisting>
    package com.mypackage;
 
@@ -787,7 +771,7 @@ public @interface Bind
    }
 
          </programlisting>
-         And in JDK 1.4.2:
+   <!--      And in JDK 1.4.2:
          <programlisting>
    package com.mypackage;
 
@@ -808,7 +792,7 @@ public @interface Bind
       }
    }
          </programlisting>
-
+-->
       </para>
       <para>
          Using XML configuration instead we would write:
@@ -840,7 +824,7 @@ public @interface Bind
            You can also annotate a POJO with @Prepare directly in cases where
            you are using Dynamic AOP, and the exact bindings are not known at
            instrumentation time. In this case you annotate the class itself.
-           Here's how it is done in JDK 5:
+           Here's how it is done:
            <programlisting>
    package com.mypackage;
 
@@ -856,7 +840,7 @@ public @interface Bind
            <literal>all(com.blah.MyDynamicPOJO)</literal>, but the use of
            <literal>all(this)</literal> is recommended.
         </para>
-        <para>
+<!--        <para>
            JDK 1.4:
            <programlisting>
    package com.mypackage;
@@ -871,7 +855,7 @@ public @interface Bind
       ...
    }
            </programlisting>
-        </para>
+        </para> -->
         <para>
            The examples just given equate to this XML
            <programlisting>
@@ -915,7 +899,7 @@ public @interface TypeDef {
          <programlisting>&lt;name of @Aspect/@InterceptorDef annotated class&gt;.&lt;name of @TypeDef annotated field&gt;</programlisting>
       </para>
       <para>
-         Here's how to use it with JDK 5:
+         Here's how to use it:
          <programlisting>
    package com.mypackage;
 
@@ -936,7 +920,7 @@ public @interface TypeDef {
    }
          </programlisting>
       </para>
-      <para>
+<!--      <para>
          And with JDK 1.4.2:
          <programlisting>
    package com.mypackage;
@@ -964,7 +948,7 @@ public @interface TypeDef {
       }
    }
          </programlisting>
-      </para>
+      </para> -->
       <para>
          The equivalent using XML configuration would be:
          <programlisting>
@@ -1028,7 +1012,7 @@ public @interface TypeDef {
          <programlisting>&lt;name of @Aspect/@InterceptorDef annotated class&gt;.&lt;name of @CFlowStackDef annotated field&gt;</programlisting>
       </para>
       <para>
-         CFlowStackDef is used like this in JDK 5:
+         CFlowStackDef is used like the following example:
          <programlisting>
    package com.mypackage;
 
@@ -1053,7 +1037,7 @@ public @interface TypeDef {
    }
          </programlisting>
       </para>
-      <para>
+<!--      <para>
          And in 1.4.2:
          <programlisting>
 
@@ -1084,7 +1068,7 @@ public @interface TypeDef {
       }
    }
          </programlisting>
-      </para>
+      </para> -->
       <para>
          The above means the same as this XML:
          <programlisting>
@@ -1117,7 +1101,7 @@ public @interface TypeDef {
          </programlisting>
       </para>
       <para>
-         Here is a @DynamicCFlow annotated class in JDK 5:
+         Here is a @DynamicCFlow annotated class:
          <programlisting>
    package com.mypackage;
 
@@ -1136,7 +1120,7 @@ public @interface TypeDef {
    }
          </programlisting>
       </para>
-      <para>
+<!--      <para>
          And the same in JDK 1.4.2:
          <programlisting>
    package com.mypackage;
@@ -1155,13 +1139,14 @@ public @interface TypeDef {
          return execute;
       }
    }
-         </programlisting>
+         </programlisting> -->
+      <para>
          The name of the
          <literal>@DynamicCFlowDef</literal> annotated class gets used as
          the name of the cflow for references.
       </para>
       <para>
-         To use the dynamic cflow we just defined in JDK 5:
+         To use the dynamic cflow we just defined:
          <programlisting>
    package com.mypackage;
 
@@ -1177,7 +1162,7 @@ public @interface TypeDef {
    }
          </programlisting>
       </para>
-      <para>
+<!--      <para>
          To use the dynamic cflow we just defined in JDK 5:
          <programlisting>
    package com.mypackage;
@@ -1197,7 +1182,7 @@ public @interface TypeDef {
       }
    }
          </programlisting>
-      </para>
+      </para>-->
    </sect1>
    <!-- *********************************** Annotation Intro ******************************** -->
 
@@ -1254,7 +1239,7 @@ public @interface TypeDef {
       </para>
       <para>
          The use of
-         <literal>@AnnotationIntroductionDef</literal> in JDK 5:
+         <literal>@AnnotationIntroductionDef</literal>:
          <programlisting>
    package com.mypackage;
 
@@ -1287,7 +1272,7 @@ public @interface TypeDef {
          <literal>@com.mypackage.MyAnnotation</literal> must use the
          fully qualified class name, and that the value for its string parameter uses single quotes.
       </para>
-      <para>
+<!--      <para>
          The use of
          <literal>@AnnotationIntroductionDef</literal> in JDK 1.4.2:
          <programlisting>
@@ -1322,7 +1307,7 @@ public @interface TypeDef {
    }
          </programlisting>
          Note that the reference to only uses one '@', and that the value for its string parameter uses single quotes.
-      </para>
+      </para> -->
       <para>
          The previous listings are the same as this XML configuration:
          <programlisting>
@@ -1377,7 +1362,7 @@ public @interface TypeDef {
       <para>
          The example shown below declares a relative sort order where <literal>org.acme.Interceptor</literal>
          must always be invoked before <literal>org.acme.Aspect.advice1()</literal> which must be invoked before
-         <literal>org.acme.Aspect.advice2()</literal>. Here is the JDK 5 version:
+         <literal>org.acme.Aspect.advice2()</literal>:
       </para>
       <programlisting>
    import org.jboss.aop.Precedence;
@@ -1396,7 +1381,7 @@ public @interface TypeDef {
       org.acme.Aspect precAdvice2;
    }
       </programlisting>
-      <para>
+<!--      <para>
          And the JDK 1.4 version:
       </para>
       <programlisting>
@@ -1420,7 +1405,7 @@ public @interface TypeDef {
        */
       org.acme.Aspect precAdvice2;
    }
-      </programlisting>
+      </programlisting> -->
       <para>
          The ordering of interceptors/advices defined via annotations that have no precedence defined, is arbitrary.
       </para>
@@ -1461,7 +1446,7 @@ public @interface TypeDef {
          the message to print out if a match is found for the pointcut. If you use
          <literal>DeclareWarning</literal> instrumentation/your application will simply continue having printed the
          message you supplied. In the case of <literal>DeclareError</literal>, the message is logged and an error is
-         thrown, causing instrumentation/your application to stop. Here is an example in JDK 5
+         thrown, causing instrumentation/your application to stop. Here is an example:
       </para>
       <programlisting>
    import org.jboss.aop.Aspect;
@@ -1483,7 +1468,7 @@ public @interface TypeDef {
       Pointcut error;
    }
       </programlisting>
-      <para>
+<!--      <para>
          And in JDK 1.4:
       </para>
       <programlisting>
@@ -1508,7 +1493,7 @@ public @interface TypeDef {
        */
       Pointcut error;
    }
-      </programlisting>
+      </programlisting> -->
    </sect1>
 
 
