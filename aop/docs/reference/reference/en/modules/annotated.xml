@@ -7,17 +7,8 @@
    <para>
          JDK 5.0 has introduced a new concept called annotations. Annotations can be
          used as an alternative to XML for configuring classes for AOP. For backward compatibility
-         with JDK 1.4.2 <!-- JBoss AOP uses an annotation compiler allowing you to create the same annotations
-         in javadoc style comments. -->, refer to XXX.
+         with JDK 1.4.2, refer to <xref linkend="jdk14compatibility"/>
    </para>
-<!--   <para>
-         The JDK 5 form has been used for the declarations of each annotation type shown below. For
-         clarity both types of annotations are shown in the usage examples contained in this chapter.
-         A point worth mentioning is that in JDK 5 annotations are part of language and can thus
-         be imported, so that just the classname can be used. In JDK 1.4.2 the annotations are not
-         part of "Java" so fully qualified classnames are needed. To keep things short and sweet
-         the listings only import classes that are new for each listing.
-   </para> -->
 
    <!-- *********************************** Aspect ******************************** -->
 
@@ -143,22 +134,6 @@
    }
 
             </programlisting>
-<!--         And in JDK 1.4.2:
-            <programlisting>
-   package com.mypackage;
-
-   /**
-    * @@org.jboss.aop.InterceptorDef (scope = org.jboss.aop.advice.Scope.PER_VM)
-    * @@org.jboss.aop.Bind (pointcut="execution("* com.blah.Test->test(..)")
-    */
-   public class MyInterceptor implements Interceptor
-   {
-      public Object invoke(Invocation invocation)throws Throwable
-      {
-         return invocation.invokeNext();
-      }
-   }
-            </programlisting> -->
          </para>
          <para>
          The name of the class (in this case <literal>com.mypackage.MyInterceptor</literal>) gets used as the
@@ -174,8 +149,7 @@
       <sect2 id="annotated-interceptor-factory" revision="1">
          <title>AspectFactory Example</title>
          <para>
-            In JDK 5 the
-            <literal>@InterceptorDef</literal> annotation is used to mark an
+            The <literal>@InterceptorDef</literal> annotation is used to mark an
             AspectFactory as follows:
             <programlisting>
    package com.mypackage;
@@ -190,31 +164,6 @@
    }
             </programlisting>
          </para>
-<!--         <para>
-            And in JDK 1.4.2:
-            <programlisting>
-   package com.mypackage;
-
-   /**
-    * @@org.jboss.aop.InterceptorDef (scope=org.jboss.aop.advice.Scope.PER_VM)
-    * @@org.jboss.aop.Bind (pointcut="execution("* com.blah.Test->test2(..)")
-    */
-   public class MyInterceptorFactory implements AspectFactory
-   {
-      //Implemented methods left out for brevity
-   }
-            </programlisting>
-         </para>
-         <para>
-         The name of the class (in this case com.mypackage.MyInterceptorFactory) gets used
-         as the factory name of the aspect factory. The equivalent using XML configuration
-         would be:
-            <programlisting>
-               &lt;aop&gt;
-               &lt;interceptor factory="com.mypackage.MyInterceptorFactory" scope="PER_VM"/&gt;
-               &lt;/aop&gt;
-            </programlisting>
-         </para> -->
       </sect2>
    </sect1>
 
@@ -272,31 +221,6 @@ public @interface PointcutDef
          outside the class they are declared in (if the annotated fields are declared
          public of course!).
       </para>
-<!--      <para>
-         The same example in JDK 1.4.2:
-         <programlisting>
-   package com.mypackage;
-
-   import org.jboss.aop.pointcut.Pointcut;
-
-   /**
-    * @@org.jboss.aop.Aspect (scope = Scope.PER_VM)
-    */
-   public class MyAspect
-   {
-      /**
-       * @@org.jboss.aop.PointcutDef ("(execution(* org.blah.Foo->someMethod()) \
-               OR execution(* org.blah.Foo->otherMethod()))")
-       */
-      public static Pointcut fooMethods;
-
-      public Object myAdvice(Invocation invocation)
-      {
-         return invocation.invokeNext();
-      }
-   }
-         </programlisting>
-      </para> -->
       <para>
          Using XML configuration this would be:
          <programlisting>
@@ -395,39 +319,6 @@ public @interface Bind
       </para>
          <para>
          </para>
-<!--         And in JDK 1.4.2:
-         <programlisting>
-   package com.mypackage;
-
-   /**
-    * @@org.jboss.aop.Aspect (scope = Scope.PER_VM)
-    */
-   public class MyAspect
-   {
-      /**
-       * @@org.jboss.aop.PointcutDef ("(execution(* org.blah.Foo->someMethod()) \
-             OR execution(* org.blah.Foo->otherMethod()))")
-       */
-      public static Pointcut fooMethods;
-
-      /**
-       * @@org.jboss.aop.Bind (pointcut="com.mypackage.MyAspect.fooMethods")
-       */
-      public Object myAdvice(Invocation invocation)
-      {
-         return invocation.invokeNext();
-      }
-
-      /**
-       * @@org.jboss.aop.Bind (pointcut="execution(* org.blah.Bar->someMethod())")
-       */
-      public Object otherAdvice(Invocation invocation)
-      {
-         return invocation.invokeNext();
-      }
-   }
-         </programlisting>
-      </para> -->
          The equivalent using XML configuration would be:
       <programlisting>
          &lt;aop&gt;
@@ -509,6 +400,7 @@ public @interface Bind
          <literal>typeExpression</literal> has to be specified,
          but not both.
       </para>
+      <anchor id="introductionEx"/>
       <para>
          This is how to use this annotation:
          <programlisting>
@@ -524,25 +416,6 @@ public @interface Bind
       public static Object pojoNoInterfacesIntro;
    }
          </programlisting>
-<!--         And in JDK 1.4.2:
-         <programlisting>
-   package com.mypackage;
-
-   /*
-    * @@org.jboss.aop.Aspect (scope = Scope.PER_VM)
-    */
-   public class IntroAspect
-   {
-      /*
-       * @org.jboss.aop.Introduction (target=com.blah.SomeClass, \
-             interfaces={java.io.Serializable})
-       */
-      public static Object pojoNoInterfacesIntro;
-   }
-         </programlisting>
-
-         Notice the slight difference in the JDK 1.4.2 annotation, the class values don't have
-         the ".class" suffix. -->
       </para>
       <para>
          This means make
@@ -642,27 +515,6 @@ public @interface Bind
       }
    }
          </programlisting>
-<!--         Here's the JDK 1.4.2 version:
-         <programlisting>
-   package com.mypackage;
-
-   import org.jboss.aop.Mixin;
-   import com.mypackage.POJO;
-
-   /**
-    * @@org.jboss.aop.Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
-    */
-   public class IntroductionAspect
-   {
-      /**
-       * @org.jboss.aop.Mixin (target=com.mypackage.POJO.class, \
-             interfaces={java.io.Externalizable.class})
-       */
-      public static ExternalizableMixin createExternalizableMixin(POJO pojo) {
-          return new ExternalizableMixin(pojo);
-      }
-   }
-         </programlisting>-->
       </para>
       <para>
          Since this is slightly more complex than the previous examples we have seen, the
@@ -771,28 +623,6 @@ public @interface Bind
    }
 
          </programlisting>
-   <!--      And in JDK 1.4.2:
-         <programlisting>
-   package com.mypackage;
-
-   /**
-    * @@org.jboss.aop.InterceptorDef (scope = org.jboss.aop.advice.Scope.PER_VM)
-    * @@org.jboss.aop.Bind (pointcut="execution("* com.blah.Test->test(..)")
-    */
-   public class MyInterceptor2 implements Interceptor
-   {
-      /**
-       * @@org.jboss.aop.Prepare ("all(com.blah.DynamicPOJO)")
-       */
-      public static Pointcut dynamicPOJO;
-
-      public Object invoke(Invocation invocation)throws Throwable
-      {
-         return invocation.invokeNext();
-      }
-   }
-         </programlisting>
--->
       </para>
       <para>
          Using XML configuration instead we would write:
@@ -840,22 +670,6 @@ public @interface Bind
            <literal>all(com.blah.MyDynamicPOJO)</literal>, but the use of
            <literal>all(this)</literal> is recommended.
         </para>
-<!--        <para>
-           JDK 1.4:
-           <programlisting>
-   package com.mypackage;
-
-   import org.jboss.aop.Prepare;
-
-   /**
-    * @@org.jboss.aop.Prepare ("all(this)")
-    */
-   public class MyDynamicPOJO implements Interceptor
-   {
-      ...
-   }
-           </programlisting>
-        </para> -->
         <para>
            The examples just given equate to this XML
            <programlisting>
@@ -920,35 +734,6 @@ public @interface TypeDef {
    }
          </programlisting>
       </para>
-<!--      <para>
-         And with JDK 1.4.2:
-         <programlisting>
-   package com.mypackage;
-
-   import org.jboss.aop.TypeDef;
-   import org.jboss.aop.pointcut.Typedef;
-
-   /**
-    * @@org.jboss.aop.Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
-    */
-   public class TypedefAspect
-   {
-      /**
-       * @@org.jboss.aop.TypeDef ("class(com.blah.POJO)")
-       */
-      public static Typedef myTypedef;
-
-      /**
-       * @@org.jboss.aop.Bind (pointcut="execution(* \
-          $typedef{com.mypackage.TypedefAspect.myTypedef}->methodWithTypedef())")
-       */
-      public Object typedefAdvice(Invocation invocation) throws Throwable
-      {
-         return invocation.invokeNext();
-      }
-   }
-         </programlisting>
-      </para> -->
       <para>
          The equivalent using XML configuration would be:
          <programlisting>
@@ -1037,38 +822,6 @@ public @interface TypeDef {
    }
          </programlisting>
       </para>
-<!--      <para>
-         And in 1.4.2:
-         <programlisting>
-
-   package com.mypackage;
-
-   import org.jboss.aop.pointcut.CFlowStack;
-   /**
-    * @@org.jboss.aop.Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
-    */
-   public class CFlowAspect
-   {
-
-      /**
-       * @@org.jboss.aop.CFlowStackDef (cflows={@org.jboss.aop.CFlowDef \
-          (expr= "void com.blah.POJO->cflowMethod1()", called=false),  \
-          @org.jboss.aop.CFlowDef (expr = "void com.blah.POJO->cflowMethod2()", \
-          called=true)})
-       */
-      public static CFlowStack cfNot1And2Stack;
-
-      /**
-       * @@org.jboss.aop.Bind (pointcut="execution(void com.blah.POJO*->privMethod())", \
-             cflow="com.mypackage.CFlowAspect.cfNot1And2Stack")
-       */
-      public Object cflowAdvice(Invocation invocation) throws Throwable
-      {
-         return invocation.invokeNext();
-      }
-   }
-         </programlisting>
-      </para> -->
       <para>
          The above means the same as this XML:
          <programlisting>
@@ -1120,26 +873,6 @@ public @interface TypeDef {
    }
          </programlisting>
       </para>
-<!--      <para>
-         And the same in JDK 1.4.2:
-         <programlisting>
-   package com.mypackage;
-
-   import org.jboss.aop.pointcut.DynamicCFlow;
-
-   /**
-    * @org.jboss.aop.DynamicCFlowDef
-    */
-   public class MyDynamicCFlow implements DynamicCFlow
-   {
-      public static boolean execute = false;
-
-      public boolean shouldExecute(Invocation invocation)
-      {
-         return execute;
-      }
-   }
-         </programlisting> -->
       <para>
          The name of the
          <literal>@DynamicCFlowDef</literal> annotated class gets used as
@@ -1162,27 +895,6 @@ public @interface TypeDef {
    }
          </programlisting>
       </para>
-<!--      <para>
-         To use the dynamic cflow we just defined in JDK 5:
-         <programlisting>
-   package com.mypackage;
-
-   /**
-    * @@org.jboss.aop.Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
-    */
-   public class CFlowAspect
-   {
-      /**
-       * @@org.jboss.aop.Bind (pointcut="execution(void com.blah.POJO->someMethod())", \
-             cflow="com.mypackage.MyDynamicCFlow")
-       */
-      public Object cflowAdvice(Invocation invocation) throws Throwable
-      {
-         return invocation.invokeNext();
-      }
-   }
-         </programlisting>
-      </para>-->
    </sect1>
    <!-- *********************************** Annotation Intro ******************************** -->
 
@@ -1237,6 +949,7 @@ public @interface TypeDef {
          </programlisting>
          What its parameters mean is not very important for our purpose.
       </para>
+      <anchor id="annotatIntroductEx"/>
       <para>
          The use of
          <literal>@AnnotationIntroductionDef</literal>:
@@ -1272,42 +985,6 @@ public @interface TypeDef {
          <literal>@com.mypackage.MyAnnotation</literal> must use the
          fully qualified class name, and that the value for its string parameter uses single quotes.
       </para>
-<!--      <para>
-         The use of
-         <literal>@AnnotationIntroductionDef</literal> in JDK 1.4.2:
-         <programlisting>
-   package com.mypackage;
-
-   import org.jboss.aop.introduction.AnnotationIntroduction;
-
-   /**
-    * @@org.jboss.aop.InterceptorDef (scope=org.jboss.aop.advice.Scope.PER_VM)
-    * @@org.jboss.aop.Bind (pointcut="all(com.blah.SomePOJO)")
-    */
-   public class IntroducedAnnotationInterceptor implements Interceptor
-   {
-      /**
-       * @@org.jboss.aop.AnnotationIntroductionDef \
-             (expr="method(* com.blah.SomePOJO->annotationIntroductionMethod())", \
-             invisible=false, \
-             annotation="@com.mypackage.MyAnnotation \
-             (string='hello', integer=5, bool=true)")
-       */
-      public static AnnotationIntroduction annotationIntroduction;
-
-      public String getName()
-      {
-         return "IntroducedAnnotationInterceptor";
-      }
-
-      public Object invoke(Invocation invocation) throws Throwable
-      {
-         return invocation.invokeNext();
-      }
-   }
-         </programlisting>
-         Note that the reference to only uses one '@', and that the value for its string parameter uses single quotes.
-      </para> -->
       <para>
          The previous listings are the same as this XML configuration:
          <programlisting>
@@ -1381,31 +1058,6 @@ public @interface TypeDef {
       org.acme.Aspect precAdvice2;
    }
       </programlisting>
-<!--      <para>
-         And the JDK 1.4 version:
-      </para>
-      <programlisting>
-   /**
-    * @@org.jboss.aop.Precedence
-    */
-   public class MyPrecedence
-   {
-      /**
-       * @@org.jboss.aop.PrecedenceInterceptor
-       */
-      org.acme.Interceptor intercept;
-
-      /**
-       * @@org.jboss.aop.PrecedenceAdvice ("advice1")
-       */
-      org.acme.Aspect precAdvice1;
-
-      /**
-       * @@org.jboss.aop.PrecedenceAdvice ("advice2")
-       */
-      org.acme.Aspect precAdvice2;
-   }
-      </programlisting> -->
       <para>
          The ordering of interceptors/advices defined via annotations that have no precedence defined, is arbitrary.
       </para>
@@ -1468,37 +1120,5 @@ public @interface TypeDef {
       Pointcut error;
    }
       </programlisting>
-<!--      <para>
-         And in JDK 1.4:
-      </para>
-      <programlisting>
-   import org.jboss.aop.pointcut.Pointcut;
-
-   /**
-    * @@org.jboss.aop.Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
-    */
-   public class DeclareAspect
-   {
-      /**
-       * @@org.jboss.aop.DeclareWarning (expr="class($instanceof{VehicleDAO}) AND \
-          !has(public void *->save())", \
-          msg="All VehicleDAO subclasses must override the save() method.")
-       */
-      Pointcut warning;
-
-      /**
-       * @@org.jboss.aop.DeclareError (expr="call(* org.acme.businesslayer.*->*(..)) \
-          AND within(org.acme.datalayer.*)", \
-          msg="Data layer classes should not call up to the business layer")
-       */
-      Pointcut error;
-   }
-      </programlisting> -->
    </sect1>
-
-
 </chapter>
-
-
-
-

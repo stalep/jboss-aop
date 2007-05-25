@@ -193,6 +193,65 @@
    }
             </programlisting>
          </para>
+         
+         <para>
+            The next aspect is the JDK1.4.2 version of the <link linkend="introductionEx">@Introduction
+            exammple</link> (<xref linkend="annotated"/>). Notice the slight difference in the JDK 1.4.2 annotation: class
+            values don't have the ".class" suffix:
+         <programlisting>
+   package com.mypackage;
+
+   /*
+    * @@org.jboss.aop.Aspect (scope = Scope.PER_VM)
+    */
+   public class IntroAspect
+   {
+      /*
+       * @org.jboss.aop.Introduction (target=com.blah.SomeClass, \
+             interfaces={java.io.Serializable})
+       */
+      public static Object pojoNoInterfacesIntro;
+   }
+         </programlisting>
+         </para>
+         <para>
+         Now, look at the next example:
+         <programlisting>
+   package com.mypackage;
+
+   import org.jboss.aop.introduction.AnnotationIntroduction;
+
+   /**
+    * @@org.jboss.aop.InterceptorDef (scope=org.jboss.aop.advice.Scope.PER_VM)
+    * @@org.jboss.aop.Bind (pointcut="all(com.blah.SomePOJO)")
+    */
+   public class IntroducedAnnotationInterceptor implements Interceptor
+   {
+      /**
+       * @@org.jboss.aop.AnnotationIntroductionDef \
+             (expr="method(* com.blah.SomePOJO->annotationIntroductionMethod())", \
+             invisible=false, \
+             annotation="@com.mypackage.MyAnnotation \
+             (string='hello', integer=5, bool=true)")
+       */
+      public static AnnotationIntroduction annotationIntroduction;
+
+      public String getName()
+      {
+         return "IntroducedAnnotationInterceptor";
+      }
+
+      public Object invoke(Invocation invocation) throws Throwable
+      {
+         return invocation.invokeNext();
+      }
+   }
+         </programlisting>
+         The code above is the jdk1.4.2 version equivalent to the <link linkend="annotatIntroductEx">
+            @AnnotationIntroductionDef example</link> we have seen in <xref linkend="annotated"/>.
+         Note that, in the version above, the reference to only uses one '@'. In addition,the value for
+            its string parameter uses single quotes instead of double ones.
+      </para>
 
       </sect2>
       <sect2 id="annotationcompiler-enums" revision="1">
@@ -404,7 +463,7 @@
                   <literal>classpath</literal>,
                   <literal>classpathref</literal> and
                   <literal>verbose</literal> -
-                  These have the same meaning as in the JBoss Retro <link linkend="jbossretroparam">task</link>.
+                  These have the same meaning as in the <link linkend="jbossretroparam">JBoss Retro task</link>.
                   <!--These are interchangable, and represent the jars needed for the annotation compiler
                   to work. The
                   <literal>compilerclasspath</literal> version takes the paths of the
