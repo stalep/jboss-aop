@@ -206,14 +206,14 @@
 
    <target name="release-output"
       description="Builds the default release structure."
-      depends="modules-release"
+      depends="modules-release, aop.reference.docs"
       >
       <ant antfile="build-release.xml" target="release"/>
   </target>
 
    <target name="release"
       description="Builds the default release structure."
-      depends="init, clean, modules-release"
+      depends="init, clean, modules-release, aop.reference.docs"
       >
       <ant antfile="build-release.xml" target="release"/>
 
