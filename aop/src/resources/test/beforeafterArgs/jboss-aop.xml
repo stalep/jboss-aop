@@ -284,6 +284,14 @@
    <bind pointcut="call(void org.jboss.test.aop.beforeafterArgs.TargetCallerPOJO2->*())">
 		<stack-ref name="CallerAdvices"/>
    </bind>
+   
+   <bind pointcut="execution(public void org.jboss.test.aop.beforeafterArgs.TargetCallerPOJO->method1())">
+      <stack-ref name="CallerAdvices"/>      
+   </bind>
+   
+   <bind pointcut="execution(public void org.jboss.test.aop.beforeafterArgs.TargetCallerPOJO->method3())">
+      <stack-ref name="CallerAdvices"/>      
+   </bind>
 
    <!-- @JoinPoint test -->
 	<aspect class="org.jboss.test.aop.beforeafterArgs.JoinPointAspect" scope="PER_VM"/>

@@ -171,6 +171,55 @@ public class CallerTestCase extends AOPTestWithSetup
       assertAllAdvices(null, thrown);
    }
    
+   public void test12()
+   {
+      // no call pointcut
+      pojo.method1();
+      
+      assertTrue(CallerAspect.before1);
+      assertFalse(CallerAspect.before2);
+      assertFalse(CallerAspect.before3);
+      assertTrue(CallerAspect.around1);
+      assertFalse(CallerAspect.around2);
+      assertFalse(CallerAspect.around4);
+      assertTrue(CallerAspect.after1);
+      assertFalse(CallerAspect.after2);
+      assertFalse(CallerAspect.throwing1);
+      assertFalse(CallerAspect.throwing3);
+      assertFalse(CallerAspect.finally1);
+      assertTrue(CallerAspect.finally2);
+      assertFalse(CallerAspect.finally4);
+   }
+   
+   public void test13()
+   {
+      // no call pointcut
+      boolean thrown = false;
+      try
+      {
+         pojo.method3();
+      }
+      catch(POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      assertTrue(CallerAspect.before1);
+      assertFalse(CallerAspect.before2);
+      assertFalse(CallerAspect.before3);
+      assertTrue(CallerAspect.around1);
+      assertFalse(CallerAspect.around2);
+      assertFalse(CallerAspect.around4);
+      assertFalse(CallerAspect.after1);
+      assertFalse(CallerAspect.after2);
+      assertTrue(CallerAspect.throwing1);
+      assertFalse(CallerAspect.throwing3);
+      assertFalse(CallerAspect.finally1);
+      assertTrue(CallerAspect.finally2);
+      assertFalse(CallerAspect.finally4);
+   }
+   
    public void assertAllAdvices(Object caller, boolean error)
    {
       assertTrue(CallerAspect.before1);
