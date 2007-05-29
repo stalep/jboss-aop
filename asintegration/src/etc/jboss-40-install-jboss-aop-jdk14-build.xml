@@ -56,7 +56,7 @@
 
       <property name="lib.javassist" value="${jboss.config.dir}/lib/javassist.jar"/>
       <available file="${lib.javassist}" property="jboss.post.4.0.4"/>
-      <property name="bak.javassist" value="${jboss.config.dir}/lib/javassist.bak"/>
+      <property name="bak.javassist" value="${old.deployer}/javassist.bak"/>
       <available file="${bak.javassist}" property="javassist.bak.exists"/>
    </target>
 
