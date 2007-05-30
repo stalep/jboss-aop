@@ -56,7 +56,8 @@ public class AOPTransformer implements ClassFileTransformer
       classname.startsWith("sun.") ||
       classname.startsWith("java.") ||
       classname.startsWith("javax.") ||
-      classname.startsWith("com.sun.")
+      classname.startsWith("com.sun.") ||
+      classname.startsWith("$Proxy")
       );
    }
 

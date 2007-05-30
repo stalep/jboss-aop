@@ -63,7 +63,8 @@ public class JDK14TransformerManager
       classname.startsWith("com.sun.") ||
       classname.startsWith("junit") || 
       classname.startsWith("jrockit.") ||
-      classname.startsWith("com.bea.vm.")
+      classname.startsWith("com.bea.vm.")  ||
+      classname.startsWith("$Proxy")
       );
    }
 }
