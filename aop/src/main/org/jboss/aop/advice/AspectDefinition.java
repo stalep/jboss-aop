@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.jboss.aop.Advisor;
+import org.jboss.aop.GeneratedClassAdvisor;
 
 /**
  * Contains definition of aspect or interceptor
@@ -85,6 +86,14 @@ public class AspectDefinition
                   else if (scope == Scope.PER_CLASS)
                   {
                      advisor.removePerClassAspect(this);
+                  }
+                  else if (scope == Scope.PER_CLASS_JOINPOINT)
+                  {
+                     if (advisor instanceof GeneratedClassAdvisor)
+                     {
+                        //GeneratedClassAdvisors handle PER_CLASS_JOINPOINT aspects slightly differently
+                        ((GeneratedClassAdvisor)advisor).removePerClassJoinpointAspect(this);
+                     }
                   }
                }
             }

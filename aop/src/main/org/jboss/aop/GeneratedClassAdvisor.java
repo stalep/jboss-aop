@@ -881,8 +881,14 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       {
          joinpoints.put(joinpoint, def.getFactory().createPerJoinpoint(this, joinpoint));
       }
+      def.registerAdvisor(this);
    }
 
+   public synchronized void removePerClassJoinpointAspect(AspectDefinition def)
+   {
+      perClassJoinpointAspectDefinitions.remove(def);
+   }
+   
    /**
     * @see Advisor#chainOverridingForInheritedMethods()
     */
