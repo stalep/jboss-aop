@@ -202,7 +202,7 @@ public [return type] [advice name]([annotated parameter], [annotated parameter],
       </para>
       <para>
          JBoss AOP will accept any type that is assignable from the type referred by that parameter, as shown in the
-         <emphasis>Type Assignable From</emphasis> column of table X. For example, for a joinpoint whose target is of type
+         <emphasis>Type Assignable From</emphasis> column of the table below. For example, for a joinpoint whose target is of type
          <literal>POJO</literal>, the annotated parameter that receives the target must be of <literal>POJO</literal> type,
          one of <literal>POJO</literal>'s superclasses, or one of the interfaces implemented by <literal>POJO</literal>.
       </para>
