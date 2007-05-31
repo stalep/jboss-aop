@@ -171,7 +171,40 @@ public class CallerTestCase extends AOPTestWithSetup
       assertAllAdvices(null, thrown);
    }
    
-   public void test12()
+   public void test12() throws POJOException
+   {
+      TargetCallerPOJO caller = new TargetCallerPOJO(CallType.CONSTRUCTOR, false);
+      assertAllAdvices(caller, false);
+   }
+   
+   public void test13() throws POJOException
+   {
+      TargetCallerPOJO caller = new TargetCallerPOJO(CallType.METHOD, false);
+      assertAllAdvices(caller, false);
+   }
+   
+   public void test14() throws POJOException
+   {
+      TargetCallerPOJO caller = new TargetCallerPOJO(CallType.STATIC_METHOD, false);
+      assertAllAdvices(caller, false);
+   }
+   
+   public void test15()
+   {
+      testConCallerWithException(CallType.CONSTRUCTOR);
+   }
+   
+   public void test16()
+   {
+      testConCallerWithException(CallType.METHOD);
+   }
+   
+   public void test17()
+   {
+      testConCallerWithException(CallType.STATIC_METHOD);
+   }
+   
+   public void test18()
    {
       // no call pointcut
       pojo.method1();
@@ -191,7 +224,7 @@ public class CallerTestCase extends AOPTestWithSetup
       assertFalse(CallerAspect.finally4);
    }
    
-   public void test13()
+   public void test19()
    {
       // no call pointcut
       boolean thrown = false;
@@ -222,6 +255,18 @@ public class CallerTestCase extends AOPTestWithSetup
    
    public void assertAllAdvices(Object caller, boolean error)
    {
+      assertAllAdvices(error);
+      assertSame(caller, CallerAspect.before2Caller);
+   }
+   
+   public void assertAllAdvicesNotNull(boolean error)
+   {
+      assertAllAdvices(error);
+      assertNotNull(CallerAspect.before2Caller);
+   }
+   
+   public void assertAllAdvices(boolean error)
+   {
       assertTrue(CallerAspect.before1);
       assertTrue(CallerAspect.before2);
       assertTrue(CallerAspect.before3);
@@ -236,7 +281,6 @@ public class CallerTestCase extends AOPTestWithSetup
       assertTrue(CallerAspect.finally2);
       assertTrue(CallerAspect.finally4);
       
-      assertSame(caller, CallerAspect.before2Caller);
       assertSame(CallerAspect.before2Caller, CallerAspect.before3Caller);
       assertSame(CallerAspect.before3Caller, CallerAspect.around2Caller);
       assertSame(CallerAspect.around2Caller, CallerAspect.around4Caller);
@@ -252,5 +296,20 @@ public class CallerTestCase extends AOPTestWithSetup
       }
       assertSame(CallerAspect.around4Caller, CallerAspect.finally1Caller);
       assertSame(CallerAspect.finally1Caller, CallerAspect.finally4Caller);
+   }
+   
+   private void testConCallerWithException(CallType callType)
+   {
+      boolean thrown = false;
+      try
+      {
+         new TargetCallerPOJO(callType, true);
+      }
+      catch(POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(thrown);
    }
 }

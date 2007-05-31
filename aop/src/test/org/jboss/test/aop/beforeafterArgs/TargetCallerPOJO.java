@@ -21,6 +21,7 @@
  */
 package org.jboss.test.aop.beforeafterArgs;
 
+enum CallType {CONSTRUCTOR, METHOD, STATIC_METHOD}
 
 /**
  * Plain old java object used on both @Target and @Caller parameter tests.
@@ -36,6 +37,36 @@ public class TargetCallerPOJO
    public TargetCallerPOJO(int x, String y) throws POJOException
    {
       throw new POJOException();
+   }
+   
+   // test constructor calls
+   public TargetCallerPOJO(CallType callType, boolean throwException) throws POJOException
+   {
+      switch(callType)
+      {
+         case CONSTRUCTOR:
+            if (throwException)
+            {
+               new TargetCallerPOJO2(0, null);
+            }
+            new TargetCallerPOJO2(5);
+            break;
+         case METHOD:
+            TargetCallerPOJO2 pojo2 = new TargetCallerPOJO2();
+            if (throwException)
+            {
+               pojo2.method3_();
+            }
+            pojo2.method1_();
+            break;
+         case STATIC_METHOD:
+            if (throwException)
+            {
+               TargetCallerPOJO2.method4_();
+            }
+            TargetCallerPOJO2.method2_();
+            break;
+      }
    }
    
    public int field1;

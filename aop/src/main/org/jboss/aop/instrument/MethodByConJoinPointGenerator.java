@@ -77,9 +77,9 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
    {
       if (Modifier.isStatic(info.getMethod().getModifiers()))
       {
-         return JoinPointParameters.ONLY_ARGS;
+         return JoinPointParameters.CALLER_ARGS;
       }
-      return JoinPointParameters.TARGET_ARGS;
+      return JoinPointParameters.TARGET_CALLER_ARGS;
    }
 
    protected void initialiseJoinPointNames(JoinPointInfo info)
@@ -286,22 +286,31 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
          CtClass[] ctorParams1 = new CtClass[params.length + offset];
          CtClass[] ctorParams2 = new CtClass[offset];
          ctorParams1[0] = ctorParams2[0] = jp;
-         ctorParams1[1] = ctorParams2[1] = callingClass;
          if (hasTargetObject)
          {
-            ctorParams1[2] = ctorParams2[2] = targetClass;
+            ctorParams1[1] = ctorParams2[1] = targetClass;
+            ctorParams1[2] = ctorParams2[2] = callingClass;
+         }
+         else
+         {
+            ctorParams1[1] = ctorParams2[1] = callingClass;
          }
          System.arraycopy(params, 0, ctorParams1, offset, params.length);
                   
          StringBuffer body = new StringBuffer();
          body.append("{");
          body.append("   this($1." + INFO_FIELD + ");");
-         body.append("   super.callingObject=$2;");
+         
          
          if (hasTargetObject)
          {
-            body.append("   super.targetObject=$3;");
-            body.append("   this.").append(TARGET_FIELD).append("=$3;");
+            body.append("   super.targetObject=$2;");
+            body.append("   this.").append(TARGET_FIELD).append("=$2;");
+            body.append("   super.callingObject=$3;");
+         }
+         else
+         {
+            body.append("   super.callingObject=$2;");
          }
          
          StringBuffer setArguments = new StringBuffer();
@@ -337,8 +346,8 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
          if (hasTargetObject)
          {
             CtClass[] invokeParams = new CtClass[params.length + 2];
-            invokeParams[0] = callingClass;
-            invokeParams[1] = targetClass;
+            invokeParams[0] = targetClass;
+            invokeParams[1] = callingClass;
             System.arraycopy(params, 0, invokeParams, 2, params.length);
             return invokeParams;
          }
@@ -402,7 +411,7 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
          }
          else
          {
-            body.append(MethodExecutionTransformer.getAopReturnStr(isVoid) + "$2." + targetMethod.getName() + "(" + parameters + ");");
+            body.append(MethodExecutionTransformer.getAopReturnStr(isVoid) + "$1." + targetMethod.getName() + "(" + parameters + ");");
          }
 
          body.append("}");

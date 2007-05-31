@@ -69,7 +69,7 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
 
    public ConByConJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
-      super(advisor, info, JoinPointParameters.ONLY_ARGS,
+      super(advisor, info, JoinPointParameters.CALLER_ARGS,
             ((ConByConInfo) info).getConstructor().getParameterTypes().length);
       returnType = new WeakReference(((ConByConInfo)info).getCalledClass());
    }

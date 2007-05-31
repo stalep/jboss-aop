@@ -116,8 +116,8 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          if (hasTargetObject)
          {
             params = new CtClass[originalLength + 2];
-            params[0] = callingClass;
-            params[1] = instrumentor.forName(cd.classname); //target object
+            params[0] = instrumentor.forName(cd.classname); //target object
+            params[1] = callingClass;
             System.arraycopy(cd.calledMethod.getParameterTypes(), 0, params, 2, originalLength);
          }
          else
@@ -131,7 +131,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
 
          if (hasTargetObject)
          {
-            proceed = MethodExecutionTransformer.getAopReturnStr(cd.calledMethod) + "$2." + cd.calledMethod.getName() + "(" + getArguments(params.length, 2) +");";
+            proceed = MethodExecutionTransformer.getAopReturnStr(cd.calledMethod) + "$1." + cd.calledMethod.getName() + "(" + getArguments(params.length, 2) +");";
          }
          else
          {
@@ -461,7 +461,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          }
          else
          {
-            args = "this, $0" + ((paramsLength > 0) ? ", $$" : "");
+            args = "$0, this" + ((paramsLength > 0) ? ", $$" : "");
          }
 
          final String ret = (!cd.calledMethod.getReturnType().equals(CtClass.voidType)) ? "$_ = " : "";
