@@ -329,15 +329,7 @@ public class GeneratedAdvisorInterceptor implements Interceptor
       else 
       {
          AspectFactory af = factory.getAspect().getFactory();
-         
-         if (af instanceof AspectFactoryDelegator)
-         {
-            return ((AspectFactoryDelegator)af).getName();
-         }
-         else
-         {
-            return ((GenericAspectFactory)af).getName();
-         }
+         return af.getName();
       }
    }
    
