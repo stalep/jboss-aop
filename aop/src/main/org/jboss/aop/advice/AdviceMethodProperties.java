@@ -45,7 +45,7 @@ public class AdviceMethodProperties
    
    public static final CtClass[] EMPTY_PARAMETERS = {};
    
-   public static enum OptionalParameters {NONE, TARGET, CALLER, TARGET_CALLER}
+   public static enum OptionalParameters {TARGET, TARGET_CALLER}
    
    //find properties
    private Class aspectClass;
@@ -72,7 +72,9 @@ public class AdviceMethodProperties
          Class invocationType,
          Class joinpointReturnType,
          Class[] joinpointParameters,
-         Class[] joinpointExceptions)
+         Class[] joinpointExceptions,
+         Class target,
+         boolean targetAvailable)
    {
       this.aspectClass = aspectClass;
       this.adviceName = adviceName;
@@ -81,30 +83,14 @@ public class AdviceMethodProperties
       this.joinpointReturnType = joinpointReturnType;
       this.joinpointParameters = joinpointParameters;
       this.joinpointExceptions = joinpointExceptions;
-      this.optionalParameters = OptionalParameters.NONE;
-   }
-   
-   public AdviceMethodProperties(
-         Class aspectClass, 
-         String adviceName, 
-         Class infoType,
-         Class invocationType,
-         Class joinpointReturnType,
-         Class[] joinpointParameters,
-         Class[] joinpointExceptions,
-         Class target,
-         boolean targetAvailable)
-   {
-      this(aspectClass, adviceName, infoType, invocationType, joinpointReturnType,
-            joinpointParameters, joinpointExceptions);
       this.target = target;
       this.targetAvailable = targetAvailable;
       this.optionalParameters = OptionalParameters.TARGET;
    }
    
    public AdviceMethodProperties(
-         Class aspectClass, 
-         String adviceName, 
+         Class aspectClass,
+         String adviceName,
          Class infoType,
          Class invocationType,
          Class joinpointReturnType,

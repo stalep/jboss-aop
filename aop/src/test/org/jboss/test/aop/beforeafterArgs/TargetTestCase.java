@@ -63,7 +63,8 @@ public class TargetTestCase extends AOPTestWithSetup
    public void test1()
    {
       new TargetCallerPOJO(1);
-      assertStaticAdvices(false);
+      assertAllAdvices(false);
+      assertTarget(null, false);
    }
    
    public void test2()
@@ -78,7 +79,8 @@ public class TargetTestCase extends AOPTestWithSetup
          thrown = true;
       }
       assertTrue(thrown);
-      assertStaticAdvices(thrown);
+      assertAllAdvices(thrown);
+      assertTarget(null, thrown);
    }
 
    public void test3()
@@ -158,7 +160,8 @@ public class TargetTestCase extends AOPTestWithSetup
    public void test11()
    {
       pojo.method5();
-      assertStaticAdvices(false);
+      assertAllAdvices(false);
+      assertTarget(null, false);
    }
    
    public void test12()
@@ -173,7 +176,8 @@ public class TargetTestCase extends AOPTestWithSetup
          thrown = true;
       }
       assertTrue(thrown);
-      assertStaticAdvices(thrown);
+      assertAllAdvices(thrown);
+      assertTarget(null, thrown);
    }
    
    public void test13()
@@ -225,7 +229,8 @@ public class TargetTestCase extends AOPTestWithSetup
    public void test17()
    {
       TargetCallerPOJO.method11();
-      assertStaticAdvices(false);
+      assertAllAdvices(false);
+      assertTarget(null, false);
    }
    
    public void test18()
@@ -274,6 +279,13 @@ public class TargetTestCase extends AOPTestWithSetup
       assertTarget(null, thrown);
    }
    
+   public void test22() throws POJOException
+   {
+      new TargetCallerPOJO(CallType.CONSTRUCTOR, false);
+      assertAllAdvices(false);
+      assertTarget(null, false);
+   }
+   
    private void assertAllAdvices(boolean error)
    {
       assertTrue(TargetAspect.before1);
@@ -314,25 +326,5 @@ public class TargetTestCase extends AOPTestWithSetup
          assertNull(TargetAspect.throwing1Target);
       }
       assertSame(TargetAspect.around2Target, TargetAspect.finally2Target);
-   }
-   
-   private void assertStaticAdvices(boolean error)
-   {
-      assertTrue(TargetAspect.before1);
-      assertFalse(TargetAspect.before2);
-      assertTrue(TargetAspect.around1);
-      assertFalse(TargetAspect.around2);
-      assertEquals(!error, TargetAspect.after1);
-      assertFalse(TargetAspect.after2);
-      assertFalse(TargetAspect.throwing1);
-      assertEquals(error, TargetAspect.throwing2);
-      assertTrue(TargetAspect.finally1);
-      assertFalse(TargetAspect.finally2);
-      
-      assertNull(TargetAspect.before2Target);
-      assertNull(TargetAspect.around2Target);
-      assertNull(TargetAspect.after2Target);
-      assertNull(TargetAspect.throwing1Target);
-      assertNull(TargetAspect.finally2Target);
    }
 }

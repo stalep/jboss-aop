@@ -118,7 +118,9 @@ public class ConstructorJoinPointGenerator extends JoinPointGenerator
             INVOCATION_TYPE,
             ctor.getDeclaringClass(),
             ctor.getParameterTypes(),
-            ctor.getExceptionTypes());
+            ctor.getExceptionTypes(), 
+            ctor.getDeclaringClass(),
+            false);
    }
 
    protected boolean hasTargetObject()

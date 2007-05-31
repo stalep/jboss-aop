@@ -126,10 +126,9 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
             ctor.getDeclaringClass(),
             ctor.getParameterTypes(),
             ctor.getExceptionTypes(),
-            null, false,
+            ((ConByConInfo) info).getCalledClass(), false,
             ((ConByConInfo) info).getCallingClass(),
             true);
-      properties.setOptionalParameters(AdviceMethodProperties.OptionalParameters.CALLER);
       return properties;
    }
 

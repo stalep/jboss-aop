@@ -175,20 +175,11 @@ public class AdviceMethodFactory
 
    static final short NOT_ASSIGNABLE_DEGREE = Short.MAX_VALUE;
    static final short MAX_DEGREE = NOT_ASSIGNABLE_DEGREE - 1;
-   static final ParameterAnnotationRule[] FULLY_STATIC =
-      new ParameterAnnotationRule[] {ParameterAnnotationRule.ARGS,
-      ParameterAnnotationRule.ARG};
-   static final int[][] FS_INCOMPATIBILITY = new int[][]{{0, 1}};
-   
-   static final ParameterAnnotationRule[] CALLER_AVAILABLE =
-      new ParameterAnnotationRule[] {ParameterAnnotationRule.CALLER,
-      ParameterAnnotationRule.ARGS, ParameterAnnotationRule.ARG};
-   static final int[][] CA_INCOMPATIBILITY = new int[][]{{1, 2}};
    
    static final ParameterAnnotationRule[] TARGET_AVAILABLE =
       new ParameterAnnotationRule[] {ParameterAnnotationRule.TARGET,
       ParameterAnnotationRule.ARGS, ParameterAnnotationRule.ARG};
-   static final int[][] TA_INCOMPATIBILITY = CA_INCOMPATIBILITY;
+   static final int[][] TA_INCOMPATIBILITY = new int[][]{{1, 2}};;
    
    static final ParameterAnnotationRule[] TARGET_CALLER_AVAILABLE =
       new ParameterAnnotationRule[] {ParameterAnnotationRule.TARGET,
@@ -262,17 +253,9 @@ public class AdviceMethodFactory
       int[][] mutuallyExclusive = null;
       switch(properties.getOptionalParameters())
       {
-         case NONE:
-            contextRules = FULLY_STATIC;
-            mutuallyExclusive = FS_INCOMPATIBILITY;
-            break;
          case TARGET:
             contextRules = TARGET_AVAILABLE;
             mutuallyExclusive = TA_INCOMPATIBILITY;
-            break;
-         case CALLER:
-            contextRules = CALLER_AVAILABLE;
-            mutuallyExclusive = CA_INCOMPATIBILITY;
             break;
          case TARGET_CALLER:
             contextRules = TARGET_CALLER_AVAILABLE;
