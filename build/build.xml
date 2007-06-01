@@ -206,16 +206,17 @@
 
    <target name="release-output"
       description="Builds the default release structure."
-      depends="modules-release, aop.reference.docs"
+      depends="modules-release"
       >
-      <ant antfile="build-release.xml" target="release"/>
-  </target>
+      <ant antfile="build-release.xml" target="release-no-reference-docs"/>
+   </target>
 
    <target name="release"
       description="Builds the default release structure."
       depends="init, clean, modules-release, aop.reference.docs"
       >
-      <ant antfile="build-release.xml" target="release"/>
+      <ant antfile="build-release.xml" target="release-no-reference-docs"/>
+      <ant antfile="build-release.xml" target="release-reference-docs"/>
 
    	<jar destfile="${project.release}.jar" basedir="${project.release}"/>
    	<move file="${project.release}.jar" todir="${module.output}/lib"/>
