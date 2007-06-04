@@ -27,12 +27,11 @@ import junit.framework.Assert;
 
 import org.jboss.aop.advice.annotation.Arg;
 import org.jboss.aop.advice.annotation.Args;
-import org.jboss.aop.advice.annotation.Thrown;
 import org.jboss.aop.joinpoint.CurrentInvocation;
 import org.jboss.aop.joinpoint.MethodInvocation;
 
 /**
- * Aspect used on @Arg parameter tests (this class complements <code>
+ * Aspect used on basic @Arg parameter tests (this class complements <code>
  * org.jboss.test.aop.args.ArgAspect</code>, by containing advices that are allowed
  * only with generated advisors).
  * 
@@ -77,28 +76,6 @@ public class ArgAspect
    static int finally1X = 0;
    static Object[] finally2Args = null;
    
-   static boolean beforeInterface1 = false;
-   static boolean beforeInterface2 = false;
-   static boolean beforeInterface3 = false;
-   static boolean aroundInterface1 = false;
-   static boolean aroundInterface2 = false;
-   static boolean aroundInterface3 = false;
-   static boolean afterInterface1 = false;
-   static boolean afterInterface2 = false;
-   static boolean afterInterface3 = false;
-   static boolean throwingInterface1 = false;
-   static boolean throwingInterface2 = false;
-   static boolean throwingInterface3 = false;
-   static boolean finallyInterface1 = false;
-   static boolean finallyInterface2 = false;
-   static boolean finallyInterface3 = false;
-   
-   static boolean beforeInverted1 = false;
-   static boolean aroundInverted1 = false;
-   static boolean afterInverted1 = false;
-   static boolean throwingInverted1 = false;
-   static boolean finallyInverted1 = false;
-   
    public static void clear()
    {
       before1 = false;
@@ -129,28 +106,6 @@ public class ArgAspect
       after6Args = null;
       finally1X = 0;
       finally2Args = null;
-      
-      beforeInterface1 = false;
-      beforeInterface2 = false;
-      beforeInterface3 = false;
-      aroundInterface1 = false;
-      aroundInterface2 = false;
-      aroundInterface3 = false;
-      afterInterface1 = false;
-      afterInterface2 = false;
-      afterInterface3 = false;
-      throwingInterface1 = false;
-      throwingInterface2 = false;
-      throwingInterface3 = false;
-      finallyInterface1 = false;
-      finallyInterface2 = false;
-      finallyInterface3 = false;
-      
-      beforeInverted1 = false;
-      aroundInverted1 = false;
-      afterInverted1 = false;
-      throwingInverted1 = false;
-      finallyInverted1 = false;
    }
    
    public void before1(@Arg(index=0) int x)
@@ -283,194 +238,6 @@ public class ArgAspect
    }
    
    public void finally3(@Arg Collection arg)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
-   public void beforeInterface1(@Arg Interface param)
-   {
-      beforeInterface1 = true;
-   }
-   
-   public void beforeInterface2(@Arg SuperInterface param)
-   {
-      beforeInterface2 = true;
-   }
-   
-   public void beforeInterface3(@Arg Object param)
-   {
-      beforeInterface3 = true;
-   }
-   
-   public void beforeInterface4(@Arg Implementor param)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
-   public void beforeInterface5(@Arg SubInterface param)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
-   public Object aroundInterface1(@Arg Interface param) throws Throwable
-   {
-      aroundInterface1 = true;
-      return CurrentInvocation.proceed();
-   }
-   
-   public Object aroundInterface2(@Arg SuperInterface param) throws Throwable
-   {
-      aroundInterface2 = true;
-      return CurrentInvocation.proceed();
-   }
-   
-   public Object aroundInterface3(@Arg Object param) throws Throwable
-   {
-      aroundInterface3 = true;
-      return CurrentInvocation.proceed();
-   }
-   
-   public Object aroundInterface4(@Arg Implementor param) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
-   public Object aroundInterface5(@Arg SubInterface param) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
-   public void afterInterface1(@Arg Interface param)
-   {
-      afterInterface1 = true;
-   }
-   
-   public void afterInterface2(@Arg SuperInterface param)
-   {
-      afterInterface2 = true;
-   }
-   
-   public void afterInterface3(@Arg Object param)
-   {
-      afterInterface3 = true;
-   }
-   
-   public void afterInterface4(@Arg Implementor param)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
-   public void afterInterface5(@Arg SubInterface param)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
-   public void throwingInterface1(@Thrown Throwable thrown, @Arg Interface param)
-   {
-      throwingInterface1 = true;
-   }
-   
-   public void throwingInterface2(@Thrown Throwable thrown, @Arg SuperInterface param)
-   {
-      throwingInterface2 = true;
-   }
-   
-   public void throwingInterface3(@Thrown Throwable thrown, @Arg Object param)
-   {
-      throwingInterface3 = true;
-   }
-   
-   public void throwingInterface4(@Thrown Throwable thrown, @Arg Implementor param)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
-   public void throwingInterface5(@Thrown Throwable thrown, @Arg SubInterface param)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
-   public void finallyInterface1(@Arg Interface param)
-   {
-      finallyInterface1 = true;
-   }
-   
-   public void finallyInterface2(@Arg SuperInterface param)
-   {
-      finallyInterface2 = true;
-   }
-   
-   public void finallyInterface3(@Arg Object param)
-   {
-      finallyInterface3 = true;
-   }
-   
-   public void finallyInterface4(@Arg Implementor param)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
-   public void finallyInterface5(@Arg SubInterface param)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
-   public void beforeInvertedArgs1(@Arg Object arg2, @Arg (index = 0) String arg1)
-   {
-      beforeInverted1 = true;
-   }
-   
-   public void beforeInvertedArgs2(@Arg (index = 0) Object arg2,
-         @Arg (index = 0) String arg1)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
-   public Object aroundInvertedArgs1(@Arg Object arg2, @Arg (index = 0) String arg1)
-      throws Throwable
-   {
-      aroundInverted1 = true;
-      return CurrentInvocation.proceed();
-   }
-   
-   public void aroundInvertedArgs2(@Arg (index = 0) Object arg2,
-         @Arg (index = 0) String arg1)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
-   public void afterInvertedArgs1(@Arg Object arg2, @Arg (index = 0) String arg1)
-   {
-      afterInverted1 = true;
-   }
-   
-   public void afterInvertedArgs2(@Arg (index = 0) Object arg2,
-         @Arg (index = 0) String arg1)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
-   public void throwingInvertedArgs1(@Thrown Throwable thrown, @Arg Object arg2,
-         @Arg (index = 0) String arg1)
-   {
-      throwingInverted1 = true;
-   }
-   
-   public void throwingInvertedArgs2(@Arg (index = 0) Object arg2,
-         @Arg (index = 0) String arg1)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
-   public void finallyInvertedArgs1(@Arg Object arg2, @Arg (index = 0) String arg1)
-   {
-      finallyInverted1 = true;
-   }
-   
-   public void finallyInvertedArgs2(@Arg (index = 0) Object arg2,
-         @Arg (index = 0) String arg1)
    {
       Assert.fail("This advice should never be executed");
    }

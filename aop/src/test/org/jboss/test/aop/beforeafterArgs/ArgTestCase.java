@@ -67,6 +67,8 @@ public class ArgTestCase extends AOPTestWithSetup
       super.setUp();
       this.pojo = new ArgsPOJO();
       ArgAspect.clear();
+      ArgAspectInterfaces.clear();
+      ArgAspectInvertedArgs.clear();
    }
 
    public void test1()
@@ -307,25 +309,25 @@ public class ArgTestCase extends AOPTestWithSetup
    {
       this.pojo.method9(new Implementor());
       
-      assertTrue(ArgAspect.beforeInterface1);
-      assertTrue(ArgAspect.beforeInterface2);
-      assertTrue(ArgAspect.beforeInterface3);
+      assertTrue(ArgAspectInterfaces.before1);
+      assertTrue(ArgAspectInterfaces.before2);
+      assertTrue(ArgAspectInterfaces.before3);
       
-      assertTrue(ArgAspect.aroundInterface1);
-      assertTrue(ArgAspect.aroundInterface2);
-      assertTrue(ArgAspect.aroundInterface3);
+      assertTrue(ArgAspectInterfaces.around1);
+      assertTrue(ArgAspectInterfaces.around2);
+      assertTrue(ArgAspectInterfaces.around3);
       
-      assertTrue(ArgAspect.afterInterface1);
-      assertTrue(ArgAspect.afterInterface2);
-      assertTrue(ArgAspect.afterInterface3);
+      assertTrue(ArgAspectInterfaces.after1);
+      assertTrue(ArgAspectInterfaces.after2);
+      assertTrue(ArgAspectInterfaces.after3);
       
-      assertFalse(ArgAspect.throwingInterface1);
-      assertFalse(ArgAspect.throwingInterface2);
-      assertFalse(ArgAspect.throwingInterface3);
+      assertFalse(ArgAspectInterfaces.throwing1);
+      assertFalse(ArgAspectInterfaces.throwing2);
+      assertFalse(ArgAspectInterfaces.throwing3);
       
-      assertTrue(ArgAspect.finallyInterface1);
-      assertTrue(ArgAspect.finallyInterface2);
-      assertTrue(ArgAspect.finallyInterface3);
+      assertTrue(ArgAspectInterfaces.finally1);
+      assertTrue(ArgAspectInterfaces.finally2);
+      assertTrue(ArgAspectInterfaces.finally3);
    }
    
    public void test11()
@@ -342,36 +344,36 @@ public class ArgTestCase extends AOPTestWithSetup
       
       assertTrue(thrown); // verify precondition for this test
       
-      assertTrue(ArgAspect.beforeInterface1);
-      assertTrue(ArgAspect.beforeInterface2);
-      assertTrue(ArgAspect.beforeInterface3);
+      assertTrue(ArgAspectInterfaces.before1);
+      assertTrue(ArgAspectInterfaces.before2);
+      assertTrue(ArgAspectInterfaces.before3);
       
-      assertTrue(ArgAspect.aroundInterface1);
-      assertTrue(ArgAspect.aroundInterface2);
-      assertTrue(ArgAspect.aroundInterface3);
+      assertTrue(ArgAspectInterfaces.around1);
+      assertTrue(ArgAspectInterfaces.around2);
+      assertTrue(ArgAspectInterfaces.around3);
       
-      assertFalse(ArgAspect.afterInterface1);
-      assertFalse(ArgAspect.afterInterface2);
-      assertFalse(ArgAspect.afterInterface3);
+      assertFalse(ArgAspectInterfaces.after1);
+      assertFalse(ArgAspectInterfaces.after2);
+      assertFalse(ArgAspectInterfaces.after3);
       
-      assertTrue(ArgAspect.throwingInterface1);
-      assertTrue(ArgAspect.throwingInterface2);
-      assertTrue(ArgAspect.throwingInterface3);
+      assertTrue(ArgAspectInterfaces.throwing1);
+      assertTrue(ArgAspectInterfaces.throwing2);
+      assertTrue(ArgAspectInterfaces.throwing3);
       
-      assertTrue(ArgAspect.finallyInterface1);
-      assertTrue(ArgAspect.finallyInterface2);
-      assertTrue(ArgAspect.finallyInterface3);
+      assertTrue(ArgAspectInterfaces.finally1);
+      assertTrue(ArgAspectInterfaces.finally2);
+      assertTrue(ArgAspectInterfaces.finally3);
    }
    
    public void testInverted1()
    {
       pojo.method11("testInverted", null);
       
-      assertTrue(ArgAspect.beforeInverted1);
-      assertTrue(ArgAspect.aroundInverted1);
-      assertTrue(ArgAspect.afterInverted1);
-      assertFalse(ArgAspect.throwingInverted1);
-      assertTrue(ArgAspect.finallyInverted1);
+      assertTrue(ArgAspectInvertedArgs.before1);
+      assertTrue(ArgAspectInvertedArgs.around1);
+      assertTrue(ArgAspectInvertedArgs.after1);
+      assertFalse(ArgAspectInvertedArgs.throwing1);
+      assertTrue(ArgAspectInvertedArgs.finally1);
    }
    
    public void testInverted2()
@@ -388,10 +390,10 @@ public class ArgTestCase extends AOPTestWithSetup
       // verify precondition for this test
       assertTrue(thrown);
       
-      assertTrue(ArgAspect.beforeInverted1);
-      assertTrue(ArgAspect.aroundInverted1);
-      assertFalse(ArgAspect.afterInverted1);
-      assertTrue(ArgAspect.throwingInverted1);
-      assertTrue(ArgAspect.finallyInverted1);
+      assertTrue(ArgAspectInvertedArgs.before1);
+      assertTrue(ArgAspectInvertedArgs.around1);
+      assertFalse(ArgAspectInvertedArgs.after1);
+      assertTrue(ArgAspectInvertedArgs.throwing1);
+      assertTrue(ArgAspectInvertedArgs.finally1);
    }
 }
