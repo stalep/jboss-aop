@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -324,7 +325,7 @@ public class ReflectiveAspectBinder
             Set<LifecycleCallbackDefinition> callbacks = lifecycleCallbacks.get(state);
             if (callbacks == null)
             {
-               callbacks = new HashSet<LifecycleCallbackDefinition>();
+               callbacks = new LinkedHashSet<LifecycleCallbackDefinition>();
                lifecycleCallbacks.put(state, callbacks);
             }
             
