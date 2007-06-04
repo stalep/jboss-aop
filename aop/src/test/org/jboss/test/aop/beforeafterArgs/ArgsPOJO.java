@@ -22,6 +22,7 @@
 package org.jboss.test.aop.beforeafterArgs;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Plain old java object used on @Args parameter tests.
@@ -125,6 +126,14 @@ public class ArgsPOJO
    public void method11(String param1, Collection param2) {}
    
    public void method12(String param1, Collection param2) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   // test of generics
+   public void method13(List<SuperValue> arg) {}
+   
+   public void method14(List<SuperValue> arg) throws POJOException
    {
       throw new POJOException();
    }

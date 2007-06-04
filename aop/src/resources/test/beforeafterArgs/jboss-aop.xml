@@ -158,7 +158,51 @@
       <finally name="finally1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInvertedArgs"/>
       <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInvertedArgs"/>
    </bind>
+   
+   <aspect class="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics" scope="PER_VM"/>
 
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsPOJO->*(java.util.List))">
+      <before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <before name="before6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <before name="before7" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <before name="before8" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <around name="around1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <around name="around2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <around name="around3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <around name="around4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <around name="around5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <around name="around6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <around name="around7" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <around name="around8" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <after name="after6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <after name="after7" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <after name="after8" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <throwing name="throwing1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <throwing name="throwing2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <throwing name="throwing3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <throwing name="throwing4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <throwing name="throwing5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <throwing name="throwing6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <throwing name="throwing7" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <throwing name="throwing8" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <finally name="finally1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <finally name="finally4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <finally name="finally5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <finally name="finally6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <finally name="finally7" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+      <finally name="finally8" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+   </bind>
+   
    <!-- @Args test -->
 	<aspect class="org.jboss.test.aop.beforeafterArgs.ArgsAspect" scope="PER_VM"/>
 
