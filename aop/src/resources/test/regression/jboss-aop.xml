@@ -166,9 +166,7 @@
       <interceptor-ref name="org.jboss.test.aop.regression.jbaop336callnpe.LogInterceptor"/>
    </bind>
 
-<!-- Comment out config for test until what appears to be an error in javassist has been fixed, since it otherwise breaks the test runs
    <bind pointcut="all(org.jboss.test.aop.regression.jbaop398nosuchfield.POJO)">
      <interceptor class="org.jboss.test.aop.regression.jbaop398nosuchfield.SimpleInterceptor" scope="PER_VM" />
   </bind>
--->
 </aop>
