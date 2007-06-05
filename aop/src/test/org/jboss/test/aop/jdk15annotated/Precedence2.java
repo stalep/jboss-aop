@@ -31,10 +31,10 @@ import org.jboss.aop.PrecedenceInterceptor;
 @org.jboss.aop.Precedence
 public class Precedence2
 {
-   @PrecedenceAdvice ("advice1")
+   @PrecedenceAdvice ("advice2")
    PrecedenceAspect1 advice1;
 
-   @PrecedenceAdvice ("advice2")
+   @PrecedenceAdvice ("advice1")
    PrecedenceAspect1 advice2;
    
    @PrecedenceInterceptor

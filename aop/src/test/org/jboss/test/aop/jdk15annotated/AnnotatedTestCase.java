@@ -321,14 +321,19 @@ public class AnnotatedTestCase extends AOPTestWithSetup
       VariaPOJO pojo = new VariaPOJO();
 
       pojo.precedenceMethod();
-      String[] expected = {"PrecedenceInterceptor1", "PrecedenceAspect1.advice1", "PrecedenceAspect1.advice2", "PrecedenceInterceptor2"};
       java.util.ArrayList intercepted = Interceptions.intercepted;
-      assertEquals("Wrong number of interceptions", expected.length ,intercepted.size());
+      assertEquals("Wrong number of interceptions", 4 ,intercepted.size());
 
-      for (int i = 0 ; i < expected.length ; i++)
-      {
-         assertEquals("Wrong interception at index " + i, expected[i], (String)intercepted.get(i));
-      }
+      int precedenceIntercptor1 = intercepted.indexOf("PrecedenceInterceptor1");
+      int precedenceAspect_advice1 = intercepted.indexOf("PrecedenceAspect1.advice1");
+      int precedenceAspect_advice2 = intercepted.indexOf("PrecedenceAspect1.advice2");
+      int precedenceIntercptor2 = intercepted.indexOf("PrecedenceInterceptor2");
+      
+      assertTrue("PrecedenceInterceptor1 must come before PrecedenceInterceptor2 as defined in Precedence1", precedenceIntercptor1 < precedenceIntercptor2);
+      
+      assertEquals("PrecedenceInterceptor2 must be the last element", 3, precedenceIntercptor2);
+      assertTrue("PrecedenceInterceptor.advice2 must come before PrecedenceInterceptor.advice1 as defined in Precedence2", precedenceAspect_advice2 < precedenceAspect_advice1);
+      assertTrue("PrecedenceInterceptor.advice1 must come before PrecedenceInterceptor.advice1 as defined in Precedence2", precedenceAspect_advice1 < precedenceIntercptor2);
    }
 
    /**
