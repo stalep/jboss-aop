@@ -23,11 +23,10 @@ package org.jboss.aop.junit;
 
 import java.net.URL;
 import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.jboss.aop.AspectXmlLoader;
 import org.jboss.test.AbstractTestDelegate;
-
-import EDU.oswego.cs.dl.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * AOPTestDelegate.
