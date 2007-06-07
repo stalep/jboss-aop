@@ -112,7 +112,6 @@ implements AsynchronousUserTask, AsynchronousConstants
 
    public void cleanup(AsynchronousParameters jp)
    {
-
       try
       {
 

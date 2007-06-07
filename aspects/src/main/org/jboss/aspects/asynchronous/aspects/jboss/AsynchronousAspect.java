@@ -71,6 +71,7 @@ public class AsynchronousAspect
        	              (asynchronous.id()!=null)&&(asynchronous.id().length()!=0) )
       	 asynchronousResult.setId(asynchronous.id());
 	  }
+      
       asynchronousResult.setAsynchronousTask(ThreadManagerFactory.getThreadManager().process(ThreadManagerFactory.createNewThreadManagerRequest(asynchronousResult.getId(),
       new InvokeTaskInputParameters((MethodInvocation) invocation.copy()),
       asynchronousInvokeTask,

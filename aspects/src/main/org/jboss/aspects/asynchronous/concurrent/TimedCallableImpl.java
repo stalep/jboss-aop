@@ -22,9 +22,12 @@
 
 package org.jboss.aspects.asynchronous.concurrent;
 
-import EDU.oswego.cs.dl.util.concurrent.Callable;
-import EDU.oswego.cs.dl.util.concurrent.FutureResult;
-import EDU.oswego.cs.dl.util.concurrent.ThreadFactoryUser;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.jboss.aspects.asynchronous.ProcessingTime;
 
 
@@ -33,7 +36,7 @@ import org.jboss.aspects.asynchronous.ProcessingTime;
  * @version <tt>$Revision$</tt>
  */
 
-public class TimedCallableImpl extends ThreadFactoryUser implements Callable, ProcessingTime
+public class TimedCallableImpl implements Callable, ProcessingTime
 {
 
    private final AdapterTask function;
@@ -57,10 +60,10 @@ public class TimedCallableImpl extends ThreadFactoryUser implements Callable, Pr
    public Object call() throws Exception
    {
 
-      FutureResult result = new FutureResult();
+      FutureTask result = new FutureTask(function);
 
 
-      Thread thread = getThreadFactory().newThread(result.setter(function));
+      Thread thread = Executors.defaultThreadFactory().newThread(result);
 
       thread.start();
 
@@ -69,14 +72,14 @@ public class TimedCallableImpl extends ThreadFactoryUser implements Callable, Pr
 
          startingTime = System.currentTimeMillis();
 
-         Object obj = result.timedGet(millis);
+         Object obj = result.get(millis, TimeUnit.MILLISECONDS);
 
          endingTime = System.currentTimeMillis();
 
          return obj;
 
       }
-      catch (InterruptedException ex)
+      catch(TimeoutException ex)
       {
 
          endingTime = System.currentTimeMillis();
@@ -88,6 +91,8 @@ public class TimedCallableImpl extends ThreadFactoryUser implements Callable, Pr
          throw ex;
 
       }
+      
+      
 
    }
 

@@ -22,8 +22,9 @@
 package org.jboss.aspects.patterns.readwritelock;
 
 
-import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
-import EDU.oswego.cs.dl.util.concurrent.ReentrantWriterPreferenceReadWriteLock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.jboss.aop.joinpoint.MethodInvocation;
 
 /**
@@ -33,7 +34,7 @@ import org.jboss.aop.joinpoint.MethodInvocation;
 public class ReadWriteLockAspect
 {
 
-   private ReadWriteLock readWriteLock = new ReentrantWriterPreferenceReadWriteLock();
+   private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
    public ReadWriteLockAspect()
    {
@@ -46,12 +47,12 @@ public class ReadWriteLockAspect
 
       try
       {
-         readWriteLock.readLock().acquire();
+         readWriteLock.readLock().lock();
          result= invocation.invokeNext();
       }
       finally
       {
-   		readWriteLock.readLock().release();
+   		readWriteLock.readLock().unlock();
       }
       return result;
    }
@@ -62,12 +63,12 @@ public class ReadWriteLockAspect
 
       try
       {
-         readWriteLock.writeLock().acquire();
+         readWriteLock.writeLock().lock();
          result= invocation.invokeNext();
       }
       finally
       {
-   		readWriteLock.writeLock().release();
+   		readWriteLock.writeLock().unlock();
       }
      return result;
    }

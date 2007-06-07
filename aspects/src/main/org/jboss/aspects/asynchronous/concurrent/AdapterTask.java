@@ -22,7 +22,8 @@
 
 package org.jboss.aspects.asynchronous.concurrent;
 
-import EDU.oswego.cs.dl.util.concurrent.Callable;
+import java.util.concurrent.Callable;
+
 import org.jboss.aspects.asynchronous.AsynchronousConstants;
 import org.jboss.aspects.asynchronous.AsynchronousParameters;
 import org.jboss.aspects.asynchronous.AsynchronousResponse;

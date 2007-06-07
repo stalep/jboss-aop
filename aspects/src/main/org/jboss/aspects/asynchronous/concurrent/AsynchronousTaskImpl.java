@@ -22,9 +22,6 @@
 
 package org.jboss.aspects.asynchronous.concurrent;
 
-import EDU.oswego.cs.dl.util.concurrent.Callable;
-import EDU.oswego.cs.dl.util.concurrent.FutureResult;
-import EDU.oswego.cs.dl.util.concurrent.TimeoutException;
 import org.jboss.aspects.asynchronous.AsynchronousConstants;
 import org.jboss.aspects.asynchronous.AsynchronousParameters;
 import org.jboss.aspects.asynchronous.AsynchronousUserTask;
@@ -32,7 +29,10 @@ import org.jboss.aspects.asynchronous.ProcessingTime;
 import org.jboss.aspects.asynchronous.ThreadManagerResponse;
 import org.jboss.aspects.asynchronous.common.ThreadManagerResponseImpl;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author <a href="mailto:chussenet@yahoo.com">{Claude Hussenet Independent Consultant}</a>.
@@ -41,7 +41,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public final class AsynchronousTaskImpl
 
-implements AsynchronousConstants, org.jboss.aspects.asynchronous.concurrent.AsynchronousTask
+implements AsynchronousConstants, AsynchronousTask
 {
 
    private long _timeout = 0;
@@ -50,7 +50,8 @@ implements AsynchronousConstants, org.jboss.aspects.asynchronous.concurrent.Asyn
 
    private AsynchronousUserTask _oneInstance = null;
 
-   private FutureResult _futureResult = null;
+   //private FutureResult _futureResult = null;
+   private FutureTask _futureResult = null;
 
    private Callable _callable = null;
 
@@ -66,8 +67,6 @@ implements AsynchronousConstants, org.jboss.aspects.asynchronous.concurrent.Asyn
    {
 
       this._id = id;
-
-      _futureResult = new FutureResult();
 
       _timeout = timeout;
 
@@ -99,8 +98,6 @@ implements AsynchronousConstants, org.jboss.aspects.asynchronous.concurrent.Asyn
    {
 
       this._id = id;
-
-      _futureResult = new FutureResult();
 
       _timeout = timeout;
 
@@ -163,22 +160,6 @@ implements AsynchronousConstants, org.jboss.aspects.asynchronous.concurrent.Asyn
          }
 
       }
-      catch (TimeoutException e)
-      {
-
-         return new ThreadManagerResponseImpl(getId(),
-
-         TIMEOUT,
-
-         e.getMessage(),
-
-         e,
-
-         getStartingTime(),
-
-         getEndingTime());
-
-      }
       catch (InterruptedException e)
       {
 
@@ -195,31 +176,24 @@ implements AsynchronousConstants, org.jboss.aspects.asynchronous.concurrent.Asyn
          getEndingTime());
 
       }
-      catch (InvocationTargetException e)
+      catch(ExecutionException e)
       {
-
          int errorCode = INVOCATION;
-
-         if (e.getTargetException()
-
-         instanceof EDU.oswego.cs.dl.util.concurrent.TimeoutException)
-
+         
+         if (e.getCause() instanceof TimeoutException)
             errorCode = TIMEOUT;
-
          return new ThreadManagerResponseImpl(getId(),
 
-         errorCode,
+               errorCode,
 
-         e.getTargetException().getMessage(),
+               e.getCause().getMessage(),
 
-         e.getTargetException(),
+               e.getCause(),
 
-         getStartingTime(),
+               getStartingTime(),
 
-         getEndingTime());
-
+               getEndingTime());
       }
-
    }
 
    public long getStartingTime()
@@ -240,7 +214,7 @@ implements AsynchronousConstants, org.jboss.aspects.asynchronous.concurrent.Asyn
    public boolean isDone()
    {
 
-      return _futureResult.isReady();
+      return _futureResult.isDone();
 
    }
 
@@ -272,9 +246,9 @@ implements AsynchronousConstants, org.jboss.aspects.asynchronous.concurrent.Asyn
 
             _timeout);
 
-         return _futureResult.setter(_callable);
-
-
+         _futureResult = new FutureTask(_callable);
+         return _futureResult;
+         
       }
       catch (Exception e)
       {
@@ -283,7 +257,6 @@ implements AsynchronousConstants, org.jboss.aspects.asynchronous.concurrent.Asyn
          throw e;
 
       }
-
    }
 
    public String getId()

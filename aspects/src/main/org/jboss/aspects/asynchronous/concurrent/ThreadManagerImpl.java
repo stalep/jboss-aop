@@ -22,8 +22,12 @@
 
 package org.jboss.aspects.asynchronous.concurrent;
 
-import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
-import EDU.oswego.cs.dl.util.concurrent.ThreadFactoryUser;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import org.jboss.aspects.asynchronous.AsynchronousConstants;
 import org.jboss.aspects.asynchronous.AsynchronousParameters;
 import org.jboss.aspects.asynchronous.AsynchronousTask;
@@ -41,13 +45,10 @@ import org.jboss.aspects.asynchronous.common.ThreadManagerResponseImpl;
  */
 
 public class ThreadManagerImpl
-
-extends ThreadFactoryUser
-
 implements AsynchronousConstants, ThreadManager
 {
 
-   protected PooledExecutor _pooledExecutor = null;
+   ThreadPoolExecutor _pooledExecutor;
 
    protected boolean waitWhenPoolSizeIsFull = true;
 
@@ -60,7 +61,7 @@ implements AsynchronousConstants, ThreadManager
    public ThreadManagerImpl()
    {
 
-      _pooledExecutor = new PooledExecutor();
+      _pooledExecutor = (ThreadPoolExecutor)Executors.newCachedThreadPool();
 
       setWaitWhenPoolSizeIsFull(false);
 
@@ -75,7 +76,7 @@ implements AsynchronousConstants, ThreadManager
    public ThreadManagerImpl(int maximumPoolSize)
    {
 
-      _pooledExecutor = new PooledExecutor(maximumPoolSize);
+      _pooledExecutor = (ThreadPoolExecutor)Executors.newFixedThreadPool(maximumPoolSize);
 
       setWaitWhenPoolSizeIsFull(false);
 
@@ -121,11 +122,11 @@ implements AsynchronousConstants, ThreadManager
 
       if (value)
 
-         _pooledExecutor.waitWhenBlocked();
+         _pooledExecutor.setRejectedExecutionHandler(new WaitWhenBlockedPolicy());
 
       else
 
-         _pooledExecutor.abortWhenBlocked();
+         _pooledExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
 
       waitWhenPoolSizeIsFull = value;
 
@@ -168,7 +169,7 @@ implements AsynchronousConstants, ThreadManager
    public void setMinimumPoolSize(int minimumPoolSize)
    {
 
-      _pooledExecutor.setMinimumPoolSize(minimumPoolSize);
+      _pooledExecutor.setCorePoolSize(minimumPoolSize);
 
    }
 
@@ -185,7 +186,7 @@ implements AsynchronousConstants, ThreadManager
    public int getMinimumPoolSize()
    {
 
-      return _pooledExecutor.getMinimumPoolSize();
+      return _pooledExecutor.getCorePoolSize();
 
    }
 
@@ -200,7 +201,7 @@ implements AsynchronousConstants, ThreadManager
    public void setKeepAliveTime(long time)
    {
 
-      _pooledExecutor.setKeepAliveTime(time);
+      _pooledExecutor.setKeepAliveTime(time, TimeUnit.MILLISECONDS);
 
    }
 
@@ -215,7 +216,7 @@ implements AsynchronousConstants, ThreadManager
    public long getKeepAliveTime()
    {
 
-      return _pooledExecutor.getKeepAliveTime();
+      return _pooledExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
 
    }
 
@@ -355,7 +356,7 @@ implements AsynchronousConstants, ThreadManager
          else
          {
 
-            Thread thread = getThreadFactory().newThread(cmd);
+            Thread thread = Executors.defaultThreadFactory().newThread(cmd);
 
             thread.start();
 
@@ -402,5 +403,19 @@ implements AsynchronousConstants, ThreadManager
 
    }
 
+   private static class WaitWhenBlockedPolicy implements RejectedExecutionHandler
+   {
+      public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) throws RejectedExecutionException 
+      {
+         try 
+         {
+            executor.getQueue().put(r);
+         }
+         catch (InterruptedException e) 
+         {
+            throw new RejectedExecutionException(e);
+         }
+      }
+   }
 }
 

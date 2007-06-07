@@ -152,11 +152,9 @@ public class ThreadManagerFactory
 
    }
 
-   static public ThreadManager getThreadManager()
+   public static ThreadManager getThreadManager()
    {
-
       return threadManagerFactory.threadManager;
-
    }
 
    static public ThreadManagerRequest createNewThreadManagerRequest(String id,

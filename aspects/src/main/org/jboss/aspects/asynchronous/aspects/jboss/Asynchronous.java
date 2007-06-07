@@ -32,6 +32,6 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Asynchronous 
 {
-   String id();
+   String id() default "";
    long timeout() default 0;
 }
