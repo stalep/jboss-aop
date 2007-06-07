@@ -58,6 +58,17 @@
       <available file="${lib.javassist}" property="jboss.post.4.0.4"/>
       <property name="bak.javassist" value="${old.deployer}/javassist.bak"/>
       <available file="${bak.javassist}" property="javassist.bak.exists"/>
+
+      <property name="backup.javassist" value="true">
+         <condition>
+            <and>
+               <isset property="jboss.post.4.0.4"/>
+               <not>
+	               <isset property="javassist.bak.exists"/>
+	            </not>
+            </and>
+         </condition>
+      </property>
    </target>
 
    <target name="prepare=aspect-library" depends="init">
@@ -130,7 +141,7 @@
       <delete dir="${temp.dir}"/>
    </target>
 
-   <target name="backup.javassist.post.4.0.4" depends="init" unless="javassist.bak.exists">
+   <target name="backup.javassist.post.4.0.4" depends="init" if="backup.javassist">
       <move file="${lib.javassist}" tofile="${bak.javassist}"/>
    </target>
 
