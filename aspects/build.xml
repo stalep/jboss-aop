@@ -17,7 +17,7 @@
 <!--| Buildmagic extentions.                                               |-->
 <!--+======================================================================+-->
 
-<project default="main" name="JBoss/Aspects">
+<project default="main" name="JBoss/Standalone Aspects">
 
    <!--+====================================================================+-->
    <!--| Setup                                                              |-->
@@ -73,7 +73,7 @@
          <path refid="beanshell.beanshell.classpath"/>
          <path refid="jboss.aop.classpath"/>
          <path refid="jboss.test.classpath"/>
-         <path refid="jboss.microcontainer.classpath"/>
+         <!--path refid="jboss.microcontainer.classpath"/-->
       </path>
 
       <!-- Configure modules -->
@@ -99,13 +99,13 @@
       <property name="build.reports" value="${module.output}/reports"/>
       <property name="build.gen-src" value="${module.output}/gen-src"/>
       <property name="build.classes" value="${module.output}/classes"/>
+      <property name="build.classes.retro" value="${module.output}/classes-retro"/>
       <property name="build.resources" value="${module.output}/resources"/>
       <property name="build.lib" value="${module.output}/lib"/>
       <property name="build.unpacked" value="${module.output}/unpacked"/>
       <property name="build.api" value="${module.output}/api"/>
       <property name="build.etc" value="${module.output}/etc"/>
       <property name="build.todo" value="${module.output}/todo"/>
-      <property name="build.meta.inf" value="${module.output}/META-INF"/>
 
       <!-- Install/Release structure -->
       <property name="install.id" value="${module.name}-${module.version}"/>
@@ -136,6 +136,13 @@
          <path refid="javac.classpath"/>
       </path>
 
+      <path id="jbossretro.classpath">
+         <path refid="apache.ant.classpath"/>
+         <path refid="javassist.classpath"/>
+         <path refid="jboss.jbossretro.classpath"/>
+         <path refid="jboss/backport.concurrent.classpath"/>
+      </path>
+  
       <!-- xdoclet -->
       <path id="xdoclet.task.classpath">
          <path refid="javac.classpath"/>
@@ -159,7 +166,7 @@
 
    <target name="compile"
       description="Compile all source files."
-      depends="_default:compile-etc, _default:compile-resources, compile-classes">
+      depends="_default:compile-etc, _default:compile-resources, compile-classes, retrotranslate">
       <!-- Add module specific elements here. -->
    </target>
 
@@ -183,6 +190,21 @@
          <classpath refid="javac.classpath"/>
       </javac>
    </target>
+ 
+   <target name="retrotranslate" depends="compile-classes">
+      <mkdir dir="${build.classes.retro}"/>
+
+      <taskdef name="retro" classname="org.jboss.ant.tasks.retro.Retro" classpathref="jbossretro.classpath"/>
+      <retro compilerclasspathref="jbossretro.classpath" destdir="${build.classes.retro}">
+         <classpath refid="jbossretro.classpath"/>
+         <classpath refid="javac15.classpath"/>
+         <classpath>
+            <pathelement path="${build.classes}"/>
+         </classpath>
+         <src path="${build.classes}"/>
+      </retro>
+   </target>
+   
 
    <!--+====================================================================+-->
    <!--| Generate Output                                                    |-->
@@ -201,56 +223,23 @@
 
       <mkdir dir="${build.lib}"/>
 
-      <!-- Build jboss-aspect-deployer-jdk50.jar -->
-      <jar destfile="${build.lib}/jboss-aspect-library-jdk50.jar" manifest="${build.etc}/default.mf"
+      <!-- Build jboss-standalone-aspect-library-jdk50.jar -->
+      <jar destfile="${build.lib}/jboss-standalone-aspect-library-jdk50.jar" manifest="${build.etc}/default.mf"
          update="${jar.update}" index="${jar.index}">
          <fileset dir="${build.classes}">
-			   <!--include name="org/jboss/aop/deployers/JBossAspectLibrary.class"/-->
-			   <include name="org/jboss/aop/junit/**"/>
+            <include name="org/jboss/aop/junit/**"/>
             <include name="org/jboss/aspects/**"/>
          </fileset>
-         <fileset dir="${build.etc}">
-            <include name="org/jboss/**/*.xml"/>
-         </fileset>
       </jar>
 
-      <!-- Build client jar containing the minimum needed for ejb 3 -->
-      <jar destfile="${build.lib}/jboss-aspect-jdk50-client.jar" manifest="${build.etc}/default.mf"
+      <!-- Build jboss-standalone-aspect-library-jdk14.jar -->
+      <jar destfile="${build.lib}/jboss-standalone-aspect-library-jdk50.jar" manifest="${build.etc}/default.mf"
          update="${jar.update}" index="${jar.index}">
          <fileset dir="${build.classes}">
-            <!-- Include everything else -->
-            <include name="org/jboss/aspects/asynch/AsynchExecutor.class"/>
-            <include name="org/jboss/aspects/asynch/AsynchProvider.class"/>
-            <include name="org/jboss/aspects/asynch/AsynchProxyInterceptor.class"/>
-            <include name="org/jboss/aspects/asynch/AsynchMixin.class"/>
-            <include name="org/jboss/aspects/asynch/Future.class"/>
-            <include name="org/jboss/aspects/asynch/FutureImpl.class"/>
-            <include name="org/jboss/aspects/asynch/FutureHolder.class"/>
-            <include name="org/jboss/aspects/asynch/FutureInvocationHandler.class"/>
-            <include name="org/jboss/aspects/asynch/RemotableFuture.class"/>
-            <include name="org/jboss/aspects/asynch/TimeoutException.class"/>
-            <include name="org/jboss/aspects/asynch/ThreadPoolExecutor*.class"/>
-            <include name="org/jboss/aspects/remoting/ClusterConstants.class"/>
-            <include name="org/jboss/aspects/remoting/ClusterChooserInterceptor.class"/>
-            <include name="org/jboss/aspects/remoting/FamilyWrapper.class"/>
-            <include name="org/jboss/aspects/remoting/InvokeRemoteInterceptor.class"/>
-            <include name="org/jboss/aspects/remoting/IsLocalInterceptor.class"/>
-            <include name="org/jboss/aspects/remoting/MergeMetaDataInterceptor.class"/>
-            <include name="org/jboss/aspects/remoting/PojiProxy.class"/>
-            <include name="org/jboss/aspects/tx/ClientTxPropagationInterceptor.class"/>
-            <include name="org/jboss/aspects/security/SecurityClientInterceptor.class"/>
-            <include name="org/jboss/aspects/security/SecurityActions*.class"/>
+            <include name="org/jboss/aop/junit/**"/>
+            <include name="org/jboss/aspects/**"/>
          </fileset>
       </jar>
-
-   	<copy file="${project.root}/aspects/src/etc/base-aop.xml" tofile="${build.meta.inf}/base-aspects.xml"/>
-   	
-      <jar destfile="${build.lib}/jboss-aop-jboss5.deployer" manifest="${build.etc}/default.mf"
-         update="${jar.update}" index="${jar.index}">
-         <fileset file="${build.lib}/jboss-aspect-library-jdk50.jar"/>
-      	<fileset file="${build.meta.inf}/base-aspects.xml"/>
-      </jar>
-      <delete dir="${build.meta.inf}"/>
    </target>
 
 

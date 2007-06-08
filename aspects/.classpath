@@ -5,36 +5,19 @@
 	<classpathentry excluding="org/jboss/test/aop/test/AOPTestSetup.java|org/jboss/test/asynch/" kind="src" path="src/test"/>
 	<classpathentry kind="src" path="src/test50"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="/system"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/common-logging-spi/lib/jboss-logging-spi.jar" sourcepath="/thirdparty/jboss/common-logging-spi/lib/jboss-logging-spi-sources.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/common-logging-log4j/lib/jboss-logging-log4j.jar" sourcepath="/thirdparty/jboss/common-logging-log4j/lib/jboss-logging-log4j-sources.jar"/>
-	<classpathentry kind="src" path="/cluster"/>
-	<classpathentry kind="src" path="/transaction"/>
 	<classpathentry kind="lib" path="/thirdparty/apache-log4j/lib/log4j.jar" sourcepath="/thirdparty/apache-log4j/lib/log4j-src.zip"/>
-	<classpathentry kind="lib" path="/thirdparty/oswego-concurrent/lib/concurrent.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/apache-logging/lib/commons-logging.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/beanshell/lib/bsh-1.3.0.jar"/>
-	<classpathentry kind="src" path="/j2se"/>
-	<classpathentry kind="src" path="/jmx"/>
 	<classpathentry kind="lib" path="/thirdparty/junit/lib/junit.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/naming"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/connector"/>
-	<classpathentry kind="lib" path="/thirdparty/jboss/remoting/lib/jboss-remoting.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/sun-servlet/lib/servlet-api.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/apache-xerces/lib/xercesImpl.jar" sourcepath="/thirdparty/apache-xerces/lib/xercesImpl-src.zip"/>
 	<classpathentry kind="lib" path="/thirdparty/trove/lib/trove.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/javassist/lib/javassist.jar" sourcepath="/thirdparty/javassist/lib/javassist-src.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/test/lib/jboss-test.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/jboss/security/lib/jbosssx.jar" sourcepath="/thirdparty/jboss/security/lib/jbosssx-src.zip"/>
-	<classpathentry kind="lib" path="/thirdparty/jboss/security-spi/lib/jboss-security-spi.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/system-jmx"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-deployers.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/common-core/lib/jboss-common-core.jar" sourcepath="/thirdparty/jboss/common-core/lib/jboss-common-core-sources.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/jboss/aop/lib/jboss-aop-jdk50.jar" sourcepath="/thirdparty/jboss/aop/lib/jboss-aop-src.zip"/>
-	<classpathentry kind="lib" path="/thirdparty/jboss/aop/lib/pluggable-instrumentor.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-container.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/jboss-vfs/lib/jboss-vfs.jar" sourcepath="/thirdparty/jboss/jboss-vfs/lib/jboss-vfs-sources.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/jboss/jboss-javaee/lib/jboss-javaee.jar" sourcepath="/thirdparty/jboss/jboss-javaee/lib/jboss-javaee-sources.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/jboss/aop/lib/jboss-aop-deployer-jdk50.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/aop"/>
+	<classpathentry kind="lib" path="/thirdparty/beanshell/lib/bsh.jar"/>
+	<classpathentry kind="lib" path="concurrent.jar"/>
 	<classpathentry kind="output" path="output/eclipse-classes"/>
 </classpath>
