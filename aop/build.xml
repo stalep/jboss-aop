@@ -120,7 +120,6 @@
       <property name="build.stylesheets" value="${module.output}/stylesheets"/>
       <property name="build.classes" value="${module.output}/classes"/>
       <property name="build.classes.retro" value="${module.output}/classes-retro"/>
-      <property name="build15.classes" value="${module.output}/classes15"/>
       <property name="build.lib" value="${module.output}/lib"/>
       <property name="build.api" value="${module.output}/api"/>
       <property name="build.etc" value="${module.output}/etc"/>
@@ -439,7 +438,6 @@
       depends="all, _buildmagic:install:default, dist"/>
 
    <target name="release" depends="install">
-      <echo>RELEASE</echo>
    </target>
 
    <target name="release-zip"

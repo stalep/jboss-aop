@@ -68,14 +68,37 @@
       </copy>
 
       <!-- ==================================================  -->
+      <!-- Add the files from 'aspects'                        -->
+      <!-- ==================================================  -->
+
+      <copy todir="${project.release}/docs/aspects" filtering="no">
+         <fileset dir="${project.root}/aspects/output">
+            <include name="api/**"/>
+         </fileset>
+      </copy>
+
+      <copy todir="${project.release}/src/aspects" filtering="no">
+         <fileset dir="${project.root}/aop/src">
+            <include name="main/**/*.java"/>
+            <include name="test/**/*.java"/>
+            <include name="resources/**"/>
+            <exclude name="**/.svn/**"/>
+            <exclude name="**/CVS/**"/>
+         </fileset>
+      </copy>
+
+
+      <!-- ==================================================  -->
       <!-- Now pull everything together                        -->
       <!-- ==================================================  -->
 
 
       &libraries;
 
-      <property name="aop.50.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50.jar"/>
       <property name="aop.14.location" value="${project.root}/aop/output/lib/jboss-aop.jar"/>
+      <property name="aop.50.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50.jar"/>
+      <property name="aop.aspect-library14.location" value="${project.root}/aspects/output/lib/jboss-standalone-aspect-library-jdk14.jar"/>
+      <property name="aop.aspect-library50.location" value="${project.root}/aspects/output/lib/jboss-standalone-aspect-library-jdk50.jar"/>      
       <property name="aop.aspect-library-beans.location" value="${project.root}/asintegration/src/resources/META-INF/jboss-aspect-library-beans.xml"/>
       <property name="aop.as4-deployer.location" value="${project.root}/asintegration/output/lib/jboss-aop-as4-deployer.jar"/>
       <property name="aop.as4-deployer-jdk14.location" value="${project.root}/asintegration/output/lib/jboss-aop-as4-deployer-jdk14.jar"/>
@@ -144,6 +167,7 @@
       <!-- The JDK 5 libs -->
       <copy todir="${project.release}/lib-50" file="${aop.50.location}"/>
       <copy todir="${project.release}/lib-50" file="${project.root}/aop/output/lib/jboss-aop-jdk50-client.jar"/>
+      <copy todir="${project.release}/lib-50" file="${aop.aspect-library50.location}"/>
       <copy todir="${project.release}/lib-50" file="${aop.jrockit-pluggable-instrumentor.location}"/>
       <copy todir="${project.release}/lib-50" file="${aop.pluggable-instrumentor.location}"/>
       <copy todir="${project.release}/lib-50" file="${javassist.location}"/>
@@ -158,6 +182,7 @@
 
       <!-- The JDK 1.4 libs -->
       <copy todir="${project.release}/lib-14" file="${aop.14.location}"/>
+      <copy todir="${project.release}/lib-14" file="${aop.aspect-library14.location}"/>
       <copy todir="${project.release}/lib-14" file="${aop.jdk14-pluggable-instrumentor.location}"/>
       <copy todir="${project.release}/lib-14" file="${javassist.location}"/>
       <copy todir="${project.release}/lib-14" file="${jboss-backport-concurrent.location}"/>
@@ -181,6 +206,7 @@
       <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/build.xml" file="../asintegration/src/etc/jboss-40-install-jboss-aop-jdk14-build.xml"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="../asintegration/src/etc/jboss.properties"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.14.location}"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.aspect-library14.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.as4-deployer-jdk14.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/" file="${aop.readme-as4.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-backport-concurrent.location}"/><!-- TODO figure out for what versions of jboss this is necessary, and if it exists in other locations -->
@@ -198,7 +224,8 @@
       </copy>
       <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/build.xml" file="../asintegration/src/etc/jboss-40-install-jboss-aop-jdk50-build.xml"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="../asintegration/src/etc/jboss.properties"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${project.root}/aop/output/lib/jboss-aop-jdk50.jar"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.50.location}"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.aspect-library50.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.as4-deployer.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/" file="${aop.readme-as4.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-container-metadata-spi.location}"/>
@@ -212,6 +239,7 @@
       <copy todir="${project.release}/jboss-50-install" file="${aop.readme-as4.location}"/>
       <copy todir="${project.release}/jboss-50-install/lib" file="${javassist.location}"/>
       <copy todir="${project.release}/jboss-50-install/lib" file="${trove.location}"/>
+      <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer" file="${aop.aspect-library50.location}"/>
       <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer/META-INF/" file="${aop.aspect-library-beans.location}"/>
 
       <delete dir="output/temp"/>

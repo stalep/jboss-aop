@@ -62,7 +62,7 @@
 
     <!-- Module name(s) & version -->
     <property name="module.name" value="jboss"/>
-    <property name="module.Name" value="JBossMC Build"/>
+    <property name="module.Name" value="JBoss AOP Build"/>
     <property name="module.version" value="${version.major}.${version.minor}.${version.revision}${version.tag}"/>
 
     <!-- Defines repository.home -->
@@ -81,6 +81,7 @@
       <!-- Modules -->
       <module name="aop"/>
       <module name="asintegration"/>
+      <module name="aspects"/>
 
       <!-- Module groups -->
 
@@ -94,6 +95,7 @@
       <group name="core">
          <include modules="aop"/>
          <include modules="asintegration"/>
+         <include modules="aspects"/>
       </group>
 
       <group name="default">
@@ -222,6 +224,12 @@
    	<move file="${project.release}.jar" todir="${module.output}/lib"/>
   </target>
 
+  <target name="release-dryrun" 
+      description="Builds the default release structure assuming that everything already has been built"
+      depends="init">
+    <ant antfile="build-release.xml" target="release-no-reference-docs"/>
+    <ant antfile="build-release.xml" target="release-reference-docs"/>   
+  </target>
 
   <!-- ================================================================== -->
   <!-- Source Archives                                                    -->

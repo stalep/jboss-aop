@@ -21,7 +21,7 @@
       <isset property="env.JBOSS_REPOSITORY"/>
    </condition>
    <!-- Fall back to default -->
-   <property name="jbossbuild.repository" value="http://repository.jboss.com"/>
+   <property name="jbossbuild.repository" value="http://repository.jboss.org"/>
 
    <!-- File Imports -->
    <import file="../tools/etc/jbossbuild/tasks.xml"/>
@@ -45,6 +45,7 @@
       -->
       <componentref name="apache-log4j" version="1.2.14-brew"/>
       <componentref name="dom4j" version="1.6.1jboss"/>
+      <componentref name="beanshell" version="1.3.0"/>
       <componentref name="javassist" version="snapshot"/>
       <componentref name="jboss/backport-concurrent" version="2.1.0.GA"/>
       <componentref name="jboss/common-core" version="2.2.0.snapshot"/>

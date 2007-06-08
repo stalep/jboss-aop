@@ -57,7 +57,7 @@
       <!-- Module name(s) & version -->
       <property name="aspects.version" value="jboss-aspect-library-1.3"/>
       <property name="aop.version" value="jboss-aop_1.3"/>
-      <property name="aspects.title" value="JBoss AOP Aspect Library"/>
+      <property name="aspects.title" value="JBoss AOP Standalone Aspect Library"/>
 
       <property name="module.name" value="aspects"/>
       <property name="module.Name" value="JBoss Aspects"/>
@@ -166,7 +166,7 @@
 
    <target name="compile"
       description="Compile all source files."
-      depends="_default:compile-etc, _default:compile-resources, compile-classes, retrotranslate">
+      depends="compile-etc, _default:compile-resources, compile-classes, retrotranslate">
       <!-- Add module specific elements here. -->
    </target>
 
@@ -191,6 +191,16 @@
       </javac>
    </target>
  
+   <!-- Compile manifests -->
+   <target name="compile-etc" depends="init">
+      <mkdir dir="${build.etc}"/>
+      <copy todir="${build.etc}" filtering="yes">
+         <fileset dir="${source.etc}">
+            <include name="**"/>
+         </fileset>
+      </copy>
+   </target>
+  
    <target name="retrotranslate" depends="compile-classes">
       <mkdir dir="${build.classes.retro}"/>
 
@@ -233,7 +243,7 @@
       </jar>
 
       <!-- Build jboss-standalone-aspect-library-jdk14.jar -->
-      <jar destfile="${build.lib}/jboss-standalone-aspect-library-jdk50.jar" manifest="${build.etc}/default.mf"
+      <jar destfile="${build.lib}/jboss-standalone-aspect-library-jdk14.jar" manifest="${build.etc}/default.mf"
          update="${jar.update}" index="${jar.index}">
          <fileset dir="${build.classes}">
             <include name="org/jboss/aop/junit/**"/>
@@ -247,7 +257,7 @@
    <!-- Cleaning                                                           -->
    <!-- ================================================================== -->
 
-   <!-- Clean up all build output -->
+      <!-- Clean up all build output -->
    <target name="clean"
       description="Cleans up most generated files."
       depends="_buildmagic:clean">
@@ -263,6 +273,16 @@
    <!-- ================================================================== -->
    <!-- Install & Release                                                  -->
    <!-- ================================================================== -->
+
+   <target name="dist" depends="javadocs, init">
+   </target>
+
+   <target name="install"
+      description="Install the structure for a release."
+      depends="all, _buildmagic:install:default, dist"/>
+
+   <target name="release" depends="install">
+   </target>
 
    <!-- ================================================================== -->
    <!-- Misc.                                                              -->
