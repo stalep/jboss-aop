@@ -78,7 +78,7 @@
       </copy>
 
       <copy todir="${project.release}/src/aspects" filtering="no">
-         <fileset dir="${project.root}/aop/src">
+         <fileset dir="${project.root}/aspects/src">
             <include name="main/**/*.java"/>
             <include name="test/**/*.java"/>
             <include name="resources/**"/>
