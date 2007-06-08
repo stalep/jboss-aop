@@ -40,29 +40,24 @@ public class BusinessModel {
 			Thread.sleep(sleep);
 		} catch (Exception e) {}
 	}
-	/**
-	 * @@org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous
- 	 */
+
+
+   @org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous
 	public void processBusinessModel() {
 		sleep(sleepTime);
 	}
-	/**
-	 * @@org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous
-	 */
+
+   @org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous
 	private void processBusinessModel3() {
 		sleep(sleepTime);
 	}
 
-	/**
-	 * @@org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous
-	 */
+   @org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous
 	public void callPrivateMethod() {
 		processBusinessModel3();
 	}
 
- 	/**
- 	 * @@org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous
-	 */
+   @org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous
 	public long processBusinessModel2(long aSleepTime) {
 		if (aSleepTime < 0) {
 			return 0 / 0;
@@ -70,9 +65,8 @@ public class BusinessModel {
 		sleep(aSleepTime);
 		return aSleepTime;
 	}
- 	/**
- 	 * @@org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous
-	 */
+
+   @org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous
 	static public long processBusinessModel4(
 		long aSleepTime,
 		Parameter parameter) {

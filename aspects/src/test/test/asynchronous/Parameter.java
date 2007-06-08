@@ -20,9 +20,7 @@
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
 package test.asynchronous;
-/**
-* @@org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous
-*/
+@org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous
 public class Parameter {
    public boolean bCleanupCalled = false;
    public Parameter() {}

@@ -615,7 +615,7 @@ public class JUnitTestAsynchronousAspects
 
 			"private method not an asynchronous call:" + (t1 - t0) + " ms.",
 
-			(t1 - t0) < 100);
+			(t1 - t0) < 180);
 
 	}
 
@@ -749,7 +749,7 @@ public class JUnitTestAsynchronousAspects
 
 			"static method not an asynchronous call:" + (t1 - t0) + " ms.",
 
-			(t1 - t0) < 160);
+			(t1 - t0) < 500);
 
 		AsynchronousFacade asynchronousFacade1 = (AsynchronousFacade)object1;
 

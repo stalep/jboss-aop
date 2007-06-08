@@ -31,9 +31,7 @@ package test.asynchronous;
 public class BusinessModelWithCleanup extends BusinessModel {
 	public BusinessModelWithCleanup() {}
 
-	/**
-	 * @@org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous
-	 */
+	@org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous
 	public BusinessModelWithCleanup(long sleepTime) {
 		super(sleepTime);
 	}
