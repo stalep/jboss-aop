@@ -64,40 +64,24 @@
 
       <!-- Configure thirdparty libraries -->
       <path id="library.classpath">
-         <path refid="qdox.classpath"/>
          <path refid="javassist.classpath"/>
          <path refid="trove.classpath"/>
          <path refid="apache.ant.classpath"/>
-         <path refid="oswego.concurrent.classpath"/>
          <path refid="junit.junit.classpath"/>
          <path refid="apache.log4j.classpath"/>
          <path refid="dom4j.dom4j.classpath"/>
          <path refid="beanshell.beanshell.classpath"/>
-         <path refid="jboss.remoting.classpath"/>
-         <path refid="apache.xerces.classpath"/>
-         <path refid="jboss.microcontainer.classpath"/>
-         <path refid="jboss.jboss.vfs.classpath"/>
          <path refid="jboss.aop.classpath"/>
          <path refid="jboss.test.classpath"/>
+         <path refid="jboss.microcontainer.classpath"/>
       </path>
 
       <!-- Configure modules -->
       <path id="dependentmodule.classpath">
-	      <path refid="jboss.common.core.classpath"/>
-   	   <path refid="jboss.common.logging.spi.classpath"/>
-      	<path refid="jboss.common.logging.log4j.classpath"/>
-	      <path refid="jboss.common.logging.jdk.classpath"/>
-         <path refid="jboss.jboss.javaee.classpath"/>
-         <path refid="jboss.j2se.classpath"/>
-         <path refid="jboss.jmx.classpath"/>
-         <path refid="jboss.system.classpath"/>
-         <path refid="jboss.systemjmx.classpath"/>
-         <path refid="jboss.security.classpath"/>
-         <path refid="jboss.security.spi.classpath"/>
-         <path refid="jboss.j2se.classpath"/>
-         <path refid="jboss.system.classpath"/>
-         <path refid="jboss.cluster.classpath"/>
-         <path refid="jboss.transaction.classpath"/>
+	      <path refid="jboss/common.core.classpath"/>
+   	   <path refid="jboss/common.logging.spi.classpath"/>
+      	<path refid="jboss/common.logging.log4j.classpath"/>
+	      <path refid="jboss/common.logging.jdk.classpath"/>
       </path>
 
       <!-- ===== -->
@@ -265,9 +249,6 @@
          update="${jar.update}" index="${jar.index}">
          <fileset file="${build.lib}/jboss-aspect-library-jdk50.jar"/>
       	<fileset file="${build.meta.inf}/base-aspects.xml"/>
-         <zipfileset prefix="META-INF" dir="${jboss.aop.resources}">
-			   <include name="jboss-aspect-library-beans.xml"/>
-         </zipfileset> 
       </jar>
       <delete dir="${build.meta.inf}"/>
    </target>
@@ -333,15 +314,27 @@
 
 
    <target name="run-asynch-aspect" depends="compile">
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
-      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
 
-      <path id="annotationc.classpath">
-         <path location="${build.classes}"/>
-      </path>
-      <annotationc compilerclasspathref="javac.classpath" classpathref="annotationc.classpath" bytecode="true">
-         <src path="src/test/."/>
-      </annotationc>
+      <delete dir="output/classes/test/asynchronous"/>
+      
+      <javac destdir="${build.classes}"
+         optimize="${javac.optimize}"
+         target="${javac.target}"
+         source="${javac.source}"
+         debug="${javac.debug}"
+         depend="${javac.depend}"
+         verbose="${javac.verbose}"
+         deprecation="${javac.deprecation}"
+         includeAntRuntime="${javac.include.ant.runtime}"
+         includeJavaRuntime="${javac.include.java.runtime}"
+         includes="test/asynchronous/**/*.java"
+         excludes="${javac.excludes}"
+         failonerror="${javac.fail.onerror}">
+         <src path="${source.test}"/>
+         <classpath refid="javac.classpath"/>
+      </javac>
+      
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
 
       <aopc compilerclasspathref="javac.classpath">
          <classpath refid="javac.classpath"/>
