@@ -21,34 +21,39 @@
  */
 package org.jboss.aop.joinpoint;
 
-import java.lang.reflect.Method;
+import org.jboss.aop.Advisor;
 
 /**
- * Represents calls made to a method or a constructor by either a method or a constructor
+ * Represents a call made on a joinpoint
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public interface ICallerMethodInfo extends IJoinPointInfo
+public interface JoinPointBean
 {
    /**
-    * Gets the class containing the method/constructor making the call
+    * Gets the advisor
     */
-   Class getCallingClass();
+   Advisor getAdvisor();
 
    /**
-    * Gets the class containing the method being called 
+    * Gets the advisor's class
     */
-   Class getCalledClass();
+   Class getClazz();
 
    /**
-    * Gets the method being called
+    * Resolves metadata on the class
     */
-   Method getMethod();
+   Object resolveClassMetaData(Object key, Object attr);
 
    /**
-    * Gets the method hash of the method being called
+    * Resolves annotations for the class
     */
-   long getCalledMethodHash();
+   Object resolveClassAnnotation(Class annotation);
+
+   /**
+    * Resolves annotations on the particular joinpoint (field, constructor, method etc.)
+    */
+   Object resolveAnnotation(Class annotation);
 
 }

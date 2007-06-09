@@ -38,8 +38,10 @@ import org.jboss.aop.FieldInfo;
 import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.joinpoint.FieldAccess;
 import org.jboss.aop.joinpoint.FieldReadInvocation;
 import org.jboss.aop.joinpoint.FieldWriteInvocation;
+import org.jboss.aop.joinpoint.JoinPointBean;
 import org.jboss.aop.util.JavassistToReflect;
 import org.jboss.aop.util.ReflectToJavassist;
 
@@ -54,6 +56,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
    public static final String READ_JOINPOINT_FIELD_PREFIX = JOINPOINT_FIELD_PREFIX + "r_";
    public static final String WRITE_JOINPOINT_CLASS_PREFIX = JOINPOINT_CLASS_PREFIX + "w_";
    public static final String READ_JOINPOINT_CLASS_PREFIX = JOINPOINT_CLASS_PREFIX + "r_";
+   private static final Class JOINPOINT_TYPE = FieldAccess.class;
    private static final Class READ_INVOCATION_TYPE = FieldReadInvocation.class;
    private static final Class WRITE_INVOCATION_TYPE = FieldWriteInvocation.class;
    private static final CtClass READ_INVOCATION_CT_TYPE;
@@ -80,7 +83,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       super(advisor, info, getParameters((FieldInfo) info),
             ((FieldInfo) info).isRead()? 0: 1);
 
-      if (read((FieldInfo)info))
+      if (((FieldInfo)info).isRead())
       {
          read = true;
          returnType = new WeakReference(((FieldInfo)info).getAdvisedField().getType());
@@ -101,20 +104,15 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
    {
       FieldInfo finfo = (FieldInfo)info;
       joinpointClassName =
-         getGeneratedJoinPointClassName(fieldName(finfo), read(finfo));
+         getGeneratedJoinPointClassName(fieldName(finfo), finfo.isRead());
 
       joinpointFieldName =
-         getGeneratedJoinPointFieldName(fieldName(finfo), read(finfo));
+         getGeneratedJoinPointFieldName(fieldName(finfo), finfo.isRead());
    }
 
    private String fieldName(FieldInfo info)
    {
       return info.getAdvisedField().getName();
-   }
-
-   private boolean read(FieldInfo info)
-   {
-      return info.isRead();
    }
 
    protected boolean isVoid()
@@ -131,17 +129,17 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       return null;
    }
 
-   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointInfo info, AdviceSetup setup)
+   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
    {
-      FieldInfo finfo = (FieldInfo)info;
-      Field field = finfo.getAdvisedField();
+      FieldAccess fieldAccess = (FieldAccess)joinPoint;
+      Field field = fieldAccess.getAdvisedField();
       return new AdviceMethodProperties(
                setup.getAspectClass(),
                setup.getAdviceName(),
-               info.getClass(),
-               (read(finfo)) ? READ_INVOCATION_TYPE : WRITE_INVOCATION_TYPE,
-               (read(finfo)) ? getReturnType() : Void.TYPE,
-               (read(finfo)) ? new Class[] {} : new Class[] {field.getType()},
+               JOINPOINT_TYPE,
+               (fieldAccess.isRead()) ? READ_INVOCATION_TYPE : WRITE_INVOCATION_TYPE,
+               (fieldAccess.isRead()) ? getReturnType() : Void.TYPE,
+               (fieldAccess.isRead()) ? new Class[] {} : new Class[] {field.getType()},
                null,
                field.getDeclaringClass(),
                hasTargetObject());

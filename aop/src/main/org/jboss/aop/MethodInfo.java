@@ -21,7 +21,7 @@
   */
 package org.jboss.aop;
 
-import org.jboss.aop.joinpoint.IMethodInfo;
+import org.jboss.aop.joinpoint.MethodExecution;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodJoinpoint;
 import org.jboss.aop.util.MethodHashing;
@@ -31,7 +31,7 @@ import java.lang.reflect.Method;
 /**
  *  This class is here to eliminate a hash lookup in invokeMethod
  */
-public class MethodInfo extends JoinPointInfo implements IMethodInfo
+public class MethodInfo extends JoinPointInfo implements MethodExecution
 {
    private Method advisedMethod;
    private Method unadvisedMethod;

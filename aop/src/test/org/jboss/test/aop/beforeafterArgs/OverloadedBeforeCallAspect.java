@@ -23,12 +23,12 @@ package org.jboss.test.aop.beforeafterArgs;
 
 import junit.framework.Assert;
 
-import org.jboss.aop.MethodByMethodInfo;
 import org.jboss.aop.advice.annotation.Arg;
 import org.jboss.aop.advice.annotation.Args;
 import org.jboss.aop.advice.annotation.Caller;
 import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Target;
+import org.jboss.aop.joinpoint.MethodCallByMethod;
 
 /**
  * Aspect used on overloaded before advice tests (for Call and Target tests
@@ -137,149 +137,149 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE1 ADVICE */
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before1 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int";
+      before1 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller,
          @Arg int arg)
    {
-      before1 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass,int";
+      before1 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass,int";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller,
          @Arg int arg)
    {
-      before1 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller,int";
+      before1 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller,
          @Arg int arg)
    {
-      before1 = "MethodByMethodInfo,Object,SuperClass,int";
+      before1 = "MethodCallByMethod,Object,SuperClass,int";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before1 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
+      before1 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller,
          @Args Object[] args)
    {
-      before1 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass,Object[]";
+      before1 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass,Object[]";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller,
          @Args Object[] args)
    {
-      before1 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller,Object[]";
+      before1 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller,
          @Args Object[] args)
    {
-      before1 = "MethodByMethodInfo,Object,SuperClass,Object[]";
+      before1 = "MethodCallByMethod,Object,SuperClass,Object[]";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before1 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
+      before1 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller)
    {
-      before1 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass";
+      before1 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before1 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller";
+      before1 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller)
    {
-      before1 = "MethodByMethodInfo,Object,SuperClass";
+      before1 = "MethodCallByMethod,Object,SuperClass";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      before1 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      before1 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Arg int arg)
    {
-      before1 = "MethodByMethodInfo,Object,int";
+      before1 = "MethodCallByMethod,Object,int";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before1 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before1 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before1 = "MethodByMethodInfo,Object,Object[]";
+      before1 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before1 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before1 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before1 = "MethodByMethodInfo,SuperClass,int";
+      before1 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before1 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before1 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before1 = "MethodByMethodInfo,SuperClass,Object[]";
+      before1 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before1(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before1 = "MethodByMethodInfo,int";
+      before1 = "MethodCallByMethod,int";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before1(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before1 = "MethodByMethodInfo,Object[]";
+      before1 = "MethodCallByMethod,Object[]";
    }
    
-   public void before1(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before1(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before1= "MethodByMethodInfo";
+      before1= "MethodCallByMethod";
    }
    
    public void before1(@Target OverloadedAdvicePOJO target,
@@ -408,142 +408,142 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE2 ADVICE */
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller,
          @Arg int arg)
    {
-      before2 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass,int";
+      before2 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass,int";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller,
          @Arg int arg)
    {
-      before2 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller,int";
+      before2 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller,
          @Arg int arg)
    {
-      before2 = "MethodByMethodInfo,Object,SuperClass,int";
+      before2 = "MethodCallByMethod,Object,SuperClass,int";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before2 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
+      before2 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller,
          @Args Object[] args)
    {
-      before2 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass,Object[]";
+      before2 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass,Object[]";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller,
          @Args Object[] args)
    {
-      before2 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller,Object[]";
+      before2 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller,
          @Args Object[] args)
    {
-      before2 = "MethodByMethodInfo,Object,SuperClass,Object[]";
+      before2 = "MethodCallByMethod,Object,SuperClass,Object[]";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before2 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
+      before2 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller)
    {
-      before2 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass";
+      before2 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before2 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller";
+      before2 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller)
    {
-      before2 = "MethodByMethodInfo,Object,SuperClass";
+      before2 = "MethodCallByMethod,Object,SuperClass";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      before2 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      before2 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Arg int arg)
    {
-      before2 = "MethodByMethodInfo,Object,int";
+      before2 = "MethodCallByMethod,Object,int";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before2 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before2 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before2 = "MethodByMethodInfo,Object,Object[]";
+      before2 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before2 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before2 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before2 = "MethodByMethodInfo,SuperClass,int";
+      before2 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before2 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before2 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before2 = "MethodByMethodInfo,SuperClass,Object[]";
+      before2 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before2(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before2 = "MethodByMethodInfo,int";
+      before2 = "MethodCallByMethod,int";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before2(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before2 = "MethodByMethodInfo,Object[]";
+      before2 = "MethodCallByMethod,Object[]";
    }
    
-   public void before2(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before2(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before2= "MethodByMethodInfo";
+      before2= "MethodCallByMethod";
    }
    
    public void before2(@Target OverloadedAdvicePOJO target,
@@ -672,135 +672,135 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE3 ADVICE */
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller,
          @Arg int arg)
    {
-      before3 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller,int";
+      before3 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller,
          @Arg int arg)
    {
-      before3 = "MethodByMethodInfo,Object,SuperClass,int";
+      before3 = "MethodCallByMethod,Object,SuperClass,int";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before3 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
+      before3 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller,
          @Args Object[] args)
    {
-      before3 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass,Object[]";
+      before3 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass,Object[]";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller,
          @Args Object[] args)
    {
-      before3 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller,Object[]";
+      before3 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller,
          @Args Object[] args)
    {
-      before3 = "MethodByMethodInfo,Object,SuperClass,Object[]";
+      before3 = "MethodCallByMethod,Object,SuperClass,Object[]";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before3 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
+      before3 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller)
    {
-      before3 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass";
+      before3 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before3 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller";
+      before3 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller)
    {
-      before3 = "MethodByMethodInfo,Object,SuperClass";
+      before3 = "MethodCallByMethod,Object,SuperClass";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      before3 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      before3 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Arg int arg)
    {
-      before3 = "MethodByMethodInfo,Object,int";
+      before3 = "MethodCallByMethod,Object,int";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before3 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before3 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before3 = "MethodByMethodInfo,Object,Object[]";
+      before3 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before3 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before3 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before3 = "MethodByMethodInfo,SuperClass,int";
+      before3 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before3 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before3 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before3 = "MethodByMethodInfo,SuperClass,Object[]";
+      before3 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before3(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before3 = "MethodByMethodInfo,int";
+      before3 = "MethodCallByMethod,int";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before3(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before3 = "MethodByMethodInfo,Object[]";
+      before3 = "MethodCallByMethod,Object[]";
    }
    
-   public void before3(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before3(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before3= "MethodByMethodInfo";
+      before3= "MethodCallByMethod";
    }
    
    public void before3(@Target OverloadedAdvicePOJO target,
@@ -929,128 +929,128 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE4 ADVICE */
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller,
          @Arg int arg)
    {
-      before4 = "MethodByMethodInfo,Object,SuperClass,int";
+      before4 = "MethodCallByMethod,Object,SuperClass,int";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before4 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
+      before4 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller,
          @Args Object[] args)
    {
-      before4 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass,Object[]";
+      before4 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass,Object[]";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller,
          @Args Object[] args)
    {
-      before4 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller,Object[]";
+      before4 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller,
          @Args Object[] args)
    {
-      before4 = "MethodByMethodInfo,Object,SuperClass,Object[]";
+      before4 = "MethodCallByMethod,Object,SuperClass,Object[]";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before4 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
+      before4 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller)
    {
-      before4 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass";
+      before4 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before4 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller";
+      before4 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller)
    {
-      before4 = "MethodByMethodInfo,Object,SuperClass";
+      before4 = "MethodCallByMethod,Object,SuperClass";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      before4 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      before4 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Arg int arg)
    {
-      before4 = "MethodByMethodInfo,Object,int";
+      before4 = "MethodCallByMethod,Object,int";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before4 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before4 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before4 = "MethodByMethodInfo,Object,Object[]";
+      before4 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before4 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before4 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before4 = "MethodByMethodInfo,SuperClass,int";
+      before4 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before4 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before4 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before4 = "MethodByMethodInfo,SuperClass,Object[]";
+      before4 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before4(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before4 = "MethodByMethodInfo,int";
+      before4 = "MethodCallByMethod,int";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before4(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before4 = "MethodByMethodInfo,Object[]";
+      before4 = "MethodCallByMethod,Object[]";
    }
    
-   public void before4(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before4(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before4= "MethodByMethodInfo";
+      before4= "MethodCallByMethod";
    }
    
    public void before4(@Target OverloadedAdvicePOJO target,
@@ -1179,121 +1179,121 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE5 ADVICE */
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before5 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
+      before5 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller,
          @Args Object[] args)
    {
-      before5 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass,Object[]";
+      before5 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass,Object[]";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller,
          @Args Object[] args)
    {
-      before5 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller,Object[]";
+      before5 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller,
          @Args Object[] args)
    {
-      before5 = "MethodByMethodInfo,Object,SuperClass,Object[]";
+      before5 = "MethodCallByMethod,Object,SuperClass,Object[]";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before5 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
+      before5 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller)
    {
-      before5 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass";
+      before5 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before5 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller";
+      before5 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller)
    {
-      before5 = "MethodByMethodInfo,Object,SuperClass";
+      before5 = "MethodCallByMethod,Object,SuperClass";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      before5 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      before5 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Arg int arg)
    {
-      before5 = "MethodByMethodInfo,Object,int";
+      before5 = "MethodCallByMethod,Object,int";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before5 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before5 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before5 = "MethodByMethodInfo,Object,Object[]";
+      before5 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before5 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before5 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before5 = "MethodByMethodInfo,SuperClass,int";
+      before5 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before5 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before5 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before5 = "MethodByMethodInfo,SuperClass,Object[]";
+      before5 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before5(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before5 = "MethodByMethodInfo,int";
+      before5 = "MethodCallByMethod,int";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before5(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before5 = "MethodByMethodInfo,Object[]";
+      before5 = "MethodCallByMethod,Object[]";
    }
    
-   public void before5(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before5(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before5= "MethodByMethodInfo";
+      before5= "MethodCallByMethod";
    }
    
    public void before5(@Target OverloadedAdvicePOJO target,
@@ -1422,114 +1422,114 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE6 ADVICE */
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller,
          @Args Object[] args)
    {
-      before6 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass,Object[]";
+      before6 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass,Object[]";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller,
          @Args Object[] args)
    {
-      before6 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller,Object[]";
+      before6 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller,
          @Args Object[] args)
    {
-      before6 = "MethodByMethodInfo,Object,SuperClass,Object[]";
+      before6 = "MethodCallByMethod,Object,SuperClass,Object[]";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before6 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
+      before6 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller)
    {
-      before6 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass";
+      before6 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before6 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller";
+      before6 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller)
    {
-      before6 = "MethodByMethodInfo,Object,SuperClass";
+      before6 = "MethodCallByMethod,Object,SuperClass";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      before6 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      before6 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Arg int arg)
    {
-      before6 = "MethodByMethodInfo,Object,int";
+      before6 = "MethodCallByMethod,Object,int";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before6 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before6 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before6 = "MethodByMethodInfo,Object,Object[]";
+      before6 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before6 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before6 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before6 = "MethodByMethodInfo,SuperClass,int";
+      before6 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before6 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before6 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before6 = "MethodByMethodInfo,SuperClass,Object[]";
+      before6 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before6(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before6 = "MethodByMethodInfo,int";
+      before6 = "MethodCallByMethod,int";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before6(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before6 = "MethodByMethodInfo,Object[]";
+      before6 = "MethodCallByMethod,Object[]";
    }
    
-   public void before6(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before6(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before6= "MethodByMethodInfo";
+      before6= "MethodCallByMethod";
    }
    
    public void before6(@Target OverloadedAdvicePOJO target,
@@ -1658,107 +1658,107 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE7 ADVICE */
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller,
          @Args Object[] args)
    {
-      before7 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller,Object[]";
+      before7 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller,
          @Args Object[] args)
    {
-      before7 = "MethodByMethodInfo,Object,SuperClass,Object[]";
+      before7 = "MethodCallByMethod,Object,SuperClass,Object[]";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before7 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
+      before7 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller)
    {
-      before7 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass";
+      before7 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before7 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller";
+      before7 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller)
    {
-      before7 = "MethodByMethodInfo,Object,SuperClass";
+      before7 = "MethodCallByMethod,Object,SuperClass";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      before7 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      before7 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Arg int arg)
    {
-      before7 = "MethodByMethodInfo,Object,int";
+      before7 = "MethodCallByMethod,Object,int";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before7 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before7 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before7 = "MethodByMethodInfo,Object,Object[]";
+      before7 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before7 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before7 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before7 = "MethodByMethodInfo,SuperClass,int";
+      before7 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before7 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before7 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before7 = "MethodByMethodInfo,SuperClass,Object[]";
+      before7 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before7(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before7 = "MethodByMethodInfo,int";
+      before7 = "MethodCallByMethod,int";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before7(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before7 = "MethodByMethodInfo,Object[]";
+      before7 = "MethodCallByMethod,Object[]";
    }
    
-   public void before7(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before7(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before7= "MethodByMethodInfo";
+      before7= "MethodCallByMethod";
    }
    
    public void before7(@Target OverloadedAdvicePOJO target,
@@ -1887,100 +1887,100 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE8 ADVICE */
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before8(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller,
          @Args Object[] args)
    {
-      before8 = "MethodByMethodInfo,Object,SuperClass,Object[]";
+      before8 = "MethodCallByMethod,Object,SuperClass,Object[]";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before8(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before8 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
+      before8 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before8(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller)
    {
-      before8 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass";
+      before8 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before8(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before8 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller";
+      before8 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before8(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller)
    {
-      before8 = "MethodByMethodInfo,Object,SuperClass";
+      before8 = "MethodCallByMethod,Object,SuperClass";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before8(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      before8 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      before8 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before8(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Arg int arg)
    {
-      before8 = "MethodByMethodInfo,Object,int";
+      before8 = "MethodCallByMethod,Object,int";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before8(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before8 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before8 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before8(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before8 = "MethodByMethodInfo,Object,Object[]";
+      before8 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before8(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before8 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before8 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before8(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before8 = "MethodByMethodInfo,SuperClass,int";
+      before8 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before8(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before8 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before8 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before8(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before8 = "MethodByMethodInfo,SuperClass,Object[]";
+      before8 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before8(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before8 = "MethodByMethodInfo,int";
+      before8 = "MethodCallByMethod,int";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before8(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before8 = "MethodByMethodInfo,Object[]";
+      before8 = "MethodCallByMethod,Object[]";
    }
    
-   public void before8(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before8(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before8= "MethodByMethodInfo";
+      before8= "MethodCallByMethod";
    }
    
    public void before8(@Target OverloadedAdvicePOJO target,
@@ -2109,93 +2109,93 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE9 ADVICE */
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before9(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before9 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
+      before9 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
    }
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before9(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller)
    {
-      before9 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass";
+      before9 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass";
    }
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before9(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before9 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller";
+      before9 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller";
    }
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before9(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller)
    {
-      before9 = "MethodByMethodInfo,Object,SuperClass";
+      before9 = "MethodCallByMethod,Object,SuperClass";
    }
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before9(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      before9 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      before9 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before9(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Arg int arg)
    {
-      before9 = "MethodByMethodInfo,Object,int";
+      before9 = "MethodCallByMethod,Object,int";
    }
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before9(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before9 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before9 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before9(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before9 = "MethodByMethodInfo,Object,Object[]";
+      before9 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before9(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before9 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before9 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before9(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before9 = "MethodByMethodInfo,SuperClass,int";
+      before9 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before9(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before9 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before9 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before9(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before9 = "MethodByMethodInfo,SuperClass,Object[]";
+      before9 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before9(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before9 = "MethodByMethodInfo,int";
+      before9 = "MethodCallByMethod,int";
    }
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before9(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before9 = "MethodByMethodInfo,Object[]";
+      before9 = "MethodCallByMethod,Object[]";
    }
    
-   public void before9(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before9(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before9= "MethodByMethodInfo";
+      before9= "MethodCallByMethod";
    }
    
    public void before9(@Target OverloadedAdvicePOJO target,
@@ -2324,86 +2324,86 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE10 ADVICE */
    
-   public void before10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before10(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Caller SuperClass caller)
    {
-      before10 = "MethodByMethodInfo,OverloadedAdvicePOJO,SuperClass";
+      before10 = "MethodCallByMethod,OverloadedAdvicePOJO,SuperClass";
    }
    
-   public void before10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before10(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before10 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller";
+      before10 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller";
    }
    
-   public void before10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before10(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller)
    {
-      before10 = "MethodByMethodInfo,Object,SuperClass";
+      before10 = "MethodCallByMethod,Object,SuperClass";
    }
    
-   public void before10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before10(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      before10 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      before10 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void before10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before10(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Arg int arg)
    {
-      before10 = "MethodByMethodInfo,Object,int";
+      before10 = "MethodCallByMethod,Object,int";
    }
    
-   public void before10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before10(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before10 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before10 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before10(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before10 = "MethodByMethodInfo,Object,Object[]";
+      before10 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before10(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before10 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before10 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before10(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before10 = "MethodByMethodInfo,SuperClass,int";
+      before10 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before10(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before10 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before10 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before10(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before10 = "MethodByMethodInfo,SuperClass,Object[]";
+      before10 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before10(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before10(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before10 = "MethodByMethodInfo,int";
+      before10 = "MethodCallByMethod,int";
    }
    
-   public void before10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before10(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before10 = "MethodByMethodInfo,Object[]";
+      before10 = "MethodCallByMethod,Object[]";
    }
    
-   public void before10(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before10(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before10= "MethodByMethodInfo";
+      before10= "MethodCallByMethod";
    }
    
    public void before10(@Target OverloadedAdvicePOJO target,
@@ -2532,80 +2532,80 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE11 ADVICE */
    
-   public void before11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before11(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller OverloadedAdvicePOJOCaller caller)
    {
-      before11 = "MethodByMethodInfo,Object,OverloadedAdvicePOJOCaller";
+      before11 = "MethodCallByMethod,Object,OverloadedAdvicePOJOCaller";
    }
    
-   public void before11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before11(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller)
    {
-      before11 = "MethodByMethodInfo,Object,SuperClass";
+      before11 = "MethodCallByMethod,Object,SuperClass";
    }
    
-   public void before11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before11(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      before11 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      before11 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void before11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before11(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Arg int arg)
    {
-      before11 = "MethodByMethodInfo,Object,int";
+      before11 = "MethodCallByMethod,Object,int";
    }
    
-   public void before11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before11(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before11 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before11 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before11(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before11 = "MethodByMethodInfo,Object,Object[]";
+      before11 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before11(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before11 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before11 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before11(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before11 = "MethodByMethodInfo,SuperClass,int";
+      before11 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before11(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before11 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before11 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before11(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before11 = "MethodByMethodInfo,SuperClass,Object[]";
+      before11 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before11(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before11(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before11 = "MethodByMethodInfo,int";
+      before11 = "MethodCallByMethod,int";
    }
    
-   public void before11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before11(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before11 = "MethodByMethodInfo,Object[]";
+      before11 = "MethodCallByMethod,Object[]";
    }
    
-   public void before11(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before11(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before11= "MethodByMethodInfo";
+      before11= "MethodCallByMethod";
    }
    
    public void before11(@Target OverloadedAdvicePOJO target,
@@ -2734,74 +2734,74 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE12 ADVICE */
    
-   public void before12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before12(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Caller SuperClass caller)
    {
-      before12 = "MethodByMethodInfo,Object,SuperClass";
+      before12 = "MethodCallByMethod,Object,SuperClass";
    }
    
-   public void before12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before12(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      before12 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      before12 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void before12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before12(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Arg int arg)
    {
-      before12 = "MethodByMethodInfo,Object,int";
+      before12 = "MethodCallByMethod,Object,int";
    }
    
-   public void before12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before12(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before12 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before12 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before12(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before12 = "MethodByMethodInfo,Object,Object[]";
+      before12 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before12(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before12 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before12 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before12(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before12 = "MethodByMethodInfo,SuperClass,int";
+      before12 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before12(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before12 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before12 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before12(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before12 = "MethodByMethodInfo,SuperClass,Object[]";
+      before12 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before12(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before12(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before12 = "MethodByMethodInfo,int";
+      before12 = "MethodCallByMethod,int";
    }
    
-   public void before12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before12(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before12 = "MethodByMethodInfo,Object[]";
+      before12 = "MethodCallByMethod,Object[]";
    }
    
-   public void before12(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before12(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before12= "MethodByMethodInfo";
+      before12= "MethodCallByMethod";
    }
    
    public void before12(@Target OverloadedAdvicePOJO target,
@@ -2930,68 +2930,68 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE13 ADVICE */
    
-   public void before13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before13(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      before13 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      before13 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void before13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before13(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Arg int arg)
    {
-      before13 = "MethodByMethodInfo,Object,int";
+      before13 = "MethodCallByMethod,Object,int";
    }
    
-   public void before13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before13(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before13 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before13 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before13(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before13 = "MethodByMethodInfo,Object,Object[]";
+      before13 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before13(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before13 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before13 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before13(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before13 = "MethodByMethodInfo,SuperClass,int";
+      before13 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before13(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before13 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before13 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before13(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before13 = "MethodByMethodInfo,SuperClass,Object[]";
+      before13 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before13(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before13(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before13 = "MethodByMethodInfo,int";
+      before13 = "MethodCallByMethod,int";
    }
    
-   public void before13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before13(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before13 = "MethodByMethodInfo,Object[]";
+      before13 = "MethodCallByMethod,Object[]";
    }
    
-   public void before13(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before13(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before13= "MethodByMethodInfo";
+      before13= "MethodCallByMethod";
    }
    
    public void before13(@Target OverloadedAdvicePOJO target,
@@ -3120,62 +3120,62 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE14 ADVICE */
    
-   public void before14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before14(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Arg int arg)
    {
-      before14 = "MethodByMethodInfo,Object,int";
+      before14 = "MethodCallByMethod,Object,int";
    }
    
-   public void before14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before14(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before14 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before14 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before14(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before14 = "MethodByMethodInfo,Object,Object[]";
+      before14 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before14(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before14 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before14 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before14(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before14 = "MethodByMethodInfo,SuperClass,int";
+      before14 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before14(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before14 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before14 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before14(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before14 = "MethodByMethodInfo,SuperClass,Object[]";
+      before14 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before14(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before14(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before14 = "MethodByMethodInfo,int";
+      before14 = "MethodCallByMethod,int";
    }
    
-   public void before14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before14(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before14 = "MethodByMethodInfo,Object[]";
+      before14 = "MethodCallByMethod,Object[]";
    }
    
-   public void before14(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before14(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before14= "MethodByMethodInfo";
+      before14= "MethodCallByMethod";
    }
    
    public void before14(@Target OverloadedAdvicePOJO target,
@@ -3304,56 +3304,56 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE15 ADVICE */
    
-   public void before15(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before15(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      before15 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      before15 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void before15(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before15(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before15 = "MethodByMethodInfo,Object,Object[]";
+      before15 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before15(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before15(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before15 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before15 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before15(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before15(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before15 = "MethodByMethodInfo,SuperClass,int";
+      before15 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before15(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before15(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before15 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before15 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before15(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before15(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before15 = "MethodByMethodInfo,SuperClass,Object[]";
+      before15 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before15(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before15(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before15 = "MethodByMethodInfo,int";
+      before15 = "MethodCallByMethod,int";
    }
    
-   public void before15(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before15(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before15 = "MethodByMethodInfo,Object[]";
+      before15 = "MethodCallByMethod,Object[]";
    }
    
-   public void before15(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before15(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before15= "MethodByMethodInfo";
+      before15= "MethodCallByMethod";
    }
    
    public void before15(@Target OverloadedAdvicePOJO target,
@@ -3482,50 +3482,50 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE16 ADVICE */
    
-   public void before16(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before16(@JoinPoint MethodCallByMethod joinPoint,
          @Target Object target, @Args Object[] args)
    {
-      before16 = "MethodByMethodInfo,Object,Object[]";
+      before16 = "MethodCallByMethod,Object,Object[]";
    }
    
-   public void before16(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before16(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before16 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before16 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before16(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before16(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before16 = "MethodByMethodInfo,SuperClass,int";
+      before16 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before16(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before16(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before16 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before16 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before16(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before16(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before16 = "MethodByMethodInfo,SuperClass,Object[]";
+      before16 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before16(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before16(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before16 = "MethodByMethodInfo,int";
+      before16 = "MethodCallByMethod,int";
    }
    
-   public void before16(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before16(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before16 = "MethodByMethodInfo,Object[]";
+      before16 = "MethodCallByMethod,Object[]";
    }
    
-   public void before16(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before16(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before16= "MethodByMethodInfo";
+      before16= "MethodCallByMethod";
    }
    
    public void before16(@Target OverloadedAdvicePOJO target,
@@ -3654,44 +3654,44 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE17 ADVICE */
    
-   public void before17(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before17(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      before17 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      before17 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void before17(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before17(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before17 = "MethodByMethodInfo,SuperClass,int";
+      before17 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before17(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before17(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before17 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before17 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before17(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before17(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before17 = "MethodByMethodInfo,SuperClass,Object[]";
+      before17 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before17(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before17(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before17 = "MethodByMethodInfo,int";
+      before17 = "MethodCallByMethod,int";
    }
    
-   public void before17(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before17(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before17 = "MethodByMethodInfo,Object[]";
+      before17 = "MethodCallByMethod,Object[]";
    }
    
-   public void before17(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before17(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before17= "MethodByMethodInfo";
+      before17= "MethodCallByMethod";
    }
    
    public void before17(@Target OverloadedAdvicePOJO target,
@@ -3820,38 +3820,38 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE18 ADVICE */
    
-   public void before18(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before18(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Arg int arg)
    {
-      before18 = "MethodByMethodInfo,SuperClass,int";
+      before18 = "MethodCallByMethod,SuperClass,int";
    }
    
-   public void before18(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before18(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before18 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before18 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before18(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before18(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before18 = "MethodByMethodInfo,SuperClass,Object[]";
+      before18 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before18(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before18(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before18 = "MethodByMethodInfo,int";
+      before18 = "MethodCallByMethod,int";
    }
    
-   public void before18(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before18(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before18 = "MethodByMethodInfo,Object[]";
+      before18 = "MethodCallByMethod,Object[]";
    }
    
-   public void before18(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before18(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before18= "MethodByMethodInfo";
+      before18= "MethodCallByMethod";
    }
    
    public void before18(@Target OverloadedAdvicePOJO target,
@@ -3980,32 +3980,32 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE19 ADVICE */
    
-   public void before19(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before19(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      before19 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      before19 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void before19(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before19(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before19 = "MethodByMethodInfo,SuperClass,Object[]";
+      before19 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before19(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before19(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before19 = "MethodByMethodInfo,int";
+      before19 = "MethodCallByMethod,int";
    }
    
-   public void before19(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before19(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before19 = "MethodByMethodInfo,Object[]";
+      before19 = "MethodCallByMethod,Object[]";
    }
    
-   public void before19(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before19(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before19= "MethodByMethodInfo";
+      before19= "MethodCallByMethod";
    }
    
    public void before19(@Target OverloadedAdvicePOJO target,
@@ -4134,26 +4134,26 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE20 ADVICE */
    
-   public void before20(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before20(@JoinPoint MethodCallByMethod joinPoint,
          @Caller SuperClass caller, @Args Object[] args)
    {
-      before20 = "MethodByMethodInfo,SuperClass,Object[]";
+      before20 = "MethodCallByMethod,SuperClass,Object[]";
    }
    
-   public void before20(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before20(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before20 = "MethodByMethodInfo,int";
+      before20 = "MethodCallByMethod,int";
    }
    
-   public void before20(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before20(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before20 = "MethodByMethodInfo,Object[]";
+      before20 = "MethodCallByMethod,Object[]";
    }
    
-   public void before20(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before20(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before20= "MethodByMethodInfo";
+      before20= "MethodCallByMethod";
    }
    
    public void before20(@Target OverloadedAdvicePOJO target,
@@ -4282,20 +4282,20 @@ public class OverloadedBeforeCallAspect
 
    /* BEFORE21 ADVICE */
    
-   public void before21(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void before21(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      before21 = "MethodByMethodInfo,int";
+      before21 = "MethodCallByMethod,int";
    }
    
-   public void before21(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before21(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before21 = "MethodByMethodInfo,Object[]";
+      before21 = "MethodCallByMethod,Object[]";
    }
    
-   public void before21(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before21(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before21= "MethodByMethodInfo";
+      before21= "MethodCallByMethod";
    }
    
    public void before21(@Target OverloadedAdvicePOJO target,
@@ -4424,15 +4424,15 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE22 ADVICE */
    
-   public void before22(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void before22(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      before22 = "MethodByMethodInfo,Object[]";
+      before22 = "MethodCallByMethod,Object[]";
    }
    
-   public void before22(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before22(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before22= "MethodByMethodInfo";
+      before22= "MethodCallByMethod";
    }
    
    public void before22(@Target OverloadedAdvicePOJO target,
@@ -4561,9 +4561,9 @@ public class OverloadedBeforeCallAspect
    
    /* BEFORE23 ADVICE */
    
-   public void before23(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void before23(@JoinPoint MethodCallByMethod joinPoint)
    {
-      before23= "MethodByMethodInfo";
+      before23= "MethodCallByMethod";
    }
    
    public void before23(@Target OverloadedAdvicePOJO target,

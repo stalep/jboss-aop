@@ -38,7 +38,9 @@ import org.jboss.aop.ConstructionInfo;
 import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.joinpoint.Construction;
 import org.jboss.aop.joinpoint.ConstructionInvocation;
+import org.jboss.aop.joinpoint.JoinPointBean;
 import org.jboss.aop.util.ReflectToJavassist;
 
 /**
@@ -50,6 +52,8 @@ public class ConstructionJoinPointGenerator extends JoinPointGenerator
 {
    public static final String JOINPOINT_CLASS_PREFIX = JoinPointGenerator.JOINPOINT_CLASS_PREFIX + "construction_";
    public static final String JOINPOINT_FIELD_PREFIX = JoinPointGenerator.JOINPOINT_FIELD_PREFIX + "construction_";
+   
+   private static final Class JOINPOINT_TYPE = Construction.class;
    private static final Class INVOCATION_TYPE = ConstructionInvocation.class;
    private static final CtClass INVOCATION_CT_TYPE;
    static
@@ -104,13 +108,13 @@ public class ConstructionJoinPointGenerator extends JoinPointGenerator
       return null;
    }
 
-   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointInfo info, AdviceSetup setup)
+   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
    {
-      Constructor ctor = ((ConstructionInfo)info).getConstructor();
+      Constructor ctor = ((Construction)joinPoint).getConstructor();
       return new AdviceMethodProperties(
             setup.getAspectClass(),
             setup.getAdviceName(),
-            info.getClass(),
+            JOINPOINT_TYPE,
             INVOCATION_TYPE,
             ctor.getDeclaringClass(),
             ctor.getParameterTypes(),

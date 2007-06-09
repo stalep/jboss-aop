@@ -21,24 +21,23 @@
  */
 package org.jboss.aop.joinpoint;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
- * Represents a field read or write 
+ * Represents a call to a constructor made by a method
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public interface IFieldInfo extends IJoinPointInfo
+public interface ConstructorCallByMethod extends ConstructorCall
 {
    /**
-    * Gets the field being read or written
+    * Gets the method hash of the calling method
     */
-   Field getAdvisedField();
+   long getCallingMethodHash();
 
    /**
-    * Gets whether we are reading the field
+    * Gets the method making the call
     */
-   boolean isRead();
-
+   Method getCallingMethod();
 }

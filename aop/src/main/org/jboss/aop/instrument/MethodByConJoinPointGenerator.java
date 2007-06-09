@@ -38,6 +38,8 @@ import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.MethodByConInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.joinpoint.JoinPointBean;
+import org.jboss.aop.joinpoint.MethodCallByConstructor;
 import org.jboss.aop.joinpoint.MethodCalledByConstructorInvocation;
 import org.jboss.aop.util.ReflectToJavassist;
 
@@ -46,6 +48,8 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
    public static final String JOINPOINT_CLASS_PREFIX = JoinPointGenerator.JOINPOINT_CLASS_PREFIX + "MByC_";
    public static final String JOINPOINT_FIELD_PREFIX = JoinPointGenerator.JOINPOINT_FIELD_PREFIX + "MByC_";
    private static final Class INVOCATION_TYPE = MethodCalledByConstructorInvocation.class;
+   private static final Class JOINPOINT_TYPE = MethodCallByConstructor.class;
+   
    private static final CtClass INVOCATION_CT_TYPE;
    static
    {
@@ -126,20 +130,20 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
       return (Class)returnType.get();
    }
 
-   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointInfo info, AdviceSetup setup)
+   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
    {
-      Method method = ((MethodByConInfo)info).getMethod();
+      Method method = ((MethodCallByConstructor)joinPoint).getMethod();
       return new AdviceMethodProperties(
                setup.getAspectClass(),
                setup.getAdviceName(),
-               info.getClass(),
+               JOINPOINT_TYPE,
                INVOCATION_TYPE,
                method.getReturnType(),
                method.getParameterTypes(),
                method.getExceptionTypes(),
                method.getDeclaringClass(),
                hasTargetObject(),
-               ((MethodByConInfo) info).getCallingClass(),
+               ((MethodCallByConstructor) joinPoint).getCallingClass(),
                hasCallingObject());
    }
 

@@ -38,6 +38,8 @@ import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.MethodByMethodInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.joinpoint.JoinPointBean;
+import org.jboss.aop.joinpoint.MethodCallByMethod;
 import org.jboss.aop.joinpoint.MethodCalledByMethodInvocation;
 import org.jboss.aop.util.ReflectToJavassist;
 
@@ -45,6 +47,7 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
 {
    public static final String JOINPOINT_CLASS_PREFIX = JoinPointGenerator.JOINPOINT_CLASS_PREFIX + "MByM_";
    public static final String JOINPOINT_FIELD_PREFIX = JoinPointGenerator.JOINPOINT_FIELD_PREFIX + "MByM_";
+   private static final Class JOINPOINT_TYPE = MethodCallByMethod.class;
    private static final Class INVOCATION_TYPE = MethodCalledByMethodInvocation.class;
    private static final CtClass INVOCATION_CT_TYPE;
    static
@@ -136,20 +139,20 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
       return (Class)returnType.get();
    }
 
-   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointInfo info, AdviceSetup setup)
+   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
    {
-      Method method = ((MethodByMethodInfo)info).getMethod();
+      Method method = ((MethodCallByMethod)joinPoint).getMethod();
       return new AdviceMethodProperties(
                setup.getAspectClass(),
                setup.getAdviceName(),
-               info.getClass(),
+               JOINPOINT_TYPE,
                INVOCATION_TYPE,
                method.getReturnType(),
                method.getParameterTypes(),
                method.getExceptionTypes(),
                method.getDeclaringClass(),
                hasTargetObject(),
-               ((MethodByMethodInfo) info).getCallingClass(),
+               ((MethodCallByMethod) joinPoint).getCallingClass(),
                hasCallingObject());
    }
 

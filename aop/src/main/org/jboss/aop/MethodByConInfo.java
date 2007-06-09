@@ -25,7 +25,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import org.jboss.aop.advice.Interceptor;
-import org.jboss.aop.joinpoint.IMethodByConInfo;
+import org.jboss.aop.joinpoint.MethodCallByConstructor;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodCalledByConstructorJoinpoint;
 
@@ -34,7 +34,7 @@ import org.jboss.aop.joinpoint.MethodCalledByConstructorJoinpoint;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
-public class MethodByConInfo extends CallerMethodInfo implements IMethodByConInfo
+public class MethodByConInfo extends CallerMethodInfo implements MethodCallByConstructor
 {
 
    private final int callingIndex;

@@ -38,6 +38,8 @@ import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.MethodInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.joinpoint.JoinPointBean;
+import org.jboss.aop.joinpoint.MethodExecution;
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.aop.util.ReflectToJavassist;
 
@@ -49,7 +51,9 @@ import org.jboss.aop.util.ReflectToJavassist;
 public class MethodJoinPointGenerator extends JoinPointGenerator
 {
    private static final Class INVOCATION_TYPE = MethodInvocation.class;
+   private static final Class JOINPOINT_TYPE = MethodExecution.class;
    private static final CtClass INVOCATION_CT_TYPE;
+
    static
    {
       try
@@ -121,13 +125,13 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
       return (Class)returnType.get();
    }
 
-   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointInfo info, AdviceSetup setup)
+   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
    {
-      Method method = ((MethodInfo)info).getAdvisedMethod();
+      Method method = ((MethodExecution)joinPoint).getAdvisedMethod();
       return new AdviceMethodProperties(
                setup.getAspectClass(), 
                setup.getAdviceName(), 
-               info.getClass(), 
+               JOINPOINT_TYPE, 
                INVOCATION_TYPE, 
                method.getReturnType(), 
                method.getParameterTypes(), 

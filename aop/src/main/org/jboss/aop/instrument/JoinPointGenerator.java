@@ -54,6 +54,7 @@ import org.jboss.aop.advice.GeneratedAdvisorInterceptor;
 import org.jboss.aop.advice.Scope;
 import org.jboss.aop.advice.annotation.AdviceMethodFactory;
 import org.jboss.aop.joinpoint.Invocation;
+import org.jboss.aop.joinpoint.JoinPointBean;
 import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
 import org.jboss.aop.pointcut.ast.ClassExpression;
 import org.jboss.aop.util.JavassistUtils;
@@ -361,7 +362,7 @@ public abstract class JoinPointGenerator
 
    protected abstract boolean isVoid();
    protected abstract Class getReturnType(); 
-   protected abstract AdviceMethodProperties getAdviceMethodProperties(JoinPointInfo info, AdviceSetup setup);
+   protected abstract AdviceMethodProperties getAdviceMethodProperties(JoinPointBean info, AdviceSetup setup);
    
    protected boolean isCaller()
    {

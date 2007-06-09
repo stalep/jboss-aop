@@ -23,13 +23,13 @@ package org.jboss.test.aop.beforeafterArgs;
 
 import junit.framework.Assert;
 
-import org.jboss.aop.MethodByMethodInfo;
 import org.jboss.aop.advice.annotation.Arg;
 import org.jboss.aop.advice.annotation.Args;
 import org.jboss.aop.advice.annotation.Caller;
 import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Target;
 import org.jboss.aop.advice.annotation.Thrown;
+import org.jboss.aop.joinpoint.MethodCallByMethod;
 
 /**
  * Aspect used on overloaded throwing advice tests (for Call and Target tests
@@ -147,85 +147,85 @@ public class OverloadedThrowingCallAspect
 
    /* THROWING1 ADVICE */
    
-   public void throwing1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Arg boolean arg)
    {
-      throwing1 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable,boolean";
+      throwing1 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable,boolean";
    }
    
-   public void throwing1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing1 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable,Object[]";
+      throwing1 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable,Object[]";
    }
    
-   public void throwing1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown)
    {
-      throwing1 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable";
+      throwing1 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable";
    }
    
-   public void throwing1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown,
          @Arg boolean arg)
    {
-      throwing1 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable,boolean";
+      throwing1 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable,boolean";
    }
    
-   public void throwing1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing1 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable,Object[]";
+      throwing1 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable,Object[]";
    }
    
-   public void throwing1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown)
    {
-      throwing1 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable";
+      throwing1 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable";
    }
    
-   public void throwing1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing1(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Arg boolean arg)
    {
-      throwing1 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,boolean";
+      throwing1 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,boolean";
    }
    
-   public void throwing1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing1(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing1 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,Object[]";
+      throwing1 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,Object[]";
    }
    
-   public void throwing1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing1(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown)
    {
-      throwing1 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable";
+      throwing1 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable";
    }
    
-   public void throwing1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing1(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Arg boolean arg)
    {
-      throwing1 = "MethodByMethodInfo,Throwable,boolean";
+      throwing1 = "MethodCallByMethod,Throwable,boolean";
    }
    
-   public void throwing1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing1(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing1 = "MethodByMethodInfo,Throwable,Object[]";
+      throwing1 = "MethodCallByMethod,Throwable,Object[]";
    }
    
-   public void throwing1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing1(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown)
    {
-      throwing1 = "MethodByMethodInfo,Throwable";
+      throwing1 = "MethodCallByMethod,Throwable";
    }
    
    public void throwing1(@Target OverloadedAdvicePOJO target,
@@ -381,84 +381,84 @@ public class OverloadedThrowingCallAspect
       throwing1 = "Throwable,boolean";
    }
    
-   public void throwing1(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing1(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING2 ADVICE */
    
-   public void throwing2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing2 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable,Object[]";
+      throwing2 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable,Object[]";
    }
    
-   public void throwing2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown)
    {
-      throwing2 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable";
+      throwing2 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable";
    }
    
-   public void throwing2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown,
          @Arg boolean arg)
    {
-      throwing2 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable,boolean";
+      throwing2 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable,boolean";
    }
    
-   public void throwing2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing2 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable,Object[]";
+      throwing2 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable,Object[]";
    }
    
-   public void throwing2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown)
    {
-      throwing2 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable";
+      throwing2 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable";
    }
    
-   public void throwing2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing2(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Arg boolean arg)
    {
-      throwing2 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,boolean";
+      throwing2 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,boolean";
    }
    
-   public void throwing2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing2(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing2 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,Object[]";
+      throwing2 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,Object[]";
    }
    
-   public void throwing2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing2(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown)
    {
-      throwing2 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable";
+      throwing2 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable";
    }
    
-   public void throwing2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing2(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Arg boolean arg)
    {
-      throwing2 = "MethodByMethodInfo,Throwable,boolean";
+      throwing2 = "MethodCallByMethod,Throwable,boolean";
    }
    
-   public void throwing2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing2(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing2 = "MethodByMethodInfo,Throwable,Object[]";
+      throwing2 = "MethodCallByMethod,Throwable,Object[]";
    }
    
-   public void throwing2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing2(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown)
    {
-      throwing2 = "MethodByMethodInfo,Throwable";
+      throwing2 = "MethodCallByMethod,Throwable";
    }
    
    public void throwing2(@Target OverloadedAdvicePOJO target,
@@ -614,76 +614,76 @@ public class OverloadedThrowingCallAspect
       throwing2 = "Throwable,boolean";
    }
    
-   public void throwing2(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing2(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING3 ADVICE */
    
-   public void throwing3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown)
    {
-      throwing3 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable";
+      throwing3 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Throwable";
    }
    
-   public void throwing3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown,
          @Arg boolean arg)
    {
-      throwing3 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable,boolean";
+      throwing3 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable,boolean";
    }
    
-   public void throwing3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing3 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable,Object[]";
+      throwing3 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable,Object[]";
    }
    
-   public void throwing3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown)
    {
-      throwing3 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable";
+      throwing3 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable";
    }
    
-   public void throwing3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing3(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Arg boolean arg)
    {
-      throwing3 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,boolean";
+      throwing3 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,boolean";
    }
    
-   public void throwing3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing3(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing3 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,Object[]";
+      throwing3 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,Object[]";
    }
    
-   public void throwing3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing3(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown)
    {
-      throwing3 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable";
+      throwing3 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable";
    }
    
-   public void throwing3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing3(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Arg boolean arg)
    {
-      throwing3 = "MethodByMethodInfo,Throwable,boolean";
+      throwing3 = "MethodCallByMethod,Throwable,boolean";
    }
    
-   public void throwing3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing3(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing3 = "MethodByMethodInfo,Throwable,Object[]";
+      throwing3 = "MethodCallByMethod,Throwable,Object[]";
    }
    
-   public void throwing3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing3(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown)
    {
-      throwing3 = "MethodByMethodInfo,Throwable";
+      throwing3 = "MethodCallByMethod,Throwable";
    }
    
    public void throwing3(@Target OverloadedAdvicePOJO target,
@@ -839,69 +839,69 @@ public class OverloadedThrowingCallAspect
       throwing3 = "Throwable,boolean";
    }
    
-   public void throwing3(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing3(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING4 ADVICE */
    
-   public void throwing4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown,
          @Arg boolean arg)
    {
-      throwing4 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable,boolean";
+      throwing4 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable,boolean";
    }
    
-   public void throwing4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing4 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable,Object[]";
+      throwing4 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable,Object[]";
    }
    
-   public void throwing4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown)
    {
-      throwing4 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable";
+      throwing4 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable";
    }
    
-   public void throwing4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing4(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Arg boolean arg)
    {
-      throwing4 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,boolean";
+      throwing4 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,boolean";
    }
    
-   public void throwing4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing4(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing4 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,Object[]";
+      throwing4 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,Object[]";
    }
    
-   public void throwing4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing4(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown)
    {
-      throwing4 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable";
+      throwing4 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable";
    }
    
-   public void throwing4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing4(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Arg boolean arg)
    {
-      throwing4 = "MethodByMethodInfo,Throwable,boolean";
+      throwing4 = "MethodCallByMethod,Throwable,boolean";
    }
    
-   public void throwing4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing4(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing4 = "MethodByMethodInfo,Throwable,Object[]";
+      throwing4 = "MethodCallByMethod,Throwable,Object[]";
    }
    
-   public void throwing4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing4(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown)
    {
-      throwing4 = "MethodByMethodInfo,Throwable";
+      throwing4 = "MethodCallByMethod,Throwable";
    }
    
    public void throwing4(@Target OverloadedAdvicePOJO target,
@@ -1057,62 +1057,62 @@ public class OverloadedThrowingCallAspect
       throwing4 = "Throwable,boolean";
    }
    
-   public void throwing4(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing4(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING5 ADVICE */
    
-   public void throwing5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing5 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable,Object[]";
+      throwing5 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable,Object[]";
    }
    
-   public void throwing5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown)
    {
-      throwing5 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable";
+      throwing5 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable";
    }
    
-   public void throwing5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing5(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Arg boolean arg)
    {
-      throwing5 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,boolean";
+      throwing5 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,boolean";
    }
    
-   public void throwing5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing5(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing5 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,Object[]";
+      throwing5 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,Object[]";
    }
    
-   public void throwing5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing5(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown)
    {
-      throwing5 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable";
+      throwing5 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable";
    }
    
-   public void throwing5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing5(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Arg boolean arg)
    {
-      throwing5 = "MethodByMethodInfo,Throwable,boolean";
+      throwing5 = "MethodCallByMethod,Throwable,boolean";
    }
    
-   public void throwing5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing5(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing5 = "MethodByMethodInfo,Throwable,Object[]";
+      throwing5 = "MethodCallByMethod,Throwable,Object[]";
    }
    
-   public void throwing5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing5(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown)
    {
-      throwing5 = "MethodByMethodInfo,Throwable";
+      throwing5 = "MethodCallByMethod,Throwable";
    }
    
    public void throwing5(@Target OverloadedAdvicePOJO target,
@@ -1268,55 +1268,55 @@ public class OverloadedThrowingCallAspect
       throwing5 = "Throwable,boolean";
    }
    
-   public void throwing5(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing5(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING6 ADVICE */
    
-   public void throwing6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing6(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Thrown Throwable thrown)
    {
-      throwing6 = "MethodByMethodInfo,OverloadedAdvicePOJO,Throwable";
+      throwing6 = "MethodCallByMethod,OverloadedAdvicePOJO,Throwable";
    }
    
-   public void throwing6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing6(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Arg boolean arg)
    {
-      throwing6 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,boolean";
+      throwing6 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,boolean";
    }
    
-   public void throwing6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing6(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing6 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,Object[]";
+      throwing6 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,Object[]";
    }
    
-   public void throwing6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing6(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown)
    {
-      throwing6 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable";
+      throwing6 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable";
    }
    
-   public void throwing6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing6(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Arg boolean arg)
    {
-      throwing6 = "MethodByMethodInfo,Throwable,boolean";
+      throwing6 = "MethodCallByMethod,Throwable,boolean";
    }
    
-   public void throwing6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing6(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing6 = "MethodByMethodInfo,Throwable,Object[]";
+      throwing6 = "MethodCallByMethod,Throwable,Object[]";
    }
    
-   public void throwing6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing6(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown)
    {
-      throwing6 = "MethodByMethodInfo,Throwable";
+      throwing6 = "MethodCallByMethod,Throwable";
    }
    
    public void throwing6(@Target OverloadedAdvicePOJO target,
@@ -1472,49 +1472,49 @@ public class OverloadedThrowingCallAspect
       throwing6 = "Throwable,boolean";
    }
    
-   public void throwing6(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing6(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING7 ADVICE */
    
-   public void throwing7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing7(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Arg boolean arg)
    {
-      throwing7 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,boolean";
+      throwing7 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,boolean";
    }
    
-   public void throwing7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing7(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing7 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,Object[]";
+      throwing7 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,Object[]";
    }
    
-   public void throwing7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing7(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown)
    {
-      throwing7 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable";
+      throwing7 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable";
    }
    
-   public void throwing7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing7(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Arg boolean arg)
    {
-      throwing7 = "MethodByMethodInfo,Throwable,boolean";
+      throwing7 = "MethodCallByMethod,Throwable,boolean";
    }
    
-   public void throwing7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing7(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing7 = "MethodByMethodInfo,Throwable,Object[]";
+      throwing7 = "MethodCallByMethod,Throwable,Object[]";
    }
    
-   public void throwing7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing7(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown)
    {
-      throwing7 = "MethodByMethodInfo,Throwable";
+      throwing7 = "MethodCallByMethod,Throwable";
    }
    
    public void throwing7(@Target OverloadedAdvicePOJO target,
@@ -1670,42 +1670,42 @@ public class OverloadedThrowingCallAspect
       throwing7 = "Throwable,boolean";
    }
    
-   public void throwing7(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing7(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING8 ADVICE */
    
-   public void throwing8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing8(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown,
          @Args Object[] args)
    {
-      throwing8 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable,Object[]";
+      throwing8 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable,Object[]";
    }
    
-   public void throwing8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing8(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown)
    {
-      throwing8 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable";
+      throwing8 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable";
    }
    
-   public void throwing8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing8(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Arg boolean arg)
    {
-      throwing8 = "MethodByMethodInfo,Throwable,boolean";
+      throwing8 = "MethodCallByMethod,Throwable,boolean";
    }
    
-   public void throwing8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing8(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing8 = "MethodByMethodInfo,Throwable,Object[]";
+      throwing8 = "MethodCallByMethod,Throwable,Object[]";
    }
    
-   public void throwing8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing8(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown)
    {
-      throwing8 = "MethodByMethodInfo,Throwable";
+      throwing8 = "MethodCallByMethod,Throwable";
    }
    
    public void throwing8(@Target OverloadedAdvicePOJO target,
@@ -1861,35 +1861,35 @@ public class OverloadedThrowingCallAspect
       throwing8 = "Throwable,boolean";
    }
    
-   public void throwing8(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing8(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING9 ADVICE */
    
-   public void throwing9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing9(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Thrown Throwable thrown)
    {
-      throwing9 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Throwable";
+      throwing9 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Throwable";
    }
    
-   public void throwing9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing9(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Arg boolean arg)
    {
-      throwing9 = "MethodByMethodInfo,Throwable,boolean";
+      throwing9 = "MethodCallByMethod,Throwable,boolean";
    }
    
-   public void throwing9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing9(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing9 = "MethodByMethodInfo,Throwable,Object[]";
+      throwing9 = "MethodCallByMethod,Throwable,Object[]";
    }
    
-   public void throwing9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing9(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown)
    {
-      throwing9 = "MethodByMethodInfo,Throwable";
+      throwing9 = "MethodCallByMethod,Throwable";
    }
    
    public void throwing9(@Target OverloadedAdvicePOJO target,
@@ -2045,29 +2045,29 @@ public class OverloadedThrowingCallAspect
       throwing9 = "Throwable,boolean";
    }
    
-   public void throwing9(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing9(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING10 ADVICE */
    
-   public void throwing10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing10(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Arg boolean arg)
    {
-      throwing10 = "MethodByMethodInfo,Throwable,boolean";
+      throwing10 = "MethodCallByMethod,Throwable,boolean";
    }
    
-   public void throwing10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing10(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing10 = "MethodByMethodInfo,Throwable,Object[]";
+      throwing10 = "MethodCallByMethod,Throwable,Object[]";
    }
    
-   public void throwing10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing10(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown)
    {
-      throwing10 = "MethodByMethodInfo,Throwable";
+      throwing10 = "MethodCallByMethod,Throwable";
    }
    
    public void throwing10(@Target OverloadedAdvicePOJO target,
@@ -2223,23 +2223,23 @@ public class OverloadedThrowingCallAspect
       throwing10 = "Throwable,boolean";
    }
    
-   public void throwing10(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing10(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING11 ADVICE */
    
-   public void throwing11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing11(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing11 = "MethodByMethodInfo,Throwable,Object[]";
+      throwing11 = "MethodCallByMethod,Throwable,Object[]";
    }
    
-   public void throwing11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing11(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown)
    {
-      throwing11 = "MethodByMethodInfo,Throwable";
+      throwing11 = "MethodCallByMethod,Throwable";
    }
    
    public void throwing11(@Target OverloadedAdvicePOJO target,
@@ -2395,17 +2395,17 @@ public class OverloadedThrowingCallAspect
       throwing11 = "Throwable,boolean";
    }
    
-   public void throwing11(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing11(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING12 ADVICE */
    
-   public void throwing12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void throwing12(@JoinPoint MethodCallByMethod joinPoint,
          @Thrown Throwable thrown)
    {
-      throwing12 = "MethodByMethodInfo,Throwable";
+      throwing12 = "MethodCallByMethod,Throwable";
    }
    
    public void throwing12(@Target OverloadedAdvicePOJO target,
@@ -2561,7 +2561,7 @@ public class OverloadedThrowingCallAspect
       throwing12 = "Throwable,boolean";
    }
    
-   public void throwing12(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing12(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -2721,7 +2721,7 @@ public class OverloadedThrowingCallAspect
       throwing13 = "Throwable,boolean";
    }
    
-   public void throwing13(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing13(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -2874,7 +2874,7 @@ public class OverloadedThrowingCallAspect
       throwing14 = "Throwable,boolean";
    }
    
-   public void throwing14(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing14(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -3020,7 +3020,7 @@ public class OverloadedThrowingCallAspect
       throwing15 = "Throwable,boolean";
    }
    
-   public void throwing15(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing15(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -3159,7 +3159,7 @@ public class OverloadedThrowingCallAspect
       throwing16 = "Throwable,boolean";
    }
    
-   public void throwing16(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing16(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -3292,7 +3292,7 @@ public class OverloadedThrowingCallAspect
       throwing17 = "Throwable,boolean";
    }
    
-   public void throwing17(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing17(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -3417,7 +3417,7 @@ public class OverloadedThrowingCallAspect
       throwing18 = "Throwable,boolean";
    }
    
-   public void throwing18(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing18(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -3536,7 +3536,7 @@ public class OverloadedThrowingCallAspect
       throwing19 = "Throwable,boolean";
    }
    
-   public void throwing19(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing19(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -3648,7 +3648,7 @@ public class OverloadedThrowingCallAspect
       throwing20 = "Throwable,boolean";
    }
    
-   public void throwing20(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing20(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -3754,7 +3754,7 @@ public class OverloadedThrowingCallAspect
       throwing21 = "Throwable,boolean";
    }
    
-   public void throwing21(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing21(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -3854,7 +3854,7 @@ public class OverloadedThrowingCallAspect
       throwing22 = "Throwable,boolean";
    }
    
-   public void throwing22(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing22(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -3948,7 +3948,7 @@ public class OverloadedThrowingCallAspect
       throwing23 = "Throwable,boolean";
    }
    
-   public void throwing23(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing23(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4036,7 +4036,7 @@ public class OverloadedThrowingCallAspect
       throwing24 = "Throwable,boolean";
    }
    
-   public void throwing24(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing24(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4118,7 +4118,7 @@ public class OverloadedThrowingCallAspect
       throwing25 = "Throwable,boolean";
    }
    
-   public void throwing25(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing25(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4194,7 +4194,7 @@ public class OverloadedThrowingCallAspect
       throwing26 = "Throwable,boolean";
    }
    
-   public void throwing26(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing26(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4264,7 +4264,7 @@ public class OverloadedThrowingCallAspect
       throwing27 = "Throwable,boolean";
    }
    
-   public void throwing27(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing27(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4328,7 +4328,7 @@ public class OverloadedThrowingCallAspect
       throwing28 = "Throwable,boolean";
    }
    
-   public void throwing28(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing28(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4386,7 +4386,7 @@ public class OverloadedThrowingCallAspect
       throwing29 = "Throwable,boolean";
    }
    
-   public void throwing29(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing29(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4438,7 +4438,7 @@ public class OverloadedThrowingCallAspect
       throwing30 = "Throwable,boolean";
    }
    
-   public void throwing30(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing30(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4485,7 +4485,7 @@ public class OverloadedThrowingCallAspect
       throwing31 = "Throwable,boolean";
    }
    
-   public void throwing31(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing31(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4526,7 +4526,7 @@ public class OverloadedThrowingCallAspect
       throwing32 = "Throwable,boolean";
    }
    
-   public void throwing32(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing32(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4561,7 +4561,7 @@ public class OverloadedThrowingCallAspect
       throwing33 = "Throwable,boolean";
    }
    
-   public void throwing33(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing33(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4590,7 +4590,7 @@ public class OverloadedThrowingCallAspect
       throwing34 = "Throwable,boolean";
    }
    
-   public void throwing34(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing34(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4613,7 +4613,7 @@ public class OverloadedThrowingCallAspect
       throwing35 = "Throwable,boolean";
    }
    
-   public void throwing35(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing35(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4630,7 +4630,7 @@ public class OverloadedThrowingCallAspect
       throwing36 = "Throwable,boolean";
    }
    
-   public void throwing36(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing36(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4642,7 +4642,7 @@ public class OverloadedThrowingCallAspect
       throwing37 = "Throwable,boolean";
    }
    
-   public void throwing37(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void throwing37(@JoinPoint MethodCallByMethod joinPoint)
    {
       Assert.fail("This advice should never be executed");
    }

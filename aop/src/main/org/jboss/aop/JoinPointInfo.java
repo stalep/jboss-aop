@@ -26,10 +26,10 @@ import java.util.ArrayList;
 
 import org.jboss.aop.advice.GeneratedAdvisorInterceptor;
 import org.jboss.aop.advice.Interceptor;
-import org.jboss.aop.joinpoint.IJoinPointInfo;
+import org.jboss.aop.joinpoint.JoinPointBean;
 import org.jboss.aop.joinpoint.Joinpoint;
 
-public abstract class JoinPointInfo implements IJoinPointInfo
+public abstract class JoinPointInfo implements JoinPointBean
 {
    private Interceptor[] interceptors;
 

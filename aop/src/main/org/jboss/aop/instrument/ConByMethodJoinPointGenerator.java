@@ -38,8 +38,9 @@ import org.jboss.aop.ConByMethodInfo;
 import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
-import org.jboss.aop.advice.AdviceMethodProperties.OptionalParameters;
+import org.jboss.aop.joinpoint.ConstructorCallByMethod;
 import org.jboss.aop.joinpoint.ConstructorCalledByMethodInvocation;
+import org.jboss.aop.joinpoint.JoinPointBean;
 import org.jboss.aop.util.ReflectToJavassist;
 
 /**
@@ -51,6 +52,7 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
 {
    public static final String JOINPOINT_CLASS_PREFIX = JoinPointGenerator.JOINPOINT_CLASS_PREFIX + "CByM_";
    public static final String JOINPOINT_FIELD_PREFIX = JoinPointGenerator.JOINPOINT_FIELD_PREFIX + "CByM_";
+   private static final Class JOINPOINT_TYPE = ConstructorCallByMethod.class;
    private static final Class INVOCATION_TYPE = ConstructorCalledByMethodInvocation.class;
    private static final CtClass INVOCATION_CT_TYPE;
    static
@@ -125,20 +127,21 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
       return (Class)returnType.get();
    }
 
-   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointInfo info, AdviceSetup setup)
+   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
    {
-      Constructor ctor = ((ConByMethodInfo)info).getConstructor();
+      ConstructorCallByMethod call = (ConstructorCallByMethod) joinPoint;
+      Constructor ctor = call.getConstructor();
       AdviceMethodProperties properties = new AdviceMethodProperties(
                setup.getAspectClass(),
                setup.getAdviceName(),
-               info.getClass(),
+               JOINPOINT_TYPE,
                INVOCATION_TYPE,
                ctor.getDeclaringClass(),
                ctor.getParameterTypes(),
                ctor.getExceptionTypes(),
-               ((ConByMethodInfo) info).getCalledClass(),
+               call.getCalledClass(),
                false,
-               ((ConByMethodInfo) info).getCallingClass(),
+               call.getCallingClass(),
                hasCallingObject());
       return properties;
    }

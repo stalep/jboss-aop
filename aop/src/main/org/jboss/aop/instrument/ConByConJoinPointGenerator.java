@@ -38,7 +38,9 @@ import org.jboss.aop.ConByConInfo;
 import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.joinpoint.ConstructorCallByConstructor;
 import org.jboss.aop.joinpoint.ConstructorCalledByConstructorInvocation;
+import org.jboss.aop.joinpoint.JoinPointBean;
 import org.jboss.aop.util.ReflectToJavassist;
 
 /**
@@ -51,6 +53,7 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
    public static final String JOINPOINT_CLASS_PREFIX = JoinPointGenerator.JOINPOINT_CLASS_PREFIX + "CByC_";
    public static final String JOINPOINT_FIELD_PREFIX = JoinPointGenerator.JOINPOINT_FIELD_PREFIX + "CByC_";
 
+   private static final Class JOINPOINT_TYPE = ConstructorCallByConstructor.class;
    private static final Class INVOCATION_TYPE = ConstructorCalledByConstructorInvocation.class;
    private static final CtClass INVOCATION_CT_TYPE;
    static
@@ -115,19 +118,20 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
       return (Class)returnType.get();
    }
 
-   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointInfo info, AdviceSetup setup)
+   protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
    {
-      Constructor ctor = ((ConByConInfo)info).getConstructor();
+      ConstructorCallByConstructor call = (ConstructorCallByConstructor) joinPoint;
+      Constructor ctor = call.getConstructor();
       AdviceMethodProperties properties = new AdviceMethodProperties(
             setup.getAspectClass(),
             setup.getAdviceName(),
-            info.getClass(),
+            JOINPOINT_TYPE,
             INVOCATION_TYPE,
             ctor.getDeclaringClass(),
             ctor.getParameterTypes(),
             ctor.getExceptionTypes(),
-            ((ConByConInfo) info).getCalledClass(), false,
-            ((ConByConInfo) info).getCallingClass(),
+            call.getCalledClass(), false,
+            call.getCallingClass(),
             true);
       return properties;
    }

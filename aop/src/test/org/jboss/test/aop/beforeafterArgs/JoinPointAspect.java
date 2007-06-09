@@ -23,12 +23,12 @@ package org.jboss.test.aop.beforeafterArgs;
 
 import junit.framework.Assert;
 
-import org.jboss.aop.ConstructorInfo;
-import org.jboss.aop.FieldInfo;
-import org.jboss.aop.JoinPointInfo;
-import org.jboss.aop.MethodInfo;
 import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Thrown;
+import org.jboss.aop.joinpoint.ConstructorExecution;
+import org.jboss.aop.joinpoint.FieldAccess;
+import org.jboss.aop.joinpoint.JoinPointBean;
+import org.jboss.aop.joinpoint.MethodExecution;
 
 /**
  * Aspect used on @JoinPoint parameter tests.
@@ -38,24 +38,24 @@ import org.jboss.aop.advice.annotation.Thrown;
 public class JoinPointAspect
 {
    static String beforeAdvice = null;
-   static JoinPointInfo beforeJoinPointInfo = null;
+   static JoinPointBean beforeJoinPoint = null;
    static String afterAdvice = null;
-   static JoinPointInfo afterJoinPointInfo = null;
+   static JoinPointBean afterJoinPoint = null;
    static String throwingAdvice = null;
-   static JoinPointInfo throwingJoinPointInfo = null;
+   static JoinPointBean throwingJoinPoint = null;
    static String finallyAdvice = null;
-   static JoinPointInfo finallyJoinPointInfo = null;
+   static JoinPointBean finallyJoinPoint = null;
    
    public static void clear()
    {
       beforeAdvice = null;
-      beforeJoinPointInfo = null;
+      beforeJoinPoint = null;
       afterAdvice = null;
-      afterJoinPointInfo = null;
+      afterJoinPoint = null;
       throwingAdvice = null;
-      throwingJoinPointInfo = null;
+      throwingJoinPoint = null;
       finallyAdvice = null;
-      finallyJoinPointInfo = null;
+      finallyJoinPoint = null;
    }
    
    public void before1()
@@ -66,33 +66,33 @@ public class JoinPointAspect
    public void before2(@JoinPoint Object joinPointInfo)
    {
       beforeAdvice = "before2";
-      beforeJoinPointInfo = (JoinPointInfo) joinPointInfo;
+      beforeJoinPoint = (JoinPointBean) joinPointInfo;
    }
    
-   public void before3(@JoinPoint JoinPointInfo joinPointInfo)
+   public void before3(@JoinPoint JoinPointBean joinPointInfo)
    {
       beforeAdvice = "before3";
-      beforeJoinPointInfo = joinPointInfo;
+      beforeJoinPoint = joinPointInfo;
    }   
    
-   public void before4(@JoinPoint MethodInfo joinPointInfo)
+   public void before4(@JoinPoint MethodExecution joinPointInfo)
    {
       beforeAdvice = "before4";
-      beforeJoinPointInfo = (JoinPointInfo) joinPointInfo;
+      beforeJoinPoint = (JoinPointBean) joinPointInfo;
    }
    
-   public void before5(@JoinPoint MethodInfo joinPointInfo)
+   public void before5(@JoinPoint MethodExecution joinPointInfo)
    {
       Assert.fail("This advice should never be executed");
    }
    
-   public void after1(@JoinPoint FieldInfo joinPointInfo)
+   public void after1(@JoinPoint FieldAccess joinPointInfo)
    {
       afterAdvice = "after1";
-      afterJoinPointInfo = joinPointInfo;
+      afterJoinPoint = joinPointInfo;
    }
    
-   public void after2(@JoinPoint ConstructorInfo constructorInfo)
+   public void after2(@JoinPoint ConstructorExecution constructorInfo)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -105,32 +105,32 @@ public class JoinPointAspect
    public void after4(@JoinPoint Object joinPointInfo)
    {
       afterAdvice = "after4";
-      afterJoinPointInfo = (JoinPointInfo) joinPointInfo;
+      afterJoinPoint = (JoinPointBean) joinPointInfo;
    }
    
-   public void after5(@JoinPoint JoinPointInfo joinPointInfo)
+   public void after5(@JoinPoint JoinPointBean joinPointInfo)
    {
       afterAdvice = "after5";
-      afterJoinPointInfo = joinPointInfo;
+      afterJoinPoint = joinPointInfo;
    }
    
    public void throwing1(@Thrown Throwable throwable, @JoinPoint Object joinPointInfo)
    {
       throwingAdvice = "throwing1";
-      throwingJoinPointInfo = (JoinPointInfo) joinPointInfo;
+      throwingJoinPoint = (JoinPointBean) joinPointInfo;
    }
    
-   public void throwing2(@JoinPoint ConstructorInfo joinPointInfo,
+   public void throwing2(@JoinPoint ConstructorExecution joinPointInfo,
          @Thrown Throwable throwable)
    {
       Assert.fail("This advice should never be executed");
    }
    
    public void throwing3(@Thrown Throwable throwable,
-         @JoinPoint JoinPointInfo joinPointInfo)
+         @JoinPoint JoinPointBean joinPointInfo)
    {
       throwingAdvice = "throwing3";
-      throwingJoinPointInfo = joinPointInfo;
+      throwingJoinPoint = joinPointInfo;
    }
    
    public void throwing4(@Thrown Throwable throwable)
@@ -138,17 +138,17 @@ public class JoinPointAspect
       throwingAdvice = "throwing4";
    }
    
-   public void throwing5(@JoinPoint MethodInfo joinPointInfo, @Thrown Throwable throwable)
+   public void throwing5(@JoinPoint MethodExecution joinPointInfo, @Thrown Throwable throwable)
    {
       throwingAdvice = "throwing5";
-      throwingJoinPointInfo = joinPointInfo;
+      throwingJoinPoint = joinPointInfo;
    }
    
 
-   public void finally1(@JoinPoint FieldInfo joinPointInfo)
+   public void finally1(@JoinPoint FieldAccess joinPointInfo)
    {
       finallyAdvice = "finally1";
-      finallyJoinPointInfo = joinPointInfo;
+      finallyJoinPoint = joinPointInfo;
    }
    
    public void finally2()
@@ -159,10 +159,10 @@ public class JoinPointAspect
    public void finally3(@JoinPoint Object joinPointInfo)
    {
       finallyAdvice = "finally3";
-      finallyJoinPointInfo = (JoinPointInfo) joinPointInfo;
+      finallyJoinPoint = (JoinPointBean) joinPointInfo;
    }
    
-   public void finally4(@JoinPoint ConstructorInfo joinPointInfo)
+   public void finally4(@JoinPoint ConstructorExecution joinPointInfo)
    {
       Assert.fail("This advice should never be executed");
    }

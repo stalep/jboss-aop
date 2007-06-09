@@ -24,17 +24,17 @@ package org.jboss.aop.joinpoint;
 import java.lang.reflect.Constructor;
 
 /**
- * Represents a call made on a constructor woven with the
- * <i>construction</i> syntax
+ * Represents a contructor call with an <i>execution</i>
+ * pointcut
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public interface IConstructionInfo extends IJoinPointInfo
+public interface ConstructorExecution extends JoinPointBean
 {
-
    /**
     * Gets the constructor being called
     */
    Constructor getConstructor();
+
 }

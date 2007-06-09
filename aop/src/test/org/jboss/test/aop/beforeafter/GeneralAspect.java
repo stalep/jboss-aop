@@ -23,10 +23,10 @@ package org.jboss.test.aop.beforeafter;
 
 import junit.framework.Assert;
 
-import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.annotation.Arg;
 import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Return;
+import org.jboss.aop.joinpoint.JoinPointBean;
 
 /**
  * 
@@ -46,13 +46,13 @@ public class GeneralAspect
    }
    
 
-   public void before(@JoinPoint JoinPointInfo jp, @Arg SuperValue superValue, @Arg int i)
+   public void before(@JoinPoint JoinPointBean jp, @Arg SuperValue superValue, @Arg int i)
    {
       before = "before";
       Assert.assertFalse(POJO.joinPointRun);
    }
    
-   public Object after(@JoinPoint JoinPointInfo jp, @Return Object ret,
+   public Object after(@JoinPoint JoinPointBean jp, @Return Object ret,
          @Arg SuperValue superValue, @Arg int i)
    {
       after = "after";

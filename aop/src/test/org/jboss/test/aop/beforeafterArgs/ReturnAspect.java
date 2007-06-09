@@ -23,11 +23,11 @@ package org.jboss.test.aop.beforeafterArgs;
 
 import junit.framework.Assert;
 
-import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Return;
 import org.jboss.aop.advice.annotation.Thrown;
 import org.jboss.aop.joinpoint.Invocation;
+import org.jboss.aop.joinpoint.JoinPointBean;
 
 /**
  * Aspect used both on @Return parameter tests, and on advice return type tests.
@@ -145,7 +145,7 @@ public class ReturnAspect
       return new SuperValue(120);
    }
    
-   public void after1(@org.jboss.aop.advice.annotation.JoinPoint JoinPointInfo info) throws Exception
+   public void after1(@org.jboss.aop.advice.annotation.JoinPoint JoinPointBean info) throws Exception
    {
       afterAdvice = "after1";
    }
@@ -156,7 +156,7 @@ public class ReturnAspect
       afterReturn = returnedValue;
    }
    
-   public Object after3(@JoinPoint JoinPointInfo info, @Return String returnedValue)
+   public Object after3(@JoinPoint JoinPointBean info, @Return String returnedValue)
    throws Throwable
    {
       afterAdvice = "after3";
@@ -182,7 +182,7 @@ public class ReturnAspect
       afterAdvice = "after6";
    }
    
-   public String after7(@JoinPoint JoinPointInfo joinPoint,
+   public String after7(@JoinPoint JoinPointBean joinPoint,
          @Return String returnedValue) throws Throwable
    {
       afterAdvice = "after7";

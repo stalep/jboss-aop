@@ -21,24 +21,19 @@
  */
 package org.jboss.aop.joinpoint;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
 
 /**
- * Represents a method being called by a method
+ * Represents a method being called by a constructor
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public interface IMethodByMethodInfo extends ICallerMethodInfo
+public interface MethodCallByConstructor extends MethodCall
 {
    /**
-    * Gets the method hash of the method making the call
+    * Gets the constructor making the call
     */
-   long getCallingMethodHash();
-
-   /**
-    * Gets the method making the call
-    */
-   Method getCallingMethod();
+   Constructor getCalling();
 
 }

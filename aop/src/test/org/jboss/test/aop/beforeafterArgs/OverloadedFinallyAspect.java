@@ -25,12 +25,12 @@ import java.io.Serializable;
 
 import junit.framework.Assert;
 
-import org.jboss.aop.MethodInfo;
 import org.jboss.aop.advice.annotation.Arg;
 import org.jboss.aop.advice.annotation.Args;
 import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Return;
 import org.jboss.aop.advice.annotation.Thrown;
+import org.jboss.aop.joinpoint.MethodExecution;
 
 /**
  * Aspect used on overloaded finally advice tests (for JoinPoint, Return, Thrown, Arg
@@ -192,238 +192,238 @@ public class OverloadedFinallyAspect
    
    /* FINALLY1 ADVICE */
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1, @Arg long arg2)
    {
-      finally1 = "void,MethodInfo,String,Throwable,int,long";
+      finally1 = "void,MethodExecution,String,Throwable,int,long";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg int arg1, @Arg long arg2)
    {
-      finally1 = "void,MethodInfo,String,Serializable,int,long";
+      finally1 = "void,MethodExecution,String,Serializable,int,long";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1, @Arg long arg2)
    {
-      finally1 = "void,MethodInfo,CharSequence,Throwable,int,long";
+      finally1 = "void,MethodExecution,CharSequence,Throwable,int,long";
    }
    
-   public String finally1(@JoinPoint MethodInfo joinPoint,
+   public String finally1(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1)
    {
-      finally1 = "String,MethodInfo,String,Throwable,int";
+      finally1 = "String,MethodExecution,String,Throwable,int";
       return "finally1";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Arg long arg2)
    {
-      finally1 = "void,MethodInfo,String,Throwable,long";
+      finally1 = "void,MethodExecution,String,Throwable,long";
    }
    
-   public String finally1(@JoinPoint MethodInfo joinPoint,
+   public String finally1(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg long arg2)
    {
-      finally1 = "String,MethodInfo,String,Serializable,long";
+      finally1 = "String,MethodExecution,String,Serializable,long";
       return "finally1";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg int arg1)
    {
-      finally1 = "void,MethodInfo,String,Serializable,int";
+      finally1 = "void,MethodExecution,String,Serializable,int";
    }
    
-   public Object finally1(@JoinPoint MethodInfo joinPoint,
+   public Object finally1(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1)
    {
-      finally1 = "Object,MethodInfo,CharSequence,Throwable,int";
+      finally1 = "Object,MethodExecution,CharSequence,Throwable,int";
       return "finally1";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg long arg2)
    {
-      finally1 = "void,MethodInfo,CharSequence,Throwable,long";
+      finally1 = "void,MethodExecution,CharSequence,Throwable,long";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally1 = "void,MethodInfo,String,Throwable,Object[]";
+      finally1 = "void,MethodExecution,String,Throwable,Object[]";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally1 = "void,MethodInfo,String,Throwable,Object";
+      finally1 = "void,MethodExecution,String,Throwable,Object";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object[] args)
    {
-      finally1 = "void,MethodInfo,String,Serializable,Object[]";
+      finally1 = "void,MethodExecution,String,Serializable,Object[]";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object args)
    {
-      finally1 = "void,MethodInfo,String,Serializable,Object";
+      finally1 = "void,MethodExecution,String,Serializable,Object";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally1 = "void,MethodInfo,CharSequence,Throwable,Object[]";
+      finally1 = "void,MethodExecution,CharSequence,Throwable,Object[]";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally1 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally1 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally1 = "void,MethodInfo,String,Throwable";
+      finally1 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally1 = "void,MethodInfo,String,Serializable";
+      finally1 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally1 = "void,MethodInfo,CharSequence,Throwable";
+      finally1 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally1 = "void,MethodInfo,Throwable,int,long";
+      finally1 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally1 = "void,MethodInfo,Serializable,int,long";
+      finally1 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally1(@JoinPoint MethodInfo joinPoint,
+   public Object finally1(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally1 = "Object,MethodInfo,Throwable,long";
+      finally1 = "Object,MethodExecution,Throwable,long";
       return "finally1";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally1 = "void,MethodInfo,Throwable,int";
+      finally1 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally1(@JoinPoint MethodInfo joinPoint,
+   public String finally1(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally1 = "String,MethodInfo,Serializable,int";
+      finally1 = "String,MethodExecution,Serializable,int";
       return "finally1";
    }
    
-   public Object finally1(@JoinPoint MethodInfo joinPoint,
+   public Object finally1(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally1 = "Object,MethodInfo,Serializable,long";
+      finally1 = "Object,MethodExecution,Serializable,long";
       return "finally1";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally1 = "void,MethodInfo,Throwable,Object[]";
+      finally1 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally1 = "void,MethodInfo,Throwable,Object";
+      finally1 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally1 = "void,MethodInfo,Serializable,Object[]";
+      finally1 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally1 = "void,MethodInfo,Serializable,Object";
+      finally1 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally1 = "void,MethodInfo,Throwable";
+      finally1 = "void,MethodExecution,Throwable";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint,
+   public void finally1(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally1 = "void,MethodInfo,Serializable";
+      finally1 = "void,MethodExecution,Serializable";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally1(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally1 = "void,MethodInfo,int,long";
+      finally1 = "void,MethodExecution,int,long";
    }
    
-   public String finally1(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally1(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally1 = "String,MethodInfo,long";
+      finally1 = "String,MethodExecution,long";
       return "finally1";
    }
    
-   public Object finally1(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally1(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally1 = "Object,MethodInfo,int";
+      finally1 = "Object,MethodExecution,int";
       return "finally1";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally1(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally1 = "void,MethodInfo,Object[]";
+      finally1 = "void,MethodExecution,Object[]";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally1(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally1 = "void,MethodInfo,Object";
+      finally1 = "void,MethodExecution,Object";
    }
    
-   public void finally1(@JoinPoint MethodInfo joinPoint)
+   public void finally1(@JoinPoint MethodExecution joinPoint)
    {
-      finally1 = "void,MethodInfo";
+      finally1 = "void,MethodExecution";
    }
    
    public void finally1(@Return String valueReturned,
@@ -636,231 +636,231 @@ public class OverloadedFinallyAspect
    
    /* FINALLY2 ADVICE */
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg int arg1, @Arg long arg2)
    {
-      finally2 = "void,MethodInfo,String,Serializable,int,long";
+      finally2 = "void,MethodExecution,String,Serializable,int,long";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1, @Arg long arg2)
    {
-      finally2 = "void,MethodInfo,CharSequence,Throwable,int,long";
+      finally2 = "void,MethodExecution,CharSequence,Throwable,int,long";
    }
    
-   public String finally2(@JoinPoint MethodInfo joinPoint,
+   public String finally2(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1)
    {
-      finally2 = "String,MethodInfo,String,Throwable,int";
+      finally2 = "String,MethodExecution,String,Throwable,int";
       return "finally2";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Arg long arg2)
    {
-      finally2 = "void,MethodInfo,String,Throwable,long";
+      finally2 = "void,MethodExecution,String,Throwable,long";
    }
    
-   public String finally2(@JoinPoint MethodInfo joinPoint,
+   public String finally2(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg long arg2)
    {
-      finally2 = "String,MethodInfo,String,Serializable,long";
+      finally2 = "String,MethodExecution,String,Serializable,long";
       return "finally2";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg int arg1)
    {
-      finally2 = "void,MethodInfo,String,Serializable,int";
+      finally2 = "void,MethodExecution,String,Serializable,int";
    }
    
-   public Object finally2(@JoinPoint MethodInfo joinPoint,
+   public Object finally2(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1)
    {
-      finally2 = "Object,MethodInfo,CharSequence,Throwable,int";
+      finally2 = "Object,MethodExecution,CharSequence,Throwable,int";
       return "finally2";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg long arg2)
    {
-      finally2 = "void,MethodInfo,CharSequence,Throwable,long";
+      finally2 = "void,MethodExecution,CharSequence,Throwable,long";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally2 = "void,MethodInfo,String,Throwable,Object[]";
+      finally2 = "void,MethodExecution,String,Throwable,Object[]";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally2 = "void,MethodInfo,String,Throwable,Object";
+      finally2 = "void,MethodExecution,String,Throwable,Object";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object[] args)
    {
-      finally2 = "void,MethodInfo,String,Serializable,Object[]";
+      finally2 = "void,MethodExecution,String,Serializable,Object[]";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object args)
    {
-      finally2 = "void,MethodInfo,String,Serializable,Object";
+      finally2 = "void,MethodExecution,String,Serializable,Object";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally2 = "void,MethodInfo,CharSequence,Throwable,Object[]";
+      finally2 = "void,MethodExecution,CharSequence,Throwable,Object[]";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally2 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally2 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally2 = "void,MethodInfo,String,Throwable";
+      finally2 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally2 = "void,MethodInfo,String,Serializable";
+      finally2 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally2 = "void,MethodInfo,CharSequence,Throwable";
+      finally2 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally2 = "void,MethodInfo,Throwable,int,long";
+      finally2 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally2 = "void,MethodInfo,Serializable,int,long";
+      finally2 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally2(@JoinPoint MethodInfo joinPoint,
+   public Object finally2(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally2 = "Object,MethodInfo,Throwable,long";
+      finally2 = "Object,MethodExecution,Throwable,long";
       return "finally2";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally2 = "void,MethodInfo,Throwable,int";
+      finally2 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally2(@JoinPoint MethodInfo joinPoint,
+   public String finally2(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally2 = "String,MethodInfo,Serializable,int";
+      finally2 = "String,MethodExecution,Serializable,int";
       return "finally2";
    }
    
-   public Object finally2(@JoinPoint MethodInfo joinPoint,
+   public Object finally2(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally2 = "Object,MethodInfo,Serializable,long";
+      finally2 = "Object,MethodExecution,Serializable,long";
       return "finally2";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally2 = "void,MethodInfo,Throwable,Object[]";
+      finally2 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally2 = "void,MethodInfo,Throwable,Object";
+      finally2 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally2 = "void,MethodInfo,Serializable,Object[]";
+      finally2 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally2 = "void,MethodInfo,Serializable,Object";
+      finally2 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally2 = "void,MethodInfo,Throwable";
+      finally2 = "void,MethodExecution,Throwable";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint,
+   public void finally2(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally2 = "void,MethodInfo,Serializable";
+      finally2 = "void,MethodExecution,Serializable";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally2(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally2 = "void,MethodInfo,int,long";
+      finally2 = "void,MethodExecution,int,long";
    }
    
-   public String finally2(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally2(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally2 = "String,MethodInfo,long";
+      finally2 = "String,MethodExecution,long";
       return "finally2";
    }
    
-   public Object finally2(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally2(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally2 = "Object,MethodInfo,int";
+      finally2 = "Object,MethodExecution,int";
       return "finally2";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally2(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally2 = "void,MethodInfo,Object[]";
+      finally2 = "void,MethodExecution,Object[]";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally2(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally2 = "void,MethodInfo,Object";
+      finally2 = "void,MethodExecution,Object";
    }
    
-   public void finally2(@JoinPoint MethodInfo joinPoint)
+   public void finally2(@JoinPoint MethodExecution joinPoint)
    {
-      finally2 = "void,MethodInfo";
+      finally2 = "void,MethodExecution";
    }
    
    public void finally2(@Return String valueReturned,
@@ -1073,224 +1073,224 @@ public class OverloadedFinallyAspect
    
    /* FINALLY3 ADVICE */
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1, @Arg long arg2)
    {
-      finally3 = "void,MethodInfo,CharSequence,Throwable,int,long";
+      finally3 = "void,MethodExecution,CharSequence,Throwable,int,long";
    }
    
-   public String finally3(@JoinPoint MethodInfo joinPoint,
+   public String finally3(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1)
    {
-      finally3 = "String,MethodInfo,String,Throwable,int";
+      finally3 = "String,MethodExecution,String,Throwable,int";
       return "finally3";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Arg long arg2)
    {
-      finally3 = "void,MethodInfo,String,Throwable,long";
+      finally3 = "void,MethodExecution,String,Throwable,long";
    }
    
-   public String finally3(@JoinPoint MethodInfo joinPoint,
+   public String finally3(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg long arg2)
    {
-      finally3 = "String,MethodInfo,String,Serializable,long";
+      finally3 = "String,MethodExecution,String,Serializable,long";
       return "finally3";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg int arg1)
    {
-      finally3 = "void,MethodInfo,String,Serializable,int";
+      finally3 = "void,MethodExecution,String,Serializable,int";
    }
    
-   public Object finally3(@JoinPoint MethodInfo joinPoint,
+   public Object finally3(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1)
    {
-      finally3 = "Object,MethodInfo,CharSequence,Throwable,int";
+      finally3 = "Object,MethodExecution,CharSequence,Throwable,int";
       return "finally3";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg long arg2)
    {
-      finally3 = "void,MethodInfo,CharSequence,Throwable,long";
+      finally3 = "void,MethodExecution,CharSequence,Throwable,long";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally3 = "void,MethodInfo,String,Throwable,Object[]";
+      finally3 = "void,MethodExecution,String,Throwable,Object[]";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally3 = "void,MethodInfo,String,Throwable,Object";
+      finally3 = "void,MethodExecution,String,Throwable,Object";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object[] args)
    {
-      finally3 = "void,MethodInfo,String,Serializable,Object[]";
+      finally3 = "void,MethodExecution,String,Serializable,Object[]";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object args)
    {
-      finally3 = "void,MethodInfo,String,Serializable,Object";
+      finally3 = "void,MethodExecution,String,Serializable,Object";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally3 = "void,MethodInfo,CharSequence,Throwable,Object[]";
+      finally3 = "void,MethodExecution,CharSequence,Throwable,Object[]";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally3 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally3 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally3 = "void,MethodInfo,String,Throwable";
+      finally3 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally3 = "void,MethodInfo,String,Serializable";
+      finally3 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally3 = "void,MethodInfo,CharSequence,Throwable";
+      finally3 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally3 = "void,MethodInfo,Throwable,int,long";
+      finally3 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally3 = "void,MethodInfo,Serializable,int,long";
+      finally3 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally3(@JoinPoint MethodInfo joinPoint,
+   public Object finally3(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally3 = "Object,MethodInfo,Throwable,long";
+      finally3 = "Object,MethodExecution,Throwable,long";
       return "finally3";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally3 = "void,MethodInfo,Throwable,int";
+      finally3 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally3(@JoinPoint MethodInfo joinPoint,
+   public String finally3(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally3 = "String,MethodInfo,Serializable,int";
+      finally3 = "String,MethodExecution,Serializable,int";
       return "finally3";
    }
    
-   public Object finally3(@JoinPoint MethodInfo joinPoint,
+   public Object finally3(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally3 = "Object,MethodInfo,Serializable,long";
+      finally3 = "Object,MethodExecution,Serializable,long";
       return "finally3";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally3 = "void,MethodInfo,Throwable,Object[]";
+      finally3 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally3 = "void,MethodInfo,Throwable,Object";
+      finally3 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally3 = "void,MethodInfo,Serializable,Object[]";
+      finally3 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally3 = "void,MethodInfo,Serializable,Object";
+      finally3 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally3 = "void,MethodInfo,Throwable";
+      finally3 = "void,MethodExecution,Throwable";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint,
+   public void finally3(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally3 = "void,MethodInfo,Serializable";
+      finally3 = "void,MethodExecution,Serializable";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally3(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally3 = "void,MethodInfo,int,long";
+      finally3 = "void,MethodExecution,int,long";
    }
    
-   public String finally3(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally3(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally3 = "String,MethodInfo,long";
+      finally3 = "String,MethodExecution,long";
       return "finally3";
    }
    
-   public Object finally3(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally3(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally3 = "Object,MethodInfo,int";
+      finally3 = "Object,MethodExecution,int";
       return "finally3";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally3(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally3 = "void,MethodInfo,Object[]";
+      finally3 = "void,MethodExecution,Object[]";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally3(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally3 = "void,MethodInfo,Object";
+      finally3 = "void,MethodExecution,Object";
    }
    
-   public void finally3(@JoinPoint MethodInfo joinPoint)
+   public void finally3(@JoinPoint MethodExecution joinPoint)
    {
-      finally3 = "void,MethodInfo";
+      finally3 = "void,MethodExecution";
    }
    
    public void finally3(@Return String valueReturned,
@@ -1503,217 +1503,217 @@ public class OverloadedFinallyAspect
    
    /* FINALLY4 ADVICE */
    
-   public String finally4(@JoinPoint MethodInfo joinPoint,
+   public String finally4(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1)
    {
-      finally4 = "String,MethodInfo,String,Throwable,int";
+      finally4 = "String,MethodExecution,String,Throwable,int";
       return "finally4";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Arg long arg2)
    {
-      finally4 = "void,MethodInfo,String,Throwable,long";
+      finally4 = "void,MethodExecution,String,Throwable,long";
    }
    
-   public String finally4(@JoinPoint MethodInfo joinPoint,
+   public String finally4(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg long arg2)
    {
-      finally4 = "String,MethodInfo,String,Serializable,long";
+      finally4 = "String,MethodExecution,String,Serializable,long";
       return "finally4";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg int arg1)
    {
-      finally4 = "void,MethodInfo,String,Serializable,int";
+      finally4 = "void,MethodExecution,String,Serializable,int";
    }
    
-   public Object finally4(@JoinPoint MethodInfo joinPoint,
+   public Object finally4(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1)
    {
-      finally4 = "Object,MethodInfo,CharSequence,Throwable,int";
+      finally4 = "Object,MethodExecution,CharSequence,Throwable,int";
       return "finally4";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg long arg2)
    {
-      finally4 = "void,MethodInfo,CharSequence,Throwable,long";
+      finally4 = "void,MethodExecution,CharSequence,Throwable,long";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally4 = "void,MethodInfo,String,Throwable,Object[]";
+      finally4 = "void,MethodExecution,String,Throwable,Object[]";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally4 = "void,MethodInfo,String,Throwable,Object";
+      finally4 = "void,MethodExecution,String,Throwable,Object";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object[] args)
    {
-      finally4 = "void,MethodInfo,String,Serializable,Object[]";
+      finally4 = "void,MethodExecution,String,Serializable,Object[]";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object args)
    {
-      finally4 = "void,MethodInfo,String,Serializable,Object";
+      finally4 = "void,MethodExecution,String,Serializable,Object";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally4 = "void,MethodInfo,CharSequence,Throwable,Object[]";
+      finally4 = "void,MethodExecution,CharSequence,Throwable,Object[]";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally4 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally4 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally4 = "void,MethodInfo,String,Throwable";
+      finally4 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally4 = "void,MethodInfo,String,Serializable";
+      finally4 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally4 = "void,MethodInfo,CharSequence,Throwable";
+      finally4 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally4 = "void,MethodInfo,Throwable,int,long";
+      finally4 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally4 = "void,MethodInfo,Serializable,int,long";
+      finally4 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally4(@JoinPoint MethodInfo joinPoint,
+   public Object finally4(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally4 = "Object,MethodInfo,Throwable,long";
+      finally4 = "Object,MethodExecution,Throwable,long";
       return "finally4";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally4 = "void,MethodInfo,Throwable,int";
+      finally4 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally4(@JoinPoint MethodInfo joinPoint,
+   public String finally4(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally4 = "String,MethodInfo,Serializable,int";
+      finally4 = "String,MethodExecution,Serializable,int";
       return "finally4";
    }
    
-   public Object finally4(@JoinPoint MethodInfo joinPoint,
+   public Object finally4(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally4 = "Object,MethodInfo,Serializable,long";
+      finally4 = "Object,MethodExecution,Serializable,long";
       return "finally4";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally4 = "void,MethodInfo,Throwable,Object[]";
+      finally4 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally4 = "void,MethodInfo,Throwable,Object";
+      finally4 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally4 = "void,MethodInfo,Serializable,Object[]";
+      finally4 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally4 = "void,MethodInfo,Serializable,Object";
+      finally4 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally4 = "void,MethodInfo,Throwable";
+      finally4 = "void,MethodExecution,Throwable";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint,
+   public void finally4(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally4 = "void,MethodInfo,Serializable";
+      finally4 = "void,MethodExecution,Serializable";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally4(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally4 = "void,MethodInfo,int,long";
+      finally4 = "void,MethodExecution,int,long";
    }
    
-   public String finally4(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally4(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally4 = "String,MethodInfo,long";
+      finally4 = "String,MethodExecution,long";
       return "finally4";
    }
    
-   public Object finally4(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally4(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally4 = "Object,MethodInfo,int";
+      finally4 = "Object,MethodExecution,int";
       return "finally4";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally4(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally4 = "void,MethodInfo,Object[]";
+      finally4 = "void,MethodExecution,Object[]";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally4(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally4 = "void,MethodInfo,Object";
+      finally4 = "void,MethodExecution,Object";
    }
    
-   public void finally4(@JoinPoint MethodInfo joinPoint)
+   public void finally4(@JoinPoint MethodExecution joinPoint)
    {
-      finally4 = "void,MethodInfo";
+      finally4 = "void,MethodExecution";
    }
    
    public void finally4(@Return String valueReturned,
@@ -1926,209 +1926,209 @@ public class OverloadedFinallyAspect
    
    /* FINALLY5 ADVICE */
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Arg long arg2)
    {
-      finally5 = "void,MethodInfo,String,Throwable,long";
+      finally5 = "void,MethodExecution,String,Throwable,long";
    }
    
-   public String finally5(@JoinPoint MethodInfo joinPoint,
+   public String finally5(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg long arg2)
    {
-      finally5 = "String,MethodInfo,String,Serializable,long";
+      finally5 = "String,MethodExecution,String,Serializable,long";
       return "finally5";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg int arg1)
    {
-      finally5 = "void,MethodInfo,String,Serializable,int";
+      finally5 = "void,MethodExecution,String,Serializable,int";
    }
    
-   public Object finally5(@JoinPoint MethodInfo joinPoint,
+   public Object finally5(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1)
    {
-      finally5 = "Object,MethodInfo,CharSequence,Throwable,int";
+      finally5 = "Object,MethodExecution,CharSequence,Throwable,int";
       return "finally5";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg long arg2)
    {
-      finally5 = "void,MethodInfo,CharSequence,Throwable,long";
+      finally5 = "void,MethodExecution,CharSequence,Throwable,long";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally5 = "void,MethodInfo,String,Throwable,Object[]";
+      finally5 = "void,MethodExecution,String,Throwable,Object[]";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally5 = "void,MethodInfo,String,Throwable,Object";
+      finally5 = "void,MethodExecution,String,Throwable,Object";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object[] args)
    {
-      finally5 = "void,MethodInfo,String,Serializable,Object[]";
+      finally5 = "void,MethodExecution,String,Serializable,Object[]";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object args)
    {
-      finally5 = "void,MethodInfo,String,Serializable,Object";
+      finally5 = "void,MethodExecution,String,Serializable,Object";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally5 = "void,MethodInfo,CharSequence,Throwable,Object[]";
+      finally5 = "void,MethodExecution,CharSequence,Throwable,Object[]";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally5 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally5 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally5 = "void,MethodInfo,String,Throwable";
+      finally5 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally5 = "void,MethodInfo,String,Serializable";
+      finally5 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally5 = "void,MethodInfo,CharSequence,Throwable";
+      finally5 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally5 = "void,MethodInfo,Throwable,int,long";
+      finally5 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally5 = "void,MethodInfo,Serializable,int,long";
+      finally5 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally5(@JoinPoint MethodInfo joinPoint,
+   public Object finally5(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally5 = "Object,MethodInfo,Throwable,long";
+      finally5 = "Object,MethodExecution,Throwable,long";
       return "finally5";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally5 = "void,MethodInfo,Throwable,int";
+      finally5 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally5(@JoinPoint MethodInfo joinPoint,
+   public String finally5(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally5 = "String,MethodInfo,Serializable,int";
+      finally5 = "String,MethodExecution,Serializable,int";
       return "finally5";
    }
    
-   public Object finally5(@JoinPoint MethodInfo joinPoint,
+   public Object finally5(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally5 = "Object,MethodInfo,Serializable,long";
+      finally5 = "Object,MethodExecution,Serializable,long";
       return "finally5";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally5 = "void,MethodInfo,Throwable,Object[]";
+      finally5 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally5 = "void,MethodInfo,Throwable,Object";
+      finally5 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally5 = "void,MethodInfo,Serializable,Object[]";
+      finally5 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally5 = "void,MethodInfo,Serializable,Object";
+      finally5 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally5 = "void,MethodInfo,Throwable";
+      finally5 = "void,MethodExecution,Throwable";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint,
+   public void finally5(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally5 = "void,MethodInfo,Serializable";
+      finally5 = "void,MethodExecution,Serializable";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally5(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally5 = "void,MethodInfo,int,long";
+      finally5 = "void,MethodExecution,int,long";
    }
    
-   public String finally5(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally5(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally5 = "String,MethodInfo,long";
+      finally5 = "String,MethodExecution,long";
       return "finally5";
    }
    
-   public Object finally5(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally5(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally5 = "Object,MethodInfo,int";
+      finally5 = "Object,MethodExecution,int";
       return "finally5";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally5(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally5 = "void,MethodInfo,Object[]";
+      finally5 = "void,MethodExecution,Object[]";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally5(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally5 = "void,MethodInfo,Object";
+      finally5 = "void,MethodExecution,Object";
    }
    
-   public void finally5(@JoinPoint MethodInfo joinPoint)
+   public void finally5(@JoinPoint MethodExecution joinPoint)
    {
-      finally5 = "void,MethodInfo";
+      finally5 = "void,MethodExecution";
    }
    
    public void finally5(@Return String valueReturned,
@@ -2341,202 +2341,202 @@ public class OverloadedFinallyAspect
    
    /* FINALLY6 ADVICE */
    
-   public String finally6(@JoinPoint MethodInfo joinPoint,
+   public String finally6(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg long arg2)
    {
-      finally6 = "String,MethodInfo,String,Serializable,long";
+      finally6 = "String,MethodExecution,String,Serializable,long";
       return "finally6";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg int arg1)
    {
-      finally6 = "void,MethodInfo,String,Serializable,int";
+      finally6 = "void,MethodExecution,String,Serializable,int";
    }
    
-   public Object finally6(@JoinPoint MethodInfo joinPoint,
+   public Object finally6(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1)
    {
-      finally6 = "Object,MethodInfo,CharSequence,Throwable,int";
+      finally6 = "Object,MethodExecution,CharSequence,Throwable,int";
       return "finally6";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg long arg2)
    {
-      finally6 = "void,MethodInfo,CharSequence,Throwable,long";
+      finally6 = "void,MethodExecution,CharSequence,Throwable,long";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally6 = "void,MethodInfo,String,Throwable,Object[]";
+      finally6 = "void,MethodExecution,String,Throwable,Object[]";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally6 = "void,MethodInfo,String,Throwable,Object";
+      finally6 = "void,MethodExecution,String,Throwable,Object";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object[] args)
    {
-      finally6 = "void,MethodInfo,String,Serializable,Object[]";
+      finally6 = "void,MethodExecution,String,Serializable,Object[]";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object args)
    {
-      finally6 = "void,MethodInfo,String,Serializable,Object";
+      finally6 = "void,MethodExecution,String,Serializable,Object";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally6 = "void,MethodInfo,CharSequence,Throwable,Object[]";
+      finally6 = "void,MethodExecution,CharSequence,Throwable,Object[]";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally6 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally6 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally6 = "void,MethodInfo,String,Throwable";
+      finally6 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally6 = "void,MethodInfo,String,Serializable";
+      finally6 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally6 = "void,MethodInfo,CharSequence,Throwable";
+      finally6 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally6 = "void,MethodInfo,Throwable,int,long";
+      finally6 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally6 = "void,MethodInfo,Serializable,int,long";
+      finally6 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally6(@JoinPoint MethodInfo joinPoint,
+   public Object finally6(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally6 = "Object,MethodInfo,Throwable,long";
+      finally6 = "Object,MethodExecution,Throwable,long";
       return "finally6";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally6 = "void,MethodInfo,Throwable,int";
+      finally6 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally6(@JoinPoint MethodInfo joinPoint,
+   public String finally6(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally6 = "String,MethodInfo,Serializable,int";
+      finally6 = "String,MethodExecution,Serializable,int";
       return "finally6";
    }
    
-   public Object finally6(@JoinPoint MethodInfo joinPoint,
+   public Object finally6(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally6 = "Object,MethodInfo,Serializable,long";
+      finally6 = "Object,MethodExecution,Serializable,long";
       return "finally6";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally6 = "void,MethodInfo,Throwable,Object[]";
+      finally6 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally6 = "void,MethodInfo,Throwable,Object";
+      finally6 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally6 = "void,MethodInfo,Serializable,Object[]";
+      finally6 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally6 = "void,MethodInfo,Serializable,Object";
+      finally6 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally6 = "void,MethodInfo,Throwable";
+      finally6 = "void,MethodExecution,Throwable";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint,
+   public void finally6(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally6 = "void,MethodInfo,Serializable";
+      finally6 = "void,MethodExecution,Serializable";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally6(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally6 = "void,MethodInfo,int,long";
+      finally6 = "void,MethodExecution,int,long";
    }
    
-   public String finally6(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally6(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally6 = "String,MethodInfo,long";
+      finally6 = "String,MethodExecution,long";
       return "finally6";
    }
    
-   public Object finally6(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally6(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally6 = "Object,MethodInfo,int";
+      finally6 = "Object,MethodExecution,int";
       return "finally6";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally6(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally6 = "void,MethodInfo,Object[]";
+      finally6 = "void,MethodExecution,Object[]";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally6(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally6 = "void,MethodInfo,Object";
+      finally6 = "void,MethodExecution,Object";
    }
    
-   public void finally6(@JoinPoint MethodInfo joinPoint)
+   public void finally6(@JoinPoint MethodExecution joinPoint)
    {
-      finally6 = "void,MethodInfo";
+      finally6 = "void,MethodExecution";
    }
    
    public void finally6(@Return String valueReturned,
@@ -2749,194 +2749,194 @@ public class OverloadedFinallyAspect
    
    /* FINALLY7 ADVICE */
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Arg int arg1)
    {
-      finally7 = "void,MethodInfo,String,Serializable,int";
+      finally7 = "void,MethodExecution,String,Serializable,int";
    }
    
-   public Object finally7(@JoinPoint MethodInfo joinPoint,
+   public Object finally7(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1)
    {
-      finally7 = "Object,MethodInfo,CharSequence,Throwable,int";
+      finally7 = "Object,MethodExecution,CharSequence,Throwable,int";
       return "finally7";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg long arg2)
    {
-      finally7 = "void,MethodInfo,CharSequence,Throwable,long";
+      finally7 = "void,MethodExecution,CharSequence,Throwable,long";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally7 = "void,MethodInfo,String,Throwable,Object[]";
+      finally7 = "void,MethodExecution,String,Throwable,Object[]";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally7 = "void,MethodInfo,String,Throwable,Object";
+      finally7 = "void,MethodExecution,String,Throwable,Object";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object[] args)
    {
-      finally7 = "void,MethodInfo,String,Serializable,Object[]";
+      finally7 = "void,MethodExecution,String,Serializable,Object[]";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object args)
    {
-      finally7 = "void,MethodInfo,String,Serializable,Object";
+      finally7 = "void,MethodExecution,String,Serializable,Object";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally7 = "void,MethodInfo,CharSequence,Throwable,Object[]";
+      finally7 = "void,MethodExecution,CharSequence,Throwable,Object[]";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally7 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally7 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally7 = "void,MethodInfo,String,Throwable";
+      finally7 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally7 = "void,MethodInfo,String,Serializable";
+      finally7 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally7 = "void,MethodInfo,CharSequence,Throwable";
+      finally7 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally7 = "void,MethodInfo,Throwable,int,long";
+      finally7 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally7 = "void,MethodInfo,Serializable,int,long";
+      finally7 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally7(@JoinPoint MethodInfo joinPoint,
+   public Object finally7(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally7 = "Object,MethodInfo,Throwable,long";
+      finally7 = "Object,MethodExecution,Throwable,long";
       return "finally7";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally7 = "void,MethodInfo,Throwable,int";
+      finally7 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally7(@JoinPoint MethodInfo joinPoint,
+   public String finally7(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally7 = "String,MethodInfo,Serializable,int";
+      finally7 = "String,MethodExecution,Serializable,int";
       return "finally7";
    }
    
-   public Object finally7(@JoinPoint MethodInfo joinPoint,
+   public Object finally7(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally7 = "Object,MethodInfo,Serializable,long";
+      finally7 = "Object,MethodExecution,Serializable,long";
       return "finally7";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally7 = "void,MethodInfo,Throwable,Object[]";
+      finally7 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally7 = "void,MethodInfo,Throwable,Object";
+      finally7 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally7 = "void,MethodInfo,Serializable,Object[]";
+      finally7 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally7 = "void,MethodInfo,Serializable,Object";
+      finally7 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally7 = "void,MethodInfo,Throwable";
+      finally7 = "void,MethodExecution,Throwable";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint,
+   public void finally7(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally7 = "void,MethodInfo,Serializable";
+      finally7 = "void,MethodExecution,Serializable";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally7(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally7 = "void,MethodInfo,int,long";
+      finally7 = "void,MethodExecution,int,long";
    }
    
-   public String finally7(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally7(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally7 = "String,MethodInfo,long";
+      finally7 = "String,MethodExecution,long";
       return "finally7";
    }
    
-   public Object finally7(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally7(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally7 = "Object,MethodInfo,int";
+      finally7 = "Object,MethodExecution,int";
       return "finally7";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally7(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally7 = "void,MethodInfo,Object[]";
+      finally7 = "void,MethodExecution,Object[]";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally7(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally7 = "void,MethodInfo,Object";
+      finally7 = "void,MethodExecution,Object";
    }
    
-   public void finally7(@JoinPoint MethodInfo joinPoint)
+   public void finally7(@JoinPoint MethodExecution joinPoint)
    {
-      finally7 = "void,MethodInfo";
+      finally7 = "void,MethodExecution";
    }
    
    public void finally7(@Return String valueReturned,
@@ -3149,187 +3149,187 @@ public class OverloadedFinallyAspect
    
    /* FINALLY8 ADVICE */
    
-   public Object finally8(@JoinPoint MethodInfo joinPoint,
+   public Object finally8(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg int arg1)
    {
-      finally8 = "Object,MethodInfo,CharSequence,Throwable,int";
+      finally8 = "Object,MethodExecution,CharSequence,Throwable,int";
       return "finally8";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg long arg2)
    {
-      finally8 = "void,MethodInfo,CharSequence,Throwable,long";
+      finally8 = "void,MethodExecution,CharSequence,Throwable,long";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally8 = "void,MethodInfo,String,Throwable,Object[]";
+      finally8 = "void,MethodExecution,String,Throwable,Object[]";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally8 = "void,MethodInfo,String,Throwable,Object";
+      finally8 = "void,MethodExecution,String,Throwable,Object";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object[] args)
    {
-      finally8 = "void,MethodInfo,String,Serializable,Object[]";
+      finally8 = "void,MethodExecution,String,Serializable,Object[]";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object args)
    {
-      finally8 = "void,MethodInfo,String,Serializable,Object";
+      finally8 = "void,MethodExecution,String,Serializable,Object";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally8 = "void,MethodInfo,CharSequence,Throwable,Object[]";
+      finally8 = "void,MethodExecution,CharSequence,Throwable,Object[]";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally8 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally8 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally8 = "void,MethodInfo,String,Throwable";
+      finally8 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally8 = "void,MethodInfo,String,Serializable";
+      finally8 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally8 = "void,MethodInfo,CharSequence,Throwable";
+      finally8 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally8 = "void,MethodInfo,Throwable,int,long";
+      finally8 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally8 = "void,MethodInfo,Serializable,int,long";
+      finally8 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally8(@JoinPoint MethodInfo joinPoint,
+   public Object finally8(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally8 = "Object,MethodInfo,Throwable,long";
+      finally8 = "Object,MethodExecution,Throwable,long";
       return "finally8";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally8 = "void,MethodInfo,Throwable,int";
+      finally8 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally8(@JoinPoint MethodInfo joinPoint,
+   public String finally8(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally8 = "String,MethodInfo,Serializable,int";
+      finally8 = "String,MethodExecution,Serializable,int";
       return "finally8";
    }
    
-   public Object finally8(@JoinPoint MethodInfo joinPoint,
+   public Object finally8(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally8 = "Object,MethodInfo,Serializable,long";
+      finally8 = "Object,MethodExecution,Serializable,long";
       return "finally8";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally8 = "void,MethodInfo,Throwable,Object[]";
+      finally8 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally8 = "void,MethodInfo,Throwable,Object";
+      finally8 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally8 = "void,MethodInfo,Serializable,Object[]";
+      finally8 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally8 = "void,MethodInfo,Serializable,Object";
+      finally8 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally8 = "void,MethodInfo,Throwable";
+      finally8 = "void,MethodExecution,Throwable";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint,
+   public void finally8(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally8 = "void,MethodInfo,Serializable";
+      finally8 = "void,MethodExecution,Serializable";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally8(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally8 = "void,MethodInfo,int,long";
+      finally8 = "void,MethodExecution,int,long";
    }
    
-   public String finally8(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally8(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally8 = "String,MethodInfo,long";
+      finally8 = "String,MethodExecution,long";
       return "finally8";
    }
    
-   public Object finally8(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally8(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally8 = "Object,MethodInfo,int";
+      finally8 = "Object,MethodExecution,int";
       return "finally8";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally8(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally8 = "void,MethodInfo,Object[]";
+      finally8 = "void,MethodExecution,Object[]";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally8(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally8 = "void,MethodInfo,Object";
+      finally8 = "void,MethodExecution,Object";
    }
    
-   public void finally8(@JoinPoint MethodInfo joinPoint)
+   public void finally8(@JoinPoint MethodExecution joinPoint)
    {
-      finally8 = "void,MethodInfo";
+      finally8 = "void,MethodExecution";
    }
    
    public void finally8(@Return String valueReturned,
@@ -3542,179 +3542,179 @@ public class OverloadedFinallyAspect
    
    /* FINALLY9 ADVICE */
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Arg long arg2)
    {
-      finally9 = "void,MethodInfo,CharSequence,Throwable,long";
+      finally9 = "void,MethodExecution,CharSequence,Throwable,long";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally9 = "void,MethodInfo,String,Throwable,Object[]";
+      finally9 = "void,MethodExecution,String,Throwable,Object[]";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally9 = "void,MethodInfo,String,Throwable,Object";
+      finally9 = "void,MethodExecution,String,Throwable,Object";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object[] args)
    {
-      finally9 = "void,MethodInfo,String,Serializable,Object[]";
+      finally9 = "void,MethodExecution,String,Serializable,Object[]";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object args)
    {
-      finally9 = "void,MethodInfo,String,Serializable,Object";
+      finally9 = "void,MethodExecution,String,Serializable,Object";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally9 = "void,MethodInfo,CharSequence,Throwable,Object[]";
+      finally9 = "void,MethodExecution,CharSequence,Throwable,Object[]";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally9 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally9 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally9 = "void,MethodInfo,String,Throwable";
+      finally9 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally9 = "void,MethodInfo,String,Serializable";
+      finally9 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally9 = "void,MethodInfo,CharSequence,Throwable";
+      finally9 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally9 = "void,MethodInfo,Throwable,int,long";
+      finally9 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally9 = "void,MethodInfo,Serializable,int,long";
+      finally9 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally9(@JoinPoint MethodInfo joinPoint,
+   public Object finally9(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally9 = "Object,MethodInfo,Throwable,long";
+      finally9 = "Object,MethodExecution,Throwable,long";
       return "finally9";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally9 = "void,MethodInfo,Throwable,int";
+      finally9 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally9(@JoinPoint MethodInfo joinPoint,
+   public String finally9(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally9 = "String,MethodInfo,Serializable,int";
+      finally9 = "String,MethodExecution,Serializable,int";
       return "finally9";
    }
    
-   public Object finally9(@JoinPoint MethodInfo joinPoint,
+   public Object finally9(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally9 = "Object,MethodInfo,Serializable,long";
+      finally9 = "Object,MethodExecution,Serializable,long";
       return "finally9";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally9 = "void,MethodInfo,Throwable,Object[]";
+      finally9 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally9 = "void,MethodInfo,Throwable,Object";
+      finally9 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally9 = "void,MethodInfo,Serializable,Object[]";
+      finally9 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally9 = "void,MethodInfo,Serializable,Object";
+      finally9 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally9 = "void,MethodInfo,Throwable";
+      finally9 = "void,MethodExecution,Throwable";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint,
+   public void finally9(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally9 = "void,MethodInfo,Serializable";
+      finally9 = "void,MethodExecution,Serializable";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally9(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally9 = "void,MethodInfo,int,long";
+      finally9 = "void,MethodExecution,int,long";
    }
    
-   public String finally9(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally9(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally9 = "String,MethodInfo,long";
+      finally9 = "String,MethodExecution,long";
       return "finally9";
    }
    
-   public Object finally9(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally9(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally9 = "Object,MethodInfo,int";
+      finally9 = "Object,MethodExecution,int";
       return "finally9";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally9(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally9 = "void,MethodInfo,Object[]";
+      finally9 = "void,MethodExecution,Object[]";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally9(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally9 = "void,MethodInfo,Object";
+      finally9 = "void,MethodExecution,Object";
    }
    
-   public void finally9(@JoinPoint MethodInfo joinPoint)
+   public void finally9(@JoinPoint MethodExecution joinPoint)
    {
-      finally9 = "void,MethodInfo";
+      finally9 = "void,MethodExecution";
    }
    
    public void finally9(@Return String valueReturned,
@@ -3927,172 +3927,172 @@ public class OverloadedFinallyAspect
    
    /* FINALLY10 ADVICE */
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally10 = "void,MethodInfo,String,Throwable,Object[]";
+      finally10 = "void,MethodExecution,String,Throwable,Object[]";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally10 = "void,MethodInfo,String,Throwable,Object";
+      finally10 = "void,MethodExecution,String,Throwable,Object";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object[] args)
    {
-      finally10 = "void,MethodInfo,String,Serializable,Object[]";
+      finally10 = "void,MethodExecution,String,Serializable,Object[]";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object args)
    {
-      finally10 = "void,MethodInfo,String,Serializable,Object";
+      finally10 = "void,MethodExecution,String,Serializable,Object";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally10 = "void,MethodInfo,CharSequence,Throwable,Object[]";
+      finally10 = "void,MethodExecution,CharSequence,Throwable,Object[]";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally10 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally10 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally10 = "void,MethodInfo,String,Throwable";
+      finally10 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally10 = "void,MethodInfo,String,Serializable";
+      finally10 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally10 = "void,MethodInfo,CharSequence,Throwable";
+      finally10 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally10 = "void,MethodInfo,Throwable,int,long";
+      finally10 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally10 = "void,MethodInfo,Serializable,int,long";
+      finally10 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally10(@JoinPoint MethodInfo joinPoint,
+   public Object finally10(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally10 = "Object,MethodInfo,Throwable,long";
+      finally10 = "Object,MethodExecution,Throwable,long";
       return "finally10";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally10 = "void,MethodInfo,Throwable,int";
+      finally10 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally10(@JoinPoint MethodInfo joinPoint,
+   public String finally10(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally10 = "String,MethodInfo,Serializable,int";
+      finally10 = "String,MethodExecution,Serializable,int";
       return "finally10";
    }
    
-   public Object finally10(@JoinPoint MethodInfo joinPoint,
+   public Object finally10(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally10 = "Object,MethodInfo,Serializable,long";
+      finally10 = "Object,MethodExecution,Serializable,long";
       return "finally10";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally10 = "void,MethodInfo,Throwable,Object[]";
+      finally10 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally10 = "void,MethodInfo,Throwable,Object";
+      finally10 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally10 = "void,MethodInfo,Serializable,Object[]";
+      finally10 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally10 = "void,MethodInfo,Serializable,Object";
+      finally10 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally10 = "void,MethodInfo,Throwable";
+      finally10 = "void,MethodExecution,Throwable";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint,
+   public void finally10(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally10 = "void,MethodInfo,Serializable";
+      finally10 = "void,MethodExecution,Serializable";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally10(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally10 = "void,MethodInfo,int,long";
+      finally10 = "void,MethodExecution,int,long";
    }
    
-   public String finally10(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally10(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally10 = "String,MethodInfo,long";
+      finally10 = "String,MethodExecution,long";
       return "finally10";
    }
    
-   public Object finally10(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally10(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally10 = "Object,MethodInfo,int";
+      finally10 = "Object,MethodExecution,int";
       return "finally10";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally10(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally10 = "void,MethodInfo,Object[]";
+      finally10 = "void,MethodExecution,Object[]";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally10(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally10 = "void,MethodInfo,Object";
+      finally10 = "void,MethodExecution,Object";
    }
    
-   public void finally10(@JoinPoint MethodInfo joinPoint)
+   public void finally10(@JoinPoint MethodExecution joinPoint)
    {
-      finally10 = "void,MethodInfo";
+      finally10 = "void,MethodExecution";
    }
    
    public void finally10(@Return String valueReturned,
@@ -4305,165 +4305,165 @@ public class OverloadedFinallyAspect
    
    /* FINALLY11 ADVICE */
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally11 = "void,MethodInfo,String,Throwable,Object";
+      finally11 = "void,MethodExecution,String,Throwable,Object";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object[] args)
    {
-      finally11 = "void,MethodInfo,String,Serializable,Object[]";
+      finally11 = "void,MethodExecution,String,Serializable,Object[]";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object args)
    {
-      finally11 = "void,MethodInfo,String,Serializable,Object";
+      finally11 = "void,MethodExecution,String,Serializable,Object";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally11 = "void,MethodInfo,CharSequence,Throwable,Object[]";
+      finally11 = "void,MethodExecution,CharSequence,Throwable,Object[]";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally11 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally11 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally11 = "void,MethodInfo,String,Throwable";
+      finally11 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally11 = "void,MethodInfo,String,Serializable";
+      finally11 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally11 = "void,MethodInfo,CharSequence,Throwable";
+      finally11 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally11 = "void,MethodInfo,Throwable,int,long";
+      finally11 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally11 = "void,MethodInfo,Serializable,int,long";
+      finally11 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally11(@JoinPoint MethodInfo joinPoint,
+   public Object finally11(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally11 = "Object,MethodInfo,Throwable,long";
+      finally11 = "Object,MethodExecution,Throwable,long";
       return "finally11";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally11 = "void,MethodInfo,Throwable,int";
+      finally11 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally11(@JoinPoint MethodInfo joinPoint,
+   public String finally11(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally11 = "String,MethodInfo,Serializable,int";
+      finally11 = "String,MethodExecution,Serializable,int";
       return "finally11";
    }
    
-   public Object finally11(@JoinPoint MethodInfo joinPoint,
+   public Object finally11(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally11 = "Object,MethodInfo,Serializable,long";
+      finally11 = "Object,MethodExecution,Serializable,long";
       return "finally11";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally11 = "void,MethodInfo,Throwable,Object[]";
+      finally11 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally11 = "void,MethodInfo,Throwable,Object";
+      finally11 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally11 = "void,MethodInfo,Serializable,Object[]";
+      finally11 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally11 = "void,MethodInfo,Serializable,Object";
+      finally11 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally11 = "void,MethodInfo,Throwable";
+      finally11 = "void,MethodExecution,Throwable";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint,
+   public void finally11(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally11 = "void,MethodInfo,Serializable";
+      finally11 = "void,MethodExecution,Serializable";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally11(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally11 = "void,MethodInfo,int,long";
+      finally11 = "void,MethodExecution,int,long";
    }
    
-   public String finally11(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally11(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally11 = "String,MethodInfo,long";
+      finally11 = "String,MethodExecution,long";
       return "finally11";
    }
    
-   public Object finally11(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally11(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally11 = "Object,MethodInfo,int";
+      finally11 = "Object,MethodExecution,int";
       return "finally11";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally11(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally11 = "void,MethodInfo,Object[]";
+      finally11 = "void,MethodExecution,Object[]";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally11(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally11 = "void,MethodInfo,Object";
+      finally11 = "void,MethodExecution,Object";
    }
    
-   public void finally11(@JoinPoint MethodInfo joinPoint)
+   public void finally11(@JoinPoint MethodExecution joinPoint)
    {
-      finally11 = "void,MethodInfo";
+      finally11 = "void,MethodExecution";
    }
    
    public void finally11(@Return String valueReturned,
@@ -4676,158 +4676,158 @@ public class OverloadedFinallyAspect
    
    /* FINALLY12 ADVICE */
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object[] args)
    {
-      finally12 = "void,MethodInfo,String,Serializable,Object[]";
+      finally12 = "void,MethodExecution,String,Serializable,Object[]";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object args)
    {
-      finally12 = "void,MethodInfo,String,Serializable,Object";
+      finally12 = "void,MethodExecution,String,Serializable,Object";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally12 = "void,MethodInfo,CharSequence,Throwable,Object[]";
+      finally12 = "void,MethodExecution,CharSequence,Throwable,Object[]";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally12 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally12 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally12 = "void,MethodInfo,String,Throwable";
+      finally12 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally12 = "void,MethodInfo,String,Serializable";
+      finally12 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally12 = "void,MethodInfo,CharSequence,Throwable";
+      finally12 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally12 = "void,MethodInfo,Throwable,int,long";
+      finally12 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally12 = "void,MethodInfo,Serializable,int,long";
+      finally12 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally12(@JoinPoint MethodInfo joinPoint,
+   public Object finally12(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally12 = "Object,MethodInfo,Throwable,long";
+      finally12 = "Object,MethodExecution,Throwable,long";
       return "finally12";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally12 = "void,MethodInfo,Throwable,int";
+      finally12 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally12(@JoinPoint MethodInfo joinPoint,
+   public String finally12(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally12 = "String,MethodInfo,Serializable,int";
+      finally12 = "String,MethodExecution,Serializable,int";
       return "finally12";
    }
    
-   public Object finally12(@JoinPoint MethodInfo joinPoint,
+   public Object finally12(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally12 = "Object,MethodInfo,Serializable,long";
+      finally12 = "Object,MethodExecution,Serializable,long";
       return "finally12";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally12 = "void,MethodInfo,Throwable,Object[]";
+      finally12 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally12 = "void,MethodInfo,Throwable,Object";
+      finally12 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally12 = "void,MethodInfo,Serializable,Object[]";
+      finally12 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally12 = "void,MethodInfo,Serializable,Object";
+      finally12 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally12 = "void,MethodInfo,Throwable";
+      finally12 = "void,MethodExecution,Throwable";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint,
+   public void finally12(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally12 = "void,MethodInfo,Serializable";
+      finally12 = "void,MethodExecution,Serializable";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally12(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally12 = "void,MethodInfo,int,long";
+      finally12 = "void,MethodExecution,int,long";
    }
    
-   public String finally12(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally12(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally12 = "String,MethodInfo,long";
+      finally12 = "String,MethodExecution,long";
       return "finally12";
    }
    
-   public Object finally12(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally12(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally12 = "Object,MethodInfo,int";
+      finally12 = "Object,MethodExecution,int";
       return "finally12";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally12(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally12 = "void,MethodInfo,Object[]";
+      finally12 = "void,MethodExecution,Object[]";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally12(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally12 = "void,MethodInfo,Object";
+      finally12 = "void,MethodExecution,Object";
    }
    
-   public void finally12(@JoinPoint MethodInfo joinPoint)
+   public void finally12(@JoinPoint MethodExecution joinPoint)
    {
-      finally12 = "void,MethodInfo";
+      finally12 = "void,MethodExecution";
    }
    
    public void finally12(@Return String valueReturned,
@@ -5040,151 +5040,151 @@ public class OverloadedFinallyAspect
    
    /* FINALLY13 ADVICE */
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException,
          @Args Object args)
    {
-      finally13 = "void,MethodInfo,String,Serializable,Object";
+      finally13 = "void,MethodExecution,String,Serializable,Object";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally13 = "void,MethodInfo,CharSequence,Throwable,Object[]";
+      finally13 = "void,MethodExecution,CharSequence,Throwable,Object[]";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally13 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally13 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally13 = "void,MethodInfo,String,Throwable";
+      finally13 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally13 = "void,MethodInfo,String,Serializable";
+      finally13 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally13 = "void,MethodInfo,CharSequence,Throwable";
+      finally13 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally13 = "void,MethodInfo,Throwable,int,long";
+      finally13 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally13 = "void,MethodInfo,Serializable,int,long";
+      finally13 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally13(@JoinPoint MethodInfo joinPoint,
+   public Object finally13(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally13 = "Object,MethodInfo,Throwable,long";
+      finally13 = "Object,MethodExecution,Throwable,long";
       return "finally13";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally13 = "void,MethodInfo,Throwable,int";
+      finally13 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally13(@JoinPoint MethodInfo joinPoint,
+   public String finally13(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally13 = "String,MethodInfo,Serializable,int";
+      finally13 = "String,MethodExecution,Serializable,int";
       return "finally13";
    }
    
-   public Object finally13(@JoinPoint MethodInfo joinPoint,
+   public Object finally13(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally13 = "Object,MethodInfo,Serializable,long";
+      finally13 = "Object,MethodExecution,Serializable,long";
       return "finally13";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally13 = "void,MethodInfo,Throwable,Object[]";
+      finally13 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally13 = "void,MethodInfo,Throwable,Object";
+      finally13 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally13 = "void,MethodInfo,Serializable,Object[]";
+      finally13 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally13 = "void,MethodInfo,Serializable,Object";
+      finally13 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally13 = "void,MethodInfo,Throwable";
+      finally13 = "void,MethodExecution,Throwable";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint,
+   public void finally13(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally13 = "void,MethodInfo,Serializable";
+      finally13 = "void,MethodExecution,Serializable";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally13(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally13 = "void,MethodInfo,int,long";
+      finally13 = "void,MethodExecution,int,long";
    }
    
-   public String finally13(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally13(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally13 = "String,MethodInfo,long";
+      finally13 = "String,MethodExecution,long";
       return "finally13";
    }
    
-   public Object finally13(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally13(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally13 = "Object,MethodInfo,int";
+      finally13 = "Object,MethodExecution,int";
       return "finally13";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally13(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally13 = "void,MethodInfo,Object[]";
+      finally13 = "void,MethodExecution,Object[]";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally13(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally13 = "void,MethodInfo,Object";
+      finally13 = "void,MethodExecution,Object";
    }
    
-   public void finally13(@JoinPoint MethodInfo joinPoint)
+   public void finally13(@JoinPoint MethodExecution joinPoint)
    {
-      finally13 = "void,MethodInfo";
+      finally13 = "void,MethodExecution";
    }
    
    public void finally13(@Return String valueReturned,
@@ -5397,144 +5397,144 @@ public class OverloadedFinallyAspect
    
    /* FINALLY14 ADVICE */
    
-   public void finally14(@JoinPoint MethodInfo joinPoint,
+   public void finally14(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object[] args)
    {
-      finally14 = "void,MethodInfo,CharSequence,Throwable,Object[]";
+      finally14 = "void,MethodExecution,CharSequence,Throwable,Object[]";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint,
+   public void finally14(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally14 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally14 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint,
+   public void finally14(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally14 = "void,MethodInfo,String,Throwable";
+      finally14 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint,
+   public void finally14(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally14 = "void,MethodInfo,String,Serializable";
+      finally14 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint,
+   public void finally14(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally14 = "void,MethodInfo,CharSequence,Throwable";
+      finally14 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint,
+   public void finally14(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally14 = "void,MethodInfo,Throwable,int,long";
+      finally14 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint,
+   public void finally14(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally14 = "void,MethodInfo,Serializable,int,long";
+      finally14 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally14(@JoinPoint MethodInfo joinPoint,
+   public Object finally14(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally14 = "Object,MethodInfo,Throwable,long";
+      finally14 = "Object,MethodExecution,Throwable,long";
       return "finally14";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint,
+   public void finally14(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally14 = "void,MethodInfo,Throwable,int";
+      finally14 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally14(@JoinPoint MethodInfo joinPoint,
+   public String finally14(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally14 = "String,MethodInfo,Serializable,int";
+      finally14 = "String,MethodExecution,Serializable,int";
       return "finally14";
    }
    
-   public Object finally14(@JoinPoint MethodInfo joinPoint,
+   public Object finally14(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally14 = "Object,MethodInfo,Serializable,long";
+      finally14 = "Object,MethodExecution,Serializable,long";
       return "finally14";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint,
+   public void finally14(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally14 = "void,MethodInfo,Throwable,Object[]";
+      finally14 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint,
+   public void finally14(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally14 = "void,MethodInfo,Throwable,Object";
+      finally14 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint,
+   public void finally14(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally14 = "void,MethodInfo,Serializable,Object[]";
+      finally14 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint,
+   public void finally14(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally14 = "void,MethodInfo,Serializable,Object";
+      finally14 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint,
+   public void finally14(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally14 = "void,MethodInfo,Throwable";
+      finally14 = "void,MethodExecution,Throwable";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint,
+   public void finally14(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally14 = "void,MethodInfo,Serializable";
+      finally14 = "void,MethodExecution,Serializable";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally14(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally14 = "void,MethodInfo,int,long";
+      finally14 = "void,MethodExecution,int,long";
    }
    
-   public String finally14(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally14(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally14 = "String,MethodInfo,long";
+      finally14 = "String,MethodExecution,long";
       return "finally14";
    }
    
-   public Object finally14(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally14(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally14 = "Object,MethodInfo,int";
+      finally14 = "Object,MethodExecution,int";
       return "finally14";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally14(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally14 = "void,MethodInfo,Object[]";
+      finally14 = "void,MethodExecution,Object[]";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally14(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally14 = "void,MethodInfo,Object";
+      finally14 = "void,MethodExecution,Object";
    }
    
-   public void finally14(@JoinPoint MethodInfo joinPoint)
+   public void finally14(@JoinPoint MethodExecution joinPoint)
    {
-      finally14 = "void,MethodInfo";
+      finally14 = "void,MethodExecution";
    }
    
    public void finally14(@Return String valueReturned,
@@ -5747,137 +5747,137 @@ public class OverloadedFinallyAspect
    
    /* FINALLY15 ADVICE */
    
-   public void finally15(@JoinPoint MethodInfo joinPoint,
+   public void finally15(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException,
          @Args Object args)
    {
-      finally15 = "void,MethodInfo,CharSequence,Throwable,Object";
+      finally15 = "void,MethodExecution,CharSequence,Throwable,Object";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint,
+   public void finally15(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally15 = "void,MethodInfo,String,Throwable";
+      finally15 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint,
+   public void finally15(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally15 = "void,MethodInfo,String,Serializable";
+      finally15 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint,
+   public void finally15(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally15 = "void,MethodInfo,CharSequence,Throwable";
+      finally15 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint,
+   public void finally15(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally15 = "void,MethodInfo,Throwable,int,long";
+      finally15 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint,
+   public void finally15(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally15 = "void,MethodInfo,Serializable,int,long";
+      finally15 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally15(@JoinPoint MethodInfo joinPoint,
+   public Object finally15(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally15 = "Object,MethodInfo,Throwable,long";
+      finally15 = "Object,MethodExecution,Throwable,long";
       return "finally15";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint,
+   public void finally15(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally15 = "void,MethodInfo,Throwable,int";
+      finally15 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally15(@JoinPoint MethodInfo joinPoint,
+   public String finally15(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally15 = "String,MethodInfo,Serializable,int";
+      finally15 = "String,MethodExecution,Serializable,int";
       return "finally15";
    }
    
-   public Object finally15(@JoinPoint MethodInfo joinPoint,
+   public Object finally15(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally15 = "Object,MethodInfo,Serializable,long";
+      finally15 = "Object,MethodExecution,Serializable,long";
       return "finally15";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint,
+   public void finally15(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally15 = "void,MethodInfo,Throwable,Object[]";
+      finally15 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint,
+   public void finally15(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally15 = "void,MethodInfo,Throwable,Object";
+      finally15 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint,
+   public void finally15(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally15 = "void,MethodInfo,Serializable,Object[]";
+      finally15 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint,
+   public void finally15(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally15 = "void,MethodInfo,Serializable,Object";
+      finally15 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint,
+   public void finally15(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally15 = "void,MethodInfo,Throwable";
+      finally15 = "void,MethodExecution,Throwable";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint,
+   public void finally15(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally15 = "void,MethodInfo,Serializable";
+      finally15 = "void,MethodExecution,Serializable";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally15(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally15 = "void,MethodInfo,int,long";
+      finally15 = "void,MethodExecution,int,long";
    }
    
-   public String finally15(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally15(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally15 = "String,MethodInfo,long";
+      finally15 = "String,MethodExecution,long";
       return "finally15";
    }
    
-   public Object finally15(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally15(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally15 = "Object,MethodInfo,int";
+      finally15 = "Object,MethodExecution,int";
       return "finally15";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally15(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally15 = "void,MethodInfo,Object[]";
+      finally15 = "void,MethodExecution,Object[]";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally15(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally15 = "void,MethodInfo,Object";
+      finally15 = "void,MethodExecution,Object";
    }
    
-   public void finally15(@JoinPoint MethodInfo joinPoint)
+   public void finally15(@JoinPoint MethodExecution joinPoint)
    {
-      finally15 = "void,MethodInfo";
+      finally15 = "void,MethodExecution";
    }
    
    public void finally15(@Return String valueReturned,
@@ -6090,130 +6090,130 @@ public class OverloadedFinallyAspect
    
    /* FINALLY16 ADVICE */
    
-   public void finally16(@JoinPoint MethodInfo joinPoint,
+   public void finally16(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Throwable thrownException)
    {
-      finally16 = "void,MethodInfo,String,Throwable";
+      finally16 = "void,MethodExecution,String,Throwable";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint,
+   public void finally16(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally16 = "void,MethodInfo,String,Serializable";
+      finally16 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint,
+   public void finally16(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally16 = "void,MethodInfo,CharSequence,Throwable";
+      finally16 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint,
+   public void finally16(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally16 = "void,MethodInfo,Throwable,int,long";
+      finally16 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint,
+   public void finally16(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally16 = "void,MethodInfo,Serializable,int,long";
+      finally16 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally16(@JoinPoint MethodInfo joinPoint,
+   public Object finally16(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally16 = "Object,MethodInfo,Throwable,long";
+      finally16 = "Object,MethodExecution,Throwable,long";
       return "finally16";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint,
+   public void finally16(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally16 = "void,MethodInfo,Throwable,int";
+      finally16 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally16(@JoinPoint MethodInfo joinPoint,
+   public String finally16(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally16 = "String,MethodInfo,Serializable,int";
+      finally16 = "String,MethodExecution,Serializable,int";
       return "finally16";
    }
    
-   public Object finally16(@JoinPoint MethodInfo joinPoint,
+   public Object finally16(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally16 = "Object,MethodInfo,Serializable,long";
+      finally16 = "Object,MethodExecution,Serializable,long";
       return "finally16";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint,
+   public void finally16(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally16 = "void,MethodInfo,Throwable,Object[]";
+      finally16 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint,
+   public void finally16(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally16 = "void,MethodInfo,Throwable,Object";
+      finally16 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint,
+   public void finally16(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally16 = "void,MethodInfo,Serializable,Object[]";
+      finally16 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint,
+   public void finally16(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally16 = "void,MethodInfo,Serializable,Object";
+      finally16 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint,
+   public void finally16(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally16 = "void,MethodInfo,Throwable";
+      finally16 = "void,MethodExecution,Throwable";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint,
+   public void finally16(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally16 = "void,MethodInfo,Serializable";
+      finally16 = "void,MethodExecution,Serializable";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally16(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally16 = "void,MethodInfo,int,long";
+      finally16 = "void,MethodExecution,int,long";
    }
    
-   public String finally16(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally16(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally16 = "String,MethodInfo,long";
+      finally16 = "String,MethodExecution,long";
       return "finally16";
    }
    
-   public Object finally16(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally16(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally16 = "Object,MethodInfo,int";
+      finally16 = "Object,MethodExecution,int";
       return "finally16";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally16(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally16 = "void,MethodInfo,Object[]";
+      finally16 = "void,MethodExecution,Object[]";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally16(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally16 = "void,MethodInfo,Object";
+      finally16 = "void,MethodExecution,Object";
    }
    
-   public void finally16(@JoinPoint MethodInfo joinPoint)
+   public void finally16(@JoinPoint MethodExecution joinPoint)
    {
-      finally16 = "void,MethodInfo";
+      finally16 = "void,MethodExecution";
    }
    
    public void finally16(@Return String valueReturned,
@@ -6426,124 +6426,124 @@ public class OverloadedFinallyAspect
    
    /* FINALLY17 ADVICE */
    
-   public void finally17(@JoinPoint MethodInfo joinPoint,
+   public void finally17(@JoinPoint MethodExecution joinPoint,
          @Return String valueReturned, @Thrown Serializable thrownException)
    {
-      finally17 = "void,MethodInfo,String,Serializable";
+      finally17 = "void,MethodExecution,String,Serializable";
    }
    
-   public void finally17(@JoinPoint MethodInfo joinPoint,
+   public void finally17(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally17 = "void,MethodInfo,CharSequence,Throwable";
+      finally17 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally17(@JoinPoint MethodInfo joinPoint,
+   public void finally17(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally17 = "void,MethodInfo,Throwable,int,long";
+      finally17 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally17(@JoinPoint MethodInfo joinPoint,
+   public void finally17(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally17 = "void,MethodInfo,Serializable,int,long";
+      finally17 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally17(@JoinPoint MethodInfo joinPoint,
+   public Object finally17(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally17 = "Object,MethodInfo,Throwable,long";
+      finally17 = "Object,MethodExecution,Throwable,long";
       return "finally17";
    }
    
-   public void finally17(@JoinPoint MethodInfo joinPoint,
+   public void finally17(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally17 = "void,MethodInfo,Throwable,int";
+      finally17 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally17(@JoinPoint MethodInfo joinPoint,
+   public String finally17(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally17 = "String,MethodInfo,Serializable,int";
+      finally17 = "String,MethodExecution,Serializable,int";
       return "finally17";
    }
    
-   public Object finally17(@JoinPoint MethodInfo joinPoint,
+   public Object finally17(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally17 = "Object,MethodInfo,Serializable,long";
+      finally17 = "Object,MethodExecution,Serializable,long";
       return "finally17";
    }
    
-   public void finally17(@JoinPoint MethodInfo joinPoint,
+   public void finally17(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally17 = "void,MethodInfo,Throwable,Object[]";
+      finally17 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally17(@JoinPoint MethodInfo joinPoint,
+   public void finally17(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally17 = "void,MethodInfo,Throwable,Object";
+      finally17 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally17(@JoinPoint MethodInfo joinPoint,
+   public void finally17(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally17 = "void,MethodInfo,Serializable,Object[]";
+      finally17 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally17(@JoinPoint MethodInfo joinPoint,
+   public void finally17(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally17 = "void,MethodInfo,Serializable,Object";
+      finally17 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally17(@JoinPoint MethodInfo joinPoint,
+   public void finally17(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally17 = "void,MethodInfo,Throwable";
+      finally17 = "void,MethodExecution,Throwable";
    }
    
-   public void finally17(@JoinPoint MethodInfo joinPoint,
+   public void finally17(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally17 = "void,MethodInfo,Serializable";
+      finally17 = "void,MethodExecution,Serializable";
    }
    
-   public void finally17(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally17(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally17 = "void,MethodInfo,int,long";
+      finally17 = "void,MethodExecution,int,long";
    }
    
-   public String finally17(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally17(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally17 = "String,MethodInfo,long";
+      finally17 = "String,MethodExecution,long";
       return "finally17";
    }
    
-   public Object finally17(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally17(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally17 = "Object,MethodInfo,int";
+      finally17 = "Object,MethodExecution,int";
       return "finally17";
    }
    
-   public void finally17(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally17(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally17 = "void,MethodInfo,Object[]";
+      finally17 = "void,MethodExecution,Object[]";
    }
    
-   public void finally17(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally17(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally17 = "void,MethodInfo,Object";
+      finally17 = "void,MethodExecution,Object";
    }
    
-   public void finally17(@JoinPoint MethodInfo joinPoint)
+   public void finally17(@JoinPoint MethodExecution joinPoint)
    {
-      finally17 = "void,MethodInfo";
+      finally17 = "void,MethodExecution";
    }
    
    public void finally17(@Return String valueReturned,
@@ -6756,118 +6756,118 @@ public class OverloadedFinallyAspect
    
    /* FINALLY18 ADVICE */
    
-   public void finally18(@JoinPoint MethodInfo joinPoint,
+   public void finally18(@JoinPoint MethodExecution joinPoint,
          @Return CharSequence valueReturned, @Thrown Throwable thrownException)
    {
-      finally18 = "void,MethodInfo,CharSequence,Throwable";
+      finally18 = "void,MethodExecution,CharSequence,Throwable";
    }
    
-   public void finally18(@JoinPoint MethodInfo joinPoint,
+   public void finally18(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally18 = "void,MethodInfo,Throwable,int,long";
+      finally18 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally18(@JoinPoint MethodInfo joinPoint,
+   public void finally18(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally18 = "void,MethodInfo,Serializable,int,long";
+      finally18 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally18(@JoinPoint MethodInfo joinPoint,
+   public Object finally18(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally18 = "Object,MethodInfo,Throwable,long";
+      finally18 = "Object,MethodExecution,Throwable,long";
       return "finally18";
    }
    
-   public void finally18(@JoinPoint MethodInfo joinPoint,
+   public void finally18(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally18 = "void,MethodInfo,Throwable,int";
+      finally18 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally18(@JoinPoint MethodInfo joinPoint,
+   public String finally18(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally18 = "String,MethodInfo,Serializable,int";
+      finally18 = "String,MethodExecution,Serializable,int";
       return "finally18";
    }
    
-   public Object finally18(@JoinPoint MethodInfo joinPoint,
+   public Object finally18(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally18 = "Object,MethodInfo,Serializable,long";
+      finally18 = "Object,MethodExecution,Serializable,long";
       return "finally18";
    }
    
-   public void finally18(@JoinPoint MethodInfo joinPoint,
+   public void finally18(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally18 = "void,MethodInfo,Throwable,Object[]";
+      finally18 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally18(@JoinPoint MethodInfo joinPoint,
+   public void finally18(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally18 = "void,MethodInfo,Throwable,Object";
+      finally18 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally18(@JoinPoint MethodInfo joinPoint,
+   public void finally18(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally18 = "void,MethodInfo,Serializable,Object[]";
+      finally18 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally18(@JoinPoint MethodInfo joinPoint,
+   public void finally18(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally18 = "void,MethodInfo,Serializable,Object";
+      finally18 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally18(@JoinPoint MethodInfo joinPoint,
+   public void finally18(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally18 = "void,MethodInfo,Throwable";
+      finally18 = "void,MethodExecution,Throwable";
    }
    
-   public void finally18(@JoinPoint MethodInfo joinPoint,
+   public void finally18(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally18 = "void,MethodInfo,Serializable";
+      finally18 = "void,MethodExecution,Serializable";
    }
    
-   public void finally18(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally18(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally18 = "void,MethodInfo,int,long";
+      finally18 = "void,MethodExecution,int,long";
    }
    
-   public String finally18(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally18(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally18 = "String,MethodInfo,long";
+      finally18 = "String,MethodExecution,long";
       return "finally18";
    }
    
-   public Object finally18(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally18(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally18 = "Object,MethodInfo,int";
+      finally18 = "Object,MethodExecution,int";
       return "finally18";
    }
    
-   public void finally18(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally18(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally18 = "void,MethodInfo,Object[]";
+      finally18 = "void,MethodExecution,Object[]";
    }
    
-   public void finally18(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally18(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally18 = "void,MethodInfo,Object";
+      finally18 = "void,MethodExecution,Object";
    }
    
-   public void finally18(@JoinPoint MethodInfo joinPoint)
+   public void finally18(@JoinPoint MethodExecution joinPoint)
    {
-      finally18 = "void,MethodInfo";
+      finally18 = "void,MethodExecution";
    }
    
    public void finally18(@Return String valueReturned,
@@ -7080,112 +7080,112 @@ public class OverloadedFinallyAspect
    
    /* FINALLY19 ADVICE */
    
-   public void finally19(@JoinPoint MethodInfo joinPoint,
+   public void finally19(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally19 = "void,MethodInfo,Throwable,int,long";
+      finally19 = "void,MethodExecution,Throwable,int,long";
    }
    
-   public void finally19(@JoinPoint MethodInfo joinPoint,
+   public void finally19(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally19 = "void,MethodInfo,Serializable,int,long";
+      finally19 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally19(@JoinPoint MethodInfo joinPoint,
+   public Object finally19(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally19 = "Object,MethodInfo,Throwable,long";
+      finally19 = "Object,MethodExecution,Throwable,long";
       return "finally19";
    }
    
-   public void finally19(@JoinPoint MethodInfo joinPoint,
+   public void finally19(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally19 = "void,MethodInfo,Throwable,int";
+      finally19 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally19(@JoinPoint MethodInfo joinPoint,
+   public String finally19(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally19 = "String,MethodInfo,Serializable,int";
+      finally19 = "String,MethodExecution,Serializable,int";
       return "finally19";
    }
    
-   public Object finally19(@JoinPoint MethodInfo joinPoint,
+   public Object finally19(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally19 = "Object,MethodInfo,Serializable,long";
+      finally19 = "Object,MethodExecution,Serializable,long";
       return "finally19";
    }
    
-   public void finally19(@JoinPoint MethodInfo joinPoint,
+   public void finally19(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally19 = "void,MethodInfo,Throwable,Object[]";
+      finally19 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally19(@JoinPoint MethodInfo joinPoint,
+   public void finally19(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally19 = "void,MethodInfo,Throwable,Object";
+      finally19 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally19(@JoinPoint MethodInfo joinPoint,
+   public void finally19(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally19 = "void,MethodInfo,Serializable,Object[]";
+      finally19 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally19(@JoinPoint MethodInfo joinPoint,
+   public void finally19(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally19 = "void,MethodInfo,Serializable,Object";
+      finally19 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally19(@JoinPoint MethodInfo joinPoint,
+   public void finally19(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally19 = "void,MethodInfo,Throwable";
+      finally19 = "void,MethodExecution,Throwable";
    }
    
-   public void finally19(@JoinPoint MethodInfo joinPoint,
+   public void finally19(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally19 = "void,MethodInfo,Serializable";
+      finally19 = "void,MethodExecution,Serializable";
    }
    
-   public void finally19(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally19(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally19 = "void,MethodInfo,int,long";
+      finally19 = "void,MethodExecution,int,long";
    }
    
-   public String finally19(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally19(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally19 = "String,MethodInfo,long";
+      finally19 = "String,MethodExecution,long";
       return "finally19";
    }
    
-   public Object finally19(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally19(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally19 = "Object,MethodInfo,int";
+      finally19 = "Object,MethodExecution,int";
       return "finally19";
    }
    
-   public void finally19(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally19(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally19 = "void,MethodInfo,Object[]";
+      finally19 = "void,MethodExecution,Object[]";
    }
    
-   public void finally19(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally19(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally19 = "void,MethodInfo,Object";
+      finally19 = "void,MethodExecution,Object";
    }
    
-   public void finally19(@JoinPoint MethodInfo joinPoint)
+   public void finally19(@JoinPoint MethodExecution joinPoint)
    {
-      finally19 = "void,MethodInfo";
+      finally19 = "void,MethodExecution";
    }
    
    public void finally19(@Return String valueReturned,
@@ -7398,106 +7398,106 @@ public class OverloadedFinallyAspect
    
    /* FINALLY20 ADVICE */
    
-   public void finally20(@JoinPoint MethodInfo joinPoint,
+   public void finally20(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1, @Arg long arg2)
    {
-      finally20 = "void,MethodInfo,Serializable,int,long";
+      finally20 = "void,MethodExecution,Serializable,int,long";
    }
       
-   public Object finally20(@JoinPoint MethodInfo joinPoint,
+   public Object finally20(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally20 = "Object,MethodInfo,Throwable,long";
+      finally20 = "Object,MethodExecution,Throwable,long";
       return "finally20";
    }
    
-   public void finally20(@JoinPoint MethodInfo joinPoint,
+   public void finally20(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally20 = "void,MethodInfo,Throwable,int";
+      finally20 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally20(@JoinPoint MethodInfo joinPoint,
+   public String finally20(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally20 = "String,MethodInfo,Serializable,int";
+      finally20 = "String,MethodExecution,Serializable,int";
       return "finally20";
    }
    
-   public Object finally20(@JoinPoint MethodInfo joinPoint,
+   public Object finally20(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally20 = "Object,MethodInfo,Serializable,long";
+      finally20 = "Object,MethodExecution,Serializable,long";
       return "finally20";
    }
    
-   public void finally20(@JoinPoint MethodInfo joinPoint,
+   public void finally20(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally20 = "void,MethodInfo,Throwable,Object[]";
+      finally20 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally20(@JoinPoint MethodInfo joinPoint,
+   public void finally20(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally20 = "void,MethodInfo,Throwable,Object";
+      finally20 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally20(@JoinPoint MethodInfo joinPoint,
+   public void finally20(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally20 = "void,MethodInfo,Serializable,Object[]";
+      finally20 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally20(@JoinPoint MethodInfo joinPoint,
+   public void finally20(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally20 = "void,MethodInfo,Serializable,Object";
+      finally20 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally20(@JoinPoint MethodInfo joinPoint,
+   public void finally20(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally20 = "void,MethodInfo,Throwable";
+      finally20 = "void,MethodExecution,Throwable";
    }
    
-   public void finally20(@JoinPoint MethodInfo joinPoint,
+   public void finally20(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally20 = "void,MethodInfo,Serializable";
+      finally20 = "void,MethodExecution,Serializable";
    }
    
-   public void finally20(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally20(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally20 = "void,MethodInfo,int,long";
+      finally20 = "void,MethodExecution,int,long";
    }
    
-   public String finally20(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally20(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally20 = "String,MethodInfo,long";
+      finally20 = "String,MethodExecution,long";
       return "finally20";
    }
    
-   public Object finally20(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally20(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally20 = "Object,MethodInfo,int";
+      finally20 = "Object,MethodExecution,int";
       return "finally20";
    }
    
-   public void finally20(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally20(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally20 = "void,MethodInfo,Object[]";
+      finally20 = "void,MethodExecution,Object[]";
    }
    
-   public void finally20(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally20(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally20 = "void,MethodInfo,Object";
+      finally20 = "void,MethodExecution,Object";
    }
    
-   public void finally20(@JoinPoint MethodInfo joinPoint)
+   public void finally20(@JoinPoint MethodExecution joinPoint)
    {
-      finally20 = "void,MethodInfo";
+      finally20 = "void,MethodExecution";
    }
    
    public void finally20(@Return String valueReturned,
@@ -7710,100 +7710,100 @@ public class OverloadedFinallyAspect
    
    /* FINALLY21 ADVICE */
    
-   public Object finally21(@JoinPoint MethodInfo joinPoint,
+   public Object finally21(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg long arg2)
    {
-      finally21 = "Object,MethodInfo,Throwable,long";
+      finally21 = "Object,MethodExecution,Throwable,long";
       return "finally21";
    }
    
-   public void finally21(@JoinPoint MethodInfo joinPoint,
+   public void finally21(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally21 = "void,MethodInfo,Throwable,int";
+      finally21 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally21(@JoinPoint MethodInfo joinPoint,
+   public String finally21(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally21 = "String,MethodInfo,Serializable,int";
+      finally21 = "String,MethodExecution,Serializable,int";
       return "finally21";
    }
    
-   public Object finally21(@JoinPoint MethodInfo joinPoint,
+   public Object finally21(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally21 = "Object,MethodInfo,Serializable,long";
+      finally21 = "Object,MethodExecution,Serializable,long";
       return "finally21";
    }
    
-   public void finally21(@JoinPoint MethodInfo joinPoint,
+   public void finally21(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally21 = "void,MethodInfo,Throwable,Object[]";
+      finally21 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally21(@JoinPoint MethodInfo joinPoint,
+   public void finally21(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally21 = "void,MethodInfo,Throwable,Object";
+      finally21 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally21(@JoinPoint MethodInfo joinPoint,
+   public void finally21(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally21 = "void,MethodInfo,Serializable,Object[]";
+      finally21 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally21(@JoinPoint MethodInfo joinPoint,
+   public void finally21(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally21 = "void,MethodInfo,Serializable,Object";
+      finally21 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally21(@JoinPoint MethodInfo joinPoint,
+   public void finally21(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally21 = "void,MethodInfo,Throwable";
+      finally21 = "void,MethodExecution,Throwable";
    }
    
-   public void finally21(@JoinPoint MethodInfo joinPoint,
+   public void finally21(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally21 = "void,MethodInfo,Serializable";
+      finally21 = "void,MethodExecution,Serializable";
    }
    
-   public void finally21(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally21(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally21 = "void,MethodInfo,int,long";
+      finally21 = "void,MethodExecution,int,long";
    }
    
-   public String finally21(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally21(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally21 = "String,MethodInfo,long";
+      finally21 = "String,MethodExecution,long";
       return "finally21";
    }
    
-   public Object finally21(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally21(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally21 = "Object,MethodInfo,int";
+      finally21 = "Object,MethodExecution,int";
       return "finally21";
    }
    
-   public void finally21(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally21(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally21 = "void,MethodInfo,Object[]";
+      finally21 = "void,MethodExecution,Object[]";
    }
    
-   public void finally21(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally21(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally21 = "void,MethodInfo,Object";
+      finally21 = "void,MethodExecution,Object";
    }
    
-   public void finally21(@JoinPoint MethodInfo joinPoint)
+   public void finally21(@JoinPoint MethodExecution joinPoint)
    {
-      finally21 = "void,MethodInfo";
+      finally21 = "void,MethodExecution";
    }
    
    public void finally21(@Return String valueReturned,
@@ -8016,93 +8016,93 @@ public class OverloadedFinallyAspect
    
    /* FINALLY22 ADVICE */
    
-   public void finally22(@JoinPoint MethodInfo joinPoint,
+   public void finally22(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Arg int arg1)
    {
-      finally22 = "void,MethodInfo,Throwable,int";
+      finally22 = "void,MethodExecution,Throwable,int";
    }
    
-   public String finally22(@JoinPoint MethodInfo joinPoint,
+   public String finally22(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally22 = "String,MethodInfo,Serializable,int";
+      finally22 = "String,MethodExecution,Serializable,int";
       return "finally22";
    }
    
-   public Object finally22(@JoinPoint MethodInfo joinPoint,
+   public Object finally22(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally22 = "Object,MethodInfo,Serializable,long";
+      finally22 = "Object,MethodExecution,Serializable,long";
       return "finally22";
    }
    
-   public void finally22(@JoinPoint MethodInfo joinPoint,
+   public void finally22(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally22 = "void,MethodInfo,Throwable,Object[]";
+      finally22 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally22(@JoinPoint MethodInfo joinPoint,
+   public void finally22(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally22 = "void,MethodInfo,Throwable,Object";
+      finally22 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally22(@JoinPoint MethodInfo joinPoint,
+   public void finally22(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally22 = "void,MethodInfo,Serializable,Object[]";
+      finally22 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally22(@JoinPoint MethodInfo joinPoint,
+   public void finally22(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally22 = "void,MethodInfo,Serializable,Object";
+      finally22 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally22(@JoinPoint MethodInfo joinPoint,
+   public void finally22(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally22 = "void,MethodInfo,Throwable";
+      finally22 = "void,MethodExecution,Throwable";
    }
    
-   public void finally22(@JoinPoint MethodInfo joinPoint,
+   public void finally22(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally22 = "void,MethodInfo,Serializable";
+      finally22 = "void,MethodExecution,Serializable";
    }
    
-   public void finally22(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally22(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally22 = "void,MethodInfo,int,long";
+      finally22 = "void,MethodExecution,int,long";
    }
    
-   public String finally22(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally22(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally22 = "String,MethodInfo,long";
+      finally22 = "String,MethodExecution,long";
       return "finally22";
    }
    
-   public Object finally22(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally22(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally22 = "Object,MethodInfo,int";
+      finally22 = "Object,MethodExecution,int";
       return "finally22";
    }
    
-   public void finally22(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally22(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally22 = "void,MethodInfo,Object[]";
+      finally22 = "void,MethodExecution,Object[]";
    }
    
-   public void finally22(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally22(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally22 = "void,MethodInfo,Object";
+      finally22 = "void,MethodExecution,Object";
    }
    
-   public void finally22(@JoinPoint MethodInfo joinPoint)
+   public void finally22(@JoinPoint MethodExecution joinPoint)
    {
-      finally22 = "void,MethodInfo";
+      finally22 = "void,MethodExecution";
    }
    
    public void finally22(@Return String valueReturned,
@@ -8315,87 +8315,87 @@ public class OverloadedFinallyAspect
    
    /* FINALLY23 ADVICE */
    
-   public String finally23(@JoinPoint MethodInfo joinPoint,
+   public String finally23(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg int arg1)
    {
-      finally23 = "String,MethodInfo,Serializable,int";
+      finally23 = "String,MethodExecution,Serializable,int";
       return "finally23";
    }
    
-   public Object finally23(@JoinPoint MethodInfo joinPoint,
+   public Object finally23(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally23 = "Object,MethodInfo,Serializable,long";
+      finally23 = "Object,MethodExecution,Serializable,long";
       return "finally23";
    }
    
-   public void finally23(@JoinPoint MethodInfo joinPoint,
+   public void finally23(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally23 = "void,MethodInfo,Throwable,Object[]";
+      finally23 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally23(@JoinPoint MethodInfo joinPoint,
+   public void finally23(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally23 = "void,MethodInfo,Throwable,Object";
+      finally23 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally23(@JoinPoint MethodInfo joinPoint,
+   public void finally23(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally23 = "void,MethodInfo,Serializable,Object[]";
+      finally23 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally23(@JoinPoint MethodInfo joinPoint,
+   public void finally23(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally23 = "void,MethodInfo,Serializable,Object";
+      finally23 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally23(@JoinPoint MethodInfo joinPoint,
+   public void finally23(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally23 = "void,MethodInfo,Throwable";
+      finally23 = "void,MethodExecution,Throwable";
    }
    
-   public void finally23(@JoinPoint MethodInfo joinPoint,
+   public void finally23(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally23 = "void,MethodInfo,Serializable";
+      finally23 = "void,MethodExecution,Serializable";
    }
    
-   public void finally23(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally23(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally23 = "void,MethodInfo,int,long";
+      finally23 = "void,MethodExecution,int,long";
    }
    
-   public String finally23(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally23(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally23 = "String,MethodInfo,long";
+      finally23 = "String,MethodExecution,long";
       return "finally23";
    }
    
-   public Object finally23(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally23(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally23 = "Object,MethodInfo,int";
+      finally23 = "Object,MethodExecution,int";
       return "finally23";
    }
    
-   public void finally23(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally23(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally23 = "void,MethodInfo,Object[]";
+      finally23 = "void,MethodExecution,Object[]";
    }
    
-   public void finally23(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally23(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally23 = "void,MethodInfo,Object";
+      finally23 = "void,MethodExecution,Object";
    }
    
-   public void finally23(@JoinPoint MethodInfo joinPoint)
+   public void finally23(@JoinPoint MethodExecution joinPoint)
    {
-      finally23 = "void,MethodInfo";
+      finally23 = "void,MethodExecution";
    }
    
    public void finally23(@Return String valueReturned,
@@ -8608,80 +8608,80 @@ public class OverloadedFinallyAspect
    
    /* FINALLY24 ADVICE */
    
-   public Object finally24(@JoinPoint MethodInfo joinPoint,
+   public Object finally24(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Arg long arg1)
    {
-      finally24 = "Object,MethodInfo,Serializable,long";
+      finally24 = "Object,MethodExecution,Serializable,long";
       return "finally24";
    }
    
-   public void finally24(@JoinPoint MethodInfo joinPoint,
+   public void finally24(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally24 = "void,MethodInfo,Throwable,Object[]";
+      finally24 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally24(@JoinPoint MethodInfo joinPoint,
+   public void finally24(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally24 = "void,MethodInfo,Throwable,Object";
+      finally24 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally24(@JoinPoint MethodInfo joinPoint,
+   public void finally24(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally24 = "void,MethodInfo,Serializable,Object[]";
+      finally24 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally24(@JoinPoint MethodInfo joinPoint,
+   public void finally24(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally24 = "void,MethodInfo,Serializable,Object";
+      finally24 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally24(@JoinPoint MethodInfo joinPoint,
+   public void finally24(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally24 = "void,MethodInfo,Throwable";
+      finally24 = "void,MethodExecution,Throwable";
    }
    
-   public void finally24(@JoinPoint MethodInfo joinPoint,
+   public void finally24(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally24 = "void,MethodInfo,Serializable";
+      finally24 = "void,MethodExecution,Serializable";
    }
    
-   public void finally24(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally24(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally24 = "void,MethodInfo,int,long";
+      finally24 = "void,MethodExecution,int,long";
    }
    
-   public String finally24(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally24(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally24 = "String,MethodInfo,long";
+      finally24 = "String,MethodExecution,long";
       return "finally24";
    }
    
-   public Object finally24(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally24(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally24 = "Object,MethodInfo,int";
+      finally24 = "Object,MethodExecution,int";
       return "finally24";
    }
    
-   public void finally24(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally24(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally24 = "void,MethodInfo,Object[]";
+      finally24 = "void,MethodExecution,Object[]";
    }
    
-   public void finally24(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally24(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally24 = "void,MethodInfo,Object";
+      finally24 = "void,MethodExecution,Object";
    }
    
-   public void finally24(@JoinPoint MethodInfo joinPoint)
+   public void finally24(@JoinPoint MethodExecution joinPoint)
    {
-      finally24 = "void,MethodInfo";
+      finally24 = "void,MethodExecution";
    }
    
    public void finally24(@Return String valueReturned,
@@ -8894,73 +8894,73 @@ public class OverloadedFinallyAspect
    
    /* FINALLY25 ADVICE */
    
-   public void finally25(@JoinPoint MethodInfo joinPoint,
+   public void finally25(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object[] args)
    {
-      finally25 = "void,MethodInfo,Throwable,Object[]";
+      finally25 = "void,MethodExecution,Throwable,Object[]";
    }
    
-   public void finally25(@JoinPoint MethodInfo joinPoint,
+   public void finally25(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally25 = "void,MethodInfo,Throwable,Object";
+      finally25 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally25(@JoinPoint MethodInfo joinPoint,
+   public void finally25(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally25 = "void,MethodInfo,Serializable,Object[]";
+      finally25 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally25(@JoinPoint MethodInfo joinPoint,
+   public void finally25(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally25 = "void,MethodInfo,Serializable,Object";
+      finally25 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally25(@JoinPoint MethodInfo joinPoint,
+   public void finally25(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally25 = "void,MethodInfo,Throwable";
+      finally25 = "void,MethodExecution,Throwable";
    }
    
-   public void finally25(@JoinPoint MethodInfo joinPoint,
+   public void finally25(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally25 = "void,MethodInfo,Serializable";
+      finally25 = "void,MethodExecution,Serializable";
    }
    
-   public void finally25(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally25(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally25 = "void,MethodInfo,int,long";
+      finally25 = "void,MethodExecution,int,long";
    }
    
-   public String finally25(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally25(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally25 = "String,MethodInfo,long";
+      finally25 = "String,MethodExecution,long";
       return "finally25";
    }
    
-   public Object finally25(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally25(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally25 = "Object,MethodInfo,int";
+      finally25 = "Object,MethodExecution,int";
       return "finally25";
    }
    
-   public void finally25(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally25(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally25 = "void,MethodInfo,Object[]";
+      finally25 = "void,MethodExecution,Object[]";
    }
    
-   public void finally25(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally25(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally25 = "void,MethodInfo,Object";
+      finally25 = "void,MethodExecution,Object";
    }
    
-   public void finally25(@JoinPoint MethodInfo joinPoint)
+   public void finally25(@JoinPoint MethodExecution joinPoint)
    {
-      finally25 = "void,MethodInfo";
+      finally25 = "void,MethodExecution";
    }
    
    public void finally25(@Return String valueReturned,
@@ -9173,67 +9173,67 @@ public class OverloadedFinallyAspect
    
    /* FINALLY26 ADVICE */
    
-   public void finally26(@JoinPoint MethodInfo joinPoint,
+   public void finally26(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException, @Args Object args)
    {
-      finally26 = "void,MethodInfo,Throwable,Object";
+      finally26 = "void,MethodExecution,Throwable,Object";
    }
    
-   public void finally26(@JoinPoint MethodInfo joinPoint,
+   public void finally26(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally26 = "void,MethodInfo,Serializable,Object[]";
+      finally26 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally26(@JoinPoint MethodInfo joinPoint,
+   public void finally26(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally26 = "void,MethodInfo,Serializable,Object";
+      finally26 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally26(@JoinPoint MethodInfo joinPoint,
+   public void finally26(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally26 = "void,MethodInfo,Throwable";
+      finally26 = "void,MethodExecution,Throwable";
    }
    
-   public void finally26(@JoinPoint MethodInfo joinPoint,
+   public void finally26(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally26 = "void,MethodInfo,Serializable";
+      finally26 = "void,MethodExecution,Serializable";
    }
    
-   public void finally26(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally26(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally26 = "void,MethodInfo,int,long";
+      finally26 = "void,MethodExecution,int,long";
    }
    
-   public String finally26(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally26(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally26 = "String,MethodInfo,long";
+      finally26 = "String,MethodExecution,long";
       return "finally26";
    }
    
-   public Object finally26(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally26(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally26 = "Object,MethodInfo,int";
+      finally26 = "Object,MethodExecution,int";
       return "finally26";
    }
    
-   public void finally26(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally26(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally26 = "void,MethodInfo,Object[]";
+      finally26 = "void,MethodExecution,Object[]";
    }
    
-   public void finally26(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally26(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally26 = "void,MethodInfo,Object";
+      finally26 = "void,MethodExecution,Object";
    }
    
-   public void finally26(@JoinPoint MethodInfo joinPoint)
+   public void finally26(@JoinPoint MethodExecution joinPoint)
    {
-      finally26 = "void,MethodInfo";
+      finally26 = "void,MethodExecution";
    }
    
    public void finally26(@Return String valueReturned,
@@ -9446,61 +9446,61 @@ public class OverloadedFinallyAspect
    
    /* FINALLY27 ADVICE */
    
-   public void finally27(@JoinPoint MethodInfo joinPoint,
+   public void finally27(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object[] args)
    {
-      finally27 = "void,MethodInfo,Serializable,Object[]";
+      finally27 = "void,MethodExecution,Serializable,Object[]";
    }
    
-   public void finally27(@JoinPoint MethodInfo joinPoint,
+   public void finally27(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally27 = "void,MethodInfo,Serializable,Object";
+      finally27 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally27(@JoinPoint MethodInfo joinPoint,
+   public void finally27(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally27 = "void,MethodInfo,Throwable";
+      finally27 = "void,MethodExecution,Throwable";
    }
    
-   public void finally27(@JoinPoint MethodInfo joinPoint,
+   public void finally27(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally27 = "void,MethodInfo,Serializable";
+      finally27 = "void,MethodExecution,Serializable";
    }
    
-   public void finally27(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally27(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally27 = "void,MethodInfo,int,long";
+      finally27 = "void,MethodExecution,int,long";
    }
    
-   public String finally27(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally27(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally27 = "String,MethodInfo,long";
+      finally27 = "String,MethodExecution,long";
       return "finally27";
    }
    
-   public Object finally27(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally27(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally27 = "Object,MethodInfo,int";
+      finally27 = "Object,MethodExecution,int";
       return "finally27";
    }
    
-   public void finally27(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally27(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally27 = "void,MethodInfo,Object[]";
+      finally27 = "void,MethodExecution,Object[]";
    }
    
-   public void finally27(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally27(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally27 = "void,MethodInfo,Object";
+      finally27 = "void,MethodExecution,Object";
    }
    
-   public void finally27(@JoinPoint MethodInfo joinPoint)
+   public void finally27(@JoinPoint MethodExecution joinPoint)
    {
-      finally27 = "void,MethodInfo";
+      finally27 = "void,MethodExecution";
    }
    
    public void finally27(@Return String valueReturned,
@@ -9713,55 +9713,55 @@ public class OverloadedFinallyAspect
    
    /* FINALLY28 ADVICE */
    
-   public void finally28(@JoinPoint MethodInfo joinPoint,
+   public void finally28(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException, @Args Object args)
    {
-      finally28 = "void,MethodInfo,Serializable,Object";
+      finally28 = "void,MethodExecution,Serializable,Object";
    }
    
-   public void finally28(@JoinPoint MethodInfo joinPoint,
+   public void finally28(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally28 = "void,MethodInfo,Throwable";
+      finally28 = "void,MethodExecution,Throwable";
    }
    
-   public void finally28(@JoinPoint MethodInfo joinPoint,
+   public void finally28(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally28 = "void,MethodInfo,Serializable";
+      finally28 = "void,MethodExecution,Serializable";
    }
    
-   public void finally28(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally28(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally28 = "void,MethodInfo,int,long";
+      finally28 = "void,MethodExecution,int,long";
    }
    
-   public String finally28(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally28(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally28 = "String,MethodInfo,long";
+      finally28 = "String,MethodExecution,long";
       return "finally28";
    }
    
-   public Object finally28(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally28(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally28 = "Object,MethodInfo,int";
+      finally28 = "Object,MethodExecution,int";
       return "finally28";
    }
    
-   public void finally28(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally28(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally28 = "void,MethodInfo,Object[]";
+      finally28 = "void,MethodExecution,Object[]";
    }
    
-   public void finally28(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally28(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally28 = "void,MethodInfo,Object";
+      finally28 = "void,MethodExecution,Object";
    }
    
-   public void finally28(@JoinPoint MethodInfo joinPoint)
+   public void finally28(@JoinPoint MethodExecution joinPoint)
    {
-      finally28 = "void,MethodInfo";
+      finally28 = "void,MethodExecution";
    }
    
    public void finally28(@Return String valueReturned,
@@ -9974,49 +9974,49 @@ public class OverloadedFinallyAspect
    
    /* FINALLY29 ADVICE */
    
-   public void finally29(@JoinPoint MethodInfo joinPoint,
+   public void finally29(@JoinPoint MethodExecution joinPoint,
          @Thrown Throwable thrownException)
    {
-      finally29 = "void,MethodInfo,Throwable";
+      finally29 = "void,MethodExecution,Throwable";
    }
    
-   public void finally29(@JoinPoint MethodInfo joinPoint,
+   public void finally29(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally29 = "void,MethodInfo,Serializable";
+      finally29 = "void,MethodExecution,Serializable";
    }
    
-   public void finally29(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally29(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally29 = "void,MethodInfo,int,long";
+      finally29 = "void,MethodExecution,int,long";
    }
    
-   public String finally29(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally29(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally29 = "String,MethodInfo,long";
+      finally29 = "String,MethodExecution,long";
       return "finally29";
    }
    
-   public Object finally29(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally29(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally29 = "Object,MethodInfo,int";
+      finally29 = "Object,MethodExecution,int";
       return "finally29";
    }
    
-   public void finally29(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally29(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally29 = "void,MethodInfo,Object[]";
+      finally29 = "void,MethodExecution,Object[]";
    }
    
-   public void finally29(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally29(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally29 = "void,MethodInfo,Object";
+      finally29 = "void,MethodExecution,Object";
    }
    
-   public void finally29(@JoinPoint MethodInfo joinPoint)
+   public void finally29(@JoinPoint MethodExecution joinPoint)
    {
-      finally29 = "void,MethodInfo";
+      finally29 = "void,MethodExecution";
    }
    
    public void finally29(@Return String valueReturned,
@@ -10229,43 +10229,43 @@ public class OverloadedFinallyAspect
    
    /* FINALLY30 ADVICE */
    
-   public void finally30(@JoinPoint MethodInfo joinPoint,
+   public void finally30(@JoinPoint MethodExecution joinPoint,
          @Thrown Serializable thrownException)
    {
-      finally30 = "void,MethodInfo,Serializable";
+      finally30 = "void,MethodExecution,Serializable";
    }
    
-   public void finally30(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally30(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally30 = "void,MethodInfo,int,long";
+      finally30 = "void,MethodExecution,int,long";
    }
    
-   public String finally30(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally30(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally30 = "String,MethodInfo,long";
+      finally30 = "String,MethodExecution,long";
       return "finally30";
    }
    
-   public Object finally30(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally30(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally30 = "Object,MethodInfo,int";
+      finally30 = "Object,MethodExecution,int";
       return "finally30";
    }
    
-   public void finally30(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally30(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally30 = "void,MethodInfo,Object[]";
+      finally30 = "void,MethodExecution,Object[]";
    }
    
-   public void finally30(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally30(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally30 = "void,MethodInfo,Object";
+      finally30 = "void,MethodExecution,Object";
    }
    
-   public void finally30(@JoinPoint MethodInfo joinPoint)
+   public void finally30(@JoinPoint MethodExecution joinPoint)
    {
-      finally30 = "void,MethodInfo";
+      finally30 = "void,MethodExecution";
    }
    
    public void finally30(@Return String valueReturned,
@@ -10478,37 +10478,37 @@ public class OverloadedFinallyAspect
    
    /* FINALLY31 ADVICE */
    
-   public void finally31(@JoinPoint MethodInfo joinPoint, @Arg int arg1,
+   public void finally31(@JoinPoint MethodExecution joinPoint, @Arg int arg1,
          @Arg long arg2)
    {
-      finally31 = "void,MethodInfo,int,long";
+      finally31 = "void,MethodExecution,int,long";
    }
    
-   public String finally31(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally31(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally31 = "String,MethodInfo,long";
+      finally31 = "String,MethodExecution,long";
       return "finally31";
    }
    
-   public Object finally31(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally31(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally31 = "Object,MethodInfo,int";
+      finally31 = "Object,MethodExecution,int";
       return "finally31";
    }
    
-   public void finally31(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally31(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally31 = "void,MethodInfo,Object[]";
+      finally31 = "void,MethodExecution,Object[]";
    }
    
-   public void finally31(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally31(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally31 = "void,MethodInfo,Object";
+      finally31 = "void,MethodExecution,Object";
    }
    
-   public void finally31(@JoinPoint MethodInfo joinPoint)
+   public void finally31(@JoinPoint MethodExecution joinPoint)
    {
-      finally31 = "void,MethodInfo";
+      finally31 = "void,MethodExecution";
    }
    
    public void finally31(@Return String valueReturned,
@@ -10721,31 +10721,31 @@ public class OverloadedFinallyAspect
    
    /* FINALLY32 ADVICE */
    
-   public String finally32(@JoinPoint MethodInfo joinPoint, @Arg long arg2)
+   public String finally32(@JoinPoint MethodExecution joinPoint, @Arg long arg2)
    {
-      finally32 = "String,MethodInfo,long";
+      finally32 = "String,MethodExecution,long";
       return "finally32";
    }
    
-   public Object finally32(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally32(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally32 = "Object,MethodInfo,int";
+      finally32 = "Object,MethodExecution,int";
       return "finally32";
    }
    
-   public void finally32(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally32(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally32 = "void,MethodInfo,Object[]";
+      finally32 = "void,MethodExecution,Object[]";
    }
    
-   public void finally32(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally32(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally32 = "void,MethodInfo,Object";
+      finally32 = "void,MethodExecution,Object";
    }
    
-   public void finally32(@JoinPoint MethodInfo joinPoint)
+   public void finally32(@JoinPoint MethodExecution joinPoint)
    {
-      finally32 = "void,MethodInfo";
+      finally32 = "void,MethodExecution";
    }
    
    public void finally32(@Return String valueReturned,
@@ -10958,25 +10958,25 @@ public class OverloadedFinallyAspect
    
    /* FINALLY33 ADVICE */
    
-   public Object finally33(@JoinPoint MethodInfo joinPoint, @Arg int arg1)
+   public Object finally33(@JoinPoint MethodExecution joinPoint, @Arg int arg1)
    {
-      finally33 = "Object,MethodInfo,int";
+      finally33 = "Object,MethodExecution,int";
       return "finally33";
    }
    
-   public void finally33(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally33(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally33 = "void,MethodInfo,Object[]";
+      finally33 = "void,MethodExecution,Object[]";
    }
    
-   public void finally33(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally33(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally33 = "void,MethodInfo,Object";
+      finally33 = "void,MethodExecution,Object";
    }
    
-   public void finally33(@JoinPoint MethodInfo joinPoint)
+   public void finally33(@JoinPoint MethodExecution joinPoint)
    {
-      finally33 = "void,MethodInfo";
+      finally33 = "void,MethodExecution";
    }
    
    public void finally33(@Return String valueReturned,
@@ -11189,19 +11189,19 @@ public class OverloadedFinallyAspect
    
    /* FINALLY34 ADVICE */
    
-   public void finally34(@JoinPoint MethodInfo joinPoint, @Args Object[] args)
+   public void finally34(@JoinPoint MethodExecution joinPoint, @Args Object[] args)
    {
-      finally34 = "void,MethodInfo,Object[]";
+      finally34 = "void,MethodExecution,Object[]";
    }
    
-   public void finally34(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally34(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally34 = "void,MethodInfo,Object";
+      finally34 = "void,MethodExecution,Object";
    }
    
-   public void finally34(@JoinPoint MethodInfo joinPoint)
+   public void finally34(@JoinPoint MethodExecution joinPoint)
    {
-      finally34 = "void,MethodInfo";
+      finally34 = "void,MethodExecution";
    }
    
    public void finally34(@Return String valueReturned,
@@ -11414,14 +11414,14 @@ public class OverloadedFinallyAspect
    
    /* FINALLY35 ADVICE */
    
-   public void finally35(@JoinPoint MethodInfo joinPoint, @Args Object args)
+   public void finally35(@JoinPoint MethodExecution joinPoint, @Args Object args)
    {
-      finally35 = "void,MethodInfo,Object";
+      finally35 = "void,MethodExecution,Object";
    }
    
-   public void finally35(@JoinPoint MethodInfo joinPoint)
+   public void finally35(@JoinPoint MethodExecution joinPoint)
    {
-      finally35 = "void,MethodInfo";
+      finally35 = "void,MethodExecution";
    }
    
    public void finally35(@Return String valueReturned,
@@ -11634,9 +11634,9 @@ public class OverloadedFinallyAspect
    
    /* FINALLY36 ADVICE */
    
-   public void finally36(@JoinPoint MethodInfo joinPoint)
+   public void finally36(@JoinPoint MethodExecution joinPoint)
    {
-      finally36 = "void,MethodInfo";
+      finally36 = "void,MethodExecution";
    }
    
    public void finally36(@Return String valueReturned,

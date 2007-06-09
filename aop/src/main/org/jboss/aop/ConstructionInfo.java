@@ -24,7 +24,7 @@ package org.jboss.aop;
 import java.lang.reflect.Constructor;
 
 import org.jboss.aop.joinpoint.ConstructorJoinpoint;
-import org.jboss.aop.joinpoint.IConstructionInfo;
+import org.jboss.aop.joinpoint.Construction;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.util.MethodHashing;
 
@@ -34,7 +34,7 @@ import org.jboss.aop.util.MethodHashing;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
-public class ConstructionInfo extends JoinPointInfo implements IConstructionInfo
+public class ConstructionInfo extends JoinPointInfo implements Construction
 {
    private Constructor constructor;
    private int index;

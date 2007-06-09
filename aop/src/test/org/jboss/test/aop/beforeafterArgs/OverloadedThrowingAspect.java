@@ -23,11 +23,11 @@ package org.jboss.test.aop.beforeafterArgs;
 
 import junit.framework.Assert;
 
-import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.annotation.Arg;
 import org.jboss.aop.advice.annotation.Args;
 import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Thrown;
+import org.jboss.aop.joinpoint.JoinPointBean;
 
 /**
  * Aspect used on overloaded throwing advice tests (for JoinPoint, Thrown, Arg and
@@ -122,221 +122,221 @@ public class OverloadedThrowingAspect
 
    /* THROWING1 ADVICE */
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1, @Arg Implementor arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,SubInterface,Implementor";
+      throwing1 = "JoinPointBean,Throwable,SubInterface,Implementor";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg Interface arg1, @Arg Implementor arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,Interface,Implementor";
+      throwing1 = "JoinPointBean,Throwable,Interface,Implementor";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1, @Arg SubInterface arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,SubInterface,SubInterface";
+      throwing1 = "JoinPointBean,Throwable,SubInterface,SubInterface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,SubInterface,Object";
+      throwing1 = "JoinPointBean,Throwable,SubInterface,Object";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg,
          @Arg Implementor implementor)
    {
-      throwing1 = "JoinPointInfo,Throwable,SuperInterface,Implementor";
+      throwing1 = "JoinPointBean,Throwable,SuperInterface,Implementor";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1, @Arg Interface arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,SubInterface,Interface";
+      throwing1 = "JoinPointBean,Throwable,SubInterface,Interface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg Interface arg1, @Arg SubInterface arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,Interface,SubInterface";
+      throwing1 = "JoinPointBean,Throwable,Interface,SubInterface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1,
          @Arg SubInterface arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,SuperInterface,SubInterface";
+      throwing1 = "JoinPointBean,Throwable,SuperInterface,SubInterface";
    }
 
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,SuperInterface,Object";
+      throwing1 = "JoinPointBean,Throwable,SuperInterface,Object";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg Interface arg1, @Arg Interface arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,Interface,Interface";
+      throwing1 = "JoinPointBean,Throwable,Interface,Interface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,SubInterface,SuperInterface";
+      throwing1 = "JoinPointBean,Throwable,SubInterface,SuperInterface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,SuperInterface,Interface";
+      throwing1 = "JoinPointBean,Throwable,SuperInterface,Interface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,Interface,SuperInterface";
+      throwing1 = "JoinPointBean,Throwable,Interface,SuperInterface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,SuperInterface,SuperInterface";
+      throwing1 = "JoinPointBean,Throwable,SuperInterface,SuperInterface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Implementor arg2)
    {
-      throwing1 = "JoinPointInfo,Object,SubInterface,Implementor";
+      throwing1 = "JoinPointBean,Object,SubInterface,Implementor";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Implementor arg2)
    {
-      throwing1 = "JoinPointInfo,Object,Interface,Implementor";
+      throwing1 = "JoinPointBean,Object,Interface,Implementor";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg SubInterface arg2)
    {
-      throwing1 = "JoinPointInfo,Object,SubInterface,SubInterface";
+      throwing1 = "JoinPointBean,Object,SubInterface,SubInterface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing1 = "JoinPointInfo,Object,SubInterface,Object";
+      throwing1 = "JoinPointBean,Object,SubInterface,Object";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg,
          @Arg Implementor implementor)
    {
-      throwing1 = "JoinPointInfo,Object,SuperInterface,Implementor";
+      throwing1 = "JoinPointBean,Object,SuperInterface,Implementor";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Interface arg2)
    {
-      throwing1 = "JoinPointInfo,Object,SubInterface,Interface";
+      throwing1 = "JoinPointBean,Object,SubInterface,Interface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SubInterface arg2)
    {
-      throwing1 = "JoinPointInfo,Object,Interface,SubInterface";
+      throwing1 = "JoinPointBean,Object,Interface,SubInterface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1,
          @Arg SubInterface arg2)
    {
-      throwing1 = "JoinPointInfo,Object,SuperInterface,SubInterface";
+      throwing1 = "JoinPointBean,Object,SuperInterface,SubInterface";
    }
 
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing1 = "JoinPointInfo,Object,SuperInterface,Object";
+      throwing1 = "JoinPointBean,Object,SuperInterface,Object";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Interface arg2)
    {
-      throwing1 = "JoinPointInfo,Object,Interface,Interface";
+      throwing1 = "JoinPointBean,Object,Interface,Interface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing1 = "JoinPointInfo,Object,SubInterface,SuperInterface";
+      throwing1 = "JoinPointBean,Object,SubInterface,SuperInterface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing1 = "JoinPointInfo,Object,SuperInterface,Interface";
+      throwing1 = "JoinPointBean,Object,SuperInterface,Interface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing1 = "JoinPointInfo,Object,Interface,SuperInterface";
+      throwing1 = "JoinPointBean,Object,Interface,SuperInterface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing1(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing1 = "JoinPointInfo,Object,SuperInterface,SuperInterface";
+      throwing1 = "JoinPointBean,Object,SuperInterface,SuperInterface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing1(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1)
    {
-      throwing1 = "JoinPointInfo,Throwable,SubInterface";
+      throwing1 = "JoinPointBean,Throwable,SubInterface";
    }
 
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing1(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Implementor arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,Implementor";
+      throwing1 = "JoinPointBean,Throwable,Implementor";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing1(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Interface arg1)
    {
-      throwing1 = "JoinPointInfo,Throwable,Interface";
+      throwing1 = "JoinPointBean,Throwable,Interface";
    }
 
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing1(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
-      throwing1 = "JoinPointInfo,Throwable,Object";
+      throwing1 = "JoinPointBean,Throwable,Object";
    }
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing1(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing1 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing1 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing1(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing1 = "JoinPointInfo,Throwable,Object[]";
+      throwing1 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing1(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing1 = "JoinPointInfo,Object,Object[]";
+      throwing1 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing1(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -499,222 +499,222 @@ public class OverloadedThrowingAspect
       throwing1 = "Object";
    }
    
-   public void throwing1(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing1(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING2 ADVICE */
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg Interface arg1, @Arg Implementor arg2)
    {
-      throwing2 = "JoinPointInfo,Throwable,Interface,Implementor";
+      throwing2 = "JoinPointBean,Throwable,Interface,Implementor";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1, @Arg SubInterface arg2)
    {
-      throwing2 = "JoinPointInfo,Throwable,SubInterface,SubInterface";
+      throwing2 = "JoinPointBean,Throwable,SubInterface,SubInterface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing2 = "JoinPointInfo,Throwable,SubInterface,Object";
+      throwing2 = "JoinPointBean,Throwable,SubInterface,Object";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg,
          @Arg Implementor implementor)
    {
-      throwing2 = "JoinPointInfo,Throwable,SuperInterface,Implementor";
+      throwing2 = "JoinPointBean,Throwable,SuperInterface,Implementor";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1, @Arg Interface arg2)
    {
-      throwing2 = "JoinPointInfo,Throwable,SubInterface,Interface";
+      throwing2 = "JoinPointBean,Throwable,SubInterface,Interface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg Interface arg1, @Arg SubInterface arg2)
    {
-      throwing2 = "JoinPointInfo,Throwable,Interface,SubInterface";
+      throwing2 = "JoinPointBean,Throwable,Interface,SubInterface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1,
          @Arg SubInterface arg2)
    {
-      throwing2 = "JoinPointInfo,Throwable,SuperInterface,SubInterface";
+      throwing2 = "JoinPointBean,Throwable,SuperInterface,SubInterface";
    }
 
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing2 = "JoinPointInfo,Throwable,SuperInterface,Object";
+      throwing2 = "JoinPointBean,Throwable,SuperInterface,Object";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg Interface arg1, @Arg Interface arg2)
    {
-      throwing2 = "JoinPointInfo,Throwable,Interface,Interface";
+      throwing2 = "JoinPointBean,Throwable,Interface,Interface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing2 = "JoinPointInfo,Throwable,SubInterface,SuperInterface";
+      throwing2 = "JoinPointBean,Throwable,SubInterface,SuperInterface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing2 = "JoinPointInfo,Throwable,SuperInterface,Interface";
+      throwing2 = "JoinPointBean,Throwable,SuperInterface,Interface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing2 = "JoinPointInfo,Throwable,Interface,SuperInterface";
+      throwing2 = "JoinPointBean,Throwable,Interface,SuperInterface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing2 = "JoinPointInfo,Throwable,SuperInterface,SuperInterface";
+      throwing2 = "JoinPointBean,Throwable,SuperInterface,SuperInterface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Implementor arg2)
    {
-      throwing2 = "JoinPointInfo,Object,SubInterface,Implementor";
+      throwing2 = "JoinPointBean,Object,SubInterface,Implementor";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Implementor arg2)
    {
-      throwing2 = "JoinPointInfo,Object,Interface,Implementor";
+      throwing2 = "JoinPointBean,Object,Interface,Implementor";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg SubInterface arg2)
    {
-      throwing2 = "JoinPointInfo,Object,SubInterface,SubInterface";
+      throwing2 = "JoinPointBean,Object,SubInterface,SubInterface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing2 = "JoinPointInfo,Object,SubInterface,Object";
+      throwing2 = "JoinPointBean,Object,SubInterface,Object";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg,
          @Arg Implementor implementor)
    {
-      throwing2 = "JoinPointInfo,Object,SuperInterface,Implementor";
+      throwing2 = "JoinPointBean,Object,SuperInterface,Implementor";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Interface arg2)
    {
-      throwing2 = "JoinPointInfo,Object,SubInterface,Interface";
+      throwing2 = "JoinPointBean,Object,SubInterface,Interface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SubInterface arg2)
    {
-      throwing2 = "JoinPointInfo,Object,Interface,SubInterface";
+      throwing2 = "JoinPointBean,Object,Interface,SubInterface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1,
          @Arg SubInterface arg2)
    {
-      throwing2 = "JoinPointInfo,Object,SuperInterface,SubInterface";
+      throwing2 = "JoinPointBean,Object,SuperInterface,SubInterface";
    }
 
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing2 = "JoinPointInfo,Object,SuperInterface,Object";
+      throwing2 = "JoinPointBean,Object,SuperInterface,Object";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Interface arg2)
    {
-      throwing2 = "JoinPointInfo,Object,Interface,Interface";
+      throwing2 = "JoinPointBean,Object,Interface,Interface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing2 = "JoinPointInfo,Object,SubInterface,SuperInterface";
+      throwing2 = "JoinPointBean,Object,SubInterface,SuperInterface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing2 = "JoinPointInfo,Object,SuperInterface,Interface";
+      throwing2 = "JoinPointBean,Object,SuperInterface,Interface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing2 = "JoinPointInfo,Object,Interface,SuperInterface";
+      throwing2 = "JoinPointBean,Object,Interface,SuperInterface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing2(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing2 = "JoinPointInfo,Object,SuperInterface,SuperInterface";
+      throwing2 = "JoinPointBean,Object,SuperInterface,SuperInterface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing2(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1)
    {
-      throwing2 = "JoinPointInfo,Throwable,SubInterface";
+      throwing2 = "JoinPointBean,Throwable,SubInterface";
    }
 
-   public void throwing2(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing2(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Implementor arg2)
    {
-      throwing2 = "JoinPointInfo,Throwable,Implementor";
+      throwing2 = "JoinPointBean,Throwable,Implementor";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing2(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Interface arg1)
    {
-      throwing2 = "JoinPointInfo,Throwable,Interface";
+      throwing2 = "JoinPointBean,Throwable,Interface";
    }
 
-   public void throwing2(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing2(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
-      throwing2 = "JoinPointInfo,Throwable,Object";
+      throwing2 = "JoinPointBean,Throwable,Object";
    }
-   public void throwing2(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing2(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing2 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing2 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing2(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing2 = "JoinPointInfo,Throwable,Object[]";
+      throwing2 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing2(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing2 = "JoinPointInfo,Object,Object[]";
+      throwing2 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing2(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -877,204 +877,204 @@ public class OverloadedThrowingAspect
       throwing2 = "Object";
    }
    
-   public void throwing2(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing2(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING3 ADVICE */
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg,
          @Arg Implementor implementor)
    {
-      throwing3 = "JoinPointInfo,Throwable,SuperInterface,Implementor";
+      throwing3 = "JoinPointBean,Throwable,SuperInterface,Implementor";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1, @Arg Interface arg2)
    {
-      throwing3 = "JoinPointInfo,Throwable,SubInterface,Interface";
+      throwing3 = "JoinPointBean,Throwable,SubInterface,Interface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg Interface arg1, @Arg SubInterface arg2)
    {
-      throwing3 = "JoinPointInfo,Throwable,Interface,SubInterface";
+      throwing3 = "JoinPointBean,Throwable,Interface,SubInterface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1,
          @Arg SubInterface arg2)
    {
-      throwing3 = "JoinPointInfo,Throwable,SuperInterface,SubInterface";
+      throwing3 = "JoinPointBean,Throwable,SuperInterface,SubInterface";
    }
 
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing3 = "JoinPointInfo,Throwable,SuperInterface,Object";
+      throwing3 = "JoinPointBean,Throwable,SuperInterface,Object";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg Interface arg1, @Arg Interface arg2)
    {
-      throwing3 = "JoinPointInfo,Throwable,Interface,Interface";
+      throwing3 = "JoinPointBean,Throwable,Interface,Interface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing3 = "JoinPointInfo,Throwable,SubInterface,SuperInterface";
+      throwing3 = "JoinPointBean,Throwable,SubInterface,SuperInterface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing3 = "JoinPointInfo,Throwable,SuperInterface,Interface";
+      throwing3 = "JoinPointBean,Throwable,SuperInterface,Interface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing3 = "JoinPointInfo,Throwable,Interface,SuperInterface";
+      throwing3 = "JoinPointBean,Throwable,Interface,SuperInterface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing3 = "JoinPointInfo,Throwable,SuperInterface,SuperInterface";
+      throwing3 = "JoinPointBean,Throwable,SuperInterface,SuperInterface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Implementor arg2)
    {
-      throwing3 = "JoinPointInfo,Object,SubInterface,Implementor";
+      throwing3 = "JoinPointBean,Object,SubInterface,Implementor";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Implementor arg2)
    {
-      throwing3 = "JoinPointInfo,Object,Interface,Implementor";
+      throwing3 = "JoinPointBean,Object,Interface,Implementor";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg SubInterface arg2)
    {
-      throwing3 = "JoinPointInfo,Object,SubInterface,SubInterface";
+      throwing3 = "JoinPointBean,Object,SubInterface,SubInterface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing3 = "JoinPointInfo,Object,SubInterface,Object";
+      throwing3 = "JoinPointBean,Object,SubInterface,Object";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg,
          @Arg Implementor implementor)
    {
-      throwing3 = "JoinPointInfo,Object,SuperInterface,Implementor";
+      throwing3 = "JoinPointBean,Object,SuperInterface,Implementor";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Interface arg2)
    {
-      throwing3 = "JoinPointInfo,Object,SubInterface,Interface";
+      throwing3 = "JoinPointBean,Object,SubInterface,Interface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SubInterface arg2)
    {
-      throwing3 = "JoinPointInfo,Object,Interface,SubInterface";
+      throwing3 = "JoinPointBean,Object,Interface,SubInterface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1,
          @Arg SubInterface arg2)
    {
-      throwing3 = "JoinPointInfo,Object,SuperInterface,SubInterface";
+      throwing3 = "JoinPointBean,Object,SuperInterface,SubInterface";
    }
 
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing3 = "JoinPointInfo,Object,SuperInterface,Object";
+      throwing3 = "JoinPointBean,Object,SuperInterface,Object";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Interface arg2)
    {
-      throwing3 = "JoinPointInfo,Object,Interface,Interface";
+      throwing3 = "JoinPointBean,Object,Interface,Interface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing3 = "JoinPointInfo,Object,SubInterface,SuperInterface";
+      throwing3 = "JoinPointBean,Object,SubInterface,SuperInterface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing3 = "JoinPointInfo,Object,SuperInterface,Interface";
+      throwing3 = "JoinPointBean,Object,SuperInterface,Interface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing3 = "JoinPointInfo,Object,Interface,SuperInterface";
+      throwing3 = "JoinPointBean,Object,Interface,SuperInterface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing3(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing3 = "JoinPointInfo,Object,SuperInterface,SuperInterface";
+      throwing3 = "JoinPointBean,Object,SuperInterface,SuperInterface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing3(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1)
    {
-      throwing3 = "JoinPointInfo,Throwable,SubInterface";
+      throwing3 = "JoinPointBean,Throwable,SubInterface";
    }
 
-   public void throwing3(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing3(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Implementor arg2)
    {
-      throwing3 = "JoinPointInfo,Throwable,Implementor";
+      throwing3 = "JoinPointBean,Throwable,Implementor";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing3(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Interface arg1)
    {
-      throwing3 = "JoinPointInfo,Throwable,Interface";
+      throwing3 = "JoinPointBean,Throwable,Interface";
    }
 
-   public void throwing3(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing3(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
-      throwing3 = "JoinPointInfo,Throwable,Object";
+      throwing3 = "JoinPointBean,Throwable,Object";
    }
-   public void throwing3(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing3(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing3 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing3 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing3(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing3 = "JoinPointInfo,Throwable,Object[]";
+      throwing3 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing3(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing3 = "JoinPointInfo,Object,Object[]";
+      throwing3 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing3(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -1237,185 +1237,185 @@ public class OverloadedThrowingAspect
       throwing3 = "Object";
    }
    
-   public void throwing3(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing3(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING4 ADVICE */
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1,
          @Arg SubInterface arg2)
    {
-      throwing4 = "JoinPointInfo,Throwable,SuperInterface,SubInterface";
+      throwing4 = "JoinPointBean,Throwable,SuperInterface,SubInterface";
    }
 
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing4 = "JoinPointInfo,Throwable,SuperInterface,Object";
+      throwing4 = "JoinPointBean,Throwable,SuperInterface,Object";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg Interface arg1, @Arg Interface arg2)
    {
-      throwing4 = "JoinPointInfo,Throwable,Interface,Interface";
+      throwing4 = "JoinPointBean,Throwable,Interface,Interface";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing4 = "JoinPointInfo,Throwable,SubInterface,SuperInterface";
+      throwing4 = "JoinPointBean,Throwable,SubInterface,SuperInterface";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing4 = "JoinPointInfo,Throwable,SuperInterface,Interface";
+      throwing4 = "JoinPointBean,Throwable,SuperInterface,Interface";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing4 = "JoinPointInfo,Throwable,Interface,SuperInterface";
+      throwing4 = "JoinPointBean,Throwable,Interface,SuperInterface";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing4 = "JoinPointInfo,Throwable,SuperInterface,SuperInterface";
+      throwing4 = "JoinPointBean,Throwable,SuperInterface,SuperInterface";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Implementor arg2)
    {
-      throwing4 = "JoinPointInfo,Object,SubInterface,Implementor";
+      throwing4 = "JoinPointBean,Object,SubInterface,Implementor";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Implementor arg2)
    {
-      throwing4 = "JoinPointInfo,Object,Interface,Implementor";
+      throwing4 = "JoinPointBean,Object,Interface,Implementor";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg SubInterface arg2)
    {
-      throwing4 = "JoinPointInfo,Object,SubInterface,SubInterface";
+      throwing4 = "JoinPointBean,Object,SubInterface,SubInterface";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing4 = "JoinPointInfo,Object,SubInterface,Object";
+      throwing4 = "JoinPointBean,Object,SubInterface,Object";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg,
          @Arg Implementor implementor)
    {
-      throwing4 = "JoinPointInfo,Object,SuperInterface,Implementor";
+      throwing4 = "JoinPointBean,Object,SuperInterface,Implementor";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Interface arg2)
    {
-      throwing4 = "JoinPointInfo,Object,SubInterface,Interface";
+      throwing4 = "JoinPointBean,Object,SubInterface,Interface";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SubInterface arg2)
    {
-      throwing4 = "JoinPointInfo,Object,Interface,SubInterface";
+      throwing4 = "JoinPointBean,Object,Interface,SubInterface";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1,
          @Arg SubInterface arg2)
    {
-      throwing4 = "JoinPointInfo,Object,SuperInterface,SubInterface";
+      throwing4 = "JoinPointBean,Object,SuperInterface,SubInterface";
    }
 
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing4 = "JoinPointInfo,Object,SuperInterface,Object";
+      throwing4 = "JoinPointBean,Object,SuperInterface,Object";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Interface arg2)
    {
-      throwing4 = "JoinPointInfo,Object,Interface,Interface";
+      throwing4 = "JoinPointBean,Object,Interface,Interface";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing4 = "JoinPointInfo,Object,SubInterface,SuperInterface";
+      throwing4 = "JoinPointBean,Object,SubInterface,SuperInterface";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing4 = "JoinPointInfo,Object,SuperInterface,Interface";
+      throwing4 = "JoinPointBean,Object,SuperInterface,Interface";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing4 = "JoinPointInfo,Object,Interface,SuperInterface";
+      throwing4 = "JoinPointBean,Object,Interface,SuperInterface";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing4(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing4 = "JoinPointInfo,Object,SuperInterface,SuperInterface";
+      throwing4 = "JoinPointBean,Object,SuperInterface,SuperInterface";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing4(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1)
    {
-      throwing4 = "JoinPointInfo,Throwable,SubInterface";
+      throwing4 = "JoinPointBean,Throwable,SubInterface";
    }
 
-   public void throwing4(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing4(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Implementor arg2)
    {
-      throwing4 = "JoinPointInfo,Throwable,Implementor";
+      throwing4 = "JoinPointBean,Throwable,Implementor";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing4(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Interface arg1)
    {
-      throwing4 = "JoinPointInfo,Throwable,Interface";
+      throwing4 = "JoinPointBean,Throwable,Interface";
    }
 
-   public void throwing4(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing4(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
-      throwing4 = "JoinPointInfo,Throwable,Object";
+      throwing4 = "JoinPointBean,Throwable,Object";
    }
-   public void throwing4(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing4(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing4 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing4 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing4(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing4 = "JoinPointInfo,Throwable,Object[]";
+      throwing4 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing4(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing4 = "JoinPointInfo,Object,Object[]";
+      throwing4 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing4(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -1578,159 +1578,159 @@ public class OverloadedThrowingAspect
       throwing4 = "Object";
    }
    
-   public void throwing4(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing4(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING5 ADVICE */
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing5 = "JoinPointInfo,Throwable,SuperInterface,Interface";
+      throwing5 = "JoinPointBean,Throwable,SuperInterface,Interface";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing5 = "JoinPointInfo,Throwable,Interface,SuperInterface";
+      throwing5 = "JoinPointBean,Throwable,Interface,SuperInterface";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing5 = "JoinPointInfo,Throwable,SuperInterface,SuperInterface";
+      throwing5 = "JoinPointBean,Throwable,SuperInterface,SuperInterface";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Implementor arg2)
    {
-      throwing5 = "JoinPointInfo,Object,SubInterface,Implementor";
+      throwing5 = "JoinPointBean,Object,SubInterface,Implementor";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Implementor arg2)
    {
-      throwing5 = "JoinPointInfo,Object,Interface,Implementor";
+      throwing5 = "JoinPointBean,Object,Interface,Implementor";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg SubInterface arg2)
    {
-      throwing5 = "JoinPointInfo,Object,SubInterface,SubInterface";
+      throwing5 = "JoinPointBean,Object,SubInterface,SubInterface";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing5 = "JoinPointInfo,Object,SubInterface,Object";
+      throwing5 = "JoinPointBean,Object,SubInterface,Object";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg,
          @Arg Implementor implementor)
    {
-      throwing5 = "JoinPointInfo,Object,SuperInterface,Implementor";
+      throwing5 = "JoinPointBean,Object,SuperInterface,Implementor";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Interface arg2)
    {
-      throwing5 = "JoinPointInfo,Object,SubInterface,Interface";
+      throwing5 = "JoinPointBean,Object,SubInterface,Interface";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SubInterface arg2)
    {
-      throwing5 = "JoinPointInfo,Object,Interface,SubInterface";
+      throwing5 = "JoinPointBean,Object,Interface,SubInterface";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1,
          @Arg SubInterface arg2)
    {
-      throwing5 = "JoinPointInfo,Object,SuperInterface,SubInterface";
+      throwing5 = "JoinPointBean,Object,SuperInterface,SubInterface";
    }
 
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing5 = "JoinPointInfo,Object,SuperInterface,Object";
+      throwing5 = "JoinPointBean,Object,SuperInterface,Object";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Interface arg2)
    {
-      throwing5 = "JoinPointInfo,Object,Interface,Interface";
+      throwing5 = "JoinPointBean,Object,Interface,Interface";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing5 = "JoinPointInfo,Object,SubInterface,SuperInterface";
+      throwing5 = "JoinPointBean,Object,SubInterface,SuperInterface";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing5 = "JoinPointInfo,Object,SuperInterface,Interface";
+      throwing5 = "JoinPointBean,Object,SuperInterface,Interface";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing5 = "JoinPointInfo,Object,Interface,SuperInterface";
+      throwing5 = "JoinPointBean,Object,Interface,SuperInterface";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing5(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing5 = "JoinPointInfo,Object,SuperInterface,SuperInterface";
+      throwing5 = "JoinPointBean,Object,SuperInterface,SuperInterface";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing5(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1)
    {
-      throwing5 = "JoinPointInfo,Throwable,SubInterface";
+      throwing5 = "JoinPointBean,Throwable,SubInterface";
    }
 
-   public void throwing5(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing5(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Implementor arg2)
    {
-      throwing5 = "JoinPointInfo,Throwable,Implementor";
+      throwing5 = "JoinPointBean,Throwable,Implementor";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing5(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Interface arg1)
    {
-      throwing5 = "JoinPointInfo,Throwable,Interface";
+      throwing5 = "JoinPointBean,Throwable,Interface";
    }
 
-   public void throwing5(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing5(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
-      throwing5 = "JoinPointInfo,Throwable,Object";
+      throwing5 = "JoinPointBean,Throwable,Object";
    }
-   public void throwing5(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing5(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing5 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing5 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing5(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing5 = "JoinPointInfo,Throwable,Object[]";
+      throwing5 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing5(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing5 = "JoinPointInfo,Object,Object[]";
+      throwing5 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing5(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -1893,147 +1893,147 @@ public class OverloadedThrowingAspect
       throwing5 = "Object";
    }
    
-   public void throwing5(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing5(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING6 ADVICE */
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing6 = "JoinPointInfo,Throwable,SuperInterface,SuperInterface";
+      throwing6 = "JoinPointBean,Throwable,SuperInterface,SuperInterface";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Implementor arg2)
    {
-      throwing6 = "JoinPointInfo,Object,SubInterface,Implementor";
+      throwing6 = "JoinPointBean,Object,SubInterface,Implementor";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Implementor arg2)
    {
-      throwing6 = "JoinPointInfo,Object,Interface,Implementor";
+      throwing6 = "JoinPointBean,Object,Interface,Implementor";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg SubInterface arg2)
    {
-      throwing6 = "JoinPointInfo,Object,SubInterface,SubInterface";
+      throwing6 = "JoinPointBean,Object,SubInterface,SubInterface";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing6 = "JoinPointInfo,Object,SubInterface,Object";
+      throwing6 = "JoinPointBean,Object,SubInterface,Object";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg,
          @Arg Implementor implementor)
    {
-      throwing6 = "JoinPointInfo,Object,SuperInterface,Implementor";
+      throwing6 = "JoinPointBean,Object,SuperInterface,Implementor";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Interface arg2)
    {
-      throwing6 = "JoinPointInfo,Object,SubInterface,Interface";
+      throwing6 = "JoinPointBean,Object,SubInterface,Interface";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SubInterface arg2)
    {
-      throwing6 = "JoinPointInfo,Object,Interface,SubInterface";
+      throwing6 = "JoinPointBean,Object,Interface,SubInterface";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1,
          @Arg SubInterface arg2)
    {
-      throwing6 = "JoinPointInfo,Object,SuperInterface,SubInterface";
+      throwing6 = "JoinPointBean,Object,SuperInterface,SubInterface";
    }
 
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing6 = "JoinPointInfo,Object,SuperInterface,Object";
+      throwing6 = "JoinPointBean,Object,SuperInterface,Object";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Interface arg2)
    {
-      throwing6 = "JoinPointInfo,Object,Interface,Interface";
+      throwing6 = "JoinPointBean,Object,Interface,Interface";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing6 = "JoinPointInfo,Object,SubInterface,SuperInterface";
+      throwing6 = "JoinPointBean,Object,SubInterface,SuperInterface";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing6 = "JoinPointInfo,Object,SuperInterface,Interface";
+      throwing6 = "JoinPointBean,Object,SuperInterface,Interface";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing6 = "JoinPointInfo,Object,Interface,SuperInterface";
+      throwing6 = "JoinPointBean,Object,Interface,SuperInterface";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing6(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing6 = "JoinPointInfo,Object,SuperInterface,SuperInterface";
+      throwing6 = "JoinPointBean,Object,SuperInterface,SuperInterface";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing6(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1)
    {
-      throwing6 = "JoinPointInfo,Throwable,SubInterface";
+      throwing6 = "JoinPointBean,Throwable,SubInterface";
    }
 
-   public void throwing6(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing6(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Implementor arg2)
    {
-      throwing6 = "JoinPointInfo,Throwable,Implementor";
+      throwing6 = "JoinPointBean,Throwable,Implementor";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing6(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Interface arg1)
    {
-      throwing6 = "JoinPointInfo,Throwable,Interface";
+      throwing6 = "JoinPointBean,Throwable,Interface";
    }
 
-   public void throwing6(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing6(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
-      throwing6 = "JoinPointInfo,Throwable,Object";
+      throwing6 = "JoinPointBean,Throwable,Object";
    }
-   public void throwing6(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing6(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing6 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing6 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing6(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing6 = "JoinPointInfo,Throwable,Object[]";
+      throwing6 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing6(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing6 = "JoinPointInfo,Object,Object[]";
+      throwing6 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing6(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -2196,140 +2196,140 @@ public class OverloadedThrowingAspect
       throwing6 = "Object";
    }
    
-   public void throwing6(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing6(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING7 ADVICE */
    
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing7(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Implementor arg2)
    {
-      throwing7 = "JoinPointInfo,Object,SubInterface,Implementor";
+      throwing7 = "JoinPointBean,Object,SubInterface,Implementor";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing7(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Implementor arg2)
    {
-      throwing7 = "JoinPointInfo,Object,Interface,Implementor";
+      throwing7 = "JoinPointBean,Object,Interface,Implementor";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing7(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg SubInterface arg2)
    {
-      throwing7 = "JoinPointInfo,Object,SubInterface,SubInterface";
+      throwing7 = "JoinPointBean,Object,SubInterface,SubInterface";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing7(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing7 = "JoinPointInfo,Object,SubInterface,Object";
+      throwing7 = "JoinPointBean,Object,SubInterface,Object";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing7(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg,
          @Arg Implementor implementor)
    {
-      throwing7 = "JoinPointInfo,Object,SuperInterface,Implementor";
+      throwing7 = "JoinPointBean,Object,SuperInterface,Implementor";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing7(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Interface arg2)
    {
-      throwing7 = "JoinPointInfo,Object,SubInterface,Interface";
+      throwing7 = "JoinPointBean,Object,SubInterface,Interface";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing7(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SubInterface arg2)
    {
-      throwing7 = "JoinPointInfo,Object,Interface,SubInterface";
+      throwing7 = "JoinPointBean,Object,Interface,SubInterface";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing7(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1,
          @Arg SubInterface arg2)
    {
-      throwing7 = "JoinPointInfo,Object,SuperInterface,SubInterface";
+      throwing7 = "JoinPointBean,Object,SuperInterface,SubInterface";
    }
 
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing7(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing7 = "JoinPointInfo,Object,SuperInterface,Object";
+      throwing7 = "JoinPointBean,Object,SuperInterface,Object";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing7(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Interface arg2)
    {
-      throwing7 = "JoinPointInfo,Object,Interface,Interface";
+      throwing7 = "JoinPointBean,Object,Interface,Interface";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing7(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing7 = "JoinPointInfo,Object,SubInterface,SuperInterface";
+      throwing7 = "JoinPointBean,Object,SubInterface,SuperInterface";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing7(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing7 = "JoinPointInfo,Object,SuperInterface,Interface";
+      throwing7 = "JoinPointBean,Object,SuperInterface,Interface";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing7(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing7 = "JoinPointInfo,Object,Interface,SuperInterface";
+      throwing7 = "JoinPointBean,Object,Interface,SuperInterface";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing7(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing7 = "JoinPointInfo,Object,SuperInterface,SuperInterface";
+      throwing7 = "JoinPointBean,Object,SuperInterface,SuperInterface";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing7(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1)
    {
-      throwing7 = "JoinPointInfo,Throwable,SubInterface";
+      throwing7 = "JoinPointBean,Throwable,SubInterface";
    }
 
-   public void throwing7(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing7(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Implementor arg2)
    {
-      throwing7 = "JoinPointInfo,Throwable,Implementor";
+      throwing7 = "JoinPointBean,Throwable,Implementor";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing7(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Interface arg1)
    {
-      throwing7 = "JoinPointInfo,Throwable,Interface";
+      throwing7 = "JoinPointBean,Throwable,Interface";
    }
 
-   public void throwing7(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing7(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
-      throwing7 = "JoinPointInfo,Throwable,Object";
+      throwing7 = "JoinPointBean,Throwable,Object";
    }
-   public void throwing7(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing7(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing7 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing7 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing7(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing7 = "JoinPointInfo,Throwable,Object[]";
+      throwing7 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing7(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing7 = "JoinPointInfo,Object,Object[]";
+      throwing7 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing7(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -2492,134 +2492,134 @@ public class OverloadedThrowingAspect
       throwing7 = "Object";
    }
    
-   public void throwing7(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing7(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING8 ADVICE */
    
-   public void throwing8(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing8(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Implementor arg2)
    {
-      throwing8 = "JoinPointInfo,Object,Interface,Implementor";
+      throwing8 = "JoinPointBean,Object,Interface,Implementor";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing8(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg SubInterface arg2)
    {
-      throwing8 = "JoinPointInfo,Object,SubInterface,SubInterface";
+      throwing8 = "JoinPointBean,Object,SubInterface,SubInterface";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing8(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing8 = "JoinPointInfo,Object,SubInterface,Object";
+      throwing8 = "JoinPointBean,Object,SubInterface,Object";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing8(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg,
          @Arg Implementor implementor)
    {
-      throwing8 = "JoinPointInfo,Object,SuperInterface,Implementor";
+      throwing8 = "JoinPointBean,Object,SuperInterface,Implementor";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing8(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Interface arg2)
    {
-      throwing8 = "JoinPointInfo,Object,SubInterface,Interface";
+      throwing8 = "JoinPointBean,Object,SubInterface,Interface";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing8(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SubInterface arg2)
    {
-      throwing8 = "JoinPointInfo,Object,Interface,SubInterface";
+      throwing8 = "JoinPointBean,Object,Interface,SubInterface";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing8(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1,
          @Arg SubInterface arg2)
    {
-      throwing8 = "JoinPointInfo,Object,SuperInterface,SubInterface";
+      throwing8 = "JoinPointBean,Object,SuperInterface,SubInterface";
    }
 
-   public void throwing8(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing8(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing8 = "JoinPointInfo,Object,SuperInterface,Object";
+      throwing8 = "JoinPointBean,Object,SuperInterface,Object";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing8(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Interface arg2)
    {
-      throwing8 = "JoinPointInfo,Object,Interface,Interface";
+      throwing8 = "JoinPointBean,Object,Interface,Interface";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing8(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing8 = "JoinPointInfo,Object,SubInterface,SuperInterface";
+      throwing8 = "JoinPointBean,Object,SubInterface,SuperInterface";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing8(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing8 = "JoinPointInfo,Object,SuperInterface,Interface";
+      throwing8 = "JoinPointBean,Object,SuperInterface,Interface";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing8(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing8 = "JoinPointInfo,Object,Interface,SuperInterface";
+      throwing8 = "JoinPointBean,Object,Interface,SuperInterface";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing8(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing8 = "JoinPointInfo,Object,SuperInterface,SuperInterface";
+      throwing8 = "JoinPointBean,Object,SuperInterface,SuperInterface";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing8(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1)
    {
-      throwing8 = "JoinPointInfo,Throwable,SubInterface";
+      throwing8 = "JoinPointBean,Throwable,SubInterface";
    }
 
-   public void throwing8(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing8(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Implementor arg2)
    {
-      throwing8 = "JoinPointInfo,Throwable,Implementor";
+      throwing8 = "JoinPointBean,Throwable,Implementor";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing8(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Interface arg1)
    {
-      throwing8 = "JoinPointInfo,Throwable,Interface";
+      throwing8 = "JoinPointBean,Throwable,Interface";
    }
 
-   public void throwing8(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing8(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
-      throwing8 = "JoinPointInfo,Throwable,Object";
+      throwing8 = "JoinPointBean,Throwable,Object";
    }
-   public void throwing8(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing8(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing8 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing8 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing8(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing8 = "JoinPointInfo,Throwable,Object[]";
+      throwing8 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing8(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing8 = "JoinPointInfo,Object,Object[]";
+      throwing8 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing8(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -2782,116 +2782,116 @@ public class OverloadedThrowingAspect
       throwing8 = "Object";
    }
    
-   public void throwing8(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing8(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING9 ADVICE */
    
-   public void throwing9(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing9(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg,
          @Arg Implementor implementor)
    {
-      throwing9 = "JoinPointInfo,Object,SuperInterface,Implementor";
+      throwing9 = "JoinPointBean,Object,SuperInterface,Implementor";
    }
    
-   public void throwing9(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing9(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, @Arg Interface arg2)
    {
-      throwing9 = "JoinPointInfo,Object,SubInterface,Interface";
+      throwing9 = "JoinPointBean,Object,SubInterface,Interface";
    }
    
-   public void throwing9(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing9(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SubInterface arg2)
    {
-      throwing9 = "JoinPointInfo,Object,Interface,SubInterface";
+      throwing9 = "JoinPointBean,Object,Interface,SubInterface";
    }
    
-   public void throwing9(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing9(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1,
          @Arg SubInterface arg2)
    {
-      throwing9 = "JoinPointInfo,Object,SuperInterface,SubInterface";
+      throwing9 = "JoinPointBean,Object,SuperInterface,SubInterface";
    }
 
-   public void throwing9(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing9(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing9 = "JoinPointInfo,Object,SuperInterface,Object";
+      throwing9 = "JoinPointBean,Object,SuperInterface,Object";
    }
    
-   public void throwing9(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing9(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Interface arg2)
    {
-      throwing9 = "JoinPointInfo,Object,Interface,Interface";
+      throwing9 = "JoinPointBean,Object,Interface,Interface";
    }
    
-   public void throwing9(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing9(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing9 = "JoinPointInfo,Object,SubInterface,SuperInterface";
+      throwing9 = "JoinPointBean,Object,SubInterface,SuperInterface";
    }
    
-   public void throwing9(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing9(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing9 = "JoinPointInfo,Object,SuperInterface,Interface";
+      throwing9 = "JoinPointBean,Object,SuperInterface,Interface";
    }
    
-   public void throwing9(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing9(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing9 = "JoinPointInfo,Object,Interface,SuperInterface";
+      throwing9 = "JoinPointBean,Object,Interface,SuperInterface";
    }
    
-   public void throwing9(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing9(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing9 = "JoinPointInfo,Object,SuperInterface,SuperInterface";
+      throwing9 = "JoinPointBean,Object,SuperInterface,SuperInterface";
    }
    
-   public void throwing9(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing9(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1)
    {
-      throwing9 = "JoinPointInfo,Throwable,SubInterface";
+      throwing9 = "JoinPointBean,Throwable,SubInterface";
    }
 
-   public void throwing9(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing9(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Implementor arg2)
    {
-      throwing9 = "JoinPointInfo,Throwable,Implementor";
+      throwing9 = "JoinPointBean,Throwable,Implementor";
    }
    
-   public void throwing9(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing9(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Interface arg1)
    {
-      throwing9 = "JoinPointInfo,Throwable,Interface";
+      throwing9 = "JoinPointBean,Throwable,Interface";
    }
 
-   public void throwing9(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing9(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
-      throwing9 = "JoinPointInfo,Throwable,Object";
+      throwing9 = "JoinPointBean,Throwable,Object";
    }
-   public void throwing9(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing9(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing9 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing9 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing9(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing9(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing9 = "JoinPointInfo,Throwable,Object[]";
+      throwing9 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing9(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing9(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing9 = "JoinPointInfo,Object,Object[]";
+      throwing9 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing9(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -3054,97 +3054,97 @@ public class OverloadedThrowingAspect
       throwing9 = "Object";
    }
    
-   public void throwing9(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing9(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING10 ADVICE */
    
-   public void throwing10(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing10(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1,
          @Arg SubInterface arg2)
    {
-      throwing10 = "JoinPointInfo,Object,SuperInterface,SubInterface";
+      throwing10 = "JoinPointBean,Object,SuperInterface,SubInterface";
    }
 
-   public void throwing10(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing10(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg(index=1) Object arg2)
    {
-      throwing10 = "JoinPointInfo,Object,SuperInterface,Object";
+      throwing10 = "JoinPointBean,Object,SuperInterface,Object";
    }
    
-   public void throwing10(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing10(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg Interface arg2)
    {
-      throwing10 = "JoinPointInfo,Object,Interface,Interface";
+      throwing10 = "JoinPointBean,Object,Interface,Interface";
    }
    
-   public void throwing10(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing10(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SubInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing10 = "JoinPointInfo,Object,SubInterface,SuperInterface";
+      throwing10 = "JoinPointBean,Object,SubInterface,SuperInterface";
    }
    
-   public void throwing10(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing10(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing10 = "JoinPointInfo,Object,SuperInterface,Interface";
+      throwing10 = "JoinPointBean,Object,SuperInterface,Interface";
    }
    
-   public void throwing10(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing10(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing10 = "JoinPointInfo,Object,Interface,SuperInterface";
+      throwing10 = "JoinPointBean,Object,Interface,SuperInterface";
    }
    
-   public void throwing10(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing10(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing10 = "JoinPointInfo,Object,SuperInterface,SuperInterface";
+      throwing10 = "JoinPointBean,Object,SuperInterface,SuperInterface";
    }
    
-   public void throwing10(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing10(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1)
    {
-      throwing10 = "JoinPointInfo,Throwable,SubInterface";
+      throwing10 = "JoinPointBean,Throwable,SubInterface";
    }
 
-   public void throwing10(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing10(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Implementor arg2)
    {
-      throwing10 = "JoinPointInfo,Throwable,Implementor";
+      throwing10 = "JoinPointBean,Throwable,Implementor";
    }
    
-   public void throwing10(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing10(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Interface arg1)
    {
-      throwing10 = "JoinPointInfo,Throwable,Interface";
+      throwing10 = "JoinPointBean,Throwable,Interface";
    }
 
-   public void throwing10(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing10(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
-      throwing10 = "JoinPointInfo,Throwable,Object";
+      throwing10 = "JoinPointBean,Throwable,Object";
    }
-   public void throwing10(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing10(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing10 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing10 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing10(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing10(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing10 = "JoinPointInfo,Throwable,Object[]";
+      throwing10 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing10(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing10(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing10 = "JoinPointInfo,Object,Object[]";
+      throwing10 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing10(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -3307,71 +3307,71 @@ public class OverloadedThrowingAspect
       throwing10 = "Object";
    }
    
-   public void throwing10(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing10(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING11 ADVICE */
    
-   public void throwing11(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing11(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, @Arg Interface arg2)
    {
-      throwing11 = "JoinPointInfo,Object,SuperInterface,Interface";
+      throwing11 = "JoinPointBean,Object,SuperInterface,Interface";
    }
    
-   public void throwing11(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing11(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg Interface arg1, @Arg SuperInterface arg2)
    {
-      throwing11 = "JoinPointInfo,Object,Interface,SuperInterface";
+      throwing11 = "JoinPointBean,Object,Interface,SuperInterface";
    }
    
-   public void throwing11(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing11(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing11 = "JoinPointInfo,Object,SuperInterface,SuperInterface";
+      throwing11 = "JoinPointBean,Object,SuperInterface,SuperInterface";
    }
    
-   public void throwing11(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing11(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1)
    {
-      throwing11 = "JoinPointInfo,Throwable,SubInterface";
+      throwing11 = "JoinPointBean,Throwable,SubInterface";
    }
 
-   public void throwing11(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing11(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Implementor arg2)
    {
-      throwing11 = "JoinPointInfo,Throwable,Implementor";
+      throwing11 = "JoinPointBean,Throwable,Implementor";
    }
    
-   public void throwing11(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing11(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Interface arg1)
    {
-      throwing11 = "JoinPointInfo,Throwable,Interface";
+      throwing11 = "JoinPointBean,Throwable,Interface";
    }
 
-   public void throwing11(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing11(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
-      throwing11 = "JoinPointInfo,Throwable,Object";
+      throwing11 = "JoinPointBean,Throwable,Object";
    }
-   public void throwing11(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing11(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing11 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing11 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing11(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing11(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing11 = "JoinPointInfo,Throwable,Object[]";
+      throwing11 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing11(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing11(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing11 = "JoinPointInfo,Object,Object[]";
+      throwing11 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing11(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -3534,59 +3534,59 @@ public class OverloadedThrowingAspect
       throwing11 = "Object";
    }
    
-   public void throwing11(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing11(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING12 ADVICE */
    
-   public void throwing12(@JoinPoint JoinPointInfo joinpoint,
+   public void throwing12(@JoinPoint JoinPointBean joinpoint,
          @Thrown Object thrown, @Arg SuperInterface arg1, 
          @Arg SuperInterface arg2)
    {
-      throwing12 = "JoinPointInfo,Object,SuperInterface,SuperInterface";
+      throwing12 = "JoinPointBean,Object,SuperInterface,SuperInterface";
    }
    
-   public void throwing12(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing12(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1)
    {
-      throwing12 = "JoinPointInfo,Throwable,SubInterface";
+      throwing12 = "JoinPointBean,Throwable,SubInterface";
    }
 
-   public void throwing12(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing12(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Implementor arg2)
    {
-      throwing12 = "JoinPointInfo,Throwable,Implementor";
+      throwing12 = "JoinPointBean,Throwable,Implementor";
    }
    
-   public void throwing12(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing12(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Interface arg1)
    {
-      throwing12 = "JoinPointInfo,Throwable,Interface";
+      throwing12 = "JoinPointBean,Throwable,Interface";
    }
 
-   public void throwing12(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing12(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
-      throwing12 = "JoinPointInfo,Throwable,Object";
+      throwing12 = "JoinPointBean,Throwable,Object";
    }
-   public void throwing12(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing12(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing12 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing12 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing12(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing12(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing12 = "JoinPointInfo,Throwable,Object[]";
+      throwing12 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing12(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing12(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing12 = "JoinPointInfo,Object,Object[]";
+      throwing12 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing12(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -3749,52 +3749,52 @@ public class OverloadedThrowingAspect
       throwing12 = "Object";
    }
    
-   public void throwing12(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing12(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING13 ADVICE */
    
-   public void throwing13(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing13(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SubInterface arg1)
    {
-      throwing13 = "JoinPointInfo,Throwable,SubInterface";
+      throwing13 = "JoinPointBean,Throwable,SubInterface";
    }
 
-   public void throwing13(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing13(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Implementor arg2)
    {
-      throwing13 = "JoinPointInfo,Throwable,Implementor";
+      throwing13 = "JoinPointBean,Throwable,Implementor";
    }
    
-   public void throwing13(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing13(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Interface arg1)
    {
-      throwing13 = "JoinPointInfo,Throwable,Interface";
+      throwing13 = "JoinPointBean,Throwable,Interface";
    }
 
-   public void throwing13(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing13(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
-      throwing13 = "JoinPointInfo,Throwable,Object";
+      throwing13 = "JoinPointBean,Throwable,Object";
    }
-   public void throwing13(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing13(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing13 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing13 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing13(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing13(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing13 = "JoinPointInfo,Throwable,Object[]";
+      throwing13 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing13(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing13(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing13 = "JoinPointInfo,Object,Object[]";
+      throwing13 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing13(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -3957,40 +3957,40 @@ public class OverloadedThrowingAspect
       throwing13 = "Object";
    }
    
-   public void throwing13(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing13(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING14 ADVICE */
    
-   public void throwing14(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing14(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg Interface arg1)
    {
-      throwing14 = "JoinPointInfo,Throwable,Interface";
+      throwing14 = "JoinPointBean,Throwable,Interface";
    }
 
-   public void throwing14(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing14(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg(index=1) Object arg2)
    {
-      throwing14 = "JoinPointInfo,Throwable,Object";
+      throwing14 = "JoinPointBean,Throwable,Object";
    }
-   public void throwing14(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing14(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing14 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing14 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing14(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing14(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing14 = "JoinPointInfo,Throwable,Object[]";
+      throwing14 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing14(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing14(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing14 = "JoinPointInfo,Object,Object[]";
+      throwing14 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing14(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -4153,29 +4153,29 @@ public class OverloadedThrowingAspect
       throwing14 = "Object";
    }
    
-   public void throwing14(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing14(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING15 ADVICE */
    
-   public void throwing15(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing15(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Arg SuperInterface arg1)
    {
-      throwing15 = "JoinPointInfo,Throwable,SuperInterface";
+      throwing15 = "JoinPointBean,Throwable,SuperInterface";
    }
    
-   public void throwing15(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing15(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing15 = "JoinPointInfo,Throwable,Object[]";
+      throwing15 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing15(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing15(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing15 = "JoinPointInfo,Object,Object[]";
+      throwing15 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing15(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -4338,23 +4338,23 @@ public class OverloadedThrowingAspect
       throwing15 = "Object";
    }
    
-   public void throwing15(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing15(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING16 ADVICE */
    
-   public void throwing16(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing16(@JoinPoint JoinPointBean joinPoint,
          @Thrown Throwable thrown, @Args Object[] args)
    {
-      throwing16 = "JoinPointInfo,Throwable,Object[]";
+      throwing16 = "JoinPointBean,Throwable,Object[]";
    }
    
-   public void throwing16(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing16(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing16 = "JoinPointInfo,Object,Object[]";
+      throwing16 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing16(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -4517,17 +4517,17 @@ public class OverloadedThrowingAspect
       throwing16 = "Object";
    }
    
-   public void throwing16(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing16(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
    
    /* THROWING17 ADVICE */
    
-   public void throwing17(@JoinPoint JoinPointInfo joinPoint,
+   public void throwing17(@JoinPoint JoinPointBean joinPoint,
          @Thrown Object thrown, @Args Object[] args)
    {
-      throwing17 = "JoinPointInfo,Object,Object[]";
+      throwing17 = "JoinPointBean,Object,Object[]";
    }
    
    public void throwing17(@Thrown Throwable thrown, @Arg SubInterface arg1,
@@ -4690,7 +4690,7 @@ public class OverloadedThrowingAspect
       throwing17 = "Object";
    }
    
-   public void throwing17(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing17(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -4857,7 +4857,7 @@ public class OverloadedThrowingAspect
       throwing18 = "Object";
    }
    
-   public void throwing18(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing18(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5018,7 +5018,7 @@ public class OverloadedThrowingAspect
       throwing19 = "Object";
    }
    
-   public void throwing19(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing19(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5161,7 +5161,7 @@ public class OverloadedThrowingAspect
       throwing20 = "Object";
    }
    
-   public void throwing20(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing20(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5286,7 +5286,7 @@ public class OverloadedThrowingAspect
       throwing21 = "Object";
    }
    
-   public void throwing21(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing21(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5387,7 +5387,7 @@ public class OverloadedThrowingAspect
       throwing22 = "Object";
    }
    
-   public void throwing22(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing22(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5476,7 +5476,7 @@ public class OverloadedThrowingAspect
       throwing23 = "Object";
    }
    
-   public void throwing23(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing23(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5559,7 +5559,7 @@ public class OverloadedThrowingAspect
       throwing24 = "Object";
    }
    
-   public void throwing24(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing24(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5636,7 +5636,7 @@ public class OverloadedThrowingAspect
       throwing25 = "Object";
    }
    
-   public void throwing25(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing25(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5703,7 +5703,7 @@ public class OverloadedThrowingAspect
       throwing26 = "Object";
    }
    
-   public void throwing26(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing26(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5760,7 +5760,7 @@ public class OverloadedThrowingAspect
       throwing27 = "Object";
    }
    
-   public void throwing27(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing27(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5812,7 +5812,7 @@ public class OverloadedThrowingAspect
       throwing28 = "Object";
    }
    
-   public void throwing28(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing28(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5854,7 +5854,7 @@ public class OverloadedThrowingAspect
       throwing29 = "Object";
    }
    
-   public void throwing29(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing29(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5886,7 +5886,7 @@ public class OverloadedThrowingAspect
       throwing30 = "Object";
    }
    
-   public void throwing30(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing30(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5913,7 +5913,7 @@ public class OverloadedThrowingAspect
       throwing31 = "Object";
    }
    
-   public void throwing31(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing31(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5935,7 +5935,7 @@ public class OverloadedThrowingAspect
       throwing32 = "Object";
    }
    
-   public void throwing32(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing32(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5952,7 +5952,7 @@ public class OverloadedThrowingAspect
       throwing33 = "Object";
    }
    
-   public void throwing33(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing33(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -5964,7 +5964,7 @@ public class OverloadedThrowingAspect
       throwing34 = "Object";
    }
    
-   public void throwing34(@JoinPoint JoinPointInfo joinpoint)
+   public void throwing34(@JoinPoint JoinPointBean joinpoint)
    {
       Assert.fail("This advice should never be executed");
    }

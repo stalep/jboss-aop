@@ -21,39 +21,24 @@
  */
 package org.jboss.aop.joinpoint;
 
-import org.jboss.aop.Advisor;
+import java.lang.reflect.Method;
 
 /**
- * Represents a call made on a joinpoint
+ * Represents a method call with an <i>execution</i>
+ * pointcut
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public interface IJoinPointInfo
+public interface MethodExecution extends JoinPointBean
 {
    /**
-    * Gets the advisor
+    * Gets the method being called
     */
-   Advisor getAdvisor();
+   Method getAdvisedMethod();
 
    /**
-    * Gets the advisor's class
+    * Gets the hash of the method being called
     */
-   Class getClazz();
-
-   /**
-    * Resolves metadata on the class
-    */
-   Object resolveClassMetaData(Object key, Object attr);
-
-   /**
-    * Resolves annotations for the class
-    */
-   Object resolveClassAnnotation(Class annotation);
-
-   /**
-    * Resolves annotations on the particular joinpoint (field, constructor, method etc.)
-    */
-   Object resolveAnnotation(Class annotation);
-
+   long getHash();
 }

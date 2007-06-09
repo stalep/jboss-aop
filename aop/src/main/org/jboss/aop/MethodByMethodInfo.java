@@ -24,7 +24,7 @@ package org.jboss.aop;
 import java.lang.reflect.Method;
 
 import org.jboss.aop.advice.Interceptor;
-import org.jboss.aop.joinpoint.IMethodByMethodInfo;
+import org.jboss.aop.joinpoint.MethodCallByMethod;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodCalledByMethodJoinpoint;
 import org.jboss.aop.util.MethodHashing;
@@ -34,7 +34,7 @@ import org.jboss.aop.util.MethodHashing;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
-public class MethodByMethodInfo extends CallerMethodInfo implements IMethodByMethodInfo
+public class MethodByMethodInfo extends CallerMethodInfo implements MethodCallByMethod
 {
    private final long callingMethodHash;
    private final Method callingMethod;

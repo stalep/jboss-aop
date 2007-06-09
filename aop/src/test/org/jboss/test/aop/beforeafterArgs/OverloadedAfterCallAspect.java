@@ -21,13 +21,13 @@
  */
 package org.jboss.test.aop.beforeafterArgs;
 
-import org.jboss.aop.MethodByMethodInfo;
 import org.jboss.aop.advice.annotation.Arg;
 import org.jboss.aop.advice.annotation.Args;
 import org.jboss.aop.advice.annotation.Caller;
 import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Return;
 import org.jboss.aop.advice.annotation.Target;
+import org.jboss.aop.joinpoint.MethodCallByMethod;
 
 /**
  * Aspect used on overloaded after advice tests (for Call and Target tests
@@ -144,158 +144,158 @@ public class OverloadedAfterCallAspect
 
    /* AFTER1 ADVICE */
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Arg int arg)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,int";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,int";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Args Object[] args)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,Object[]";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,Object[]";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned,
          @Arg int arg)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJO,long,int";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJO,long,int";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned,
          @Args Object[] args)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJO,long,Object[]";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJO,long,Object[]";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJO,long";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJO,long";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJO";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJO";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Arg int arg)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,int";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,int";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Args Object[] args)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,Object[]";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after1 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after1 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after1 = "MethodByMethodInfo,long,int";
+      after1 = "MethodCallByMethod,long,int";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after1 = "MethodByMethodInfo,long,Object[]";
+      after1 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after1 = "MethodByMethodInfo,long";
+      after1 = "MethodCallByMethod,long";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after1(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after1 = "MethodByMethodInfo,int";
+      after1 = "MethodCallByMethod,int";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after1(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after1 = "MethodByMethodInfo,Object[]";
+      after1 = "MethodCallByMethod,Object[]";
    }
    
-   public void after1(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after1(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after1 = "MethodByMethodInfo";
+      after1 = "MethodCallByMethod";
    }
    
    public void after1(@Target OverloadedAdvicePOJO target,
@@ -496,150 +496,150 @@ public class OverloadedAfterCallAspect
    
    /* AFTER2 ADVICE */
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Args Object[] args)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,Object[]";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long,Object[]";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned,
          @Arg int arg)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJO,long,int";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJO,long,int";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned,
          @Args Object[] args)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJO,long,Object[]";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJO,long,Object[]";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJO,long";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJO,long";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJO";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJO";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Arg int arg)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,int";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,int";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Args Object[] args)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,Object[]";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after2 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after2 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after2 = "MethodByMethodInfo,long,int";
+      after2 = "MethodCallByMethod,long,int";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after2 = "MethodByMethodInfo,long,Object[]";
+      after2 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after2 = "MethodByMethodInfo,long";
+      after2 = "MethodCallByMethod,long";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after2(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after2 = "MethodByMethodInfo,int";
+      after2 = "MethodCallByMethod,int";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after2(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after2 = "MethodByMethodInfo,Object[]";
+      after2 = "MethodCallByMethod,Object[]";
    }
    
-   public void after2(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after2(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after2 = "MethodByMethodInfo";
+      after2 = "MethodCallByMethod";
    }
    
    public void after2(@Target OverloadedAdvicePOJO target,
@@ -840,142 +840,142 @@ public class OverloadedAfterCallAspect
    
    /* AFTER3 ADVICE */
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned,
          @Arg int arg)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJO,long,int";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJO,long,int";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned,
          @Args Object[] args)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJO,long,Object[]";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJO,long,Object[]";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJO,long";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJO,long";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJO";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJO";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Arg int arg)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,int";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,int";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Args Object[] args)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,Object[]";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after3 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after3 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after3 = "MethodByMethodInfo,long,int";
+      after3 = "MethodCallByMethod,long,int";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after3 = "MethodByMethodInfo,long,Object[]";
+      after3 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after3 = "MethodByMethodInfo,long";
+      after3 = "MethodCallByMethod,long";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after3(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after3 = "MethodByMethodInfo,int";
+      after3 = "MethodCallByMethod,int";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after3(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after3 = "MethodByMethodInfo,Object[]";
+      after3 = "MethodCallByMethod,Object[]";
    }
    
-   public void after3(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after3(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after3 = "MethodByMethodInfo";
+      after3 = "MethodCallByMethod";
    }
    
    public void after3(@Target OverloadedAdvicePOJO target,
@@ -1176,135 +1176,135 @@ public class OverloadedAfterCallAspect
    
    /* AFTER4 ADVICE */
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned,
          @Arg int arg)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJO,long,int";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJO,long,int";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned,
          @Args Object[] args)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJO,long,Object[]";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJO,long,Object[]";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJO,long";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJO,long";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJO";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJO";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Arg int arg)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,int";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,int";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Args Object[] args)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,Object[]";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after4 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after4 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after4 = "MethodByMethodInfo,long,int";
+      after4 = "MethodCallByMethod,long,int";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after4 = "MethodByMethodInfo,long,Object[]";
+      after4 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after4 = "MethodByMethodInfo,long";
+      after4 = "MethodCallByMethod,long";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after4(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after4 = "MethodByMethodInfo,int";
+      after4 = "MethodCallByMethod,int";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after4(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after4 = "MethodByMethodInfo,Object[]";
+      after4 = "MethodCallByMethod,Object[]";
    }
    
-   public void after4(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after4(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after4 = "MethodByMethodInfo";
+      after4 = "MethodCallByMethod";
    }
    
    public void after4(@Target OverloadedAdvicePOJO target,
@@ -1505,121 +1505,121 @@ public class OverloadedAfterCallAspect
    
    /* AFTER5 ADVICE */
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after5 = "MethodByMethodInfo,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
+      after5 = "MethodCallByMethod,OverloadedAdvicePOJO,OverloadedAdvicePOJOCaller";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned,
          @Arg int arg)
    {
-      after5 = "MethodByMethodInfo,OverloadedAdvicePOJO,long,int";
+      after5 = "MethodCallByMethod,OverloadedAdvicePOJO,long,int";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned,
          @Args Object[] args)
    {
-      after5 = "MethodByMethodInfo,OverloadedAdvicePOJO,long,Object[]";
+      after5 = "MethodCallByMethod,OverloadedAdvicePOJO,long,Object[]";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned)
    {
-      after5 = "MethodByMethodInfo,OverloadedAdvicePOJO,long";
+      after5 = "MethodCallByMethod,OverloadedAdvicePOJO,long";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      after5 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      after5 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      after5 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      after5 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target)
    {
-      after5 = "MethodByMethodInfo,OverloadedAdvicePOJO";
+      after5 = "MethodCallByMethod,OverloadedAdvicePOJO";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Arg int arg)
    {
-      after5 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,int";
+      after5 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,int";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Args Object[] args)
    {
-      after5 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]";
+      after5 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,Object[]";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after5 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long";
+      after5 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after5 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      after5 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after5 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      after5 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after5 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after5 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after5 = "MethodByMethodInfo,long,int";
+      after5 = "MethodCallByMethod,long,int";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after5 = "MethodByMethodInfo,long,Object[]";
+      after5 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after5 = "MethodByMethodInfo,long";
+      after5 = "MethodCallByMethod,long";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after5(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after5 = "MethodByMethodInfo,int";
+      after5 = "MethodCallByMethod,int";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after5(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after5 = "MethodByMethodInfo,Object[]";
+      after5 = "MethodCallByMethod,Object[]";
    }
    
-   public void after5(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after5(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after5 = "MethodByMethodInfo";
+      after5 = "MethodCallByMethod";
    }
    
    public void after5(@Target OverloadedAdvicePOJO target,
@@ -1820,114 +1820,114 @@ public class OverloadedAfterCallAspect
    
    /* AFTER6 ADVICE */
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned,
          @Arg int arg)
    {
-      after6 = "MethodByMethodInfo,OverloadedAdvicePOJO,long,int";
+      after6 = "MethodCallByMethod,OverloadedAdvicePOJO,long,int";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned,
          @Args Object[] args)
    {
-      after6 = "MethodByMethodInfo,OverloadedAdvicePOJO,long,Object[]";
+      after6 = "MethodCallByMethod,OverloadedAdvicePOJO,long,Object[]";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned)
    {
-      after6 = "MethodByMethodInfo,OverloadedAdvicePOJO,long";
+      after6 = "MethodCallByMethod,OverloadedAdvicePOJO,long";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      after6 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      after6 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      after6 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      after6 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target)
    {
-      after6 = "MethodByMethodInfo,OverloadedAdvicePOJO";
+      after6 = "MethodCallByMethod,OverloadedAdvicePOJO";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Arg int arg)
    {
-      after6 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,int";
+      after6 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,int";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Args Object[] args)
    {
-      after6 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]";
+      after6 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,Object[]";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after6 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long";
+      after6 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after6 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      after6 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after6 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      after6 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after6 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after6 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after6 = "MethodByMethodInfo,long,int";
+      after6 = "MethodCallByMethod,long,int";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after6 = "MethodByMethodInfo,long,Object[]";
+      after6 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after6 = "MethodByMethodInfo,long";
+      after6 = "MethodCallByMethod,long";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after6(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after6 = "MethodByMethodInfo,int";
+      after6 = "MethodCallByMethod,int";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after6(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after6 = "MethodByMethodInfo,Object[]";
+      after6 = "MethodCallByMethod,Object[]";
    }
    
-   public void after6(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after6(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after6 = "MethodByMethodInfo";
+      after6 = "MethodCallByMethod";
    }
    
    public void after6(@Target OverloadedAdvicePOJO target,
@@ -2128,107 +2128,107 @@ public class OverloadedAfterCallAspect
    
    /* AFTER7 ADVICE */
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned,
          @Args Object[] args)
    {
-      after7 = "MethodByMethodInfo,OverloadedAdvicePOJO,long,Object[]";
+      after7 = "MethodCallByMethod,OverloadedAdvicePOJO,long,Object[]";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned)
    {
-      after7 = "MethodByMethodInfo,OverloadedAdvicePOJO,long";
+      after7 = "MethodCallByMethod,OverloadedAdvicePOJO,long";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      after7 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      after7 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      after7 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      after7 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target)
    {
-      after7 = "MethodByMethodInfo,OverloadedAdvicePOJO";
+      after7 = "MethodCallByMethod,OverloadedAdvicePOJO";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Arg int arg)
    {
-      after7 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,int";
+      after7 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,int";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Args Object[] args)
    {
-      after7 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]";
+      after7 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,Object[]";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after7 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long";
+      after7 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after7 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      after7 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after7 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      after7 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after7 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after7 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after7 = "MethodByMethodInfo,long,int";
+      after7 = "MethodCallByMethod,long,int";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after7 = "MethodByMethodInfo,long,Object[]";
+      after7 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after7 = "MethodByMethodInfo,long";
+      after7 = "MethodCallByMethod,long";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after7(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after7 = "MethodByMethodInfo,int";
+      after7 = "MethodCallByMethod,int";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after7(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after7 = "MethodByMethodInfo,Object[]";
+      after7 = "MethodCallByMethod,Object[]";
    }
    
-   public void after7(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after7(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after7 = "MethodByMethodInfo";
+      after7 = "MethodCallByMethod";
    }
    
    public void after7(@Target OverloadedAdvicePOJO target,
@@ -2429,100 +2429,100 @@ public class OverloadedAfterCallAspect
    
    /* AFTER8 ADVICE */
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after8(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Return long valueReturned)
    {
-      after8 = "MethodByMethodInfo,OverloadedAdvicePOJO,long";
+      after8 = "MethodCallByMethod,OverloadedAdvicePOJO,long";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after8(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      after8 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      after8 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after8(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      after8 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      after8 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after8(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target)
    {
-      after8 = "MethodByMethodInfo,OverloadedAdvicePOJO";
+      after8 = "MethodCallByMethod,OverloadedAdvicePOJO";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after8(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Arg int arg)
    {
-      after8 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,int";
+      after8 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,int";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after8(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Args Object[] args)
    {
-      after8 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]";
+      after8 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,Object[]";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after8(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after8 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long";
+      after8 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after8(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after8 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      after8 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after8(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after8 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      after8 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after8(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after8 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after8 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after8(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after8 = "MethodByMethodInfo,long,int";
+      after8 = "MethodCallByMethod,long,int";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after8(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after8 = "MethodByMethodInfo,long,Object[]";
+      after8 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after8(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after8 = "MethodByMethodInfo,long";
+      after8 = "MethodCallByMethod,long";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after8(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after8 = "MethodByMethodInfo,int";
+      after8 = "MethodCallByMethod,int";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after8(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after8 = "MethodByMethodInfo,Object[]";
+      after8 = "MethodCallByMethod,Object[]";
    }
    
-   public void after8(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after8(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after8 = "MethodByMethodInfo";
+      after8 = "MethodCallByMethod";
    }
    
    public void after8(@Target OverloadedAdvicePOJO target,
@@ -2723,94 +2723,94 @@ public class OverloadedAfterCallAspect
    
    /* AFTER9 ADVICE */
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after9(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Arg int arg)
    {
-      after9 = "MethodByMethodInfo,OverloadedAdvicePOJO,int";
+      after9 = "MethodCallByMethod,OverloadedAdvicePOJO,int";
    }
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after9(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target, @Args Object[] args)
    {
-      after9 = "MethodByMethodInfo,OverloadedAdvicePOJO,Object[]";
+      after9 = "MethodCallByMethod,OverloadedAdvicePOJO,Object[]";
    }
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after9(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target)
    {
-      after9 = "MethodByMethodInfo,OverloadedAdvicePOJO";
+      after9 = "MethodCallByMethod,OverloadedAdvicePOJO";
    }
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after9(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Arg int arg)
    {
-      after9 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,int";
+      after9 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,int";
    }
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after9(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Args Object[] args)
    {
-      after9 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]";
+      after9 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,Object[]";
    }
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after9(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after9 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long";
+      after9 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after9(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after9 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      after9 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after9(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after9 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      after9 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after9(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after9 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after9 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after9(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after9 = "MethodByMethodInfo,long,int";
+      after9 = "MethodCallByMethod,long,int";
    }
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after9(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after9 = "MethodByMethodInfo,long,Object[]";
+      after9 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after9(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after9 = "MethodByMethodInfo,long";
+      after9 = "MethodCallByMethod,long";
    }
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after9(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after9 = "MethodByMethodInfo,int";
+      after9 = "MethodCallByMethod,int";
    }
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after9(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after9 = "MethodByMethodInfo,Object[]";
+      after9 = "MethodCallByMethod,Object[]";
    }
    
-   public void after9(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after9(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after9 = "MethodByMethodInfo";
+      after9 = "MethodCallByMethod";
    }
    
    public void after9(@Target OverloadedAdvicePOJO target,
@@ -3011,82 +3011,82 @@ public class OverloadedAfterCallAspect
    
    /* AFTER10 ADVICE */
    
-   public void after10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after10(@JoinPoint MethodCallByMethod joinPoint,
          @Target OverloadedAdvicePOJO target)
    {
-      after10 = "MethodByMethodInfo,OverloadedAdvicePOJO";
+      after10 = "MethodCallByMethod,OverloadedAdvicePOJO";
    }
    
-   public void after10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after10(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Arg int arg)
    {
-      after10 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,int";
+      after10 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,int";
    }
    
-   public void after10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after10(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Args Object[] args)
    {
-      after10 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]";
+      after10 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,Object[]";
    }
    
-   public void after10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after10(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after10 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long";
+      after10 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after10(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after10 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      after10 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after10(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after10 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      after10 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after10(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after10 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after10 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after10(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after10 = "MethodByMethodInfo,long,int";
+      after10 = "MethodCallByMethod,long,int";
    }
    
-   public void after10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after10(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after10 = "MethodByMethodInfo,long,Object[]";
+      after10 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after10(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after10 = "MethodByMethodInfo,long";
+      after10 = "MethodCallByMethod,long";
    }
    
-   public void after10(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after10(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after10 = "MethodByMethodInfo,int";
+      after10 = "MethodCallByMethod,int";
    }
    
-   public void after10(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after10(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after10 = "MethodByMethodInfo,Object[]";
+      after10 = "MethodCallByMethod,Object[]";
    }
    
-   public void after10(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after10(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after10 = "MethodByMethodInfo";
+      after10 = "MethodCallByMethod";
    }
    
    public void after10(@Target OverloadedAdvicePOJO target,
@@ -3287,76 +3287,76 @@ public class OverloadedAfterCallAspect
    
    /* AFTER11 ADVICE */
    
-   public void after11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after11(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Arg int arg)
    {
-      after11 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,int";
+      after11 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,int";
    }
    
-   public void after11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after11(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Args Object[] args)
    {
-      after11 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]";
+      after11 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,Object[]";
    }
    
-   public void after11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after11(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after11 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long";
+      after11 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after11(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after11 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      after11 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after11(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after11 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      after11 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after11(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after11 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after11 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after11(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after11 = "MethodByMethodInfo,long,int";
+      after11 = "MethodCallByMethod,long,int";
    }
    
-   public void after11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after11(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after11 = "MethodByMethodInfo,long,Object[]";
+      after11 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after11(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after11 = "MethodByMethodInfo,long";
+      after11 = "MethodCallByMethod,long";
    }
    
-   public void after11(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after11(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after11 = "MethodByMethodInfo,int";
+      after11 = "MethodCallByMethod,int";
    }
    
-   public void after11(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after11(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after11 = "MethodByMethodInfo,Object[]";
+      after11 = "MethodCallByMethod,Object[]";
    }
    
-   public void after11(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after11(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after11 = "MethodByMethodInfo";
+      after11 = "MethodCallByMethod";
    }
    
    public void after11(@Target OverloadedAdvicePOJO target,
@@ -3557,69 +3557,69 @@ public class OverloadedAfterCallAspect
    
    /* AFTER12 ADVICE */
    
-   public void after12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after12(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned,
          @Args Object[] args)
    {
-      after12 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long,Object[]";
+      after12 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long,Object[]";
    }
    
-   public void after12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after12(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after12 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long";
+      after12 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after12(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after12 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      after12 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after12(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after12 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      after12 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after12(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after12 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after12 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after12(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after12 = "MethodByMethodInfo,long,int";
+      after12 = "MethodCallByMethod,long,int";
    }
    
-   public void after12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after12(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after12 = "MethodByMethodInfo,long,Object[]";
+      after12 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after12(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after12 = "MethodByMethodInfo,long";
+      after12 = "MethodCallByMethod,long";
    }
    
-   public void after12(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after12(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after12 = "MethodByMethodInfo,int";
+      after12 = "MethodCallByMethod,int";
    }
    
-   public void after12(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after12(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after12 = "MethodByMethodInfo,Object[]";
+      after12 = "MethodCallByMethod,Object[]";
    }
    
-   public void after12(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after12(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after12 = "MethodByMethodInfo";
+      after12 = "MethodCallByMethod";
    }
    
    public void after12(@Target OverloadedAdvicePOJO target,
@@ -3820,62 +3820,62 @@ public class OverloadedAfterCallAspect
    
    /* AFTER13 ADVICE */
    
-   public void after13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after13(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Return long valueReturned)
    {
-      after13 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,long";
+      after13 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,long";
    }
    
-   public void after13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after13(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after13 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      after13 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after13(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after13 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      after13 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after13(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after13 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after13 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after13(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after13 = "MethodByMethodInfo,long,int";
+      after13 = "MethodCallByMethod,long,int";
    }
    
-   public void after13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after13(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after13 = "MethodByMethodInfo,long,Object[]";
+      after13 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after13(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after13 = "MethodByMethodInfo,long";
+      after13 = "MethodCallByMethod,long";
    }
    
-   public void after13(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after13(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after13 = "MethodByMethodInfo,int";
+      after13 = "MethodCallByMethod,int";
    }
    
-   public void after13(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after13(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after13 = "MethodByMethodInfo,Object[]";
+      after13 = "MethodCallByMethod,Object[]";
    }
    
-   public void after13(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after13(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after13 = "MethodByMethodInfo";
+      after13 = "MethodCallByMethod";
    }
    
    public void after13(@Target OverloadedAdvicePOJO target,
@@ -4076,56 +4076,56 @@ public class OverloadedAfterCallAspect
    
    /* AFTER14 ADVICE */
    
-   public void after14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after14(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
    {
-      after14 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,int";
+      after14 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,int";
    }
    
-   public void after14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after14(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller, @Args Object[] args)
    {
-      after14 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller,Object[]";
+      after14 = "MethodCallByMethod,OverloadedAdvicePOJOCaller,Object[]";
    }
    
-   public void after14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after14(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after14 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after14 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after14(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after14 = "MethodByMethodInfo,long,int";
+      after14 = "MethodCallByMethod,long,int";
    }
    
-   public void after14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after14(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after14 = "MethodByMethodInfo,long,Object[]";
+      after14 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after14(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after14 = "MethodByMethodInfo,long";
+      after14 = "MethodCallByMethod,long";
    }
    
-   public void after14(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after14(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after14 = "MethodByMethodInfo,int";
+      after14 = "MethodCallByMethod,int";
    }
    
-   public void after14(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after14(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after14 = "MethodByMethodInfo,Object[]";
+      after14 = "MethodCallByMethod,Object[]";
    }
    
-   public void after14(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after14(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after14 = "MethodByMethodInfo";
+      after14 = "MethodCallByMethod";
    }
    
    public void after14(@Target OverloadedAdvicePOJO target,
@@ -4326,44 +4326,44 @@ public class OverloadedAfterCallAspect
    
    /* AFTER15 ADVICE */
    
-   public void after15(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after15(@JoinPoint MethodCallByMethod joinPoint,
          @Caller OverloadedAdvicePOJOCaller caller)
    {
-      after15 = "MethodByMethodInfo,OverloadedAdvicePOJOCaller";
+      after15 = "MethodCallByMethod,OverloadedAdvicePOJOCaller";
    }
    
-   public void after15(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after15(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after15 = "MethodByMethodInfo,long,int";
+      after15 = "MethodCallByMethod,long,int";
    }
    
-   public void after15(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after15(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after15 = "MethodByMethodInfo,long,Object[]";
+      after15 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after15(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after15(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after15 = "MethodByMethodInfo,long";
+      after15 = "MethodCallByMethod,long";
    }
    
-   public void after15(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after15(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after15 = "MethodByMethodInfo,int";
+      after15 = "MethodCallByMethod,int";
    }
    
-   public void after15(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after15(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after15 = "MethodByMethodInfo,Object[]";
+      after15 = "MethodCallByMethod,Object[]";
    }
    
-   public void after15(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after15(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after15 = "MethodByMethodInfo";
+      after15 = "MethodCallByMethod";
    }
    
    public void after15(@Target OverloadedAdvicePOJO target,
@@ -4564,38 +4564,38 @@ public class OverloadedAfterCallAspect
    
    /* AFTER16 ADVICE */
    
-   public void after16(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after16(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Arg int arg)
    {
-      after16 = "MethodByMethodInfo,long,int";
+      after16 = "MethodCallByMethod,long,int";
    }
    
-   public void after16(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after16(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after16 = "MethodByMethodInfo,long,Object[]";
+      after16 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after16(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after16(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after16 = "MethodByMethodInfo,long";
+      after16 = "MethodCallByMethod,long";
    }
    
-   public void after16(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after16(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after16 = "MethodByMethodInfo,int";
+      after16 = "MethodCallByMethod,int";
    }
    
-   public void after16(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after16(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after16 = "MethodByMethodInfo,Object[]";
+      after16 = "MethodCallByMethod,Object[]";
    }
    
-   public void after16(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after16(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after16 = "MethodByMethodInfo";
+      after16 = "MethodCallByMethod";
    }
    
    public void after16(@Target OverloadedAdvicePOJO target,
@@ -4796,32 +4796,32 @@ public class OverloadedAfterCallAspect
    
    /* AFTER17 ADVICE */
    
-   public void after17(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after17(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned, @Args Object[] args)
    {
-      after17 = "MethodByMethodInfo,long,Object[]";
+      after17 = "MethodCallByMethod,long,Object[]";
    }
    
-   public void after17(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after17(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after17 = "MethodByMethodInfo,long";
+      after17 = "MethodCallByMethod,long";
    }
    
-   public void after17(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after17(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after17 = "MethodByMethodInfo,int";
+      after17 = "MethodCallByMethod,int";
    }
    
-   public void after17(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after17(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after17 = "MethodByMethodInfo,Object[]";
+      after17 = "MethodCallByMethod,Object[]";
    }
    
-   public void after17(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after17(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after17 = "MethodByMethodInfo";
+      after17 = "MethodCallByMethod";
    }
    
    public void after17(@Target OverloadedAdvicePOJO target,
@@ -5022,26 +5022,26 @@ public class OverloadedAfterCallAspect
    
    /* AFTER18 ADVICE */
    
-   public void after18(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after18(@JoinPoint MethodCallByMethod joinPoint,
          @Return long valueReturned)
    {
-      after18 = "MethodByMethodInfo,long";
+      after18 = "MethodCallByMethod,long";
    }
    
-   public void after18(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after18(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after18 = "MethodByMethodInfo,int";
+      after18 = "MethodCallByMethod,int";
    }
    
-   public void after18(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after18(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after18 = "MethodByMethodInfo,Object[]";
+      after18 = "MethodCallByMethod,Object[]";
    }
    
-   public void after18(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after18(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after18 = "MethodByMethodInfo";
+      after18 = "MethodCallByMethod";
    }
    
    public void after18(@Target OverloadedAdvicePOJO target,
@@ -5242,20 +5242,20 @@ public class OverloadedAfterCallAspect
    
    /* AFTER19 ADVICE */
    
-   public void after19(@JoinPoint MethodByMethodInfo joinPointInfo, @Arg int arg)
+   public void after19(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
    {
-      after19 = "MethodByMethodInfo,int";
+      after19 = "MethodCallByMethod,int";
    }
    
-   public void after19(@JoinPoint MethodByMethodInfo joinPointInfo,
+   public void after19(@JoinPoint MethodCallByMethod joinPoint,
          @Args Object[] args)
    {
-      after19 = "MethodByMethodInfo,Object[]";
+      after19 = "MethodCallByMethod,Object[]";
    }
    
-   public void after19(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after19(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after19 = "MethodByMethodInfo";
+      after19 = "MethodCallByMethod";
    }
    
    public void after19(@Target OverloadedAdvicePOJO target,
@@ -5456,9 +5456,9 @@ public class OverloadedAfterCallAspect
    
    /* AFTER20 ADVICE */
    
-   public void after20(@JoinPoint MethodByMethodInfo joinPointInfo)
+   public void after20(@JoinPoint MethodCallByMethod joinPoint)
    {
-      after20 = "MethodByMethodInfo";
+      after20 = "MethodCallByMethod";
    }
    
    public void after20(@Target OverloadedAdvicePOJO target,

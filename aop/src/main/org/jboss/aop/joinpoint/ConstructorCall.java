@@ -24,16 +24,26 @@ package org.jboss.aop.joinpoint;
 import java.lang.reflect.Constructor;
 
 /**
- * Represents a call to a constructor made by a constructor
+ * Represents calls made to a constructor by either a method or a constructor
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public interface IConByConInfo extends ICallerConstructorInfo
+public interface ConstructorCall extends JoinPointBean
 {
    /**
-    * Gets the calling constructor
+    * Gets the constructor being called
     */
-   Constructor getCalling();
+   Constructor getConstructor();
+
+   /**
+    * Gets the class making the call
+    */
+   Class getCallingClass();
+
+   /**
+    * Gets the class being called
+    */
+   Class getCalledClass();
 
 }
