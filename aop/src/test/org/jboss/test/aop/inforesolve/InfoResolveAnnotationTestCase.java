@@ -21,9 +21,10 @@
 */ 
 package org.jboss.test.aop.inforesolve;
 
-import org.jboss.aop.ConstructorInfo;
-import org.jboss.aop.FieldInfo;
-import org.jboss.aop.MethodInfo;
+import org.jboss.aop.joinpoint.ConstructorExecution;
+import org.jboss.aop.joinpoint.FieldAccess;
+import org.jboss.aop.joinpoint.JoinPointBean;
+import org.jboss.aop.joinpoint.MethodExecution;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
@@ -43,37 +44,37 @@ public class InfoResolveAnnotationTestCase extends AOPTestWithSetup
       ResolveAnnotationAspect.clear();
       POJO pojo = new POJO();
       assertNotNull(pojo);
-      check(ConstructorInfo.class, "class", "ctor");
+      check(ConstructorExecution.class, "class", "ctor");
       
       ResolveAnnotationAspect.clear();
       pojo.field = 100;
-      check(FieldInfo.class, "class", "field");
+      check(FieldAccess.class, "class", "field");
       
       ResolveAnnotationAspect.clear();
       assertEquals(100, pojo.field);
-      check(FieldInfo.class, "class", "field");
+      check(FieldAccess.class, "class", "field");
       
       ResolveAnnotationAspect.clear();
       POJO.staticField = 101;
-      check(FieldInfo.class, "class", "staticField");
+      check(FieldAccess.class, "class", "staticField");
       
       ResolveAnnotationAspect.clear();
       assertEquals(101, POJO.staticField);
-      check(FieldInfo.class, "class", "staticField");
+      check(FieldAccess.class, "class", "staticField");
       
       ResolveAnnotationAspect.clear();
       assertEquals(201, pojo.method(200));
-      check(MethodInfo.class, "class", "method");
+      check(MethodExecution.class, "class", "method");
       
       ResolveAnnotationAspect.clear();
       assertEquals(302, pojo.staticMethod(300));
-      check(MethodInfo.class, "class", "staticMethod");
+      check(MethodExecution.class, "class", "staticMethod");
    }
    
-   private void check(Class expectedInfoClazz, String expectedClassString, String expectedJoinPointString)
+   private void check(Class<? extends JoinPointBean> expectedInfoClazz, String expectedClassString, String expectedJoinPointString)
    {
-      assertNotNull(ResolveAnnotationAspect.info);
-      assertEquals(expectedInfoClazz, ResolveAnnotationAspect.info.getClass());
+      assertNotNull(ResolveAnnotationAspect.joinPoint);
+      assertTrue(expectedInfoClazz.isAssignableFrom(ResolveAnnotationAspect.joinPoint.getClass()));
       assertNotNull(ResolveAnnotationAspect.classAnnotation);
       assertEquals(expectedClassString, ResolveAnnotationAspect.classAnnotation.value());
       assertNotNull(ResolveAnnotationAspect.joinpointAnnotation);

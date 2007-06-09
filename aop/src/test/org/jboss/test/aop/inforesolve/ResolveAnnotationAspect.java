@@ -21,8 +21,8 @@
 */ 
 package org.jboss.test.aop.inforesolve;
 
-import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.annotation.JoinPoint;
+import org.jboss.aop.joinpoint.JoinPointBean;
 
 /**
  * 
@@ -31,27 +31,27 @@ import org.jboss.aop.advice.annotation.JoinPoint;
  */
 public class ResolveAnnotationAspect
 {
-   public static JoinPointInfo info;
+   public static JoinPointBean joinPoint;
    public static TestAnnotation classAnnotation;
    public static TestAnnotation joinpointAnnotation;
    
    public static void clear()
    {
-      info = null;
+      joinPoint = null;
       classAnnotation = null;
       joinpointAnnotation = null;
    }
    
-   public void before(@JoinPoint JoinPointInfo info)
+   public void before(@JoinPoint JoinPointBean joinPoint)
    {
-      this.info = info;
-      if (info == null)
+      this.joinPoint = joinPoint;
+      if (joinPoint == null)
       {
          //This is an error but will be picked up by the test
          return;
       }
          
-      classAnnotation = (TestAnnotation)info.resolveClassAnnotation(TestAnnotation.class);
-      joinpointAnnotation = (TestAnnotation)info.resolveAnnotation(TestAnnotation.class);
+      classAnnotation = (TestAnnotation)joinPoint.resolveClassAnnotation(TestAnnotation.class);
+      joinpointAnnotation = (TestAnnotation)joinPoint.resolveAnnotation(TestAnnotation.class);
    }
 }
