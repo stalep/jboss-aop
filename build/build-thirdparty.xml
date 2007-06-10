@@ -21,7 +21,7 @@
       <isset property="env.JBOSS_REPOSITORY"/>
    </condition>
    <!-- Fall back to default -->
-   <property name="jbossbuild.repository" value="http://repository.jboss.org"/>
+   <property name="jbossbuild.repository" value="http://repository.jboss.com"/>
 
    <!-- File Imports -->
    <import file="../tools/etc/jbossbuild/tasks.xml"/>
