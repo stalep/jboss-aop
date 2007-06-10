@@ -21,6 +21,8 @@
  */
 package org.jboss.test.aop.beforeafterArgs;
 
+import java.lang.reflect.Method;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
@@ -35,6 +37,7 @@ import org.jboss.aop.joinpoint.JoinPointBean;
 import org.jboss.aop.joinpoint.MethodCallByConstructor;
 import org.jboss.aop.joinpoint.MethodCallByMethod;
 import org.jboss.aop.joinpoint.MethodExecution;
+import org.jboss.aop.util.MethodHashing;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
@@ -149,7 +152,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertTrue(fieldInfo.isRead());
    }
    
-   public void testMethodExecution1()
+   public void testMethodExecution1() throws Exception
    {
       pojo.method1();
       assertEquals("before3", JoinPointAspect.beforeAdvice);
@@ -162,11 +165,13 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNull(JoinPointAspect.finallyJoinPoint);
       
       assertTrue(JoinPointAspect.beforeJoinPoint instanceof MethodExecution);
-      assertEquals("method1", ((MethodExecution) JoinPointAspect.beforeJoinPoint).
-            getAdvisedMethod().getName());
+      MethodExecution joinPoint = (MethodExecution)JoinPointAspect.beforeJoinPoint;
+      assertEquals("method1", joinPoint.getAdvisedMethod().getName());
+      assertEquals(MethodHashing.methodHash(joinPoint.getAdvisedMethod()),
+            joinPoint.getHash());
    }
    
-   public void testMethodExecution2() throws POJOException
+   public void testMethodExecution2() throws Exception
    {
       pojo.method2(false);
       assertEquals("before4", JoinPointAspect.beforeAdvice);
@@ -180,11 +185,13 @@ public class JoinPointTestCase extends AOPTestWithSetup
       
       assertSame(JoinPointAspect.beforeJoinPoint, JoinPointAspect.afterJoinPoint);
       assertTrue(JoinPointAspect.beforeJoinPoint instanceof MethodExecution);
-      assertEquals("method2", ((MethodExecution) JoinPointAspect.beforeJoinPoint).
-            getAdvisedMethod().getName());
+      MethodExecution joinPoint = (MethodExecution) JoinPointAspect.beforeJoinPoint;
+      assertEquals("method2", joinPoint.getAdvisedMethod().getName());
+      assertEquals(MethodHashing.methodHash(joinPoint.getAdvisedMethod()),
+            joinPoint.getHash());
    }
    
-   public void testMethodExecutionException1()
+   public void testMethodExecutionException1() throws Exception
    {
       boolean exceptionThrown = false;
       try
@@ -209,11 +216,13 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertSame(JoinPointAspect.beforeJoinPoint,
             JoinPointAspect.throwingJoinPoint);
       assertTrue(JoinPointAspect.beforeJoinPoint instanceof MethodExecution);
-      assertEquals("method2", ((MethodExecution) JoinPointAspect.beforeJoinPoint).
-            getAdvisedMethod().getName());
+      MethodExecution joinPoint = (MethodExecution) JoinPointAspect.beforeJoinPoint;
+      assertEquals("method2", joinPoint.getAdvisedMethod().getName());
+      assertEquals(MethodHashing.methodHash(joinPoint.getAdvisedMethod()),
+            joinPoint.getHash());
    }
    
-   public void testMethodExecutionException2()
+   public void testMethodExecutionException2() throws Exception
    {
       boolean exceptionThrown = false;
       try
@@ -236,11 +245,13 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNull(JoinPointAspect.finallyJoinPoint);
       
       assertTrue(JoinPointAspect.beforeJoinPoint instanceof MethodExecution);
-      assertEquals("method3", ((MethodExecution) JoinPointAspect.beforeJoinPoint).
-            getAdvisedMethod().getName());
+      MethodExecution joinPoint = (MethodExecution) JoinPointAspect.beforeJoinPoint;
+      assertEquals("method3", joinPoint.getAdvisedMethod().getName());
+      assertEquals(MethodHashing.methodHash(joinPoint.getAdvisedMethod()),
+            joinPoint.getHash());
    }
    
-   public void testMethodExecutionException3()
+   public void testMethodExecutionException3() throws Exception
    {
       boolean exceptionThrown = false;
       try
@@ -265,8 +276,10 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertSame(JoinPointAspect.throwingJoinPoint,
             JoinPointAspect.finallyJoinPoint);
       assertTrue(JoinPointAspect.throwingJoinPoint instanceof MethodExecution);
-      assertEquals("method4", ((MethodExecution) JoinPointAspect.throwingJoinPoint).
-            getAdvisedMethod().getName());
+      MethodExecution joinPoint = (MethodExecution) JoinPointAspect.throwingJoinPoint;
+      assertEquals("method4", joinPoint.getAdvisedMethod().getName());
+      assertEquals(MethodHashing.methodHash(joinPoint.getAdvisedMethod()),
+            joinPoint.getHash());
    }
    
    public void testMethodExecutionException4()
@@ -292,7 +305,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNull(JoinPointAspect.finallyJoinPoint);
    }
    
-   public void testMethodExecutionException5()
+   public void testMethodExecutionException5() throws Exception
    {
       boolean exceptionThrown = false;
       try
@@ -315,8 +328,10 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNull(JoinPointAspect.finallyJoinPoint);
       
       assertTrue(JoinPointAspect.throwingJoinPoint instanceof MethodExecution);
-      assertEquals("method6", ((MethodExecution) JoinPointAspect.throwingJoinPoint).
-            getAdvisedMethod().getName());
+      MethodExecution joinPoint = (MethodExecution) JoinPointAspect.throwingJoinPoint;
+      assertEquals("method6", joinPoint.getAdvisedMethod().getName());
+      assertEquals(MethodHashing.methodHash(joinPoint.getAdvisedMethod()),
+            joinPoint.getHash());
 
    }
    
@@ -373,7 +388,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertSame(boolean.class, callerParameters[1]);
    }
    
-   public void testConstructorCallByMethod() throws POJOException
+   public void testConstructorCallByMethod() throws Exception
    {
       pojo.callConstructor(false);
       assertFullInterception(ConstructorCallByMethod.class, "before3", "after5",
@@ -392,9 +407,11 @@ public class JoinPointTestCase extends AOPTestWithSetup
       Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
       assertEquals(1, callerParameters.length);
       assertSame(boolean.class, callerParameters[0]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getCallingMethod()),
+            joinPoint.getCallingMethodHash());
    }
    
-   public void testConstructorCallByMethodException()
+   public void testConstructorCallByMethodException() throws Exception
    {
       boolean exceptionThrown = false;
       try
@@ -423,9 +440,11 @@ public class JoinPointTestCase extends AOPTestWithSetup
       Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
       assertEquals(1, callerParameters.length);
       assertSame(boolean.class, callerParameters[0]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getCallingMethod()),
+            joinPoint.getCallingMethodHash());
    }
    
-   public void testConstructorCallByStaticMethod() throws POJOException
+   public void testConstructorCallByStaticMethod() throws Exception
    {
       JoinPointPOJO.staticCallConstructor(false);
       
@@ -445,9 +464,11 @@ public class JoinPointTestCase extends AOPTestWithSetup
       Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
       assertEquals(1, callerParameters.length);
       assertSame(boolean.class, callerParameters[0]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getCallingMethod()),
+            joinPoint.getCallingMethodHash());
    }
    
-   public void testConstructorCallByStaticMethodException()
+   public void testConstructorCallByStaticMethodException() throws Exception
    {
       boolean exceptionThrown = false;
       try
@@ -476,9 +497,11 @@ public class JoinPointTestCase extends AOPTestWithSetup
       Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
       assertEquals(1, callerParameters.length);
       assertSame(boolean.class, callerParameters[0]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getCallingMethod()),
+            joinPoint.getCallingMethodHash());
    }
    
-   public void testMethodCallByConstructor() throws POJOException
+   public void testMethodCallByConstructor() throws Exception
    {
       new JoinPointPOJO(false, false);
       assertFullInterception(MethodCallByConstructor.class, "before7", "after6",
@@ -498,9 +521,11 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertEquals(2, callerParameters.length);
       assertSame(boolean.class, callerParameters[0]);
       assertSame(boolean.class, callerParameters[1]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
+            joinPoint.getCalledMethodHash());
    }
    
-   public void testMethodCallByConstructorException()
+   public void testMethodCallByConstructorException() throws Exception
    {
       boolean exceptionThrown = false;
       try
@@ -530,9 +555,11 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertEquals(2, callerParameters.length);
       assertSame(boolean.class, callerParameters[0]);
       assertSame(boolean.class, callerParameters[1]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
+            joinPoint.getCalledMethodHash());
    }
    
-   public void testMethodCallByMethod() throws POJOException
+   public void testMethodCallByMethod() throws Exception
    {
       pojo.callMethod(false);
       assertFullInterception(MethodCallByMethod.class, "before8", "after6",
@@ -552,9 +579,13 @@ public class JoinPointTestCase extends AOPTestWithSetup
       Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
       assertEquals(1, callerParameters.length);
       assertSame(boolean.class, callerParameters[0]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
+            joinPoint.getCalledMethodHash());
+      assertEquals(MethodHashing.methodHash(joinPoint.getCallingMethod()),
+            joinPoint.getCallingMethodHash());
    }
    
-   public void testMethodCallByMethodException()
+   public void testMethodCallByMethodException() throws Exception
    {
       boolean exceptionThrown = false;
       try
@@ -584,9 +615,13 @@ public class JoinPointTestCase extends AOPTestWithSetup
       Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
       assertEquals(1, callerParameters.length);
       assertSame(boolean.class, callerParameters[0]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
+            joinPoint.getCalledMethodHash());
+      assertEquals(MethodHashing.methodHash(joinPoint.getCallingMethod()),
+            joinPoint.getCallingMethodHash());
    }
    
-   public void testMethodCallByStaticMethod() throws POJOException
+   public void testMethodCallByStaticMethod() throws Exception
    {
       JoinPointPOJO.staticCallMethod(pojo, false);
       assertFullInterception(MethodCallByMethod.class, "before8", "after6",
@@ -607,9 +642,13 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertEquals(2, callerParameters.length);
       assertSame(JoinPointPOJO.class, callerParameters[0]);
       assertSame(boolean.class, callerParameters[1]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
+            joinPoint.getCalledMethodHash());
+      assertEquals(MethodHashing.methodHash(joinPoint.getCallingMethod()),
+            joinPoint.getCallingMethodHash());
    }
    
-   public void testMethodCallByStaticMethodException()
+   public void testMethodCallByStaticMethodException() throws Exception
    {
       boolean exceptionThrown = false;
       try
@@ -640,9 +679,13 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertEquals(2, callerParameters.length);
       assertSame(JoinPointPOJO.class, callerParameters[0]);
       assertSame(boolean.class, callerParameters[1]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
+            joinPoint.getCalledMethodHash());
+      assertEquals(MethodHashing.methodHash(joinPoint.getCallingMethod()),
+            joinPoint.getCallingMethodHash());
    }
    
-   public void testStaticMethodCallByConstructor() throws POJOException
+   public void testStaticMethodCallByConstructor() throws Exception
    {
       new JoinPointPOJO('a', false);
       
@@ -663,9 +706,11 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertEquals(2, callerParameters.length);
       assertSame(char.class, callerParameters[0]);
       assertSame(boolean.class, callerParameters[1]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
+            joinPoint.getCalledMethodHash());
    }
    
-   public void testStaticMethodCallByConstructorException()
+   public void testStaticMethodCallByConstructorException() throws Exception
    {
       boolean exceptionThrown = false;
       try
@@ -695,9 +740,11 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertEquals(2, callerParameters.length);
       assertSame(char.class, callerParameters[0]);
       assertSame(boolean.class, callerParameters[1]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
+            joinPoint.getCalledMethodHash());
    }
    
-   public void testStaticMethodCallByMethod() throws POJOException
+   public void testStaticMethodCallByMethod() throws Exception
    {
       pojo.callStaticMethod(false);
       
@@ -718,9 +765,13 @@ public class JoinPointTestCase extends AOPTestWithSetup
       Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
       assertEquals(1, callerParameters.length);
       assertSame(boolean.class, callerParameters[0]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
+            joinPoint.getCalledMethodHash());
+      assertEquals(MethodHashing.methodHash(joinPoint.getCallingMethod()),
+            joinPoint.getCallingMethodHash());
    }
    
-   public void testStaticMethodCallByMethodException()
+   public void testStaticMethodCallByMethodException() throws Exception
    {
       boolean exceptionThrown = false;
       try
@@ -750,9 +801,13 @@ public class JoinPointTestCase extends AOPTestWithSetup
       Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
       assertEquals(1, callerParameters.length);
       assertSame(boolean.class, callerParameters[0]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
+            joinPoint.getCalledMethodHash());
+      assertEquals(MethodHashing.methodHash(joinPoint.getCallingMethod()),
+            joinPoint.getCallingMethodHash());
    }
    
-   public void testStaticMethodCallByStaticMethod() throws POJOException
+   public void testStaticMethodCallByStaticMethod() throws Exception
    {
       JoinPointPOJO.staticCallStaticMethod(false);
       
@@ -773,9 +828,13 @@ public class JoinPointTestCase extends AOPTestWithSetup
       Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
       assertEquals(1, callerParameters.length);
       assertSame(boolean.class, callerParameters[0]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
+            joinPoint.getCalledMethodHash());
+      assertEquals(MethodHashing.methodHash(joinPoint.getCallingMethod()),
+            joinPoint.getCallingMethodHash());
    }
    
-   public void testStaticMethodCallByStaticMethodException()
+   public void testStaticMethodCallByStaticMethodException() throws Exception
    {
       boolean exceptionThrown = false;
       try
@@ -805,6 +864,10 @@ public class JoinPointTestCase extends AOPTestWithSetup
       Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
       assertEquals(1, callerParameters.length);
       assertSame(boolean.class, callerParameters[0]);
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
+            joinPoint.getCalledMethodHash());
+      assertEquals(MethodHashing.methodHash(joinPoint.getCallingMethod()),
+            joinPoint.getCallingMethodHash());
    }
    
    public void testConstructorExecution() throws POJOException
