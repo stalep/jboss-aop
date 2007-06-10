@@ -391,7 +391,49 @@
 	<bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.JoinPointPOJO->method6(..))">
    	<throwing name="throwing5" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
+   
+   <bind pointcut="call(org.jboss.test.aop.beforeafterArgs.JoinPointPOJO->new(boolean)) AND withincode(org.jboss.test.aop.beforeafterArgs.JoinPointPOJO->new(..))">
+      <before name="before6" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <throwing name="throwing6" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <finally name="finally5" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+   </bind>
+   
+   <bind pointcut="call(org.jboss.test.aop.beforeafterArgs.JoinPointPOJO->new(boolean)) AND withincode(public void org.jboss.test.aop.beforeafterArgs.JoinPointPOJO->*(..))">
+      <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <throwing name="throwing7" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <finally name="finally6" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+   </bind>
 
+   <bind pointcut="call(* org.jboss.test.aop.beforeafterArgs.JoinPointPOJO->*Method(boolean)) AND withincode(org.jboss.test.aop.beforeafterArgs.JoinPointPOJO->new(..))">
+      <before name="before7" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <after name="after6" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <throwing name="throwing8" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+   </bind>
+   
+   <bind pointcut="call(* org.jboss.test.aop.beforeafterArgs.JoinPointPOJO->*Method(boolean)) AND withincode(public void org.jboss.test.aop.beforeafterArgs.JoinPointPOJO->*(..))">
+      <before name="before8" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <after name="after6" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <throwing name="throwing8" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <finally name="finally7" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(org.jboss.test.aop.beforeafterArgs.JoinPointPOJO->new(short,boolean))">
+      <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <after name="after7" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <throwing name="throwing2" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <finally name="finally7" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+   </bind>
+   
+   <bind pointcut="construction(org.jboss.test.aop.beforeafterArgs.JoinPointPOJO->new(float,boolean))">
+      <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <throwing name="throwing1" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+      <finally name="finally8" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+   </bind>
+   
    <!-- Return type and @Return test -->
 	<aspect class="org.jboss.test.aop.beforeafterArgs.ReturnAspect" scope="PER_VM"/>
 	

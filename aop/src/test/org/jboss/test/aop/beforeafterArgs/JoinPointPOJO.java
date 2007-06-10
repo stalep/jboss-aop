@@ -31,6 +31,54 @@ public class JoinPointPOJO
    public int number;
    public String text;
    
+   // constructor without advices
+   public JoinPointPOJO() {}
+   
+   // constructor execution
+   public JoinPointPOJO(short arg0, boolean shouldThrow) throws POJOException
+   {
+      if (shouldThrow)
+      {
+         throw new POJOException();
+      }
+   }
+   
+   // construction
+   public JoinPointPOJO(float arg0, boolean shouldThrow) throws POJOException
+   {
+      if (shouldThrow)
+      {
+         throw new POJOException();
+      }
+   }
+   
+   // called constructor
+   public JoinPointPOJO(boolean shouldThrow) throws POJOException
+   {
+      if (shouldThrow)
+      {
+         throw new POJOException();
+      }
+   }
+   
+   // constructor call constructor
+   public JoinPointPOJO(int arg0, boolean shouldThrow) throws POJOException
+   {
+      new JoinPointPOJO(shouldThrow);
+   }
+   
+   // constructor call method
+   public JoinPointPOJO(boolean arg0, boolean shouldThrow) throws POJOException
+   {
+      this.calledMethod(shouldThrow);
+   }
+   
+   // constructor call static method
+   public JoinPointPOJO(char arg0, boolean shouldThrow) throws POJOException
+   {
+      calledStaticMethod(shouldThrow);
+   }
+   
    public void method1()
    {
       
@@ -63,5 +111,57 @@ public class JoinPointPOJO
    public void method6() throws POJOException
    {
       throw new POJOException();
+   }
+ 
+   // method call constructor
+   public void callConstructor(boolean shouldThrow) throws POJOException
+   {
+      new JoinPointPOJO(shouldThrow);
+   }
+   
+   // static method call constructor
+   public static void staticCallConstructor(boolean shouldThrow) throws POJOException
+   {
+      new JoinPointPOJO(shouldThrow);
+   }
+   
+   // method call method
+   public void callMethod(boolean shouldThrow) throws POJOException
+   {
+      calledMethod(shouldThrow);
+   }
+   
+   // static method call method
+   public static void staticCallMethod(JoinPointPOJO pojo, boolean shouldThrow) throws POJOException
+   {
+      pojo.calledMethod(shouldThrow);
+   }
+   
+   public void calledMethod(boolean shouldThrow) throws POJOException
+   {
+      if (shouldThrow)
+      {
+         throw new POJOException();
+      }
+   }
+   
+   // method call static method
+   public void callStaticMethod(boolean shouldThrow) throws POJOException
+   {
+      calledStaticMethod(shouldThrow);
+   }
+   
+   // static method call static method
+   public static void staticCallStaticMethod(boolean shouldThrow) throws POJOException
+   {
+      calledStaticMethod(shouldThrow);
+   }
+   
+   public static void calledStaticMethod(boolean shouldThrow) throws POJOException
+   {
+      if (shouldThrow)
+      {
+         throw new POJOException();
+      }
    }
 }

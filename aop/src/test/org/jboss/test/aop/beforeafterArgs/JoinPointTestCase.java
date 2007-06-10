@@ -25,7 +25,15 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
+import org.jboss.aop.Advised;
+import org.jboss.aop.joinpoint.Construction;
+import org.jboss.aop.joinpoint.ConstructorCallByConstructor;
+import org.jboss.aop.joinpoint.ConstructorCallByMethod;
+import org.jboss.aop.joinpoint.ConstructorExecution;
 import org.jboss.aop.joinpoint.FieldAccess;
+import org.jboss.aop.joinpoint.JoinPointBean;
+import org.jboss.aop.joinpoint.MethodCallByConstructor;
+import org.jboss.aop.joinpoint.MethodCallByMethod;
 import org.jboss.aop.joinpoint.MethodExecution;
 import org.jboss.test.aop.AOPTestWithSetup;
 
@@ -62,7 +70,30 @@ public class JoinPointTestCase extends AOPTestWithSetup
       this.pojo = new JoinPointPOJO();
    }
    
-   public void test1()
+   public void tearDown() throws Exception
+   {
+      JoinPointBean joinPoint = JoinPointAspect.beforeJoinPoint;
+      if (joinPoint == null)
+      {
+         joinPoint = JoinPointAspect.afterJoinPoint;
+         if (joinPoint == null)
+         {
+            joinPoint = JoinPointAspect.throwingJoinPoint;
+            if (joinPoint == null)
+            {
+               joinPoint = JoinPointAspect.finallyJoinPoint;
+            }
+         }
+      }
+      if (joinPoint != null)
+      {
+         assertSame(((Advised) pojo)._getAdvisor(), joinPoint.getAdvisor());
+         assertSame(JoinPointPOJO.class, joinPoint.getClazz());
+      }
+      super.tearDown();
+   }
+   
+   public void testFieldWrite1()
    {
       pojo.number = 0;
       assertEquals("before1", JoinPointAspect.beforeAdvice);
@@ -80,7 +111,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertFalse(fieldInfo.isRead());
    }
    
-   public void test2()
+   public void testFieldWrite2()
    {
       pojo.text = "test2";
       assertEquals("before2", JoinPointAspect.beforeAdvice);
@@ -100,7 +131,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertFalse(fieldInfo.isRead());
    }
    
-   public void test3()
+   public void testFieldWrite3()
    {
       String text = pojo.text;
       assertNull(JoinPointAspect.beforeAdvice);
@@ -118,7 +149,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertTrue(fieldInfo.isRead());
    }
    
-   public void test4()
+   public void testMethodExecution1()
    {
       pojo.method1();
       assertEquals("before3", JoinPointAspect.beforeAdvice);
@@ -135,7 +166,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
             getAdvisedMethod().getName());
    }
    
-   public void test5() throws POJOException
+   public void testMethodExecution2() throws POJOException
    {
       pojo.method2(false);
       assertEquals("before4", JoinPointAspect.beforeAdvice);
@@ -153,7 +184,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
             getAdvisedMethod().getName());
    }
    
-   public void test6() throws POJOException
+   public void testMethodExecutionException1()
    {
       boolean exceptionThrown = false;
       try
@@ -182,7 +213,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
             getAdvisedMethod().getName());
    }
    
-   public void test7() throws POJOException
+   public void testMethodExecutionException2()
    {
       boolean exceptionThrown = false;
       try
@@ -209,7 +240,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
             getAdvisedMethod().getName());
    }
    
-   public void test8() throws POJOException
+   public void testMethodExecutionException3()
    {
       boolean exceptionThrown = false;
       try
@@ -238,7 +269,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
             getAdvisedMethod().getName());
    }
    
-   public void test9() throws POJOException
+   public void testMethodExecutionException4()
    {
       boolean exceptionThrown = false;
       try
@@ -261,7 +292,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNull(JoinPointAspect.finallyJoinPoint);
    }
    
-   public void test10() throws POJOException
+   public void testMethodExecutionException5()
    {
       boolean exceptionThrown = false;
       try
@@ -287,5 +318,600 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertEquals("method6", ((MethodExecution) JoinPointAspect.throwingJoinPoint).
             getAdvisedMethod().getName());
 
+   }
+   
+   public void testConstructorCallByConstructor() throws POJOException
+   {
+      new JoinPointPOJO(11, false);
+      
+      assertFullInterception(ConstructorCallByConstructor.class, "before6", "after4",
+            "finally5", false);
+      
+      ConstructorCallByConstructor joinPoint = (ConstructorCallByConstructor)
+         JoinPointAspect.beforeJoinPoint;
+      Class[] parameters = joinPoint.getConstructor().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getConstructor().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalling().getDeclaringClass());
+      Class[] callerParameters = joinPoint.getCalling().getParameterTypes();
+      assertEquals(2, callerParameters.length);
+      assertSame(int.class, callerParameters[0]);
+      assertSame(boolean.class, callerParameters[1]);
+   }
+   
+   public void testConstructorCallByConstructorException()
+   {
+      boolean exceptionThrown = false;
+      try
+      {
+         new JoinPointPOJO(12, true);
+      }
+      catch (POJOException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      
+      assertFullInterception(ConstructorCallByConstructor.class, "before6",
+            "throwing6", "finally5", exceptionThrown);
+      
+      ConstructorCallByConstructor joinPoint = (ConstructorCallByConstructor)
+      JoinPointAspect.beforeJoinPoint;
+      Class[] parameters = joinPoint.getConstructor().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getConstructor().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalling().getDeclaringClass());
+      Class[] callerParameters = joinPoint.getCalling().getParameterTypes();
+      assertEquals(2, callerParameters.length);
+      assertSame(int.class, callerParameters[0]);
+      assertSame(boolean.class, callerParameters[1]);
+   }
+   
+   public void testConstructorCallByMethod() throws POJOException
+   {
+      pojo.callConstructor(false);
+      assertFullInterception(ConstructorCallByMethod.class, "before3", "after5",
+            "finally6", false);
+      
+      ConstructorCallByMethod joinPoint = (ConstructorCallByMethod)
+      JoinPointAspect.beforeJoinPoint;
+      Class[] parameters = joinPoint.getConstructor().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getConstructor().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingMethod().getDeclaringClass());
+      assertSame("callConstructor", joinPoint.getCallingMethod().getName());
+      Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
+      assertEquals(1, callerParameters.length);
+      assertSame(boolean.class, callerParameters[0]);
+   }
+   
+   public void testConstructorCallByMethodException()
+   {
+      boolean exceptionThrown = false;
+      try
+      {
+         pojo.callConstructor(true);
+      }
+      catch (POJOException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      
+      assertFullInterception(ConstructorCallByMethod.class, "before3", "throwing7",
+            "finally6", true);
+      
+      ConstructorCallByMethod joinPoint = (ConstructorCallByMethod)
+      JoinPointAspect.beforeJoinPoint;
+      Class[] parameters = joinPoint.getConstructor().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getConstructor().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingMethod().getDeclaringClass());
+      assertSame("callConstructor", joinPoint.getCallingMethod().getName());
+      Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
+      assertEquals(1, callerParameters.length);
+      assertSame(boolean.class, callerParameters[0]);
+   }
+   
+   public void testConstructorCallByStaticMethod() throws POJOException
+   {
+      JoinPointPOJO.staticCallConstructor(false);
+      
+      assertFullInterception(ConstructorCallByMethod.class, "before3", "after5",
+            "finally6", false);
+      
+      ConstructorCallByMethod joinPoint = (ConstructorCallByMethod)
+      JoinPointAspect.beforeJoinPoint;
+      Class[] parameters = joinPoint.getConstructor().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getConstructor().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingMethod().getDeclaringClass());
+      assertSame("staticCallConstructor", joinPoint.getCallingMethod().getName());
+      Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
+      assertEquals(1, callerParameters.length);
+      assertSame(boolean.class, callerParameters[0]);
+   }
+   
+   public void testConstructorCallByStaticMethodException()
+   {
+      boolean exceptionThrown = false;
+      try
+      {
+         JoinPointPOJO.staticCallConstructor(true);
+      }
+      catch (POJOException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      
+      assertFullInterception(ConstructorCallByMethod.class, "before3", "throwing7",
+            "finally6", exceptionThrown);
+      
+      ConstructorCallByMethod joinPoint = (ConstructorCallByMethod)
+      JoinPointAspect.beforeJoinPoint;
+      Class[] parameters = joinPoint.getConstructor().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getConstructor().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingMethod().getDeclaringClass());
+      assertSame("staticCallConstructor", joinPoint.getCallingMethod().getName());
+      Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
+      assertEquals(1, callerParameters.length);
+      assertSame(boolean.class, callerParameters[0]);
+   }
+   
+   public void testMethodCallByConstructor() throws POJOException
+   {
+      new JoinPointPOJO(false, false);
+      assertFullInterception(MethodCallByConstructor.class, "before7", "after6",
+            "finally3", false);
+      
+      MethodCallByConstructor joinPoint = (MethodCallByConstructor)
+         JoinPointAspect.beforeJoinPoint;
+      assertSame("calledMethod", joinPoint.getMethod().getName());
+      Class[] parameters = joinPoint.getMethod().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalling().getDeclaringClass());
+      Class[] callerParameters = joinPoint.getCalling().getParameterTypes();
+      assertEquals(2, callerParameters.length);
+      assertSame(boolean.class, callerParameters[0]);
+      assertSame(boolean.class, callerParameters[1]);
+   }
+   
+   public void testMethodCallByConstructorException()
+   {
+      boolean exceptionThrown = false;
+      try
+      {
+         new JoinPointPOJO(true, true);
+      }
+      catch (POJOException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      
+      assertFullInterception(MethodCallByConstructor.class, "before7", "throwing8",
+            "finally3", exceptionThrown);
+
+      MethodCallByConstructor joinPoint = (MethodCallByConstructor)
+         JoinPointAspect.beforeJoinPoint;
+      assertSame("calledMethod", joinPoint.getMethod().getName());
+      Class[] parameters = joinPoint.getMethod().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalling().getDeclaringClass());
+      Class[] callerParameters = joinPoint.getCalling().getParameterTypes();
+      assertEquals(2, callerParameters.length);
+      assertSame(boolean.class, callerParameters[0]);
+      assertSame(boolean.class, callerParameters[1]);
+   }
+   
+   public void testMethodCallByMethod() throws POJOException
+   {
+      pojo.callMethod(false);
+      assertFullInterception(MethodCallByMethod.class, "before8", "after6",
+            "finally7", false);
+      
+      MethodCallByMethod joinPoint = (MethodCallByMethod)
+         JoinPointAspect.beforeJoinPoint;
+      assertSame("calledMethod", joinPoint.getMethod().getName());
+      Class[] parameters = joinPoint.getMethod().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingMethod().getDeclaringClass());
+      assertSame("callMethod", joinPoint.getCallingMethod().getName());
+      Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
+      assertEquals(1, callerParameters.length);
+      assertSame(boolean.class, callerParameters[0]);
+   }
+   
+   public void testMethodCallByMethodException()
+   {
+      boolean exceptionThrown = false;
+      try
+      {
+         pojo.callMethod(true);
+      }
+      catch (POJOException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      
+      assertFullInterception(MethodCallByMethod.class, "before8", "throwing8",
+            "finally7", exceptionThrown);
+      
+      MethodCallByMethod joinPoint = (MethodCallByMethod)
+         JoinPointAspect.beforeJoinPoint;
+      assertSame("calledMethod", joinPoint.getMethod().getName());
+      Class[] parameters = joinPoint.getMethod().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingMethod().getDeclaringClass());
+      assertSame("callMethod", joinPoint.getCallingMethod().getName());
+      Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
+      assertEquals(1, callerParameters.length);
+      assertSame(boolean.class, callerParameters[0]);
+   }
+   
+   public void testMethodCallByStaticMethod() throws POJOException
+   {
+      JoinPointPOJO.staticCallMethod(pojo, false);
+      assertFullInterception(MethodCallByMethod.class, "before8", "after6",
+            "finally7", false);
+      
+      MethodCallByMethod joinPoint = (MethodCallByMethod)
+      JoinPointAspect.beforeJoinPoint;
+      assertSame("calledMethod", joinPoint.getMethod().getName());
+      Class[] parameters = joinPoint.getMethod().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingMethod().getDeclaringClass());
+      assertSame("staticCallMethod", joinPoint.getCallingMethod().getName());
+      Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
+      assertEquals(2, callerParameters.length);
+      assertSame(JoinPointPOJO.class, callerParameters[0]);
+      assertSame(boolean.class, callerParameters[1]);
+   }
+   
+   public void testMethodCallByStaticMethodException()
+   {
+      boolean exceptionThrown = false;
+      try
+      {
+         JoinPointPOJO.staticCallMethod(pojo, true);
+      }
+      catch (POJOException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      
+      assertFullInterception(MethodCallByMethod.class, "before8", "throwing8",
+            "finally7", exceptionThrown);
+      
+      MethodCallByMethod joinPoint = (MethodCallByMethod)
+         JoinPointAspect.beforeJoinPoint;
+      assertSame("calledMethod", joinPoint.getMethod().getName());
+      Class[] parameters = joinPoint.getMethod().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingMethod().getDeclaringClass());
+      assertSame("staticCallMethod", joinPoint.getCallingMethod().getName());
+      Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
+      assertEquals(2, callerParameters.length);
+      assertSame(JoinPointPOJO.class, callerParameters[0]);
+      assertSame(boolean.class, callerParameters[1]);
+   }
+   
+   public void testStaticMethodCallByConstructor() throws POJOException
+   {
+      new JoinPointPOJO('a', false);
+      
+      assertFullInterception(MethodCallByConstructor.class, "before7", "after6",
+            "finally3", false);
+      
+      MethodCallByConstructor joinPoint = (MethodCallByConstructor)
+         JoinPointAspect.beforeJoinPoint;
+      assertSame("calledStaticMethod", joinPoint.getMethod().getName());
+      Class[] parameters = joinPoint.getMethod().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalling().getDeclaringClass());
+      Class[] callerParameters = joinPoint.getCalling().getParameterTypes();
+      assertEquals(2, callerParameters.length);
+      assertSame(char.class, callerParameters[0]);
+      assertSame(boolean.class, callerParameters[1]);
+   }
+   
+   public void testStaticMethodCallByConstructorException()
+   {
+      boolean exceptionThrown = false;
+      try
+      {
+         new JoinPointPOJO('b', true);
+      }
+      catch (POJOException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      
+      assertFullInterception(MethodCallByConstructor.class, "before7", "throwing8",
+            "finally3", exceptionThrown);
+      
+      MethodCallByConstructor joinPoint = (MethodCallByConstructor)
+         JoinPointAspect.beforeJoinPoint;
+      assertSame("calledStaticMethod", joinPoint.getMethod().getName());
+      Class[] parameters = joinPoint.getMethod().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalling().getDeclaringClass());
+      Class[] callerParameters = joinPoint.getCalling().getParameterTypes();
+      assertEquals(2, callerParameters.length);
+      assertSame(char.class, callerParameters[0]);
+      assertSame(boolean.class, callerParameters[1]);
+   }
+   
+   public void testStaticMethodCallByMethod() throws POJOException
+   {
+      pojo.callStaticMethod(false);
+      
+      assertFullInterception(MethodCallByMethod.class, "before8", "after6",
+            "finally7", false);
+      
+      MethodCallByMethod joinPoint = (MethodCallByMethod)
+         JoinPointAspect.beforeJoinPoint;
+      assertSame("calledStaticMethod", joinPoint.getMethod().getName());
+      Class[] parameters = joinPoint.getMethod().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingMethod().getDeclaringClass());
+      assertSame("callStaticMethod", joinPoint.getCallingMethod().getName());
+      Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
+      assertEquals(1, callerParameters.length);
+      assertSame(boolean.class, callerParameters[0]);
+   }
+   
+   public void testStaticMethodCallByMethodException()
+   {
+      boolean exceptionThrown = false;
+      try
+      {
+         pojo.callStaticMethod(true);
+      }
+      catch (POJOException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      
+      assertFullInterception(MethodCallByMethod.class, "before8", "throwing8",
+            "finally7", exceptionThrown);
+
+      MethodCallByMethod joinPoint = (MethodCallByMethod)
+         JoinPointAspect.beforeJoinPoint;
+      assertSame("calledStaticMethod", joinPoint.getMethod().getName());
+      Class[] parameters = joinPoint.getMethod().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingMethod().getDeclaringClass());
+      assertSame("callStaticMethod", joinPoint.getCallingMethod().getName());
+      Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
+      assertEquals(1, callerParameters.length);
+      assertSame(boolean.class, callerParameters[0]);
+   }
+   
+   public void testStaticMethodCallByStaticMethod() throws POJOException
+   {
+      JoinPointPOJO.staticCallStaticMethod(false);
+      
+      assertFullInterception(MethodCallByMethod.class, "before8", "after6",
+            "finally7", false);
+      
+      MethodCallByMethod joinPoint = (MethodCallByMethod)
+         JoinPointAspect.beforeJoinPoint;
+      assertSame("calledStaticMethod", joinPoint.getMethod().getName());
+      Class[] parameters = joinPoint.getMethod().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingMethod().getDeclaringClass());
+      assertSame("staticCallStaticMethod", joinPoint.getCallingMethod().getName());
+      Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
+      assertEquals(1, callerParameters.length);
+      assertSame(boolean.class, callerParameters[0]);
+   }
+   
+   public void testStaticMethodCallByStaticMethodException()
+   {
+      boolean exceptionThrown = false;
+      try
+      {
+         JoinPointPOJO.staticCallStaticMethod(true);
+      }
+      catch (POJOException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      
+      assertFullInterception(MethodCallByMethod.class, "before8", "throwing8",
+            "finally7", exceptionThrown);
+      
+      MethodCallByMethod joinPoint = (MethodCallByMethod)
+         JoinPointAspect.beforeJoinPoint;
+      assertSame("calledStaticMethod", joinPoint.getMethod().getName());
+      Class[] parameters = joinPoint.getMethod().getParameterTypes();
+      assertEquals(1, parameters.length);
+      assertSame(boolean.class, parameters[0]);
+      assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingMethod().getDeclaringClass());
+      assertSame("staticCallStaticMethod", joinPoint.getCallingMethod().getName());
+      Class[] callerParameters = joinPoint.getCallingMethod().getParameterTypes();
+      assertEquals(1, callerParameters.length);
+      assertSame(boolean.class, callerParameters[0]);
+   }
+   
+   public void testConstructorExecution() throws POJOException
+   {
+      new JoinPointPOJO((short) 5, false);
+      
+      assertFullInterception(ConstructorExecution.class, "before2", "after7",
+            "finally7", false);
+      
+      ConstructorExecution joinPoint = (ConstructorExecution)
+         JoinPointAspect.beforeJoinPoint;
+      assertSame(JoinPointPOJO.class, joinPoint.getConstructor().getDeclaringClass());
+      Class[] parameters = joinPoint.getConstructor().getParameterTypes();
+      assertEquals(2, parameters.length);
+      assertSame(short.class, parameters[0]);
+      assertSame(boolean.class, parameters[1]);
+   }
+   
+   public void testConstructorExecutionException()
+   {
+      boolean exceptionThrown = false;
+      try
+      {
+         new JoinPointPOJO((short) 15, true);
+      }
+      catch (POJOException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      
+      assertFullInterception(ConstructorExecution.class, "before2", "throwing2",
+            "finally7", exceptionThrown);
+
+      ConstructorExecution joinPoint = (ConstructorExecution)
+         JoinPointAspect.beforeJoinPoint;
+      assertSame(JoinPointPOJO.class, joinPoint.getConstructor().getDeclaringClass());
+      Class[] parameters = joinPoint.getConstructor().getParameterTypes();
+      assertEquals(2, parameters.length);
+      assertSame(short.class, parameters[0]);
+      assertSame(boolean.class, parameters[1]);
+   }
+   
+   public void testConstruction() throws POJOException
+   {
+      new JoinPointPOJO((float) 5.0, false);
+      
+      assertFullInterception(Construction.class, "before3", "after5", "finally8",
+            false);
+      
+      Construction joinPoint = (Construction) JoinPointAspect.beforeJoinPoint;
+      assertSame(JoinPointPOJO.class, joinPoint.getConstructor().getDeclaringClass());
+      Class[] parameters = joinPoint.getConstructor().getParameterTypes();
+      assertEquals(2, parameters.length);
+      assertSame(float.class, parameters[0]);
+      assertSame(boolean.class, parameters[1]);
+   }
+   
+   public void testConstructionException()
+   {
+      boolean exceptionThrown = false;
+      try
+      {
+         new JoinPointPOJO((float) 51.0, true);
+      }
+      catch (POJOException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      
+      assertNull(JoinPointAspect.beforeAdvice);
+      assertNull(JoinPointAspect.beforeJoinPoint);
+      assertNull(JoinPointAspect.afterAdvice);
+      assertNull(JoinPointAspect.afterJoinPoint);
+      assertNull(JoinPointAspect.throwingAdvice);
+      assertNull(JoinPointAspect.throwingJoinPoint);
+      assertNull(JoinPointAspect.finallyAdvice);
+      assertNull(JoinPointAspect.finallyJoinPoint);
+   }
+   
+   private void assertFullInterception(Class<? extends JoinPointBean> expectedType,
+         String beforeAdvice, String afterAdvice, String finallyAdvice,
+         boolean exceptionThrown)
+   {
+      JoinPointBean afterJoinPoint = null;
+      
+      assertEquals(beforeAdvice, JoinPointAspect.beforeAdvice);
+      if (exceptionThrown)
+      {
+         assertNull(JoinPointAspect.afterAdvice);
+         assertNull(JoinPointAspect.afterJoinPoint);
+         assertEquals(afterAdvice, JoinPointAspect.throwingAdvice);
+         afterJoinPoint = JoinPointAspect.throwingJoinPoint;
+      }
+      else
+      {
+         assertEquals(afterAdvice, JoinPointAspect.afterAdvice);
+         afterJoinPoint = JoinPointAspect.afterJoinPoint;
+         assertNull(afterAdvice, JoinPointAspect.throwingAdvice);
+         assertNull(JoinPointAspect.throwingJoinPoint);
+      }
+      assertEquals(finallyAdvice, JoinPointAspect.finallyAdvice);
+      
+      assertNotNull(JoinPointAspect.beforeJoinPoint);
+      assertTrue(expectedType.isAssignableFrom(JoinPointAspect.beforeJoinPoint.getClass()));
+      assertSame(JoinPointAspect.beforeJoinPoint, afterJoinPoint);
+      assertSame(afterJoinPoint, JoinPointAspect.finallyJoinPoint);
    }
 }
