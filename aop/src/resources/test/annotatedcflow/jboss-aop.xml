@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aop>
    <cflow-stack name="normalInstantiate">
-      <called expr="void org.jboss.test.aop.annotatedcflow.NotAnnotatedCaller->instantiate()"/>
+      <!-- picks out NotAnnotatedCaller.instantiate() -->
+      <called expr="void org.jboss.test.aop.annotatedcflow.NotAnnotated*->i*()"/>
    </cflow-stack>
    
    <cflow-stack name="annotatedInstantiate">
