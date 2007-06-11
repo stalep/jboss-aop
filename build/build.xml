@@ -346,7 +346,11 @@
          <fileset dir="../asintegration/output/lib">
             <include name="jboss-aop-as4-deployer.jar"/>
             <include name="jboss-aop-deployer-jdk50.jar"/>
-            <include name="${build.lib}/jboss-asintegration-src.zip"/>
+            <include name="jboss-asintegration-src.zip"/>
+         </fileset>
+         <fileset dir="../aspects/output/lib">
+            <include name="jboss-standalone-aspect-library-jdk50.jar"/>
+            <include name="jboss-standalone-aspects-src.zip"/>
          </fileset>
       </copy>
       <copy todir="${aop14.dir}">
@@ -358,7 +362,11 @@
          </fileset>
          <fileset dir="../asintegration/output/lib">
             <include name="jboss-aop-as4-deployer-jdk14.jar"/>
-            <include name="${build.lib}/jboss-asintegration-src.zip"/>
+            <include name="jboss-asintegration-src.zip"/>
+         </fileset>
+         <fileset dir="../aspects/output/lib">
+            <include name="jboss-standalone-aspect-library-jdk14.jar"/>
+            <include name="jboss-standalone-aspects-src.zip"/>
          </fileset>
       </copy>
    </target>
