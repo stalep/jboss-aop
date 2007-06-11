@@ -45,21 +45,30 @@
       </condition>
    </target>
 
-   <target name="prepare=aspect-library" depends="init">
+   <target name="prepare-aspect-library" depends="init">
+   	<!-- Unjar aspect library into a temp folder -->
       <delete file="jboss-aspect-library-jdk50.jar"/>
-      <tempfile property="temp.dir" prefix="aop"/>
-      <mkdir dir="${temp.dir}"/>
-      <unjar src="${aspect.library}" dest="${temp.dir}"/>
+      <mkdir dir="aspect-library-temp"/>
+      <unjar src="${aspect.library}" dest="aspect-library-temp"/>
 
       <!-- Get rid of the files that exist in jboss-aop-as4-deplyer.jar -->
-      <delete dir="${temp.dir}/org/jboss/aop"/>
+      <delete dir="aspect-library-temp/org/jboss/aop"/>
 
-      <jar destfile="jboss-aspect-library-jdk50.jar" basedir="${temp.dir}" manifest="${temp.dir}/META-INF/MANIFEST.MF"/>
+      <!-- Get rid of the files that exist in jboss-standalone-aspect-library-jdk50.jar -->
+      <delete dir="aspect-library-temp/org/jboss/aspects/asynchronous"/>
+      <delete dir="aspect-library-temp/org/jboss/aspects/concurrent"/>
+      <delete dir="aspect-library-temp/org/jboss/aspects/dbc"/>
+      <delete dir="aspect-library-temp/org/jboss/aspects/jmx"/>
+      <delete dir="aspect-library-temp/org/jboss/aspects/logging"/>
+      <delete dir="aspect-library-temp/org/jboss/aspects/patterns"/>
+      <delete file="aspect-library-temp/org/jboss/aspects/*.class"/>
 
-      <delete dir="${temp.dir}"/>
+      <jar destfile="jboss-aspect-library-jdk50.jar" basedir="aspect-library-temp" manifest="aspect-library-temp/META-INF/MANIFEST.MF"/>
+
+      <delete dir="aspect-library-temp"/>
    </target>
 
-   <target name="backup" depends="prepare=aspect-library" unless="old.deployer.exists">
+   <target name="backup" depends="prepare-aspect-library" unless="old.deployer.exists">
       <echo>Backing up existing aop deployer to ${old.deployer}</echo>
       <copy todir="${old.deployer}">
          <fileset dir="${aspect.deployer}"/>

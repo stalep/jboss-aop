@@ -27,7 +27,7 @@
       <property name="aop2.deployer" value="${deploy.dir}/jboss-aop-jdk14.deployer"/>
       <available file="${aop2.deployer}" property="aop2.deployer.exists" type="dir"/>
 
-      <fail message="Neither ${jdk14.deployer} (JBoss AOP 2.0) nor ${aop2.deployer} exist.">
+      <fail message="Neither ${jdk15.deployer} (JBoss AOP 1.5.x) nor ${aop2.deployer} (JBoss AOP 2.0) exist.">
          <condition>
             <and>
                <not><isset property="aop15.deployer.exists"/></not>
@@ -35,7 +35,6 @@
             </and>
          </condition>
       </fail>
-
    </target>
 
    <target name="init-has-aop15-deployer" depends="setup" if="aop15.deployer.exists">
@@ -55,35 +54,85 @@
       <available file="${old.deployer}" property="old.deployer.exists"/>
 
       <property name="lib.javassist" value="${jboss.config.dir}/lib/javassist.jar"/>
-      <available file="${lib.javassist}" property="jboss.post.4.0.4"/>
-      <property name="bak.javassist" value="${old.deployer}/javassist.bak"/>
+      <available file="${lib.javassist}" property="lib.javassist.exists"/>
+      <property name="bak.javassist" value="${old.deployer}/lib/javassist.bak"/>
       <available file="${bak.javassist}" property="javassist.bak.exists"/>
 
-      <condition property="backup.javassist" value="true">
+      <condition property="backup.lib.javassist" value="true">
          <and>
-            <isset property="jboss.post.4.0.4"/>
+            <isset property="lib.javassist.exists"/>
             <not>
                <isset property="javassist.bak.exists"/>
              </not>
          </and>
       </condition>
+
+      <property name="client.javassist" value="${jboss.home}/client/javassist.jar"/>
+      <available file="${client.javassist}" property="client.javassist.exists"/>
+      <property name="bak.client.javassist" value="${jboss.home}/client/javassist.bak"/>
+      <available file="${bak.client.javassist}" property="client.javassist.bak.exists"/>
+      
+      <condition property="backup.client.javassist" value="true">
+         <and>
+            <isset property="client.javassist.exists"/>
+            <not>
+               <isset property="client.javassist.bak.exists"/>
+             </not>
+         </and>
+      </condition>
+
+      <property name="client.retro" value="${jboss.home}/client/jbossretro-rt.jar"/>
+      <available file="${client.retro}" property="client.retro.exists"/>
+      <property name="bak.client.retro" value="${jboss.home}/client/jbossretro-rt.bak"/>
+      <available file="${bak.client.retro}" property="client.retro.bak.exists"/>
+      
+      <condition property="backup.client.retro" value="true">
+         <and>
+            <isset property="client.retro.exists"/>
+            <not>
+               <isset property="client.retro.bak.exists"/>
+             </not>
+         </and>
+      </condition>
+
+      <property name="lib.retro" value="${jboss.config.dir}/lib/jbossretro-rt.jar"/>
+      <available file="${lib.retro}" property="lib.retro.exists"/>
+      <property name="bak.lib.retro" value="${old.deployer}/lib/jbossretro-rt.bak"/>
+      <available file="${bak.lib.retro}" property="lib.retro.bak.exists"/>
+      
+      <condition property="backup.lib.retro" value="true">
+         <and>
+            <isset property="lib.retro.exists"/>
+            <not>
+               <isset property="lib.retro.bak.exists"/>
+             </not>
+         </and>
+      </condition>
    </target>
 
-   <target name="prepare=aspect-library" depends="init">
+   <target name="prepare-aspect-library" depends="init">
       <delete file="jboss-aspect-library.jar"/>
-      <tempfile property="temp.dir" prefix="aop"/>
-      <mkdir dir="${temp.dir}"/>
-      <unjar src="${aspect.library}" dest="${temp.dir}"/>
+      <mkdir dir="aspect-library-temp"/>
+      <unjar src="${aspect.library}" dest="aspect-library-temp"/>
 
       <!-- Get rid of the files that exist in jboss-aop-as4-deplyer.jar -->
-      <delete dir="${temp.dir}/org/jboss/aop"/>
+      <delete dir="aspect-library-temp/org/jboss/aop"/>
 
-      <jar destfile="jboss-aspect-library.jar" basedir="${temp.dir}" manifest="${temp.dir}/META-INF/MANIFEST.MF"/>
+      <!-- Get rid of the files that exist in jboss-standalone-aspect-library-jdk14.jar -->
+      <delete dir="aspect-library-temp/org/jboss/aspects/asynchronous"/>
+      <delete dir="aspect-library-temp/org/jboss/aspects/concurrent"/>
+      <delete dir="aspect-library-temp/org/jboss/aspects/dbc"/>
+      <delete dir="aspect-library-temp/org/jboss/aspects/jmx"/>
+      <delete dir="aspect-library-temp/org/jboss/aspects/logging"/>
+      <delete dir="aspect-library-temp/org/jboss/aspects/patterns"/>
+      <delete file="aspect-library-temp/org/jboss/aspects/*.class"/>
 
-      <delete dir="${temp.dir}"/>
+      <jar destfile="jboss-aspect-library.jar" basedir="aspect-library-temp" manifest="aspect-library-temp/META-INF/MANIFEST.MF"/>
+
+      <delete dir="aspect-library-temp"/>
    </target>
 
-   <target name="backup" depends="prepare=aspect-library" unless="old.deployer.exists">
+   <target name="backup" depends="prepare-aspect-library" unless="old.deployer.exists">
       <echo>Backing up existing aop deployer to ${old.deployer}</echo>
       <copy todir="${old.deployer}">
          <fileset dir="${aspect.deployer}"/>
@@ -139,14 +188,43 @@
       <delete dir="${temp.dir}"/>
    </target>
 
-   <target name="backup.javassist.post.4.0.4" depends="init" if="backup.javassist">
-      <move file="${lib.javassist}" tofile="${bak.javassist}"/>
+   <target name="backup.lib.javassist" depends="init" if="backup.lib.javassist">
+      <copy file="${lib.javassist}" tofile="${bak.javassist}" overwrite="true"/>
+   </target>
+   
+   <target name="install.lib.javassist" depends="backup.lib.javassist" if="lib.javassist.exists">
+      <delete file="${deploy.dir}/jboss-aop-jdk14.deployer/javassist.jar"/>
+   	<copy file="javassist.jar" tofile="${lib.javassist}" overwrite="true"/>
    </target>
 
-   <target name="install.post.4.0.4" depends="install.deployer, backup.javassist.post.4.0.4" if="jboss.post.4.0.4">
-      <delete file="${aspect.deployer}/javassist.jar"/>
-      <copy file="javassist.jar" tofile="${lib.javassist}" overwrite="true"/>
+   <target name="backup.client.javassist" depends="init" if="backup.client.javassist">
+      <copy file="${client.javassist}" tofile="${bak.client.javassist}" overwrite="true"/>
+   </target>
+   
+   <target name="install.client.javassist" depends="backup.client.javassist" if="client.javassist.exists">
+      <delete file="${deploy.dir}/jboss-aop-jdk14.deployer/javassist.jar"/>
+   	<copy file="javassist.jar" tofile="${lib.javassist}" overwrite="true"/>
    </target>
 
-   <target name="install" depends="install.post.4.0.4"/>
+   <target name="backup.client.retro" depends="init" if="backup.client.retro">
+      <copy file="${client.retro}" tofile="${bak.client.retro}" overwrite="true"/>
+   </target>
+
+   <target name="install.client.retro" depends="backup.client.retro" if="client.retro.exists">
+   	<copy file="jbossretro-rt.jar" tofile="${client.retro}" overwrite="true"/>
+   </target>
+
+   <target name="backup.lib.retro" depends="init" if="backup.lib.retro">
+      <copy file="${lib.retro}" tofile="${bak.lib.retro}" overwrite="true"/>
+   </target>
+   
+   <target name="install.lib.retro" depends="backup.lib.retro" if="lib.retro.exists">
+      <delete file="${deploy.dir}/jboss-aop-jdk14.deployer/jbossretro-rt.jar"/>
+      <delete file="${deploy.dir}/jboss-aop-jdk14.deployer/jboss-backport-concurrent.jar"/>
+   	<copy file="jbossretro-rt.jar" tofile="${lib.retro}" overwrite="true"/>
+   </target>
+
+   <target name="install.post.4.0.4" depends="install.lib.javassist, install.client.javassist, install.client.retro, install.lib.retro"/>
+
+   <target name="install" depends="install.deployer, install.post.4.0.4"/>
 </project>

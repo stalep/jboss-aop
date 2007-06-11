@@ -48,13 +48,16 @@
          </listitem>
          <listitem>
             In JBoss 4.0.4.GA and later, move <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/javassist.jar]]></literal>
-            to <literal><![CDATA[server/<config-name>/lib/javassist.jar]]></literal>.
+            to <literal><![CDATA[server/<config-name>/lib/javassist.jar]]></literal>. Any existing javassist.jar in that location is copied to
+            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer.bak/lib/javassist.bak]]></literal>
          </listitem>
          <listitem>
             If you NOT upgrading from a previous AOP 2 distribution, open up
             <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-aspect-library-jdk50.jar]]></literal> and
-            delete all classes and subpackages under <literal>org.jboss.aop</literal>. (In AOP 2.0 we changed the packaging, these
-            classes now exist inside <![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-aop-as4-deployer.jar]]>
+            delete all classes and subpackages under <literal>org.jboss.aop</literal>. In AOP 2.0 we changed the packaging, these
+            classes now exist inside <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-aop-as4-deployer.jar]]></literal>. 
+            Also, we delete any files that also exist in 
+            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-standalone-aspect-library-jdk14.jar]]></literal>
          </listitem>
       </orderedlist>
    </sect1>
@@ -81,15 +84,29 @@
          </listitem>
          <listitem>
             In JBoss 4.0.4.GA and later, move <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/javassist.jar]]></literal>
-            to <literal><![CDATA[server/<config-name>/lib/javassist.jar]]></literal>
+            to <literal><![CDATA[server/<config-name>/lib/javassist.jar]]></literal>. Any existing javassist.jar in that location is copied to
+            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer.bak/lib/javassist.bak]]></literal>
          </listitem>
          <listitem>
-            If you NOT upgrading from a previous AOP 2 distribution, copy the
-            <literal><![CDATA[server/<config-name>/deploy/jboss-aop.deployer.bak/jboss-aspect-library.jar]]></literal> to
-            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk14.deployer/jboss-aspect-library.jar]]></literal> and
-            delete all classes and subpackages under <literal>org.jboss.aop</literal>. (In AOP 2.0 we changed the packaging, these
-            classes now exist inside <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk14.deployer/jboss-aop-as4-deployer.jar]]></literal>. The
-            script also makes the jdk 1.4 annotations compatible with how they are simulated in JBoss AOP 2.x.
+            In JBoss 4.0.4.GA and later, move <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jbossretro-rt.jar]]></literal>
+            to <literal><![CDATA[server/<config-name>/lib/jbossretro-rt.jar]]></literal>. Any existing jbossretro-rt.jar in that location is copied to
+            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer.bak/lib/jbossretro-rt.bak]]></literal>
+         </listitem>
+         <listitem>
+            In JBoss 4.0.4.GA and later, move <literal><![CDATA[client/jbossretro-rt.jar]]></literal>
+            to <literal><![CDATA[client/jbossretro-rt.bak]]></literal>. 
+         </listitem>
+         <listitem>
+            In JBoss 4.0.4.GA and later, move <literal><![CDATA[client/javassist.jar]]></literal>
+            to <literal><![CDATA[client/javassist.bak]]></literal>. 
+         </listitem>
+         <listitem>
+            If you NOT upgrading from a previous AOP 2 distribution, open up
+            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-aspect-library-jdk50.jar]]></literal> and
+            delete all classes and subpackages under <literal>org.jboss.aop</literal>. In AOP 2.0 we changed the packaging, these
+            classes now exist inside <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-aop-as4-deployer.jar]]></literal>. 
+            Also, we delete any files that also exist in 
+            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-standalone-aspect-library-jdk14.jar]]></literal>
          </listitem>
       </orderedlist>
    </sect1>

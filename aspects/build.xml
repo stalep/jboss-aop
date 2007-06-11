@@ -245,7 +245,7 @@
       <!-- Build jboss-standalone-aspect-library-jdk14.jar -->
       <jar destfile="${build.lib}/jboss-standalone-aspect-library-jdk14.jar" manifest="${build.etc}/default.mf"
          update="${jar.update}" index="${jar.index}">
-         <fileset dir="${build.classes}">
+         <fileset dir="${build.classes.retro}">
             <include name="org/jboss/aop/junit/**"/>
             <include name="org/jboss/aspects/**"/>
          </fileset>
