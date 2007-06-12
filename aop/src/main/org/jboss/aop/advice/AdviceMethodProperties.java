@@ -50,7 +50,7 @@ public class AdviceMethodProperties
    //find properties
    private Class aspectClass;
    private String adviceName;
-   private Class infoType;
+   private Class joinPointBeanType;
    private Class invocationType;
    private Class target;
    private Class caller;
@@ -68,7 +68,7 @@ public class AdviceMethodProperties
    public AdviceMethodProperties(
          Class aspectClass, 
          String adviceName, 
-         Class infoType,
+         Class joinPointBeanType,
          Class invocationType,
          Class joinpointReturnType,
          Class[] joinpointParameters,
@@ -78,7 +78,7 @@ public class AdviceMethodProperties
    {
       this.aspectClass = aspectClass;
       this.adviceName = adviceName;
-      this.infoType = infoType;
+      this.joinPointBeanType = joinPointBeanType;
       this.invocationType = invocationType;
       this.joinpointReturnType = joinpointReturnType;
       this.joinpointParameters = joinpointParameters;
@@ -91,7 +91,7 @@ public class AdviceMethodProperties
    public AdviceMethodProperties(
          Class aspectClass,
          String adviceName,
-         Class infoType,
+         Class joinPointBeanType,
          Class invocationType,
          Class joinpointReturnType,
          Class[] joinpointParameters,
@@ -101,7 +101,7 @@ public class AdviceMethodProperties
          Class caller,
          boolean callerAvailable)
    {
-      this (aspectClass, adviceName, infoType, invocationType, joinpointReturnType,
+      this (aspectClass, adviceName, joinPointBeanType, invocationType, joinpointReturnType,
       joinpointParameters, joinpointExceptions, target, targetAvailable);
       this.caller = caller;
       this.callerAvailable = callerAvailable;
@@ -126,9 +126,9 @@ public class AdviceMethodProperties
    }
 
 
-   public Class getInfoType()
+   public Class getJoinPointBeanType()
    {
-      return infoType;
+      return joinPointBeanType;
    }
 
 

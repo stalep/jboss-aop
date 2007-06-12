@@ -23,11 +23,11 @@
 import org.jboss.aop.advice.annotation.JoinPoint;
 
 import org.jboss.aop.joinpoint.ConstructorInvocation;
+import org.jboss.aop.joinpoint.ConstructorExecution;
+import org.jboss.aop.joinpoint.FieldAccess;
 import org.jboss.aop.joinpoint.FieldReadInvocation;
 import org.jboss.aop.joinpoint.FieldWriteInvocation;
-import org.jboss.aop.joinpoint.IConstructorInfo;
-import org.jboss.aop.joinpoint.IFieldInfo;
-import org.jboss.aop.joinpoint.IMethodInfo;
+import org.jboss.aop.joinpoint.MethodExecution;
 import org.jboss.aop.joinpoint.MethodInvocation;
 
 public class JoinPointAspect
@@ -60,19 +60,19 @@ public class JoinPointAspect
       return invocation.invokeNext();
    }
    
-   public void otherTypeOfAdvice(@JoinPoint IConstructorInfo joinPoint)
+   public void otherTypeOfAdvice(@JoinPoint ConstructorExecution joinPoint)
    {
       System.out.println(">>> otherTypeOfAdvice on constructor of class: " +
             joinPoint.getConstructor().getDeclaringClass().getName());
    }
    
-   public void otherTypeOfAdvice(@JoinPoint IMethodInfo joinPoint)
+   public void otherTypeOfAdvice(@JoinPoint MethodExecution joinPoint)
    {
       System.out.println(">>> otherTypeOfAdvice on method execution: " +
             joinPoint.getAdvisedMethod().getName());
    }
       
-   public void otherTypeOfAdvice(@JoinPoint IFieldInfo joinPoint)
+   public void otherTypeOfAdvice(@JoinPoint FieldAccess joinPoint)
    {
       System.out.println(">>> otherTypeOfAdvice on field" +
          (joinPoint.isRead()? "read: ": "write: ") +

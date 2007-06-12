@@ -20,9 +20,6 @@
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import org.jboss.aop.ConstructorInfo;
-import org.jboss.aop.FieldInfo;
-import org.jboss.aop.JoinPointInfo;
 
 import org.jboss.aop.advice.annotation.Arg;
 import org.jboss.aop.advice.annotation.Args;
@@ -32,15 +29,18 @@ import org.jboss.aop.advice.annotation.Return;
 import org.jboss.aop.advice.annotation.Target;
 
 import org.jboss.aop.joinpoint.CallerInvocation;
+import org.jboss.aop.joinpoint.ConstructorExecution;
 import org.jboss.aop.joinpoint.CurrentInvocation;
+import org.jboss.aop.joinpoint.JoinPointBean;
+
 
 public class Aspect
 {
    // @JoinPoint
    
-   public void beforeJoinPoint(@JoinPoint JoinPointInfo joinPointInfo)
+   public void beforeJoinPoint(@JoinPoint JoinPointBean joinPoint)
    {
-      System.out.println(">>> beforeJoinPoint: FieldInfo " + joinPointInfo);
+      System.out.println(">>> beforeJoinPoint: JoinPointBean " + joinPoint);
    }
    
    public Object aroundJoinPoint(@JoinPoint CallerInvocation invocation) throws Throwable
@@ -49,9 +49,9 @@ public class Aspect
       return invocation.invokeNext();
    }
    
-   public void afterJoinPoint(@JoinPoint ConstructorInfo joinPointInfo)
+   public void afterJoinPoint(@JoinPoint ConstructorExecution joinPoint)
    {
-      System.out.println(">>> afterJoinPoint: ConstructorInfo " + joinPointInfo);
+      System.out.println(">>> afterJoinPoint: ConstructorExecution " + joinPoint);
    }
    
    // @Target

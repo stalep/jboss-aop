@@ -109,9 +109,9 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNull(JoinPointAspect.finallyJoinPoint);
       
       assertTrue(JoinPointAspect.afterJoinPoint instanceof FieldAccess);
-      FieldAccess fieldInfo = (FieldAccess) JoinPointAspect.afterJoinPoint;
-      assertEquals("number", fieldInfo.getAdvisedField().getName());
-      assertFalse(fieldInfo.isRead());
+      FieldAccess fieldAccess = (FieldAccess) JoinPointAspect.afterJoinPoint;
+      assertEquals("number", fieldAccess.getAdvisedField().getName());
+      assertFalse(fieldAccess.isRead());
    }
    
    public void testFieldWrite2()
@@ -129,9 +129,9 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertSame(JoinPointAspect.beforeJoinPoint,
             JoinPointAspect.finallyJoinPoint);
       assertTrue(JoinPointAspect.beforeJoinPoint instanceof FieldAccess);
-      FieldAccess fieldInfo = (FieldAccess) JoinPointAspect.beforeJoinPoint;
-      assertEquals("text", fieldInfo.getAdvisedField().getName());
-      assertFalse(fieldInfo.isRead());
+      FieldAccess fieldAccess = (FieldAccess) JoinPointAspect.beforeJoinPoint;
+      assertEquals("text", fieldAccess.getAdvisedField().getName());
+      assertFalse(fieldAccess.isRead());
    }
    
    public void testFieldWrite3()
@@ -147,9 +147,9 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertNull(JoinPointAspect.finallyJoinPoint);
       
       assertTrue(JoinPointAspect.afterJoinPoint instanceof FieldAccess);
-      FieldAccess fieldInfo = (FieldAccess) JoinPointAspect.afterJoinPoint;
-      assertEquals("text", fieldInfo.getAdvisedField().getName());
-      assertTrue(fieldInfo.isRead());
+      FieldAccess fieldAccess = (FieldAccess) JoinPointAspect.afterJoinPoint;
+      assertEquals("text", fieldAccess.getAdvisedField().getName());
+      assertTrue(fieldAccess.isRead());
    }
    
    public void testMethodExecution1() throws Exception

@@ -25,9 +25,9 @@ import org.jboss.aop.advice.annotation.Caller;
 import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Target;
 
-import org.jboss.aop.joinpoint.IConstructorInfo;
-import org.jboss.aop.joinpoint.IJoinPointInfo;
-import org.jboss.aop.joinpoint.ICallerMethodInfo;
+import org.jboss.aop.joinpoint.ConstructorExecution;
+import org.jboss.aop.joinpoint.JoinPointBean;
+import org.jboss.aop.joinpoint.MethodCall;
 
 public class MixedParametersAspect
 {
@@ -37,9 +37,9 @@ public class MixedParametersAspect
       return 0;
    }
 
-   public void overloadedAdvice(@JoinPoint IConstructorInfo joinPoint)
+   public void overloadedAdvice(@JoinPoint ConstructorExecution joinPoint)
    {
-      System.out.println(">>> overloadedAdvice: (JoinPoint IConstructorInfo)");
+      System.out.println(">>> overloadedAdvice: (JoinPoint ConstructorExecution)");
    }
 
    public void overloadedAdvice(@Target Object target)
@@ -47,13 +47,13 @@ public class MixedParametersAspect
       System.out.println(">>> overloadedAdvice: (Target Object)");
    }
 
-   public void overloadedAdvice(@JoinPoint ICallerMethodInfo joinPoint, @Caller Driver driver)
+   public void overloadedAdvice(@JoinPoint MethodCall joinPoint, @Caller Driver driver)
    {
-      System.out.println(">>> overloadedAdvice: (JoinPoint ICallerMethodInfo, Caller Driver)");
+      System.out.println(">>> overloadedAdvice: (JoinPoint MethodCall, Caller Driver)");
    }
 
-   public void overloadedAdvice(@JoinPoint IJoinPointInfo joinPoint, @Arg String arg)
+   public void overloadedAdvice(@JoinPoint JoinPointBean joinPoint, @Arg String arg)
    {
-      System.out.println(">>> overloadedAdvice: JoinPoint IJoinPoint, Arg String");
+      System.out.println(">>> overloadedAdvice: JoinPoint JoinPointBean, Arg String");
    }
 }

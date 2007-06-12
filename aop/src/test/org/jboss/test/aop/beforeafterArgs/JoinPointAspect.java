@@ -117,7 +117,7 @@ public class JoinPointAspect
       afterJoinPoint = joinPoint;
    }
    
-   public void after2(@JoinPoint ConstructorExecution constructorInfo)
+   public void after2(@JoinPoint ConstructorExecution constructorExecution)
    {
       Assert.fail("This advice should never be executed");
    }

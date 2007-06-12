@@ -110,9 +110,9 @@
          avoiding the creation of the <literal>Invocation</literal> objects per joinpoint execution.
       </para>
       <para>
-         Instead of <literal>Invocation</literal> objects, JBoss AOP provides <link linkend="pointcuts-typetable">JoinPointInfo beans</link>
+         Instead of <literal>Invocation</literal> objects, JBoss AOP provides <link linkend="pointcuts-typetable">JoinPointBean beans</link>
          for these advices. As described in <xref linkend="pointcuts-beans"/>, these beans contain all information regarding a joinpoint,
-         like an <literal>Invocation</literal> would do. However, since <literal>IJoinPointInfo</literal> objects are not used on around
+         like an <literal>Invocation</literal> would do. However, since <literal>JoinPointBean</literal> objects are not used on around
          advice types, they do not provide proceeding methods, like <literal>invokeNext()</literal>. They also do not allow you to
          attach metadata for a particular invocation.
       </para>
@@ -212,7 +212,7 @@ public [return type] [advice name]([annotated parameter], [annotated parameter],
          <literal>MethodInvocation</literal>, or an <literal>Invocation</literal> (the complete list of joinpoint beans
          and their relationship with joinpoint types was shown in <xref linkend="pointcuts-typetable">in a previously seen table</xref>).
          As already explained, around advices use <literal>Invocation</literal> instances, while the other advices use
-         <literal>IJoinPointInfo</literal> objects.
+         <literal>JoinPointBean</literal> objects.
       </para>
       <para>
          Notice also that only one annotated parameter can be mandatory: <literal>@Thrown</literal>. This will be
@@ -265,7 +265,7 @@ public [return type] [advice name]([annotated parameter], [annotated parameter],
                   <entry>No</entry>
                </row>
                <row>
-                  <entry>Joinpoint info</entry>
+                  <entry>JoinpointBean interface type</entry>
                   <entry>No</entry>
                   <entry>Yes</entry>
                   <entry>No</entry>

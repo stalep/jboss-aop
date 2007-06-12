@@ -23,6 +23,10 @@ package org.jboss.test.aop.container;
 
 import java.lang.reflect.Method;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import junit.textui.TestRunner;
+
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassContainer;
 import org.jboss.aop.MethodInfo;
@@ -30,10 +34,6 @@ import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.aop.util.MethodHashing;
 import org.jboss.test.aop.AOPTestWithSetup;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.textui.TestRunner;
 
 /**
 *

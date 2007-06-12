@@ -155,7 +155,7 @@ public class OverloadedBeforeAspect
       before1 = "";
    }
    
-   public void before1(@JoinPoint MethodExecution constructorInfo)
+   public void before1(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -237,7 +237,7 @@ public class OverloadedBeforeAspect
       before2 = "";
    }
    
-   public void before2(@JoinPoint MethodExecution constructorInfo)
+   public void before2(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -314,7 +314,7 @@ public class OverloadedBeforeAspect
       before3 = "";
    }
    
-   public void before3(@JoinPoint MethodExecution constructorInfo)
+   public void before3(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -386,7 +386,7 @@ public class OverloadedBeforeAspect
       before4 = "";
    }
    
-   public void before4(@JoinPoint MethodExecution constructorInfo)
+   public void before4(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -453,7 +453,7 @@ public class OverloadedBeforeAspect
       before5 = "";
    }
    
-   public void before5(@JoinPoint MethodExecution constructorInfo)
+   public void before5(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -515,7 +515,7 @@ public class OverloadedBeforeAspect
       before6 = "";
    }
    
-   public void before6(@JoinPoint MethodExecution constructorInfo)
+   public void before6(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -572,7 +572,7 @@ public class OverloadedBeforeAspect
       before7 = "";
    }
    
-   public void before7(@JoinPoint MethodExecution constructorInfo)
+   public void before7(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -624,7 +624,7 @@ public class OverloadedBeforeAspect
       before8 = "";
    }
    
-   public void before8(@JoinPoint MethodExecution constructorInfo)
+   public void before8(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -671,7 +671,7 @@ public class OverloadedBeforeAspect
       before9 = "";
    }
    
-   public void before9(@JoinPoint MethodExecution constructorInfo)
+   public void before9(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -713,7 +713,7 @@ public class OverloadedBeforeAspect
       before10 = "";
    }
    
-   public void before10(@JoinPoint MethodExecution constructorInfo)
+   public void before10(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -750,7 +750,7 @@ public class OverloadedBeforeAspect
       before11 = "";
    }
    
-   public void before11(@JoinPoint MethodExecution constructorInfo)
+   public void before11(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -782,7 +782,7 @@ public class OverloadedBeforeAspect
       before12 = "";
    }
    
-   public void before12(@JoinPoint MethodExecution constructorInfo)
+   public void before12(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -814,7 +814,7 @@ public class OverloadedBeforeAspect
       before13 = "";
    }
    
-   public void before13(@JoinPoint MethodExecution constructorInfo)
+   public void before13(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -841,7 +841,7 @@ public class OverloadedBeforeAspect
       before14 = "";
    }
    
-   public void before14(@JoinPoint MethodExecution constructorInfo)
+   public void before14(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -863,7 +863,7 @@ public class OverloadedBeforeAspect
       before15 = "";
    }
    
-   public void before15(@JoinPoint MethodExecution constructorInfo)
+   public void before15(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -880,7 +880,7 @@ public class OverloadedBeforeAspect
       before16 = "";
    }
    
-   public void before16(@JoinPoint MethodExecution constructorInfo)
+   public void before16(@JoinPoint MethodExecution methodExecution)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -892,12 +892,12 @@ public class OverloadedBeforeAspect
    
    /* BEFORE17 ADVICE */
    
-   public void before17(@JoinPoint FieldAccess fieldInfo, @Arg String text)
+   public void before17(@JoinPoint FieldAccess fieldAccess, @Arg String text)
    {
       before17 = "FieldAccess,String";
    }
    
-   public void before17(@JoinPoint FieldAccess fieldInfo)
+   public void before17(@JoinPoint FieldAccess fieldAccess)
    {
       before17 = "FieldAccess";
    }

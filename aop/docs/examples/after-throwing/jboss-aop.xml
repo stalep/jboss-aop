@@ -5,9 +5,9 @@
 
    <bind pointcut="execution(* POJO->*(..))">
       <throwing name="afterThrowing" aspect="Aspect"/>
-      <throwing name="afterThrowingInfo" aspect="Aspect"/>
+      <throwing name="afterThrowingJoinPoint" aspect="Aspect"/>
       <throwing name="afterThrowingArg" aspect="Aspect"/>
-      <throwing name="afterThrowingInfoArg" aspect="Aspect"/>
+      <throwing name="afterThrowingJoinPointArg" aspect="Aspect"/>
    </bind>
    
 </aop>

@@ -96,19 +96,19 @@ of checking the invocation type everytime this advice is invoked.
 </p><p>
 This example could also be applied to another type of advice with minor changes:
 <pre>
-public void otherTypeOfAdvice(@JoinPoint IConstructorInfo joinPoint)
+public void otherTypeOfAdvice(@JoinPoint ConstructorExecution joinPoint)
 {
    System.out.println("&gt;&gt;&gt; otherTypeOfAdvice on constructor of class: " +
          joinPoint.getConstructor().getDeclaringClass().getName());
 }
 
-public void otherTypeOfAdvice(@JoinPoint IMethodInfo joinPoint)
+public void otherTypeOfAdvice(@JoinPoint MethodExecution joinPoint)
 {
    System.out.println("&gt;&gt;&gt; otherTypeOfAdvice on method execution: " +
          joinPoint.getAdvisedMethod().getName());
 }
 
-public void otherTypeOfAdvice(@JoinPoint IFieldInfo joinPoint)
+public void otherTypeOfAdvice(@JoinPoint FieldAccess joinPoint)
 {
    System.out.println("&gt;&gt;&gt; otherTypeOfAdvice on field" +
       (joinPoint.isRead()? "read: ": "write: ") +
@@ -122,7 +122,7 @@ ___________________________
 &lt;/bind&gt;
 </pre>
 </p><p>
-Notice that <tt>IFieldInfo</tt> is used for both field read and write joinpoints. The
+Notice that <tt>FieldAccess</tt> is used for both field read and write joinpoints. The
 <tt>otherTypeOfAdvice</tt> advice is applied as a before advice in the example. However,
 it could have been applied as an after advice, or a finally advice. And it could
 also have been applied as an after-throwing advice if we added a <tt>@Thrown</tt>
@@ -144,9 +144,9 @@ public int overloadedAdvice(@Target POJO target)
    return 0;
 }
 
-public void overloadedAdvice(@JoinPoint IConstructorInfo joinPoint)
+public void overloadedAdvice(@JoinPoint ConstructorExecution joinPoint)
 {
-   System.out.println("&gt;&gt;&gt; overloadedAdvice: (JoinPoint IConstructorInfo)");
+   System.out.println("&gt;&gt;&gt; overloadedAdvice: (JoinPoint ConstructorExecution)");
 }
 
 public void overloadedAdvice(@Target Object target)
@@ -154,14 +154,14 @@ public void overloadedAdvice(@Target Object target)
    System.out.println("&gt;&gt;&gt; overloadedAdvice: (Target Object)");
 }
 
-public void overloadedAdvice(@JoinPoint ICallerMethodInfo joinPoint, @Caller Driver driver)
+public void overloadedAdvice(@JoinPoint MethodCall joinPoint, @Caller Driver driver)
 {
-   System.out.println("&gt;&gt;&gt; overloadedAdvice: (JoinPoint ICallerMethodInfo, Caller Driver)");
+   System.out.println("&gt;&gt;&gt; overloadedAdvice: (JoinPoint MethodCall, Caller Driver)");
 }
 
-public void overloadedAdvice(@JoinPoint IJoinPointInfo joinPoint, @Arg String arg)
+public void overloadedAdvice(@JoinPoint JoinPointBean joinPoint, @Arg String arg)
 {
-   System.out.println("&gt;&gt;&gt; overloadedAdvice: JoinPoint IJoinPoint, Arg String");
+   System.out.println("&gt;&gt;&gt; overloadedAdvice: JoinPoint JoinPointBean, Arg String");
 }
 </pre>
 </p><p>
@@ -191,7 +191,7 @@ _run.aopc.50:
      [java] ========================
      [java] &gt;&gt;&gt; otherTypeOfAdvice on constructor of class: POJO
      [java] &gt;&gt;&gt; aroundAdvice on constructor of class: POJO
-     [java] &gt;&gt;&gt; overloadedAdvice: (JoinPoint IConstructorInfo)
+     [java] &gt;&gt;&gt; overloadedAdvice: (JoinPoint ConstructorExecution)
 
      [java] Setting POJO-&gt;intField with 1751 value
      [java] ======================================
@@ -209,7 +209,7 @@ _run.aopc.50:
      [java] ===========================================
      [java] &gt;&gt;&gt; otherTypeOfAdvice on fieldwrite: stringField
      [java] &gt;&gt;&gt; aroundAdvice on field write: stringField
-     [java] &gt;&gt;&gt; overloadedAdvice: JoinPoint IJoinPoint, Arg String
+     [java] &gt;&gt;&gt; overloadedAdvice: (JoinPoint JoinPointBean, Arg String)
 
      [java] Reading POJO-&gt;stringField value
      [java] ===============================
@@ -223,15 +223,15 @@ _run.aopc.50:
      [java] &gt;&gt;&gt; aroundAdvice on method execution: voidMethod
      [java] RUNNING POJO-&gt;voidMethod()
      [java] &gt;&gt;&gt; overloadedAdvice: int(Target POJO)
-     [java] &gt;&gt;&gt; overloadedAdvice: (JoinPoint ICallerMethodInfo, Caller Driver)
+     [java] &gt;&gt;&gt; overloadedAdvice: (JoinPoint MethodCall, Caller Driver)
 
      [java] Calling POJO-&gt;methodWithStringArg()
      [java] ===================================
      [java] &gt;&gt;&gt; otherTypeOfAdvice on method execution: methodWithStringArg
      [java] &gt;&gt;&gt; aroundAdvice on method execution: methodWithStringArg
      [java] RUNNING POJO-&gt;methodWithStringArg("stringArg")
-     [java] &gt;&gt;&gt; overloadedAdvice: JoinPoint IJoinPoint, Arg String
-     [java] &gt;&gt;&gt; overloadedAdvice: (JoinPoint ICallerMethodInfo, Caller Driver)
+     [java] &gt;&gt;&gt; overloadedAdvice: (JoinPoint JoinPointBean, Arg String)
+     [java] &gt;&gt;&gt; overloadedAdvice: (JoinPoint MethodCall, Caller Driver)
 </pre>
 </p><p>
 </p>

@@ -22,14 +22,14 @@
 
 import org.jboss.aop.advice.annotation.JoinPoint;
 
-import org.jboss.aop.JoinPointInfo; 
+import org.jboss.aop.joinpoint.JoinPointBean; 
 
 public class MutexAspect
 {
    private Object lock = new Object();
    private boolean locked = false;   
    
-   public void beforeAdvice(@JoinPoint JoinPointInfo joinPoint)
+   public void beforeAdvice(@JoinPoint JoinPointBean joinPoint)
    {
       synchronized(lock)
       {
@@ -50,7 +50,7 @@ public class MutexAspect
       }
    }
    
-   public void afterAdvice(@JoinPoint JoinPointInfo joinPoint)
+   public void afterAdvice(@JoinPoint JoinPointBean joinPoint)
    {
       synchronized(lock)
       {

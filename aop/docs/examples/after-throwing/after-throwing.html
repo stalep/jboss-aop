@@ -63,7 +63,7 @@ But you can also include any other
 The following advice signature is valid to intercept a method execution throwing an
 exception:
 <pre>
-public void afterThrowingInfo(@JoinPoint IMethodInfo methodInfo, @Thrown Throwable thrown)
+public void afterThrowingJoinPoint(@JoinPoint MethodExecution methodExecution, @Thrown Throwable thrown)
 </pre>
 </p><p>
 Notice that you can declare the annotated parameters in any order you wish.
@@ -73,7 +73,7 @@ signatures are also valid:
 </p><p>
 <pre>
 public void afterThrowingArg(@Thrown Throwable thrown, @Arg String argument)
-public void afterThrowingInfoArg(@Thrown Throwable thrown, @JoinPoint IMethodInfo methodInfo, @Arg String argument)
+public void afterThrowingJoinPointArg(@Thrown Throwable thrown, @JoinPoint MethodExecution methodExecution, @Arg String argument)
 </pre>
 </p><p>
 </p><p>
@@ -93,9 +93,9 @@ _run.aopc.50:
      [java] ====================================
      [java] RUNNING POJO-&gt;throwsExceptionMethod("argument")
      [java] &gt;&gt;&gt; afterThrowing: java.lang.Exception: POJO Exception
-     [java] &gt;&gt;&gt; afterThrowingInfo: java.lang.Exception: POJO Exception
+     [java] &gt;&gt;&gt; afterThrowingJoinPoint: java.lang.Exception: POJO Exception
      [java] &gt;&gt;&gt; afterThrowingArg: java.lang.Exception: POJO Exception
-     [java] &gt;&gt;&gt; afterThrowingInfoArg: java.lang.Exception: POJO Exception
+     [java] &gt;&gt;&gt; afterThrowingJoinPointArg: java.lang.Exception: POJO Exception
      [java] Caching Exception java.lang.Exception: POJO Exception
 
      [java] Calling POJO-&gt;throwNothingMethod()

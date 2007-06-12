@@ -32,7 +32,7 @@ Differently from around advices and interceptors, throwing a <tt>java.lang.Throw
 is not necessary, because these advices do not wrap a joinpoint.
 </p><p>
 Instead of <a href="../../misc/invocation.html"><tt>Invocation</tt></a> instances, before/after advices receive instances
-of <a href="../../misc/joinpoint.html"><tt>org.jboss.aop.IJoinpointInfo</tt> and subinterfaces</a>
+of <a href="../../misc/joinpoint.html"><tt>org.jboss.aop.joinpoint.JoinpointBean</tt> and subinterfaces</a>
 as parameters.
 </p><p>
 Furthermore, one can notice the presence of the parameter annotation <tt>@org.jboss.aop.advice.annotation.JoinPoint</tt>. This is necessary because
@@ -331,8 +331,6 @@ _run.aopc.50:
 
      [java] TRANSACTIONS
      [java] ============
-     [java] Using context classloader sun.misc.Launcher$AppClassLoader@133056f to load aspect mypackage.MutexAspect
-     [java] Using context classloader sun.misc.Launcher$AppClassLoader@133056f to load aspect mypackage.MutexAspect
      [java] &gt;&gt;&gt; Retrieved concurrency lock
      [java] Depositing US$ 50.00 to account A
      [java] &lt;&lt;&lt; Releasing concurrency lock

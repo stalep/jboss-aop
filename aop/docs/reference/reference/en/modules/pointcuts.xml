@@ -468,12 +468,12 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
          </para>
          <para>
             The other group of beans contains only information regarding the joinpoint itself, and are called the <literal>
-            JoinPointInfo</literal> group. All beans of this group are defined in interfaces, with <literal>
-            org.jboss.joinpoint.IJoinPointInfo</literal> being their common superinterface.
+            JoinPointBean</literal> group. All beans of this group are defined in interfaces, with <literal>
+            org.jboss.joinpoint.JoinPointBean</literal> being their common superinterface.
          </para>
          <para>
             The <literal>Invocation</literal> objects are available only to around advices. All other types of advices can use the
-            <literal>JoinPointInfo Beans</literal> to access joinpoint specific data.
+            <literal>JoinPointBean</literal> types to access joinpoint specific data.
          </para>
          <para>
             In both groups there is a specific type for each joinpoint type. The type of bean corresponding to each joinpoint type can be seen
@@ -536,7 +536,7 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
                   </row>
                   <row>
                      <entry>Invocation</entry>
-                     <entry>IJoinpointInfo</entry>
+                     <entry>JoinpointBean</entry>
                      <entry>Target</entry>
                      <entry>Caller</entry>
                      <entry>Arguments</entry>
@@ -548,7 +548,7 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
                      <entry>field read</entry>
                      <entry><literal>read</literal>, <literal>field</literal>, <literal>all</literal></entry>
                      <entry><literal>FieldReadInvocation</literal></entry>
-                     <entry><literal>IFieldInfo</literal></entry>
+                     <entry><literal>FieldAccess</literal></entry>
                      <entry>Yes</entry>
                      <entry>No</entry>
                      <entry>No</entry>
@@ -558,7 +558,7 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
                      <entry>field write</entry>
                      <entry><literal>write</literal>, <literal>field</literal>, <literal>all</literal></entry>
                      <entry><literal>FieldWriteInvocation</literal></entry>
-                     <entry><literal>IFieldInfo</literal></entry>
+                     <entry><literal>FieldAccess</literal></entry>
                      <entry>Yes</entry>
                      <entry>No</entry>
                      <entry>Yes</entry>
@@ -568,7 +568,7 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
                      <entry>method execution</entry>
                      <entry><literal>execution</literal>, <literal>all</literal></entry>
                      <entry><literal>MethodInvocation</literal></entry>
-                     <entry><literal>IMethodInfo</literal></entry>
+                     <entry><literal>MethodExecution</literal></entry>
                      <entry>Yes</entry>
                      <entry>No</entry>
                      <entry>Yes</entry>
@@ -578,7 +578,7 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
                      <entry>constructor execution</entry>
                      <entry><literal>execution</literal></entry>
                      <entry><literal>ConstructorInvocation</literal></entry>
-                     <entry><literal>IConstructorInfo</literal></entry>
+                     <entry><literal>ConstructorExecution</literal></entry>
                      <entry>No</entry>
                      <entry>No</entry>
                      <entry>Yes</entry>
@@ -588,7 +588,7 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
                      <entry>construction</entry>
                      <entry><literal>construction</literal></entry>
                      <entry><literal>ConstructionInvocation</literal></entry>
-                     <entry><literal>IConstructorInfo</literal></entry>
+                     <entry><literal>ConstructorExecution</literal></entry>
                      <entry>Yes</entry>
                      <entry>No</entry>
                      <entry>Yes</entry>
@@ -597,8 +597,8 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
                   <row>
                      <entry>method call</entry>
                      <entry><literal>call</literal>, <literal>within</literal>, <literal>withincode</literal></entry>
-                     <entry><literal>MethodCalledByConstructorInvocation</literal>, <literal>MethodCalledByMethodInvocation</literal></entry>
-                     <entry><literal>IMethodByConInfo</literal>, <literal>IMethodByMethodInfo</literal></entry>
+                     <entry><literal>CallerInvocation</literal>, <literal>MethodCalledByConstructorInvocation</literal>, <literal>MethodCalledByMethodInvocation</literal></entry>
+                     <entry><literal>MethodCall</literal>, <literal>MethodCallByConstructor</literal>, <literal>MethodCallByMethod</literal></entry>
                      <entry>Yes</entry>
                      <entry>Yes</entry>
                      <entry>Yes</entry>
@@ -607,8 +607,8 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
                   <row>
                      <entry>constructor call</entry>
                      <entry><literal>call</literal>, <literal>within</literal>, <literal>withincode</literal></entry>
-                     <entry><literal>ConstructorCalledByConstructorInvocation</literal>, <literal>ConstructorCalledByMethodInvocation</literal></entry>
-                     <entry><literal>IConByConInfo</literal>, <literal>IConByMethodInfo</literal></entry>
+                     <entry><literal>CallerInvocation</literal>, <literal>ConstructorCalledByConstructorInvocation</literal>, <literal>ConstructorCalledByMethodInvocation</literal></entry>
+                     <entry><literal>ConstructorCall</literal>, <literal>ConstructorCallByConstructor</literal>, <literal>ConstructorCallByMethod</literal></entry>
                      <entry>Yes</entry>
                      <entry>Yes</entry>
                      <entry>Yes</entry>
@@ -619,7 +619,7 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
             The first column shows the joinpoint type. The second column shows which pointcut constructs can identify a joinpoint of that type.
             <literal>has</literal> and <literal>hasfield</literal> are additional constructs, and therefore are not shown in this table. The
             third column shows the specific type of joinpoint bean class that is used to represent that joinpoint. This column is split into two:
-            one for the <literal>Invocation</literal> beans, the other one for the <literal>JoinPointInfo</literal> ones. The fourth column is
+            one for the <literal>Invocation</literal> beans, the other one for the <literal>JoinPointBean</literal> ones. The fourth column is
             composed of four subcolumns, and it shows the context values avaialble for each joinpoint type. Notice that, on some of these values,
             there are additional restrictions for their availability. Like, for example, there is no target on a static method execution.
          </table>

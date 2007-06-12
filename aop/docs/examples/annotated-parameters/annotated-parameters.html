@@ -88,19 +88,19 @@ This annotation is used on objects that represent a joinpoint. If the advice
 is an around advice, the type of this object belongs to the
 <a href="../../misc/invocation.html">Invocation class hierarchy</a>. On all other
 advices, joinpoints are represented by types of the
-<a href="../../misc/joinpoint.html">JoinPoint interface hierarchy</a>, as follows:
+<a href="../../misc/joinpoint.html">JoinPointBean interface hierarchy</a>, as follows:
 </p><p>
 <pre>
-public void beforeJoinPoint(@JoinPoint JoinPointInfo joinPointInfo)
+public void beforeJoinPoint(@JoinPoint JoinPointBean joinPoint)
 
 public Object aroundJoinPoint(@JoinPoint CallerInvocation invocation) throws Throwable
 
-public void afterJoinPoint(@JoinPoint ConstructorInfo joinPointInfo)
+public void afterJoinPoint(@JoinPoint ConstructorExecution joinPoint)
 </pre>
 </p><p>
 Notice how <tt>beforeJoinPoint</tt> advice receives a parameter of the supertype
-<tt>JoinPointInfo</tt> while, in <tt>afterJoinPoint</tt>, the parameter is of the more
-specific type <tt>ConstructorInfo</tt>, valid only on constructor execution
+<tt>JoinPointBean</tt> while, in <tt>afterJoinPoint</tt>, the parameter is of the more
+specific type <tt>ConstructorExecution</tt>, valid only on constructor execution
 joinpoints.
 To see these and all other advice examples, open up the <tt>Aspect.java</tt> file.
 </p><p>
@@ -278,11 +278,11 @@ _run.aopc.50:
      [java] &gt;&gt;&gt; beforeConstructorArg: Object "Driver"
      [java] &gt;&gt;&gt; aroundConstructorArg: String "Driver"
      [java] RUNNING new POJO("Driver")
-     [java] &gt;&gt;&gt; afterJoinPoint: ConstructorInfo Constructor[constructor=public POJO(java.lang.String)]
+     [java] &gt;&gt;&gt; afterJoinPoint: ConstructorExecution Constructor[constructor=public POJO(java.lang.String)]
 
      [java] Setting POJO-&gt;field with "text" value
      [java] =======================================
-     [java] &gt;&gt;&gt; beforeJoinPoint: FieldInfo Field Write[field=public java.lang.Object POJO.field]
+     [java] &gt;&gt;&gt; beforeJoinPoint: JoinPointBean Field Write[field=public java.lang.Object POJO.field]
      [java] &gt;&gt;&gt; aroundTarget: POJO POJO@19209ea
      [java] &gt;&gt;&gt; aroundArgs: arguments [text]
 

@@ -24,7 +24,7 @@ import org.jboss.aop.advice.annotation.Arg;
 import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Thrown;
 
-import org.jboss.aop.joinpoint.IMethodInfo;
+import org.jboss.aop.joinpoint.MethodExecution;
 
 public class Aspect
 {
@@ -33,9 +33,9 @@ public class Aspect
       System.out.println(">>> afterThrowing: " + thrown);
    }
    
-   public void afterThrowingInfo(@JoinPoint IMethodInfo methodInfo, @Thrown Throwable thrown)
+   public void afterThrowingJoinPoint(@JoinPoint MethodExecution methodExecution, @Thrown Throwable thrown)
    {
-      System.out.println(">>> afterThrowingInfo: " + thrown);
+      System.out.println(">>> afterThrowingJoinPoint: " + thrown);
    }
    
    public void afterThrowingArg(@Thrown Throwable thrown, @Arg String argument)
@@ -43,8 +43,8 @@ public class Aspect
       System.out.println(">>> afterThrowingArg: " + thrown);
    }
    
-   public void afterThrowingInfoArg(@Thrown Throwable thrown, @JoinPoint IMethodInfo methodInfo, @Arg String argument)
+   public void afterThrowingJoinPointArg(@Thrown Throwable thrown, @JoinPoint MethodExecution methodExecution, @Arg String argument)
    {
-      System.out.println(">>> afterThrowingInfoArg: " + thrown);
+      System.out.println(">>> afterThrowingJoinPointArg: " + thrown);
    }
 }

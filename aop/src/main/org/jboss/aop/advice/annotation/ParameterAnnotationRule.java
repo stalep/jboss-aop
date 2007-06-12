@@ -1,9 +1,9 @@
 package org.jboss.aop.advice.annotation;
 
-import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
 import org.jboss.aop.joinpoint.FieldReadInvocation;
 import org.jboss.aop.joinpoint.Invocation;
+import org.jboss.aop.joinpoint.JoinPointBean;
 
 /**
  * Represents the set of rules associated with a parameter annotation. Every parameter
@@ -17,12 +17,12 @@ enum ParameterAnnotationRule
     * Rule for parameter annotation {@link JoinPoint}.
     */
    JOIN_POINT (
-         JoinPoint.class, JoinPointInfo.class, AdviceMethodProperties.JOINPOINT_ARG,
+         JoinPoint.class, JoinPointBean.class, AdviceMethodProperties.JOINPOINT_ARG,
          700, false, true)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
-         return properties.getInfoType();
+         return properties.getJoinPointBeanType();
       }
    },
    
