@@ -69,7 +69,7 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
    public MethodByMethodJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
       super(advisor, info, getParameters((MethodByMethodInfo) info),
-            ((MethodByMethodInfo) info).getMethod().getParameterTypes().length);
+            ((MethodByMethodInfo) info).getMethod().getParameterTypes().length, false);
 
       if (!((MethodByMethodInfo)info).getMethod().getReturnType().equals(Void.TYPE))
       {

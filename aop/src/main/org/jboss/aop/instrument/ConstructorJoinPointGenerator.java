@@ -73,7 +73,8 @@ public class ConstructorJoinPointGenerator extends JoinPointGenerator
    public ConstructorJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
       super(advisor, info, JoinPointParameters.ONLY_ARGS,
-            ((ConstructorInfo) info).getConstructor().getParameterTypes().length);
+            ((ConstructorInfo) info).getConstructor().getParameterTypes().length,
+            false);
       returnType = new WeakReference(((ConstructorInfo)info).getConstructor().getDeclaringClass());
    }
 

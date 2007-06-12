@@ -89,7 +89,7 @@ public abstract class JoinPointGenerator
    private static final String GET_ARGUMENTS= OptimizedBehaviourInvocations.GET_ARGUMENTS + "()";
    protected static final CtClass[] EMPTY_CTCLASS_ARRAY = new CtClass[0];
    private final ArrayList<Integer> joinPointArguments;
-   
+   private final boolean nullArgsArray;
    
    private JoinPointParameters parameters;
    private static int increment;
@@ -110,13 +110,25 @@ public abstract class JoinPointGenerator
    private HashMap<String, GeneratedClassInfo> generatedJoinPointClassCache =
       new HashMap<String, GeneratedClassInfo>();
    
+   /**
+    * Constructor.
+    * 
+    * @param advisor        the advisor associated to this generator
+    * @param info           information regarding the joinpoint to be intercepted
+    * @param parameters     indicates the parameters available to the interception
+    *                       of this joinpoint
+    * @param argumentsSize  number of joinpoint arguments
+    * @param nullArgsArray  <code>true</code> to indicate that the arguments array
+    *                       should be null when there is not argument available
+    */
    protected JoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info,
-         JoinPointParameters parameters, int argumentsSize)
+         JoinPointParameters parameters, int argumentsSize, boolean nullArgsArray)
    {
-//      this.info = info;
+      // this.info = info;
       this.parameters = parameters;
-//      this.advisor = advisor;
+      // this.advisor = advisor;
       this.advisorClass = advisor.getClass();
+      this.nullArgsArray = nullArgsArray;
       Class[] interfaces = advisorClass.getInterfaces();
       
       for (int i = 0 ; i < interfaces.length ; i++)
@@ -649,7 +661,7 @@ public abstract class JoinPointGenerator
       // declare arguments array if necessary
       if (argsFoundBefore || argsFoundAfter)
       {
-         code.insert(1, parameters.declareArgsArray(parameterTypes.length));
+         code.insert(1, parameters.declareArgsArray(parameterTypes.length, nullArgsArray));
       }
       return code.toString();
    }
@@ -1819,13 +1831,31 @@ public abstract class JoinPointGenerator
          return firstArgIndex;
       }
       
-      public final String declareArgsArray(int totalParameters)
+      /**
+       * Returns an statement declaring the arguments array.
+       * 
+       * @param totalParameters the total number of joinpoint parameters (including
+       *                        caller and target when available)
+       * @param nullArgsArray   <code>true</code> to indicate that the array should
+       *                        be <code>null</code> where there is no argument;
+       *                        <code>false</code> to indicate it should be an empty
+       *                        array
+       * @return an statement declaring (and initializing) the arguments array
+       */
+      public final String declareArgsArray(int totalParameters, boolean nullArgsArray)
       {
          StringBuffer buffer = new StringBuffer("Object[] ");
          buffer.append(ARGUMENTS);
          if (++totalParameters == firstArgIndex)
          {
-            buffer.append(" = new Object[0];");
+            if (nullArgsArray)
+            {
+               buffer.append(" = null;");
+            }
+            else
+            {
+               buffer.append(" = new Object[0];");
+            }
          }
          else
          {

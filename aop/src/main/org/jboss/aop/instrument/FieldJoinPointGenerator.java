@@ -81,7 +81,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
    public FieldJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
       super(advisor, info, getParameters((FieldInfo) info),
-            ((FieldInfo) info).isRead()? 0: 1);
+            ((FieldInfo) info).isRead()? 0: 1, ((FieldInfo) info).isRead());
 
       if (((FieldInfo)info).isRead())
       {
@@ -526,14 +526,6 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
          StringBuffer code = new StringBuffer("public java.lang.Object[] ");
          code.append(OptimizedBehaviourInvocations.GET_ARGUMENTS);
          code.append("(){ ");
-         code.append("   if(");
-         code.append(ARGUMENTS);
-         code.append("  == null)");
-         code.append("   {");
-         code.append("      ");
-         code.append(ARGUMENTS);
-         code.append(" = new java.lang.Object[0];");
-         code.append("   }");
          code.append("   return ");
          code.append(ARGUMENTS);
          code.append("; ");
@@ -546,6 +538,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
          StringBuffer code = new StringBuffer(
          "public void setArguments(java.lang.Object[] args)");
          code.append("{   ");
+         code.append("if (args != null){ throw new RuntimeException(\"Arguments array of field read must be null\");}");
          code.append(ARGUMENTS);
          code.append("=args;");
          code.append("}");
@@ -649,6 +642,10 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
          StringBuffer code = new StringBuffer(
          "public void setArguments(java.lang.Object[] args)");
          code.append("{   ");
+         code.append("if (args == null || args.length != 1)");
+         code.append("{throw new RuntimeException(");
+         code.append("\"Field write arguments must be a non-null array containing");
+         code.append(" a single element: the value of the field write\");}");
          code.append(ARGUMENTS);
          code.append("=args;");
          code.append("   super.value=args[0];");

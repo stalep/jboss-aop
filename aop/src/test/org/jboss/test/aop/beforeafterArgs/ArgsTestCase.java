@@ -68,7 +68,7 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertTrue(ArgsAspect.before3);
       
       assertSame(ArgsAspect.before2Args, ArgsAspect.before3Args);
-      assertEquals(0, ArgsAspect.before2Args.length);
+      assertNull(ArgsAspect.before2Args);
       
       assertFalse(ArgsAspect.before6);
       assertFalse(ArgsAspect.before7);
@@ -193,13 +193,12 @@ public class ArgsTestCase extends AOPTestWithSetup
       assertTrue(ArgsAspect.after3);
       assertTrue(ArgsAspect.finally1);
       
-      assertNotNull(ArgsAspect.before2Args);
       assertSame(ArgsAspect.before2Args, ArgsAspect.before3Args);
       assertSame(ArgsAspect.before2Args, ArgsAspect.after2Args);
       assertSame(ArgsAspect.before2Args, ArgsAspect.after3Args);
       assertSame(ArgsAspect.before2Args, ArgsAspect.finally1Args);
-      assertEquals(0, ArgsAspect.before2Args.length);
-      
+      assertNull(ArgsAspect.before2Args);
+            
       assertFalse(ArgsAspect.after6);
       assertFalse(ArgsAspect.after7);
       assertFalse(ArgsAspect.after8);

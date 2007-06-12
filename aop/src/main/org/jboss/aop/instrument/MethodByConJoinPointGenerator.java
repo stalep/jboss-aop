@@ -69,7 +69,7 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
    public MethodByConJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
       super(advisor, info, getParameters((MethodByConInfo) info),
-            ((MethodByConInfo) info).getMethod().getParameterTypes().length);
+            ((MethodByConInfo) info).getMethod().getParameterTypes().length, false);
       if (!((MethodByConInfo)info).getMethod().getReturnType().equals(Void.TYPE))
       {
          returnType = new WeakReference(((MethodByConInfo)info).getMethod().getReturnType());         
