@@ -16,11 +16,11 @@
    </bind>
 
    <bind pointcut="execution(void org.jboss.test.aop.basic.POJOAspectTester->someMethod())">
-      <advice name="interceptMethod" aspect="org.jboss.test.aop.basic.Aspect"/>
+      <around name="interceptMethod" aspect="org.jboss.test.aop.basic.Aspect"/>
    </bind>
 
    <bind pointcut="get(* org.jboss.test.aop.basic.POJOAspectTester->field) OR set(* org.jboss.test.aop.basic.POJOAspectTester->field)">
-      <advice name="interceptField" aspect="org.jboss.test.aop.basic.Aspect"/>
+      <around name="interceptField" aspect="org.jboss.test.aop.basic.Aspect"/>
    </bind>
 
    <bind pointcut="execution(org.jboss.test.aop.basic.POJOWildCardConstructorTest->new(..))">
