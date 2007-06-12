@@ -44,8 +44,52 @@ can achieve flexibility on the type, order and presence of advice parameters.
 <h3>Binding Before/After Advices</h3>
 
 </p><p>
-To bind a before/after advice to a pointcut, you only need to declare an xml binding as
-follows (open up <tt>jboss-aop.xml</tt> to see this example):
+To bind a before and after advices to a pointcut, you need to follow this structure:
+</p><p>
+<pre>
+&lt;aspect class="<i>aspect class name</i>" scope="<i>scope of the aspect</i>"&gt;
+
+&lt;bind pointcut="<i>pointcut expression</i>"&gt;
+      &lt;before name="<i>advice name</i>" aspect="<i>aspect class name</i>"/&gt;
+&lt;/bind&gt;
+   
+&lt;bind pointcut="<i>pointcut expression</i>"&gt;
+      &lt;after name="<i>advice name</i>" aspect="<i>aspect class name</i>"/&gt;
+&lt;/bind&gt;
+</pre>
+</p><p>
+As you can see, it is as simple as declaring a usual <tt>&lt;bind&gt;</tt> tag, and
+adding to it <tt>&lt;before&gt;</tt> and <tt>&lt;after&gt;</tt> tags for before and
+after advices respectively. Not forgetting that we need to declare each aspect class
+with the <tt>&lt;aspect&gt;</tt> tag (in the same way shown
+<a href="../aspect/aspect.html#aspectxml"/> before</a>). We can also mix interceptor
+declarations and around, before, and after advices declarations in a single binding,
+like follows:
+</p><p>
+<pre>
+&lt;bind pointcut="<i>pointcut expression</i>"&gt;
+      &lt;interceptor class="<i>interceptor class name</i>"/&gt;
+      &lt;advice name="<i>advice name</i>" aspect="<i>aspect class name</i>"/&gt;
+      &lt;before name="<i>advice name</i>" aspect="<i>aspect class name</i>"/&gt;
+      &lt;after name="<i>advice name</i>" aspect="<i>aspect class name</i>"/&gt;
+&lt;/bind&gt;
+</pre>
+</p><p>
+The tag <tt>&lt;advice&gt;</tt> above has been introduced by the
+<a href="../aspect/aspect.html">previous example</a>, and refers to
+advices of the default type, around. As an alternative, you can specify explicitly
+the type of an advice to be around by using the tag <tt>&lt;around&gt;</tt> as follows:
+</p><p>
+<pre>
+&lt;bind pointcut="<i>pointcut expression</i>"&gt;
+      &lt;around name="<i>advice name</i>" aspect="<i>aspect class name</i>"/&gt;
+&lt;/bind&gt;
+</pre>
+<p></p>
+For clarity, we have opted to use the tag <tt>&lt;around&gt;</tt> instead of
+<tt>&lt;advice&gt;</tt> on all examples of this tutorial that involve typed advices.
+<p></p>
+Open up <tt>jboss-aop.xml</tt> to see an example of binding with typed advices:
 </p><p>
 <pre>
 &lt;bind pointcut="execution(public void $instanceof{Transaction}-&gt;run())"&gt;
@@ -54,10 +98,8 @@ follows (open up <tt>jboss-aop.xml</tt> to see this example):
 &lt;/bind&gt;
 </pre>
 </p><p>
-As you can see, you just need to declare a usual bind tag, and add to it
-<tt>&lt;before&gt;</tt> and <tt>&lt;after&gt;</tt> tags for before and after advices
-respectively. We can also mix interceptor declarations and around, before, and
-after advices declarations in a single binding.
+For more examples on typed advices bindings, refer the <tt>jboss-aop.xml</tt> file
+of our <a href="../annotated-parameters/annotated-parameters.html">next example</a>
 </p><p>
 
 <h3>Around, Before and After Advices</h3>

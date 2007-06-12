@@ -69,13 +69,13 @@ public class JoinPointAspect
    public void otherTypeOfAdvice(@JoinPoint MethodExecution joinPoint)
    {
       System.out.println(">>> otherTypeOfAdvice on method execution: " +
-            joinPoint.getAdvisedMethod().getName());
+            joinPoint.getMethod().getName());
    }
       
    public void otherTypeOfAdvice(@JoinPoint FieldAccess joinPoint)
    {
       System.out.println(">>> otherTypeOfAdvice on field" +
          (joinPoint.isRead()? "read: ": "write: ") +
-         joinPoint.getAdvisedField().getName());
+         joinPoint.getField().getName());
    }
 }

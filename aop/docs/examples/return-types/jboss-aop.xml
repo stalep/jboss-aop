@@ -4,22 +4,22 @@
    <aspect class="Aspect" scope="PER_VM"/>
 
    <bind pointcut="execution(int POJO->*())">
-      <advice name="aroundDefaultSignature" aspect="Aspect"/>
-      <advice name="aroundAnnotatedParam" aspect="Aspect"/>
+      <around name="aroundDefaultSignature" aspect="Aspect"/>
+      <around name="aroundAnnotatedParam" aspect="Aspect"/>
       <after name="afterOverwriteReturnValue" aspect="Aspect"/>
       <after name="afterVoid" aspect="Aspect"/>
    </bind>
    
    <bind pointcut="execution(java.util.List POJO->*())">
-      <advice name="aroundDefaultSignature" aspect="Aspect"/>
-      <advice name="aroundCollection" aspect="Aspect"/>
+      <around name="aroundDefaultSignature" aspect="Aspect"/>
+      <around name="aroundCollection" aspect="Aspect"/>
       <after name="afterUnmodifiableList" aspect="Aspect"/>
       <after name="afterVoid" aspect="Aspect"/>
    </bind>
    
    <bind pointcut="execution(void POJO->*())">
-      <advice name="aroundDefaultSignature" aspect="Aspect"/>
-      <advice name="aroundVoid" aspect="Aspect"/>
+      <around name="aroundDefaultSignature" aspect="Aspect"/>
+      <around name="aroundVoid" aspect="Aspect"/>
       <after name="afterVoid" aspect="Aspect"/>
    </bind>
    

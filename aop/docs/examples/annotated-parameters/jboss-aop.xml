@@ -19,7 +19,7 @@
    <bind pointcut="execution(POJO->new(java.lang.String))">
       <after name="afterJoinPoint" aspect="Aspect"/>
       <before name="beforeConstructorArg" aspect="Aspect"/>
-      <advice name="aroundConstructorArg" aspect="Aspect"/>
+      <around name="aroundConstructorArg" aspect="Aspect"/>
    </bind>
    
    <bind pointcut="execution(* POJO->someMethod(..))">
@@ -30,7 +30,7 @@
    
    <bind pointcut="execution(* POJO->method(..))">
       <after name="afterArg" aspect="Aspect"/>
-      <advice name="aroundArgs" aspect="Aspect"/>
+      <around name="aroundArgs" aspect="Aspect"/>
       <after name="afterArgs" aspect="Aspect"/>
    </bind>
 
@@ -41,7 +41,7 @@
    </bind>
       
    <bind pointcut="call(* POJO->calledMethod(..))">
-      <advice name="aroundJoinPoint" aspect="Aspect"/>
+      <around name="aroundJoinPoint" aspect="Aspect"/>
       <before name="beforeTarget" aspect="Aspect"/>
       <after name="afterTarget" aspect="Aspect"/>
       <before name="beforeCaller" aspect="Aspect"/>
@@ -49,8 +49,8 @@
    </bind>
    
    <bind pointcut="call(* POJO->callMethod())">
-      <advice name="aroundCaller" aspect="Aspect"/>
-      <advice name="aroundArgs" aspect="Aspect"/>
+      <around name="aroundCaller" aspect="Aspect"/>
+      <around name="aroundArgs" aspect="Aspect"/>
    </bind>
          
 </aop>

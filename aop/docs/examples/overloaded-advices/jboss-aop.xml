@@ -5,7 +5,7 @@
 
    <bind pointcut="all(POJO)">
       <before name="otherTypeOfAdvice" aspect="JoinPointAspect"/>
-      <advice name="aroundAdvice" aspect="JoinPointAspect"/>
+      <around name="aroundAdvice" aspect="JoinPointAspect"/>
    </bind>
 
    <aspect class="MixedParametersAspect" scope="PER_VM"/>
