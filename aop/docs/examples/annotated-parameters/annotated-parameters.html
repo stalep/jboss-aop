@@ -223,9 +223,9 @@ public void beforeMethodArg2(@Arg(index=2) long argument)
 This element can be set everytime JBoss AOP does not associate your <tt>@Arg</tt>
 annotated parameter with the joinpoint argument you want to receive.
 </p><p>
-<b>@Arguments</b>
+<b>@Args</b>
 </p><p>
-Finally, this annotation is used on advice parameters of type &lt;tt&gt;java.lang.Object TODO ARRAY &lt;/tt&gt;, that contain the complete list of the joinpoint arguments.
+Finally, this annotation is used on advice parameters of type <tt>java.lang.Object[]</tt>, that contain the complete list of the joinpoint arguments.
 </p><p>
 Look at these examples:
 </p><p>
@@ -238,7 +238,7 @@ public void afterArgs(@Args Object[] arguments)
 </pre>
 </p><p>
 Use this annotation when you need a generic advice, that receives all arguments
-without knowing how many arguments there are, or their types. Using <tt>@Arguments
+without knowing how many arguments there are, or their types. Using <tt>@Args
 </tt> instead of a list of <tt>@Arg</tt> annotated parameters is also useful when you need to
 change one or more joinpoint argument values. An example is the <tt>beforeArgs</tt> advice,
 that ovewrites two argument values of <tt>POJO.method(long,int,long,String)</tt> execution:
@@ -253,7 +253,7 @@ public void beforeArgs(@Args Object[] arguments)
 }
 </pre>
 </p><p>
-Avoid using <tt>@Arguments</tt> when none of those conditions apply. This
+Avoid using <tt>@Args</tt> when none of those conditions apply. This
 parameter type can incur in the creation of an array and of wrapper objects (as is
 the case of argument 1 above). Besides, you have the extra cost of downcasting
 the arguments.
