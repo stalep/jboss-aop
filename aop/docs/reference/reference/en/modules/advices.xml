@@ -568,10 +568,10 @@ public [return type] [advice name]([annotated parameter], [annotated parameter],
             as follows:
          </para>
          <programlisting>
-param0 &larr; arg0
-param1 &larr; arg1
-param2 &larr; arg2
-param3 &larr; arg3
+param0 <![CDATA[<-]]> arg0
+param1 <![CDATA[<-]]> arg1
+param2 <![CDATA[<-]]> arg2
+param3 <![CDATA[<-]]> arg3
          </programlisting>
          <para>
             The matching outcome will be the same if <literal>MyAspect.advice()</literal> signature changes slightly in the following
@@ -598,7 +598,7 @@ param3 &larr; arg3
             The parameter matching outcome will be:
          </para>
          <programlisting>
-param0 &larr; arg0
+param0 <![CDATA[<-]]> arg0
          </programlisting>
          <para>
             Since there is no joinpoint argument of type <literal>Object</literal>, we proceed to the additional
@@ -630,7 +630,7 @@ param0 &larr; arg0
             It will not work as desired. JBoss AOP will assign <literal>arg0</literal> to <literal>param1</literal>:
          </para>
          <programlisting>
-param1 &larr; arg0
+param1 <![CDATA[<-]]> arg0
          </programlisting>
          <para>
             In cases like this, it is possible to enforce the correct matching of joinpoint arguments and
@@ -651,7 +651,7 @@ param1 &larr; arg0
             Will have the desired matching, which is:
          </para>
          <programlisting>
-param1 &larr; arg1
+param1 <![CDATA[<-]]> arg1
          </programlisting>
          <para>
             In the example just shown in this section, <literal>MyAspect.advice()</literal> was a before advice,
