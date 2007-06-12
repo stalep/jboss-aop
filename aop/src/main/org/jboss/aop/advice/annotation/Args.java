@@ -29,10 +29,22 @@ import java.lang.annotation.Target;
 
 /**
  * Use this annotation on the advice parameter that receives the complete list of
- * joinpoint argument values.
+ * joinpoint argument values.<br>
  * The annotated parameter must be of type <code>Object[]</code> and there
  * should not be any other advice parameter annotated either with {@link Arg} or
- * with <code>Args</code> itself.
+ * with <code>Args</code> itself.<br>
+ * For procedure executions and calls, this parameter will contain the arguments
+ * of the execution or call, in the same order they occur in the intercepted
+ * code. For interception of field write joinpoints, it will
+ * contain a single element: the value of the field write. For field read joinpoints,
+ * this parameter value will always be <code>null</code>.
+ * <br>
+ * Notice that primitive argument values are converted to their respective wrappers.
+ * <br>
+ * Any change that the advice performs on this parameter will be reflected on the
+ * next advices in the stack, and on the joinpoint itself (unless the advice performs
+ * a change after the joinpoint execution). Such a change must be compatible to
+ * the joinpoint argument types.
  * 
  * @author Flavia Rainone
  */
