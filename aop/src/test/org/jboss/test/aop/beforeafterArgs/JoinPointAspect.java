@@ -23,6 +23,11 @@ package org.jboss.test.aop.beforeafterArgs;
 
 import junit.framework.Assert;
 
+import org.jboss.aop.CallerConstructorInfo;
+import org.jboss.aop.CallerMethodInfo;
+import org.jboss.aop.FieldInfo;
+import org.jboss.aop.JoinPointInfo;
+import org.jboss.aop.MethodInfo;
 import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.advice.annotation.Thrown;
 import org.jboss.aop.joinpoint.Construction;
@@ -111,6 +116,11 @@ public class JoinPointAspect
       beforeJoinPoint = joinPoint;
    }
    
+   public void before9(@JoinPoint FieldInfo joinPoint)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
    public void after1(@JoinPoint FieldAccess joinPoint)
    {
       afterAdvice = "after1";
@@ -149,6 +159,11 @@ public class JoinPointAspect
    {
       afterAdvice = "after7";
       afterJoinPoint = joinPoint;
+   }
+   
+   public void after8(@JoinPoint JoinPointInfo joinPoint)
+   {
+      Assert.fail("This advice should never be executed");
    }
    
    public void throwing1(@Thrown Throwable throwable, @JoinPoint Object joinPoint)
@@ -200,6 +215,16 @@ public class JoinPointAspect
       throwingJoinPoint = joinPoint;
    }
 
+   public void throwing9(@JoinPoint CallerConstructorInfo joinPoint, @Thrown Throwable throwable)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void throwing10(@JoinPoint CallerMethodInfo joinPoint, @Thrown Throwable throwable)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
    public void finally1(@JoinPoint FieldAccess joinPoint)
    {
       finallyAdvice = "finally1";
@@ -244,5 +269,10 @@ public class JoinPointAspect
    {
       finallyAdvice = "finally8";
       finallyJoinPoint = joinPoint;
+   }
+   
+   public void finally9(@JoinPoint MethodInfo joinPoint)
+   {
+      Assert.fail("This advice should never be executed");
    }
 }
