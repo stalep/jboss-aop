@@ -190,7 +190,9 @@
         <advice aspect name/> |
         <before aspect name/> |
         <after aspect name/> |
-        <throwing aspect name/>  ]*
+        <around aspect name/> |
+        <throwing aspect name/> |
+        <finally aspect name/>  ]*
    </bind>
              ]]>
          </programlisting>       
