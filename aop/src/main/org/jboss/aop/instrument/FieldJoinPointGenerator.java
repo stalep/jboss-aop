@@ -86,14 +86,14 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       if (((FieldInfo)info).isRead())
       {
          read = true;
-         returnType = new WeakReference(((FieldInfo)info).getAdvisedField().getType());
+         returnType = new WeakReference(((FieldInfo)info).getField().getType());
       }
-      hasTargetObject = !Modifier.isStatic(((FieldInfo)info).getAdvisedField().getModifiers());
+      hasTargetObject = !Modifier.isStatic(((FieldInfo)info).getField().getModifiers());
    }
 
    private static JoinPointParameters getParameters(FieldInfo info)
    {
-      if (Modifier.isStatic(info.getAdvisedField().getModifiers()))
+      if (Modifier.isStatic(info.getField().getModifiers()))
       {
          return JoinPointParameters.ONLY_ARGS;
       }
@@ -112,7 +112,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
 
    private String fieldName(FieldInfo info)
    {
-      return info.getAdvisedField().getName();
+      return info.getField().getName();
    }
 
    protected boolean isVoid()
@@ -132,7 +132,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
    protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
    {
       FieldAccess fieldAccess = (FieldAccess)joinPoint;
-      Field field = fieldAccess.getAdvisedField();
+      Field field = fieldAccess.getField();
       return new AdviceMethodProperties(
                setup.getAspectClass(),
                setup.getAdviceName(),

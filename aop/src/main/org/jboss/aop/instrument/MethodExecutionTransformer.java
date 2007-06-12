@@ -161,7 +161,7 @@ public abstract class MethodExecutionTransformer
       for (Iterator iterator = methodInfos.iterator(); iterator.hasNext();)
       {
          org.jboss.aop.MethodInfo methodInfo = (org.jboss.aop.MethodInfo) iterator.next();
-         Method method = methodInfo.getAdvisedMethod();
+         Method method = methodInfo.getMethod();
          AOPClassPool classPool = (AOPClassPool) clazz.getClassPool();
          Class[] parameterTypes = method.getParameterTypes();
          CtClass[] javassistParameterTypes = new CtClass[parameterTypes.length];
@@ -208,7 +208,7 @@ public abstract class MethodExecutionTransformer
       for (Iterator iterator = methodInfos.iterator(); iterator.hasNext();)
       {
          org.jboss.aop.MethodInfo methodInfo = (org.jboss.aop.MethodInfo) iterator.next();
-         Method method = methodInfo.getAdvisedMethod();
+         Method method = methodInfo.getMethod();
          AOPClassPool classPool = (AOPClassPool) clazz.getClassPool();
          Class[] parameterTypes = method.getParameterTypes();
          CtClass[] javassistParameterTypes = new CtClass[parameterTypes.length];

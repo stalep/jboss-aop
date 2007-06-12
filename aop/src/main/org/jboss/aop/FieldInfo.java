@@ -123,7 +123,14 @@ public class FieldInfo extends JoinPointInfo implements FieldAccess
       this.advisedField = advisedField;
    }
 
+   //Use getField instead
+   @Deprecated
    public Field getAdvisedField()
+   {
+      return advisedField;
+   }
+   
+   public Field getField()
    {
       return advisedField;
    }

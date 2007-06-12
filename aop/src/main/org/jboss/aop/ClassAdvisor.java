@@ -797,7 +797,7 @@ public class ClassAdvisor extends Advisor
       while (it.hasNext())
       {
          AdviceBinding binding = (AdviceBinding) it.next();
-         pointcutResolved(info, binding, new ConstructorCalledByConstructorJoinpoint(info.getCalling(), info.getConstructor()));
+         pointcutResolved(info, binding, new ConstructorCalledByConstructorJoinpoint(info.getCallingConstructor(), info.getConstructor()));
       }
       finalizeConCalledByConInterceptorChain(info);
    }
@@ -821,7 +821,7 @@ public class ClassAdvisor extends Advisor
       while (it.hasNext())
       {
          AdviceBinding binding = (AdviceBinding) it.next();
-         pointcutResolved(info, binding, new MethodCalledByConstructorJoinpoint(info.getCalling(), info.getMethod()));
+         pointcutResolved(info, binding, new MethodCalledByConstructorJoinpoint(info.getCallingConstructor(), info.getMethod()));
       }
       finalizeMethodCalledByConInterceptorChain(info);
    }

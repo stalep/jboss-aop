@@ -34,7 +34,7 @@ public interface FieldAccess extends JoinPointBean
    /**
     * Gets the field being read or written
     */
-   Field getAdvisedField();
+   Field getField();
 
    /**
     * Gets whether we are reading the field

@@ -243,7 +243,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          for (Iterator it = overriddenMethods.iterator() ; it.hasNext() ; )
          {
             MethodInfo info = (MethodInfo)it.next();
-            Method method = info.getAdvisedMethod();
+            Method method = info.getMethod();
             PointcutMethodMatch match = binding.getPointcut().matchesExecution(this, method);
             
             if (match != null && match.isMatch())
@@ -1315,13 +1315,13 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       public void makeAccessibleField(FieldInfo fi)
       {
          //If we do dynamic invokes the field will need to be accessible via reflection
-         SecurityActions.setAccessible(fi.getAdvisedField());
+         SecurityActions.setAccessible(fi.getField());
       }
       
       public void makeAccessibleMethod(MethodInfo mi)
       {
          //If we do dynamic invokes the method will need to be accessible via reflection if private/protected
-         SecurityActions.setAccessible(mi.getAdvisedMethod());
+         SecurityActions.setAccessible(mi.getMethod());
       }
    }
    

@@ -55,7 +55,7 @@ public abstract class FieldInvocation extends InvocationBase
 
    protected FieldInvocation(FieldInfo info, Interceptor[] interceptors)
    {
-      this(info.getAdvisedField(), info.getIndex(), interceptors);
+      this(info.getField(), info.getIndex(), interceptors);
       this.advisor = info.getAdvisor();
    }
    

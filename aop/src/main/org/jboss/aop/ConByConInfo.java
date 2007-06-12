@@ -53,12 +53,12 @@ public class ConByConInfo extends CallerConstructorInfo implements ConstructorCa
    {
       super(other);
       this.callingIndex = other.callingIndex;
-      this.calling = other.getCalling();
+      this.calling = other.getCallingConstructor();
    }
    
    protected Joinpoint internalGetJoinpoint()
    {
-      return new ConstructorCalledByConstructorJoinpoint(getCalling(), getConstructor());
+      return new ConstructorCalledByConstructorJoinpoint(getCallingConstructor(), getConstructor());
    }   
 
    public JoinPointInfo copy()
@@ -70,7 +70,7 @@ public class ConByConInfo extends CallerConstructorInfo implements ConstructorCa
    {
       StringBuffer sb = new StringBuffer("Constructor called by Constructor");
       sb.append("[");
-      sb.append("calling=" + getCalling());
+      sb.append("calling=" + getCallingConstructor());
       sb.append(",called=" + getConstructor());
       sb.append("]");
       return sb.toString();
@@ -81,7 +81,14 @@ public class ConByConInfo extends CallerConstructorInfo implements ConstructorCa
       return callingIndex;
    }
 
+   //Use getCallingConstructor instead
+   @Deprecated()
    public Constructor getCalling()
+   {
+      return calling;
+   }
+   
+   public Constructor getCallingConstructor()
    {
       return calling;
    }

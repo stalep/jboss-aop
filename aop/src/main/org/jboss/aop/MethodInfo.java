@@ -80,7 +80,13 @@ public class MethodInfo extends JoinPointInfo implements MethodExecution
       return new MethodInfo(this);
    }
 
+   @Deprecated
    public Method getAdvisedMethod() 
+   {
+      return advisedMethod;
+   }
+
+   public Method getMethod() 
    {
       return advisedMethod;
    }

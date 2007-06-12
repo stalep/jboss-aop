@@ -83,7 +83,13 @@ public class MethodByConInfo extends CallerMethodInfo implements MethodCallByCon
       return callingIndex;
    }
 
+   @Deprecated
    public Constructor getCalling()
+   {
+      return calling;
+   }
+
+   public Constructor getCallingConstructor()
    {
       return calling;
    }

@@ -280,7 +280,7 @@ public class XmlReport
          if (method == null && methodCallers == null) continue;
          if (method != null && methodCallers == null && (method.getInterceptors() == null || method.getInterceptors().length < 1)) continue;
          indenter(pw, indent);
-         pw.println("<method signature=\"" + method.getAdvisedMethod().toString() + "\">");
+         pw.println("<method signature=\"" + method.getMethod().toString() + "\">");
          if (method != null)
          {
             Interceptor[] chain = method.getInterceptors();

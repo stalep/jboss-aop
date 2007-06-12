@@ -206,7 +206,7 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
    public MethodInfo getMethodInfo(long hash)
    {
       MethodInfo info = super.getMethodInfo(hash);
-      if (classAdvisor instanceof ClassAdvisor && info.getAdvisedMethod().equals(info.getUnadvisedMethod()))
+      if (classAdvisor instanceof ClassAdvisor && info.getMethod().equals(info.getUnadvisedMethod()))
       {
          MethodInfo superInfo = classAdvisor.getMethodInfo(hash);
          if (superInfo != null)

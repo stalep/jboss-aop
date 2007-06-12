@@ -48,12 +48,12 @@ public class MethodCalledByConstructorInvocation extends CallerInvocation
    
    public MethodCalledByConstructorInvocation(MethodByConInfo info, Object callingObject, Object target, Object[] args, Interceptor[] interceptors)
    {
-      this(info.getAdvisor(), info.getCalling(), info.getMethod(), callingObject, target, args, interceptors);
+      this(info.getAdvisor(), info.getCallingConstructor(), info.getMethod(), callingObject, target, args, interceptors);
    }
 
    public MethodCalledByConstructorInvocation(MethodByConInfo info, Object callingObject, Object target, Interceptor[] interceptors)
    {
-      this(info.getAdvisor(), info.getCalling(), info.getMethod(), callingObject, target, null, interceptors);
+      this(info.getAdvisor(), info.getCallingConstructor(), info.getMethod(), callingObject, target, null, interceptors);
    }
    
    public MethodCalledByConstructorInvocation(Advisor advisor, Constructor calling, Method method, Object callingObject, Object target, Object[] args, Interceptor[] interceptors)

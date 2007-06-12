@@ -34,6 +34,6 @@ public interface MethodCallByConstructor extends MethodCall
    /**
     * Gets the constructor making the call
     */
-   Constructor getCalling();
+   Constructor getCallingConstructor();
 
 }

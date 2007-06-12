@@ -110,7 +110,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
       
       assertTrue(JoinPointAspect.afterJoinPoint instanceof FieldAccess);
       FieldAccess fieldAccess = (FieldAccess) JoinPointAspect.afterJoinPoint;
-      assertEquals("number", fieldAccess.getAdvisedField().getName());
+      assertEquals("number", fieldAccess.getField().getName());
       assertFalse(fieldAccess.isRead());
    }
    
@@ -130,7 +130,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
             JoinPointAspect.finallyJoinPoint);
       assertTrue(JoinPointAspect.beforeJoinPoint instanceof FieldAccess);
       FieldAccess fieldAccess = (FieldAccess) JoinPointAspect.beforeJoinPoint;
-      assertEquals("text", fieldAccess.getAdvisedField().getName());
+      assertEquals("text", fieldAccess.getField().getName());
       assertFalse(fieldAccess.isRead());
    }
    
@@ -148,7 +148,7 @@ public class JoinPointTestCase extends AOPTestWithSetup
       
       assertTrue(JoinPointAspect.afterJoinPoint instanceof FieldAccess);
       FieldAccess fieldAccess = (FieldAccess) JoinPointAspect.afterJoinPoint;
-      assertEquals("text", fieldAccess.getAdvisedField().getName());
+      assertEquals("text", fieldAccess.getField().getName());
       assertTrue(fieldAccess.isRead());
    }
    
@@ -166,8 +166,8 @@ public class JoinPointTestCase extends AOPTestWithSetup
       
       assertTrue(JoinPointAspect.beforeJoinPoint instanceof MethodExecution);
       MethodExecution joinPoint = (MethodExecution)JoinPointAspect.beforeJoinPoint;
-      assertEquals("method1", joinPoint.getAdvisedMethod().getName());
-      assertEquals(MethodHashing.methodHash(joinPoint.getAdvisedMethod()),
+      assertEquals("method1", joinPoint.getMethod().getName());
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
             joinPoint.getHash());
    }
    
@@ -186,8 +186,8 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertSame(JoinPointAspect.beforeJoinPoint, JoinPointAspect.afterJoinPoint);
       assertTrue(JoinPointAspect.beforeJoinPoint instanceof MethodExecution);
       MethodExecution joinPoint = (MethodExecution) JoinPointAspect.beforeJoinPoint;
-      assertEquals("method2", joinPoint.getAdvisedMethod().getName());
-      assertEquals(MethodHashing.methodHash(joinPoint.getAdvisedMethod()),
+      assertEquals("method2", joinPoint.getMethod().getName());
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
             joinPoint.getHash());
    }
    
@@ -217,8 +217,8 @@ public class JoinPointTestCase extends AOPTestWithSetup
             JoinPointAspect.throwingJoinPoint);
       assertTrue(JoinPointAspect.beforeJoinPoint instanceof MethodExecution);
       MethodExecution joinPoint = (MethodExecution) JoinPointAspect.beforeJoinPoint;
-      assertEquals("method2", joinPoint.getAdvisedMethod().getName());
-      assertEquals(MethodHashing.methodHash(joinPoint.getAdvisedMethod()),
+      assertEquals("method2", joinPoint.getMethod().getName());
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
             joinPoint.getHash());
    }
    
@@ -246,8 +246,8 @@ public class JoinPointTestCase extends AOPTestWithSetup
       
       assertTrue(JoinPointAspect.beforeJoinPoint instanceof MethodExecution);
       MethodExecution joinPoint = (MethodExecution) JoinPointAspect.beforeJoinPoint;
-      assertEquals("method3", joinPoint.getAdvisedMethod().getName());
-      assertEquals(MethodHashing.methodHash(joinPoint.getAdvisedMethod()),
+      assertEquals("method3", joinPoint.getMethod().getName());
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
             joinPoint.getHash());
    }
    
@@ -277,8 +277,8 @@ public class JoinPointTestCase extends AOPTestWithSetup
             JoinPointAspect.finallyJoinPoint);
       assertTrue(JoinPointAspect.throwingJoinPoint instanceof MethodExecution);
       MethodExecution joinPoint = (MethodExecution) JoinPointAspect.throwingJoinPoint;
-      assertEquals("method4", joinPoint.getAdvisedMethod().getName());
-      assertEquals(MethodHashing.methodHash(joinPoint.getAdvisedMethod()),
+      assertEquals("method4", joinPoint.getMethod().getName());
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
             joinPoint.getHash());
    }
    
@@ -329,8 +329,8 @@ public class JoinPointTestCase extends AOPTestWithSetup
       
       assertTrue(JoinPointAspect.throwingJoinPoint instanceof MethodExecution);
       MethodExecution joinPoint = (MethodExecution) JoinPointAspect.throwingJoinPoint;
-      assertEquals("method6", joinPoint.getAdvisedMethod().getName());
-      assertEquals(MethodHashing.methodHash(joinPoint.getAdvisedMethod()),
+      assertEquals("method6", joinPoint.getMethod().getName());
+      assertEquals(MethodHashing.methodHash(joinPoint.getMethod()),
             joinPoint.getHash());
 
    }
@@ -350,8 +350,8 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertSame(JoinPointPOJO.class, joinPoint.getConstructor().getDeclaringClass());
       assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
       assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
-      assertSame(JoinPointPOJO.class, joinPoint.getCalling().getDeclaringClass());
-      Class[] callerParameters = joinPoint.getCalling().getParameterTypes();
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingConstructor().getDeclaringClass());
+      Class[] callerParameters = joinPoint.getCallingConstructor().getParameterTypes();
       assertEquals(2, callerParameters.length);
       assertSame(int.class, callerParameters[0]);
       assertSame(boolean.class, callerParameters[1]);
@@ -381,8 +381,8 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertSame(JoinPointPOJO.class, joinPoint.getConstructor().getDeclaringClass());
       assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
       assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
-      assertSame(JoinPointPOJO.class, joinPoint.getCalling().getDeclaringClass());
-      Class[] callerParameters = joinPoint.getCalling().getParameterTypes();
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingConstructor().getDeclaringClass());
+      Class[] callerParameters = joinPoint.getCallingConstructor().getParameterTypes();
       assertEquals(2, callerParameters.length);
       assertSame(int.class, callerParameters[0]);
       assertSame(boolean.class, callerParameters[1]);
@@ -516,8 +516,8 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
       assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
       assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
-      assertSame(JoinPointPOJO.class, joinPoint.getCalling().getDeclaringClass());
-      Class[] callerParameters = joinPoint.getCalling().getParameterTypes();
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingConstructor().getDeclaringClass());
+      Class[] callerParameters = joinPoint.getCallingConstructor().getParameterTypes();
       assertEquals(2, callerParameters.length);
       assertSame(boolean.class, callerParameters[0]);
       assertSame(boolean.class, callerParameters[1]);
@@ -550,8 +550,8 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
       assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
       assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
-      assertSame(JoinPointPOJO.class, joinPoint.getCalling().getDeclaringClass());
-      Class[] callerParameters = joinPoint.getCalling().getParameterTypes();
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingConstructor().getDeclaringClass());
+      Class[] callerParameters = joinPoint.getCallingConstructor().getParameterTypes();
       assertEquals(2, callerParameters.length);
       assertSame(boolean.class, callerParameters[0]);
       assertSame(boolean.class, callerParameters[1]);
@@ -701,8 +701,8 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
       assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
       assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
-      assertSame(JoinPointPOJO.class, joinPoint.getCalling().getDeclaringClass());
-      Class[] callerParameters = joinPoint.getCalling().getParameterTypes();
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingConstructor().getDeclaringClass());
+      Class[] callerParameters = joinPoint.getCallingConstructor().getParameterTypes();
       assertEquals(2, callerParameters.length);
       assertSame(char.class, callerParameters[0]);
       assertSame(boolean.class, callerParameters[1]);
@@ -735,8 +735,8 @@ public class JoinPointTestCase extends AOPTestWithSetup
       assertSame(JoinPointPOJO.class, joinPoint.getMethod().getDeclaringClass());
       assertSame(JoinPointPOJO.class, joinPoint.getCalledClass());
       assertSame(JoinPointPOJO.class, joinPoint.getCallingClass());
-      assertSame(JoinPointPOJO.class, joinPoint.getCalling().getDeclaringClass());
-      Class[] callerParameters = joinPoint.getCalling().getParameterTypes();
+      assertSame(JoinPointPOJO.class, joinPoint.getCallingConstructor().getDeclaringClass());
+      Class[] callerParameters = joinPoint.getCallingConstructor().getParameterTypes();
       assertEquals(2, callerParameters.length);
       assertSame(char.class, callerParameters[0]);
       assertSame(boolean.class, callerParameters[1]);

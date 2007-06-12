@@ -107,7 +107,7 @@ class MethodMatchInfo
    
    private void overridePopulateBindings(ArrayList applicableBindings)
    {
-      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("populate bindings for " + info.getAdvisedMethod() + " all bindings");
+      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("populate bindings for " + info.getMethod() + " all bindings");
       int size = bindings.size();
       int minMatchLevel = 1000000;
       for (int i = 0 ; i < size ; i++)
@@ -122,7 +122,7 @@ class MethodMatchInfo
          }
       }
 
-      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("populate bindings for " + info.getAdvisedMethod() + " actual bindings");
+      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("populate bindings for " + info.getMethod() + " actual bindings");
       for (int i = 0 ; i < size ; i++)
       {
          AdviceBinding binding = (AdviceBinding)bindings.get(i);
@@ -140,7 +140,7 @@ class MethodMatchInfo
    {
       applicableBindings.add(binding);
       binding.addAdvisor(advisor);
-      advisor.pointcutResolved(info, binding, new MethodJoinpoint(info.getAdvisedMethod()));
+      advisor.pointcutResolved(info, binding, new MethodJoinpoint(info.getMethod()));
    }
    
    public void clear()

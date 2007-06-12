@@ -72,17 +72,17 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
    public MethodJoinPointGenerator(GeneratedClassAdvisor advisor, MethodInfo info)
    {
       super(advisor, info, getParameters(info),
-            info.getAdvisedMethod().getParameterTypes().length);
+            info.getMethod().getParameterTypes().length);
       if (!info.getUnadvisedMethod().getReturnType().equals(Void.TYPE))
       {
          returnType = new WeakReference(info.getUnadvisedMethod().getReturnType());
       }
-      hasTargetObject = !Modifier.isStatic(info.getAdvisedMethod().getModifiers());
+      hasTargetObject = !Modifier.isStatic(info.getMethod().getModifiers());
    }
    
    private static JoinPointParameters getParameters(MethodInfo info)
    {
-      if (Modifier.isStatic(info.getAdvisedMethod().getModifiers()))
+      if (Modifier.isStatic(info.getMethod().getModifiers()))
       {
          return JoinPointParameters.ONLY_ARGS;
       }
@@ -103,7 +103,7 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
    
    private String advisedMethodName(MethodInfo info)
    {
-      return info.getAdvisedMethod().getName();
+      return info.getMethod().getName();
    }
    
    private long methodHash(MethodInfo info)
@@ -127,7 +127,7 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
 
    protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
    {
-      Method method = ((MethodExecution)joinPoint).getAdvisedMethod();
+      Method method = ((MethodExecution)joinPoint).getMethod();
       return new AdviceMethodProperties(
                setup.getAspectClass(), 
                setup.getAdviceName(), 

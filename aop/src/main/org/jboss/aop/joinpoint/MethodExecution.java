@@ -35,7 +35,7 @@ public interface MethodExecution extends JoinPointBean
    /**
     * Gets the method being called
     */
-   Method getAdvisedMethod();
+   Method getMethod();
 
    /**
     * Gets the hash of the method being called

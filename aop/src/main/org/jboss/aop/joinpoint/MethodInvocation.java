@@ -66,7 +66,7 @@ public class MethodInvocation extends InvocationBase implements java.io.External
 
    public MethodInvocation(MethodInfo info, org.jboss.aop.advice.Interceptor[] interceptors)
    {
-      this(interceptors, info.getHash(), info.getAdvisedMethod(), info.getUnadvisedMethod(), info.getAdvisor());
+      this(interceptors, info.getHash(), info.getMethod(), info.getUnadvisedMethod(), info.getAdvisor());
    }
 
    public MethodInvocation(Interceptor[] interceptors, long methodHash, Method advisedMethod, Method unadvisedMethod, Advisor advisor)
