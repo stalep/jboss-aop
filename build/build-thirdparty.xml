@@ -48,8 +48,8 @@
       <componentref name="beanshell" version="1.3.0"/>
       <componentref name="javassist" version="3.6.0.beta1"/>
       <componentref name="jboss/backport-concurrent" version="2.1.0.GA"/>
-      <componentref name="jboss/common-core" version="2.2.0.snapshot"/>
-      <componentref name="jboss/common-core-14" version="2.2.0.snapshot"/>
+      <componentref name="jboss/common-core" version="2.2.0.GA"/>
+      <componentref name="jboss/common-core-14" version="2.2.0.GA"/>
       <componentref name="jboss/common-logging-jdk" version="2.0.2.GA"/>
       <componentref name="jboss/common-logging-log4j" version="2.0.2.GA"/>
       <componentref name="jboss/common-logging-spi" version="2.0.2.GA"/>
