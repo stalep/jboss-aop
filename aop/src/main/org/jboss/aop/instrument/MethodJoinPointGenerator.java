@@ -355,7 +355,7 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
                advisedMethod.getReturnType(), 
                INVOKE_JOINPOINT, 
                params, 
-               advisedMethod.getExceptionTypes(), 
+               THROWS_THROWABLE, 
                null, 
                jp);
          invokeJoinpointMethod.setModifiers(Modifier.PROTECTED);

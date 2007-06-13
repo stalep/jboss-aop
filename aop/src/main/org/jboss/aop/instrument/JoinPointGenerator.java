@@ -88,6 +88,22 @@ public abstract class JoinPointGenerator
    protected static final String ARGUMENTS= "arguments";
    private static final String GET_ARGUMENTS= OptimizedBehaviourInvocations.GET_ARGUMENTS + "()";
    protected static final CtClass[] EMPTY_CTCLASS_ARRAY = new CtClass[0];
+   protected static final CtClass[] THROWS_THROWABLE;
+   static
+   {
+         try
+         {
+            THROWS_THROWABLE = new CtClass[]{
+                  AspectManager.instance().findClassPool(
+                        Thread.currentThread().getContextClassLoader()).
+                        get("java.lang.Throwable")};
+         } catch (NotFoundException e)
+         {
+            throw new RuntimeException(e);
+         }
+      
+   }
+   
    private final ArrayList<Integer> joinPointArguments;
    private final boolean nullArgsArray;
    
@@ -622,8 +638,8 @@ public abstract class JoinPointGenerator
       afterCode.append(THROWABLE).append(" = ").append("throwable;");
       argsFoundAfter = defaultCall.addInvokeCode(this,
             setups.getByType(AdviceType.THROWING), afterCode, info) || argsFoundAfter;
-      
-      addHandleExceptionCode(afterCode, declaredExceptions);
+      afterCode.append("throw t;");
+      //addHandleExceptionCode(afterCode, declaredExceptions);
       afterCode.append("   }");
       
       AdviceSetup[] finallySetups = setups.getByType(AdviceType.FINALLY);

@@ -346,7 +346,7 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
                targetClass,
                INVOKE_JOINPOINT,
                getInvokeJoinPointParams(),
-               targetCtor.getExceptionTypes(),
+               THROWS_THROWABLE,
                null,
                jp);
          invokeJoinpointMethod.setModifiers(Modifier.PROTECTED);

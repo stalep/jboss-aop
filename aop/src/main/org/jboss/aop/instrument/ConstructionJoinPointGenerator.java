@@ -297,7 +297,7 @@ public class ConstructionJoinPointGenerator extends JoinPointGenerator
                CtClass.voidType,
                INVOKE_JOINPOINT,
                params,
-               advisedCtor.getExceptionTypes(),
+               THROWS_THROWABLE,
                null,
                jp);
          invokeJoinpointMethod.setModifiers(Modifier.PROTECTED);

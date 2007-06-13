@@ -498,7 +498,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
                advisedField.getType(),
                INVOKE_JOINPOINT,
                getInvokeJoinPointParams(),
-               new CtClass[0],
+               THROWS_THROWABLE,
                null,
                jp);
          invokeJoinpointMethod.setModifiers(Modifier.PROTECTED);
@@ -584,7 +584,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
                CtClass.voidType,
                JoinPointGenerator.INVOKE_JOINPOINT,
                getInvokeJoinPointParams(),
-               new CtClass[0],
+               THROWS_THROWABLE,
                null,
                jp);
          invokeJoinpointMethod.setModifiers(Modifier.PROTECTED);

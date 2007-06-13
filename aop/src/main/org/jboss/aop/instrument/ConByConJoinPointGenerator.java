@@ -320,7 +320,7 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
                targetClass,
                INVOKE_JOINPOINT,
                getInvokeJoinPointParameters(),
-               targetCtor.getExceptionTypes(),
+               THROWS_THROWABLE,
                null,
                jp);
          invokeJoinpointMethod.setModifiers(Modifier.PROTECTED);

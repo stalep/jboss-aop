@@ -376,7 +376,7 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
                targetMethod.getReturnType(),
                INVOKE_JOINPOINT,
                getInvokeJoinpointParameters(),
-               targetMethod.getExceptionTypes(),
+               THROWS_THROWABLE,
                null,
                jp);
 
