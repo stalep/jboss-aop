@@ -8,5 +8,4 @@ Implementation-URL: @implementation.url@
 Implementation-Version: @aop.version@
 Implementation-Vendor: @implementation.vendor@
 Implementation-Vendor-Id: @implementation.vendor.id@
-Premain-Class: org.jboss.aop.standalone.Agent
-Can-Redefine-Classes: true
+
