@@ -3,7 +3,12 @@
 <project default="usage" name="JBoss/AOP">
    <import file="../examples-build.xml"/>
 
-   <target name="annotationc" depends="_compile14">
+   <target name="validate-1.4">
+     <available classname="java.lang.Enum" property="HAVE_JDK_1.5"/>
+     <fail if="HAVE_JDK_1.5" message="Please use JDK 1.4 to run this particular example"/>
+   </target>
+
+   <target name="annotationc" depends="validate-1.4, _compile14">
       <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath14"/>
       <annotationc compilerclasspathref="classpath14" classpathref="classpath14" bytecode="true">
          <src path="."/>
