@@ -185,7 +185,7 @@
       <copy todir="${project.release}/lib-14" file="${aop.aspect-library14.location}"/>
       <copy todir="${project.release}/lib-14" file="${aop.jdk14-pluggable-instrumentor.location}"/>
       <copy todir="${project.release}/lib-14" file="${javassist.location}"/>
-      <copy todir="${project.release}/lib-14" file="${jboss-common-core.location}"/>
+      <copy todir="${project.release}/lib-14" file="${jboss-common-core14.location}"/>
       <copy todir="${project.release}/lib-14" file="${jboss-backport-concurrent.location}"/>
       <copy todir="${project.release}/lib-14" file="${jboss-container-metadata-spi14.location}"/>
       <copy todir="${project.release}/lib-14" file="${jboss-container14.location}"/>
