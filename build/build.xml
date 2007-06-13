@@ -220,15 +220,15 @@
       <ant antfile="build-release.xml" target="release-no-reference-docs"/>
       <ant antfile="build-release.xml" target="release-reference-docs"/>
 
-   	<jar destfile="${project.release}.jar" basedir="${project.release}"/>
-   	<move file="${project.release}.jar" todir="${module.output}/lib"/>
+   	<zip destfile="${project.release}.zip" basedir="${project.release}"/>
+   	<move file="${project.release}.zip" todir="${module.output}/lib"/>
   </target>
 
-  <target name="release-dryrun" 
+  <target name="release-dryrun"
       description="Builds the default release structure assuming that everything already has been built"
       depends="init">
     <ant antfile="build-release.xml" target="release-no-reference-docs"/>
-    <ant antfile="build-release.xml" target="release-reference-docs"/>   
+    <ant antfile="build-release.xml" target="release-reference-docs"/>
   </target>
 
   <!-- ================================================================== -->
