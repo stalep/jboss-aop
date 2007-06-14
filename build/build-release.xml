@@ -98,7 +98,7 @@
       <property name="aop.14.location" value="${project.root}/aop/output/lib/jboss-aop.jar"/>
       <property name="aop.50.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50.jar"/>
       <property name="aop.aspect-library14.location" value="${project.root}/aspects/output/lib/jboss-standalone-aspect-library-jdk14.jar"/>
-      <property name="aop.aspect-library50.location" value="${project.root}/aspects/output/lib/jboss-standalone-aspect-library-jdk50.jar"/>      
+      <property name="aop.aspect-library50.location" value="${project.root}/aspects/output/lib/jboss-standalone-aspect-library-jdk50.jar"/>
       <property name="aop.aspect-library-beans.location" value="${project.root}/asintegration/src/resources/META-INF/jboss-aspect-library-beans.xml"/>
       <property name="aop.as4-deployer.location" value="${project.root}/asintegration/output/lib/jboss-aop-as4-deployer.jar"/>
       <property name="aop.as4-deployer-jdk14.location" value="${project.root}/asintegration/output/lib/jboss-aop-as4-deployer-jdk14.jar"/>
@@ -243,10 +243,13 @@
       <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer" file="${aop.aspect-library50.location}"/>
       <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer/META-INF/" file="${aop.aspect-library-beans.location}"/>
 
+
+      <copy todir="${project.release}" file="RELEASE_NOTES.html"/>
+
       <delete dir="output/temp"/>
 
   </target>
-  
+
   <target name="release-reference-docs"
      description="Builds the default release structure, minus the reference documentation">
 
@@ -255,8 +258,8 @@
             <include name="**"/>
          </fileset>
       </copy>
-     
+
   </target>
-  
-  
+
+
 </project>

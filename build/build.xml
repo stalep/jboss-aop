@@ -222,7 +222,6 @@
 
    	<zip destfile="${project.release}.zip">
          <fileset dir="${project.release}"/>
-         <fileset dir="." includes="RELEASE_NOTES.html"/>
       </zip>
    	<move file="${project.release}.zip" todir="${module.output}/lib"/>
   </target>
