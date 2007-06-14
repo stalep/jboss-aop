@@ -21,6 +21,7 @@
 */ 
 package org.jboss.test.aop.stress.batf;
 
+import org.jboss.aop.advice.annotation.Thrown;
 import org.jboss.aop.joinpoint.Invocation;
 
 /**
@@ -76,7 +77,7 @@ public class SimpleAspect
       after = true;
    }
    
-   public void throwing()
+   public void throwing(@Thrown Throwable e)
    {
       throwing = true;
    }
