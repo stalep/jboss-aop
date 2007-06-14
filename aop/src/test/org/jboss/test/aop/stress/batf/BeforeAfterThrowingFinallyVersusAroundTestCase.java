@@ -45,6 +45,7 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
 
    public void testAroundWithNoExceptionScenario() throws Exception
    {
+      SimpleAspect.reset();
       POJO pojo = new POJO();
       pojo.methodWithAroundNoExceptions();
       assertTrue(SimpleAspect.before);
@@ -66,6 +67,7 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
 
    public void testBeforeAfterThrowingFinallyWithNoExceptionScenario() throws Exception
    {
+      SimpleAspect.reset();
       POJO pojo = new POJO();
       pojo.methodWithBeforeAfter();
       assertTrue(SimpleAspect.before);
@@ -86,15 +88,12 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
 
    public void testAroundWithExceptionScenario() throws Exception
    {
+      SimpleAspect.reset();
       boolean exception = false;
       try
       {
          POJO pojo = new POJO();
          pojo.methodWithAroundExceptions();
-         assertTrue(SimpleAspect.before);
-         assertFalse(SimpleAspect.after);
-         assertTrue(SimpleAspect.throwing);
-         assertTrue(SimpleAspect.finaly);
       }
       catch (Exception e)
       {
@@ -102,6 +101,11 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
       }
       
       assertTrue(exception);
+      assertTrue(SimpleAspect.before);
+      assertFalse(SimpleAspect.after);
+      assertTrue(SimpleAspect.throwing);
+      assertTrue(SimpleAspect.finaly);
+
       getRunner().executeScenario(new AroundWithExceptionsScenario());
    }
    
@@ -124,15 +128,12 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
 
    public void testBeforeAfterThrowingFinallyWithExceptionScenario() throws Exception
    {
+      SimpleAspect.reset();
       boolean exception = false;
       try
       {
          POJO pojo = new POJO();
          pojo.methodWithBeforeThrowingFinally();
-         assertTrue(SimpleAspect.before);
-         assertFalse(SimpleAspect.after);
-         assertTrue(SimpleAspect.throwing);
-         assertTrue(SimpleAspect.finaly);
       }
       catch (Exception e)
       {
@@ -140,6 +141,11 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
       }
       
       assertTrue(exception);
+      assertTrue(SimpleAspect.before);
+      assertFalse(SimpleAspect.after);
+      assertTrue(SimpleAspect.throwing);
+      assertTrue(SimpleAspect.finaly);
+
       getRunner().executeScenario(new BeforeAfterThrowingFinallyWithExceptionScenario());
    }
    

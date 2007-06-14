@@ -86,7 +86,7 @@ public class SimpleAspect
       finaly = true;
    }
    
-   public void reset()
+   public static void reset()
    {
       before = false;
       after = false;
