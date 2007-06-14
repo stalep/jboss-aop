@@ -220,7 +220,10 @@
       <ant antfile="build-release.xml" target="release-no-reference-docs"/>
       <ant antfile="build-release.xml" target="release-reference-docs"/>
 
-   	<zip destfile="${project.release}.zip" basedir="${project.release}"/>
+   	<zip destfile="${project.release}.zip">
+         <fileset dir="${project.release}"/>
+         <fileset dir="." includes="RELEASE_NOTES.html"/>
+      </zip>
    	<move file="${project.release}.zip" todir="${module.output}/lib"/>
   </target>
 
