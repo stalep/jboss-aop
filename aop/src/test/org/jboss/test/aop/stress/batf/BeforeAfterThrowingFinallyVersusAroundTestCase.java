@@ -163,4 +163,32 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
          }
       }
    }
+
+   public void testNotWovenNoCtorScenario() throws Exception
+   {
+      getRunner().executeScenario(new NotWovenNoCtorScenario());
+   }
+   
+   private class NotWovenNoCtorScenario extends AbstractScenario
+   {
+      NotWoven pojo = new NotWoven();
+      public void execute(int thread, int loop) throws Exception
+      {
+         pojo.method1();
+      }
+   }
+
+   public void testNotWovenWithCtorScenario() throws Exception
+   {
+      getRunner().executeScenario(new NotWovenWithCtorScenario());
+   }
+   
+   private class NotWovenWithCtorScenario extends AbstractScenario
+   {
+      public void execute(int thread, int loop) throws Exception
+      {
+         NotWoven pojo = new NotWoven();
+         pojo.method2();
+      }
+   }
 }
