@@ -4,11 +4,17 @@
 and you should do the following to avoid versioning conflicts:
 -move javassist.jar to ../../lib/javassist.jar
 
+*On JBoss 4.0.4 or later, and if using JDK 1.4, you should upgrade the version of jbossretro-rt.jar by moving it 
+from the jboss-aop-jdk14.deployer to ../../lib/jbossretro-rt.jar
+
 * Note that this will not replace the jboss-aspect-library(-jdk50).jar, which is tied to application
 server version. If you are upgrading from JBoss AOP 1.5.x, you should remove the following packages and classes
 contained therein from your jboss-aspect-library(-jdk50).jar:
 -org.jboss.aop
 -org.jboss.aop.deployment
+
+*Also, in the existing jboss-aspect-library(-jdk50).jar you should delete the classes that exist in 
+jboss-standalone-aspect-library-jdkxx.jar
 
 * The ant build.xml contained in this folder automates these tasks for you. Set the root of the jboss installation
 and the server configuration you wish to patch in the jboss.properties file.
