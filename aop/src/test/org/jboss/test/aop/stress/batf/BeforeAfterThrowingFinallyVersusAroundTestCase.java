@@ -33,7 +33,8 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
 {
    
    public static void main(String[] args)
-   {
+   {int i = -5;
+   i*=(-1);
       junit.textui.TestRunner.run(BeforeAfterThrowingFinallyVersusAroundTestCase.class);
    }
 
