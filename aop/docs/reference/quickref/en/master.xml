@@ -6,15 +6,15 @@
    <bookinfo>
       <title>JBoss AOP - Aspect-Oriented Framework for Java</title>
       <subtitle>Quick Reference</subtitle>
-      <releaseinfo>1.1</releaseinfo>
+      <releaseinfo>2.0.0</releaseinfo>
    </bookinfo>
    <chapter id="quickref-intro">
       <title>Conventions</title>
       <para>
          This document gives a quick overview of how to use the XML and annotation
-         constructs available in JBoss AOP for users who have read through the rest 
-         of the documentation. It uses a somewhat non-standard notation, based on how 
-         you would actually use an xml snippet or annotation in your code, with 
+         constructs available in JBoss AOP for users who have read through the rest
+         of the documentation. It uses a somewhat non-standard notation, based on how
+         you would actually use an xml snippet or annotation in your code, with
          optional and alternates marked. The values for attributes
          and elements have been left out, and for annotations taking only one
          value, the value should not be specified.
@@ -64,83 +64,83 @@
          For the following XML "definition":
          <programlisting>
             <![CDATA[
-   <test {optional} [choiceA | choiceB] compulsory >               
-      [ <subA></subA> | <subB></subB> ]? 
+   <test {optional} [choiceA | choiceB] compulsory >
+      [ <subA></subA> | <subB></subB> ]?
    </test>
-            ]]>   
+            ]]>
          </programlisting>
          These would be valid XML:
          <programlisting>
             <![CDATA[
-   <test choiceA="y" compulsory="c" >               
-      <subA>4</subA> 
-   </test>               
-   <test optional="x" choiceB="y" compulsory="c" >               
-      <subB>4</subB> 
-   </test>               
+   <test choiceA="y" compulsory="c" >
+      <subA>4</subA>
+   </test>
+   <test optional="x" choiceB="y" compulsory="c" >
+      <subB>4</subB>
+   </test>
    <test optional="x" choiceB="y" compulsory="c" />
             ]]>
          </programlisting>
            These would not be valid:
          <programlisting>
             <![CDATA[
-   <test choiceA="y" choiceB="y" compulsory="c" >               
-      <subA>4</subA> 
-   </test>               
-              
-   <test choiceA="y" >               
-      <subA>4</subA> 
-   </test>               
-              
-   <test choiceA="y" choiceB="y" compulsory="c" >               
-      <subA>4</subA> 
-   </test>               
-              
-   <test choiceA="y" compulsory="c" >               
-      <subA>4</subA> 
-      <subB>4</subB> 
-   </test>               
-            
+   <test choiceA="y" choiceB="y" compulsory="c" >
+      <subA>4</subA>
+   </test>
+
+   <test choiceA="y" >
+      <subA>4</subA>
+   </test>
+
+   <test choiceA="y" choiceB="y" compulsory="c" >
+      <subA>4</subA>
+   </test>
+
+   <test choiceA="y" compulsory="c" >
+      <subA>4</subA>
+      <subB>4</subB>
+   </test>
+
             ]]>
          </programlisting>
-      </para>            
+      </para>
       <para>
          For the following annotation "definitions":
          <programlisting>
-            <![CDATA[    
-   @AnnA ( compulsory, [choiceA | choiceB] {, optional1})         
-   @AnnB (expr)         
-             ]]>         
+            <![CDATA[
+   @AnnA ( compulsory, [choiceA | choiceB] {, optional1})
+   @AnnB (expr)
+             ]]>
          </programlisting>
-         These would be valid uses, bearing in mind that for this example compulsory is a 
+         These would be valid uses, bearing in mind that for this example compulsory is a
          String, choiceA and choiceB are integers, optional1 is an array of Strings, and
          expr is a String:
          <programlisting>
-            <![CDATA[    
-   @AnnA ( compulsory="a", choiceA=3, optional1="a")         
-   @AnnA ( compulsory="a", choiceB=3, optional1="a", "b")         
-   @AnnA ( compulsory="a", choiceA=3)         
-   @AnnB ("a")         
-             ]]>         
+            <![CDATA[
+   @AnnA ( compulsory="a", choiceA=3, optional1="a")
+   @AnnA ( compulsory="a", choiceB=3, optional1="a", "b")
+   @AnnA ( compulsory="a", choiceA=3)
+   @AnnB ("a")
+             ]]>
           </programlisting>
          These would not be valid:
          <programlisting>
-   @AnnA (choiceA=3, optional1={"a", b=""})         
-   @AnnA ( compulsory="a", choiceB=3, choiceB=3, optional1={"a", "b"})         
-   @AnnB (3)         
+   @AnnA (choiceA=3, optional1={"a", b=""})
+   @AnnA ( compulsory="a", choiceB=3, choiceB=3, optional1={"a", "b"})
+   @AnnB (3)
          </programlisting>
       </para>
    </chapter>
-   
+
    <chapter id="quickref-ref">
-   
+
       <title>Quick ref</title>
-   
+
       <sect1 id="aspects" revision="1">
          <title>Aspects</title>
          <para><emphasis>XML</emphasis></para>
-         <programlisting>       
-<![CDATA[             
+         <programlisting>
+<![CDATA[
    <aspect {name} [class |factory] scope>
       [<attribute name></attribute>]*
       [<advisor-attribute  name ></advisor-attribute>]
@@ -148,20 +148,20 @@
       [<joinpoint-attribute  name ></joinpoint-attribute>]
       [random xml]
    </aspect>
- ]]>         </programlisting>       
+ ]]>         </programlisting>
          <para><emphasis>Annotation</emphasis></para>
          <para><emphasis>Usage:</emphasis> class</para>
-         <programlisting>       
+         <programlisting>
    @Aspect ([class|factory], scope)
-         </programlisting>       
+         </programlisting>
       </sect1>
 
 
       <sect1 id="interceptors" revision="1">
          <title>Interceptors</title>
          <para><emphasis>XML</emphasis></para>
-         <programlisting>   
-            <![CDATA[           
+         <programlisting>
+            <![CDATA[
    <interceptor {name} [class|factory] scope />
    	[<attribute name ></attribute>]*
    	[<advisor-attribute name ></advisor-attribute>]
@@ -170,20 +170,20 @@
    	[random xml]
    <interceptor>
              ]]>
-         </programlisting>       
+         </programlisting>
          <para><emphasis>Annotation</emphasis></para>
          <para><emphasis>Usage:</emphasis> class</para>
-         <programlisting>       
+         <programlisting>
    @InterceptorDef ([class|factory], scope)
-         </programlisting>       
+         </programlisting>
       </sect1>
 
 
       <sect1 id="bindings" revision="1">
          <title>Bindings</title>
          <para><emphasis>XML</emphasis></para>
-         <programlisting>    
-            <![CDATA[          
+         <programlisting>
+            <![CDATA[
    <bind {name} pointcut {cflow} >
       [ <interceptor-ref name/> |
         <stack-ref name/> |
@@ -195,19 +195,19 @@
         <finally aspect name/>  ]*
    </bind>
              ]]>
-         </programlisting>       
+         </programlisting>
          <para><emphasis>Annotation</emphasis></para>
          <para><emphasis>Usage:</emphasis> class (if annotated @InterceptorDef), method (if class annotated @Aspect)</para>
-         <programlisting>       
+         <programlisting>
    Bind (pointcut {, cflow} )
-         </programlisting>       
+         </programlisting>
       </sect1>
 
       <sect1 id="stacks" revision="1">
          <title>Stacks</title>
          <para><emphasis>XML</emphasis></para>
-         <programlisting>       
-            <![CDATA[          
+         <programlisting>
+            <![CDATA[
    <stack name>
       [ <interceptor-ref name /> |
         <stack-ref name /> |
@@ -215,187 +215,187 @@
         <advice aspect name />  ]+
    </stack>
              ]]>
-         </programlisting>       
+         </programlisting>
          <para><emphasis>Annotation</emphasis></para>
          <para><emphasis>Usage:</emphasis> N/A</para>
       </sect1>
-   
+
       <sect1 id="pointcuts" revision="1">
          <title>Pointcuts</title>
          <para><emphasis>XML</emphasis></para>
-         <programlisting>     
-           <![CDATA[ 
-   <pointcut name expr /> 
+         <programlisting>
+           <![CDATA[
+   <pointcut name expr />
             ]]>
-         </programlisting>       
+         </programlisting>
          <para><emphasis>Annotation</emphasis></para>
          <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class</para>
-         <programlisting>       
+         <programlisting>
    @PointcutDef (expr)
-         </programlisting>       
+         </programlisting>
       </sect1>
-   
+
       <sect1 id="if-introductions" revision="1">
          <title>Interface Introductions</title>
          <para><emphasis>XML</emphasis></para>
-         <programlisting>       
-           <![CDATA[ 
+         <programlisting>
+           <![CDATA[
    <introduction [class|expr] >
    	<interfaces></interfaces>
    </introduction>
             ]]>
-         </programlisting>       
+         </programlisting>
          <para><emphasis>Annotation</emphasis></para>
          <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class</para>
-         <programlisting>       
+         <programlisting>
    @Introduction ([target|typeExpression], interfaces)
-         </programlisting>       
+         </programlisting>
       </sect1>
-   
+
       <sect1 id="mixins" revision="1">
          <title>Mixins</title>
          <para><emphasis>XML</emphasis></para>
-         <programlisting>       
-         <![CDATA[          
+         <programlisting>
+         <![CDATA[
    <introduction [class|expr] >
       [
    	<mixin {transient} >
    	    <interfaces></interfaces>
    	    <class></class>
    	    <construction></construction>
-   	</mixin>		
+   	</mixin>
       ]*
    </introduction>
              ]]>
-         </programlisting>       
+         </programlisting>
          <para><emphasis>Annotation</emphasis></para>
-         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class. The method returns the mixin class type</para> 
-         <programlisting>       
+         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class. The method returns the mixin class type</para>
+         <programlisting>
    @Mixin ([target|typeExpression], interfaces, isTransient)
-         </programlisting>       
+         </programlisting>
       </sect1>
 
 
       <sect1 id="ann-intro" revision="1">
          <title>Annotation Introductions</title>
          <para><emphasis>XML</emphasis></para>
-         <programlisting>       
-            <![CDATA[    
+         <programlisting>
+            <![CDATA[
    <annotation-introduction expr invisible ></annotation-introduction>
-             ]]>        
-         </programlisting>       
+             ]]>
+         </programlisting>
          <para><emphasis>Annotation</emphasis></para>
-         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class.</para> 
-         <programlisting>    
+         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class.</para>
+         <programlisting>
    @AnnotationIntroductionDef (expr, invisible, annotation)
-         </programlisting>       
+         </programlisting>
       </sect1>
-   
+
       <sect1 id="cflow-stack" revision="1">
          <title>CFlow Stack</title>
          <para><emphasis>XML</emphasis></para>
-         <programlisting> 
-            <![CDATA[    
+         <programlisting>
+            <![CDATA[
    <cflow-stack name>
       [<called></called> | <not-called></not-called>]*
-   <cflow-stack>      
-             ]]>        
-         </programlisting>       
+   <cflow-stack>
+             ]]>
+         </programlisting>
          <para><emphasis>Annotation</emphasis></para>
-         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class.</para> 
-         <programlisting>       
+         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class.</para>
+         <programlisting>
    @CFlowStackDef (cflows)
-         </programlisting>       
+         </programlisting>
          Where the cflows entries must be of type
-         <programlisting>       
+         <programlisting>
    @CFlowDef (expr, called)
-         </programlisting>       
+         </programlisting>
       </sect1>
-   
+
       <sect1 id="typedef" revision="1">
          <title>Typedefs</title>
          <para><emphasis>XML</emphasis></para>
-         <programlisting> 
-            <![CDATA[    
+         <programlisting>
+            <![CDATA[
    <typedef name expr />
-             ]]>        
-         </programlisting>       
+             ]]>
+         </programlisting>
          <para><emphasis>Annotation</emphasis></para>
-         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class.</para> 
-         <programlisting>       
+         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class.</para>
+         <programlisting>
    @TypeDef (expr)
-         </programlisting>       
+         </programlisting>
       </sect1>
 
       <sect1 id="dyna-cflow" revision="1">
          <title>Dynamic CFlow</title>
          <para><emphasis>XML</emphasis></para>
-         <programlisting> 
-            <![CDATA[    
+         <programlisting>
+            <![CDATA[
    <dynamic-cflow name class />
-             ]]>        
-         </programlisting>       
+             ]]>
+         </programlisting>
          <para><emphasis>Annotation</emphasis></para>
-         <para><emphasis>Usage:</emphasis>class.</para> 
-         <programlisting>       
+         <para><emphasis>Usage:</emphasis>class.</para>
+         <programlisting>
    @DynamicCFlowDef (expr)
-         </programlisting>       
+         </programlisting>
       </sect1>
 
       <sect1 id="prepare" revision="1">
          <title>Prepare</title>
          <para><emphasis>XML</emphasis></para>
-         <programlisting> 
-            <![CDATA[    
+         <programlisting>
+            <![CDATA[
    <prepare expr />
-             ]]>        
-         </programlisting>       
+             ]]>
+         </programlisting>
          <para><emphasis>Annotation</emphasis></para>
-         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class.</para> 
-         <programlisting>       
+         <para><emphasis>Usage:</emphasis>field in @Aspect or @InterceptorDef annotated class.</para>
+         <programlisting>
    @Prepare (expr)
-         </programlisting>       
+         </programlisting>
       </sect1>
 
       <sect1 id="metadata" revision="1">
          <title>Metadata</title>
          <para><emphasis>XML</emphasis></para>
-         <programlisting> 
-            <![CDATA[    
+         <programlisting>
+            <![CDATA[
    <metadata tag class>
       [<default>[any xml tags with content]*</default>]*
       [<class>[any xml tags with content]*</class>]*
       [<method expr>[any xml tags with content]*</method>]*
       [<constructor expr>[any xml tags with content]*</constructor>]*
-      [<field expr>[any xml tags with content]*</field>]*   
+      [<field expr>[any xml tags with content]*</field>]*
    </metadata>
-             ]]>   
-         </programlisting>       
+             ]]>
+         </programlisting>
          <para><emphasis>Annotation</emphasis></para>
-         <para><emphasis>Usage:</emphasis> N/A.</para> 
+         <para><emphasis>Usage:</emphasis> N/A.</para>
       </sect1>
 
       <sect1 id="metadata-loader" revision="1">
          <title>Metadata Loaders</title>
          <para><emphasis>XML</emphasis></para>
-         <programlisting> 
-            <![CDATA[    
+         <programlisting>
+            <![CDATA[
    <metadata-loader tag class>
       [arbitrary xml]
    </metadata-loader>
-             ]]>   
-         </programlisting>       
+             ]]>
+         </programlisting>
          <para><emphasis>Annotation</emphasis></para>
-         <para><emphasis>Usage:</emphasis> N/A.</para> 
+         <para><emphasis>Usage:</emphasis> N/A.</para>
       </sect1>
 
-      
 
 
 
 
 
-   </chapter>   
+
+   </chapter>
 </book>
 
 
