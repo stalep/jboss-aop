@@ -60,6 +60,7 @@ public abstract class JoinPointInfo implements JoinPointBean
    protected JoinPointInfo(JoinPointInfo other)
    {
       this.advisor = other.advisor;
+      this.clazz = other.clazz;
       if (other.interceptors != null)
       {
          this.interceptors = new Interceptor[other.interceptors.length];

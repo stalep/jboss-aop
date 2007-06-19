@@ -1,0 +1,10 @@
+<aop>
+	<aspect class="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" scope="PER_INSTANCE"/>
+	
+	<bind pointcut="execution(* org.jboss.test.aop.beforeafterthrowingscoped.POJO->methodWithPerInstanceAspects(..))">
+		<before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="before"/>
+		<after aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="after"/>
+		<throwing aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="throwing"/>		
+		<finally aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="finaly"/>
+	</bind>
+</aop>

@@ -262,7 +262,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
 
       CtClass[] params = addTargetToParamsForNonStaticMethod(trans.getClazz(), trans.getWMethod());
 
-      String code = createAdvisorMethodBody(trans, genadvisor/*kill*/);
+      String code = createAdvisorMethodBody(trans);
       try
       {
          CtMethod advisorMethod = CtNewMethod.make(
@@ -283,7 +283,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
       }
    }
 
-   private String createAdvisorMethodBody(MethodTransformation trans, CtClass ga/*kill*/)throws NotFoundException
+   private String createAdvisorMethodBody(MethodTransformation trans)throws NotFoundException
    {
       if (Modifier.isStatic(trans.getWMethod().getModifiers()))
       {
@@ -291,7 +291,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
       }
       else
       {
-         return createNonStaticAdvisorMethodBody(trans, ga);
+         return createNonStaticAdvisorMethodBody(trans);
       }
    }
 
@@ -319,7 +319,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
       return code;
    }
 
-   private String createNonStaticAdvisorMethodBody(MethodTransformation trans, CtClass ga/*kill*/)throws NotFoundException
+   private String createNonStaticAdvisorMethodBody(MethodTransformation trans)throws NotFoundException
    {
       String joinpointName = getJoinPointFieldName(trans);
       String infoName = getMethodInfoFieldName(trans.getOriginalName(), trans.getHash());

@@ -166,7 +166,6 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       ConByConInfo copy = (ConByConInfo)info.copy();
       copy.setAdvisor(this);
-//      addMethodInfo(copy);
       return copy;
    }
 
@@ -177,7 +176,6 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       MethodByConInfo copy = (MethodByConInfo)info.copy();
       copy.setAdvisor(this);
-//      addMethodInfo(copy);
       return copy;
    }
 
@@ -188,7 +186,6 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       ConByMethodInfo copy = (ConByMethodInfo)info.copy();
       copy.setAdvisor(this);
-//      addMethodInfo(copy);
       return copy;
    }
    
@@ -199,7 +196,6 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       MethodByMethodInfo copy = (MethodByMethodInfo)info.copy();
       copy.setAdvisor(this);
-//      addMethodInfo(copy);
       return copy;
    }
    
@@ -1024,11 +1020,21 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
    }
    
-   protected void rebindJoinPointWithInstanceInformation(JoinPointInfo info)
+   protected Object rebindJoinPointWithInstanceInformation(JoinPointInfo info)
    {
       JoinPointGenerator generator = getJoinPointGenerator(info);
       generator.rebindJoinpoint(info);
-      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+      return generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+   }
+   
+   /**
+    * Called back from generated code
+    */
+   public Object createAndRebindJoinPointForInstance(JoinPointInfo info)
+   {
+      JoinPointInfo newinfo = info.copy();
+      newinfo.setAdvisor(this);
+      return rebindJoinPointWithInstanceInformation(newinfo);
    }
    
    /**

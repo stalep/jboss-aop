@@ -405,6 +405,10 @@
          <param name="test" value="beforeafterthrowingstack"/>
          <param name="caller" value="javaagent-genadvisor-tests"/>
       </antcall>
+      <antcall target="_run-javaagent-test" inheritRefs="true">
+         <param name="test" value="beforeafterthrowingscoped"/>
+         <param name="caller" value="javaagent-genadvisor-tests"/>
+      </antcall>
 
       <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-jdk50-tests" inheritRefs="true">
@@ -582,6 +586,10 @@
       </antcall>
       <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="beforeafterthrowingstack"/>
+         <param name="caller" value="precompiled-genadvisor-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="beforeafterthrowingscoped"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
       
