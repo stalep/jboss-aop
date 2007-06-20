@@ -35,6 +35,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE}) @Retention(RetentionPolicy.RUNTIME)
         public @interface Bind
 {
+   AdviceType type() default AdviceType.AROUND;
+   
    String pointcut();
 
    String cflow() default "";

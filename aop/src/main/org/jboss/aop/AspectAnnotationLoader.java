@@ -465,7 +465,18 @@ public class AspectAnnotationLoader
             cflowExpression = new PointcutExpressionParser(new StringReader(cflow)).CFlowExpression();
 
          }
-         AdviceFactory factory = new AdviceFactory(def, minfo.getName());
+         
+         org.jboss.aop.advice.AdviceType internalAdviceType = getInternalAdviceType(binding.type());
+         AdviceFactory factory = null;
+         if (internalAdviceType == org.jboss.aop.advice.AdviceType.AROUND)
+         {
+            factory = new AdviceFactory(def, minfo.getName());
+         }
+         else
+         {
+            factory = new AdviceFactory(def, minfo.getName(), internalAdviceType);
+         }
+         
          manager.addInterceptorFactory(factory.getName(), factory);
          InterceptorFactory[] fact = {factory};
          String name = getAspectMethodBindingName(cf, minfo);
@@ -475,6 +486,31 @@ public class AspectAnnotationLoader
       }
    }
 
+   private org.jboss.aop.advice.AdviceType getInternalAdviceType(AdviceType adviceType)
+   {
+      if (adviceType == AdviceType.AROUND)
+      {
+         return org.jboss.aop.advice.AdviceType.AROUND;
+      }
+      else if (adviceType == AdviceType.BEFORE)
+      {
+         return org.jboss.aop.advice.AdviceType.BEFORE;
+      }
+      else if (adviceType == AdviceType.AFTER)
+      {
+         return org.jboss.aop.advice.AdviceType.AFTER;
+      }
+      else if (adviceType == AdviceType.THROWING)
+      {
+         return org.jboss.aop.advice.AdviceType.THROWING;
+      }
+      else if (adviceType == AdviceType.FINALLY)
+      {
+         return org.jboss.aop.advice.AdviceType.FINALLY;         
+      }
+      
+      throw new RuntimeException("Bad type " + adviceType);
+   }
 
    private void undeployAspectMethodBindings(ClassFile cf)
    throws Exception

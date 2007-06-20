@@ -96,7 +96,7 @@ public abstract class JoinPointInfo implements JoinPointBean
 
    public boolean hasAdvices()
    {
-      return (interceptors != null && interceptors.length > 0) /*|| (factories != null && factories.length > 0)*/;
+      return (interceptors != null && interceptors.length > 0);
    }
    
    public boolean equalChains(JoinPointInfo other)
