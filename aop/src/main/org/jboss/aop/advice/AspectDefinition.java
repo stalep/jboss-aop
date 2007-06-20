@@ -86,6 +86,11 @@ public class AspectDefinition
                   else if (scope == Scope.PER_CLASS)
                   {
                      advisor.removePerClassAspect(this);
+                     if (advisor instanceof GeneratedClassAdvisor)
+                     {
+                        //If it was a PER_JOINPOINT aspect for a static member, it might be listed under PER_CLASS_JOINPOINT as well
+                        ((GeneratedClassAdvisor)advisor).removePerClassJoinpointAspect(this);
+                     }
                   }
                   else if (scope == Scope.PER_CLASS_JOINPOINT)
                   {

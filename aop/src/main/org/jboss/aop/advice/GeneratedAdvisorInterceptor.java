@@ -259,7 +259,14 @@ public class GeneratedAdvisorInterceptor implements Interceptor
 
             if (instance == null)
             {
-               instance = def.getFactory().createPerJoinpoint(advisor, ia, joinpoint);
+               instance = ((GeneratedClassAdvisor)advisor).getPerClassJoinpointAspect(def, joinpoint);
+               if (instance != null)
+               {
+                  return instance;
+               }
+               
+               ((GeneratedClassAdvisor)advisor).addPerClassJoinpointAspect(def, joinpoint);
+               instance = ((GeneratedClassAdvisor)advisor).getPerClassJoinpointAspect(def, joinpoint);
             }
          }
          return instance;

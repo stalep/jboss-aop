@@ -29,6 +29,7 @@ package org.jboss.test.aop.beforeafterthrowingscoped;
 public class POJOWithPerInstanceAspects
 {
    public int field;
+   public static int staticField;
    
    public void methodWithPerInstanceAspects(boolean error) throws ThrownByTestException
    {
@@ -41,5 +42,10 @@ public class POJOWithPerInstanceAspects
    public int methodWithPerInstanceAspects() 
    {
       return 10;
+   }
+   
+   public static int staticMethod(int i)
+   {
+      return i;
    }
 }

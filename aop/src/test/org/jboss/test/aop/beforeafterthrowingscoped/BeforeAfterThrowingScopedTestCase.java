@@ -219,6 +219,28 @@ public class BeforeAfterThrowingScopedTestCase extends AOPTestWithSetup
       assertSame(aspect1w, PerInstanceAspect.before);
    }
    
+   public void testPerInstanceStaticMethodsAndFieldAspects()
+   {
+      PerInstanceAspect.reset();
+      POJOWithPerInstanceAspects.staticField = 10;
+      assertNull(PerInstanceAspect.before);
+      assertNull(PerInstanceAspect.after);
+      assertNull(PerInstanceAspect.throwing);
+      assertNull(PerInstanceAspect.finaly);
+
+      assertEquals(10, POJOWithPerInstanceAspects.staticField);
+      assertNull(PerInstanceAspect.before);
+      assertNull(PerInstanceAspect.after);
+      assertNull(PerInstanceAspect.throwing);
+      assertNull(PerInstanceAspect.finaly);
+      
+      assertEquals(101, POJOWithPerInstanceAspects.staticMethod(101));
+      assertNull(PerInstanceAspect.before);
+      assertNull(PerInstanceAspect.after);
+      assertNull(PerInstanceAspect.throwing);
+      assertNull(PerInstanceAspect.finaly);
+   }
+   
    public void testAllPerInstanceAspectsSame() 
    {
       POJOWithPerInstanceAspects pojo = new POJOWithPerInstanceAspects();
@@ -259,6 +281,8 @@ public class BeforeAfterThrowingScopedTestCase extends AOPTestWithSetup
       assertNotNull(PerJoinpointAspect.after);
       assertNull(PerJoinpointAspect.throwing);
       assertNotNull(PerJoinpointAspect.finaly);
+      assertSame(PerJoinpointAspect.before, PerJoinpointAspect.after);
+      assertSame(PerJoinpointAspect.finaly, PerJoinpointAspect.after);
       PerJoinpointAspect pja = PerJoinpointAspect.before;
       
       PerJoinpointAspect.reset();
@@ -267,6 +291,8 @@ public class BeforeAfterThrowingScopedTestCase extends AOPTestWithSetup
       assertNotNull(PerJoinpointAspect.after);
       assertNull(PerJoinpointAspect.throwing);
       assertNotNull(PerJoinpointAspect.finaly);
+      assertSame(PerJoinpointAspect.before, PerJoinpointAspect.after);
+      assertSame(PerJoinpointAspect.finaly, PerJoinpointAspect.after);
       assertEquals(pja, PerJoinpointAspect.before); //Works like PER_CLASS_JOINPOINT when no instance
    }
    
@@ -368,7 +394,7 @@ public class BeforeAfterThrowingScopedTestCase extends AOPTestWithSetup
       assertNotNull(PerJoinpointAspect.finaly);    
       assertSame(PerJoinpointAspect.before, PerJoinpointAspect.after);
       assertSame(PerJoinpointAspect.finaly, PerJoinpointAspect.after);
-      assertNotSame(aspectA, PerJoinpointAspect.before);
+      assertSame(aspectA, PerJoinpointAspect.before);
    }
 
    public void testPerJoinpointFieldAspects()
@@ -923,6 +949,5 @@ public class BeforeAfterThrowingScopedTestCase extends AOPTestWithSetup
    }
    
    
-   //PER_INSTANCE with contructors, static fields and methods should be ignored
-   //PER_JOINPOINT should be ignored for ctors, and act like PER_CLASS_JOINPOINT for static fields and methods  
+   //PER_JOINPOINT should act like PER_CLASS_JOINPOINT for static fields and methods  
 }
