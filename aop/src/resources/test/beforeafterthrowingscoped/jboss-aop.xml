@@ -1,10 +1,54 @@
 <aop>
 	<aspect class="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" scope="PER_INSTANCE"/>
+	<aspect class="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" scope="PER_JOINPOINT"/>
+	<aspect class="org.jboss.test.aop.beforeafterthrowingscoped.PerClassJoinpointAspect" scope="PER_CLASS_JOINPOINT"/>
+	<aspect class="org.jboss.test.aop.beforeafterthrowingscoped.PerClassAspect" scope="PER_CLASS"/>
+	<aspect class="org.jboss.test.aop.beforeafterthrowingscoped.PerVmAspect" scope="PER_VM"/>
 	
-	<bind pointcut="execution(* org.jboss.test.aop.beforeafterthrowingscoped.POJO->methodWithPerInstanceAspects(..))">
+	<bind pointcut="execution(* org.jboss.test.aop.beforeafterthrowingscoped.POJOWithPerInstanceAspects->methodWithPerInstanceAspects(..))">
 		<before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="before"/>
 		<after aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="after"/>
 		<throwing aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="throwing"/>		
 		<finally aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="finaly"/>
 	</bind>
+	
+	<bind pointcut="field(* org.jboss.test.aop.beforeafterthrowingscoped.POJOWithPerInstanceAspects->field)">
+		<before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="before"/>
+		<after aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="after"/>
+		<throwing aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="throwing"/>		
+		<finally aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="finaly"/>
+	</bind>
+	
+	<bind pointcut="execution(* org.jboss.test.aop.beforeafterthrowingscoped.POJOWithPerJoinpointAspects->method*(..))">
+		<before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" name="before"/>
+		<after aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" name="after"/>
+		<throwing aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" name="throwing"/>		
+		<finally aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" name="finaly"/>
+	</bind>
+
+	<bind pointcut="field(* org.jboss.test.aop.beforeafterthrowingscoped.POJOWithPerJoinpointAspects->field*)">
+		<before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" name="before"/>
+		<after aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" name="after"/>
+		<throwing aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" name="throwing"/>		
+		<finally aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" name="finaly"/>
+	</bind>
+	
+	<bind pointcut="all(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithPerClassJoinpointAspects)">
+		<before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassJoinpointAspect" name="before"/>
+		<after aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassJoinpointAspect" name="after"/>
+		<throwing aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassJoinpointAspect" name="throwing"/>		
+		<finally aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassJoinpointAspect" name="finaly"/>
+	</bind>
+	
+	<bind pointcut="all(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithPerClassAndPerVmAspects)">
+		<before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerVmAspect" name="before"/>
+		<after aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerVmAspect" name="after"/>
+		<throwing aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerVmAspect" name="throwing"/>		
+		<finally aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerVmAspect" name="finaly"/>
+		<before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassAspect" name="before"/>
+		<after aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassAspect" name="after"/>
+		<throwing aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassAspect" name="throwing"/>		
+		<finally aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassAspect" name="finaly"/>
+	</bind>
+	
 </aop>

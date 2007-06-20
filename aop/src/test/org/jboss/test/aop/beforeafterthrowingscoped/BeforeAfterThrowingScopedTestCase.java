@@ -51,12 +51,12 @@ public class BeforeAfterThrowingScopedTestCase extends AOPTestWithSetup
       return suite;
    }
 
-   public void testPerInstanceAspects()
+   public void testPerInstanceVoidMethodAspects()
    {
-      System.out.println("===== testPerInstanceAspects()");
+      System.out.println("===== testPerInstanceVoidMethodAspects()");
       System.out.println("Calling POJO 1");
       PerInstanceAspect.reset();
-      POJO pojo1 = new POJO();
+      POJOWithPerInstanceAspects pojo1 = new POJOWithPerInstanceAspects();
       try
       {
          pojo1.methodWithPerInstanceAspects(false);
@@ -76,7 +76,7 @@ public class BeforeAfterThrowingScopedTestCase extends AOPTestWithSetup
       
       System.out.println("Calling POJO 2");
       PerInstanceAspect.reset();
-      POJO pojo2 = new POJO();
+      POJOWithPerInstanceAspects pojo2 = new POJOWithPerInstanceAspects();
       try
       {
          pojo2.methodWithPerInstanceAspects(true);
@@ -112,4 +112,634 @@ public class BeforeAfterThrowingScopedTestCase extends AOPTestWithSetup
       assertSame(aspect1, aspect1a);
       System.out.println("DONE");
    }
+
+   public void testPerInstanceReturnMethodAspects()
+   {
+      System.out.println("===== testPerInstanceReturnMethodAspects()");
+      System.out.println("Calling POJO 1");
+      PerInstanceAspect.reset();
+      POJOWithPerInstanceAspects pojo1 = new POJOWithPerInstanceAspects();
+      assertEquals(10, pojo1.methodWithPerInstanceAspects());
+    
+      assertNotNull(PerInstanceAspect.before);
+      assertNotNull(PerInstanceAspect.after);
+      assertNull(PerInstanceAspect.throwing);
+      assertNotNull(PerInstanceAspect.finaly);
+      assertSame(PerInstanceAspect.before, PerInstanceAspect.after);
+      assertSame(PerInstanceAspect.after, PerInstanceAspect.finaly);
+      PerInstanceAspect aspect1 = PerInstanceAspect.before;
+      
+      System.out.println("Calling POJO 2");
+      PerInstanceAspect.reset();
+      POJOWithPerInstanceAspects pojo2 = new POJOWithPerInstanceAspects();
+      assertEquals(10, pojo2.methodWithPerInstanceAspects());
+      
+      assertNotNull(PerInstanceAspect.before);
+      assertNotNull(PerInstanceAspect.after);
+      assertNull(PerInstanceAspect.throwing);
+      assertNotNull(PerInstanceAspect.finaly);
+      assertSame(PerInstanceAspect.before, PerInstanceAspect.after);
+      assertSame(PerInstanceAspect.after, PerInstanceAspect.finaly);
+      PerInstanceAspect aspect2 = PerInstanceAspect.before;
+    
+      assertNotSame(aspect1, aspect2);
+      
+      
+      System.out.println("Calling POJO 1 again");
+      assertEquals(10, pojo1.methodWithPerInstanceAspects());
+    
+      PerInstanceAspect aspect1a = PerInstanceAspect.before;
+      
+      assertSame(aspect1, aspect1a);
+      System.out.println("DONE");
+   }
+
+   public void testPerInstanceFieldAspects()
+   {
+      System.out.println("===== testPerInstanceReturnMethodAspects()");
+      System.out.println("Calling POJO 1");
+      PerInstanceAspect.reset();
+      POJOWithPerInstanceAspects pojo1 = new POJOWithPerInstanceAspects();
+      
+      pojo1.field = 10;
+      assertNotNull(PerInstanceAspect.before);
+      assertNotNull(PerInstanceAspect.after);
+      assertNull(PerInstanceAspect.throwing);
+      assertNotNull(PerInstanceAspect.finaly);
+      assertSame(PerInstanceAspect.before, PerInstanceAspect.after);
+      assertSame(PerInstanceAspect.after, PerInstanceAspect.finaly);
+      PerInstanceAspect aspect1w = PerInstanceAspect.before;
+      
+      PerInstanceAspect.reset();
+      assertEquals(10, pojo1.field);
+      assertNotNull(PerInstanceAspect.before);
+      assertNotNull(PerInstanceAspect.after);
+      assertNull(PerInstanceAspect.throwing);
+      assertNotNull(PerInstanceAspect.finaly);
+      assertSame(PerInstanceAspect.before, PerInstanceAspect.after);
+      assertSame(PerInstanceAspect.after, PerInstanceAspect.finaly);
+      PerInstanceAspect aspect1r = PerInstanceAspect.before;
+      
+      assertSame(aspect1w, aspect1r);
+      
+      PerInstanceAspect.reset();
+      POJOWithPerInstanceAspects pojo2 = new POJOWithPerInstanceAspects();
+      
+      pojo2.field = 10;
+      assertNotNull(PerInstanceAspect.before);
+      assertNotNull(PerInstanceAspect.after);
+      assertNull(PerInstanceAspect.throwing);
+      assertNotNull(PerInstanceAspect.finaly);
+      assertSame(PerInstanceAspect.before, PerInstanceAspect.after);
+      assertSame(PerInstanceAspect.after, PerInstanceAspect.finaly);
+      PerInstanceAspect aspect2w = PerInstanceAspect.before;
+      
+      PerInstanceAspect.reset();
+      assertEquals(10, pojo2.field);
+      assertNotNull(PerInstanceAspect.before);
+      assertNotNull(PerInstanceAspect.after);
+      assertNull(PerInstanceAspect.throwing);
+      assertNotNull(PerInstanceAspect.finaly);
+      assertSame(PerInstanceAspect.before, PerInstanceAspect.after);
+      assertSame(PerInstanceAspect.after, PerInstanceAspect.finaly);
+      PerInstanceAspect aspect2r = PerInstanceAspect.before;
+      
+      assertSame(aspect2w, aspect2r);
+      assertNotSame(aspect1w, aspect2w);
+    
+      PerInstanceAspect.reset();
+      pojo1.field = 10;
+      assertSame(aspect1w, PerInstanceAspect.before);
+   }
+   
+   public void testAllPerInstanceAspectsSame() 
+   {
+      POJOWithPerInstanceAspects pojo = new POJOWithPerInstanceAspects();
+
+      PerInstanceAspect.reset();
+      pojo.methodWithPerInstanceAspects();
+      assertNotNull(PerInstanceAspect.before);
+      PerInstanceAspect aspect1 = PerInstanceAspect.before;
+
+      PerInstanceAspect.reset();
+      pojo.field = 10;
+      assertNotNull(PerInstanceAspect.before);
+      PerInstanceAspect aspect2 = PerInstanceAspect.before;
+      
+      assertSame(aspect1, aspect2);
+      
+      PerInstanceAspect.reset();
+      try
+      {
+         pojo.methodWithPerInstanceAspects(false);
+      }
+      catch (ThrownByTestException e)
+      {
+         fail("unexpected exception");
+      }
+      assertNotNull(PerInstanceAspect.before);
+      PerInstanceAspect aspect3 = PerInstanceAspect.before;
+      
+      assertSame(aspect1, aspect3);
+   }
+   
+   public void testPerJoinpointMethodAspects()
+   {
+      POJOWithPerJoinpointAspects pojo1 = new POJOWithPerJoinpointAspects();
+      
+      PerJoinpointAspect.reset();
+      assertEquals(10, pojo1.methodA(10));
+      
+      assertNotNull(PerJoinpointAspect.before);
+      assertNotNull(PerJoinpointAspect.after);
+      assertNull(PerJoinpointAspect.throwing);
+      assertNotNull(PerJoinpointAspect.finaly);
+      assertSame(PerJoinpointAspect.before, PerJoinpointAspect.after);
+      assertSame(PerJoinpointAspect.finaly, PerJoinpointAspect.after);
+      PerJoinpointAspect aspect1a = PerJoinpointAspect.before; 
+      
+      POJOWithPerJoinpointAspects pojo2 = new POJOWithPerJoinpointAspects();
+      
+      PerJoinpointAspect.reset();
+      assertEquals(10, pojo2.methodA(10));
+      
+      assertNotNull(PerJoinpointAspect.before);
+      assertNotNull(PerJoinpointAspect.after);
+      assertNull(PerJoinpointAspect.throwing);
+      assertNotNull(PerJoinpointAspect.finaly);
+      assertSame(PerJoinpointAspect.before, PerJoinpointAspect.after);
+      assertSame(PerJoinpointAspect.finaly, PerJoinpointAspect.after);
+      PerJoinpointAspect aspect2a = PerJoinpointAspect.before;
+      assertNotSame(aspect1a, aspect2a);
+      
+      
+      PerJoinpointAspect.reset();
+      pojo1.methodB();
+      
+      assertNotNull(PerJoinpointAspect.before);
+      assertNotNull(PerJoinpointAspect.after);
+      assertNull(PerJoinpointAspect.throwing);
+      assertNotNull(PerJoinpointAspect.finaly);
+      assertSame(PerJoinpointAspect.before, PerJoinpointAspect.after);
+      assertSame(PerJoinpointAspect.finaly, PerJoinpointAspect.after);
+      PerJoinpointAspect aspect1b = PerJoinpointAspect.before;
+      assertNotSame(aspect1b, aspect1a);
+      
+      PerJoinpointAspect.reset();
+      pojo2.methodB();
+      
+      assertNotNull(PerJoinpointAspect.before);
+      assertNotNull(PerJoinpointAspect.after);
+      assertNull(PerJoinpointAspect.throwing);
+      assertNotNull(PerJoinpointAspect.finaly);
+      assertSame(PerJoinpointAspect.before, PerJoinpointAspect.after);
+      assertSame(PerJoinpointAspect.finaly, PerJoinpointAspect.after);
+      PerJoinpointAspect aspect2b = PerJoinpointAspect.before;
+      assertNotSame(aspect2a, aspect2b);
+      assertNotSame(aspect1b, aspect2b);
+      
+      PerJoinpointAspect.reset();
+      assertEquals(100, pojo1.methodA(100));
+
+      assertNotNull(PerJoinpointAspect.before);
+      assertEquals(aspect1a, PerJoinpointAspect.before); 
+      
+   }
+   
+   public void testPerClassjoinpointConstructorAspects()
+   {
+      PerClassJoinpointAspect.reset();
+      POJOWithPerClassJoinpointAspects pojo1 = new POJOWithPerClassJoinpointAspects();
+      
+      assertNotNull(PerClassJoinpointAspect.before);
+      assertNotNull(PerClassJoinpointAspect.after);
+      assertNull(PerClassJoinpointAspect.throwing);
+      assertNotNull(PerClassJoinpointAspect.finaly);
+      assertSame(PerClassJoinpointAspect.before, PerClassJoinpointAspect.after);
+      assertSame(PerClassJoinpointAspect.finaly, PerClassJoinpointAspect.after);
+      PerClassJoinpointAspect aspect1c = PerClassJoinpointAspect.before;
+      
+      PerClassJoinpointAspect.reset();
+      POJOWithPerClassJoinpointAspects pojo2 = new POJOWithPerClassJoinpointAspects();
+      
+      assertNotNull(PerClassJoinpointAspect.before);
+      assertNotNull(PerClassJoinpointAspect.after);
+      assertNull(PerClassJoinpointAspect.throwing);
+      assertNotNull(PerClassJoinpointAspect.finaly);
+      assertSame(PerClassJoinpointAspect.before, PerClassJoinpointAspect.after);
+      assertSame(PerClassJoinpointAspect.finaly, PerClassJoinpointAspect.after);
+      PerClassJoinpointAspect aspect2c = PerClassJoinpointAspect.before;
+      assertSame(aspect1c, aspect2c);
+   }
+   
+   public void testPerClassJoinpointFieldAspects()
+   {
+      PerClassJoinpointAspect.reset();
+      POJOWithPerClassJoinpointAspects pojo1 = new POJOWithPerClassJoinpointAspects();
+      PerClassJoinpointAspect ctorAspect = PerClassJoinpointAspect.before;
+      assertNotNull(ctorAspect);
+      POJOWithPerClassJoinpointAspects pojo2 = new POJOWithPerClassJoinpointAspects();
+
+      PerClassJoinpointAspect.reset();
+      pojo1.field = 10;
+      
+      assertNotNull(PerClassJoinpointAspect.before);
+      assertNotNull(PerClassJoinpointAspect.after);
+      assertNull(PerClassJoinpointAspect.throwing);
+      assertNotNull(PerClassJoinpointAspect.finaly);
+      assertSame(PerClassJoinpointAspect.before, PerClassJoinpointAspect.after);
+      assertSame(PerClassJoinpointAspect.finaly, PerClassJoinpointAspect.after);
+      PerClassJoinpointAspect aspect1fw = PerClassJoinpointAspect.before;
+
+      PerClassJoinpointAspect.reset();
+      assertEquals(10, pojo1.field );
+      
+      assertNotNull(PerClassJoinpointAspect.before);
+      assertNotNull(PerClassJoinpointAspect.after);
+      assertNull(PerClassJoinpointAspect.throwing);
+      assertNotNull(PerClassJoinpointAspect.finaly);
+      assertSame(PerClassJoinpointAspect.before, PerClassJoinpointAspect.after);
+      assertSame(PerClassJoinpointAspect.finaly, PerClassJoinpointAspect.after);
+      PerClassJoinpointAspect aspect1fr = PerClassJoinpointAspect.before;
+      assertSame(aspect1fw, aspect1fr);
+      assertNotSame(ctorAspect, aspect1fr);
+
+      PerClassJoinpointAspect.reset();
+      pojo2.field = 100;
+      
+      assertNotNull(PerClassJoinpointAspect.before);
+      assertNotNull(PerClassJoinpointAspect.after);
+      assertNull(PerClassJoinpointAspect.throwing);
+      assertNotNull(PerClassJoinpointAspect.finaly);
+      assertSame(PerClassJoinpointAspect.before, PerClassJoinpointAspect.after);
+      assertSame(PerClassJoinpointAspect.finaly, PerClassJoinpointAspect.after);
+      PerClassJoinpointAspect aspect2fw = PerClassJoinpointAspect.before;
+      assertSame(aspect1fw, aspect1fr);
+
+      PerClassJoinpointAspect.reset();
+      assertEquals(100, pojo2.field );
+
+      assertNotNull(PerClassJoinpointAspect.before);
+      assertNotNull(PerClassJoinpointAspect.after);
+      assertNull(PerClassJoinpointAspect.throwing);
+      assertNotNull(PerClassJoinpointAspect.finaly);
+      assertSame(PerClassJoinpointAspect.before, PerClassJoinpointAspect.after);
+      assertSame(PerClassJoinpointAspect.finaly, PerClassJoinpointAspect.after);
+      PerClassJoinpointAspect aspect2fr = PerClassJoinpointAspect.before;
+      assertSame(aspect2fr, aspect2fw);
+      
+      PerClassJoinpointAspect.reset();
+      pojo1.field = 1000;
+      assertNotNull(PerClassJoinpointAspect.before);
+      assertSame(aspect1fw, PerClassJoinpointAspect.before);
+   }
+   
+   
+   public void testPerClassJoinpointMethodAspects()
+   {
+      PerClassJoinpointAspect.reset();
+      POJOWithPerClassJoinpointAspects pojo1 = new POJOWithPerClassJoinpointAspects();
+      PerClassJoinpointAspect ctorAspect = PerClassJoinpointAspect.before;
+      assertNotNull(ctorAspect);
+      POJOWithPerClassJoinpointAspects pojo2 = new POJOWithPerClassJoinpointAspects();
+
+      PerClassJoinpointAspect.reset();
+      pojo1.method();
+      
+      assertNotNull(PerClassJoinpointAspect.before);
+      assertNotNull(PerClassJoinpointAspect.after);
+      assertNull(PerClassJoinpointAspect.throwing);
+      assertNotNull(PerClassJoinpointAspect.finaly);
+      assertSame(PerClassJoinpointAspect.before, PerClassJoinpointAspect.after);
+      assertSame(PerClassJoinpointAspect.finaly, PerClassJoinpointAspect.after);
+      PerClassJoinpointAspect aspect1 = PerClassJoinpointAspect.before;
+
+      PerClassJoinpointAspect.reset();
+      pojo2.method();
+      
+      assertNotNull(PerClassJoinpointAspect.before);
+      assertNotNull(PerClassJoinpointAspect.after);
+      assertNull(PerClassJoinpointAspect.throwing);
+      assertNotNull(PerClassJoinpointAspect.finaly);
+      assertSame(PerClassJoinpointAspect.before, PerClassJoinpointAspect.after);
+      assertSame(PerClassJoinpointAspect.finaly, PerClassJoinpointAspect.after);
+      PerClassJoinpointAspect aspect2 = PerClassJoinpointAspect.before;
+      assertSame(aspect2, aspect1);
+
+      PerClassJoinpointAspect.reset();
+      pojo1.method();
+      assertNotNull(PerClassJoinpointAspect.before);
+      assertEquals(aspect1, PerClassJoinpointAspect.before);
+   }
+   
+   public void testPerClassJoinpointStaticMethodAndFieldAspects()
+   {
+      PerClassJoinpointAspect.reset();
+      POJOWithPerClassJoinpointAspects.staticField = 1000;
+      
+      assertNotNull(PerClassJoinpointAspect.before);
+      assertNotNull(PerClassJoinpointAspect.after);
+      assertNull(PerClassJoinpointAspect.throwing);
+      assertNotNull(PerClassJoinpointAspect.finaly);
+      assertSame(PerClassJoinpointAspect.before, PerClassJoinpointAspect.after);
+      assertSame(PerClassJoinpointAspect.finaly, PerClassJoinpointAspect.after);
+      PerClassJoinpointAspect fieldW = PerClassJoinpointAspect.after;
+      
+      PerClassJoinpointAspect.reset();
+      assertEquals(1000, POJOWithPerClassJoinpointAspects.staticField);
+      
+      assertNotNull(PerClassJoinpointAspect.before);
+      assertNotNull(PerClassJoinpointAspect.after);
+      assertNull(PerClassJoinpointAspect.throwing);
+      assertNotNull(PerClassJoinpointAspect.finaly);
+      assertSame(PerClassJoinpointAspect.before, PerClassJoinpointAspect.after);
+      assertSame(PerClassJoinpointAspect.finaly, PerClassJoinpointAspect.after);
+      assertSame(fieldW, PerClassJoinpointAspect.after);
+      
+      PerClassJoinpointAspect.reset();
+      POJOWithPerClassJoinpointAspects.staticMethod();
+      
+      assertNotNull(PerClassJoinpointAspect.before);
+      assertNotNull(PerClassJoinpointAspect.after);
+      assertNull(PerClassJoinpointAspect.throwing);
+      assertNotNull(PerClassJoinpointAspect.finaly);
+      assertSame(PerClassJoinpointAspect.before, PerClassJoinpointAspect.after);
+      assertSame(PerClassJoinpointAspect.finaly, PerClassJoinpointAspect.after);
+      PerClassJoinpointAspect method = PerClassJoinpointAspect.after;
+      assertNotSame(method, fieldW);
+      
+      PerClassJoinpointAspect.reset();
+      POJOWithPerClassJoinpointAspects.staticMethod();
+      assertNotNull(PerClassJoinpointAspect.before);
+      assertSame(method, PerClassJoinpointAspect.before);
+   }
+   
+   public void testPerClassAndPerVmConstructorAspects()
+   {
+      //Call constructors
+      PerVmAspect.reset();
+      PerClassAspect.reset();
+      POJOWithPerClassAndPerVmAspects pojo1 = new POJOWithPerClassAndPerVmAspects();
+      
+      assertNotNull(PerClassAspect.before);
+      assertNotNull(PerClassAspect.after);
+      assertNull(PerClassAspect.throwing);
+      assertNotNull(PerClassAspect.finaly);
+      assertSame(PerClassAspect.before, PerClassAspect.after);
+      assertSame(PerClassAspect.finaly, PerClassAspect.after);
+      PerClassAspect pc1 = PerClassAspect.before;
+      
+      assertNotNull(PerVmAspect.before);
+      assertNotNull(PerVmAspect.after);
+      assertNull(PerVmAspect.throwing);
+      assertNotNull(PerVmAspect.finaly);
+      assertSame(PerVmAspect.before, PerVmAspect.after);
+      assertSame(PerVmAspect.finaly, PerVmAspect.after);
+      PerVmAspect pv1 = PerVmAspect.before;
+      
+      PerVmAspect.reset();
+      PerClassAspect.reset();
+      
+      POJOWithPerClassAndPerVmAspects pojo2 = new POJOWithPerClassAndPerVmAspects();
+      
+      assertNotNull(PerClassAspect.before);
+      assertNotNull(PerClassAspect.after);
+      assertNull(PerClassAspect.throwing);
+      assertNotNull(PerClassAspect.finaly);
+      assertSame(PerClassAspect.before, PerClassAspect.after);
+      assertSame(PerClassAspect.finaly, PerClassAspect.after);
+      assertEquals(pc1, PerClassAspect.before);
+      
+      assertNotNull(PerVmAspect.before);
+      assertNotNull(PerVmAspect.after);
+      assertNull(PerVmAspect.throwing);
+      assertNotNull(PerVmAspect.finaly);
+      assertSame(PerVmAspect.before, PerVmAspect.after);
+      assertSame(PerVmAspect.finaly, PerVmAspect.after);
+      assertEquals(pv1, PerVmAspect.before);
+   }
+   
+   public void testPerClassAndPerVmFieldAspects()
+   {
+      PerVmAspect.reset();
+      PerClassAspect.reset();
+      POJOWithPerClassAndPerVmAspects pojo1 = new POJOWithPerClassAndPerVmAspects();
+      assertNotNull(PerClassAspect.before);
+      PerClassAspect pc1 = PerClassAspect.before;
+      
+      assertNotNull(PerVmAspect.before);
+      PerVmAspect pv1 = PerVmAspect.before;
+      
+      POJOWithPerClassAndPerVmAspects pojo2 = new POJOWithPerClassAndPerVmAspects();
+      
+      //Call fields
+      PerVmAspect.reset();
+      PerClassAspect.reset();
+      pojo1.field = 10; 
+      
+      assertNotNull(PerClassAspect.before);
+      assertNotNull(PerClassAspect.after);
+      assertNull(PerClassAspect.throwing);
+      assertNotNull(PerClassAspect.finaly);
+      assertSame(PerClassAspect.before, PerClassAspect.after);
+      assertSame(PerClassAspect.finaly, PerClassAspect.after);
+      assertEquals(pc1, PerClassAspect.before);
+      
+      assertNotNull(PerVmAspect.before);
+      assertNotNull(PerVmAspect.after);
+      assertNull(PerVmAspect.throwing);
+      assertNotNull(PerVmAspect.finaly);
+      assertSame(PerVmAspect.before, PerVmAspect.after);
+      assertSame(PerVmAspect.finaly, PerVmAspect.after);
+      assertEquals(pv1, PerVmAspect.before);
+      
+      PerVmAspect.reset();
+      PerClassAspect.reset();
+      assertEquals(10, pojo1.field); 
+      
+      assertNotNull(PerClassAspect.before);
+      assertNotNull(PerClassAspect.after);
+      assertNull(PerClassAspect.throwing);
+      assertNotNull(PerClassAspect.finaly);
+      assertSame(PerClassAspect.before, PerClassAspect.after);
+      assertSame(PerClassAspect.finaly, PerClassAspect.after);
+      assertEquals(pc1, PerClassAspect.before);
+      
+      assertNotNull(PerVmAspect.before);
+      assertNotNull(PerVmAspect.after);
+      assertNull(PerVmAspect.throwing);
+      assertNotNull(PerVmAspect.finaly);
+      assertSame(PerVmAspect.before, PerVmAspect.after);
+      assertSame(PerVmAspect.finaly, PerVmAspect.after);
+      assertEquals(pv1, PerVmAspect.before);
+      
+      PerVmAspect.reset();
+      PerClassAspect.reset();
+      pojo2.field = 100; 
+      
+      assertNotNull(PerClassAspect.before);
+      assertNotNull(PerClassAspect.after);
+      assertNull(PerClassAspect.throwing);
+      assertNotNull(PerClassAspect.finaly);
+      assertSame(PerClassAspect.before, PerClassAspect.after);
+      assertSame(PerClassAspect.finaly, PerClassAspect.after);
+      assertEquals(pc1, PerClassAspect.before);
+      
+      assertNotNull(PerVmAspect.before);
+      assertNotNull(PerVmAspect.after);
+      assertNull(PerVmAspect.throwing);
+      assertNotNull(PerVmAspect.finaly);
+      assertSame(PerVmAspect.before, PerVmAspect.after);
+      assertSame(PerVmAspect.finaly, PerVmAspect.after);
+      assertEquals(pv1, PerVmAspect.before);
+      
+      PerVmAspect.reset();
+      PerClassAspect.reset();
+      assertEquals(100, pojo2.field); 
+      
+      assertNotNull(PerClassAspect.before);
+      assertNotNull(PerClassAspect.after);
+      assertNull(PerClassAspect.throwing);
+      assertNotNull(PerClassAspect.finaly);
+      assertSame(PerClassAspect.before, PerClassAspect.after);
+      assertSame(PerClassAspect.finaly, PerClassAspect.after);
+      assertEquals(pc1, PerClassAspect.before);
+      
+      assertNotNull(PerVmAspect.before);
+      assertNotNull(PerVmAspect.after);
+      assertNull(PerVmAspect.throwing);
+      assertNotNull(PerVmAspect.finaly);
+      assertSame(PerVmAspect.before, PerVmAspect.after);
+      assertSame(PerVmAspect.finaly, PerVmAspect.after);
+      assertEquals(pv1, PerVmAspect.before);
+   }
+   
+   public void testPerClassAndPerVmMethodAspects()
+   {
+      PerVmAspect.reset();
+      PerClassAspect.reset();
+      POJOWithPerClassAndPerVmAspects pojo1 = new POJOWithPerClassAndPerVmAspects();
+      assertNotNull(PerClassAspect.before);
+      PerClassAspect pc1 = PerClassAspect.before;
+      
+      assertNotNull(PerVmAspect.before);
+      PerVmAspect pv1 = PerVmAspect.before;
+      
+      POJOWithPerClassAndPerVmAspects pojo2 = new POJOWithPerClassAndPerVmAspects();
+      
+      //Call fields
+      PerVmAspect.reset();
+      PerClassAspect.reset();
+      assertEquals(10, pojo1.method(10)); 
+      
+      assertNotNull(PerClassAspect.before);
+      assertNotNull(PerClassAspect.after);
+      assertNull(PerClassAspect.throwing);
+      assertNotNull(PerClassAspect.finaly);
+      assertSame(PerClassAspect.before, PerClassAspect.after);
+      assertSame(PerClassAspect.finaly, PerClassAspect.after);
+      assertEquals(pc1, PerClassAspect.before);
+      
+      assertNotNull(PerVmAspect.before);
+      assertNotNull(PerVmAspect.after);
+      assertNull(PerVmAspect.throwing);
+      assertNotNull(PerVmAspect.finaly);
+      assertSame(PerVmAspect.before, PerVmAspect.after);
+      assertSame(PerVmAspect.finaly, PerVmAspect.after);
+      assertEquals(pv1, PerVmAspect.before);
+           
+      PerVmAspect.reset();
+      PerClassAspect.reset();
+      assertEquals(100, pojo2.method(100)); 
+      
+      assertNotNull(PerClassAspect.before);
+      assertNotNull(PerClassAspect.after);
+      assertNull(PerClassAspect.throwing);
+      assertNotNull(PerClassAspect.finaly);
+      assertSame(PerClassAspect.before, PerClassAspect.after);
+      assertSame(PerClassAspect.finaly, PerClassAspect.after);
+      assertEquals(pc1, PerClassAspect.before);
+      
+      assertNotNull(PerVmAspect.before);
+      assertNotNull(PerVmAspect.after);
+      assertNull(PerVmAspect.throwing);
+      assertNotNull(PerVmAspect.finaly);
+      assertSame(PerVmAspect.before, PerVmAspect.after);
+      assertSame(PerVmAspect.finaly, PerVmAspect.after);
+      assertEquals(pv1, PerVmAspect.before);
+      
+   }
+   
+
+   public void testPerClassAndPerVmStaticFieldAspects()
+   {
+      PerVmAspect.reset();
+      PerClassAspect.reset();
+      
+      //Call fields
+      PerVmAspect.reset();
+      PerClassAspect.reset();
+      POJOWithPerClassAndPerVmAspects.staticField = 10; 
+      
+      assertNotNull(PerClassAspect.before);
+      assertNotNull(PerClassAspect.after);
+      assertNull(PerClassAspect.throwing);
+      assertNotNull(PerClassAspect.finaly);
+      assertSame(PerClassAspect.before, PerClassAspect.after);
+      assertSame(PerClassAspect.finaly, PerClassAspect.after);
+      PerClassAspect pc1 = PerClassAspect.before;
+      
+      assertNotNull(PerVmAspect.before);
+      assertNotNull(PerVmAspect.after);
+      assertNull(PerVmAspect.throwing);
+      assertNotNull(PerVmAspect.finaly);
+      assertSame(PerVmAspect.before, PerVmAspect.after);
+      assertSame(PerVmAspect.finaly, PerVmAspect.after);
+      PerVmAspect pv1 = PerVmAspect.before;
+      
+      PerVmAspect.reset();
+      PerClassAspect.reset();
+      assertEquals(10, POJOWithPerClassAndPerVmAspects.staticField); 
+      
+      assertNotNull(PerClassAspect.before);
+      assertNotNull(PerClassAspect.after);
+      assertNull(PerClassAspect.throwing);
+      assertNotNull(PerClassAspect.finaly);
+      assertSame(PerClassAspect.before, PerClassAspect.after);
+      assertSame(PerClassAspect.finaly, PerClassAspect.after);
+      assertEquals(pc1, PerClassAspect.before);
+      
+      assertNotNull(PerVmAspect.before);
+      assertNotNull(PerVmAspect.after);
+      assertNull(PerVmAspect.throwing);
+      assertNotNull(PerVmAspect.finaly);
+      assertSame(PerVmAspect.before, PerVmAspect.after);
+      assertSame(PerVmAspect.finaly, PerVmAspect.after);
+      assertEquals(pv1, PerVmAspect.before);
+      
+      //Call fields
+      PerVmAspect.reset();
+      PerClassAspect.reset();
+      assertEquals(10, POJOWithPerClassAndPerVmAspects.staticMethod(10)); 
+      
+      assertNotNull(PerClassAspect.before);
+      assertNotNull(PerClassAspect.after);
+      assertNull(PerClassAspect.throwing);
+      assertNotNull(PerClassAspect.finaly);
+      assertSame(PerClassAspect.before, PerClassAspect.after);
+      assertSame(PerClassAspect.finaly, PerClassAspect.after);
+      assertEquals(pc1, PerClassAspect.before);
+      
+      assertNotNull(PerVmAspect.before);
+      assertNotNull(PerVmAspect.after);
+      assertNull(PerVmAspect.throwing);
+      assertNotNull(PerVmAspect.finaly);
+      assertSame(PerVmAspect.before, PerVmAspect.after);
+      assertSame(PerVmAspect.finaly, PerVmAspect.after);
+      assertEquals(pv1, PerVmAspect.before);
+   }
+   
+   
+   //PER_INSTANCE with contructors, static fields and methods should be ignored
+   //PER_JOINPOINT should be ignored for ctors, and act like PER_CLASS_JOINPOINT for static fields and methods  
 }

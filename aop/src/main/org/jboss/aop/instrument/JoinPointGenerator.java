@@ -684,7 +684,6 @@ public abstract class JoinPointGenerator
 
       code.append("   try");
       code.append("   {");
-//      code.append("System.out.println(\"invokeJP - \" + java.lang.System.identityHashCode(this));");
       boolean argsFoundBefore = defaultCall.
          addInvokeCode(this, setups.getByType(AdviceType.BEFORE), code, info);
       

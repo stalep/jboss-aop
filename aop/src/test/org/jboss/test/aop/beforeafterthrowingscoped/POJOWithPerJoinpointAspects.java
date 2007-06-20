@@ -26,14 +26,16 @@ package org.jboss.test.aop.beforeafterthrowingscoped;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class POJO
+public class POJOWithPerJoinpointAspects
 {
-   public void methodWithPerInstanceAspects(boolean error) throws ThrownByTestException
-   {
-      if (error)
-      {
-         throw new ThrownByTestException();
-      }
-   }
+   public int fieldA;
+   public int fieldB;
    
+   public int methodA(int i)
+   {
+      return i;
+   }
+   public void methodB()
+   {
+   }
 }
