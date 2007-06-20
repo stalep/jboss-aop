@@ -1474,6 +1474,10 @@ public abstract class JoinPointGenerator
          ArrayList<AdviceSetup>[] aspects = (ArrayList<AdviceSetup>[]) new ArrayList<?>[length];
          for (int i = 0 ; i < allSetups.length ; i++)
          {
+            if (!allSetups[i].shouldInvokeAspect())
+            {
+               continue;
+            }
             AdviceMethodProperties properties = getAdviceMethodProperties(info, allSetups[i]);
             AdviceType type = allSetups[i].getType();
             int index = type.ordinal();
@@ -1481,6 +1485,7 @@ public abstract class JoinPointGenerator
             {
                aspects[index] = new ArrayList<AdviceSetup>();
             }
+            
             
             properties = type.getFactory().findAdviceMethod(properties);
             if (properties != null)

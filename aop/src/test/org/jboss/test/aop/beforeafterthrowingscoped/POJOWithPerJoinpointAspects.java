@@ -30,12 +30,22 @@ public class POJOWithPerJoinpointAspects
 {
    public int fieldA;
    public int fieldB;
+   public static int staticFieldA;
+   public static int staticFieldB;
    
    public int methodA(int i)
    {
       return i;
    }
    public void methodB()
+   {
+   }
+   
+   public static int staticMethodA(int i)
+   {
+      return i;
+   }
+   public static void staticMethodB()
    {
    }
 }
