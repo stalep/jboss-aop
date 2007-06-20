@@ -409,6 +409,14 @@
          <param name="test" value="beforeafterthrowingscoped"/>
          <param name="caller" value="javaagent-genadvisor-tests"/>
       </antcall>
+      <antcall target="_run-javaagent-test" inheritRefs="true">
+         <param name="test" value="beforeafterthrowingannotated"/>
+         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="no.xml" value="true"/>
+         <param name="use.annotations" value="true"/>
+      </antcall>
+      
+      
 
       <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-jdk50-tests" inheritRefs="true">
@@ -591,6 +599,12 @@
       <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="beforeafterthrowingscoped"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="beforeafterthrowingannotated"/>
+         <param name="caller" value="precompiled-genadvisor-tests"/>
+         <param name="no.xml" value="true"/>
+         <param name="use.annotations" value="true"/>
       </antcall>
       
        <!-- This should only be run using compile-time weaving -->
