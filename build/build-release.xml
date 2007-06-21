@@ -126,40 +126,41 @@
       <property name="trove.location" value="${trove.trove.lib}/trove.jar"/>
 
       <!--
-      	Create the MC container.jar subset with org.jboss.metadata.spi since those files do not exist in JBoss 4.0.x or 4.2.x. This
-      	should be redundant once the mc is properly released. The maven build for container MC already creates the
+      	Create the MC container.jar subset with org.jboss.metadata.spi and org.jboss.annotation,factory classes since 
+      	those files do not exist in JBoss 4.0.x or 4.2.x, which is shipped with MC version 2.0.
+      	This should be redundant once the mc is properly released. The maven build for container MC already creates the
       	jboss-container-metadata-spi.jar, but does not exist in any repository yet.
       	http://www.jboss.com/index.html?module=bb&op=viewtopic&p=4044342#4044342
       -->
-      <mkdir dir="output/temp/jboss-container-metadata-spi"/>
-      <mkdir dir="output/temp/jboss-container-metadata-spi14"/>
-      <unjar src="${jboss-container.location}" dest="output/temp/jboss-container-metadata-spi"/>
-      <unjar src="${jboss-container14.location}" dest="output/temp/jboss-container-metadata-spi14"/>
-      <!-- delete>
-         <fileset dir="output/temp/jboss-container-metadata-spi">
-            <exclude name="org/jboss/metadata/spi/**"/>
-            <include name="**/*"/>
-         </fileset>
-      </delete>
-      <delete>
-         <fileset dir="output/temp/jboss-container-metadata-spi14">
-            <exclude name="org/jboss/metadata/spi/**"/>
-            <include name="**/*"/>
-         </fileset>
-      </delete -->
+      <mkdir dir="output/temp/jboss-container-classes"/>
+      <mkdir dir="output/temp/jboss-container-classes14"/>
+      <unjar src="${jboss-container.location}" dest="output/temp/jboss-container-classes"/>
+      <unjar src="${jboss-container14.location}" dest="output/temp/jboss-container-classes14"/>
       <jar
       	destfile="output/temp/jboss-container-metadata-spi.jar"
-      	basedir="output/temp/jboss-container-metadata-spi"
+      	basedir="output/temp/jboss-container-classes"
       	includes="org/jboss/metadata/spi/**"
-      	manifest="output/temp/jboss-container-metadata-spi/META-INF/MANIFEST.MF"/>
+      	manifest="output/temp/jboss-container-classes/META-INF/MANIFEST.MF"/>
       <jar
       	destfile="output/temp/jboss-container-metadata-spi14.jar"
-      	basedir="output/temp/jboss-container-metadata-spi14"
+      	basedir="output/temp/jboss-container-classes14"
       	includes="org/jboss/metadata/spi/**"
-      	manifest="output/temp/jboss-container-metadata-spi14/META-INF/MANIFEST.MF"/>
+      	manifest="output/temp/jboss-container-classes14/META-INF/MANIFEST.MF"/>
+      <jar
+      	destfile="output/temp/jboss-container-annotation.jar"
+      	basedir="output/temp/jboss-container-classes"
+      	includes="org/jboss/annotation/factory/**"
+      	manifest="output/temp/jboss-container-classes/META-INF/MANIFEST.MF"/>
+      <jar
+      	destfile="output/temp/jboss-container-annotation14.jar"
+      	basedir="output/temp/jboss-container-classes14"
+      	includes="org/jboss/annotation/factory/**"
+      	manifest="output/temp/jboss-container-classes14/META-INF/MANIFEST.MF"/>
 
       <property name="jboss-container-metadata-spi.location" value="output/temp/jboss-container-metadata-spi.jar"/>
       <property name="jboss-container-metadata-spi14.location" value="output/temp/jboss-container-metadata-spi14.jar"/>
+      <property name="jboss-container-annotation.location" value="output/temp/jboss-container-annotation.jar"/>
+      <property name="jboss-container-annotation14.location" value="output/temp/jboss-container-annotation14.jar"/>
 
       <!-- Copy across the eula -->
       <copy todir="${project.release}" file="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
@@ -172,7 +173,7 @@
       <copy todir="${project.release}/lib-50" file="${aop.pluggable-instrumentor.location}"/>
       <copy todir="${project.release}/lib-50" file="${javassist.location}"/>
       <copy todir="${project.release}/lib-50" file="${jboss-common-core.location}"/>
-      <copy todir="${project.release}/lib-50" file="${jboss-container-metadata-spi.location}"/>
+      <copy todir="${project.release}/lib-50" file="${jboss-container.location}"/>
       <copy todir="${project.release}/lib-50" file="${jboss-logging-log4j.location}"/>
       <copy todir="${project.release}/lib-50" file="${jboss-logging-spi.location}"/>
       <copy todir="${project.release}/lib-50" file="${log4j.location}"/>
@@ -187,7 +188,6 @@
       <copy todir="${project.release}/lib-14" file="${javassist.location}"/>
       <copy todir="${project.release}/lib-14" file="${jboss-common-core14.location}"/>
       <copy todir="${project.release}/lib-14" file="${jboss-backport-concurrent.location}"/>
-      <copy todir="${project.release}/lib-14" file="${jboss-container-metadata-spi14.location}"/>
       <copy todir="${project.release}/lib-14" file="${jboss-container14.location}"/>
       <copy todir="${project.release}/lib-14" file="${jboss-logging-log4j.location}"/>
       <copy todir="${project.release}/lib-14" file="${jboss-logging-spi.location}"/>
@@ -212,6 +212,7 @@
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/" file="${aop.readme-as4.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-backport-concurrent.location}"/><!-- TODO figure out for what versions of jboss this is necessary, and if it exists in other locations -->
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-container-metadata-spi14.location}"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-container-annotation14.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${javassist.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jbossretro-rt.location}"/><!-- TODO figure out for what versions of jboss this is necessary, and if it exists in other locations -->
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${trove.location}"/>
@@ -230,6 +231,7 @@
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.as4-deployer.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/" file="${aop.readme-as4.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-container-metadata-spi.location}"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-container-annotation.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${javassist.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${trove.location}"/>
       <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/META-INF/jboss-service.xml" file="output/temp/jboss-service-jdk50.xml"/>
