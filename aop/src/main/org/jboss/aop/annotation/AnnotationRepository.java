@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.jboss.aop.annotation.factory.duplicate.AnnotationCreator;
+import org.jboss.annotation.factory.AnnotationCreator;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
 
 import javassist.CtMember;

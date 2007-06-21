@@ -774,7 +774,7 @@
          <src path="${build.tests.classes}"/>
          <include name="org/jboss/test/aop/${test}/**"/>
          <exclude name="${exclude}"/>
-         <aopclasspath path="${build.tests.classes}"/>
+         <aopclasspath path="${build.tests.classes}"/>         
       </aopc>
 
       <!-- Get -Djboss.aop.path from passed in parameters -->

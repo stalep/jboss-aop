@@ -707,8 +707,6 @@
          <include name="org/jboss/test/aop/annotationc/*.java"/>
       </annotationc>
 
-      <echo>org/jboss/test/aop/methodhashing/MethodHashingTestCase will fail until the microcontainer has been updated in the repository</echo>
-
       <junit printsummary="yes" fork="no" haltonfailure="no" jvm="${java14}">
          <sysproperty key="jboss-junit-configuration" value="jdk14"/>
          <sysproperty key="jboss.aop.debug.classes" value="${jboss.aop.debug.classes}"/>

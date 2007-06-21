@@ -24,10 +24,10 @@ package org.jboss.aop.annotation.compiler;
 import com.thoughtworks.qdox.model.AbstractJavaEntity;
 import com.thoughtworks.qdox.model.DocletTag;
 
-import org.jboss.aop.annotation.factory.duplicate.ast.ASTAnnotation;
-import org.jboss.aop.annotation.factory.duplicate.ast.ASTStart;
-import org.jboss.aop.annotation.factory.duplicate.ast.AnnotationParser;
-import org.jboss.aop.annotation.factory.duplicate.ast.ParseException;
+import org.jboss.annotation.factory.ast.ASTAnnotation;
+import org.jboss.annotation.factory.ast.ASTStart;
+import org.jboss.annotation.factory.ast.AnnotationParser;
+import org.jboss.annotation.factory.ast.ParseException;
 
 import java.io.StringReader;
 import java.util.Map;

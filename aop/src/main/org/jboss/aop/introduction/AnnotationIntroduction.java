@@ -26,9 +26,9 @@ import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
 import org.jboss.aop.Advisor;
-import org.jboss.aop.annotation.factory.duplicate.ast.ASTAnnotation;
-import org.jboss.aop.annotation.factory.duplicate.ast.AnnotationParser;
-import org.jboss.aop.annotation.factory.duplicate.ast.ParseException;
+import org.jboss.annotation.factory.ast.ASTAnnotation;
+import org.jboss.annotation.factory.ast.AnnotationParser;
+import org.jboss.annotation.factory.ast.ParseException;
 import org.jboss.aop.pointcut.AnnotationMatcher;
 import org.jboss.aop.pointcut.ast.ASTStart;
 import org.jboss.aop.pointcut.ast.TypeExpressionParser;
@@ -90,7 +90,7 @@ public class AnnotationIntroduction
       try
       {
          AnnotationParser parser = new AnnotationParser(new StringReader(annotationExpr));
-         org.jboss.aop.annotation.factory.duplicate.ast.ASTStart start = parser.Start();
+         org.jboss.annotation.factory.ast.ASTStart start = parser.Start();
          annotation = (ASTAnnotation) start.jjtGetChild(0);
       }
       catch (ParseException e)

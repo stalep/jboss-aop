@@ -33,7 +33,7 @@ import javassist.bytecode.FieldInfo;
 import javassist.bytecode.MethodInfo;
 
 import org.jboss.aop.AspectManager;
-import org.jboss.aop.annotation.factory.duplicate.javassist.AnnotationProxy;
+import org.jboss.annotation.factory.javassist.AnnotationProxy;
 import org.jboss.aop.util.ReflectToJavassist;
 
 import java.lang.reflect.Constructor;

@@ -31,17 +31,17 @@ import javassist.bytecode.annotation.CharMemberValue;
 import javassist.bytecode.annotation.MemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 
-import org.jboss.aop.annotation.factory.duplicate.ast.ASTAnnotation;
-import org.jboss.aop.annotation.factory.duplicate.ast.ASTChar;
-import org.jboss.aop.annotation.factory.duplicate.ast.ASTIdentifier;
-import org.jboss.aop.annotation.factory.duplicate.ast.ASTMemberValueArrayInitializer;
-import org.jboss.aop.annotation.factory.duplicate.ast.ASTMemberValuePair;
-import org.jboss.aop.annotation.factory.duplicate.ast.ASTMemberValuePairs;
-import org.jboss.aop.annotation.factory.duplicate.ast.ASTSingleMemberValue;
-import org.jboss.aop.annotation.factory.duplicate.ast.ASTStart;
-import org.jboss.aop.annotation.factory.duplicate.ast.ASTString;
-import org.jboss.aop.annotation.factory.duplicate.ast.AnnotationParserVisitor;
-import org.jboss.aop.annotation.factory.duplicate.ast.SimpleNode;
+import org.jboss.annotation.factory.ast.ASTAnnotation;
+import org.jboss.annotation.factory.ast.ASTChar;
+import org.jboss.annotation.factory.ast.ASTIdentifier;
+import org.jboss.annotation.factory.ast.ASTMemberValueArrayInitializer;
+import org.jboss.annotation.factory.ast.ASTMemberValuePair;
+import org.jboss.annotation.factory.ast.ASTMemberValuePairs;
+import org.jboss.annotation.factory.ast.ASTSingleMemberValue;
+import org.jboss.annotation.factory.ast.ASTStart;
+import org.jboss.annotation.factory.ast.ASTString;
+import org.jboss.annotation.factory.ast.AnnotationParserVisitor;
+import org.jboss.annotation.factory.ast.SimpleNode;
 
 import java.util.Set;
 

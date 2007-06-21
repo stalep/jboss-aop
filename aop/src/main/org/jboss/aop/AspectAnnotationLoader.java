@@ -55,7 +55,7 @@ import org.jboss.aop.advice.PrecedenceDef;
 import org.jboss.aop.advice.PrecedenceDefEntry;
 import org.jboss.aop.advice.Scope;
 import org.jboss.aop.advice.ScopedInterceptorFactory;
-import org.jboss.aop.annotation.factory.duplicate.javassist.AnnotationProxy;
+import org.jboss.annotation.factory.javassist.AnnotationProxy;
 import org.jboss.aop.introduction.AnnotationIntroduction;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.pointcut.CFlow;

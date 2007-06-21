@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 import org.jboss.aop.annotation.AnnotationElement;
-import org.jboss.aop.annotation.factory.duplicate.AnnotationCreator;
+import org.jboss.annotation.factory.AnnotationCreator;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
