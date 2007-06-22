@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>3</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>jboss-aop-parent</artifactId>
+  <packaging>pom</packaging>
+  <version>1-SNAPSHOT</version>
+  <description>JBoss AOP</description>
+  <name>JBoss AOP Framework</name>
+  <url>http://labs.jboss.org/jbossaop/</url>
+  <repositories>
+    <repository>
+      <id>repository.jboss.org</id>
+      <name>JBoss Inc. Repository</name>
+      <layout>default</layout>
+      <url>http://repository.jboss.org/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>snapshots.jboss.org</id>
+      <name>JBoss Inc. Repository</name>
+      <layout>default</layout>
+      <url>http://snapshots.jboss.org/maven2/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <modules>
+    <module>aop</module>
+    <module>maven-jbossaop-plugin</module>
+  </modules>
+</project>

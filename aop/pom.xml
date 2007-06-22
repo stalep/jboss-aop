@@ -2,16 +2,17 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>jboss</groupId>
-    <artifactId>jboss-parent</artifactId>
-    <version>2</version>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-aop-parent</artifactId>
+    <version>1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jboss-aop</artifactId>
   <packaging>jar</packaging>
   <version>2.0.0-SNAPSHOT</version>
   <name>JBoss AOP</name>
-  <url>http://labs.jboss.com/portal/jbossaop</url>
+  <description>JBoss AOP Framework</description>
+  <url>http://labs.jboss.org/jbossaop</url>
   <build>
     <sourceDirectory>src/main/</sourceDirectory>
     <testSourceDirectory>src/test/</testSourceDirectory>
@@ -41,55 +42,56 @@
           </excludes>
         </configuration>
       </plugin>
+      <!-- The tests here are skipped, and for now
+        - they should be run with ant until some of the maven issues 
+        - can be worked out. -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.4-SNAPSHOT</version>
+        <!--
         <executions>
           <execution>
-            <id>override</id>
-            <phase>test</phase>
+            <id>javaagent-genadvisor-tests</id>
             <goals>
               <goal>test</goal>
             </goals>
             <configuration>
-              <skip>false</skip>
               <includes>
-                <include>org/jboss/test/aop/override/**/*TestCase.java</include>
-                <include>org/jboss/test/aop/override/**/*Tester.java</include>
+                <include>org/jboss/test/aop/**/GenAdvisorOverrideTestCase.java</include>
               </includes>
               <excludes>
-                <exclude>**/GenAdvisorOverrideTestCase.java</exclude>
                 <exclude>org/jboss/test/aop/reflection/ReflectionAspectTester.java</exclude>
                 <exclude>org/jboss/test/aop/basic/POJOAspectTester.java</exclude>
               </excludes>
+              <argLine>-javaagent:target/jboss-aop-jdk50.jar</argLine>
               <systemProperties>
                 <property>
                   <name>jboss.aop.path</name>
-                  <value>/home/pgier/projects/aop/aop/src/resources/test/override/jboss-aop.xml</value>
+                  <value>src/resources/test/override/jboss-aop.xml</value>
                 </property>
                 <property>
-                  <name>instrumentator</name>
-                  <value>org.jboss.aop.instrument.ClassicInstrumentor</value>
+                  <name>jboss.aop.class.path</name>
+                  <value></value>
+                </property>
+                <property>
+                  <name>jboss.aop.instrumentor</name>
+                  <value>org.jboss.aop.instrument.GeneratedAdvisorInstrumentor</value>
+                </property>
+                <property>
+                  <name>jboss-junit-configuration</name>
+                  <value>javaagent-genadvisor-tests</value>
                 </property>
               </systemProperties>
             </configuration>
           </execution>
-          <execution>
-            <id>advice</id>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <includes>
-                <include>org/jboss/test/aop/advice/**/*TestCase.java</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
+        </executions>-->
         <configuration>
-          <testFailureIgnore>true</testFailureIgnore>
-          <forkMode>always</forkMode>
           <skip>true</skip>
+          <forkMode>always</forkMode>
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
+          <trimStackTrace>false</trimStackTrace>
+          <useSystemClassLoader>true</useSystemClassLoader>
         </configuration>
       </plugin>
       <plugin>
@@ -104,7 +106,207 @@
             </manifestEntries>
           </archive>
         </configuration>
-        </plugin>
+      </plugin>
+      <!-- When assembly plugin 2.2-beta-2 is released, we should be able to use
+        -  this configuration instead of the antrun config
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-2-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <id>jdk50</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/jdk50.xml</descriptor>
+              </descriptors>
+              <archive>
+                <manifest>
+                  <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                  <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                </manifest>
+                <manifestEntries>
+                  <Implementation-URL>${pom.url}</Implementation-URL>
+                  <Premain-Class>org.jboss.aop.standalone.Agent</Premain-Class>
+                  <Can-Redefine-Classes>true</Can-Redefine-Classes>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </execution>
+          <execution>
+            <id>jdk50-client</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/jdk50-client.xml</descriptor>
+              </descriptors>
+              <archive>
+                <manifest>
+                  <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                  <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                </manifest>
+                <manifestEntries>
+                  <Implementation-URL>${pom.url}</Implementation-URL>
+                  <Premain-Class>org.jboss.aop.standalone.Agent</Premain-Class>
+                  <Can-Redefine-Classes>true</Can-Redefine-Classes>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </execution>
+          <execution>
+            <id>pluggable-instrumentor</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/pluggable-instrumentor.xml</descriptor>
+              </descriptors>
+              <archive>
+                <manifest>
+                  <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                  <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                </manifest>
+                <manifestEntries>
+                  <Implementation-URL>${pom.url}</Implementation-URL>
+                  <Premain-Class>org.jboss.aop.standalone.PluggableInstrumentor</Premain-Class>
+                  <Can-Redefine-Classes>true</Can-Redefine-Classes>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution>
+            <!-- This execution is required until the assembly plugin can correctly
+              -  add custom manifest attributes to jar files.
+              -->
+            <id>create-jars</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <tasks>
+                <property name="java.vm.version" value="${java.vm.version}"/>
+                <!-- Build the jboss-aop-jdk50.jar -->
+                <jar destfile="${project.build.directory}/jboss-aop-jdk50.jar">
+                   <fileset dir="${project.build.outputDirectory}">
+                      <exclude name="org/jboss/aop/standalone/PluggableInstrumentor.class"/>
+                   </fileset>
+                   <fileset file="${project.basedir}/docs/jboss-aop_1_0.dtd"/>
+                   <fileset file ="${project.basedir}/src/etc/jbossorg-eula.txt"/>
+                   <manifest>
+                     <attribute name="Created-By" value="${java.vm.version} (${java.vm.vendor})"/>
+                     <attribute name="Build-Jdk" value="${java.vm.version}"/>
+                     <attribute name="Specification-Title" value="${project.name}"/>
+                     <attribute name="Specification-Version" value="${project.version}"/>
+                     <attribute name="Specification-Vendor" value="${project.organization.name}"/>
+                     <attribute name="Implementation-Title" value="${project.name}"/>
+                     <attribute name="Implementation-URL" value="${project.url}"/>
+                     <attribute name="Implementation-Version" value="${project.version}"/>
+                     <attribute name="Implementation-Vendor" value="${project.organization.name}"/>
+                     <attribute name="Implementation-Vendor-Id" value="${project.groupId}"/>
+                     <attribute name="Premain-Class" value="org.jboss.aop.standalone.Agent"/>
+                     <attribute name="Can-Redefine-Classes" value="true"/>
+                   </manifest>
+                </jar>
+               <jar destfile="${project.build.directory}/pluggable-instrumentor.jar">
+                   <fileset dir="${project.build.outputDirectory}">
+                      <!-- Include everything else -->
+                      <include name="org/jboss/aop/standalone/PluggableInstrumentor.class"/>
+                   </fileset>
+                   <fileset file ="${project.basedir}/src/etc/jbossorg-eula.txt"/>
+                   <manifest>
+                     <attribute name="Created-By" value="${java.vm.version} (${java.vm.vendor})"/>
+                     <attribute name="Build-Jdk" value="${java.vm.version}"/>
+                     <attribute name="Specification-Title" value="${project.name}"/>
+                     <attribute name="Specification-Version" value="${project.version}"/>
+                     <attribute name="Specification-Vendor" value="${project.organization.name}"/>
+                     <attribute name="Implementation-Title" value="${project.name}"/>
+                     <attribute name="Implementation-URL" value="${project.url}"/>
+                     <attribute name="Implementation-Version" value="${project.version}"/>
+                     <attribute name="Implementation-Vendor" value="${project.organization.name}"/>
+                     <attribute name="Implementation-Vendor-Id" value="${project.groupId}"/>
+                     <attribute name="Premain-Class" value="org.jboss.aop.standalone.PluggableInstrumentor"/>
+                     <attribute name="Can-Redefine-Classes" value="true"/>
+                   </manifest>
+                </jar>
+                <!-- Build the jboss-aop-jdk50-client.jar needed for EJB 3-->
+                <jar destfile="${project.build.directory}/jboss-aop-jdk50-client.jar">
+                   <fileset dir="${project.build.outputDirectory}">
+                      <!-- Include everything else -->
+                      <include name="org/jboss/lang/**"/>
+                      <include name="org/jboss/aop/Advisor.class"/>
+                      <include name="org/jboss/aop/AspectManager.class"/>
+                      <include name="org/jboss/aop/AspectManager$*.class"/>
+                      <include name="org/jboss/aop/ClassAdvisor.class"/>
+                      <include name="org/jboss/aop/ClassInstanceAdvisor.class"/>
+                      <include name="org/jboss/aop/InstanceAdvisorDelegate.class"/>
+                      <include name="org/jboss/aop/Domain.class"/>
+                      <include name="org/jboss/aop/InstanceAdvisor.class"/>
+                      <include name="org/jboss/aop/MethodInfo.class"/>
+                      <include name="org/jboss/aop/InterceptorChainObserver.class"/>
+                      <include name="org/jboss/aop/JoinPoint.class"/>
+                      <include name="org/jboss/aop/JoinPointInfo.class"/>
+                      <include name="org/jboss/aop/MethodJoinPoint.class"/>
+                      <include name="org/jboss/aop/*Dispatcher*.class"/>
+                      <include name="org/jboss/aop/*Advised.class"/>
+                      <include name="org/jboss/aop/advice/AspectDefinition.class"/>
+                      <include name="org/jboss/aop/advice/Interceptor.class"/>
+                      <include name="org/jboss/aop/instrument/Untransformable.class"/>
+                      <include name="org/jboss/aop/joinpoint/Invocation*.class"/>
+                      <include name="org/jboss/aop/joinpoint/Joinpoint.class"/>
+                      <include name="org/jboss/aop/joinpoint/MethodInvocation*.class"/>
+                      <include name="org/jboss/aop/joinpoint/MethodJoinpoint.class"/>
+                      <include name="org/jboss/aop/metadata/SimpleMetaData.class"/>
+                      <include name="org/jboss/aop/metadata/SimpleMetaData$MetaDataValue.class"/>
+                      <include name="org/jboss/aop/metadata/MetaDataResolver.class"/>
+                      <include name="org/jboss/aop/metadata/ThreadMetaData.class"/>
+                      <include name="org/jboss/aop/proxy/MarshalledInterfaceProxy.class"/>
+                      <include name="org/jboss/aop/proxy/MethodMapped.class"/>
+                      <include name="org/jboss/aop/proxy/Proxy.class"/>
+                      <include name="org/jboss/aop/proxy/ProxyFactory.class"/>
+                      <include name="org/jboss/aop/proxy/ProxyMixin.class"/>
+                      <include name="org/jboss/aop/util/SecurityActions*.class"/>
+                      <include name="org/jboss/aop/util/Marshalled*.class"/>
+                      <include name="org/jboss/aop/util/MethodHashing*.class"/>
+                      <include name="org/jboss/aop/util/PayloadKey*.class"/>
+                   </fileset>
+                   <fileset file ="${project.basedir}/src/etc/jbossorg-eula.txt"/>
+                   <manifest>
+                     <attribute name="Created-By" value="${java.vm.version} (${java.vm.vendor})"/>
+                     <attribute name="Build-Jdk" value="${java.vm.version}"/>
+                     <attribute name="Specification-Title" value="${project.name}"/>
+                     <attribute name="Specification-Version" value="${project.version}"/>
+                     <attribute name="Specification-Vendor" value="${project.organization.name}"/>
+                     <attribute name="Implementation-Title" value="${project.name}"/>
+                     <attribute name="Implementation-URL" value="${project.url}"/>
+                     <attribute name="Implementation-Version" value="${project.version}"/>
+                     <attribute name="Implementation-Vendor" value="${project.organization.name}"/>
+                     <attribute name="Implementation-Vendor-Id" value="${project.groupId}"/>
+                     <attribute name="Premain-Class" value="org.jboss.aop.standalone.Agent"/>
+                     <attribute name="Can-Redefine-Classes" value="true"/>
+                   </manifest>
+                </jar>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <repositories>
@@ -112,7 +314,7 @@
       <id>jboss</id>
       <name>JBoss Inc. Repository</name>
       <layout>default</layout>
-      <url>http://repository.jboss.org/maven2/</url>
+      <url>http://repository.jboss.org/maven2</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -121,7 +323,7 @@
       <id>jboss-snapshots</id>
       <name>JBoss Inc. Repository</name>
       <layout>default</layout>
-      <url>http://snapshots.jboss.org/maven2/</url>
+      <url>http://snapshots.jboss.org/maven2</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -139,9 +341,9 @@
       <version>2.7.1</version>
     </dependency>
     <dependency>
-      <groupId>javassist</groupId>
+      <groupId>org.jboss</groupId>
       <artifactId>javassist</artifactId>
-      <version>3.5-SNAPSHOT</version>
+      <version>3.6-beta</version>
     </dependency>
     <dependency>
       <groupId>jboss</groupId>
@@ -192,4 +394,37 @@
       <version>2.1.1</version>
     </dependency>
   </dependencies>
+  <profiles>
+  <!-- The test profiles are currently not working until some maven issues are fixed.
+    -  For now the ant scripts can be used to run the tests.
+    -->
+    <!--<profile>
+      <id>javaagent-genadvisor-tests</id>
+      <activation>
+        <property>
+          <name>test</name>
+          <value>javaagent-genadvisor-tests</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>javaagent-genadvisor-tests</id>
+                <configuration>
+                  <skip>false</skip>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>-->
+  </profiles>
+  <properties>
+    
+  </properties>
 </project>
