@@ -811,10 +811,7 @@ public abstract class JoinPointGenerator
                cflows.append(", cflow" + asetups[i].getIndex());
             }
          }
-         code.append(joinpointFqn).append(" jp = null;");
-         code.append("      if(" + INFO_FIELD + ".getInterceptors() != null)");
-         code.append("      {");
-         code.append("         jp = new " + joinpointClass.getName() + "(this");
+         code.append(joinpointFqn).append(" jp = new " + joinpointClass.getName() + "(this");
          if (argsFoundBefore)
          {
             parameters.appendParameterListWithoutArgs(code);
@@ -839,14 +836,6 @@ public abstract class JoinPointGenerator
             code.append("          " + RETURN_VALUE + " = ($r)");
          }
          code.append("jp.invokeNext();");
-         
-         code.append("      }");
-         code.append("      else");
-         code.append("      {");
-         
-         addDispatchCode(code, parameterTypes, argsFoundBefore);
-         
-         code.append("      }");
          
          // 'after' code will find all args inconsistent, since we have to update
          // arguments array according to invocation values
