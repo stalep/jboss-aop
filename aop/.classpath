@@ -12,7 +12,7 @@
 	<classpathentry kind="lib" path="/thirdparty/jboss/profiler/jvmti/lib/jboss-profiler-jvmti.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/common-logging-spi/lib/jboss-logging-spi.jar" sourcepath="/thirdparty/jboss/common-logging-spi/lib/jboss-logging-spi-sources.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/javassist/lib/javassist.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-container.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-container.jar" sourcepath="/thirdparty/jboss/microcontainer/lib/jboss-container-src.zip"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/test/lib/jboss-test.jar" sourcepath="/thirdparty/jboss/test/lib/jboss-test-src.zip"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/common-core/lib/jboss-common-core.jar" sourcepath="/thirdparty/jboss/common-core/lib/jboss-common-core-sources.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/apache-log4j/lib/log4j.jar"/>
