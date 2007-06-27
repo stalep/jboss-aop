@@ -28,38 +28,41 @@ package org.jboss.test.aop.stress.methodinvocation;
  */
 public class POJO
 {
+   private static int counter;
+   
    public static void staticMethodNoAdvice()
    {
-      
+      counter++;
    }
    
    public void nonStaticMethodNoAdvice()
    {
-      
+      counter++;
    }
    
    public void oneInterceptor()
    {
-      
+      counter++;
    }
    
    public void fiveInterceptors()
    {
-      
+      counter++;
    }
    
    public void oneAdvice()
    {
-      
+      counter++;
    }
    
    public void fiveAdvices()
    {
-      
+      counter++;
    }
    
    public static void generateStackTrace()
    {
+      counter++;
       //Look at the depth of the call stack for different weaving types
       new Exception("CALL STACK - INFO ONLY").printStackTrace();
    }

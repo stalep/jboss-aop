@@ -28,20 +28,24 @@ package org.jboss.test.aop.stress.batf;
  */
 public class POJO
 {
+   private static int counter;
+   
    public void methodWithAroundNoExceptions() 
    {
-      
+      counter++;
    }
    public void methodWithBeforeAfter() 
    {
-      
+      counter++;      
    }
    public void methodWithAroundExceptions()
    {
+      counter++;
       throw new RuntimeException();
    }
    public void methodWithBeforeThrowingFinally()
    {
+      counter++;
       throw new RuntimeException();
    }
 }
