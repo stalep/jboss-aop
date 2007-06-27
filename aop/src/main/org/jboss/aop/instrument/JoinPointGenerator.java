@@ -302,7 +302,6 @@ public abstract class JoinPointGenerator
    
    private Object instantiateClass(Class clazz, AdviceSetup[] aroundSetups, JoinPointInfo info) throws Exception
    {
-//      System.out.println("Creating instance of " + clazz + " for advisor " + info.getAdvisor().getClass().getName());
       Constructor ctor = clazz.getConstructor(new Class[] {info.getClass()});
       Object obj;
       try
@@ -1622,29 +1621,24 @@ public abstract class JoinPointGenerator
          call.append(".");
          call.append(setup.getAdviceName());
          call.append("(");
-         
-         
+
          final int[] args = properties.getArgs();
          boolean argsFound = false;
          if (args.length > 0)
          {
             final Class[] adviceParams = properties.getAdviceMethod().getParameterTypes();
-            call.append("(");
-            call.append(ClassExpression.simpleType(adviceParams[0]));
-            call.append(")");
             argsFound = appendParameter(beforeCall, call, args[0], adviceParams[0], properties,
                   generator);
             for (int i = 1 ; i < args.length ; i++)
             {
-               call.append(", (");
-               call.append(ClassExpression.simpleType(adviceParams[i]));
-               call.append(")");
+               call.append(", ");
+
                argsFound = appendParameter(beforeCall, call, args[i], adviceParams[i],
                      properties, generator) || argsFound;
             }
          }
          
-         call.append(");");
+         call.append(");\n");
          return argsFound;
       }
       
@@ -1661,12 +1655,15 @@ public abstract class JoinPointGenerator
             call.append(INFO_FIELD);
             break;
          case AdviceMethodProperties.RETURN_ARG:
+            appendCast(call, adviceParam);
             call.append(RETURN_VALUE);
             break;
          case AdviceMethodProperties.THROWABLE_ARG:
+            appendCast(call, adviceParam);
             call.append(THROWABLE);
             break;
          case AdviceMethodProperties.TARGET_ARG:
+            appendCast(call, adviceParam);
             if (!generator.parameters.hasTarget())
             {
                call.append("null");
@@ -1678,6 +1675,7 @@ public abstract class JoinPointGenerator
             }
             break;
          case AdviceMethodProperties.CALLER_ARG:
+            appendCast(call, adviceParam);
             if (!generator.parameters.hasCaller())
             {
                call.append("null");
@@ -1696,6 +1694,8 @@ public abstract class JoinPointGenerator
             // return true when args has been found; false otherwise
             return true;
          default:
+            appendCast(call, adviceParam);
+
             // make typed argument consistent, if that is the case
             Set<Integer> inconsistentTypeArgs = generator.inconsistentTypeArgs.get();
             int argIndex = arg + generator.parameters.getFirstArgIndex();
@@ -1711,6 +1711,13 @@ public abstract class JoinPointGenerator
             call.append(arg + generator.parameters.getFirstArgIndex());
          }
          return false;
+      }
+      
+      protected void appendCast(StringBuffer call, Class adviceParam)
+      {
+         call.append("(");
+         call.append(ClassExpression.simpleType(adviceParam));
+         call.append(")");
       }
    }
    
@@ -1825,11 +1832,13 @@ public abstract class JoinPointGenerator
             final int arg, final Class adviceParam,
             AdviceMethodProperties properties, JoinPointGenerator generator)
       {
+         
          switch(arg)
          {
          case AdviceMethodProperties.TARGET_ARG:
             if (generator.parameters.hasTarget())
             {
+               appendCast(call, adviceParam);
                call.append(TARGET_FIELD);
                return false;
             }
@@ -1837,6 +1846,7 @@ public abstract class JoinPointGenerator
          case AdviceMethodProperties.CALLER_ARG:
             if (generator.parameters.hasCaller())
             {
+               appendCast(call, adviceParam);
                call.append(CALLER_FIELD);
                return false;
             }
