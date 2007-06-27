@@ -1838,7 +1838,6 @@ public abstract class JoinPointGenerator
          case AdviceMethodProperties.TARGET_ARG:
             if (generator.parameters.hasTarget())
             {
-               appendCast(call, adviceParam);
                call.append(TARGET_FIELD);
                return false;
             }
