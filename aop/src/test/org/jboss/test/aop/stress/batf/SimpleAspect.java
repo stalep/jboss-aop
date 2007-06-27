@@ -21,8 +21,10 @@
 */ 
 package org.jboss.test.aop.stress.batf;
 
+import org.jboss.aop.advice.annotation.Arg;
 import org.jboss.aop.advice.annotation.Thrown;
 import org.jboss.aop.joinpoint.Invocation;
+import org.jboss.aop.joinpoint.MethodInvocation;
 
 /**
  * 
@@ -99,5 +101,19 @@ public class SimpleAspect
       after = false;
       throwing = false;
       finaly = false;
+      string = null;
    }
+
+   public static String string;
+   public Object aroundWithAroundArguments(MethodInvocation invocation) throws Throwable
+   {
+      string = (String)invocation.getArguments()[0];
+      return invocation.invokeNext();
+   }
+   
+   public void beforeWithTypedArguments(@Arg String s)
+   {
+      string = s;
+   }
+
 }

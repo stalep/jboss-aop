@@ -60,4 +60,14 @@ public class POJO
    {
       counter++;
    }
+   
+   public void methodWithAroundArguments(String s)
+   {
+      
+   }
+   
+   public void methodWithTypedArguments(String s)
+   {
+      
+   }
 }

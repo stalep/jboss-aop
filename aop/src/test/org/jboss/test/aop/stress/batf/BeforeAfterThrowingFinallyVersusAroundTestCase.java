@@ -208,6 +208,47 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
          pojo.methodWithOnlyBefore();
       }
    }
+   
+   public void testAroundAccessArguments() throws Exception
+   {
+      SimpleAspect.reset();
+      POJO pojo = new POJO();
+      pojo.methodWithAroundArguments("HELLO");
+      assertEquals("HELLO", SimpleAspect.string);
+      
+      getRunner().executeScenario(new AroundAccessArgumentsScenario());
+   }
+   
+   private class AroundAccessArgumentsScenario extends AbstractScenario
+   {
+      POJO pojo = new POJO();
+      public void execute(int thread, int loop) throws Exception
+      {
+         pojo.methodWithAroundArguments("TEST");
+      }
+   }
+   
+   
+   public void testBeforeAccessTypedArgument() throws Exception
+   {
+      SimpleAspect.reset();
+      POJO pojo = new POJO();
+      pojo.methodWithTypedArguments("HEY");
+      assertEquals("HEY", SimpleAspect.string);
+      
+      getRunner().executeScenario(new BeforeAccessTypedArgumentScenario());
+   }
+   
+   private class BeforeAccessTypedArgumentScenario extends AbstractScenario
+   {
+      POJO pojo = new POJO();
+      public void execute(int thread, int loop) throws Exception
+      {
+         pojo.methodWithTypedArguments("TEST123");
+      }
+   }
+   
+   
    public void testNotWovenNoCtorScenario() throws Exception
    {
       getRunner().executeScenario(new NotWovenNoCtorScenario());
