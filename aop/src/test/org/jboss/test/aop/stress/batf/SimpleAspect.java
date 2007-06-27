@@ -67,6 +67,12 @@ public class SimpleAspect
       }
    }
    
+   public Object methodWithSimulatedBefore(Invocation inv) throws Throwable
+   {
+      before = true;
+      return inv.invokeNext();
+   }
+   
    public void before()
    {
       before = true;

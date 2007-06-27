@@ -21,6 +21,8 @@
 */ 
 package org.jboss.test.aop.stress.batf;
 
+import org.jboss.aop.joinpoint.Invocation;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
@@ -47,5 +49,15 @@ public class POJO
    {
       counter++;
       throw new RuntimeException();
+   }
+   
+   public void methodWithSimulatedBefore()
+   {
+      counter++;
+   }
+   
+   public void methodWithOnlyBefore()
+   {
+      counter++;
    }
 }

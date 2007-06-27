@@ -165,6 +165,49 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
       }
    }
 
+   public void testAroundSimulatedBefore() throws Exception
+   {
+      SimpleAspect.reset();
+      POJO pojo = new POJO();
+      pojo.methodWithSimulatedBefore();
+      assertTrue(SimpleAspect.before);
+      assertFalse(SimpleAspect.after);
+      assertFalse(SimpleAspect.throwing);
+      assertFalse(SimpleAspect.finaly);
+
+      getRunner().executeScenario(new AroundSimulatedBeforeScenario());
+   }
+   
+   private class AroundSimulatedBeforeScenario extends AbstractScenario
+   {
+      POJO pojo = new POJO();
+      public void execute(int thread, int loop) throws Exception
+      {
+         pojo.methodWithSimulatedBefore();
+      }
+   }
+   
+   public void testBeforeOnly() throws Exception
+   {
+      SimpleAspect.reset();
+      POJO pojo = new POJO();
+      pojo.methodWithOnlyBefore();
+      assertTrue(SimpleAspect.before);
+      assertFalse(SimpleAspect.after);
+      assertFalse(SimpleAspect.throwing);
+      assertFalse(SimpleAspect.finaly);
+
+      getRunner().executeScenario(new BeforeOnlyScenario());
+   }
+   
+   private class BeforeOnlyScenario extends AbstractScenario
+   {
+      POJO pojo = new POJO();
+      public void execute(int thread, int loop) throws Exception
+      {
+         pojo.methodWithOnlyBefore();
+      }
+   }
    public void testNotWovenNoCtorScenario() throws Exception
    {
       getRunner().executeScenario(new NotWovenNoCtorScenario());

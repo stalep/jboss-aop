@@ -20,6 +20,14 @@
 	   <throwing aspect="org.jboss.test.aop.stress.batf.SimpleAspect" name="throwing"/>
 	   <finally aspect="org.jboss.test.aop.stress.batf.SimpleAspect" name="finaly"/>
    </bind>
+
+   <bind pointcut="execution(* org.jboss.test.aop.stress.batf.POJO->methodWithSimulatedBefore())">
+	   <around aspect="org.jboss.test.aop.stress.batf.SimpleAspect" name="methodWithSimulatedBefore"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.stress.batf.POJO->methodWithOnlyBefore())">
+	   <before aspect="org.jboss.test.aop.stress.batf.SimpleAspect" name="before"/>
+   </bind>
    
 </aop>
 

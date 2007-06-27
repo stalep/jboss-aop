@@ -28,7 +28,7 @@ package org.jboss.test.aop.stress.batf;
  */
 public class NotWoven
 {
-   boolean b;
+   private int counter;
    public NotWoven()
    {
       
@@ -36,11 +36,11 @@ public class NotWoven
    
    public void method1()
    {
-      b = true;
+      counter++;
    }
    
    public void method2()
    {
-      b = true;
+      counter++;
    }   
 }
