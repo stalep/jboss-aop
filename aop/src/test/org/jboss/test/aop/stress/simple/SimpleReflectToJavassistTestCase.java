@@ -113,4 +113,63 @@ public class SimpleReflectToJavassistTestCase extends ScenarioTest
          ReflectToJavassist.fieldToJavassist(f);
       }
    }
+
+   /**
+    * Just here to check the overhead of creating/throwing exceptions
+    */
+   public void testExceptionOverhead() throws Throwable
+   {
+      getRunner().executeScenario(new InstantiateObjectScenario());
+      getRunner().executeScenario(new CreateExceptionScenario());
+      getRunner().executeScenario(new CreateExceptionGetStackTraceScenario());
+      getRunner().executeScenario(new CallMethodWithExceptionScenario());
+   }
+   
+   private class InstantiateObjectScenario extends AbstractScenario
+   {
+      public void execute(int thread, int loop) throws Exception
+      {
+         Object o = new Object();
+      }
+   }
+   
+   private class CreateExceptionScenario extends AbstractScenario
+   {
+      public void execute(int thread, int loop) throws Exception
+      {
+         RuntimeException e = new RuntimeException();
+      }
+   }
+   
+   private class CreateExceptionGetStackTraceScenario extends AbstractScenario
+   {
+      public void execute(int thread, int loop) throws Exception
+      {
+         RuntimeException e = new RuntimeException();
+         e.getStackTrace();
+      }
+   }
+   
+   
+   private class CallMethodWithExceptionScenario extends AbstractScenario
+   {
+      RuntimeException e = new RuntimeException();
+      public void execute(int thread, int loop) throws Exception
+      {
+         try
+         {
+            method();
+         }
+         catch(Exception e)
+         {
+            
+         }
+      }
+      
+      private void method()
+      {
+         throw e;
+      }
+   }
+   
 }
