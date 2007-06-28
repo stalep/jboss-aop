@@ -29,5 +29,12 @@
 	   <before aspect="org.jboss.test.aop.stress.batf.SimpleAspect" name="before"/>
    </bind>
    
+   <bind pointcut="execution(* org.jboss.test.aop.stress.batf.POJO->methodWithAroundArguments(..))">
+	   <around aspect="org.jboss.test.aop.stress.batf.SimpleAspect" name="aroundWithAroundArguments"/>
+   </bind>
+
+   <bind pointcut="execution(* org.jboss.test.aop.stress.batf.POJO->methodWithTypedArguments(..))">
+	   <before aspect="org.jboss.test.aop.stress.batf.SimpleAspect" name="beforeWithTypedArguments"/>
+   </bind>
 </aop>
 
