@@ -830,11 +830,25 @@ public abstract class JoinPointGenerator
             code.append(");");
          }
          
+         if (setups.getHasArgsAroundAdvices())
+         {
+            code.append("try{");
+            code.append("   org.jboss.aop.joinpoint.CurrentInvocation.push(jp); ");
+         }
+         
+         
          if (!isVoid())
          {
             code.append("          " + RETURN_VALUE + " = ($r)");
          }
          code.append("jp.invokeNext();");
+         
+         if (setups.getHasArgsAroundAdvices())
+         {
+            code.append("}finally{");
+            code.append("   org.jboss.aop.joinpoint.CurrentInvocation.pop(); ");
+            code.append("}");
+         }
          
          // 'after' code will find all args inconsistent, since we have to update
          // arguments array according to invocation values
@@ -1454,12 +1468,14 @@ public abstract class JoinPointGenerator
       AdviceSetup[][] setups;
       List<AdviceSetup> lightweightAdvicesRequiringInstanceAdvisor;
       boolean hasAroundAdvices;
+      boolean hasArgsAroundAdvices;
       
       AdviceSetups(JoinPointInfo info, AdviceSetup[] allSetups)
       {
          this.allSetups = allSetups;
          int length = AdviceType.values().length;
          ArrayList<AdviceSetup>[] aspects = (ArrayList<AdviceSetup>[]) new ArrayList<?>[length];
+         
          for (int i = 0 ; i < allSetups.length ; i++)
          {
             if (!allSetups[i].shouldInvokeAspect())
@@ -1484,6 +1500,14 @@ public abstract class JoinPointGenerator
                if (AdviceType.AROUND == type)
                {
                   hasAroundAdvices = true;
+                  if (!hasArgsAroundAdvices)
+                  {
+                     if (!hasInvocation(properties))
+                     {
+                        hasArgsAroundAdvices = true;
+                     }
+                  }
+
                }
                else if (allSetups[i].requiresInstanceAdvisor())
                {
@@ -1511,6 +1535,19 @@ public abstract class JoinPointGenerator
          }
       }
 
+      private boolean hasInvocation(AdviceMethodProperties properties)
+      {
+         int[] args = properties.getArgs();
+         for (int z = 0; z < args.length ; z++)
+         {
+            if (args[z] == AdviceMethodProperties.INVOCATION_ARG)
+            {
+               return true;
+            }
+         }
+         return false;
+      }
+      
       /**
        * Returns the list of all advice setups, regardless of the advice type.
        */
@@ -1539,6 +1576,11 @@ public abstract class JoinPointGenerator
       public List<AdviceSetup> getLightweightAdvicesRequiringInstanceAdvisor()
       {
          return lightweightAdvicesRequiringInstanceAdvisor;
+      }
+
+      public boolean getHasArgsAroundAdvices()
+      {
+         return hasArgsAroundAdvices;
       }
    }
 
@@ -1806,25 +1848,11 @@ public abstract class JoinPointGenerator
          this.consistencyEnforced = false;
          int[] args = properties.getArgs();
          
-         final boolean firstParamIsInvocation =
-            (args.length >= 1 && args[0] == AdviceMethodProperties.INVOCATION_ARG);
-
-         if (!firstParamIsInvocation)
-         {
-            call.append("try{");
-            call.append("   org.jboss.aop.joinpoint.CurrentInvocation.push(this); ");
-         }
          call.append("   ");
          call.append(returnStr);
          call.append(" ");
          boolean result = super.appendAdviceCall(setup, beforeCall, call, generator);
          
-         if (!firstParamIsInvocation)
-         {
-            call.append("}finally{");
-            call.append("   org.jboss.aop.joinpoint.CurrentInvocation.pop(); ");
-            call.append("}");
-         }
          return result;
       }
       
