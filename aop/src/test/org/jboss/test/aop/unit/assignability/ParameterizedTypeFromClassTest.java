@@ -31,7 +31,7 @@ import java.util.List;
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-public class ParameterizedTypeFromClassTest extends AssignabilityAlgorithmTest
+public class ParameterizedTypeFromClassTest extends ParameterizedTypeTest
 {
    // Scenario 1
    
