@@ -283,7 +283,7 @@ public class VariableNode
       if (type instanceof ParameterizedType)
       {
          return ParamTypeAssignabilityAlgorithm.isAssignable(
-               (ParameterizedType) type, fromType, CHECKER, this);
+               (ParameterizedType) type, fromType, CHECKER, this, false);
       }
       if (type instanceof TypeVariable)
       {
@@ -401,7 +401,7 @@ public class VariableNode
    private static ParamTypeAssignabilityAlgorithm.EqualityChecker<VariableNode> CHECKER =
       new ParamTypeAssignabilityAlgorithm.EqualityChecker<VariableNode>()
       {
-         public boolean isSame(Type argument, Type fromArgument, VariableNode node)
+         public boolean isSame(Type argument, Type fromArgument, VariableNode node, boolean boundLevel)
          {
             return node.isSame(fromArgument, argument, false);
          }

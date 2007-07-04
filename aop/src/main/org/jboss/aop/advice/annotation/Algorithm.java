@@ -56,7 +56,7 @@ public class Algorithm
       if (type instanceof ParameterizedType)
       {
          return isAssignable((ParameterizedType) type, fromType,
-               variableHierarchy);
+               variableHierarchy, false);
       }
       if (type instanceof TypeVariable)
       {
@@ -65,7 +65,8 @@ public class Algorithm
          if (variableHierarchy.containsKey(variable.getName()))
          {
             node = variableHierarchy.get(variable.getName());
-         } else
+         }
+         else
          {
             node = new VariableNode(variable, variableHierarchy);
          }
@@ -151,14 +152,14 @@ public class Algorithm
    }
 
    private boolean isAssignable(ParameterizedType paramType, Type fromType, 
-         Map<String, VariableNode> variableHierarchy)
+         Map<String, VariableNode> variableHierarchy, boolean boundLevel)
    {
       if (fromType instanceof TypeVariable)
       {
          Type[] concreteBounds = getConcreteBounds((TypeVariable) fromType);
          for (int i = 0; i < concreteBounds.length; i++)
          {
-            if (isAssignable(paramType, concreteBounds[i], variableHierarchy))
+            if (isAssignable(paramType, concreteBounds[i], variableHierarchy, true))
             {
                return true;
             }
@@ -166,7 +167,7 @@ public class Algorithm
          return false;
       }
       return ParamTypeAssignabilityAlgorithm.isAssignable(
-            paramType, fromType, CHECKER, variableHierarchy);
+            paramType, fromType, CHECKER, variableHierarchy, boundLevel);
    }
 
    private boolean isAssignable(GenericArrayType arrayType, Type fromType,
@@ -195,7 +196,7 @@ public class Algorithm
    private static final ParamTypeAssignabilityAlgorithm.EqualityChecker<Map<String, VariableNode>> CHECKER
       = new ParamTypeAssignabilityAlgorithm.EqualityChecker<Map<String,VariableNode>>()
    {
-      public boolean isSame(Type type, Type fromType, Map<String, VariableNode> variableHierarchy)
+      public boolean isSame(Type type, Type fromType, Map<String, VariableNode> variableHierarchy, boolean boundLevel)
       {
          if (type instanceof TypeVariable)
          {
@@ -203,7 +204,11 @@ public class Algorithm
             VariableNode node = variableHierarchy.containsKey(variable.getName())?
                   variableHierarchy.get(variable.getName()):
                      new VariableNode(variable, variableHierarchy);
-                  return node.assignValue(fromType);
+             if (boundLevel && fromType instanceof WildcardType)
+             {
+                return false;
+             }
+             return node.assignValue(fromType);
          }
          if (type instanceof Class)
          {
@@ -218,12 +223,12 @@ public class Algorithm
             ParameterizedType fromParamType = (ParameterizedType) fromType;
             ParameterizedType paramType = (ParameterizedType) type;
             if (!isSame(paramType.getRawType(), fromParamType.getRawType(),
-                  variableHierarchy))
+                  variableHierarchy, boundLevel))
             {
                return false;
             }
             return isSame(paramType.getActualTypeArguments(),
-                  fromParamType.getActualTypeArguments(), variableHierarchy);
+                  fromParamType.getActualTypeArguments(), variableHierarchy, boundLevel);
          }
          if (type instanceof WildcardType)
          {
