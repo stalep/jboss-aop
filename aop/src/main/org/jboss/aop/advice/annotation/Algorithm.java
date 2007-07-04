@@ -61,13 +61,13 @@ public class Algorithm
       if (type instanceof TypeVariable)
       {
          VariableNode node = null;
-         TypeVariable fromVariable = (TypeVariable) type;
-         if (variableHierarchy.containsKey(fromVariable.getName()))
+         TypeVariable variable = (TypeVariable) type;
+         if (variableHierarchy.containsKey(variable.getName()))
          {
-            node = variableHierarchy.get(fromVariable.getName());
+            node = variableHierarchy.get(variable.getName());
          } else
          {
-            node = new VariableNode(fromVariable, variableHierarchy);
+            node = new VariableNode(variable, variableHierarchy);
          }
          return node.addLowerBound(fromType);
       }
@@ -165,7 +165,8 @@ public class Algorithm
          }
          return false;
       }
-      return ContextualizedArguments.isAssignable(CHECKER, paramType, fromType, variableHierarchy);
+      return ParamTypeAssignabilityAlgorithm.isAssignable(
+            paramType, fromType, CHECKER, variableHierarchy);
    }
 
    private boolean isAssignable(GenericArrayType arrayType, Type fromType,
@@ -190,75 +191,77 @@ public class Algorithm
       return false;
    }
 
-   // ////////////////////////////////////////////////////////
-   private static final ContextualizedArguments.EqualityChecker<Map<String, VariableNode>> CHECKER
-      = new ContextualizedArguments.EqualityChecker<Map<String,VariableNode>>()
+   //////////////////////////////////////////////////////////
+   private static final ParamTypeAssignabilityAlgorithm.EqualityChecker<Map<String, VariableNode>> CHECKER
+      = new ParamTypeAssignabilityAlgorithm.EqualityChecker<Map<String,VariableNode>>()
+   {
+      public boolean isSame(Type type, Type fromType, Map<String, VariableNode> variableHierarchy)
       {
-
-         public boolean isSame(Type type2, Type type1, Map<String, VariableNode> variableHierarchy)
+         if (type instanceof TypeVariable)
          {
-            if (type2 instanceof TypeVariable)
+            TypeVariable variable = (TypeVariable) type;
+            VariableNode node = variableHierarchy.containsKey(variable.getName())?
+                  variableHierarchy.get(variable.getName()):
+                     new VariableNode(variable, variableHierarchy);
+                  return node.assignValue(fromType);
+         }
+         if (type instanceof Class)
+         {
+            return type.equals(fromType);
+         }
+         if (type instanceof ParameterizedType)
+         {
+            if (!(fromType instanceof ParameterizedType))
             {
-               TypeVariable variable2 = (TypeVariable) type2;
-               VariableNode node = variableHierarchy.containsKey(variable2.getName())?
-                  variableHierarchy.get(variable2.getName()):
-                  new VariableNode(variable2, variableHierarchy);
-               return node.assignValue(type1);
+               return false;
             }
-            if (type2 instanceof Class)
+            ParameterizedType fromParamType = (ParameterizedType) fromType;
+            ParameterizedType paramType = (ParameterizedType) type;
+            if (!isSame(paramType.getRawType(), fromParamType.getRawType(),
+                  variableHierarchy))
             {
-               return type1.equals(type2);
+               return false;
             }
-            if (type2 instanceof ParameterizedType)
+            return isSame(paramType.getActualTypeArguments(),
+                  fromParamType.getActualTypeArguments(), variableHierarchy);
+         }
+         if (type instanceof WildcardType)
+         {
+            Type[] upperBounds = ((WildcardType) type).getUpperBounds();
+            Algorithm algorithm = Algorithm.getInstance();
+            if (fromType instanceof WildcardType)
             {
-               if (!(type1 instanceof ParameterizedType))
+               Type[] fromUpperBounds = ((WildcardType) fromType).getUpperBounds();
+               outer: for (int i = 0; i < upperBounds.length; i++)
                {
-                  return false;
-               }
-               ParameterizedType paramType1 = (ParameterizedType) type1;
-               ParameterizedType paramType2 = (ParameterizedType) type2;
-               if (!isSame(paramType2.getRawType(), paramType1.getRawType(), variableHierarchy))
-               {
-                  return false;
-               }
-               return isSame(paramType2.getActualTypeArguments(), paramType1.getActualTypeArguments(), variableHierarchy);
-            }
-            if (type2 instanceof WildcardType)
-            {
-               Type[] upperBounds2 = ((WildcardType) type2).getUpperBounds();
-               Algorithm algorithm = Algorithm.getInstance();
-               if (type1 instanceof WildcardType)
-               {
-                  Type[] upperBounds1 = ((WildcardType) type1).getUpperBounds();
-                  outer: for (int i = 0; i < upperBounds2.length; i++)
+                  for (int j = 0; j < fromUpperBounds.length; j++)
                   {
-                     for (int j = 0; j < upperBounds1.length; j++)
+                     if (algorithm.isAssignable(upperBounds[i],
+                           fromUpperBounds[i], variableHierarchy))
                      {
-                        if (algorithm.isAssignable(upperBounds2[i], upperBounds1[i], variableHierarchy))
-                        {
-                           continue outer;
-                        }
+                        continue outer;
                      }
+                  }
+                  return false;
+               }
+               // TODO lower bounds: inverted algorithm
+               return true;
+            }
+            else
+            {
+               for (int i = 0; i < upperBounds.length; i++)
+               {
+                  if (!algorithm.isAssignable(upperBounds[i], fromType,
+                        variableHierarchy))
+                  {
                      return false;
                   }
-                  // TODO lower bounds: inverted algorithm
-                  return true;
                }
-               else
-               {
-                  for (int i = 0; i < upperBounds2.length; i++)
-                  {
-                     if (!algorithm.isAssignable(upperBounds2[i], type1, variableHierarchy))
-                     {
-                           return false;
-                     }
-                  }
-                  // TODO lower bounds: inverted algorithm
-                  return true;
-               }
+               // TODO lower bounds: inverted algorithm
+               return true;
             }
-            return true;
          }
-      };
-   
+         return true;
+      }
+   };
 }
