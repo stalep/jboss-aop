@@ -42,7 +42,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test1() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller1", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called1", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called1", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -57,7 +57,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test2() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller2", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called2", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called2", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -72,7 +72,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test3() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller3", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called3", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called3", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -87,7 +87,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test4() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller4", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called4", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called4", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -102,7 +102,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test5() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller5", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called5", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called5", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -117,7 +117,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test6() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller6", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called6", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called6", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -132,7 +132,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test7() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller7", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called7", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called7", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -147,7 +147,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test8() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller8", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called8", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called8", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -162,7 +162,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test9() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller9", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called9", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called9", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -177,7 +177,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test10() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller10", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called10", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called10", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -192,7 +192,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test11() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller11", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called11", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called11", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -207,7 +207,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test12() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller12", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called12", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called12", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -222,7 +222,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test13() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller13", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called13", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called13", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -237,7 +237,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test14() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller14", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called14", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called14", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -252,7 +252,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test15() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller15", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called15", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called15", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -267,7 +267,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test16() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller16", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called16", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called16", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -282,7 +282,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test17() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller17", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called17", new Class[]{HashMap.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called17", new Class[]{HashMap.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -297,7 +297,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test18() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller18", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called1", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called1", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -312,7 +312,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test19() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller19", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called2", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called2", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -327,7 +327,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test20() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller20", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called3", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called3", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -342,7 +342,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test21() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller21", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called4", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called4", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -357,7 +357,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test22() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller22", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called4", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called4", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -372,7 +372,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test23() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller23", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called5", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called5", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -387,7 +387,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test24() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller24", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called7", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called7", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -402,7 +402,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test25() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller25", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called8", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called8", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -417,7 +417,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test26() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller26", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called9", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called9", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -432,7 +432,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test27() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller27", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called10", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called10", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -447,7 +447,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test28() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller28", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called11", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called11", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -462,7 +462,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test29() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller29", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called12", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called12", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -477,7 +477,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test30() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller30", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called13", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called13", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -492,7 +492,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test31() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller31", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called14", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called14", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -507,7 +507,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test32() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller32", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called15", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called15", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -522,7 +522,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test33() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller33", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called16", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called16", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -537,7 +537,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test34() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller34", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called17", new Class[]{HashMap.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called17", new Class[]{HashMap.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -552,7 +552,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test35() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller35", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called1", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called1", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -567,7 +567,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test36() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller36", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called2", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called2", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -582,7 +582,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test37() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller37", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called3", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called3", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -597,7 +597,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test38() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller38", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called4", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called4", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -612,7 +612,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test39() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller39", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called5", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called5", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -627,7 +627,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test40() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller40", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called6", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called6", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -642,7 +642,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test41() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller41", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called7", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called7", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -657,7 +657,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test42() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller42", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called8", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called8", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -672,7 +672,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test43() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller43", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called9", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called9", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -687,7 +687,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test44() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller44", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called10", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called10", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -702,7 +702,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test45() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller45", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called11", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called11", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -717,7 +717,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test46() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller46", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called12", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called12", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -732,7 +732,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test47() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller47", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called13", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called13", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -747,7 +747,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test48() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller48", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called14", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called14", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -762,7 +762,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test49() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller49", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called15", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called15", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -777,7 +777,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test50() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller50", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called16", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called16", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -792,7 +792,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test51() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller51", new Class[]{Object[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called17", new Class[]{HashMap.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called17", new Class[]{HashMap.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -807,7 +807,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test52() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller52", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called1", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called1", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -822,7 +822,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test53() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller53", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called2", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called2", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -837,7 +837,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test54() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller54", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called3", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called3", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -852,7 +852,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test55() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller55", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called4", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called4", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -867,7 +867,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test56() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller56", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called5", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called5", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -882,7 +882,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test57() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller57", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called6", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called6", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -897,7 +897,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test58() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller58", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called7", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called7", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -912,7 +912,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test59() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller59", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called8", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called8", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -927,7 +927,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test60() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller60", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called9", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called9", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -942,7 +942,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test61() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller61", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called10", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called10", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -957,7 +957,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test62() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller62", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called11", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called11", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -972,7 +972,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test63() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller63", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called12", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called12", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -987,7 +987,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test64() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller64", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called13", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called13", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1002,7 +1002,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test65() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller65", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called14", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called14", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1017,7 +1017,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test66() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller66", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called15", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called15", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1032,7 +1032,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test67() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller67", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called16", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called16", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1047,7 +1047,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test68() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller68", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called17", new Class[]{HashMap.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called17", new Class[]{HashMap.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1062,7 +1062,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test69() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller69", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called1", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called1", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1077,7 +1077,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test70() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller70", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called2", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called2", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1092,7 +1092,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test71() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller71", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called3", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called3", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1107,7 +1107,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test72() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller72", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called4", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called4", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1122,7 +1122,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test73() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller73", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called5", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called5", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1137,7 +1137,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test74() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller74", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called6", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called6", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1152,7 +1152,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test75() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller75", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called7", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called7", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1167,7 +1167,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test76() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller76", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called8", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called8", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1182,7 +1182,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test77() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller77", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called9", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called9", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1197,7 +1197,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test78() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller78", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called10", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called10", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1212,7 +1212,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test79() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller79", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called11", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called11", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1227,7 +1227,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test80() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller80", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called12", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called12", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1242,7 +1242,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test81() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller81", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called13", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called13", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1257,7 +1257,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test82() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller82", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called14", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called14", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1272,7 +1272,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test83() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller83", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called15", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called15", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1287,7 +1287,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test84() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller84", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called16", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called16", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1302,7 +1302,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test85() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller85", new Class[]{ArrayList[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called17", new Class[]{HashMap.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called17", new Class[]{HashMap.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1317,7 +1317,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test86() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller86", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called1", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called1", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1332,7 +1332,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test87() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller87", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called2", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called2", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1347,7 +1347,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test88() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller88", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called3", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called3", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1362,7 +1362,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test89() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller89", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called4", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called4", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1377,7 +1377,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test90() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller90", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called5", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called5", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1392,7 +1392,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test91() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller91", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called6", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called6", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1407,7 +1407,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test92() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller92", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called7", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called7", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1422,7 +1422,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test93() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller93", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called8", new Class[]{ArrayList.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called8", new Class[]{ArrayList.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1437,7 +1437,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test94() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller94", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called9", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called9", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1452,7 +1452,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test95() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller95", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called10", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called10", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1467,7 +1467,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test96() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller96", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called11", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called11", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1482,7 +1482,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test97() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller97", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called12", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called12", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1497,7 +1497,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test98() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller98", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called13", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called13", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1512,7 +1512,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test99() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller99", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called14", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called14", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1527,7 +1527,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test100() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller100", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called15", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called15", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1542,7 +1542,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test101() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller101", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called16", new Class[]{List.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called16", new Class[]{List.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
@@ -1557,7 +1557,7 @@ public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
    public void test102() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller102", new Class[]{List[].class});
-      Method called = AssignabilityAlgorithmTest.class.getDeclaredMethod("called17", new Class[]{HashMap.class});
+      Method called = ParameterizedTypeTest.class.getDeclaredMethod("called17", new Class[]{HashMap.class});
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
