@@ -120,6 +120,31 @@ public class Algorithm
          }
          return inside;
       }
+      else if (fromType instanceof WildcardType)
+      {
+         WildcardType fromWildcard = (WildcardType) fromType;
+         boolean boundOk = false;
+         for (Type upperBound: fromWildcard.getUpperBounds())
+         {
+            if (isAssignable(classType, upperBound, variableHierarchy))
+            {
+               boundOk = true;
+               break;
+            }
+         }
+         if (!boundOk)
+         {
+            return false;
+         }
+         for (Type lowerBound: fromWildcard.getLowerBounds())
+         {
+            if (isAssignable(classType, lowerBound, variableHierarchy))
+            {
+               return true;
+            }
+         }
+         return fromWildcard.getLowerBounds().length == 0;
+      }
       // type instanceof GenericArrayType (ommitting check for performance
       // reasons)
       if (classType == Object.class)

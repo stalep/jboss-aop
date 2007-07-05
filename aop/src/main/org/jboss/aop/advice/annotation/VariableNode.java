@@ -40,6 +40,8 @@ import java.util.Map;
  */
 public class VariableNode
 {
+   private static int boundComparation = 0;
+   private Map<String, VariableNode> map;
    private VariableNode previous;
    private VariableNode next;
    private Collection<Type> lowerBounds;
@@ -48,6 +50,7 @@ public class VariableNode
    
    public VariableNode(TypeVariable content, Map<String, VariableNode> map)
    {
+      this.map = map;
       this.variable = content;
       lowerBounds = new HashSet<Type>();
       Type[] bounds = content.getBounds();
@@ -69,9 +72,15 @@ public class VariableNode
    
    public final boolean assignValue(Type value)
    {
+      if (boundComparation > 0 && !(value instanceof Class)
+            && !(value instanceof ParameterizedType))
+      {
+         return false;
+      }
       if (this.assignedValue != null)
       {
-         return isSame(this.assignedValue, value, true);
+         // TODO HERE1 HERE HERE HERE HERE
+         return isSame(value, this.assignedValue, true);
       }
       
       // TODO fix this
@@ -100,14 +109,7 @@ public class VariableNode
       if (lowerBound instanceof TypeVariable)
       {
          Type[] bounds = ((TypeVariable) lowerBound).getBounds();
-         if (bounds.length == 1)
-         {
-            this.lowerBounds.add(bounds[0]);
-         }
-         else
-         {
-            this.lowerBounds.add(new ChoiceBound(bounds));
-         }
+         this.lowerBounds.add(new ChoiceBound((TypeVariable) lowerBound, bounds));
       }
       else
       {
@@ -146,7 +148,7 @@ public class VariableNode
       {
          for (Type bound: this.lowerBounds)
          {
-            if (!isAssignable(lowerBound, bound))
+            if (!isAssignable(bound, lowerBound))
             {
                return false;
             }
@@ -155,16 +157,63 @@ public class VariableNode
       if (next == null)
       {
          Type[] bounds = variable.getBounds();
+         boundComparation ++;
          for (int i = 0; i < bounds.length; i++)
          {
-            if (isAssignable(bounds[i], lowerBound))
+            // TODO HERE HERE HERE HERE
+            if (!Algorithm.getInstance().isAssignable(bounds[i], lowerBound, map))
             {
-               return true;
+               boundComparation --;
+               return false;
+            }
+         }
+         boundComparation --;
+         return true;
+      }
+      return next.isInsideBounds(lowerBound, true);
+   }
+   
+   private boolean isAssignable(TypeVariable type, TypeVariable fromType)
+   {
+      Type[] fromBounds = fromType.getBounds();
+      if (type == fromType)
+      {
+         return true;
+      }
+      while (fromBounds.length == 1 && fromBounds[0] instanceof TypeVariable)
+      {
+         if (fromBounds[0] == type)
+         {
+            return true;
+         }
+         fromType = (TypeVariable) fromBounds[0];
+         fromBounds = fromType.getBounds();
+      }
+      TypeVariable variable = (TypeVariable) type;
+      Type[] bounds = variable.getBounds();
+      while (bounds.length == 1 && bounds[0] instanceof TypeVariable)
+      {
+         if (bounds[0] == fromType)
+         {
+            return false;
+         }
+         variable = (TypeVariable) bounds[0];
+         bounds = variable.getBounds();
+      }
+      // TODO check if this should really be removed
+      /*outer: for (int i = 0; i < bounds.length; i++)
+      {
+         for (int j = 0; j < fromBounds.length; j++)
+         {
+            if (isAssignable(bounds[i], fromBounds[j]))
+            {
+               continue outer;
             }
          }
          return false;
       }
-      return next.isInsideBounds(lowerBound, true);
+      return true;*/
+      return false;
    }
    
    // both type and bound belong to the same context
@@ -173,49 +222,16 @@ public class VariableNode
       if (fromType instanceof TypeVariable)
       {
          TypeVariable fromVariable = (TypeVariable) fromType;
-         Type[] fromBounds = fromVariable.getBounds();
          if (type instanceof TypeVariable)
          {
-            if (type == fromType)
-            {
-               return true;
-            }
-            while (fromBounds.length == 1 && fromBounds[0] instanceof TypeVariable)
-            {
-               if (fromBounds[0] == type)
-               {
-                  return true;
-               }
-               fromType = (TypeVariable) fromBounds[0];
-               fromBounds = fromVariable.getBounds();
-            }
-            TypeVariable variable = (TypeVariable) type;
-            Type[] bounds = variable.getBounds();
-            while (bounds.length == 1 && bounds[0] instanceof TypeVariable)
-            {
-               if (bounds[0] == fromType)
-               {
-                  return false;
-               }
-               variable = (TypeVariable) bounds[0];
-               bounds = variable.getBounds();
-            }
-            outer: for (int i = 0; i < bounds.length; i++)
-            {
-               for (int j = 0; j < fromBounds.length; j++)
-               {
-                  if (isAssignable(bounds[i], fromBounds[j]))
-                  {
-                     continue outer;
-                  }
-               }
-               return false;
-            }
-            return true;
+            return isAssignable((TypeVariable) type, fromVariable);
          }
+         Type[] fromBounds = fromVariable.getBounds();
+         TypeVariable temp = fromVariable;
          while (fromBounds.length == 1 && fromBounds[0] instanceof TypeVariable)
          {
-            fromBounds = fromVariable.getBounds();
+            temp = (TypeVariable) fromBounds[0];
+            fromBounds = temp.getBounds();            
          }
          for (Type fromBound: fromBounds)
          {
@@ -225,6 +241,24 @@ public class VariableNode
             }
          }
          return false;
+      }
+      if (fromType instanceof ChoiceBound)
+      {
+         ChoiceBound fromChoiceBound = (ChoiceBound) fromType;
+         if (type instanceof TypeVariable &&
+               !isAssignable((TypeVariable) type, fromChoiceBound.variable))
+         {
+            return false;
+         }
+         for (Iterator<Type> it = fromChoiceBound.bounds.iterator(); it.hasNext();)
+         {
+            Type fromOption = it.next();
+            if (!isAssignable(type, fromOption))
+            {
+               it.remove();
+            }
+         }
+         return !fromChoiceBound.bounds.isEmpty();
       }
       if (type instanceof Class)
       {
@@ -257,7 +291,7 @@ public class VariableNode
             {
                return false;
             }
-            for (Type lowerBound: fromWildcard.getUpperBounds())
+            for (Type lowerBound: fromWildcard.getLowerBounds())
             {
                if (isAssignable(type, lowerBound))
                {
@@ -297,6 +331,11 @@ public class VariableNode
          return true;
       }
       ChoiceBound choiceBound = (ChoiceBound) type;
+      if (fromType instanceof TypeVariable &&
+            !isAssignable(choiceBound.variable, (TypeVariable) fromType))
+      {
+         return false;
+      }
       for (Iterator<Type> it = choiceBound.bounds.iterator(); it.hasNext();)
       {
          Type boundOption = it.next();
@@ -403,18 +442,19 @@ public class VariableNode
       {
          public boolean isSame(Type argument, Type fromArgument, VariableNode node, boolean boundLevel)
          {
-            return node.isSame(fromArgument, argument, false);
+            return node.isSame(argument, fromArgument, false);
          }
       };
 }
 
 class ChoiceBound implements Type
 {
-   public ChoiceBound(Type[] bounds)
+   public ChoiceBound(TypeVariable variable, Type[] bounds)
    {
+      this.variable = variable;
       this.bounds = new LinkedList<Type>();
       Collections.addAll(this.bounds, bounds);
    }
-   
+   TypeVariable variable;
    Collection<Type> bounds;
 }
