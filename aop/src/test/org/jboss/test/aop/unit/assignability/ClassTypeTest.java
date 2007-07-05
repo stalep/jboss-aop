@@ -93,7 +93,7 @@ public class ClassTypeTest extends AssignabilityAlgorithmTest
    
    void called6(ArrayList arg) {}
    
-   public void tes6() throws Exception
+   public void test6() throws Exception
    {
       Method caller = this.getClass().getDeclaredMethod("caller6", new Class[]{ArrayList.class});
       Method called = this.getClass().getDeclaredMethod("called6", new Class[]{ArrayList.class});
@@ -525,6 +525,147 @@ public class ClassTypeTest extends AssignabilityAlgorithmTest
       Method caller = this.getClass().getDeclaredMethod("caller31", new Class[]{List.class});
       Method called = this.getClass().getDeclaredMethod("called31", new Class[]{Collection.class});
       assertTrue(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
+   
+   // Scenario 32
+   
+   <D extends ArrayList & Runnable> void caller32(D arg)
+   {
+      called32(arg);
+   }
+
+   void called32(List arg){}
+
+   public void test32() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller32", new Class[]{ArrayList.class});
+      Method called = this.getClass().getDeclaredMethod("called32", new Class[]{List.class});
+      assertTrue(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
+   
+   // Scenario 33
+   
+   <A extends List> void caller33(A arg)
+   {
+      called33(arg);
+   }
+   
+   void called33(List arg) {}
+
+   public void test33() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller33", new Class[]{List.class});
+      Method called = this.getClass().getDeclaredMethod("called33", new Class[]{List.class});
+      assertTrue(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
+   
+   // Scenario 34
+   
+   <A extends ArrayList> void caller34(A arg)
+   {
+      called33(arg);
+   }
+   
+   public void test34() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller34", new Class[]{ArrayList.class});
+      Method called = this.getClass().getDeclaredMethod("called33", new Class[]{List.class});
+      assertTrue(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
+   
+   // Scenario 35
+
+   <B extends List, A extends B> void caller35(A arg)
+   {
+      called33(arg);
+   }
+   
+   public void test35() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller35", new Class[]{List.class});
+      Method called = this.getClass().getDeclaredMethod("called33", new Class[]{List.class});
+      assertTrue(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
+   
+   // Scenario 36
+   
+   <A extends Collection> void caller36(A arg)
+   {
+      //called33(arg);
+   }
+   
+   public void test36() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller36", new Class[]{Collection.class});
+      Method called = this.getClass().getDeclaredMethod("called33", new Class[]{List.class});
+      assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
+
+   // Scenario 37
+   
+   <A> void caller37(A arg)
+   {
+      //called33(arg);
+   }
+
+   public void test37() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller37", new Class[]{Object.class});
+      Method called = this.getClass().getDeclaredMethod("called33", new Class[]{List.class});
+      assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
+   
+   // Scenario 38
+   
+   <B extends Collection, A extends B> void caller38(A arg)
+   {
+      //called33(arg);
+   }
+
+   public void test38() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller38", new Class[]{Collection.class});
+      Method called = this.getClass().getDeclaredMethod("called33", new Class[]{List.class});
+      assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
+   
+   // Scenario 39
+   
+   <B extends Collection, C extends B, A extends B> void caller39(A arg)
+   {
+      //called33(arg);
+   }
+
+   public void test39() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller39", new Class[]{Collection.class});
+      Method called = this.getClass().getDeclaredMethod("called33", new Class[]{List.class});
+      assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
+   
+   // Scenario 40
+   
+   <B extends Collection, A extends B> void caller40(A arg)
+   {
+      //called40(arg);
+   }
+
+   void called40(Runnable arg){}
+   
+   public void test40() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller40", new Class[]{Collection.class});
+      Method called = this.getClass().getDeclaredMethod("called40", new Class[]{Runnable.class});
+      assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
 }
