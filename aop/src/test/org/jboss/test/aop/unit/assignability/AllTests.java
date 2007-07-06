@@ -37,6 +37,7 @@ public class AllTests
             "Test for org.jboss.test.aop.unit.assignability");
       //$JUnit-BEGIN$
       suite.addTestSuite(ClassTypeTest.class);
+      suite.addTestSuite(GenericArrayTypeTest.class);
       suite.addTestSuite(ParameterizedTypeFromClassTest.class);
       suite.addTestSuite(TypeVariableTest.class);
       suite.addTestSuite(ParameterizedTypeFromVariableTest.class);
