@@ -35,6 +35,7 @@ public class VariableHierarchy
 {
    private Map<String, VariableNode> map;
    private int boundComparation;
+   private int realBoundComparation;
    
    public VariableHierarchy()
    {
@@ -66,5 +67,20 @@ public class VariableHierarchy
    boolean isBoundComparation()
    {
       return this.boundComparation > 0;
+   }
+   
+   void startRealBoundComparation()
+   {
+      this.realBoundComparation ++;
+   }
+   
+   void finishRealBoundComparation()
+   {
+      this.realBoundComparation --;
+   }
+   
+   boolean isRealBoundComparation()
+   {
+      return this.realBoundComparation > 0;
    }
 }

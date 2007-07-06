@@ -47,10 +47,10 @@ public enum Algorithm
       }
       
       protected boolean assignValue(Type type, Type fromType,
-            VariableHierarchy variableHierarchy, boolean boundLevel)
+            VariableHierarchy variableHierarchy)
       {
          VariableNode node = variableHierarchy.getVariableNode((TypeVariable) type);
-         return node.assignValue(fromType, boundLevel);
+         return node.assignValue(fromType);
       }
       
       protected boolean addBound(Type type, Type fromType,
@@ -73,10 +73,10 @@ public enum Algorithm
       }
       
       protected boolean assignValue(Type type, Type fromType,
-            VariableHierarchy variableHierarchy, boolean boundLevel)
+            VariableHierarchy variableHierarchy)
       {
          VariableNode fromNode = variableHierarchy.getVariableNode((TypeVariable) fromType);
-         return fromNode.assignValue(type, boundLevel);
+         return fromNode.assignValue(type);
       }
       
       protected boolean addBound(Type type, Type fromType,
@@ -91,7 +91,7 @@ public enum Algorithm
    protected abstract boolean isVariableOperationApplicable(Type type, Type fromType);
    
    protected abstract boolean assignValue(Type type, Type fromType,
-         VariableHierarchy variableHierarchy, boolean boundLevel);
+         VariableHierarchy variableHierarchy);
    
    protected abstract boolean addBound(Type type, Type fromType,
          VariableHierarchy variableHierarchy);
@@ -114,8 +114,7 @@ public enum Algorithm
       }
       if (type instanceof ParameterizedType)
       {
-         return isAssignable((ParameterizedType) type, fromType,
-               variableHierarchy, false);
+         return isAssignable((ParameterizedType) type, fromType, variableHierarchy);
       }
       if (type instanceof WildcardType)
       {
@@ -211,7 +210,7 @@ public enum Algorithm
     * @param type
     * @return
     */
-   private Type[] getConcreteBounds(Type type)
+   public static Type[] getConcreteBounds(Type type)
    {
       TypeVariable current = (TypeVariable) type;
       Type[] bounds = current.getBounds();
@@ -224,22 +223,30 @@ public enum Algorithm
    }
 
    private boolean isAssignable(ParameterizedType paramType, Type fromType, 
-         VariableHierarchy variableHierarchy, boolean boundLevel)
+         VariableHierarchy variableHierarchy)
    {
       if (fromType instanceof TypeVariable)
       {
          Type[] concreteBounds = getConcreteBounds((TypeVariable) fromType);
-         for (int i = 0; i < concreteBounds.length; i++)
+         try
          {
-            if (isAssignable(paramType, concreteBounds[i], variableHierarchy, true))
+            variableHierarchy.startRealBoundComparation();
+            for (int i = 0; i < concreteBounds.length; i++)
             {
-               return true;
+               if (isAssignable(paramType, concreteBounds[i], variableHierarchy))
+               {
+                  return true;
+               }
             }
+         }
+         finally
+         {
+            variableHierarchy.finishRealBoundComparation();
          }
          return false;
       }
       return ParamTypeAssignabilityAlgorithm.isAssignable(
-            paramType, fromType, CHECKER, this, variableHierarchy, boundLevel);
+            paramType, fromType, CHECKER, this, variableHierarchy);
    }
 
    private boolean isAssignable(GenericArrayType arrayType, Type fromType,
@@ -268,11 +275,11 @@ public enum Algorithm
    private static final ParamTypeAssignabilityAlgorithm.EqualityChecker<Algorithm, VariableHierarchy> CHECKER
       = new ParamTypeAssignabilityAlgorithm.EqualityChecker<Algorithm, VariableHierarchy>()
    {
-      public boolean isSame(Type type, Type fromType, Algorithm client, VariableHierarchy variableHierarchy, boolean boundLevel)
+      public boolean isSame(Type type, Type fromType, Algorithm client, VariableHierarchy variableHierarchy)
       {
          if(Algorithm.VARIABLE_TARGET.isVariableOperationApplicable(type, fromType))
          {
-            return Algorithm.VARIABLE_TARGET.assignValue(type, fromType, variableHierarchy, boundLevel);
+            return Algorithm.VARIABLE_TARGET.assignValue(type, fromType, variableHierarchy);
          }
          if (type instanceof Class)
          {
@@ -287,12 +294,12 @@ public enum Algorithm
             ParameterizedType fromParamType = (ParameterizedType) fromType;
             ParameterizedType paramType = (ParameterizedType) type;
             if (!isSame(paramType.getRawType(), fromParamType.getRawType(), client,
-                  variableHierarchy, boundLevel))
+                  variableHierarchy))
             {
                return false;
             }
             return isSame(paramType.getActualTypeArguments(),
-                  fromParamType.getActualTypeArguments(), client, variableHierarchy, boundLevel);
+                  fromParamType.getActualTypeArguments(), client, variableHierarchy);
          }
          if (type instanceof WildcardType)
          {

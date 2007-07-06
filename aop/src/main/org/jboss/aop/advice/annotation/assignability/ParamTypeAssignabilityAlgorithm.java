@@ -58,11 +58,11 @@ class ParamTypeAssignabilityAlgorithm
        *                      fromArguments</code> list can be assigned to a list of
        *                      <code>arguments</code> type.
        */
-      protected boolean isSame(Type[] arguments, Type[] fromArguments, C caller, T token, boolean assignAllowed)
+      protected boolean isSame(Type[] arguments, Type[] fromArguments, C caller, T token)
       {
          for (int i = 0; i < arguments.length; i++)
          {
-            if (!isSame(arguments[i], fromArguments[i], caller, token, assignAllowed))
+            if (!isSame(arguments[i], fromArguments[i], caller, token))
             {
                return false;
             }
@@ -87,7 +87,7 @@ class ParamTypeAssignabilityAlgorithm
        *                      <code>fromArgument</code> as the equivalent parameter
        *                      value
        */
-      abstract boolean isSame(Type argument, Type fromArgument, C caller, T token, boolean assignAllowed);
+      abstract boolean isSame(Type argument, Type fromArgument, C caller, T token);
    }
 
    /**
@@ -100,7 +100,7 @@ class ParamTypeAssignabilityAlgorithm
     * @return
     */
    public static<C, T> boolean isAssignable(ParameterizedType paramType, Type fromType,
-         EqualityChecker<C, T> checker, C caller, T checkerToken, boolean assignAllowed)
+         EqualityChecker<C, T> checker, C caller, T checkerToken)
    {
       Class<?> fromRaw = null;
       ParameterizedType fromParamType = null;
@@ -129,7 +129,7 @@ class ParamTypeAssignabilityAlgorithm
          {
             // compare arguments with arguments
             return checker.isSame(paramType.getActualTypeArguments(),
-                  fromParamType.getActualTypeArguments(), caller, checkerToken, assignAllowed);
+                  fromParamType.getActualTypeArguments(), caller, checkerToken);
          }
          else if (!desiredType.isAssignableFrom(fromRaw))
          {
@@ -147,6 +147,6 @@ class ParamTypeAssignabilityAlgorithm
       {
          return true; // TODO with Warning
       }
-      return checker.isSame(paramType.getActualTypeArguments(), arguments, caller, checkerToken, assignAllowed);
+      return checker.isSame(paramType.getActualTypeArguments(), arguments, caller, checkerToken);
    }
 }
