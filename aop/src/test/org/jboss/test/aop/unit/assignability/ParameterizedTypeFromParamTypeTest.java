@@ -2236,4 +2236,96 @@ public class ParameterizedTypeFromParamTypeTest extends ParameterizedTypeTest
       assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
    }
+   
+   // Scenario 142
+   
+   void caller142(ArrayList<List> arg)
+   {
+      called142(arg);
+   }
+   
+   void called142(ArrayList<? super List> arg) {}
+   
+   public void test142() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller142", new Class[]{ArrayList.class});
+      Method called = this.getClass().getDeclaredMethod("called142", new Class[]{ArrayList.class});
+      assertTrue(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
+   
+   // Scenario 143
+   
+   void caller143(ArrayList<Collection> arg)
+   {
+      called142(arg);
+   }
+   
+   public void test143() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller143", new Class[]{ArrayList.class});
+      Method called = this.getClass().getDeclaredMethod("called142", new Class[]{ArrayList.class});
+      assertTrue(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
+   
+   // Scenario 144
+   
+   void caller144(ArrayList<ArrayList> arg)
+   {
+      //called142(arg);
+   }
+   
+   public void test144() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller144", new Class[]{ArrayList.class});
+      Method called = this.getClass().getDeclaredMethod("called142", new Class[]{ArrayList.class});
+      assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
+   
+   // Scenario 145
+   
+   <A extends List>void caller145(ArrayList<A> arg)
+   {
+      //called142(arg);
+   }
+   
+   public void test145() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller145", new Class[]{ArrayList.class});
+      Method called = this.getClass().getDeclaredMethod("called142", new Class[]{ArrayList.class});
+      assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
+   
+   // Scenario 146
+   
+   <A extends Collection>void caller146(ArrayList<A> arg)
+   {
+      //called142(arg);
+   }
+   
+   public void test146() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller146", new Class[]{ArrayList.class});
+      Method called = this.getClass().getDeclaredMethod("called142", new Class[]{ArrayList.class});
+      assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
+   
+   // Scenario 147
+   
+   <A extends ArrayList>void caller147(ArrayList<ArrayList> arg)
+   {
+      //called142(arg);
+   }
+   
+   public void test147() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller147", new Class[]{ArrayList.class});
+      Method called = this.getClass().getDeclaredMethod("called142", new Class[]{ArrayList.class});
+      assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+   }
 }

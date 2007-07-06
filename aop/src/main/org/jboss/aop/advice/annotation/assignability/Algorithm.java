@@ -120,6 +120,10 @@ public enum Algorithm
       {
          throw new RuntimeException("This comparison should never happen");
       }
+      if (type instanceof TypeVariable)
+      {
+         return false;
+      }
       else
       {
          return isAssignable((GenericArrayType) type, fromType,
