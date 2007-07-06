@@ -19,36 +19,95 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.aop.advice.annotation;
+package org.jboss.aop.advice.annotation.assignability;
 
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  * 
+ * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-public class Algorithm
+public enum Algorithm
 {
-   private static final Algorithm INSTANCE = new Algorithm();
-   public static Algorithm getInstance()
+   
+   VARIABLE_TARGET()
    {
-      return INSTANCE;
-   }
+      protected Algorithm getInverseAlgorithm()
+      {
+         return FROM_VARIABLE;
+      }
+      
+      protected boolean isVariableOperationApplicable(Type type, Type fromType)
+      {
+         return type instanceof TypeVariable;
+      }
+      
+      protected boolean assignValue(Type type, Type fromType,
+            VariableHierarchy variableHierarchy, boolean boundLevel)
+      {
+         VariableNode node = variableHierarchy.getVariableNode((TypeVariable) type);
+         return node.assignValue(fromType, boundLevel);
+      }
+      
+      protected boolean addBound(Type type, Type fromType,
+            VariableHierarchy variableHierarchy)
+      {
+         VariableNode node = variableHierarchy.getVariableNode((TypeVariable) type);
+         return node.addLowerBound(fromType);
+      }
+   },
+   FROM_VARIABLE()
+   {
+      protected Algorithm getInverseAlgorithm()
+      {
+         return VARIABLE_TARGET;
+      }
+      
+      protected boolean isVariableOperationApplicable(Type type, Type fromType)
+      {
+         return fromType instanceof TypeVariable;
+      }
+      
+      protected boolean assignValue(Type type, Type fromType,
+            VariableHierarchy variableHierarchy, boolean boundLevel)
+      {
+         VariableNode fromNode = variableHierarchy.getVariableNode((TypeVariable) fromType);
+         return fromNode.assignValue(type, boundLevel);
+      }
+      
+      protected boolean addBound(Type type, Type fromType,
+            VariableHierarchy variableHierarchy)
+      {
+         VariableNode fromNode = variableHierarchy.getVariableNode((TypeVariable) fromType);
+         return fromNode.addUpperBound(type);
+      }
+   };
 
-   public Map<String, VariableNode> getInitialHierarchy()
-   {
-      return new HashMap<String, VariableNode>();
-   }
+   protected abstract Algorithm getInverseAlgorithm();
+   protected abstract boolean isVariableOperationApplicable(Type type, Type fromType);
+   
+   protected abstract boolean assignValue(Type type, Type fromType,
+         VariableHierarchy variableHierarchy, boolean boundLevel);
+   
+   protected abstract boolean addBound(Type type, Type fromType,
+         VariableHierarchy variableHierarchy);
    
    public boolean isAssignable(Type type, Type fromType,
-         Map<String, VariableNode> variableHierarchy)
+         VariableHierarchy variableHierarchy)
    {
+      // special case, check fromType
+      if (fromType instanceof WildcardType)
+      {
+         return isAssignable(type, (WildcardType) fromType, variableHierarchy);
+      }
+      if (isVariableOperationApplicable(type, fromType))
+      {
+         return addBound(type, fromType, variableHierarchy);
+      }
       if (type instanceof Class)
       {
          return isAssignable((Class<?>) type, fromType, variableHierarchy);
@@ -58,33 +117,46 @@ public class Algorithm
          return isAssignable((ParameterizedType) type, fromType,
                variableHierarchy, false);
       }
-      if (type instanceof TypeVariable)
-      {
-         VariableNode node = null;
-         TypeVariable variable = (TypeVariable) type;
-         if (variableHierarchy.containsKey(variable.getName()))
-         {
-            node = variableHierarchy.get(variable.getName());
-         }
-         else
-         {
-            node = new VariableNode(variable, variableHierarchy);
-         }
-         return node.addLowerBound(fromType);
-      }
       if (type instanceof WildcardType)
       {
          throw new RuntimeException("This comparison should never happen");
-      } else
+      }
+      else
       {
          return isAssignable((GenericArrayType) type, fromType,
                variableHierarchy);
       }
    }
+   
+   private boolean isAssignable(Type type, WildcardType fromWildcardType,
+         VariableHierarchy variableHierarchy)
+   {
+      boolean boundOk = false;
+      for (Type upperBound: fromWildcardType.getUpperBounds())
+      {
+         if (isAssignable(type, upperBound, variableHierarchy))
+         {
+            boundOk = true;
+            break;
+         }
+      }
+      if (!boundOk)
+      {
+         return false;
+      }
+      for (Type lowerBound: fromWildcardType.getLowerBounds())
+      {
+         if (isAssignable(type, lowerBound, variableHierarchy))
+         {
+            return true;
+         }
+      }
+      return fromWildcardType.getLowerBounds().length == 0;
+   }
 
    // is classType super of fromType?
    private boolean isAssignable(Class<?> classType, Type fromType,
-         Map<String, VariableNode> variableHierarchy)
+         VariableHierarchy variableHierarchy)
    {
       if (fromType instanceof Class)
       {
@@ -120,31 +192,6 @@ public class Algorithm
          }
          return inside;
       }
-      else if (fromType instanceof WildcardType)
-      {
-         WildcardType fromWildcard = (WildcardType) fromType;
-         boolean boundOk = false;
-         for (Type upperBound: fromWildcard.getUpperBounds())
-         {
-            if (isAssignable(classType, upperBound, variableHierarchy))
-            {
-               boundOk = true;
-               break;
-            }
-         }
-         if (!boundOk)
-         {
-            return false;
-         }
-         for (Type lowerBound: fromWildcard.getLowerBounds())
-         {
-            if (isAssignable(classType, lowerBound, variableHierarchy))
-            {
-               return true;
-            }
-         }
-         return fromWildcard.getLowerBounds().length == 0;
-      }
       // type instanceof GenericArrayType (ommitting check for performance
       // reasons)
       if (classType == Object.class)
@@ -177,7 +224,7 @@ public class Algorithm
    }
 
    private boolean isAssignable(ParameterizedType paramType, Type fromType, 
-         Map<String, VariableNode> variableHierarchy, boolean boundLevel)
+         VariableHierarchy variableHierarchy, boolean boundLevel)
    {
       if (fromType instanceof TypeVariable)
       {
@@ -192,11 +239,11 @@ public class Algorithm
          return false;
       }
       return ParamTypeAssignabilityAlgorithm.isAssignable(
-            paramType, fromType, CHECKER, variableHierarchy, boundLevel);
+            paramType, fromType, CHECKER, this, variableHierarchy, boundLevel);
    }
 
    private boolean isAssignable(GenericArrayType arrayType, Type fromType,
-         Map<String, VariableNode> variableHierarchy)
+         VariableHierarchy variableHierarchy)
    {
       if (fromType instanceof Class)
       {
@@ -218,22 +265,14 @@ public class Algorithm
    }
 
    //////////////////////////////////////////////////////////
-   private static final ParamTypeAssignabilityAlgorithm.EqualityChecker<Map<String, VariableNode>> CHECKER
-      = new ParamTypeAssignabilityAlgorithm.EqualityChecker<Map<String,VariableNode>>()
+   private static final ParamTypeAssignabilityAlgorithm.EqualityChecker<Algorithm, VariableHierarchy> CHECKER
+      = new ParamTypeAssignabilityAlgorithm.EqualityChecker<Algorithm, VariableHierarchy>()
    {
-      public boolean isSame(Type type, Type fromType, Map<String, VariableNode> variableHierarchy, boolean boundLevel)
+      public boolean isSame(Type type, Type fromType, Algorithm client, VariableHierarchy variableHierarchy, boolean boundLevel)
       {
-         if (type instanceof TypeVariable)
+         if(Algorithm.VARIABLE_TARGET.isVariableOperationApplicable(type, fromType))
          {
-            TypeVariable variable = (TypeVariable) type;
-            VariableNode node = variableHierarchy.containsKey(variable.getName())?
-                  variableHierarchy.get(variable.getName()):
-                     new VariableNode(variable, variableHierarchy);
-             if (boundLevel && fromType instanceof WildcardType)
-             {
-                return false;
-             }
-             return node.assignValue(fromType);
+            return Algorithm.VARIABLE_TARGET.assignValue(type, fromType, variableHierarchy, boundLevel);
          }
          if (type instanceof Class)
          {
@@ -247,18 +286,18 @@ public class Algorithm
             }
             ParameterizedType fromParamType = (ParameterizedType) fromType;
             ParameterizedType paramType = (ParameterizedType) type;
-            if (!isSame(paramType.getRawType(), fromParamType.getRawType(),
+            if (!isSame(paramType.getRawType(), fromParamType.getRawType(), client,
                   variableHierarchy, boundLevel))
             {
                return false;
             }
             return isSame(paramType.getActualTypeArguments(),
-                  fromParamType.getActualTypeArguments(), variableHierarchy, boundLevel);
+                  fromParamType.getActualTypeArguments(), client, variableHierarchy, boundLevel);
          }
          if (type instanceof WildcardType)
          {
             Type[] upperBounds = ((WildcardType) type).getUpperBounds();
-            Algorithm algorithm = Algorithm.getInstance();
+            Type[] lowerBounds = ((WildcardType) type).getLowerBounds();
             if (fromType instanceof WildcardType)
             {
                Type[] fromUpperBounds = ((WildcardType) fromType).getUpperBounds();
@@ -266,7 +305,7 @@ public class Algorithm
                {
                   for (int j = 0; j < fromUpperBounds.length; j++)
                   {
-                     if (algorithm.isAssignable(upperBounds[i],
+                     if (client.isAssignable(upperBounds[i],
                            fromUpperBounds[i], variableHierarchy))
                      {
                         continue outer;
@@ -274,20 +313,40 @@ public class Algorithm
                   }
                   return false;
                }
-               // TODO lower bounds: inverted algorithm
+               Type[] fromLowerBounds = ((WildcardType) fromType).getLowerBounds();
+               outer: for (int i = 0; i < lowerBounds.length; i++)
+               {
+                  for (int j = 0; j < fromLowerBounds.length; j++)
+                  {
+                     if (client.getInverseAlgorithm().isAssignable(
+                           fromLowerBounds[i],
+                           lowerBounds[i], variableHierarchy))
+                     {
+                        continue outer;
+                     }
+                  }
+                  return false;
+               }
                return true;
             }
             else
             {
                for (int i = 0; i < upperBounds.length; i++)
                {
-                  if (!algorithm.isAssignable(upperBounds[i], fromType,
+                  if (!client.isAssignable(upperBounds[i], fromType,
                         variableHierarchy))
                   {
                      return false;
                   }
                }
-               // TODO lower bounds: inverted algorithm
+               for (int i = 0; i < lowerBounds.length; i++)
+               {
+                  if (!client.getInverseAlgorithm().isAssignable(
+                        fromType, lowerBounds[i], variableHierarchy))
+                  {
+                     return false;
+                  }
+               }
                return true;
             }
          }

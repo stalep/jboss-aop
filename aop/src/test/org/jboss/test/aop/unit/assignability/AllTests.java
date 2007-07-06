@@ -21,33 +21,30 @@
  */
 package org.jboss.test.aop.unit.assignability;
 
-import junit.framework.TestCase;
-
-import org.jboss.aop.advice.annotation.assignability.Algorithm;
-import org.jboss.aop.advice.annotation.assignability.VariableHierarchy;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
- * 
- * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
+ *
  */
-public abstract class AssignabilityAlgorithmTest extends TestCase
+public class AllTests
 {
 
-   protected Algorithm algorithm;
-   protected VariableHierarchy hierarchy;
-
-   /**
-    * 
-    */
-   public AssignabilityAlgorithmTest()
+   public static Test suite()
    {
-      super();
+      TestSuite suite = new TestSuite(
+            "Test for org.jboss.test.aop.unit.assignability");
+      //$JUnit-BEGIN$
+      suite.addTestSuite(ClassTypeTest.class);
+      suite.addTestSuite(ParameterizedTypeFromClassTest.class);
+      suite.addTestSuite(TypeVariableTest.class);
+      suite.addTestSuite(ParameterizedTypeFromVariableTest.class);
+      //suite.addTestSuite(ParameterizedTypeTest.class);
+      suite.addTestSuite(ParameterizedTypeFromParamTypeTest.class);
+      suite.addTestSuite(ParameterizedTypeFromArrayTest.class);
+      //$JUnit-END$
+      return suite;
    }
 
-   public void setUp()
-   {
-      algorithm = Algorithm.VARIABLE_TARGET;
-      hierarchy = new VariableHierarchy();
-   }
 }

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.aop.advice.annotation;
+package org.jboss.aop.advice.annotation.assignability;
 
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
@@ -27,56 +27,51 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
+
 
 /**
  * 
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-public class VariableNode
+class VariableNode
 {
-   private static int boundComparation = 0;
-   private Map<String, VariableNode> map;
+   private VariableHierarchy hierarchy;
    private VariableNode previous;
    private VariableNode next;
    private Collection<Type> lowerBounds;
    private TypeVariable variable;
    private Type assignedValue;
    
-   public VariableNode(TypeVariable content, Map<String, VariableNode> map)
+   public VariableNode(TypeVariable content, VariableHierarchy hierarchy)
    {
-      this.map = map;
+      this.hierarchy = hierarchy;
       this.variable = content;
       lowerBounds = new HashSet<Type>();
       Type[] bounds = content.getBounds();
       if (bounds.length == 1 && bounds[0] instanceof TypeVariable)
       {
          TypeVariable typeVariable = (TypeVariable) bounds[0];
-         if (map.containsKey(typeVariable.getName()))
-         {
-            next = map.get(typeVariable.getName());
-         }
-         else
-         {
-            next = new VariableNode(typeVariable, map);
-         }
+         next = hierarchy.getVariableNode(typeVariable);
          next.previous = this;
       }
-      map.put(content.getName(), this);
    }
    
-   public final boolean assignValue(Type value)
+   public final boolean assignValue(Type value, boolean boundLevel)
    {
-      if (boundComparation > 0 && !(value instanceof Class)
+      if (this.hierarchy.isBoundComparation() && !(value instanceof Class)
             && !(value instanceof ParameterizedType))
       {
          return false;
       }
+      
+      if (boundLevel && value instanceof WildcardType)
+      {
+         return false;
+      }
+      
       if (this.assignedValue != null)
       {
          // TODO HERE1 HERE HERE HERE HERE
@@ -115,6 +110,12 @@ public class VariableNode
       {
          this.lowerBounds.add(lowerBound);
       }
+      return true;
+   }
+   
+   public final boolean addUpperBound(Type upperBound)
+   {
+      // TODO
       return true;
    }
    
@@ -157,17 +158,21 @@ public class VariableNode
       if (next == null)
       {
          Type[] bounds = variable.getBounds();
-         boundComparation ++;
-         for (int i = 0; i < bounds.length; i++)
+         this.hierarchy.startBoundComparation();
+         try
          {
-            // TODO HERE HERE HERE HERE
-            if (!Algorithm.getInstance().isAssignable(bounds[i], lowerBound, map))
+            for (int i = 0; i < bounds.length; i++)
             {
-               boundComparation --;
-               return false;
+               if (!Algorithm.VARIABLE_TARGET.isAssignable(bounds[i], lowerBound, hierarchy))
+               {
+                  return false;
+               }
             }
          }
-         boundComparation --;
+         finally
+         {
+            this.hierarchy.finishBoundComparation();
+         }
          return true;
       }
       return next.isInsideBounds(lowerBound, true);
@@ -317,7 +322,7 @@ public class VariableNode
       if (type instanceof ParameterizedType)
       {
          return ParamTypeAssignabilityAlgorithm.isAssignable(
-               (ParameterizedType) type, fromType, CHECKER, this, false);
+               (ParameterizedType) type, fromType, CHECKER, this, null, false);
       }
       if (type instanceof TypeVariable)
       {
@@ -437,24 +442,13 @@ public class VariableNode
       return true;
    }
    
-   private static ParamTypeAssignabilityAlgorithm.EqualityChecker<VariableNode> CHECKER =
-      new ParamTypeAssignabilityAlgorithm.EqualityChecker<VariableNode>()
+   private static ParamTypeAssignabilityAlgorithm.EqualityChecker<VariableNode, ?> CHECKER =
+      new ParamTypeAssignabilityAlgorithm.EqualityChecker<VariableNode, Object>()
       {
-         public boolean isSame(Type argument, Type fromArgument, VariableNode node, boolean boundLevel)
+         public boolean isSame(Type argument, Type fromArgument, VariableNode node,
+               Object token, boolean boundLevel)
          {
             return node.isSame(argument, fromArgument, false);
          }
       };
-}
-
-class ChoiceBound implements Type
-{
-   public ChoiceBound(TypeVariable variable, Type[] bounds)
-   {
-      this.variable = variable;
-      this.bounds = new LinkedList<Type>();
-      Collections.addAll(this.bounds, bounds);
-   }
-   TypeVariable variable;
-   Collection<Type> bounds;
 }

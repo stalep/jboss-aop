@@ -19,35 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.test.aop.unit.assignability;
+package org.jboss.aop.advice.annotation.assignability;
 
-import junit.framework.TestCase;
-
-import org.jboss.aop.advice.annotation.assignability.Algorithm;
-import org.jboss.aop.advice.annotation.assignability.VariableHierarchy;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 
 /**
  * 
- * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-public abstract class AssignabilityAlgorithmTest extends TestCase
+class ChoiceBound implements Type
 {
-
-   protected Algorithm algorithm;
-   protected VariableHierarchy hierarchy;
-
-   /**
-    * 
-    */
-   public AssignabilityAlgorithmTest()
+   public ChoiceBound(TypeVariable variable, Type[] bounds)
    {
-      super();
+      this.variable = variable;
+      this.bounds = new LinkedList<Type>();
+      Collections.addAll(this.bounds, bounds);
    }
-
-   public void setUp()
-   {
-      algorithm = Algorithm.VARIABLE_TARGET;
-      hierarchy = new VariableHierarchy();
-   }
+   TypeVariable variable;
+   Collection<Type> bounds;
 }

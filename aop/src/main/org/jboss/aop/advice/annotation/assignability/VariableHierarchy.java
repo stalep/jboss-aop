@@ -19,35 +19,52 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.test.aop.unit.assignability;
+package org.jboss.aop.advice.annotation.assignability;
 
-import junit.framework.TestCase;
+import java.lang.reflect.TypeVariable;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.jboss.aop.advice.annotation.assignability.Algorithm;
-import org.jboss.aop.advice.annotation.assignability.VariableHierarchy;
 
 /**
  * 
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-public abstract class AssignabilityAlgorithmTest extends TestCase
+public class VariableHierarchy
 {
-
-   protected Algorithm algorithm;
-   protected VariableHierarchy hierarchy;
-
-   /**
-    * 
-    */
-   public AssignabilityAlgorithmTest()
+   private Map<String, VariableNode> map;
+   private int boundComparation;
+   
+   public VariableHierarchy()
    {
-      super();
+      this.map = new HashMap<String, VariableNode>();
    }
 
-   public void setUp()
+   VariableNode getVariableNode(TypeVariable typeVariable)
    {
-      algorithm = Algorithm.VARIABLE_TARGET;
-      hierarchy = new VariableHierarchy();
+      String key = typeVariable.getName();
+      if (map.containsKey(key))
+      {
+         return map.get(key);
+      }
+      VariableNode node = new VariableNode(typeVariable, this);
+      map.put(key, node);
+      return node;
+   }
+   
+   void startBoundComparation()
+   {
+      this.boundComparation ++;
+   }
+   
+   void finishBoundComparation()
+   {
+      this.boundComparation --;
+   }
+   
+   boolean isBoundComparation()
+   {
+      return this.boundComparation > 0;
    }
 }

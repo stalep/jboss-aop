@@ -19,10 +19,11 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.aop.advice.annotation;
+package org.jboss.aop.advice.annotation.assignability;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+
 
 /**
  * 
@@ -41,7 +42,7 @@ class ParamTypeAssignabilityAlgorithm
     * @param <T> this is a token that can be used to store information useful for
     *            the implementor.
     */
-   static abstract class EqualityChecker<T>
+   static abstract class EqualityChecker<C, T>
    {
       /**
        * Indicates whether both argument list can be considered the same.
@@ -57,11 +58,11 @@ class ParamTypeAssignabilityAlgorithm
        *                      fromArguments</code> list can be assigned to a list of
        *                      <code>arguments</code> type.
        */
-      protected boolean isSame(Type[] arguments, Type[] fromArguments, T token, boolean assignAllowed)
+      protected boolean isSame(Type[] arguments, Type[] fromArguments, C caller, T token, boolean assignAllowed)
       {
          for (int i = 0; i < arguments.length; i++)
          {
-            if (!isSame(arguments[i], fromArguments[i], token, assignAllowed))
+            if (!isSame(arguments[i], fromArguments[i], caller, token, assignAllowed))
             {
                return false;
             }
@@ -86,7 +87,7 @@ class ParamTypeAssignabilityAlgorithm
        *                      <code>fromArgument</code> as the equivalent parameter
        *                      value
        */
-      abstract boolean isSame(Type argument, Type fromArgument, T token, boolean assignAllowed);
+      abstract boolean isSame(Type argument, Type fromArgument, C caller, T token, boolean assignAllowed);
    }
 
    /**
@@ -98,8 +99,8 @@ class ParamTypeAssignabilityAlgorithm
     * @param checkerToken
     * @return
     */
-   public static<T> boolean isAssignable(ParameterizedType paramType, Type fromType,
-         EqualityChecker<T> checker, T checkerToken, boolean assignAllowed)
+   public static<C, T> boolean isAssignable(ParameterizedType paramType, Type fromType,
+         EqualityChecker<C, T> checker, C caller, T checkerToken, boolean assignAllowed)
    {
       Class<?> fromRaw = null;
       ParameterizedType fromParamType = null;
@@ -128,7 +129,7 @@ class ParamTypeAssignabilityAlgorithm
          {
             // compare arguments with arguments
             return checker.isSame(paramType.getActualTypeArguments(),
-                  fromParamType.getActualTypeArguments(), checkerToken, assignAllowed);
+                  fromParamType.getActualTypeArguments(), caller, checkerToken, assignAllowed);
          }
          else if (!desiredType.isAssignableFrom(fromRaw))
          {
@@ -146,6 +147,6 @@ class ParamTypeAssignabilityAlgorithm
       {
          return true; // TODO with Warning
       }
-      return checker.isSame(paramType.getActualTypeArguments(), arguments, checkerToken, assignAllowed);
+      return checker.isSame(paramType.getActualTypeArguments(), arguments, caller, checkerToken, assignAllowed);
    }
 }
