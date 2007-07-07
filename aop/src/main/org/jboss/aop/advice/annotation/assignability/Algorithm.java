@@ -76,7 +76,7 @@ public enum Algorithm
             VariableHierarchy variableHierarchy)
       {
          VariableNode fromNode = variableHierarchy.getVariableNode((TypeVariable) fromType);
-         return fromNode.assignValue(type);
+         return fromNode.addMaximumUpperBound(type);
       }
       
       protected boolean addBound(Type type, Type fromType,
@@ -281,9 +281,9 @@ public enum Algorithm
    {
       public boolean isSame(Type type, Type fromType, Algorithm client, VariableHierarchy variableHierarchy)
       {
-         if(Algorithm.VARIABLE_TARGET.isVariableOperationApplicable(type, fromType))
+         if(client.isVariableOperationApplicable(type, fromType))
          {
-            return Algorithm.VARIABLE_TARGET.assignValue(type, fromType, variableHierarchy);
+            return client.assignValue(type, fromType, variableHierarchy);
          }
          if (type instanceof Class)
          {

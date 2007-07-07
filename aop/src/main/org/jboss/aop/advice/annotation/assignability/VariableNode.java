@@ -63,14 +63,7 @@ class VariableNode
    
    public final boolean assignValue(Type value)
    {
-      // assigned bounds can only be assigned to concrete types
-      if (this.hierarchy.isBoundComparation() && !(value instanceof Class)
-            && !(value instanceof ParameterizedType))
-      {
-         return false;
-      }
-      // real bounds can have values assigned to variables
-      if (this.hierarchy.isRealBoundComparation() && (value instanceof WildcardType))
+      if (!isAssignabilityPermited(value))
       {
          return false;
       }
@@ -87,7 +80,7 @@ class VariableNode
       this.assignedValue = value;
       return true;
    }
-   
+
    public final boolean addLowerBound(Type lowerBound)
    {
       if (!isInsideUpperBounds(lowerBound, false) ||
@@ -114,6 +107,15 @@ class VariableNode
       {
          return false;
       }
+      addToUpperBounds(upperBound);
+      return true;
+   }
+
+   /**
+    * @param upperBound
+    */
+   private void addToUpperBounds(Type upperBound)
+   {
       if (upperBound instanceof TypeVariable)
       {
          Type[] bounds = ((TypeVariable) upperBound).getBounds();
@@ -123,7 +125,63 @@ class VariableNode
       {
          this.upperBounds.add(upperBound);
       }
-      return true;
+   }
+   
+   public final boolean addMaximumUpperBound(Type upperBound)
+   {
+      if (!isAssignabilityPermited(upperBound))
+      {
+         return false;
+      }
+      for (Type oldUpperBound: upperBounds)
+      {
+         if (!isAssignable(upperBound, oldUpperBound))
+         {
+            return false;
+         }
+      }
+      for (Type oldLowerBound: lowerBounds)
+      {
+         if (!isAssignable(upperBound, oldLowerBound))
+         {
+            return false;
+         }
+      }
+      if (this.assignedValue != null && !isAssignable(upperBound, assignedValue))
+      {
+         return false;
+      }
+      if (this.next != null)
+      {
+         return this.next.addMaximumUpperBound(upperBound);
+      }
+      Type[] bounds = this.variable.getBounds();
+      if (bounds.length == 1 && bounds[0] == Object.class)
+      {
+         return true;
+      }
+      else
+      {
+         for (Type bound: bounds)
+         {
+            if (!isAssignable(upperBound, bound))
+            {
+               return false;
+            }
+         }
+         return true;
+      }
+   }
+   
+   private boolean isAssignabilityPermited(Type value)
+   {
+      // assigned bounds can only be assigned to concrete types
+      return !(
+       ((this.hierarchy.isBoundComparation() && !(value instanceof Class)
+            && !(value instanceof ParameterizedType))) ||
+       (
+      // real bounds can have values assigned to variables
+       (this.hierarchy.isRealBoundComparation() && (value instanceof WildcardType))));
    }
    
    private boolean areLowerBoundsInside(Type bound, boolean checkUpperBounds)
@@ -401,6 +459,25 @@ class VariableNode
       if (type instanceof TypeVariable)
       {
          for (Type bound: ((TypeVariable) type).getBounds())
+         {
+            if (!isAssignable(bound, fromType))
+            {
+               return false;
+            }
+         }
+         return true;
+      }
+      if (type instanceof WildcardType)
+      {
+         WildcardType wildcard = (WildcardType) type;
+         for (Type bound: wildcard.getUpperBounds())
+         {
+            if (!isAssignable(bound, fromType))
+            {
+               return false;
+            }
+         }
+         for (Type bound: wildcard.getLowerBounds())
          {
             if (!isAssignable(bound, fromType))
             {
