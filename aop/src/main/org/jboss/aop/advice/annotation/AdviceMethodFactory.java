@@ -35,6 +35,7 @@ import java.util.WeakHashMap;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.advice.annotation.assignability.DegreeAlgorithm;
 import org.jboss.aop.util.ReflectUtils;
 
 /**
@@ -158,7 +159,7 @@ public class AdviceMethodFactory
                   public short getAssignabilityDegree(int typeIndex,
                         boolean isContextRule, AdviceMethodProperties properties)
                   {
-                     return getAssignabilityDegree(parameterTypes[0], properties.getInvocationType());
+                     return DEGREE.getAssignabilityDegree(properties.getInvocationType(), parameterTypes[0]);
                   }
                   
                   public void assignAdviceInfo(AdviceMethodProperties properties)
@@ -173,9 +174,6 @@ public class AdviceMethodFactory
          ReturnType.NOT_VOID, null);
          
 
-   static final short NOT_ASSIGNABLE_DEGREE = Short.MAX_VALUE;
-   static final short MAX_DEGREE = NOT_ASSIGNABLE_DEGREE - 1;
-   
    static final ParameterAnnotationRule[] TARGET_AVAILABLE =
       new ParameterAnnotationRule[] {ParameterAnnotationRule.TARGET,
       ParameterAnnotationRule.ARGS, ParameterAnnotationRule.ARG};
@@ -485,7 +483,7 @@ public class AdviceMethodFactory
       {
          return bestAdvice;
       }
-      short bestDegree = NOT_ASSIGNABLE_DEGREE;
+      short bestDegree = DegreeAlgorithm.NOT_ASSIGNABLE_DEGREE;
       if (returnType == ReturnType.ANY || returnType == ReturnType.NOT_VOID)
       {
          for (AdviceInfo currentAdvice: greatestRank)
@@ -522,7 +520,7 @@ public class AdviceMethodFactory
          AdviceMethodProperties properties, int totalRules,
          boolean isContextRule)
    {
-      short bestDegree = NOT_ASSIGNABLE_DEGREE;
+      short bestDegree = DegreeAlgorithm.NOT_ASSIGNABLE_DEGREE;
       List<AdviceInfo> bestAdviceList = new ArrayList<AdviceInfo>();
       
       // rule i is more important than rule i + 1
@@ -554,7 +552,7 @@ public class AdviceMethodFactory
          greatestRank.addAll(bestAdviceList);
          // reset values
          bestAdviceList.clear();
-         bestDegree = NOT_ASSIGNABLE_DEGREE;
+         bestDegree = DegreeAlgorithm.NOT_ASSIGNABLE_DEGREE;
       }
       return null;
    }

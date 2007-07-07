@@ -519,9 +519,9 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          {
             return -1;
          }
-         return AnnotatedParameterAdviceInfo.this.getAssignabilityDegree(
-               (Class) rule.getAssignableFrom(properties),
-               method.getParameterTypes()[this.index]);
+         return DEGREE.getAssignabilityDegree(
+               method.getParameterTypes()[this.index],
+               (Class) rule.getAssignableFrom(properties));
       }
       
       public final void assignParameterInfo(int[] args)
@@ -706,9 +706,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          short level = 0;
          for (int i = 0; i < indexesLength; i++)
          {
-            level += AnnotatedParameterAdviceInfo.this.getAssignabilityDegree(
-                  expectedTypes[this.indexes[i][1]],
-                  method.getParameterTypes()[this.indexes[i][0]]);
+            level += DEGREE.getAssignabilityDegree(method.getParameterTypes()[this.indexes[i][0]],
+                  expectedTypes[this.indexes[i][1]]);
          }
          return level; 
       }
