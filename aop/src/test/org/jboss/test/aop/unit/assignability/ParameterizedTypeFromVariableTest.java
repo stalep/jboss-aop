@@ -1196,4 +1196,40 @@ public class ParameterizedTypeFromVariableTest extends ParameterizedTypeTest
       assertTrue(algorithm.isAssignable(called.getGenericParameterTypes()[1],
             caller.getGenericParameterTypes()[1], hierarchy));
    }
+
+   // Scenario 77
+   
+   void caller77(Collection<Integer> ci, Collection<Collection<Integer>> cci)
+   {
+      called77(ci, cci);
+   }
+
+   <B> void called77(B arg, Collection<B> arg2){}
+   
+   public void test77() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller77", new Class[]{Collection.class, Collection.class});
+      Method called = this.getClass().getDeclaredMethod("called77", new Class[]{Object.class, Collection.class});
+      assertTrue(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+      assertTrue(algorithm.isAssignable(called.getGenericParameterTypes()[1],
+            caller.getGenericParameterTypes()[1], hierarchy));
+   }
+   
+   // Scenario 78
+   
+   public void caller78(Collection<Integer> ci, Collection<Collection<String>> ccs)
+   {
+      //called77(ci, ccs);
+   }
+   
+   public void test78() throws Exception
+   {
+      Method caller = this.getClass().getDeclaredMethod("caller78", new Class[]{Collection.class, Collection.class});
+      Method called = this.getClass().getDeclaredMethod("called77", new Class[]{Object.class, Collection.class});
+      assertTrue(algorithm.isAssignable(called.getGenericParameterTypes()[0],
+            caller.getGenericParameterTypes()[0], hierarchy));
+      assertFalse(algorithm.isAssignable(called.getGenericParameterTypes()[1],
+            caller.getGenericParameterTypes()[1], hierarchy));
+   }
 }
