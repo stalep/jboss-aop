@@ -44,6 +44,7 @@ public class AllTests
       //suite.addTestSuite(ParameterizedTypeTest.class);
       suite.addTestSuite(ParameterizedTypeFromParamTypeTest.class);
       suite.addTestSuite(ParameterizedTypeFromArrayTest.class);
+      suite.addTestSuite(FromVariableAlgorithmTest.class);
       //$JUnit-END$
       return suite;
    }
