@@ -50,6 +50,7 @@ import org.jboss.aop.pointcut.ast.ClassExpression;
  * Comment
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
+ * @author adrian@jboss.org
  * @version $Revision$
  */
 public class Domain extends AspectManager
@@ -934,7 +935,7 @@ public class Domain extends AspectManager
    }
 
 
-   /** Managed by the top-level aspect manager */
+   @Deprecated
    protected Map getScopedClassLoaderDomains()
    {
       return parent.getScopedClassLoaderDomains();

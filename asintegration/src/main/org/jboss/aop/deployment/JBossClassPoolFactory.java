@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.jboss.aop.AspectManager;
+import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.mx.loading.RepositoryClassLoader;
 import javassist.ClassPool;
@@ -37,6 +38,7 @@ import javassist.scopedpool.ScopedClassPoolRepository;
  * Comment
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
+ * @author adrian@jboss.org
  * @version $Revision$
  *
  **/
@@ -63,7 +65,8 @@ public class JBossClassPoolFactory implements ScopedClassPoolFactory
          {
             throw new RuntimeException(e);
          }
-         if (AspectManager.scopedCLHelper.ifScopedDeploymentGetScopedParentUclForCL(cl) != null)
+         AOPClassLoaderScopingPolicy policy = AspectManager.getClassLoaderScopingPolicy();
+         if (policy != null && policy.isScoped(cl))
          {
             //It is scoped
             return new ScopedJBossClassPool(cl, src, repository, tempdir, tmpCP);

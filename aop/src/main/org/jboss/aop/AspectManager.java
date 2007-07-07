@@ -32,13 +32,18 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.WeakHashMap;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.scopedpool.ScopedClassPool;
+import javassist.scopedpool.ScopedClassPoolFactory;
 
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AdviceStack;
@@ -50,6 +55,7 @@ import org.jboss.aop.advice.PrecedenceDef;
 import org.jboss.aop.advice.PrecedenceDefEntry;
 import org.jboss.aop.advice.PrecedenceSorter;
 import org.jboss.aop.advice.Scope;
+import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.AOPClassPoolRepository;
 import org.jboss.aop.classpool.AOPScopedClassLoaderHelper;
 import org.jboss.aop.instrument.GeneratedAdvisorInstrumentor;
@@ -78,10 +84,6 @@ import org.jboss.logging.Logger;
 import org.jboss.util.collection.WeakValueHashMap;
 import org.jboss.util.loading.Translatable;
 import org.jboss.util.loading.Translator;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.scopedpool.ScopedClassPool;
-import javassist.scopedpool.ScopedClassPoolFactory;
 
 /**
  * This singleton class manages all pointcuts and metadata.
@@ -95,6 +97,7 @@ import javassist.scopedpool.ScopedClassPoolFactory;
  * to do that.
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
+ * @author adrian@jboss.org
  * @version $Revision$
  */
 public class AspectManager
@@ -109,6 +112,9 @@ public class AspectManager
    protected final WeakHashMap advisors = new WeakHashMap();
    
    /** A map of domains by loader repository, maintaned by the top level AspectManager */
+   // This seems to be maintained but not used, to avoid garbage collection of domains?
+   // I moved it to the AOPClassLoaderScopingPolicy for now 
+   @Deprecated 
    protected WeakHashMap scopedClassLoaderDomains = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
 
    /** A map of domains by class, maintaned by the top level AspectManager */
@@ -174,8 +180,12 @@ public class AspectManager
    // indicates that the transformation process has begun
    protected boolean transformationStarted = false;
 
-   //This will be set by the AspectManagerService if running in JBoss
-   public static AOPScopedClassLoaderHelper scopedCLHelper;
+   @Deprecated // replaced by the temporary AOPClassLoaderScopingPolicy - no longer referenced
+   protected static AOPScopedClassLoaderHelper scopedCLHelper;
+   
+   /** The classloader scoping policy */
+   // This shouldn't really be static (artifact of singleton and self-bootstrap design)
+   private static AOPClassLoaderScopingPolicy classLoaderScopingPolicy;
    
    //Keeps track of if we need to convert references etc for a given class. Domains for scoped classloaders will have their own version of this
    protected static InterceptionMarkers interceptionMarkers = new InterceptionMarkers();
@@ -195,30 +205,63 @@ public class AspectManager
     */
    public static boolean verbose = false;
 
+   /**
+    * Get the top level aspect manager
+    * 
+    * @return the top level aspect manager
+    */
    public static synchronized AspectManager getTopLevelAspectManager()
    {
-      if (scopedCLHelper == null)
+      if (classLoaderScopingPolicy == null)
       {
          //We are not running in jboss
          return instance();
       }
-      ClassLoader topUcl = scopedCLHelper.getTopLevelJBossClassLoader();
-      return instance(topUcl);
 
+      AspectManager result = initManager();
+      Domain scopedDomain = classLoaderScopingPolicy.getTopLevelDomain(result);
+      if (scopedDomain != null)
+         result = scopedDomain;
+      return result;
    }
 
    public static synchronized AspectManager instance()
    {
       return instance(Thread.currentThread().getContextClassLoader());
    }
-
+   
+   /**
+    * Get the aspect manager for a classloader
+    * 
+    * @param loadingClassLoader the classloader
+    * @return the aspect manager
+    */
    public static synchronized AspectManager instance(ClassLoader loadingClassLoader)
+   {
+      AspectManager result = initManager();
+      if (classLoaderScopingPolicy != null)
+      {
+         Domain scopedDomain = classLoaderScopingPolicy.getDomain(loadingClassLoader, result);
+         if (scopedDomain != null)
+            result = scopedDomain;
+      }
+      return result;
+   }
+
+   /**
+    * Initialise the manager if not already dones so<p>
+    * 
+    * This method should be invoked in a synchronized block
+    * 
+    * @return the manager
+    */
+   private static AspectManager initManager()
    {
       if (manager == null)
       {
-         AccessController.doPrivileged(new PrivilegedAction()
+         AccessController.doPrivileged(new PrivilegedAction<AspectManager>()
          {
-            public Object run()
+            public AspectManager run()
             {
                String optimized = System.getProperty("jboss.aop.optimized", null);
                if (optimized != null)
@@ -232,7 +275,6 @@ public class AspectManager
                }
                manager = new AspectManager();
                //Initialise frequently used fields needed by the top-level manager
-               manager.scopedClassLoaderDomains = new WeakHashMap();
                manager.subDomainsPerClass = new WeakHashMap();
                manager.exclude = new ArrayList();
                manager.include = new ArrayList();
@@ -302,35 +344,28 @@ public class AspectManager
             }
          });
       }
-
-      if (scopedCLHelper != null)
-      {
-         ClassLoader scopedClassLoader = scopedCLHelper.ifScopedDeploymentGetScopedParentUclForCL(loadingClassLoader);
-         if (scopedClassLoader != null)
-         {
-            Domain scopedManager = null;
-            synchronized (AOPClassPoolRepository.getInstance().getRegisteredCLs())
-            {
-               Object loaderRepository = scopedCLHelper.getLoaderRepository(loadingClassLoader);
-               scopedManager = (Domain)manager.scopedClassLoaderDomains.get(loaderRepository);
-               if (scopedManager == null)
-               {
-                  scopedManager = scopedCLHelper.getScopedClassLoaderDomain(scopedClassLoader, manager);
-                  if (verbose && logger.isDebugEnabled())
-                  {
-                     logger.debug("Created domain " + scopedManager + " for scoped deployment on: " +
-                           loadingClassLoader + "; identifying scoped ucl: " + scopedClassLoader);
-                  }
-                  scopedManager.setInheritsBindings(true);
-                  scopedManager.setInheritsDeclarations(true);
-                  
-                  manager.scopedClassLoaderDomains.put(loaderRepository, scopedManager);
-               }
-            }
-            return scopedManager;
-         }
-      }
       return manager;
+   }
+
+   /**
+    * Get the classLoaderScopingPolicy.
+    * 
+    * @return the classLoaderScopingPolicy.
+    */
+   public static AOPClassLoaderScopingPolicy getClassLoaderScopingPolicy()
+   {
+      return classLoaderScopingPolicy;
+   }
+
+   /**
+    * Set the classLoaderScopingPolicy.
+    * 
+    * TODO does it make sense for this to be modified once it has been set?
+    * @param classLoaderScopingPolicy the classLoaderScopingPolicy.
+    */
+   public static void setClassLoaderScopingPolicy(AOPClassLoaderScopingPolicy classLoaderScopingPolicy)
+   {
+      AspectManager.classLoaderScopingPolicy = classLoaderScopingPolicy;
    }
 
    public InterceptionMarkers getInterceptionMarkers()
@@ -696,6 +731,8 @@ public class AspectManager
       AOPClassPoolRepository.getInstance().registerClass(clazz);
    }
 
+   @Deprecated
+   // This is never invoked, it always referenced the scopedClassLoaderDomains directly?
    protected Map getScopedClassLoaderDomains()
    {
       return scopedClassLoaderDomains;

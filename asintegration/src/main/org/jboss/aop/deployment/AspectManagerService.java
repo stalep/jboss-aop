@@ -39,6 +39,7 @@ import javax.management.MBeanException;
 import javax.management.Notification;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
+
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.AspectNotificationHandler;
 import org.jboss.aop.AspectXmlLoader;
@@ -46,6 +47,9 @@ import org.jboss.aop.ClassLoaderValidation;
 import org.jboss.aop.ClassicWeavingStrategy;
 import org.jboss.aop.Deployment;
 import org.jboss.aop.SuperClassesFirstWeavingStrategy;
+import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
+import org.jboss.aop.classpool.AOPScopedClassLoaderHelper;
+import org.jboss.aop.classpool.AOPScopedClassLoaderHelperBridge;
 import org.jboss.aop.hook.JDK14Transformer;
 import org.jboss.aop.hook.JDK14TransformerManager;
 import org.jboss.aop.instrument.InstrumentorFactory;
@@ -58,6 +62,7 @@ import org.jboss.system.server.ServerConfig;
 
 /**
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
+ * @author adrian@jboss.org
  * @version $Revision$
  * @jmx:mbean extends="org.jboss.system.ServiceMBean"
  */
@@ -159,7 +164,9 @@ public class AspectManagerService
       created = true;
       AspectManager.notificationHandler = this;
 
-      AspectManager.scopedCLHelper = new JBossScopedClassLoaderHelper();
+      AOPScopedClassLoaderHelper helper = new JBossScopedClassLoaderHelper();
+      AOPClassLoaderScopingPolicy policy = new AOPScopedClassLoaderHelperBridge(helper);
+      AspectManager.setClassLoaderScopingPolicy(policy);
 
       baseAop();
    }
