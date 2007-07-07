@@ -42,6 +42,13 @@ public class VariableHierarchy
       this.map = new HashMap<String, VariableNode>();
    }
 
+   public void reset()
+   {
+      this.map.clear();
+      this.boundComparation = 0;
+      this.realBoundComparation = 0;
+   }
+   
    VariableNode getVariableNode(TypeVariable typeVariable)
    {
       String key = typeVariable.getName();

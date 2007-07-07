@@ -24,6 +24,7 @@ package org.jboss.aop.instrument;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 
 import javassist.CannotCompileException;
 import javassist.CtClass;
@@ -74,7 +75,8 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       }
    }
 
-   WeakReference returnType;
+   WeakReference<Class<?>> returnClassType;
+   WeakReference<Type> returnType;
    boolean read;
    boolean hasTargetObject;
    
@@ -86,7 +88,8 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       if (((FieldInfo)info).isRead())
       {
          read = true;
-         returnType = new WeakReference(((FieldInfo)info).getField().getType());
+         returnClassType = new WeakReference(((FieldInfo)info).getField().getType());
+         returnType = new WeakReference(((FieldInfo)info).getField().getGenericType());
       }
       hasTargetObject = !Modifier.isStatic(((FieldInfo)info).getField().getModifiers());
    }
@@ -120,11 +123,11 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       return !read;
    }
 
-   protected Class getReturnType()
+   protected Class<?> getReturnClassType()
    {
-      if (returnType != null)
+      if (returnClassType != null)
       {
-         return (Class)returnType.get();
+         return returnClassType.get();
       }
       return null;
    }
@@ -138,7 +141,8 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
                setup.getAdviceName(),
                JOINPOINT_TYPE,
                (fieldAccess.isRead()) ? READ_INVOCATION_TYPE : WRITE_INVOCATION_TYPE,
-               (fieldAccess.isRead()) ? getReturnType() : Void.TYPE,
+               (fieldAccess.isRead()) ? field.getGenericType() : Void.TYPE,
+               (fieldAccess.isRead()) ? new Type[] {} : new Type[] {field.getGenericType()},
                (fieldAccess.isRead()) ? new Class[] {} : new Class[] {field.getType()},
                null,
                field.getDeclaringClass(),

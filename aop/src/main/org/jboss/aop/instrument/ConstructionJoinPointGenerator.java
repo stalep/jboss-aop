@@ -104,7 +104,7 @@ public class ConstructionJoinPointGenerator extends JoinPointGenerator
       return true;
    }
 
-   protected Class getReturnType()
+   protected Class getReturnClassType()
    {
       return null;
    }
@@ -118,8 +118,9 @@ public class ConstructionJoinPointGenerator extends JoinPointGenerator
             JOINPOINT_TYPE,
             INVOCATION_TYPE,
             ctor.getDeclaringClass(),
+            ctor.getGenericParameterTypes(),
             ctor.getParameterTypes(),
-            ctor.getExceptionTypes(),
+            ctor.getGenericExceptionTypes(),
             ctor.getDeclaringClass(),
             true);
    }

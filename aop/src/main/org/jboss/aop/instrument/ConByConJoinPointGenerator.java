@@ -114,7 +114,7 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
       return false;
    }
 
-   protected Class getReturnType()
+   protected Class getReturnClassType()
    {
       return (Class)returnType.get();
    }
@@ -129,8 +129,9 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
             JOINPOINT_TYPE,
             INVOCATION_TYPE,
             ctor.getDeclaringClass(),
+            ctor.getGenericParameterTypes(),
             ctor.getParameterTypes(),
-            ctor.getExceptionTypes(),
+            ctor.getGenericExceptionTypes(),
             call.getCalledClass(), false,
             call.getCallingClass(),
             true);

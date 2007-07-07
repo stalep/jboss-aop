@@ -127,10 +127,10 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
 
    protected boolean isVoid()
    {
-      return getReturnType() == null;
+      return getReturnClassType() == null;
    }
 
-   protected Class getReturnType()
+   protected Class getReturnClassType()
    {
       if (returnType == null)
       {
@@ -147,9 +147,10 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
                setup.getAdviceName(),
                JOINPOINT_TYPE,
                INVOCATION_TYPE,
-               method.getReturnType(),
+               method.getGenericReturnType(),
+               method.getGenericParameterTypes(),
                method.getParameterTypes(),
-               method.getExceptionTypes(),
+               method.getGenericExceptionTypes(),
                method.getDeclaringClass(),
                hasTargetObject(),
                ((MethodCallByMethod) joinPoint).getCallingClass(),

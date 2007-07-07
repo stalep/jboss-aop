@@ -22,6 +22,7 @@
 package org.jboss.aop.advice;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 import javassist.CtClass;
 import javassist.NotFoundException;
@@ -52,11 +53,12 @@ public class AdviceMethodProperties
    private String adviceName;
    private Class joinPointBeanType;
    private Class invocationType;
-   private Class target;
-   private Class caller;
-   private Class joinpointReturnType;
-   private Class[] joinpointParameters;
-   private Class[] joinpointExceptions;
+   private Type target;
+   private Type caller;
+   private Type joinpointReturnType;
+   private Type[] joinpointParameters;
+   private Class<?>[] joinpointParameterClassTypes;
+   private Type[] joinpointExceptions;
    private OptionalParameters optionalParameters;
    private boolean targetAvailable;
    private boolean callerAvailable;
@@ -70,10 +72,11 @@ public class AdviceMethodProperties
          String adviceName, 
          Class joinPointBeanType,
          Class invocationType,
-         Class joinpointReturnType,
-         Class[] joinpointParameters,
-         Class[] joinpointExceptions,
-         Class target,
+         Type joinpointReturnType,
+         Type[] joinpointParameters,
+         Class[] joinpointParameterClassTypes,
+         Type[] joinpointExceptions,
+         Type target,
          boolean targetAvailable)
    {
       this.aspectClass = aspectClass;
@@ -82,6 +85,7 @@ public class AdviceMethodProperties
       this.invocationType = invocationType;
       this.joinpointReturnType = joinpointReturnType;
       this.joinpointParameters = joinpointParameters;
+      this.joinpointParameterClassTypes = joinpointParameterClassTypes;
       this.joinpointExceptions = joinpointExceptions;
       this.target = target;
       this.targetAvailable = targetAvailable;
@@ -93,16 +97,18 @@ public class AdviceMethodProperties
          String adviceName,
          Class joinPointBeanType,
          Class invocationType,
-         Class joinpointReturnType,
-         Class[] joinpointParameters,
-         Class[] joinpointExceptions,
-         Class target,
+         Type joinpointReturnType,
+         Type[] joinpointParameters,
+         Class<?>[] joinpointParameterClassTypes,
+         Type[] joinpointExceptions,
+         Type target,
          boolean targetAvailable,
-         Class caller,
+         Type caller,
          boolean callerAvailable)
    {
       this (aspectClass, adviceName, joinPointBeanType, invocationType, joinpointReturnType,
-      joinpointParameters, joinpointExceptions, target, targetAvailable);
+      joinpointParameters, joinpointParameterClassTypes, joinpointExceptions, target,
+      targetAvailable);
       this.caller = caller;
       this.callerAvailable = callerAvailable;
       this.optionalParameters = OptionalParameters.TARGET_CALLER;
@@ -138,19 +144,23 @@ public class AdviceMethodProperties
    }
 
 
-   public Class[] getJoinpointExceptions()
+   public Type[] getJoinpointExceptions()
    {
       return joinpointExceptions;
    }
 
 
-   public Class[] getJoinpointParameters()
+   public Type[] getJoinpointParameters()
    {
       return joinpointParameters;
    }
 
+   public Class<?>[] getJoinpointParameterClassTypes()
+   {
+      return joinpointParameterClassTypes;
+   }
 
-   public Class<?> getJoinpointReturnType()
+   public Type getJoinpointReturnType()
    {
       return joinpointReturnType;
    }
@@ -170,7 +180,7 @@ public class AdviceMethodProperties
       return args;
    }
    
-   public Class getTargetType()
+   public Type getTargetType()
    {
       return this.target;
    }
@@ -180,7 +190,7 @@ public class AdviceMethodProperties
       return this.targetAvailable;
    }
    
-   public Class getCallerType()
+   public Type getCallerType()
    {
       return this.caller;
    }

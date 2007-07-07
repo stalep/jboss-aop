@@ -2,10 +2,13 @@ package org.jboss.aop.advice.annotation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.AdviceMethodProperties;
 import org.jboss.aop.advice.annotation.AdviceMethodFactory.ReturnType;
+import org.jboss.aop.advice.annotation.assignability.AssignabilityAlgorithm;
+import org.jboss.aop.advice.annotation.assignability.VariableHierarchy;
 
 /**
  * Information about an advice method whose parameters should annotated according to
@@ -25,6 +28,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
    // the following elements are the annotations whose use is compulsory given
    // that precondition is present among the annotated parameters
    private int[][] compulsory;
+   // hierarchy of variable types
+   private VariableHierarchy hierarchy;
    
    /**
     * Creates an annotated parameter advice info.
@@ -54,6 +59,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       this.contextParamTypes = createParameterAnnotationTypes(contextRules);
       this.mutuallyExclusive = mutuallyExclusive;
       this.compulsory = compulsory;
+      this.hierarchy = new VariableHierarchy();
       this.applyRules(properties);
    }
       
@@ -85,8 +91,9 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          case NOT_VOID:
             if (properties.getJoinpointReturnType() != void.class &&
                   method.getReturnType() != Object.class &&
-                  !properties.getJoinpointReturnType().
-                  isAssignableFrom(method.getReturnType()))
+                  !AssignabilityAlgorithm.FROM_VARIABLE.isAssignable(
+                        properties.getJoinpointReturnType(),
+                        method.getGenericReturnType(), hierarchy))
             {
                if (AspectManager.verbose)
                {
@@ -493,8 +500,9 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       
       public final boolean internalValidate(AdviceMethodProperties properties)
       {
-         if (index != -1 && !method.getParameterTypes()[index].isAssignableFrom(
-               (Class)rule.getAssignableFrom(properties)))
+         if (index != -1 && !AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(
+               method.getGenericParameterTypes()[index],
+               (Type)rule.getAssignableFrom(properties), hierarchy))
          {
             if (AspectManager.verbose)
             {
@@ -520,8 +528,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             return -1;
          }
          return DEGREE.getAssignabilityDegree(
-               method.getParameterTypes()[this.index],
-               (Class) rule.getAssignableFrom(properties));
+               method.getGenericParameterTypes()[this.index],
+               (Type) rule.getAssignableFrom(properties));
       }
       
       public final void assignParameterInfo(int[] args)
@@ -572,8 +580,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       
       public final boolean internalValidate(AdviceMethodProperties properties)
       {
-         Class<?>[] expectedTypes = (Class<?>[]) rule.getAssignableFrom(properties);
-         Class<?>[] adviceTypes = method.getParameterTypes();
+         Type[] expectedTypes = (Type[]) rule.getAssignableFrom(properties);
+         Type[] adviceTypes = method.getGenericParameterTypes();
          boolean[] taken = new boolean[expectedTypes.length];
          for (int i = 0; i < indexesLength; i++)
          {
@@ -603,19 +611,20 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
                   return false;
                }
                // wrong type
-               if (!adviceTypes[indexes[i][0]].isAssignableFrom(
-                     expectedTypes[indexes[i][1]]))
+               if (!AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(
+                     adviceTypes[indexes[i][0]], expectedTypes[indexes[i][1]],
+                     hierarchy))
                {
                   if (AspectManager.verbose)
                   {
                      AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - Advice parameter ");
                      AdviceMethodFactory.adviceMatchingMessage.append(indexes[i][0]);
                      AdviceMethodFactory.adviceMatchingMessage.append(", of type ");
-                     AdviceMethodFactory.adviceMatchingMessage.append(adviceTypes[indexes[i][0]].getName());
+                     AdviceMethodFactory.adviceMatchingMessage.append(adviceTypes[indexes[i][0]]);
                      AdviceMethodFactory.adviceMatchingMessage.append(", cannot be assigned to the value of joinpoint parameter with index ");
                      AdviceMethodFactory.adviceMatchingMessage.append(indexes[i][1]);
                      AdviceMethodFactory.adviceMatchingMessage.append(", whose type is ");
-                     AdviceMethodFactory.adviceMatchingMessage.append(expectedTypes[indexes[i][1]].getName());
+                     AdviceMethodFactory.adviceMatchingMessage.append(expectedTypes[indexes[i][1]]);
                   }
                   return false;
                }
@@ -657,7 +666,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             {
                for (int j = 0; j < expectedTypes.length; j++)
                {
-                  if (adviceTypes[indexes[i][0]].isAssignableFrom(expectedTypes[j]) &&
+                  if (AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(
+                        adviceTypes[indexes[i][0]], expectedTypes[j], hierarchy) &&
                         !taken[j])
                   {
                      indexes[i][1] = j;
@@ -702,11 +712,12 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          {
             return -1;
          }
-         Class[] expectedTypes = (Class[]) rule.getAssignableFrom(properties);
+         Type[] expectedTypes = (Type[]) rule.getAssignableFrom(properties);
          short level = 0;
          for (int i = 0; i < indexesLength; i++)
          {
-            level += DEGREE.getAssignabilityDegree(method.getParameterTypes()[this.indexes[i][0]],
+            level += DEGREE.getAssignabilityDegree(
+                  method.getGenericParameterTypes()[this.indexes[i][0]],
                   expectedTypes[this.indexes[i][1]]);
          }
          return level; 

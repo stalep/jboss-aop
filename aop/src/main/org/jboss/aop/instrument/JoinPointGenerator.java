@@ -434,7 +434,7 @@ public abstract class JoinPointGenerator
    }
    
    protected abstract boolean isVoid();
-   protected abstract Class getReturnType(); 
+   protected abstract Class getReturnClassType(); 
    protected abstract AdviceMethodProperties getAdviceMethodProperties(JoinPointBean info, AdviceSetup setup);
    
    protected boolean isCaller()
@@ -660,7 +660,7 @@ public abstract class JoinPointGenerator
       if (!isVoid())
       {
          String ret = null;
-         Class retType = getReturnType();
+         Class retType = getReturnClassType();
          if (retType.isPrimitive())
          {
             if (retType.equals(Boolean.TYPE)) ret = "false";
@@ -672,7 +672,7 @@ public abstract class JoinPointGenerator
             else if (retType.equals(Float.TYPE)) ret = "0.0f";
             else if (retType.equals(Double.TYPE)) ret =  "0.0d";
          }
-         code.append("   " + ClassExpression.simpleType(getReturnType()) + "  " + RETURN_VALUE + " = " + ret + ";");
+         code.append("   " + ClassExpression.simpleType(getReturnClassType()) + "  " + RETURN_VALUE + " = " + ret + ";");
       }
       
       // declare the throwable in an outer variable (this is needed for finally)
@@ -1744,7 +1744,8 @@ public abstract class JoinPointGenerator
             if (inconsistentTypeArgs.contains(arg))
             {
                beforeCall.append("$").append(argIndex).append(" = ");
-               beforeCall.append(ReflectToJavassist.castInvocationValueToTypeString(properties.getJoinpointParameters()[arg], ARGUMENTS + '[' + arg + ']'));
+               beforeCall.append(ReflectToJavassist.castInvocationValueToTypeString(
+               properties.getJoinpointParameterClassTypes()[arg], ARGUMENTS + '[' + arg + ']'));
                beforeCall.append(';');
                inconsistentTypeArgs.remove(arg);
             }
@@ -1940,7 +1941,7 @@ public abstract class JoinPointGenerator
             return "";
          }
          return "          " + RETURN_VALUE + " = (" +
-         generator.getReturnType().getName() + ")";
+         generator.getReturnClassType().getName() + ")";
       }
 
       public boolean appendAdviceCall(AdviceSetup setup, String key,
