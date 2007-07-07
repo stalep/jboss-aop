@@ -32,7 +32,7 @@ import java.util.List;
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-public class TypeVariableTest extends AssignabilityAlgorithmTest
+public class TypeVariableTest extends VariableTargetAlgorithmTest
 {
    // Scenario 1
    

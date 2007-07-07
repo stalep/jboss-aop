@@ -34,7 +34,7 @@ import org.jboss.aop.advice.annotation.assignability.VariableHierarchy;
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-public class FromVariableTest extends TestCase
+public class FromVariableAlgorithmTest extends TestCase
 {
    Algorithm algorithm;
    VariableHierarchy hierarchy;

@@ -30,7 +30,7 @@ import java.util.List;
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  *
  */
-public class ParameterizedTypeTest extends AssignabilityAlgorithmTest
+public class ParameterizedTypeTest extends VariableTargetAlgorithmTest
 {
    protected <A> void called1(ArrayList<A> arg) {}
    protected void called2(ArrayList<?> arg) {}

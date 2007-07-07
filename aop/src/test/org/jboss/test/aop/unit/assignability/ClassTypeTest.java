@@ -33,7 +33,7 @@ import java.util.Set;
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-public class ClassTypeTest extends AssignabilityAlgorithmTest
+public class ClassTypeTest extends VariableTargetAlgorithmTest
 {
    public void test1()
    {

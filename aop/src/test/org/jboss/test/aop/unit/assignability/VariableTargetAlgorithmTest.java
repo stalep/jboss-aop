@@ -31,7 +31,7 @@ import org.jboss.aop.advice.annotation.assignability.VariableHierarchy;
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-public abstract class AssignabilityAlgorithmTest extends TestCase
+public abstract class VariableTargetAlgorithmTest extends TestCase
 {
 
    protected Algorithm algorithm;
@@ -40,7 +40,7 @@ public abstract class AssignabilityAlgorithmTest extends TestCase
    /**
     * 
     */
-   public AssignabilityAlgorithmTest()
+   public VariableTargetAlgorithmTest()
    {
       super();
    }

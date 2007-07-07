@@ -30,7 +30,7 @@ import java.util.List;
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  *
  */
-public class GenericArrayTypeTest extends AssignabilityAlgorithmTest
+public class GenericArrayTypeTest extends VariableTargetAlgorithmTest
 {
    // Scenario 1
    
