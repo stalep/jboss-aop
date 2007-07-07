@@ -35,7 +35,6 @@ import org.jboss.aop.advice.annotation.AdviceMethodFactory;
  */
 public class DegreeAlgorithm
 {
-   private static final short HIGHEST_DEGREE = 1000;
    public static final short NOT_ASSIGNABLE_DEGREE = Short.MAX_VALUE;
    public static final short MAX_DEGREE = NOT_ASSIGNABLE_DEGREE - 1;
    
@@ -57,12 +56,12 @@ public class DegreeAlgorithm
        Class<?> clazz = getClassType(type);
        if (clazz == null)
        {
-          return HIGHEST_DEGREE;
+          return MAX_DEGREE;
        }
        Class<?> fromClass = getClassType(fromType);
        if (fromClass == null)
        {
-          return HIGHEST_DEGREE;
+          return MAX_DEGREE;
        }
        return getAssignabilityDegree(fromClass, clazz);
    }
