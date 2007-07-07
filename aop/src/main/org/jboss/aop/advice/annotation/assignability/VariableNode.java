@@ -245,7 +245,7 @@ class VariableNode
          {
             for (int i = 0; i < bounds.length; i++)
             {
-               if (!Algorithm.VARIABLE_TARGET.isAssignable(bounds[i], lowerBound, hierarchy))
+               if (!AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(bounds[i], lowerBound, hierarchy))
                {
                   return false;
                }
@@ -369,7 +369,7 @@ class VariableNode
             }
             return false;
          }
-         Type[] fromBounds = Algorithm.getConcreteBounds(fromVariable);
+         Type[] fromBounds = AssignabilityAlgorithm.getConcreteBounds(fromVariable);
          for (Type fromBound: fromBounds)
          {
             if (isAssignable(type, fromBound))

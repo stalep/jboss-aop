@@ -23,7 +23,7 @@ package org.jboss.test.aop.unit.assignability;
 
 import junit.framework.TestCase;
 
-import org.jboss.aop.advice.annotation.assignability.Algorithm;
+import org.jboss.aop.advice.annotation.assignability.AssignabilityAlgorithm;
 import org.jboss.aop.advice.annotation.assignability.VariableHierarchy;
 
 /**
@@ -34,7 +34,7 @@ import org.jboss.aop.advice.annotation.assignability.VariableHierarchy;
 public abstract class VariableTargetAlgorithmTest extends TestCase
 {
 
-   protected Algorithm algorithm;
+   protected AssignabilityAlgorithm algorithm;
    protected VariableHierarchy hierarchy;
 
    /**
@@ -47,7 +47,7 @@ public abstract class VariableTargetAlgorithmTest extends TestCase
 
    public void setUp()
    {
-      algorithm = Algorithm.VARIABLE_TARGET;
+      algorithm = AssignabilityAlgorithm.VARIABLE_TARGET;
       hierarchy = new VariableHierarchy();
    }
 }

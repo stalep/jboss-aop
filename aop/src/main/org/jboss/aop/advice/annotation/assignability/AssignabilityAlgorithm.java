@@ -31,12 +31,12 @@ import java.lang.reflect.WildcardType;
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-public enum Algorithm
+public enum AssignabilityAlgorithm
 {
    
    VARIABLE_TARGET()
    {
-      protected Algorithm getInverseAlgorithm()
+      protected AssignabilityAlgorithm getInverseAlgorithm()
       {
          return FROM_VARIABLE;
       }
@@ -62,7 +62,7 @@ public enum Algorithm
    },
    FROM_VARIABLE()
    {
-      protected Algorithm getInverseAlgorithm()
+      protected AssignabilityAlgorithm getInverseAlgorithm()
       {
          return VARIABLE_TARGET;
       }
@@ -87,7 +87,7 @@ public enum Algorithm
       }
    };
 
-   protected abstract Algorithm getInverseAlgorithm();
+   protected abstract AssignabilityAlgorithm getInverseAlgorithm();
    protected abstract boolean isVariableOperationApplicable(Type type, Type fromType);
    
    protected abstract boolean assignValue(Type type, Type fromType,
@@ -276,10 +276,10 @@ public enum Algorithm
    }
 
    //////////////////////////////////////////////////////////
-   private static final ParamTypeAssignabilityAlgorithm.EqualityChecker<Algorithm, VariableHierarchy> CHECKER
-      = new ParamTypeAssignabilityAlgorithm.EqualityChecker<Algorithm, VariableHierarchy>()
+   private static final ParamTypeAssignabilityAlgorithm.EqualityChecker<AssignabilityAlgorithm, VariableHierarchy> CHECKER
+      = new ParamTypeAssignabilityAlgorithm.EqualityChecker<AssignabilityAlgorithm, VariableHierarchy>()
    {
-      public boolean isSame(Type type, Type fromType, Algorithm client, VariableHierarchy variableHierarchy)
+      public boolean isSame(Type type, Type fromType, AssignabilityAlgorithm client, VariableHierarchy variableHierarchy)
       {
          if(client.isVariableOperationApplicable(type, fromType))
          {

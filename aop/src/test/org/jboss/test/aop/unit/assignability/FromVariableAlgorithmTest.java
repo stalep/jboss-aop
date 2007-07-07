@@ -27,7 +27,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.jboss.aop.advice.annotation.assignability.Algorithm;
+import org.jboss.aop.advice.annotation.assignability.AssignabilityAlgorithm;
 import org.jboss.aop.advice.annotation.assignability.VariableHierarchy;
 
 /**
@@ -36,13 +36,13 @@ import org.jboss.aop.advice.annotation.assignability.VariableHierarchy;
  */
 public class FromVariableAlgorithmTest extends TestCase
 {
-   Algorithm algorithm;
+   AssignabilityAlgorithm algorithm;
    VariableHierarchy hierarchy;
    private static Class[] NO_ARGS = new Class[0]; 
    
    public void setUp()
    {
-      this.algorithm = Algorithm.FROM_VARIABLE;
+      this.algorithm = AssignabilityAlgorithm.FROM_VARIABLE;
       hierarchy = new VariableHierarchy();
    }
    
@@ -164,7 +164,7 @@ public class FromVariableAlgorithmTest extends TestCase
    {
       Method caller = this.getClass().getDeclaredMethod("caller8", new Class[]{Collection.class});
       Method called = this.getClass().getDeclaredMethod("called8", new Class[]{Collection.class});
-      assertTrue(Algorithm.VARIABLE_TARGET.isAssignable(called.getGenericParameterTypes()[0],
+      assertTrue(AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
       assertTrue(algorithm.isAssignable(caller.getGenericReturnType(),
             called.getGenericReturnType(), hierarchy));
@@ -181,7 +181,7 @@ public class FromVariableAlgorithmTest extends TestCase
    {
       Method caller = this.getClass().getDeclaredMethod("caller9", new Class[]{Collection.class});
       Method called = this.getClass().getDeclaredMethod("called8", new Class[]{Collection.class});
-      assertTrue(Algorithm.VARIABLE_TARGET.isAssignable(called.getGenericParameterTypes()[0],
+      assertTrue(AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
       assertTrue(algorithm.isAssignable(caller.getGenericReturnType(),
             called.getGenericReturnType(), hierarchy));
@@ -198,7 +198,7 @@ public class FromVariableAlgorithmTest extends TestCase
    {
       Method caller = this.getClass().getDeclaredMethod("caller10", new Class[]{Collection.class});
       Method called = this.getClass().getDeclaredMethod("called8", new Class[]{Collection.class});
-      assertTrue(Algorithm.VARIABLE_TARGET.isAssignable(called.getGenericParameterTypes()[0],
+      assertTrue(AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
       assertTrue(algorithm.isAssignable(caller.getGenericReturnType(),
             called.getGenericReturnType(), hierarchy));
@@ -216,7 +216,7 @@ public class FromVariableAlgorithmTest extends TestCase
    {
       Method caller = this.getClass().getDeclaredMethod("caller11", new Class[]{Collection.class});
       Method called = this.getClass().getDeclaredMethod("called8", new Class[]{Collection.class});
-      assertTrue(Algorithm.VARIABLE_TARGET.isAssignable(called.getGenericParameterTypes()[0],
+      assertTrue(AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(called.getGenericParameterTypes()[0],
             caller.getGenericParameterTypes()[0], hierarchy));
       assertFalse(algorithm.isAssignable(caller.getGenericReturnType(),
             called.getGenericReturnType(), hierarchy));
