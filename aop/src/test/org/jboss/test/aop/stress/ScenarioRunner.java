@@ -245,6 +245,12 @@ public class ScenarioRunner
       
       public void run()
       {
+         if (forWarmup && scenario.getClass().isAnnotationPresent(SkipWarmup.class))
+         {
+            System.out.println("Skipping warmup for " + scenario.getName());
+            return;
+         }
+         
          final int max = forWarmup ? warmup : loops;
          try
          {
