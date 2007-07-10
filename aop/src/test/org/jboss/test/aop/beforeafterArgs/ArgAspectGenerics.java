@@ -109,7 +109,7 @@ public class ArgAspectGenerics
       before1 = true;
    }
    
-   public void before2(@Arg List<Object> arg)
+   public void before2(@Arg List<?> arg)
    {
       before2 = true;
    }
@@ -162,7 +162,7 @@ public class ArgAspectGenerics
       CurrentInvocation.proceed();
    }
    
-   public void around4(@Arg List<Object> arg) throws Throwable
+   public void around4(@Arg List<? extends Object> arg) throws Throwable
    {
       around4 = true;
       CurrentInvocation.proceed();
@@ -170,7 +170,7 @@ public class ArgAspectGenerics
    
    public void around5(@Arg List<Interface> arg) throws Throwable
    {
-      //Assert.fail("This advice should never be executed");
+      Assert.fail("This advice should never be executed");
       CurrentInvocation.proceed();
    }
    
@@ -195,7 +195,7 @@ public class ArgAspectGenerics
       after1 = true;
    }
    
-   public void after2(@Arg List<Object> arg)
+   public <A> void after2(@Arg List<A> arg)
    {
       after2 = true;
    }
@@ -212,7 +212,7 @@ public class ArgAspectGenerics
    
    public void after5(@Arg Collection<Object> arg)
    {
-      //Assert.fail("This advice should never be executed");
+      Assert.fail("This advice should never be executed");
    }
    
    public void after6(@Arg Collection arg)
@@ -237,7 +237,7 @@ public class ArgAspectGenerics
    
    public void throwing2(@Arg Collection<SubValue> arg, @Thrown Throwable t)
    {
-      //Assert.fail("This advice should never be executed");
+      Assert.fail("This advice should never be executed");
    }
    
    public void throwing3(@Arg Collection arg, @Thrown Throwable t)
@@ -250,7 +250,7 @@ public class ArgAspectGenerics
       throwing4 = true;
    }
    
-   public void throwing5(@Arg List<Object> arg, @Thrown Throwable t)
+   public void throwing5(@Arg List<?> arg, @Thrown Throwable t)
    {
       throwing5 = true;
    }
@@ -275,7 +275,7 @@ public class ArgAspectGenerics
       finally1 = true;
    }
    
-   public void finally2(@Arg List<Object> arg)
+   public <A extends Object> void finally2(@Arg List<A> arg)
    {
       finally2 = true;
    }
@@ -292,7 +292,7 @@ public class ArgAspectGenerics
    
    public void finally5(@Arg Collection<Interface> arg)
    {
-      //Assert.fail("This advice should never be executed");
+      Assert.fail("This advice should never be executed");
    }
    
    public void finally6(@Arg Collection arg)
