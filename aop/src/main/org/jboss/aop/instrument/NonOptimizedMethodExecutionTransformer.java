@@ -53,7 +53,7 @@ public class NonOptimizedMethodExecutionTransformer  extends MethodExecutionTran
       String originalName = trans.getOriginalName();
       wmethod.setName(wrappedName);
       trans.getClazz().addMethod(wmethod);
-      moveAnnotations(trans.getMethod(), wmethod);
+      moveAnnotationsAndCopySignature(trans.getMethod(), wmethod);
       trans.getMethod().setName(wrappedName);
       wmethod.setName(originalName);
       

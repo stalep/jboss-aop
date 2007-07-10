@@ -120,14 +120,14 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
             clazz);
       clazz.addMethod(original);
       long hash = JavassistMethodHashing.methodHash(original);
-      moveAnnotations(mixinMethod, original);
+      moveAnnotationsAndCopySignature(mixinMethod, original);
 
       String wrappedName = ClassAdvisor.notAdvisedMethodName(clazz.getName(), originalName);
       CtMethod wmethod = CtNewMethod.copy(original, clazz, null);
 
       wmethod.setName(wrappedName);
       clazz.addMethod(wmethod);
-      moveAnnotations(original, wmethod);
+      moveAnnotationsAndCopySignature(original, wmethod);
 
       original.setName(wrappedName);
       wmethod.setName(originalName);
@@ -160,7 +160,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
       String originalName = trans.getOriginalName();
       wmethod.setName(wrappedName);
       trans.getClazz().addMethod(wmethod);
-      moveAnnotations(trans.getMethod(), wmethod);
+      moveAnnotationsAndCopySignature(trans.getMethod(), wmethod);
       trans.getMethod().setName(wrappedName);
       wmethod.setName(originalName);
 

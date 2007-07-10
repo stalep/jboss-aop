@@ -35,6 +35,7 @@ import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.ParameterAnnotationsAttribute;
+import javassist.bytecode.SignatureAttribute;
 import javassist.bytecode.annotation.Annotation;
 
 import org.jboss.aop.ClassAdvisor;
@@ -230,7 +231,7 @@ public abstract class MethodExecutionTransformer
       }
    }
 
-   protected void moveAnnotations(CtMethod src, CtMethod dest) throws NotFoundException
+   protected void moveAnnotationsAndCopySignature(CtMethod src, CtMethod dest) throws NotFoundException
    {
       MethodInfo mi = src.getMethodInfo2();
       MethodInfo wmi = dest.getMethodInfo2();
@@ -240,6 +241,7 @@ public abstract class MethodExecutionTransformer
       int numParams = src.getParameterTypes().length;
       moveParameterAnnotations(numParams, mi, wmi, ParameterAnnotationsAttribute.visibleTag);
       moveParameterAnnotations(numParams, mi, wmi, ParameterAnnotationsAttribute.invisibleTag);
+      copySignature(mi, wmi);
    }
 
    private void moveAnnotations(MethodInfo src, MethodInfo dest, String annotationTag)
@@ -269,6 +271,15 @@ public abstract class MethodExecutionTransformer
       }
    }
 
+   private void copySignature(MethodInfo src, MethodInfo dest)
+   {
+      SignatureAttribute attribute = (SignatureAttribute) src.getAttribute(SignatureAttribute.tag);
+      if (attribute != null)
+      {
+         dest.addAttribute(attribute.copy(dest.getConstPool(), new HashMap()));
+      }
+   }
+   
    protected static String getAopReturnStr(CtMethod method)throws NotFoundException
    {
       return getAopReturnStr(method.getReturnType().equals(CtClass.voidType));
