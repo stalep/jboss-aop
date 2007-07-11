@@ -139,7 +139,7 @@
       <path id="jbossretro.classpath">
          <path refid="apache.ant.classpath"/>
          <path refid="javassist.classpath"/>
-         <path refid="jboss.jbossretro.classpath"/>
+         <path refid="org/jboss/jboss.retro.classpath"/>
          <path refid="jboss/backport.concurrent.classpath"/>
       </path>
   
