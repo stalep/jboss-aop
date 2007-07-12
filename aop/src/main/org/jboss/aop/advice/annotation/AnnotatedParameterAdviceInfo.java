@@ -500,6 +500,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       
       public final boolean internalValidate(AdviceMethodProperties properties)
       {
+         try
+         {
          if (index != -1 && !AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(
                method.getGenericParameterTypes()[index],
                (Type)rule.getAssignableFrom(properties), hierarchy))
@@ -514,6 +516,26 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
                AdviceMethodFactory.adviceMatchingMessage.append(method);
             }
             return false;
+         }
+         }
+         // TODO this is a temporary fix until JBBUILD-384 is done
+         catch (RuntimeException e)
+         {
+            if (index != -1 && !AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(
+                  method.getParameterTypes()[index],
+                  (Type)rule.getAssignableFrom(properties), hierarchy))
+            {
+               if (AspectManager.verbose)
+               {
+                  AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - parameter annotated with ");
+                  AdviceMethodFactory.adviceMatchingMessage.append(rule.getAnnotation());
+                  AdviceMethodFactory.adviceMatchingMessage.append(" is not assignable from expected type ");
+                  AdviceMethodFactory.adviceMatchingMessage.append(rule.getAssignableFrom(properties));   
+                  AdviceMethodFactory.adviceMatchingMessage.append(" on  method ");
+                  AdviceMethodFactory.adviceMatchingMessage.append(method);
+               }
+               return false;
+            }
          }
          return  true;
       }
@@ -581,7 +603,16 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       public final boolean internalValidate(AdviceMethodProperties properties)
       {
          Type[] expectedTypes = (Type[]) rule.getAssignableFrom(properties);
-         Type[] adviceTypes = method.getGenericParameterTypes();
+         Type[] adviceTypes = null;
+         try
+         {
+         adviceTypes = method.getGenericParameterTypes();
+         }
+         // TODO this is a temporary fix until JBBUILD-384 is done
+         catch (RuntimeException e)
+         {
+            adviceTypes = method.getParameterTypes();
+         }
          boolean[] taken = new boolean[expectedTypes.length];
          for (int i = 0; i < indexesLength; i++)
          {

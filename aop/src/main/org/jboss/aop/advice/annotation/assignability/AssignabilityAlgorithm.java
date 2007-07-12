@@ -100,9 +100,16 @@ public enum AssignabilityAlgorithm
          VariableHierarchy variableHierarchy)
    {
       // special case, check fromType
+      try
+      {
       if (fromType instanceof WildcardType)
       {
          return isAssignable(type, (WildcardType) fromType, variableHierarchy);
+      }
+      } catch (NoClassDefFoundError e)
+      {
+         // TODO this is a temporary fix until JBBUILD-384 is done
+         // do nothing
       }
       if (isVariableOperationApplicable(type, fromType))
       {
