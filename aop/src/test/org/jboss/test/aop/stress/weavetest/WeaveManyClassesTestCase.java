@@ -72,7 +72,6 @@ public class WeaveManyClassesTestCase extends ScenarioTest
       public void execute(int thread, int loop) throws Exception
       {
          Class clazz = factories[loop].loadClass();
-         System.out.println("Loaded class " + clazz);
          if (clazz == null)
          {
             throw new RuntimeException("Class was null");
