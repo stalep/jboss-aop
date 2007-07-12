@@ -88,16 +88,23 @@ public class InstanceAdvisorDelegate implements Serializable
          Set instanceDefs = ia.getPerInstanceAspectDefinitions();
          if (instanceDefs.size() > 0)
          {
+            aspects = new WeakHashMap();
             for (Iterator it = instanceDefs.iterator() ; it.hasNext() ; )
             {
-               ia.addPerInstanceAspect((AspectDefinition)it.next());
+               AspectDefinition def = (AspectDefinition) it.next();
+               ia.addPerInstanceAspect(def);
+               Object aspect = def.getFactory().createPerInstance(getClassAdvisor(), instanceAdvisor);
+               aspects.put(def, aspect);
             }
          }
       }
       Set defs = getClassAdvisor().getPerInstanceAspectDefinitions();
       if (defs.size() > 0)
       {
-         aspects = new WeakHashMap();
+         if (aspects == null)
+         {
+            aspects = new WeakHashMap();
+         }
          Iterator it = defs.iterator();
          while (it.hasNext())
          {
@@ -119,9 +126,11 @@ public class InstanceAdvisorDelegate implements Serializable
          
          if (instanceJpAspects.size() > 0)
          {
+            joinpointAspects = new WeakHashMap();
             for (Iterator it = instanceJpAspects.keySet().iterator() ; it.hasNext() ; )
             {
                AspectDefinition def = (AspectDefinition) it.next();
+               initJoinpointAspect(def, instanceJpAspects);
                Set joinpoints = (Set)instanceJpAspects.get(def);
                ia.addPerInstanceJoinpointAspect(joinpoints, def);
             }
@@ -136,16 +145,21 @@ public class InstanceAdvisorDelegate implements Serializable
          while (it.hasNext())
          {
             AspectDefinition def = (AspectDefinition) it.next();
-            ConcurrentHashMap joins = new ConcurrentHashMap();
-            joinpointAspects.put(def, joins);
-            Set joinpoints = (Set) jpAspects.get(def);
-            Iterator jps = joinpoints.iterator();
-            while (jps.hasNext())
-            {
-               Object joinpoint = jps.next();
-               joins.put(joinpoint, def.getFactory().createPerJoinpoint(getClassAdvisor(), instanceAdvisor, (Joinpoint) joinpoint));
-            }
+            initJoinpointAspect(def, jpAspects);
          }
+      }
+   }
+   
+   private void initJoinpointAspect(AspectDefinition def, Map jpAspects)
+   {
+      ConcurrentHashMap joins = new ConcurrentHashMap();
+      joinpointAspects.put(def, joins);
+      Set joinpoints = (Set) jpAspects.get(def);
+      Iterator jps = joinpoints.iterator();
+      while (jps.hasNext())
+      {
+         Object joinpoint = jps.next();
+         joins.put(joinpoint, def.getFactory().createPerJoinpoint(getClassAdvisor(), instanceAdvisor, (Joinpoint) joinpoint));
       }
    }
    

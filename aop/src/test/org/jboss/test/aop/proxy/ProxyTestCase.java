@@ -293,4 +293,72 @@ public class ProxyTestCase extends AOPTestWithSetup
       assertEquals(o.toString(), o.toString());
       assertTrue(tgt.invokedToString);
    }
+   
+   public void testProxyWithPerInstanceAspects() throws Exception
+   {
+      AspectManager manager = AspectManager.instance();
+      AspectDefinition def = new AspectDefinition("perinstanceaspect", Scope.PER_INSTANCE, new GenericAspectFactory(TestInterceptor.class.getName(), null));
+      AdviceFactory advice = new AdviceFactory(def, "invoke");
+      PointcutExpression pointcut = new PointcutExpression("perinstancepointcut", "execution(* $instanceof{" + SomeInterface.class.getName() + "}->*(..))");
+      InterceptorFactory[] interceptors = {advice};
+      AdviceBinding binding = new AdviceBinding("perinstancebinding", pointcut, null, null, interceptors);
+      try
+      {
+         manager.addAspectDefinition(def);
+         manager.addInterceptorFactory(advice.getName(), advice);
+         manager.addPointcut(pointcut);
+         manager.addBinding(binding);
+         
+         AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
+         params.setInterfaces(new Class[] {SomeInterface.class});
+         params.setTarget(new POJO());
+         
+         GeneratedAOPProxyFactory factory = new GeneratedAOPProxyFactory();
+         SomeInterface si = (SomeInterface)factory.createAdvisedProxy(params);
+         
+         si.helloWorld();
+         
+         assertTrue(TestInterceptor.invoked);
+      }
+      finally
+      {
+         manager.removeBinding("perinstancebinding");
+         manager.removePointcut("perinstancepointcut");
+         manager.removeInterceptorFactory("perinstanceaspect");
+      }
+   }
+
+   public void testProxyWithPerJoinpointAspects() throws Exception
+   {
+      AspectManager manager = AspectManager.instance();
+      AspectDefinition def = new AspectDefinition("perinstanceaspect", Scope.PER_JOINPOINT, new GenericAspectFactory(TestInterceptor.class.getName(), null));
+      AdviceFactory advice = new AdviceFactory(def, "invoke");
+      PointcutExpression pointcut = new PointcutExpression("perinstancepointcut", "execution(* $instanceof{" + SomeInterface.class.getName() + "}->*(..))");
+      InterceptorFactory[] interceptors = {advice};
+      AdviceBinding binding = new AdviceBinding("perinstancebinding", pointcut, null, null, interceptors);
+      try
+      {
+         manager.addAspectDefinition(def);
+         manager.addInterceptorFactory(advice.getName(), advice);
+         manager.addPointcut(pointcut);
+         manager.addBinding(binding);
+         
+         AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
+         params.setInterfaces(new Class[] {SomeInterface.class});
+         params.setTarget(new POJO());
+         
+         GeneratedAOPProxyFactory factory = new GeneratedAOPProxyFactory();
+         SomeInterface si = (SomeInterface)factory.createAdvisedProxy(params);
+         
+         si.helloWorld();
+         
+         assertTrue(TestInterceptor.invoked);
+      }
+      finally
+      {
+         manager.removeBinding("perinstancebinding");
+         manager.removePointcut("perinstancepointcut");
+         manager.removeInterceptorFactory("perinstanceaspect");
+      }
+   }
 }
