@@ -119,14 +119,14 @@
       <property name="jboss-logging-spi.location" value="${jboss/common.logging.spi.lib}/jboss-logging-spi.jar"/>
       <property name="jboss-container.location" value="${jboss.microcontainer.lib}/jboss-container.jar"/>
       <property name="jboss-container14.location" value="${jboss.microcontainer14.lib}/jboss-container14.jar"/>
-      <property name="jbossretro.location" value="${jboss.jbossretro.lib}/jbossretro.jar"/>
-      <property name="jbossretro-rt.location" value="${jboss.jbossretro.lib}/jbossretro-rt.jar"/>
+      <property name="jbossretro.location" value="${org/jboss/jboss.retro.lib}/jboss-retro-1.1.1.jar"/>
+      <property name="jbossretro-rt.location" value="${org/jboss/jboss.retro.lib}/jboss-retro-1.1.1-rt.jar"/>
       <property name="log4j.location" value="${apache.log4j.lib}/log4j.jar"/>
       <property name="qdox.location" value="${qdox.qdox.lib}/qdox.jar"/>
       <property name="trove.location" value="${trove.trove.lib}/trove.jar"/>
 
       <!--
-      	Create the MC container.jar subset with org.jboss.metadata.spi and org.jboss.annotation,factory classes since 
+      	Create the MC container.jar subset with org.jboss.metadata.spi and org.jboss.annotation,factory classes since
       	those files do not exist in JBoss 4.0.x or 4.2.x, which is shipped with MC version 2.0.
       	This should be redundant once the mc is properly released. The maven build for container MC already creates the
       	jboss-container-metadata-spi.jar, but does not exist in any repository yet.
