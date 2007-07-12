@@ -178,7 +178,7 @@
 
       <path id="jbossretrort.classpath">
          <path refid="jboss/backport.concurrent.classpath"/>
-         <pathelement path="${org/jboss/jboss.retro.lib}/jboss-retro-1.1.0-rt.jar"/>
+         <pathelement path="${org/jboss/jboss.retro.lib}/jbossretro-rt.jar"/>
          <path refid="jboss.microcontainer14.classpath"/>
          <path refid="jboss/common.core.14.classpath"/>
       </path>

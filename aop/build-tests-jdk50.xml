@@ -114,6 +114,7 @@
          </not>
       </condition>
 
+		<echo>Debug: ${debug}</echo>
 
       <!-- ======= -->
       <!-- Modules -->
@@ -415,8 +416,8 @@
          <param name="no.xml" value="true"/>
          <param name="use.annotations" value="true"/>
       </antcall>
-      
-      
+
+
 
       <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-jdk50-tests" inheritRefs="true">
@@ -606,14 +607,14 @@
          <param name="no.xml" value="true"/>
          <param name="use.annotations" value="true"/>
       </antcall>
-      
+
        <!-- This should only be run using compile-time weaving -->
       <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="postweavingmixins"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
 
-      
+
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-jdk50-tests" inheritRefs="true">
          <param name="caller" value="precompiled-genadvisor-tests"/>
@@ -1452,6 +1453,111 @@
                <exclude name="org/jboss/test/aop/args/ArgumentsTestCase.class"/>
             </fileset>
          </batchtest>
+      </junit>
+   </target>
+
+   <!-- ==================================================================================== -->
+   <!-- MEMORY TESTS (JDK 5.0)                                                               -->
+   <!-- ==================================================================================== -->
+
+   <target name="memory-tests" depends="compile-test-classes">
+      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
+
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="annotatedcflow"/>
+         <param name="case" value="AnnotatedCFlowTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="annotatedparams"/>
+         <param name="case" value="AnnotatedParamsTester"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="args"/>
+         <param name="case" value="ArgsTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="basic"/>
+         <param name="case" value="AOPTester"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="beanstyleconfig"/>
+         <param name="case" value="ConfigTester"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="callerargs"/>
+         <param name="case" value="CallerArgsTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="callerscope"/>
+         <param name="case" value="CallerScopeTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="construction"/>
+         <param name="case" value="ConstructionTester"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="constructortarget"/>
+         <param name="case" value="ConstructorTargetTester"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="dotinpointcutname"/>
+         <param name="case" value="DotInPointcutNameTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="implementz"/>
+         <param name="case" value="ImplementsTester"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="instanceofannotated"/>
+         <param name="case" value="InstanceOfAnnotatedTester"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="introduction"/>
+         <param name="case" value="IntroductionTester"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="override"/>
+         <param name="case" value="OverrideTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="perjoinpoint"/>
+         <param name="case" value="PerJoinpointTester"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="scope"/>
+         <param name="case" value="ScopeTestCase"/>
+      </antcall>
+   </target>
+
+   <target name="memory-test" depends="init">
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
+      <property name="aoppath" value="${source.res}/test/${test}/jboss-aop.xml"/>
+      <property name="testcase" value="org.jboss.test.aop.${test}.${case}"/>
+
+
+      <aopc compilerclasspathref="aopc.task.classpath">
+         <classpath refid="aopc.task.classpath"/>
+         <classpath path="${build.tests.classes}"/>
+         <aoppath path="${aoppath}"/>
+         <src path="${build.tests.classes}"/>
+         <include name="org/jboss/test/aop/${test}/**"/>
+         <aopclasspath path="${build.tests.classes}"/>
+      </aopc>
+
+      <property name="report.dir" value="${build.reports}"/>
+      <mkdir dir="${report.dir}/memory-tests"/>
+
+      <echo>${testcase}</echo>
+      <junit printsummary="yes" fork="yes" haltonfailure="no">
+         <sysproperty key="jboss.aop.path" value="${aoppath}"/>
+         <sysproperty key="test.to.run" value="${testcase}"/>
+         <sysproperty key="leak.report.dir" value="${report.dir}"/>
+         <classpath refid="test.classpath"/>
+         <classpath path="${build.tests.classes}"/>
+         <jvmarg value="-agentlib:jbossAgent"/>
+         <formatter usefile="true" type="xml" extension="-${testcase}.xml"/>
+         <formatter usefile="true" type="plain" extension="-${testcase}.txt"/>
+         <test fork="yes" name="org.jboss.test.aop.memoryleaks.MemoryLeakTestCase" todir="${report.dir}"/>
       </junit>
    </target>
 
