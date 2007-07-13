@@ -191,6 +191,7 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
       GeneratedAdvisorInstrumentor instrumentor;
       CtClass callingClass;
       int callingIndex;
+      CtField callingField;
       CtClass targetClass;
       String classname;
       CtMethod targetMethod;
@@ -233,6 +234,7 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
          {
             addTypedTargetField();
          }
+         addTypedCallingField();
          addInvokeJoinpointMethod();
          addMethodInfoField();
          addPublicConstructor();
@@ -261,10 +263,18 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
 
       private void addTypedTargetField()throws CannotCompileException
       {
-         CtField targetField = new CtField(targetClass, TARGET_FIELD, jp);
+         CtField targetField = new CtField(targetClass, TYPED_TARGET_FIELD, jp);
          jp.addField(targetField);
          targetField.setModifiers(Modifier.PROTECTED);
       }
+      
+      private void addTypedCallingField()throws CannotCompileException
+      {
+         callingField = new CtField(callingClass, TYPED_CALLER_FIELD, jp);
+         jp.addField(callingField);
+         callingField.setModifiers(Modifier.PROTECTED);
+      }
+      
       /**
        * This constructor is used by the advisor when we have regenerated the joinpoint.
        * This just creates a generic JoinPoint instance with no data specific to the
@@ -309,13 +319,15 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
          
          if (hasTargetObject)
          {
-            body.append("   super.targetObject=$2;");
-            body.append("   this.").append(TARGET_FIELD).append("=$2;");
-            body.append("   super.callingObject=$3;");
+            body.append("   super.").append(TARGET_FIELD).append("=$2;");
+            body.append("   this.").append(TYPED_TARGET_FIELD).append("=$2;");
+            body.append("   super.").append(CALLER_FIELD).append("=$3;");
+            body.append("   this.").append(callingField.getName()).append("=$3;");
          }
          else
          {
-            body.append("   super.callingObject=$2;");
+            body.append("   super.").append(CALLER_FIELD).append("=$2;");
+            body.append("   this.").append(callingField.getName()).append("=$2;");
          }
          
          StringBuffer setArguments = new StringBuffer();

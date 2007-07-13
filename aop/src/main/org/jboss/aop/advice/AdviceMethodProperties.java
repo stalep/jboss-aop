@@ -66,6 +66,8 @@ public class AdviceMethodProperties
    //found properties
    private Method adviceMethod;
    private int[] args;
+   
+   private boolean overloadedMethod;
 
    public AdviceMethodProperties(
          Class aspectClass, 
@@ -208,5 +210,15 @@ public class AdviceMethodProperties
    public void setOptionalParameters(OptionalParameters optionalParameters)
    {
       this.optionalParameters = optionalParameters;
+   }
+   
+   public boolean isAdviceOverloaded()
+   {
+      return this.overloadedMethod;
+   }
+   
+   public void setAdviceOverloaded(boolean overloaded)
+   {
+      this.overloadedMethod = overloaded;
    }
 }

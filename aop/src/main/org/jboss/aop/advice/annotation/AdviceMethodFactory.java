@@ -285,6 +285,7 @@ public class AdviceMethodFactory
          }
          // assign best Advice info to properties 
          bestAdvice.assignAdviceInfo(properties);
+         properties.setAdviceOverloaded(rankedAdvices.size() > 1);
       }
       return properties;
    }

@@ -246,6 +246,10 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
          {
             addTypedTargetField();
          }
+         if (hasCallingObject)
+         {
+            addTypedCallingField();
+         }
          addInvokeJoinpointMethod();
          addMethodInfoField();
          addPublicConstructor();
@@ -274,10 +278,18 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
 
       private void addTypedTargetField()throws CannotCompileException
       {
-         CtField targetField = new CtField(targetClass, TARGET_FIELD, jp);
+         CtField targetField = new CtField(targetClass, TYPED_TARGET_FIELD, jp);
          jp.addField(targetField);
          targetField.setModifiers(Modifier.PROTECTED);
       }
+      
+      private void addTypedCallingField()throws CannotCompileException
+      {
+         CtField callingField = new CtField(callingClass, TYPED_CALLER_FIELD, jp);
+         jp.addField(callingField);
+         callingField.setModifiers(Modifier.PROTECTED);
+      }
+      
       /**
        * This constructor is used by the advisor when we have regenerated the joinpoint.
        * This just creates a generic JoinPoint instance with no data specific to the
@@ -317,10 +329,17 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
          body.append("   this($1." + INFO_FIELD + ");");
          if (hasTargetObject)
          {
-            body.append("   super.targetObject=$2;");
-            body.append("   this.").append(TARGET_FIELD).append("=$2;");
+            body.append("   super.").append(TARGET_FIELD).append("=$2;");
+            body.append("   this.").append(TYPED_TARGET_FIELD).append("=$2;");
          }
-         if (hasCallingObject) body.append("   super.callingObject=$" + (hasTargetObject ? 3 : 2) + ";");
+         if (hasCallingObject)
+         {
+            int arg = hasTargetObject ? 3 : 2;
+            body.append("   super.").append(CALLER_FIELD);
+            body.append("=$").append(arg).append(';');
+            body.append("   this.").append(TYPED_CALLER_FIELD);
+            body.append("=$").append(arg).append(';');
+         }
          
          StringBuffer setArguments = new StringBuffer();
          for (int i = offset ; i < ctorParams1.length ; i++)

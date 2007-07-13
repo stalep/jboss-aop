@@ -221,7 +221,7 @@ public class ConstructionJoinPointGenerator extends JoinPointGenerator
 
       private void addTypedTargetField()throws CannotCompileException
       {
-         targetField = new CtField(advisedClass, TARGET_FIELD, jp);
+         targetField = new CtField(advisedClass, TYPED_TARGET_FIELD, jp);
          jp.addField(targetField);
          targetField.setModifiers(Modifier.PROTECTED);
       }

@@ -236,6 +236,7 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
          jp = setupClass();
          OptimizedBehaviourInvocations.addArgumentFieldsAndAccessors(
                instrumentor.getClassPool(), jp, params, false);
+         addTypedCallingField();
          addInvokeJoinpointMethod();
          addMethodInfoField();
          addPublicConstructor();
@@ -255,6 +256,13 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
          jp = TransformerCommon.makeNestedClass(callingClass, className, true, Modifier.PUBLIC | Modifier.STATIC, INVOCATION_CT_TYPE);
          addUntransformableInterface(instrumentor, jp);
          return jp;
+      }
+      
+      private void addTypedCallingField()throws CannotCompileException
+      {
+         CtField callingField = new CtField(callingClass, TYPED_CALLER_FIELD, jp);
+         jp.addField(callingField);
+         callingField.setModifiers(Modifier.PROTECTED);
       }
 
       /**
@@ -295,7 +303,10 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
 
          if (hasCallingObject)
          {
-            body.append("   super.callingObject=$" + offset + ";");
+            body.append("   super.").append(CALLER_FIELD);
+            body.append("=$").append(offset).append(';');
+            body.append("   this.").append(TYPED_CALLER_FIELD);
+            body.append("=$").append(offset).append(';');
          }
 
          StringBuffer setArguments = new StringBuffer();

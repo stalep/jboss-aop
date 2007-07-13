@@ -298,7 +298,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
 
       private void addTypedTargetField()throws CannotCompileException
       {
-         CtField targetField = new CtField(advisedClass, TARGET_FIELD, jp);
+         CtField targetField = new CtField(advisedClass, TYPED_TARGET_FIELD, jp);
          jp.addField(targetField);
          targetField.setModifiers(Modifier.PROTECTED);
       }
@@ -338,7 +338,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
 
          if (hasTargetObject)
          {
-            body.append("   this." + TARGET_FIELD + " = $2;");
+            body.append("   this." + TYPED_TARGET_FIELD + " = $2;");
             body.append("   super.setTargetObject($2);");
          }
          
@@ -514,7 +514,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       protected String createInvokeNextDispatchMethodBody()
       {
          return (hasTargetObject) ?
-            "{return "  + TARGET_FIELD + "." + advisedField.getName() + ";}" :
+            "{return "  + TYPED_TARGET_FIELD + "." + advisedField.getName() + ";}" :
             "{return " + advisedClass.getName() + "." + advisedField.getName() + ";}";
       }
 
@@ -605,11 +605,11 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
          return
             "{" +
             ((hasTargetObject) ?
-                  TARGET_FIELD + "." + advisedField.getName() + " = " +  value:
+                  TYPED_TARGET_FIELD + "." + advisedField.getName() + " = " +  value:
                      advisedClass.getName() + "." + advisedField.getName() + " = " +  value) +
 
             ((hasTargetObject) ?
-                  "; return "  + TARGET_FIELD + "." + advisedField.getName() + ";" :
+                  "; return "  + TYPED_TARGET_FIELD + "." + advisedField.getName() + ";" :
                      "; return " + advisedClass.getName() + "." + advisedField.getName() + ";") +
             "}";
       }

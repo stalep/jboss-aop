@@ -82,8 +82,10 @@ public abstract class JoinPointGenerator
    public static final String INVOKE_JOINPOINT = "invokeJoinpoint";
    public static final String INVOKE_TARGET = "invokeTarget";
    public static final String DISPATCH = "dispatch";
-   protected static final String TARGET_FIELD = "typedTargetObject";
+   protected static final String TARGET_FIELD = "targetObject";
+   protected static final String TYPED_TARGET_FIELD = "typedTargetObject";
    protected static final String CALLER_FIELD = "callingObject";
+   protected static final String TYPED_CALLER_FIELD = "typedCallingObject";
    protected static final String GENERATED_CLASS_ADVISOR = GeneratedClassAdvisor.class.getName();
    public static final String GENERATE_JOINPOINT_CLASS = "generateJoinPointClass";
    private static final String CURRENT_ADVICE = "super.currentInterceptor";
@@ -539,7 +541,7 @@ public abstract class JoinPointGenerator
    {
       if (setup.requiresInstanceAdvisor())
       {
-         String instanceAdvisor = (isCaller()) ? "callingObject" : "targetObject";
+         String instanceAdvisor = (isCaller()) ? CALLER_FIELD : TARGET_FIELD;
                         
          return getPerInstanceAspectCode(instanceAdvisor, setup, true);
       }
@@ -1669,12 +1671,19 @@ public abstract class JoinPointGenerator
          if (args.length > 0)
          {
             final Class[] adviceParams = properties.getAdviceMethod().getParameterTypes();
+            if (properties.isAdviceOverloaded())
+            {
+               appendCast(call, adviceParams[0]);
+            }
             argsFound = appendParameter(beforeCall, call, args[0], adviceParams[0], properties,
                   generator);
             for (int i = 1 ; i < args.length ; i++)
             {
                call.append(", ");
-
+               if (properties.isAdviceOverloaded())
+               {
+                  appendCast(call, adviceParams[i]);
+               }
                argsFound = appendParameter(beforeCall, call, args[i], adviceParams[i],
                      properties, generator) || argsFound;
             }
@@ -1697,15 +1706,12 @@ public abstract class JoinPointGenerator
             call.append(INFO_FIELD);
             break;
          case AdviceMethodProperties.RETURN_ARG:
-            appendCast(call, adviceParam);
             call.append(RETURN_VALUE);
             break;
          case AdviceMethodProperties.THROWABLE_ARG:
-            appendCast(call, adviceParam);
             call.append(THROWABLE);
             break;
          case AdviceMethodProperties.TARGET_ARG:
-            appendCast(call, adviceParam);
             if (!generator.parameters.hasTarget())
             {
                call.append("null");
@@ -1717,7 +1723,6 @@ public abstract class JoinPointGenerator
             }
             break;
          case AdviceMethodProperties.CALLER_ARG:
-            appendCast(call, adviceParam);
             if (!generator.parameters.hasCaller())
             {
                call.append("null");
@@ -1736,8 +1741,7 @@ public abstract class JoinPointGenerator
             // return true when args has been found; false otherwise
             return true;
          default:
-            appendCast(call, adviceParam);
-
+            
             // make typed argument consistent, if that is the case
             Set<Integer> inconsistentTypeArgs = generator.inconsistentTypeArgs.get();
             int argIndex = arg + generator.parameters.getFirstArgIndex();
@@ -1804,6 +1808,7 @@ public abstract class JoinPointGenerator
          }
       
          boolean result = false;
+         
          AdviceMethodProperties properties = AdviceMethodFactory.AROUND.
             findAdviceMethod(generator.getAdviceMethodProperties(info, setup));
          if (properties == null || properties.getAdviceMethod() == null)
@@ -1861,21 +1866,19 @@ public abstract class JoinPointGenerator
             final int arg, final Class adviceParam,
             AdviceMethodProperties properties, JoinPointGenerator generator)
       {
-         
          switch(arg)
          {
          case AdviceMethodProperties.TARGET_ARG:
             if (generator.parameters.hasTarget())
             {
-               call.append(TARGET_FIELD);
+               call.append(TYPED_TARGET_FIELD);
                return false;
             }
             break;
          case AdviceMethodProperties.CALLER_ARG:
             if (generator.parameters.hasCaller())
             {
-               appendCast(call, adviceParam);
-               call.append(CALLER_FIELD);
+               call.append(TYPED_CALLER_FIELD);
                return false;
             }
             break;

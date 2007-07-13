@@ -187,6 +187,7 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
       GeneratedAdvisorInstrumentor instrumentor;
       CtClass callingClass;
       int callingIndex;
+      CtField callingField;
       String classname;
       CtClass targetClass;
       CtConstructor targetCtor;
@@ -223,6 +224,7 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
          jp = setupClass();
          OptimizedBehaviourInvocations.addArgumentFieldsAndAccessors(
                instrumentor.getClassPool(), jp, params, false);
+         addTypedCallingField();
          addInvokeJoinpointMethod();
          addMethodInfoField();
          addPublicConstructor();
@@ -242,6 +244,13 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
          jp = TransformerCommon.makeNestedClass(callingClass, className, true, Modifier.PUBLIC | Modifier.STATIC, INVOCATION_CT_TYPE);
          addUntransformableInterface(instrumentor, jp);
          return jp;
+      }
+      
+      private void addTypedCallingField()throws CannotCompileException
+      {
+         callingField = new CtField(callingClass, TYPED_CALLER_FIELD, jp);
+         jp.addField(callingField);
+         callingField.setModifiers(Modifier.PROTECTED);
       }
 
       /**
@@ -274,7 +283,8 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
          StringBuffer body = new StringBuffer();
          body.append("{");
          body.append("   this($1." + INFO_FIELD + ");");
-         body.append("   super.callingObject=$2;");
+         body.append("   super.").append(CALLER_FIELD).append("=$2;");
+         body.append("   this.").append(callingField.getName()).append("=$2;");
          
          StringBuffer setArguments = new StringBuffer();
          int offset = 2;

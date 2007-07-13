@@ -254,7 +254,7 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
       
       private void addTypedTargetField()throws CannotCompileException
       {
-         CtField targetField = new CtField(advisedClass, TARGET_FIELD, jp);
+         CtField targetField = new CtField(advisedClass, TYPED_TARGET_FIELD, jp);
          jp.addField(targetField);
          targetField.setModifiers(Modifier.PROTECTED | Modifier.TRANSIENT);
       }
@@ -308,7 +308,7 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
             ctorParams2 = new CtClass[2];
             System.arraycopy(ctorParams1, 0, ctorParams2, 0, 2);
                         
-            body.append("   this." + TARGET_FIELD + " = $2;");
+            body.append("   this." + TYPED_TARGET_FIELD + " = $2;");
             body.append("   super.setTargetObject($2);");
          }
          else
