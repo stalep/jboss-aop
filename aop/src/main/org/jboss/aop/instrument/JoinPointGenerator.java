@@ -44,13 +44,11 @@ import javassist.CtNewMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
 
-import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.CallerConstructorInfo;
 import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.JoinPointInfo;
-import org.jboss.aop.MethodInfo;
 import org.jboss.aop.advice.AdviceMethodProperties;
 import org.jboss.aop.advice.AdviceType;
 import org.jboss.aop.advice.GeneratedAdvisorInterceptor;
@@ -1809,8 +1807,7 @@ public abstract class JoinPointGenerator
       
          boolean result = false;
          
-         AdviceMethodProperties properties = AdviceMethodFactory.AROUND.
-            findAdviceMethod(generator.getAdviceMethodProperties(info, setup));
+         AdviceMethodProperties properties = setup.getAdviceMethodProperties();
          if (properties == null || properties.getAdviceMethod() == null)
          {
             // throw new RuntimeException("DEBUG ONLY Properties was null " + 
