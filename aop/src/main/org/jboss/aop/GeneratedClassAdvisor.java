@@ -76,7 +76,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    //TODO These are only needed for the class advisor really
    //All joinpoint generators apart from field reads and constructions go in here
-   private ConcurrentHashMap joinPoinGenerators = new ConcurrentHashMap();
+   private ConcurrentHashMap joinPointGenerators = new ConcurrentHashMap();
    //Needs its own map to avoid crashing with the field write generators
    private ConcurrentHashMap fieldReadJoinPoinGenerators = new ConcurrentHashMap();
    //Needs its own map to avoid crashing with the constructor generators
@@ -688,12 +688,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       //An extra level of indirection since we distinguish between callers of method depending on
       //where the called method is defined (sub/super interfaces)
-      ConcurrentHashMap map = (ConcurrentHashMap)joinPoinGenerators.get(info.getJoinpoint());
+      ConcurrentHashMap map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
       if (map == null)
       {
          map = new ConcurrentHashMap();
-         joinPoinGenerators.put(info.getJoinpoint(), map);
-         map = (ConcurrentHashMap)joinPoinGenerators.get(info.getJoinpoint());
+         joinPointGenerators.put(info.getJoinpoint(), map);
+         map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
       }
 
       MethodByConJoinPointGenerator generator = getJoinPointGenerator(info);
@@ -1114,11 +1114,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       
       public MethodJoinPointGenerator getJoinPointGenerator(MethodInfo info)
       {
-         MethodJoinPointGenerator generator = (MethodJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
+         MethodJoinPointGenerator generator = (MethodJoinPointGenerator)joinPointGenerators.get(info.getJoinpoint());
          if (generator == null)
          {
             generator = new MethodJoinPointGenerator(GeneratedClassAdvisor.this, info);
-            joinPoinGenerators.put(info.getJoinpoint(), generator);
+            joinPointGenerators.put(info.getJoinpoint(), generator);
          }
          return generator;
       }
@@ -1137,11 +1137,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          }
          else
          {
-            FieldJoinPointGenerator generator = (FieldJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
+            FieldJoinPointGenerator generator = (FieldJoinPointGenerator)joinPointGenerators.get(info.getJoinpoint());
             if (generator == null)
             {
                generator = new FieldJoinPointGenerator(GeneratedClassAdvisor.this, info);
-               joinPoinGenerators.put(info.getJoinpoint(), generator);
+               joinPointGenerators.put(info.getJoinpoint(), generator);
             }
             return generator;
          }
@@ -1161,11 +1161,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
       public ConstructionJoinPointGenerator getJoinPointGenerator(ConstructionInfo info)
       {
-         ConstructionJoinPointGenerator generator = (ConstructionJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
+         ConstructionJoinPointGenerator generator = (ConstructionJoinPointGenerator)joinPointGenerators.get(info.getJoinpoint());
          if (generator == null)
          {
             generator = new ConstructionJoinPointGenerator(GeneratedClassAdvisor.this, info);
-            joinPoinGenerators.put(info.getJoinpoint(), generator);
+            joinPointGenerators.put(info.getJoinpoint(), generator);
          }
          return generator;
       }
@@ -1174,12 +1174,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       {
          //An extra level of indirection since we distinguish between callers of method depending on
          //where the called method is defined (sub/super interfaces)
-         ConcurrentHashMap map = (ConcurrentHashMap)joinPoinGenerators.get(info.getJoinpoint());
+         ConcurrentHashMap map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
          if (map == null)
          {
             map = new ConcurrentHashMap();
-            joinPoinGenerators.put(info.getJoinpoint(), map);
-            map = (ConcurrentHashMap)joinPoinGenerators.get(info.getJoinpoint());
+            joinPointGenerators.put(info.getJoinpoint(), map);
+            map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
          }
 
          MethodByMethodJoinPointGenerator generator = (MethodByMethodJoinPointGenerator)map.get(info.getCalledClass());
@@ -1194,11 +1194,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
       public ConByMethodJoinPointGenerator getJoinPointGenerator(ConByMethodInfo info)
       {
-         ConByMethodJoinPointGenerator generator = (ConByMethodJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
+         ConByMethodJoinPointGenerator generator = (ConByMethodJoinPointGenerator)joinPointGenerators.get(info.getJoinpoint());
          if (generator == null)
          {
             generator = new ConByMethodJoinPointGenerator(GeneratedClassAdvisor.this, info);
-            joinPoinGenerators.put(info.getJoinpoint(), generator);
+            joinPointGenerators.put(info.getJoinpoint(), generator);
          }
          return generator;
       }
@@ -1206,11 +1206,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       public ConByConJoinPointGenerator getJoinPointGenerator(ConByConInfo info)
       {
          //We are the class advisor
-         ConByConJoinPointGenerator generator = (ConByConJoinPointGenerator)joinPoinGenerators.get(info.getJoinpoint());
+         ConByConJoinPointGenerator generator = (ConByConJoinPointGenerator)joinPointGenerators.get(info.getJoinpoint());
          if (generator == null)
          {
             generator = new ConByConJoinPointGenerator(GeneratedClassAdvisor.this, info);
-            joinPoinGenerators.put(info.getJoinpoint(), generator);
+            joinPointGenerators.put(info.getJoinpoint(), generator);
          }
          return generator;
       }
@@ -1219,12 +1219,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       {
          //An extra level of indirection since we distinguish between callers of method depending on
          //where the called method is defined (sub/super interfaces)
-         ConcurrentHashMap map = (ConcurrentHashMap)joinPoinGenerators.get(info.getJoinpoint());
+         ConcurrentHashMap map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
          if (map == null)
          {
             map = new ConcurrentHashMap();
-            joinPoinGenerators.put(info.getJoinpoint(), map);
-            map = (ConcurrentHashMap)joinPoinGenerators.get(info.getJoinpoint());
+            joinPointGenerators.put(info.getJoinpoint(), map);
+            map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
          }
 
          MethodByConJoinPointGenerator generator = (MethodByConJoinPointGenerator)map.get(info.getCalledClass());
