@@ -48,7 +48,7 @@ public class PerInstanceTestCase extends ScenarioTest
       PerInstanceInterceptor.called = 0;
       pojo.method1();
       assertEquals(1, PerInstanceInterceptor.called);
-      getRunner().executeScenario(new PerInstanceInterceptorScenario());
+      getRunner().executeScenario(new PerInstanceInterceptorScenario(), this);
    }
    
    private class PerInstanceInterceptorScenario extends AbstractScenario
@@ -66,7 +66,7 @@ public class PerInstanceTestCase extends ScenarioTest
       PerInstanceAspect.called = 0;
       pojo.method2();
       assertEquals(1, PerInstanceAspect.called);
-      getRunner().executeScenario(new PerInstanceAspectScenario());
+      getRunner().executeScenario(new PerInstanceAspectScenario(), this);
    }
    
    private class PerInstanceAspectScenario extends AbstractScenario
@@ -85,7 +85,7 @@ public class PerInstanceTestCase extends ScenarioTest
       pojo.method1();
       pojo.method1();
       assertEquals(2, PerInstanceInterceptor.called);
-      getRunner().executeScenario(new PerInstanceInterceptorRepeatInstantiationScenario());
+      getRunner().executeScenario(new PerInstanceInterceptorRepeatInstantiationScenario(), this);
    }
    
    private class PerInstanceInterceptorRepeatInstantiationScenario extends AbstractScenario
@@ -103,7 +103,7 @@ public class PerInstanceTestCase extends ScenarioTest
       PerInstanceAspect.called = 0;
       pojo.method2();
       assertEquals(1, PerInstanceAspect.called);
-      getRunner().executeScenario(new PerInstanceAspectRepeatInstantiationScenario());
+      getRunner().executeScenario(new PerInstanceAspectRepeatInstantiationScenario(), this);
    }
    
    private class PerInstanceAspectRepeatInstantiationScenario extends AbstractScenario

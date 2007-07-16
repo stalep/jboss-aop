@@ -21,24 +21,28 @@
 */ 
 package org.jboss.test.aop.stress;
 
-import org.jboss.test.AbstractTestDelegate;
+import java.util.Properties;
 
 /**
- * 
+ * Default values for Scenario Properties
+ *  
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class ScenarioTestDelegate extends AbstractTestDelegate
+public class DefaultScenarioPropertyReader extends ScenarioPropertyReader
 {
-   ScenarioRunner runner; 
-   public ScenarioTestDelegate(Class clazz)
+   @Override
+   Properties loadProperties()
    {
-      super(clazz);
-      runner = new ScenarioRunner(super.clazz); 
+      Properties properties = new Properties();
+      properties.put(WARMUP, "100000");
+      properties.put(LOOPS, "10");
+      properties.put(THREADS, "10");
+      properties.put(RANDOM_SLEEP_INTERVAL, "false");
+      properties.put(SLEEPTIME_MILLIS, "100");
+      properties.put(LOGGING, "false");
+
+      return properties;
    }
 
-   public ScenarioRunner getRunner()
-   {
-      return runner;
-   }
 }

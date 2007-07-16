@@ -21,24 +21,18 @@
 */ 
 package org.jboss.test.aop.stress;
 
-import org.jboss.test.AbstractTestDelegate;
+import java.util.Properties;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class ScenarioTestDelegate extends AbstractTestDelegate
+public class SystemScenarioPropertyReader extends ScenarioPropertyReader
 {
-   ScenarioRunner runner; 
-   public ScenarioTestDelegate(Class clazz)
+   @Override
+   Properties loadProperties()
    {
-      super(clazz);
-      runner = new ScenarioRunner(super.clazz); 
-   }
-
-   public ScenarioRunner getRunner()
-   {
-      return runner;
+      return System.getProperties();
    }
 }

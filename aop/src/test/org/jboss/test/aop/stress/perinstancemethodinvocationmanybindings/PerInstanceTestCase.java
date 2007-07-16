@@ -151,7 +151,7 @@ public class PerInstanceTestCase extends ScenarioTest
       assertEquals(0, PerVmInterceptor.called);
       assertEquals(24, PerInstanceInterceptor.called);
       
-      getRunner().executeScenario(new PerInstanceInterceptorRepeatInstantiationScenario());
+      getRunner().executeScenario(new PerInstanceInterceptorRepeatInstantiationScenario(), this);
    }
    
    private class PerInstanceInterceptorRepeatInstantiationScenario extends AbstractScenario

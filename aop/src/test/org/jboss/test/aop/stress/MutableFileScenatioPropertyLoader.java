@@ -21,24 +21,24 @@
 */ 
 package org.jboss.test.aop.stress;
 
-import org.jboss.test.AbstractTestDelegate;
-
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class ScenarioTestDelegate extends AbstractTestDelegate
+public class MutableFileScenatioPropertyLoader extends FileScenarioPropertyReader
 {
-   ScenarioRunner runner; 
-   public ScenarioTestDelegate(Class clazz)
+
+   MutableFileScenatioPropertyLoader(String location, boolean strict)
    {
-      super(clazz);
-      runner = new ScenarioRunner(super.clazz); 
+      // FIXME MutableFileScenatioPropertyLoader constructor
+      super(location, strict);
+   }
+   
+   public void updateProperties(String location)
+   {
+      super.location = location;
+      super.properties = super.loadProperties();
    }
 
-   public ScenarioRunner getRunner()
-   {
-      return runner;
-   }
 }

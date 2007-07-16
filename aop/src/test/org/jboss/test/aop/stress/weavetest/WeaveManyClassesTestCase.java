@@ -49,12 +49,12 @@ public class WeaveManyClassesTestCase extends ScenarioTest
 
    public void testVanilla() throws Exception
    {
-      getRunner().executeScenario(new VanillaScenario());
+      getRunner().executeScenario(new VanillaScenario(), this);
    }
    
    public void testWeave() throws Exception
    {
-      getRunner().executeScenario(new WeaveScenario());
+      getRunner().executeScenario(new WeaveScenario(), this);
    }
    
    @SkipWarmup
@@ -113,7 +113,7 @@ public class WeaveManyClassesTestCase extends ScenarioTest
    
    public void testInitAdvisor() throws Exception
    {
-      getRunner().executeScenario(new InitAdvisorScenario());
+      getRunner().executeScenario(new InitAdvisorScenario(), this);
    }
 
    @SkipWarmup

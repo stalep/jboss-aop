@@ -53,7 +53,7 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
       assertTrue(SimpleAspect.after);
       assertFalse(SimpleAspect.throwing);
       assertFalse(SimpleAspect.finaly);
-      getRunner().executeScenario(new AroundWithNoExceptionsScenario());
+      getRunner().executeScenario(new AroundWithNoExceptionsScenario(), this);
    }
    
    private class AroundWithNoExceptionsScenario extends AbstractScenario
@@ -75,7 +75,7 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
       assertTrue(SimpleAspect.after);
       assertFalse(SimpleAspect.throwing);
       assertFalse(SimpleAspect.finaly);
-      getRunner().executeScenario(new BeforeAfterThrowingFinallyWithNoExceptionsScenario());
+      getRunner().executeScenario(new BeforeAfterThrowingFinallyWithNoExceptionsScenario(), this);
    }
    
    private class BeforeAfterThrowingFinallyWithNoExceptionsScenario extends AbstractScenario
@@ -107,7 +107,7 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
       assertTrue(SimpleAspect.throwing);
       assertTrue(SimpleAspect.finaly);
 
-      getRunner().executeScenario(new AroundWithExceptionsScenario());
+      getRunner().executeScenario(new AroundWithExceptionsScenario(), this);
    }
    
    private class AroundWithExceptionsScenario extends AbstractScenario
@@ -147,7 +147,7 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
       assertTrue(SimpleAspect.throwing);
       assertTrue(SimpleAspect.finaly);
 
-      getRunner().executeScenario(new BeforeAfterThrowingFinallyWithExceptionScenario());
+      getRunner().executeScenario(new BeforeAfterThrowingFinallyWithExceptionScenario(), this);
    }
    
    private class BeforeAfterThrowingFinallyWithExceptionScenario extends AbstractScenario
@@ -175,7 +175,7 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
       assertFalse(SimpleAspect.throwing);
       assertFalse(SimpleAspect.finaly);
 
-      getRunner().executeScenario(new AroundSimulatedBeforeScenario());
+      getRunner().executeScenario(new AroundSimulatedBeforeScenario(), this);
    }
    
    private class AroundSimulatedBeforeScenario extends AbstractScenario
@@ -197,7 +197,7 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
       assertFalse(SimpleAspect.throwing);
       assertFalse(SimpleAspect.finaly);
 
-      getRunner().executeScenario(new BeforeOnlyScenario());
+      getRunner().executeScenario(new BeforeOnlyScenario(), this);
    }
    
    private class BeforeOnlyScenario extends AbstractScenario
@@ -216,7 +216,7 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
       pojo.methodWithAroundArguments("HELLO");
       assertEquals("HELLO", SimpleAspect.string);
       
-      getRunner().executeScenario(new AroundAccessArgumentsScenario());
+      getRunner().executeScenario(new AroundAccessArgumentsScenario(), this);
    }
    
    private class AroundAccessArgumentsScenario extends AbstractScenario
@@ -236,7 +236,7 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
       pojo.methodWithTypedArguments("HEY");
       assertEquals("HEY", SimpleAspect.string);
       
-      getRunner().executeScenario(new BeforeAccessTypedArgumentScenario());
+      getRunner().executeScenario(new BeforeAccessTypedArgumentScenario(), this);
    }
    
    private class BeforeAccessTypedArgumentScenario extends AbstractScenario
@@ -251,7 +251,7 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
    
    public void testNotWovenNoCtorScenario() throws Exception
    {
-      getRunner().executeScenario(new NotWovenNoCtorScenario());
+      getRunner().executeScenario(new NotWovenNoCtorScenario(), this);
    }
    
    private class NotWovenNoCtorScenario extends AbstractScenario
@@ -265,7 +265,7 @@ public class BeforeAfterThrowingFinallyVersusAroundTestCase extends ScenarioTest
 
    public void testNotWovenWithCtorScenario() throws Exception
    {
-      getRunner().executeScenario(new NotWovenWithCtorScenario());
+      getRunner().executeScenario(new NotWovenWithCtorScenario(), this);
    }
    
    private class NotWovenWithCtorScenario extends AbstractScenario

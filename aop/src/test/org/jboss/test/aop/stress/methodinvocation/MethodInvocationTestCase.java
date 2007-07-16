@@ -46,7 +46,7 @@ public class MethodInvocationTestCase extends ScenarioTest
    
    public void testStaticWovenNoAdvice() throws Exception
    {
-      getRunner().executeScenario(new StaticWovenNoAdviceScenario());
+      getRunner().executeScenario(new StaticWovenNoAdviceScenario(), this);
    }
    
    private class StaticWovenNoAdviceScenario extends AbstractScenario
@@ -60,7 +60,7 @@ public class MethodInvocationTestCase extends ScenarioTest
    
    public void testNonStaticWovenNoAdvice() throws Exception
    {
-      getRunner().executeScenario(new NonStaticWovenNoAdviceScenario());
+      getRunner().executeScenario(new NonStaticWovenNoAdviceScenario(), this);
    }
 
    private class NonStaticWovenNoAdviceScenario extends AbstractScenario
@@ -78,7 +78,7 @@ public class MethodInvocationTestCase extends ScenarioTest
       PlainInterceptor.called = 0;
       pojo.oneInterceptor();
       assertEquals(1, PlainInterceptor.called);
-      getRunner().executeScenario(new NonStaticWithOneInterceptorScenario());
+      getRunner().executeScenario(new NonStaticWithOneInterceptorScenario(), this);
    }
    
    private class NonStaticWithOneInterceptorScenario extends AbstractScenario
@@ -96,7 +96,7 @@ public class MethodInvocationTestCase extends ScenarioTest
       PlainInterceptor.called = 0;
       pojo.fiveInterceptors();
       assertEquals(5, PlainInterceptor.called);
-      getRunner().executeScenario(new NonStaticWithFiveInterceptorsScenario());
+      getRunner().executeScenario(new NonStaticWithFiveInterceptorsScenario(), this);
    }
    
    private class NonStaticWithFiveInterceptorsScenario extends AbstractScenario
@@ -114,7 +114,7 @@ public class MethodInvocationTestCase extends ScenarioTest
       PlainAspect.called = 0;
       pojo.oneAdvice();
       assertEquals(1, PlainAspect.called);
-      getRunner().executeScenario(new NonStaticWithOneAdviceScenario());
+      getRunner().executeScenario(new NonStaticWithOneAdviceScenario(), this);
    }
    
    private class NonStaticWithOneAdviceScenario extends AbstractScenario
@@ -132,7 +132,7 @@ public class MethodInvocationTestCase extends ScenarioTest
       PlainAspect.called = 0;
       pojo.fiveAdvices();
       assertEquals(5, PlainAspect.called);
-      getRunner().executeScenario(new NonStaticWithFiveAdvicesScenario());
+      getRunner().executeScenario(new NonStaticWithFiveAdvicesScenario(), this);
    }
    
    private class NonStaticWithFiveAdvicesScenario extends AbstractScenario

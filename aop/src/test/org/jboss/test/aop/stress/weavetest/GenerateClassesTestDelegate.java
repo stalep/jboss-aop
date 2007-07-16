@@ -47,7 +47,7 @@ public class GenerateClassesTestDelegate extends ScenarioTestDelegate
       super.setUp();
       System.out.println("Seeing up delegate");
       setupScenario = new GenerateClassesScenario();
-      super.getRunner().executeScenario(setupScenario);
+      super.getRunner().executeScenario(setupScenario, null);
    }
    
    public Factory[] getWovenFactories()

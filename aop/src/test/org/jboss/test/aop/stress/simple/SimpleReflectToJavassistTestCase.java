@@ -53,7 +53,7 @@ public class SimpleReflectToJavassistTestCase extends ScenarioTest
       boolean exception = false;
       try
       {
-         getRunner().executeScenario(new ExceptionScenario());
+         getRunner().executeScenario(new ExceptionScenario(), this);
       }
       catch (Exception e)
       {
@@ -70,7 +70,7 @@ public class SimpleReflectToJavassistTestCase extends ScenarioTest
         new SimpleFieldToJavassistScenario(),
         new SimpleMethodToJavassistScenario()};
       
-      getRunner().executeScenarios(scenarios);
+      getRunner().executeScenario(scenarios, this);
    }
 
    private class ExceptionScenario extends AbstractScenario
@@ -119,10 +119,10 @@ public class SimpleReflectToJavassistTestCase extends ScenarioTest
     */
    public void testExceptionOverhead() throws Throwable
    {
-      getRunner().executeScenario(new InstantiateObjectScenario());
-      getRunner().executeScenario(new CreateExceptionScenario());
-      getRunner().executeScenario(new CreateExceptionGetStackTraceScenario());
-      getRunner().executeScenario(new CallMethodWithExceptionScenario());
+      getRunner().executeScenario(new InstantiateObjectScenario(), this);
+      getRunner().executeScenario(new CreateExceptionScenario(), this);
+      getRunner().executeScenario(new CreateExceptionGetStackTraceScenario(), this);
+      getRunner().executeScenario(new CallMethodWithExceptionScenario(), this);
    }
    
    private class InstantiateObjectScenario extends AbstractScenario
