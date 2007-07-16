@@ -50,6 +50,7 @@ import org.jboss.aop.joinpoint.FieldJoinpoint;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodJoinpoint;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
+import org.jboss.aop.util.UnmodifiableEmptyCollections;
 
 /**
  * Comment
@@ -76,15 +77,15 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    //TODO These are only needed for the class advisor really
    //All joinpoint generators apart from field reads and constructions go in here
-   private ConcurrentHashMap joinPointGenerators = new ConcurrentHashMap();
+   private ConcurrentHashMap joinPointGenerators = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
    //Needs its own map to avoid crashing with the field write generators
-   private ConcurrentHashMap fieldReadJoinPoinGenerators = new ConcurrentHashMap();
+   private ConcurrentHashMap fieldReadJoinPoinGenerators = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
    //Needs its own map to avoid crashing with the constructor generators
-   private ConcurrentHashMap constructionJoinPointGenerators = new ConcurrentHashMap();
+   private ConcurrentHashMap constructionJoinPointGenerators = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
    
-   ConcurrentHashMap oldInfos = new ConcurrentHashMap();
-   ConcurrentHashMap oldFieldReadInfos = new ConcurrentHashMap();
-   ConcurrentHashMap oldConstructionInfos = new ConcurrentHashMap();
+   ConcurrentHashMap oldInfos = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   ConcurrentHashMap oldFieldReadInfos = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   ConcurrentHashMap oldConstructionInfos = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
 
    boolean initialisedSuperClasses; 
 
@@ -548,7 +549,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          MethodInfo myMethodInfo = matchInfo.getInfo();
          myMethodInfo.cloneChains(classMethodInfo);
          
-         if (updateOldInfo(oldInfos, myMethodInfo))
+         if (updateOldInfo(oldInfos, myMethodInfo, OldInfoMaps.INFOS))
          {
             MethodJoinPointGenerator generator = getJoinPointGenerator(myMethodInfo);
             generator.rebindJoinpoint(myMethodInfo);
@@ -571,7 +572,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          newMethodInfos.put(keys[i], info);
 
          MethodJoinPointGenerator generator = getJoinPointGenerator(info);
-         finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
+         finalizeChainAndRebindJoinPoint(oldInfos, info, generator, OldInfoMaps.INFOS);
       }
       methodInterceptors = newMethodInfos;
       
@@ -583,7 +584,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
             MethodInfo info = (MethodInfo)it.next();
 
             MethodJoinPointGenerator generator = getJoinPointGenerator(info);
-            finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
+            finalizeChainAndRebindJoinPoint(oldInfos, info, generator, OldInfoMaps.INFOS);
          }
       }      
    }
@@ -595,12 +596,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       if (classAdvisor != null)
       {
          //We are an instance advisor with no own data influencing the chains, copy these from the parent advisor
-         easyFinalizeFieldChainForInstance(oldFieldReadInfos, classAdvisor.getFieldReadInfos(), newFieldInfos);
+         easyFinalizeFieldChainForInstance(oldFieldReadInfos, classAdvisor.getFieldReadInfos(), newFieldInfos, OldInfoMaps.FIELD_READ_INFOS);
       }
       else
       {
          //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
-         fullWorkFinalizeFieldChain(oldFieldReadInfos, newFieldInfos);
+         fullWorkFinalizeFieldChain(oldFieldReadInfos, newFieldInfos, OldInfoMaps.FIELD_READ_INFOS);
       }
    }
 
@@ -611,16 +612,16 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       if (classAdvisor != null)
       {
          //We are an instance advisor with no own data influencing the chains, copy these from the parent advisor
-         easyFinalizeFieldChainForInstance(oldInfos, classAdvisor.getFieldWriteInfos(), newFieldInfos);
+         easyFinalizeFieldChainForInstance(oldInfos, classAdvisor.getFieldWriteInfos(), newFieldInfos, OldInfoMaps.INFOS);
       }
       else
       {
          //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
-         fullWorkFinalizeFieldChain(oldInfos, newFieldInfos);
+         fullWorkFinalizeFieldChain(oldInfos, newFieldInfos, OldInfoMaps.INFOS);
       }
    }
 
-   private void easyFinalizeFieldChainForInstance(Map oldFieldInfos, FieldInfo[] classFieldInfos, ArrayList newFieldInfos)
+   private void easyFinalizeFieldChainForInstance(Map oldFieldInfos, FieldInfo[] classFieldInfos, ArrayList newFieldInfos, OldInfoMaps oldInfoMapInstance)
    {
       //We are an instance advisor with no own data influencing the chains, copy these from the parent advisor
       if (newFieldInfos.size() > 0)
@@ -630,7 +631,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
             FieldInfo myInfo = (FieldInfo)newFieldInfos.get(i);
             myInfo.cloneChains(classFieldInfos[i]);
             
-            if (updateOldInfo(oldFieldInfos, myInfo))
+            if (updateOldInfo(oldFieldInfos, myInfo, oldInfoMapInstance))
             {
                FieldJoinPointGenerator generator = getJoinPointGenerator(myInfo);
                generator.rebindJoinpoint(myInfo);
@@ -639,14 +640,14 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
    }
    
-   private void fullWorkFinalizeFieldChain(Map oldFieldInfos, ArrayList newFieldInfos)
+   private void fullWorkFinalizeFieldChain(Map oldFieldInfos, ArrayList newFieldInfos, OldInfoMaps oldInfoMapInstance)
    {
       //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
       for (int i = 0; i < newFieldInfos.size(); i++)
       {
          FieldInfo info = (FieldInfo)newFieldInfos.get(i);
          FieldJoinPointGenerator generator = getJoinPointGenerator(info);
-         finalizeChainAndRebindJoinPoint(oldFieldInfos, info, generator);
+         finalizeChainAndRebindJoinPoint(oldFieldInfos, info, generator, oldInfoMapInstance);
       }
    }
    
@@ -666,21 +667,21 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    protected void finalizeMethodCalledByMethodInterceptorChain(MethodByMethodInfo info)
    {
       MethodByMethodJoinPointGenerator generator = getJoinPointGenerator(info);
-      finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
+      finalizeChainAndRebindJoinPoint(oldInfos, info, generator, OldInfoMaps.INFOS);
    }
 
    @Override
    protected void finalizeConCalledByMethodInterceptorChain(ConByMethodInfo info)
    {
       ConByMethodJoinPointGenerator generator = getJoinPointGenerator(info);
-      finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
+      finalizeChainAndRebindJoinPoint(oldInfos, info, generator, OldInfoMaps.INFOS);
    }
 
    @Override
    protected void finalizeConCalledByConInterceptorChain(ConByConInfo info)
    {
       ConByConJoinPointGenerator generator = getJoinPointGenerator(info);
-      finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
+      finalizeChainAndRebindJoinPoint(oldInfos, info, generator, OldInfoMaps.INFOS);
    }
 
    @Override
@@ -692,12 +693,13 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       if (map == null)
       {
          map = new ConcurrentHashMap();
+         initJoinPointGeneratorsMap();
          joinPointGenerators.put(info.getJoinpoint(), map);
          map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
       }
 
       MethodByConJoinPointGenerator generator = getJoinPointGenerator(info);
-      finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
+      finalizeChainAndRebindJoinPoint(oldInfos, info, generator, OldInfoMaps.INFOS);
    }
 
    private JoinPointGenerator getJoinPointGenerator(JoinPointInfo info)
@@ -807,7 +809,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
    }
 
-   private void finalizeChainAndRebindJoinPoint(Map oldInfos, JoinPointInfo info, JoinPointGenerator generator)
+   private void finalizeChainAndRebindJoinPoint(Map oldInfos, JoinPointInfo info, JoinPointGenerator generator, OldInfoMaps oldInfoMapInstance)
    {
       ArrayList list = info.getInterceptorChain();
       GeneratedAdvisorInterceptor[] factories = null;
@@ -817,7 +819,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
       info.setInterceptors(factories);
 
-      if (updateOldInfo(oldInfos, info))
+      if (updateOldInfo(oldInfos, info, oldInfoMapInstance))
       {
          generator.rebindJoinpoint(info);
       }
@@ -956,7 +958,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    /**
     * Caches the old info and checks if the chains have been updated
     */
-   private boolean updateOldInfo(Map oldInfos, JoinPointInfo newInfo)
+   private boolean updateOldInfo(Map oldInfos, JoinPointInfo newInfo, OldInfoMaps oldInfoMapInstance)
    {
       JoinPointInfo oldInfo = (JoinPointInfo)oldInfos.get(newInfo.getJoinpoint());
       if (oldInfo != null)
@@ -968,6 +970,24 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          }
       }
       oldInfo = newInfo.copy();
+      
+      if (oldInfoMapInstance == OldInfoMaps.INFOS) 
+      {
+         oldInfos = initOldInfosMap();
+      }
+      else if (oldInfoMapInstance == OldInfoMaps.FIELD_READ_INFOS)
+      {
+         oldInfos = initOldFieldReadInfosMap();
+      }
+      else if (oldInfoMapInstance == OldInfoMaps.CONSTRUCTION_INFOS)
+      {
+         oldInfos = initOldConstructionInfosMap();
+      }
+      else
+      {
+         throw new RuntimeException("Unrecognised map");
+      }
+      
       oldInfos.put(newInfo.getJoinpoint(), oldInfo);
       return true;
    }
@@ -1035,6 +1055,124 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       JoinPointInfo newinfo = info.copy();
       newinfo.setAdvisor(this);
       return rebindJoinPointWithInstanceInformation(newinfo);
+   }
+   
+   
+   protected void initJoinPointGeneratorsMap()
+   {
+      if (joinPointGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (joinPointGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+            {
+               joinPointGenerators = new ConcurrentHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   protected void initFieldReadJoinPointGeneratorsMap()
+   {
+      if (fieldReadJoinPoinGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (fieldReadJoinPoinGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+            {
+               fieldReadJoinPoinGenerators = new ConcurrentHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   protected void initConstructionJoinPointGeneratorsMap()
+   {
+      if (constructionJoinPointGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (constructionJoinPointGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+            {
+               constructionJoinPointGenerators = new ConcurrentHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   protected ConcurrentHashMap initOldInfosMap()
+   {
+      if (oldInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (oldInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+            {
+               oldInfos = new ConcurrentHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+      return oldInfos;
+   }
+   
+   protected ConcurrentHashMap initOldFieldReadInfosMap()
+   {
+      if (oldFieldReadInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (oldFieldReadInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+            {
+               oldFieldReadInfos = new ConcurrentHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+      return oldFieldReadInfos;
+   }
+   
+   protected ConcurrentHashMap initOldConstructionInfosMap()
+   {
+      if (oldConstructionInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (oldConstructionInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+            {
+               oldConstructionInfos = new ConcurrentHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+      return oldConstructionInfos;
    }
    
    /**
@@ -1118,6 +1256,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          if (generator == null)
          {
             generator = new MethodJoinPointGenerator(GeneratedClassAdvisor.this, info);
+            initJoinPointGeneratorsMap();
             joinPointGenerators.put(info.getJoinpoint(), generator);
          }
          return generator;
@@ -1131,6 +1270,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
             if (generator == null)
             {
                generator = new FieldJoinPointGenerator(GeneratedClassAdvisor.this, info);
+               initFieldReadJoinPointGeneratorsMap();
                fieldReadJoinPoinGenerators.put(info.getJoinpoint(), generator);
             }
             return generator;
@@ -1141,6 +1281,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
             if (generator == null)
             {
                generator = new FieldJoinPointGenerator(GeneratedClassAdvisor.this, info);
+               initJoinPointGeneratorsMap();
                joinPointGenerators.put(info.getJoinpoint(), generator);
             }
             return generator;
@@ -1154,6 +1295,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          if (generator == null)
          {
             generator = new ConstructorJoinPointGenerator(GeneratedClassAdvisor.this, info);
+            initConstructionJoinPointGeneratorsMap();
             constructionJoinPointGenerators.put(info.getJoinpoint(), generator);
          }
          return generator;
@@ -1165,6 +1307,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          if (generator == null)
          {
             generator = new ConstructionJoinPointGenerator(GeneratedClassAdvisor.this, info);
+            initJoinPointGeneratorsMap();
             joinPointGenerators.put(info.getJoinpoint(), generator);
          }
          return generator;
@@ -1178,6 +1321,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          if (map == null)
          {
             map = new ConcurrentHashMap();
+            initJoinPointGeneratorsMap();
             joinPointGenerators.put(info.getJoinpoint(), map);
             map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
          }
@@ -1198,6 +1342,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          if (generator == null)
          {
             generator = new ConByMethodJoinPointGenerator(GeneratedClassAdvisor.this, info);
+            initJoinPointGeneratorsMap();
             joinPointGenerators.put(info.getJoinpoint(), generator);
          }
          return generator;
@@ -1210,6 +1355,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          if (generator == null)
          {
             generator = new ConByConJoinPointGenerator(GeneratedClassAdvisor.this, info);
+            initJoinPointGeneratorsMap();
             joinPointGenerators.put(info.getJoinpoint(), generator);
          }
          return generator;
@@ -1223,6 +1369,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          if (map == null)
          {
             map = new ConcurrentHashMap();
+            initJoinPointGeneratorsMap();
             joinPointGenerators.put(info.getJoinpoint(), map);
             map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
          }
@@ -1304,7 +1451,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             ConstructorInfo info = (ConstructorInfo) newConstructorInfos.get(i);
             ConstructorJoinPointGenerator generator = getJoinPointGenerator(info);
-            finalizeChainAndRebindJoinPoint(oldInfos, info, generator);
+            finalizeChainAndRebindJoinPoint(oldInfos, info, generator, OldInfoMaps.INFOS);
          }
       }
 
@@ -1314,7 +1461,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             ConstructionInfo info = (ConstructionInfo) newConstructionInfos.get(i);
             ConstructionJoinPointGenerator generator = getJoinPointGenerator(info);
-            finalizeChainAndRebindJoinPoint(oldConstructionInfos, info, generator);
+            finalizeChainAndRebindJoinPoint(oldConstructionInfos, info, generator, OldInfoMaps.CONSTRUCTION_INFOS);
          }
       }
 
@@ -1527,5 +1674,9 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       {
          //Do nothing, field was already made accessible in class advisor
       }
+   }
+   
+   enum OldInfoMaps{
+      INFOS, FIELD_READ_INFOS, CONSTRUCTION_INFOS;
    }
 }
