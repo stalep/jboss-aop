@@ -24,12 +24,14 @@ import javassist.CtMethod;
 import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.aop.util.PayloadKey;
+import org.jboss.aop.util.UnmodifiableEmptyCollections;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
@@ -38,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MethodMetaData implements MetaDataResolver
 {
-   Map methodMetaData = new ConcurrentHashMap();
+   Map methodMetaData = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
    HashMap inexactMatches;
 
    public boolean hasTag(String group)
@@ -72,18 +74,16 @@ public class MethodMetaData implements MetaDataResolver
       addMethodMetaData(method.toString(), tag, attr, value, type, exactMatch);
    }
 
-   private void addMethodMetaData(String key, Object tag, Object attr, Object value, PayloadKey type, boolean exactMatch)
+   private synchronized void addMethodMetaData(String key, Object tag, Object attr, Object value, PayloadKey type, boolean exactMatch)
    {
-      synchronized (methodMetaData)
+      SimpleMetaData methodData = (SimpleMetaData)methodMetaData.get(key);
+      if (methodData == null)
       {
-         SimpleMetaData methodData = (SimpleMetaData)methodMetaData.get(key);
-         if (methodData == null)
-         {
-            methodData = new SimpleMetaData();
-            methodMetaData.put(key, methodData);
-         }
-         methodData.addMetaData(tag, attr, value, type);
-      }      
+         methodData = new SimpleMetaData();
+         initMethodMetaDataMap();
+         methodMetaData.put(key, methodData);
+      }
+      methodData.addMetaData(tag, attr, value, type);
       manageInexactMatches(key, tag, attr, exactMatch);
    }
    
@@ -212,5 +212,11 @@ public class MethodMetaData implements MetaDataResolver
       return meta.hasTag(tag);
    }
 
-
+   private void initMethodMetaDataMap()
+   {
+      if (methodMetaData == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         methodMetaData = new LinkedHashMap();
+      }
+   }
 }
