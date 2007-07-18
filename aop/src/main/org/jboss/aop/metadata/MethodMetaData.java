@@ -29,9 +29,8 @@ import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.ConcurrentHashMap;
 /**
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
@@ -214,9 +213,9 @@ public class MethodMetaData implements MetaDataResolver
 
    private void initMethodMetaDataMap()
    {
-      if (methodMetaData == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      if (methodMetaData == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         methodMetaData = new LinkedHashMap();
+         methodMetaData = new ConcurrentHashMap();
       }
    }
 }
