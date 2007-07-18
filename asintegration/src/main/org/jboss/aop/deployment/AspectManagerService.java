@@ -31,14 +31,8 @@ import java.util.StringTokenizer;
 
 import javassist.scopedpool.ScopedClassPoolFactory;
 
-import javax.management.Attribute;
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.InvalidAttributeValueException;
-import javax.management.MBeanException;
 import javax.management.Notification;
 import javax.management.ObjectName;
-import javax.management.ReflectionException;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.AspectNotificationHandler;
@@ -47,9 +41,6 @@ import org.jboss.aop.ClassLoaderValidation;
 import org.jboss.aop.ClassicWeavingStrategy;
 import org.jboss.aop.Deployment;
 import org.jboss.aop.SuperClassesFirstWeavingStrategy;
-import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
-import org.jboss.aop.classpool.AOPScopedClassLoaderHelper;
-import org.jboss.aop.classpool.AOPScopedClassLoaderHelperBridge;
 import org.jboss.aop.hook.JDK14Transformer;
 import org.jboss.aop.hook.JDK14TransformerManager;
 import org.jboss.aop.instrument.InstrumentorFactory;
@@ -64,7 +55,6 @@ import org.jboss.system.server.ServerConfig;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @author adrian@jboss.org
  * @version $Revision$
- * @jmx:mbean extends="org.jboss.system.ServiceMBean"
  */
 public class AspectManagerService
         extends ServiceMBeanSupport
@@ -75,6 +65,7 @@ public class AspectManagerService
       //pre-load necessary classes so that we avoid NoClassDefFoundErrors on JRockit when using the RepositoryClassloader hook
       //When AspectManager.translate() is called the first time, these classes have not been loaded yet, and this is what causes
       //JRockit to get confused
+      @SuppressWarnings("unused")
       Class clazz = TransformerCommon.class;
       clazz = SuperClassesFirstWeavingStrategy.class;
       clazz = ClassicWeavingStrategy.class;
@@ -98,6 +89,9 @@ public class AspectManagerService
    //When running with JBoss 5 registration with MBeanServer happens after the service has been started
    boolean registerHappensAfterStart;
    boolean hasBeenStarted;
+   
+   /** The encapsulation of the integration */
+   private JBossIntegration integration;
 
    // Static -------------------------------------------------------
 
@@ -108,6 +102,8 @@ public class AspectManagerService
 
    /**
     * Ctor called wehen running in JBoss 5. In JBoss 5 we take control of registering this service in JMX ourselves
+    * 
+    * @param baseXml the base xml for aspects
     */
    public AspectManagerService(String baseXml)
    {
@@ -117,19 +113,53 @@ public class AspectManagerService
 
    // Public -------------------------------------------------------
 
+   /**
+    * Get the integration
+    * 
+    * @return the integration
+    */
+   public JBossIntegration getJBossIntegration()
+   {
+      return integration;
+   }
+   
+   /**
+    * Set the integration
+    * 
+    * @param integration the integration 
+    */
+   public void setJBossIntegration(JBossIntegration integration)
+   {
+      this.integration = integration;
+   }
+
    protected ScopedClassPoolFactory createFactory() throws Exception
    {
-      return new JBossClassPoolFactory(tmpClassesDir);
+      return initIntegration().createScopedClassPoolFactory(tmpClassesDir);
    }
-
+   
    protected ClassLoaderValidation createClassLoaderValidation()
    {
-      return new JBossClassLoaderValidator();
+      return initIntegration();
    }
 
+   /**
+    * Initialize the integration if not alreday done so
+    * 
+    * @return the integration
+    */
+   protected JBossIntegration initIntegration()
+   {
+      // Default to old JBoss4 integration when not configured
+      if (integration == null)
+         integration = new JBoss4Integration();
+      return integration;
+   }
+   
    protected void createService()
            throws Exception
    {
+      initIntegration();
       if (hasBeenStarted)
       {
          return;
@@ -164,9 +194,7 @@ public class AspectManagerService
       created = true;
       AspectManager.notificationHandler = this;
 
-      AOPScopedClassLoaderHelper helper = new JBossScopedClassLoaderHelper();
-      AOPClassLoaderScopingPolicy policy = new AOPScopedClassLoaderHelperBridge(helper);
-      AspectManager.setClassLoaderScopingPolicy(policy);
+      AspectManager.setClassLoaderScopingPolicy(integration.createAOPClassLoaderScopingPolicy());
 
       baseAop();
    }
@@ -204,59 +232,12 @@ public class AspectManagerService
    protected void attachDeprecatedTranslator()
    {
       log.warn("EnableTransformer has been deprecated, please use EnableLoadtimeWeaving.  See docs for more details");
-      AspectManager mgr = AspectManager.instance();
-      try
-      {
-         server.setAttribute(DEFAULT_LOADER_REPOSITORY, new Attribute("Translator", mgr));
-      }
-      catch (InstanceNotFoundException e)
-      {
-         throw new RuntimeException(e);
-      }
-      catch (AttributeNotFoundException e)
-      {
-         throw new RuntimeException(e);
-      }
-      catch (InvalidAttributeValueException e)
-      {
-         throw new RuntimeException(e);
-      }
-      catch (MBeanException e)
-      {
-         throw new RuntimeException(e);
-      }
-      catch (ReflectionException e)
-      {
-         throw new RuntimeException(e);
-      }
+      initIntegration().attachDeprecatedTranslator();
    }
 
    protected void detachDeprecatedTranslator()
    {
-      try
-      {
-         server.setAttribute(DEFAULT_LOADER_REPOSITORY, new Attribute("Translator", null));
-      }
-      catch (InstanceNotFoundException e)
-      {
-         throw new RuntimeException(e);
-      }
-      catch (AttributeNotFoundException e)
-      {
-         throw new RuntimeException(e);
-      }
-      catch (InvalidAttributeValueException e)
-      {
-         throw new RuntimeException(e);
-      }
-      catch (MBeanException e)
-      {
-         throw new RuntimeException(e);
-      }
-      catch (ReflectionException e)
-      {
-         throw new RuntimeException(e);
-      }
+      initIntegration().detachDeprecatedTranslator();
    }
 
    protected void attachTranslator()
@@ -308,7 +289,7 @@ public class AspectManagerService
    public void setExclude(String exclude)
    {
       this.exclude = exclude;
-      ArrayList list = new ArrayList();
+      ArrayList<String> list = new ArrayList<String>();
       if (exclude != null)
       {
          StringTokenizer tokenizer = new StringTokenizer(exclude, ",");
@@ -328,7 +309,7 @@ public class AspectManagerService
    public void setInclude(String include)
    {
       this.include = include;
-      ArrayList list = new ArrayList();
+      ArrayList<String> list = new ArrayList<String>();
       if (include != null)
       {
          StringTokenizer tokenizer = new StringTokenizer(include, ",");
@@ -348,7 +329,7 @@ public class AspectManagerService
    public void setIgnore(String ignore)
    {
       this.ignore = ignore;
-      ArrayList list = new ArrayList();
+      ArrayList<String> list = new ArrayList<String>();
       if (ignore != null)
       {
          StringTokenizer tokenizer = new StringTokenizer(ignore, ",");
@@ -363,8 +344,6 @@ public class AspectManagerService
 
    /**
     * The temporary directory to which dyn class files are written
-    *
-    * @jmx:managed-attribute
     */
    public File getTmpClassesDir()
    {
@@ -373,8 +352,6 @@ public class AspectManagerService
 
    /**
     * The temporary directory to which dyn class files are written
-    *
-    * @jmx:managed-attribute
     */
    public void setTmpClassesDir(File tmpClassesDir)
    {
@@ -383,8 +360,6 @@ public class AspectManagerService
 
    /**
     * Set the verbosity of aop logging.  It doesn't use log4j
-    *
-    * @jmx:managed-attribute
     */
    public boolean getVerbose()
    {
@@ -393,8 +368,6 @@ public class AspectManagerService
 
    /**
     * Set the verbosity of aop logging.  It doesn't use log4j
-    *
-    * @jmx:managed-attribute
     */
    public void setVerbose(boolean verbose)
    {
@@ -403,8 +376,6 @@ public class AspectManagerService
 
    /**
     * Use aop optimizations.  Optional just in case there is a bug
-    *
-    * @jmx:managed-attribute
     */
    public boolean getOptimized()
    {
@@ -413,42 +384,28 @@ public class AspectManagerService
 
    /**
     * Use aop optimizations.  Optional just in case there is a bug
-    *
-    * @jmx:managed-attribute
     */
    public void setOptimized(boolean verbose)
    {
       AspectManager.optimize = verbose;
    }
 
-   /**
-    * @jmx:managed-attribute
-    */
    public boolean getSuppressTransformationErrors()
    {
       return suppressTransformationErrors;
    }
 
-   /**
-    * @jmx:managed-attribute
-    */
    public void setSuppressTransformationErrors(boolean suppressTransformationErrors)
    {
       this.suppressTransformationErrors = suppressTransformationErrors;
       AspectManager.suppressTransformationErrors = suppressTransformationErrors;
    }
 
-   /**
-    * @jmx:managed-attribute
-    */
    public boolean getSuppressReferenceErrors()
    {
       return suppressReferenceErrors;
    }
 
-   /**
-    * @jmx:managed-attribute
-    */
    public void setSuppressReferenceErrors(boolean suppressReferenceErrors)
    {
       this.suppressReferenceErrors = suppressReferenceErrors;
@@ -457,8 +414,6 @@ public class AspectManagerService
 
    /**
     * The temporary directory to which dyn class files are written
-    *
-    * @jmx:managed-attribute
     */
    public boolean getEnableTransformer()
    {
@@ -467,8 +422,6 @@ public class AspectManagerService
 
    /**
     * The temporary directory to which dyn class files are written
-    *
-    * @jmx:managed-operation
     */
    public String interceptorFactories()
    {
@@ -484,8 +437,6 @@ public class AspectManagerService
 
    /**
     * The temporary directory to which dyn class files are written
-    *
-    * @jmx:managed-operation
     */
    public String aspectDefinitions()
    {
@@ -499,9 +450,6 @@ public class AspectManagerService
       return buffer.toString();
    }
 
-   /**
-    * @jmx:managed-operation
-    */
    public String introductions()
    {
       Map factories = AspectManager.instance().getInterfaceIntroductions();
@@ -514,11 +462,6 @@ public class AspectManagerService
       return buffer.toString();
    }
 
-   /**
-    * The temporary directory to which dyn class files are written
-    *
-    * @jmx:managed-operation
-    */
    public String stacks()
    {
       Map factories = AspectManager.instance().getInterceptorStacks();
@@ -531,11 +474,6 @@ public class AspectManagerService
       return buffer.toString();
    }
 
-   /**
-    * The temporary directory to which dyn class files are written
-    *
-    * @jmx:managed-operation
-    */
    public String bindings()
    {
       Map factories = AspectManager.instance().getBindings();
@@ -548,11 +486,6 @@ public class AspectManagerService
       return buffer.toString();
    }
 
-   /**
-    * The temporary directory to which dyn class files are written
-    *
-    * @jmx:managed-operation
-    */
    public String registeredClassLoaders()
    {
       Map factories = AspectManager.instance().getRegisteredCLs();
@@ -565,11 +498,6 @@ public class AspectManagerService
       return buffer.toString();
    }
 
-   /**
-    * The temporary directory to which dyn class files are written
-    *
-    * @jmx:managed-attribute
-    */
    public void setEnableTransformer(boolean enableTransformer)
    {
       // Testsuite uses enableTransformer, we may be testing new loadtime features though.
@@ -599,11 +527,6 @@ public class AspectManagerService
       return enableLoadtimeWeaving;
    }
 
-   /**
-    * The temporary directory to which dyn class files are written
-    *
-    * @jmx:managed-attribute
-    */
    public void setEnableLoadtimeWeaving(boolean enableTransformer)
    {
       if (this.enableLoadtimeWeaving == enableTransformer) return;

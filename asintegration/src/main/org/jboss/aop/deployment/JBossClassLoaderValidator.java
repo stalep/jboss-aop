@@ -27,9 +27,12 @@ import org.jboss.mx.loading.RepositoryClassLoader;
 /**
  * Comment
  *
+ * TODO Is this used anywhere anymore? {@link JBoss4Integration} contains the real implementation
+ * @Deprecated use JBossIntegration
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
+@Deprecated
 public class JBossClassLoaderValidator implements ClassLoaderValidation
 {
    public boolean isValidClassLoader(ClassLoader loader)

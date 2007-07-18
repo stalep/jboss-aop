@@ -35,9 +35,11 @@ import org.jboss.mx.util.MBeanServerLocator;
 
 /**
  * 
+ * @deprecated JBAOP-??? Need a different version for the JBoss5 classloader 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
+@Deprecated
 public class LoaderRepositoryUrlUtil implements NotificationListener
 {
    final static MBeanServer SERVER;

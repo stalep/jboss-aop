@@ -27,7 +27,6 @@ import org.jboss.aop.standalone.PluggableInstrumentor;
 /**
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision: 57692 $
- * @jmx:mbean extends="org.jboss.system.ServiceMBean"
  */
 public class AspectManagerServiceJDK5 extends AspectManagerService
 {

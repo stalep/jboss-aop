@@ -24,7 +24,7 @@ package org.jboss.aop.deployers;
 import org.jboss.aop.AspectAnnotationLoader;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.AspectXmlLoader;
-import org.jboss.aop.deployment.JBossScopedClassLoaderHelper;
+import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.deployers.plugins.deployer.AbstractSimpleDeployer;
 import org.jboss.deployers.spi.deployer.DeploymentUnit;
 import org.jboss.deployers.spi.DeploymentException;
@@ -307,9 +307,11 @@ public class AspectDeployer extends AbstractSimpleDeployer
       //Scoped AOP deployments are only available when deployed as part of a scoped sar, ear etc.
       //It can contain an aop.xml file, or it can be part of a .aop file
       //Linking a standalone -aop.xml file onto a scoped deployment is not possible at the moment
-      if (JBossScopedClassLoaderHelper.isScopedClassLoader(unit.getClassLoader()))
+      AOPClassLoaderScopingPolicy policy = AspectManager.instance().getClassLoaderScopingPolicy();
+      ClassLoader cl = unit.getClassLoader();
+      if (policy != null && policy.isScoped(cl))
       {
-         return unit.getClassLoader();
+         return cl;
       }
       
       return null;

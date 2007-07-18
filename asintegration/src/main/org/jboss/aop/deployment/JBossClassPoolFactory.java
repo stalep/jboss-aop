@@ -37,11 +37,12 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 /**
  * Comment
  *
+ * @deprecated TODO JBAOP-107 Need a different version for the JBoss5 classloader 
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @author adrian@jboss.org
  * @version $Revision$
- *
  **/
+@Deprecated
 public class JBossClassPoolFactory implements ScopedClassPoolFactory
 {
    protected File tmpClassesDir;

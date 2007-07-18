@@ -23,6 +23,7 @@ package org.jboss.aop.deployment;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.Domain;
+import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.AOPScopedClassLoaderHelper;
 import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
 import org.jboss.mx.loading.LoaderRepository;
@@ -30,9 +31,13 @@ import org.jboss.mx.loading.RepositoryClassLoader;
 
 /**
  * 
+ * TODO JBAOP-107 Need a different version for the JBoss5 classloader
+ * @deprecated use {@link AOPClassLoaderScopingPolicy}
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
+ * @autor adrian@jboss.org
  * @version $Revision$
  */
+@Deprecated
 public class JBossScopedClassLoaderHelper implements AOPScopedClassLoaderHelper
 {
    public ClassLoader ifScopedDeploymentGetScopedParentUclForCL(ClassLoader loader)

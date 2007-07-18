@@ -42,9 +42,11 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 /**
  * A classpool in JBoss backed by a scoped (HierarchicalLoaderRepository) loader repository
  * 
+ * @deprecated JBAOP-??? Need a different version for the JBoss5 classloader 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
+@Deprecated
 public class ScopedJBossClassPool extends JBossClassPool 
 {
    final static LoaderRepositoryUrlUtil LOADER_REPOSITORY_UTIL = new LoaderRepositoryUrlUtil();
