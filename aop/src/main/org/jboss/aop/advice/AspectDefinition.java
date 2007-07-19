@@ -73,32 +73,30 @@ public class AspectDefinition
             Advisor advisor = (Advisor)it.next();
             if (advisor != null)
             {
-               if (advisors.remove(advisor) !=  null)
+               it.remove();
+               if (scope == Scope.PER_INSTANCE)
                {
-                  if (scope == Scope.PER_INSTANCE)
+                  advisor.removePerInstanceAspect(this);
+               }
+               else if (scope == Scope.PER_JOINPOINT)
+               {
+                  advisor.removePerInstanceJoinpointAspect(this);
+               }
+               else if (scope == Scope.PER_CLASS)
+               {
+                  advisor.removePerClassAspect(this);
+                  if (advisor instanceof GeneratedClassAdvisor)
                   {
-                     advisor.removePerInstanceAspect(this);
+                     //If it was a PER_JOINPOINT aspect for a static member, it might be listed under PER_CLASS_JOINPOINT as well
+                     ((GeneratedClassAdvisor)advisor).removePerClassJoinpointAspect(this);
                   }
-                  else if (scope == Scope.PER_JOINPOINT)
+               }
+               else if (scope == Scope.PER_CLASS_JOINPOINT)
+               {
+                  if (advisor instanceof GeneratedClassAdvisor)
                   {
-                     advisor.removePerInstanceJoinpointAspect(this);
-                  }
-                  else if (scope == Scope.PER_CLASS)
-                  {
-                     advisor.removePerClassAspect(this);
-                     if (advisor instanceof GeneratedClassAdvisor)
-                     {
-                        //If it was a PER_JOINPOINT aspect for a static member, it might be listed under PER_CLASS_JOINPOINT as well
-                        ((GeneratedClassAdvisor)advisor).removePerClassJoinpointAspect(this);
-                     }
-                  }
-                  else if (scope == Scope.PER_CLASS_JOINPOINT)
-                  {
-                     if (advisor instanceof GeneratedClassAdvisor)
-                     {
-                        //GeneratedClassAdvisors handle PER_CLASS_JOINPOINT aspects slightly differently
-                        ((GeneratedClassAdvisor)advisor).removePerClassJoinpointAspect(this);
-                     }
+                     //GeneratedClassAdvisors handle PER_CLASS_JOINPOINT aspects slightly differently
+                     ((GeneratedClassAdvisor)advisor).removePerClassJoinpointAspect(this);
                   }
                }
             }
