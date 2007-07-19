@@ -45,22 +45,26 @@ import org.jboss.mx.loading.RepositoryClassLoader;
 public class ScopedClassLoaderDomain extends Domain
 {
    
-   WeakReference loader;
+   WeakReference<ClassLoader> loader;
    boolean parentDelegation;
-   ConcurrentHashMap myPerVMAspects = new ConcurrentHashMap();
-   ConcurrentHashMap notMyPerVMAspects = new ConcurrentHashMap();
+   ConcurrentHashMap<String, Object> myPerVMAspects = new ConcurrentHashMap<String, Object>();
+   ConcurrentHashMap<String, Boolean> notMyPerVMAspects = new ConcurrentHashMap<String, Boolean>();
    InterceptionMarkers interceptionMarkers = new InterceptionMarkers();
+   String classLoaderString;
    
    public ScopedClassLoaderDomain(ClassLoader loader, String name, boolean parentDelegation, AspectManager manager, boolean parentFirst)
    {
       super(manager, name, parentFirst);
-      this.loader = new WeakReference(loader);
+      if (loader == null)
+         throw new IllegalArgumentException("Null classloader");
+      this.loader = new WeakReference<ClassLoader>(loader);
       this.parentDelegation = parentDelegation;
+      classLoaderString = loader.toString();
    }
 
    protected ClassLoader getClassLoader()
    {
-      ClassLoader cl = (ClassLoader)loader.get();
+      ClassLoader cl = loader.get();
       if (cl != null)
       {
          return cl;
@@ -73,7 +77,7 @@ public class ScopedClassLoaderDomain extends Domain
       AspectDefinition def = super.internalRemoveAspectDefintion(name);
       if (def != null)
       {
-         Object o = myPerVMAspects.remove(name);
+         myPerVMAspects.remove(name);
       }
    }
 
@@ -166,7 +170,17 @@ public class ScopedClassLoaderDomain extends Domain
    
    private HeirarchicalLoaderRepository3 getScopedRepository()
    {
-      HeirarchicalLoaderRepository3 myRepository = (HeirarchicalLoaderRepository3)((RepositoryClassLoader)getClassLoader()).getLoaderRepository();
-      return myRepository;
+      ClassLoader classloader = getClassLoader();
+      if (classloader == null)
+         throw new IllegalStateException("ClassLoader no longer exists: " + classLoaderString);
+      if (classloader instanceof RepositoryClassLoader == false)
+         throw new IllegalStateException("ClassLoader is not an instanceof RepositoryClassLoader " + classLoaderString);
+      RepositoryClassLoader repositoryClassLoader = (RepositoryClassLoader) classloader;
+      LoaderRepository loaderRepository = repositoryClassLoader.getLoaderRepository();
+      if (loaderRepository == null)
+         throw new IllegalStateException("ClassLoader has been undeployed: " + classLoaderString);
+      if (loaderRepository instanceof HeirarchicalLoaderRepository3 == false)
+         throw new IllegalStateException("Repository " + loaderRepository + " for classlaoder " + classLoaderString + " is not an HeirarchicalLoaderRepository3");
+      return (HeirarchicalLoaderRepository3) loaderRepository;
    }
 }
