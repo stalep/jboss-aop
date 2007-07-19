@@ -168,5 +168,7 @@
 
    <bind pointcut="all(org.jboss.test.aop.regression.jbaop398nosuchfield.POJO)">
      <interceptor class="org.jboss.test.aop.regression.jbaop398nosuchfield.SimpleInterceptor" scope="PER_VM" />
-  </bind>
+   </bind>
+   
+   <prepare expr="all(org.jboss.test.aop.regression.jbaop442instancedomain.POJO)"/>
 </aop>
