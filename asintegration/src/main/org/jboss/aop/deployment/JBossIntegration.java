@@ -37,7 +37,7 @@ import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision: 1.1 $
  */
-public interface JBossIntegration extends ClassLoaderValidation, ScopedClassPoolFactory
+public interface JBossIntegration extends ClassLoaderValidation
 {
    /**
     * Create the AOPClassLoaderScopingPolicy

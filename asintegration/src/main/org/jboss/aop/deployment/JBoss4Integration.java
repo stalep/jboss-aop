@@ -65,7 +65,7 @@ import org.jboss.mx.util.MBeanServerLocator;
  * @version $Revision: 1.1 $
  */
 @Deprecated
-public class JBoss4Integration implements JBossIntegration
+public class JBoss4Integration implements JBossIntegration, ScopedClassPoolFactory
 {
    /** The delegate classpool factory */
    private ScopedClassPoolFactory delegateClassPoolFactory;
