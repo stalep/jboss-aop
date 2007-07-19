@@ -76,6 +76,14 @@ public class AOPScopedClassLoaderHelperBridge implements AOPClassLoaderScopingPo
          {
             Object loaderRepository = delegate.getLoaderRepository(classLoader);
             scopedManager = scopedClassLoaderDomains.get(loaderRepository);
+            
+            // FIXME: JBAOP-107 REMOVE THIS HACK
+            if (scopedManager != null && scopedManager.isValid() == false)
+            {
+               scopedClassLoaderDomains.remove(loaderRepository);
+               scopedManager = null;
+            }
+            
             if (scopedManager == null)
             {
                scopedManager = delegate.getScopedClassLoaderDomain(scopedClassLoader, parent);

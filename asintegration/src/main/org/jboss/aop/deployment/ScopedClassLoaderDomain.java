@@ -72,6 +72,15 @@ public class ScopedClassLoaderDomain extends Domain
       return null;
    }
    
+   // FIXME: JBAOP-107 REMOVE THIS HACK
+   public boolean isValid()
+   {
+      RepositoryClassLoader cl = (RepositoryClassLoader) getClassLoader();
+      if (cl == null)
+         return false;
+      return cl.getLoaderRepository() != null;
+   }
+
    public void removeAspectDefinition(String name)
    {
       AspectDefinition def = super.internalRemoveAspectDefintion(name);

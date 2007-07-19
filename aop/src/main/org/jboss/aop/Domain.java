@@ -81,6 +81,12 @@ public class Domain extends AspectManager
       manager.addSubDomainByName(this);
    }
 
+   // FIXME: JBAOP-107 REMOVE THIS HACK
+   public boolean isValid()
+   {
+      return true;
+   }
+   
    public String getDomainName()
    {
       return name;
