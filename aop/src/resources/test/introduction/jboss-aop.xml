@@ -15,7 +15,7 @@
          <class>org.jboss.test.aop.introduction.NonSerializableMixin</class>
       </mixin>
    </introduction>
-   
+
    <introduction class="org.jboss.test.aop.introduction.POJOSuperClass">
       <interfaces>
          org.jboss.test.aop.introduction.InterceptorHandledIntroduction
@@ -43,7 +43,7 @@
    <bind pointcut="execution(* org.jboss.test.aop.introduction.POJOSubClass->handledByIntroduction())">
       <interceptor-ref name="org.jboss.test.aop.introduction.SubClassHandlerInterceptor"/>
    </bind>
-   
+
    <introduction class="org.jboss.test.aop.introduction.SubClass">
       <mixin>
          <interfaces>
@@ -52,4 +52,11 @@
          <class>org.jboss.test.aop.introduction.NonSerializableMixin</class>
       </mixin>
    </introduction>
+
+   <introduction class="org.jboss.test.aop.introduction.OverrideObjectPOJO">
+      <interfaces>
+         org.jboss.test.aop.introduction.OverrideObjectInterface
+      </interfaces>
+   </introduction>
+
 </aop>
