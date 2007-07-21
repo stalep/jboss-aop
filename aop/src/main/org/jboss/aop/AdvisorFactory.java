@@ -23,6 +23,8 @@ package org.jboss.aop;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
 
 import javassist.CtClass;
 
@@ -113,7 +115,26 @@ public class AdvisorFactory
                //Generated advisors need to be initialised via the class itself
                try
                {
-                  Method getAdvisor = loadedClass.getMethod(GeneratedAdvisorInstrumentor.GET_CLASS_ADVISOR, NO_ARGS);
+                  final Method getAdvisor = loadedClass.getMethod(GeneratedAdvisorInstrumentor.GET_CLASS_ADVISOR, NO_ARGS);
+                  if (!getAdvisor.isAccessible())
+                  {
+                     if (System.getSecurityManager() == null)
+                     {
+                        getAdvisor.setAccessible(true);
+                     }
+                     else
+                     {
+                        AccessController.doPrivileged(
+                              new PrivilegedExceptionAction<Object>()
+                        {
+                           public Object run() throws Exception
+                           {
+                              getAdvisor.setAccessible(true);
+                              return null;
+                           }
+                        });
+                     }
+                  }
                   ClassAdvisor advisor = (ClassAdvisor)getAdvisor.invoke(null, null);
                   if (advisor != null && advisor.getClazz() == loadedClass)
                   {
