@@ -53,9 +53,9 @@ public abstract class CallerInfoAdder
    
    protected abstract void addConByMethodInfoField(CtClass addTo, String fieldName, long callingHash, String classname, long calledHash) throws NotFoundException, CannotCompileException;
 
-   protected abstract void addConByConInfoField(CtClass addTo, String fieldName, int callingIndex, String classname, long calledHash) throws NotFoundException, CannotCompileException;
+   protected abstract void addConByConInfoField(CtClass addTo, String fieldName, String callingClassName, int callingIndex, String classname, long calledHash) throws NotFoundException, CannotCompileException;
 
-   protected abstract void addMethodByConInfoField(CtClass addTo, String fieldName, int callingIndex, String classname, long calledHash) throws NotFoundException, CannotCompileException;
+   protected abstract void addMethodByConInfoField(CtClass addTo, String fieldName, String callingClassName, int callingIndex, String classname, long calledHash) throws NotFoundException, CannotCompileException;
    
    
    protected void addConByConInfoField(CtClass addTo, String fieldName, String init) throws NotFoundException, CannotCompileException

@@ -42,6 +42,7 @@ public class GeneratedAdvisorCallerInfoAdder extends CallerInfoAdder
 
    protected void addMethodByMethodInfoField(CtClass addTo, String fieldName, long callingHash, String classname, long calledHash) throws NotFoundException, CannotCompileException
    {
+      // addTo is the advisor class
       String init = "resolveCallerMethodInfo(" + callingHash + "L, \"" + classname + "\", " + calledHash + "L)";
       addMethodByMethodInfoField(addTo, fieldName, null);
       ((GeneratedAdvisorInstrumentor)instrumentor).initialiseCallerInfoField(fieldName, init);
@@ -54,16 +55,16 @@ public class GeneratedAdvisorCallerInfoAdder extends CallerInfoAdder
       ((GeneratedAdvisorInstrumentor)instrumentor).initialiseCallerInfoField(fieldName, init);
    }
 
-   protected void addConByConInfoField(CtClass addTo, String fieldName, int callingIndex, String classname, long calledHash) throws NotFoundException, CannotCompileException
+   protected void addConByConInfoField(CtClass addTo, String fieldName, String callingClassName, int callingIndex, String classname, long calledHash) throws NotFoundException, CannotCompileException
    {
-      String init = "resolveConstructorCallerConstructorInfo(" + callingIndex + ", \"" + classname + "\", " + calledHash + "L)";
+      String init = "resolveConstructorCallerConstructorInfo(" + callingClassName +  ".class, " + callingIndex + ", \"" + classname + "\", " + calledHash + "L)";
       addConByConInfoField(addTo, fieldName, null);
       ((GeneratedAdvisorInstrumentor)instrumentor).initialiseCallerInfoField(fieldName, init);
    }
 
-   protected void addMethodByConInfoField(CtClass addTo, String fieldName, int callingIndex, String classname, long calledHash) throws NotFoundException, CannotCompileException
+   protected void addMethodByConInfoField(CtClass addTo, String fieldName, String callingClassName, int callingIndex, String classname, long calledHash) throws NotFoundException, CannotCompileException
    {
-      String init = "resolveConstructorCallerMethodInfo(" + callingIndex + ", \"" + classname + "\", " + calledHash + "L)";
+      String init = "resolveConstructorCallerMethodInfo(" + callingClassName +  ".class, " + callingIndex + ", \"" + classname + "\", " + calledHash + "L)";
       addMethodByConInfoField(addTo, fieldName, null);
       ((GeneratedAdvisorInstrumentor)instrumentor).initialiseCallerInfoField(fieldName, init);
    }

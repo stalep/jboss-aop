@@ -39,18 +39,11 @@ public class MethodByMethodInfo extends CallerMethodInfo implements MethodCallBy
    private final long callingMethodHash;
    private final Method callingMethod;
    
-   public MethodByMethodInfo(Advisor advisor, Class calledClass, Method m, long callingMethodHash, long calledMethodHash, Interceptor[] in)
+   public MethodByMethodInfo(Advisor advisor, Class calledClass, Method m, Method callingMethod, long callingMethodHash, long calledMethodHash, Interceptor[] in)
    {
-      super(advisor, calledClass, m, calledMethodHash, in, advisor.getClazz());
-      try
-      {
-         this.callingMethodHash = callingMethodHash;
-         callingMethod = MethodHashing.findMethodByHash(getCallingClass(), callingMethodHash);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
+      super(advisor, calledClass, m, calledMethodHash, in, callingMethod.getDeclaringClass());
+      this.callingMethodHash = callingMethodHash;
+      this.callingMethod = callingMethod;
    }
    
    /*

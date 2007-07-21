@@ -25,8 +25,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import org.jboss.aop.advice.Interceptor;
-import org.jboss.aop.joinpoint.ConstructorCalledByConstructorJoinpoint;
 import org.jboss.aop.joinpoint.ConstructorCallByConstructor;
+import org.jboss.aop.joinpoint.ConstructorCalledByConstructorJoinpoint;
 import org.jboss.aop.joinpoint.Joinpoint;
 
 /**
@@ -39,13 +39,18 @@ public class ConByConInfo extends CallerConstructorInfo implements ConstructorCa
    private final int callingIndex;
    private final Constructor calling;
    
-   public ConByConInfo(Advisor advisor, Class calledClass, int callingIndex, Constructor called, long calledConHash, Method wrappingMethod, Interceptor[] in)
+   public ConByConInfo(Advisor advisor, Class calledClass, Class callingClass, int callingIndex, Constructor called, long calledConHash, Method wrappingMethod, Interceptor[] in)
    {
-      super(advisor, calledClass, called, calledConHash, wrappingMethod, in, advisor.getClazz());
+      super(advisor, calledClass, called, calledConHash, wrappingMethod, in, callingClass);
       this.callingIndex = callingIndex;
-      this.calling = advisor.constructors[callingIndex];
+      Advisor tempAdvisor = advisor;
+      if (advisor.getClazz() != callingClass)
+      {
+         tempAdvisor = advisor.manager.getAdvisor(callingClass);
+      }
+      this.calling = tempAdvisor.constructors[callingIndex];
    }
-
+   
    /*
     * For copying
     */

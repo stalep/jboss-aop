@@ -63,7 +63,7 @@ public class OptimizedCallerTransformer extends CallerTransformer
             String invocationClassName = OptimizedCallerInvocations.createOptimizedMethodCalledByConInvocationClass(instrumentor, createName, callingClass, cd.calledMethod, cd.callingIndex, cd.calledHash);
 
             callerInfos.put(cd.callerInfoField, invocationClassName);
-            callerInfoAdder.addMethodByConInfoField(callingClass, cd.callerInfoField, cd.callingIndex, cd.classname, cd.calledHash);
+            callerInfoAdder.addMethodByConInfoField(callingClass, cd.callerInfoField, callingClass.getName(), cd.callingIndex, cd.classname, cd.calledHash);
          }
       }
 
@@ -116,7 +116,7 @@ public class OptimizedCallerTransformer extends CallerTransformer
             {
                callerInfos.put(cd.callerInfoField, NonOptimizedCallerTransformer.PLACEHOLDER);
             }
-            callerInfoAdder.addConByConInfoField(callingClass, cd.callerInfoField, cd.callingIndex, cd.classname, cd.calledHash);
+            callerInfoAdder.addConByConInfoField(callingClass, cd.callerInfoField, callingClass.getName(), cd.callingIndex, cd.classname, cd.calledHash);
          }
       }
 

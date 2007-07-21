@@ -46,19 +46,12 @@ public class ConByMethodInfo extends CallerConstructorInfo implements Constructo
     * @param c
     * @param in
     */
-   public ConByMethodInfo(Advisor advisor, Class calledClass, long callingMethodHash, Constructor c, long calledConHash, Method wrappingMethod, Interceptor[] in)
+   public ConByMethodInfo(Advisor advisor, Class calledClass, Method callingMethod, long callingMethodHash, Constructor c, long calledConHash, Method wrappingMethod, Interceptor[] in)
    {
       // FIXME ConByMethodJoinPont constructor
-      super(advisor, calledClass, c, calledConHash, wrappingMethod, in, advisor.getClazz());
-      try
-      {
-         this.callingMethodHash = callingMethodHash;
-         callingMethod = MethodHashing.findMethodByHash(getCallingClass(), callingMethodHash);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
+      super(advisor, calledClass, c, calledConHash, wrappingMethod, in, callingMethod.getDeclaringClass());
+      this.callingMethodHash = callingMethodHash;
+      this.callingMethod = callingMethod;
    }
 
    /*

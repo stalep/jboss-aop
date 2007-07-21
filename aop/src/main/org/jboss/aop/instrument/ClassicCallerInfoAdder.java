@@ -51,15 +51,15 @@ public class ClassicCallerInfoAdder extends CallerInfoAdder
       addConByMethodInfoField(addTo, fieldName, init);
    }
 
-   protected void addConByConInfoField(CtClass addTo, String fieldName, int callingIndex, String classname, long calledHash) throws NotFoundException, CannotCompileException
+   protected void addConByConInfoField(CtClass addTo, String fieldName, String callingClassName, int callingIndex, String classname, long calledHash) throws NotFoundException, CannotCompileException
    {
-      String init = "aop$classAdvisor$aop.resolveConstructorCallerConstructorInfoAsWeakReference(" + callingIndex + ", \"" + classname + "\", " + calledHash + "L)";
+      String init = "aop$classAdvisor$aop.resolveConstructorCallerConstructorInfoAsWeakReference(" + addTo.getName() +  ".class, " + callingIndex + ", \"" + classname + "\", " + calledHash + "L)";
       addConByConInfoField(addTo, fieldName, init);
    }
 
-   protected void addMethodByConInfoField(CtClass addTo, String fieldName, int callingIndex, String classname, long calledHash) throws NotFoundException, CannotCompileException
+   protected void addMethodByConInfoField(CtClass addTo, String fieldName, String callingClassName, int callingIndex, String classname, long calledHash) throws NotFoundException, CannotCompileException
    {
-      String init = "aop$classAdvisor$aop.resolveConstructorCallerMethodInfoAsWeakReference(" + callingIndex + ", \"" + classname + "\", " + calledHash + "L)";
+      String init = "aop$classAdvisor$aop.resolveConstructorCallerMethodInfoAsWeakReference(" + addTo.getName() + ".class, " + callingIndex + ", \"" + classname + "\", " + calledHash + "L)";
       addMethodByConInfoField(addTo, fieldName, init);
    }
 

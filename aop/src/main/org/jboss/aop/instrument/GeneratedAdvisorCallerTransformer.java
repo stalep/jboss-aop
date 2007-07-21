@@ -77,7 +77,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          if (callerInfos.get(cd.callerInfoField) == null)
          {
             callerInfos.put(cd.callerInfoField, NonOptimizedCallerTransformer.PLACEHOLDER);
-            callerInfoAdder.addMethodByConInfoField(getGenadvisor(), cd.callerInfoField, cd.callingIndex, cd.classname, cd.calledHash);
+            callerInfoAdder.addMethodByConInfoField(getGenadvisor(), cd.callerInfoField, callingClass.getName(), cd.callingIndex, cd.classname, cd.calledHash);
             addJoinpoint(cd);
             createGenAdvisorMethodByConMethod(cd);
          }
@@ -374,7 +374,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          if (callerInfos.get(cd.callerInfoField) == null)
          {
             callerInfos.put(cd.callerInfoField, NonOptimizedCallerTransformer.PLACEHOLDER);
-            callerInfoAdder.addConByConInfoField(getGenadvisor(), cd.callerInfoField, cd.callingIndex, cd.classname, cd.calledHash);
+            callerInfoAdder.addConByConInfoField(getGenadvisor(), cd.callerInfoField, callingClass.getName(), cd.callingIndex, cd.classname, cd.calledHash);
             addJoinpoint(cd);
             createGenAdvisorConByConMethod(cd);
          }

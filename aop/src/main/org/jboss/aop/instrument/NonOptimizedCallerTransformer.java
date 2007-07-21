@@ -64,7 +64,7 @@ public class NonOptimizedCallerTransformer extends CallerTransformer
             String invocationClassName = PLACEHOLDER;
          
             callerInfos.put(cd.callerInfoField, invocationClassName);
-            callerInfoAdder.addMethodByConInfoField(callingClass, cd.callerInfoField, cd.callingIndex, cd.classname, cd.calledHash);
+            callerInfoAdder.addMethodByConInfoField(callingClass, cd.callerInfoField, callingClass.getName(), cd.callingIndex, cd.classname, cd.calledHash);
          }
       }
 
@@ -97,7 +97,7 @@ public class NonOptimizedCallerTransformer extends CallerTransformer
             String invocationClassName = PLACEHOLDER;
             
             callerInfos.put(cd.callerInfoField, invocationClassName);
-            callerInfoAdder.addConByConInfoField(callingClass, cd.callerInfoField, cd.callingIndex, cd.classname, cd.calledHash);
+            callerInfoAdder.addConByConInfoField(callingClass, cd.callerInfoField, callingClass.getName(), cd.callingIndex, cd.classname, cd.calledHash);
          }
       }
 

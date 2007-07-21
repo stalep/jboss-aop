@@ -641,7 +641,7 @@ public class ClassAdvisor extends Advisor
       constructionInfos = (ConstructionInfo[]) newConstructionInfos.toArray(new ConstructionInfo[newConstructionInfos.size()]);
    }
    
-   private MethodByConInfo initializeConstructorCallerInterceptorsMap(int callingIndex, String calledClass, long calledMethodHash, Method calledMethod) throws Exception
+   private MethodByConInfo initializeConstructorCallerInterceptorsMap(Class callingClass, int callingIndex, String calledClass, long calledMethodHash, Method calledMethod) throws Exception
    {
       HashMap calledClassesMap = methodCalledByConInterceptors[callingIndex];
       if (calledClassesMap == null)
@@ -659,12 +659,12 @@ public class ClassAdvisor extends Advisor
       //The standard MethodCalledByXXXXInvocation class calls by reflection and needs access
       calledMethod.setAccessible(true);
       Class calledClazz = Thread.currentThread().getContextClassLoader().loadClass(calledClass);
-      MethodByConInfo info = new MethodByConInfo(this, calledClazz, callingIndex, calledMethod, calledMethodHash, null);
+      MethodByConInfo info = new MethodByConInfo(this, calledClazz, callingClass, callingIndex, calledMethod, calledMethodHash, null);
       calledMethodsMap.put(calledMethodHash, info);
       return info;
    }
 
-   private ConByConInfo initializeConCalledByConInterceptorsMap(int callingIndex, String calledClass, long calledConHash, Constructor calledCon) throws Exception
+   private ConByConInfo initializeConCalledByConInterceptorsMap(Class callingClass, int callingIndex, String calledClass, long calledConHash, Constructor calledCon) throws Exception
    {
       HashMap calledClassesMap = conCalledByConInterceptors[callingIndex];
       if (calledClassesMap == null)
@@ -678,13 +678,13 @@ public class ClassAdvisor extends Advisor
          calledMethodsMap = new TLongObjectHashMap();
          calledClassesMap.put(calledClass, calledMethodsMap);
       }
-      ConByConInfo info = createConByConInfo(callingIndex, calledClass, calledCon, calledConHash);
+      ConByConInfo info = createConByConInfo(callingClass, callingIndex, calledClass, calledCon, calledConHash);
       calledMethodsMap.put(calledConHash, info);
       return info;
    }
 
 
-   private ConByConInfo createConByConInfo(int callingIndex, String calledClass, Constructor calledCon, long calledConHash) throws Exception
+   private ConByConInfo createConByConInfo(Class callingClass, int callingIndex, String calledClass, Constructor calledCon, long calledConHash) throws Exception
    {
       //The standard ConstructorCalledByXXXXInvocation class calls by reflection and needs access
       calledCon.setAccessible(true);
@@ -695,11 +695,11 @@ public class ClassAdvisor extends Advisor
          int index = calledClass.lastIndexOf('.');
          String baseClassName = calledClass.substring(index + 1);
          Method wrapper = calledCon.getDeclaringClass().getDeclaredMethod(ConstructorExecutionTransformer.constructorFactory(baseClassName), calledCon.getParameterTypes());
-         return new ConByConInfo(this, calledClazz, callingIndex, calledCon, calledConHash, wrapper, null);
+         return new ConByConInfo(this, calledClazz, callingClass, callingIndex, calledCon, calledConHash, wrapper, null);
       }
       catch (NoSuchMethodException e)
       {
-         return new ConByConInfo(this, calledClazz, callingIndex, calledCon, calledConHash, null, null);
+         return new ConByConInfo(this, calledClazz, callingClass, callingIndex, calledCon, calledConHash, null, null);
       }
    }
 
@@ -1237,19 +1237,25 @@ public class ClassAdvisor extends Advisor
       return new WeakReference(resolveCallerConstructorInfo(callingMethodHash, calledClass, calledConHash));
    }
 
+   @Deprecated
    public MethodByConInfo resolveConstructorCallerMethodInfo(int callingIndex, String calledClass, long calledMethodHash)
+   {
+      return resolveConstructorCallerMethodInfo(this.getClazz(), callingIndex, calledClass, calledMethodHash);
+   }
+   
+   public MethodByConInfo resolveConstructorCallerMethodInfo(Class callingClass, int callingIndex, String calledClass, long calledMethodHash)
    {
       if (System.getSecurityManager() == null)
       {
-         return ResolveConstructorCallerMethodInfoAction.NON_PRIVILEGED.resolveInfo(this, callingIndex, calledClass, calledMethodHash);
+         return ResolveConstructorCallerMethodInfoAction.NON_PRIVILEGED.resolveInfo(this, callingClass, callingIndex, calledClass, calledMethodHash);
       }
       else
       {
-         return ResolveConstructorCallerMethodInfoAction.PRIVILEGED.resolveInfo(this, callingIndex, calledClass, calledMethodHash);
+         return ResolveConstructorCallerMethodInfoAction.PRIVILEGED.resolveInfo(this, callingClass, callingIndex, calledClass, calledMethodHash);
       }
    }
 
-   private MethodByConInfo doResolveConstructorCallerMethodInfo(int callingIndex, String calledClass, long calledMethodHash)
+   private MethodByConInfo doResolveConstructorCallerMethodInfo(Class callingClass, int callingIndex, String calledClass, long calledMethodHash)
    {
       try
       {
@@ -1275,7 +1281,7 @@ public class ClassAdvisor extends Advisor
             }
          }
          if (!matched) initializeEmptyConstructorCallerChain(callingIndex, calledClass, calledMethodHash);
-         MethodByConInfo info = initializeConstructorCallerInterceptorsMap(callingIndex, calledClass, calledMethodHash, calledMethod);
+         MethodByConInfo info = initializeConstructorCallerInterceptorsMap(callingClass, callingIndex, calledClass, calledMethodHash, calledMethod);
          ArrayList bindings = getConstructorCallerBindings(callingIndex, calledClass, calledMethodHash);
          bindConstructorCallerInterceptorChain(bindings, callingIndex, calledClass, calledMethodHash);
          return info;
@@ -1286,26 +1292,37 @@ public class ClassAdvisor extends Advisor
       }
    }
 
-
+   @Deprecated
    public WeakReference resolveConstructorCallerMethodInfoAsWeakReference(int callingIndex, String calledClass, long calledMethodHash)
    {
       //Javassist doesn't like this in a field initialiser hence this method
       return new WeakReference(resolveConstructorCallerMethodInfo(callingIndex, calledClass, calledMethodHash));
    }
 
+   public WeakReference resolveConstructorCallerMethodInfoAsWeakReference(Class callingClass, int callingIndex, String calledClass, long calledMethodHash)
+   {
+      //Javassist doesn't like this in a field initialiser hence this method
+      return new WeakReference(resolveConstructorCallerMethodInfo(callingClass, callingIndex, calledClass, calledMethodHash));
+   }
+
    public ConByConInfo resolveConstructorCallerConstructorInfo(int callingIndex, String calledClass, long calledConHash)
+   {
+      return resolveConstructorCallerConstructorInfo(this.getClazz(), callingIndex, calledClass, calledConHash);
+   }
+   
+   public ConByConInfo resolveConstructorCallerConstructorInfo(Class callingClass, int callingIndex, String calledClass, long calledConHash)
    {
       if (System.getSecurityManager() == null)
       {
-         return ResolveConstructorCallerConstructorInfoAction.NON_PRIVILEGED.resolveInfo(this, callingIndex, calledClass, calledConHash);
+         return ResolveConstructorCallerConstructorInfoAction.NON_PRIVILEGED.resolveInfo(this, callingClass, callingIndex, calledClass, calledConHash);
       }
       else
       {
-         return ResolveConstructorCallerConstructorInfoAction.PRIVILEGED.resolveInfo(this, callingIndex, calledClass, calledConHash);
+         return ResolveConstructorCallerConstructorInfoAction.PRIVILEGED.resolveInfo(this, callingClass, callingIndex, calledClass, calledConHash);
       }
    }
 
-   private ConByConInfo doResolveConstructorCallerConstructorInfo(int callingIndex, String calledClass, long calledConHash)
+   private ConByConInfo doResolveConstructorCallerConstructorInfo(Class callingClass, int callingIndex, String calledClass, long calledConHash)
    {
       try
       {
@@ -1330,7 +1347,7 @@ public class ClassAdvisor extends Advisor
             }
          }
          if (!matched) initializeConCalledByConEmptyChain(callingIndex, calledClass, calledConHash);
-         ConByConInfo info = initializeConCalledByConInterceptorsMap(callingIndex, calledClass, calledConHash, calledCon);
+         ConByConInfo info = initializeConCalledByConInterceptorsMap(callingClass, callingIndex, calledClass, calledConHash, calledCon);
          ArrayList bindings = getConCalledByConBindings(callingIndex, calledClass, calledConHash);
          bindConCalledByConInterceptorChain(bindings, callingIndex, calledClass, calledConHash);
          return info;
@@ -1341,11 +1358,19 @@ public class ClassAdvisor extends Advisor
       }
    }
 
+   @Deprecated
    public WeakReference resolveConstructorCallerConstructorInfoAsWeakReference(int callingIndex, String calledClass, long calledConHash)
    {
       //Javassist doesn't like this in a field initialiser hence this method
       return new WeakReference(resolveConstructorCallerConstructorInfo(callingIndex, calledClass, calledConHash));
    }
+   
+   public WeakReference resolveConstructorCallerConstructorInfoAsWeakReference(Class callingClass, int callingIndex, String calledClass, long calledConHash)
+   {
+      //Javassist doesn't like this in a field initialiser hence this method
+      return new WeakReference(resolveConstructorCallerConstructorInfo(callingClass, callingIndex, calledClass, calledConHash));
+   }
+   
    /////////////////////////
    // Invoking
 
@@ -1827,11 +1852,11 @@ public class ClassAdvisor extends Advisor
 
    interface ResolveConstructorCallerMethodInfoAction
    {
-      MethodByConInfo resolveInfo(ClassAdvisor advisor, int callingIndex, String calledClass, long calledMethodHash);
+      MethodByConInfo resolveInfo(ClassAdvisor advisor, Class callingClass, int callingIndex, String calledClass, long calledMethodHash);
 
       ResolveConstructorCallerMethodInfoAction PRIVILEGED = new ResolveConstructorCallerMethodInfoAction()
       {
-         public MethodByConInfo resolveInfo(final ClassAdvisor advisor, final int callingIndex, final String calledClass, final long calledMethodHash)
+         public MethodByConInfo resolveInfo(final ClassAdvisor advisor, final Class callingClass, final int callingIndex, final String calledClass, final long calledMethodHash)
          {
             try
             {
@@ -1839,7 +1864,7 @@ public class ClassAdvisor extends Advisor
                {
                   public Object run() throws Exception
                   {
-                     return advisor.doResolveConstructorCallerMethodInfo(callingIndex, calledClass, calledMethodHash);
+                     return advisor.doResolveConstructorCallerMethodInfo(callingClass, callingIndex, calledClass, calledMethodHash);
                   }
                });
             }
@@ -1857,20 +1882,20 @@ public class ClassAdvisor extends Advisor
 
       ResolveConstructorCallerMethodInfoAction NON_PRIVILEGED = new ResolveConstructorCallerMethodInfoAction()
       {
-         public MethodByConInfo resolveInfo(ClassAdvisor advisor, int callingIndex, String calledClass, long calledMethodHash)
+         public MethodByConInfo resolveInfo(ClassAdvisor advisor, Class callingClass, int callingIndex, String calledClass, long calledMethodHash)
          {
-            return advisor.doResolveConstructorCallerMethodInfo(callingIndex, calledClass, calledMethodHash);
+            return advisor.doResolveConstructorCallerMethodInfo(callingClass, callingIndex, calledClass, calledMethodHash);
          }
       };
    }
 
    interface ResolveConstructorCallerConstructorInfoAction
    {
-      ConByConInfo resolveInfo(ClassAdvisor advisor, int callingIndex, String calledClass, long calledConHash);
+      ConByConInfo resolveInfo(ClassAdvisor advisor, Class callingClass, int callingIndex, String calledClass, long calledConHash);
 
       ResolveConstructorCallerConstructorInfoAction PRIVILEGED = new ResolveConstructorCallerConstructorInfoAction()
       {
-         public ConByConInfo resolveInfo(final ClassAdvisor advisor, final int callingIndex, final String calledClass, final long calledConHash)
+         public ConByConInfo resolveInfo(final ClassAdvisor advisor, final Class callingClass, final int callingIndex, final String calledClass, final long calledConHash)
          {
             try
             {
@@ -1878,7 +1903,7 @@ public class ClassAdvisor extends Advisor
                {
                   public Object run() throws Exception
                   {
-                     return advisor.doResolveConstructorCallerConstructorInfo(callingIndex, calledClass, calledConHash);
+                     return advisor.doResolveConstructorCallerConstructorInfo(callingClass, callingIndex, calledClass, calledConHash);
                   }
                });
             }
@@ -1896,9 +1921,9 @@ public class ClassAdvisor extends Advisor
 
       ResolveConstructorCallerConstructorInfoAction NON_PRIVILEGED = new ResolveConstructorCallerConstructorInfoAction()
       {
-         public ConByConInfo resolveInfo(ClassAdvisor advisor, int callingIndex, String calledClass, long calledConHash)
+         public ConByConInfo resolveInfo(ClassAdvisor advisor, Class callingClass, int callingIndex, String calledClass, long calledConHash)
          {
-            return advisor.doResolveConstructorCallerConstructorInfo(callingIndex, calledClass, calledConHash);
+            return advisor.doResolveConstructorCallerConstructorInfo(callingClass, callingIndex, calledClass, calledConHash);
          }
       };
    }
@@ -2152,7 +2177,7 @@ public class ClassAdvisor extends Advisor
          calledMethod.setAccessible(true);
 
          Class calledClazz = Thread.currentThread().getContextClassLoader().loadClass(calledClass);
-         MethodByMethodInfo info = new MethodByMethodInfo(ClassAdvisor.this, calledClazz, calledMethod, callingMethodHash, calledMethodHash, null);
+         MethodByMethodInfo info = new MethodByMethodInfo(ClassAdvisor.this, calledClazz, calledMethod, callingMethod, callingMethodHash, calledMethodHash, null);
          calledMethodsMap.put(calledMethodHash, info);
          return info;
       }
@@ -2296,7 +2321,7 @@ public class ClassAdvisor extends Advisor
                }
             }
             if (!matched) initializeConCalledByMethodEmptyChain(callingMethodHash, calledClass, calledConHash);
-            ConByMethodInfo info = initializeConCalledByMethodInterceptorsMap(callingMethodHash, calledClass, calledConHash, calledCon);
+            ConByMethodInfo info = initializeConCalledByMethodInterceptorsMap(callingMethod, callingMethodHash, calledClass, calledConHash, calledCon);
             ArrayList bindings = getConCalledByMethodBindings(callingMethodHash, calledClass, calledConHash);
             bindConCalledByMethodInterceptorChain(bindings, callingMethodHash, calledClass, calledConHash);
             return info;
@@ -2345,7 +2370,7 @@ public class ClassAdvisor extends Advisor
          else if (createdBindings) backrefs.add(bindings);
       }
 
-      private ConByMethodInfo initializeConCalledByMethodInterceptorsMap(long callingMethodHash, String calledClass, long calledConHash, Constructor calledCon) throws Exception
+      private ConByMethodInfo initializeConCalledByMethodInterceptorsMap(Method callingMethod, long callingMethodHash, String calledClass, long calledConHash, Constructor calledCon) throws Exception
       {
          HashMap calledClassesMap = (HashMap) conCalledByMethodInterceptors.get(callingMethodHash);
          if (calledClassesMap == null)
@@ -2360,7 +2385,7 @@ public class ClassAdvisor extends Advisor
             calledClassesMap.put(calledClass, calledMethodsMap);
          }
 
-         ConByMethodInfo info = createConByMethodInfo(calledClass, callingMethodHash, calledCon, calledConHash);
+         ConByMethodInfo info = createConByMethodInfo(calledClass, callingMethod, callingMethodHash, calledCon, calledConHash);
          calledMethodsMap.put(calledConHash, info);
          return info;
       }
@@ -2395,7 +2420,7 @@ public class ClassAdvisor extends Advisor
          return info;
       }
 
-      private ConByMethodInfo createConByMethodInfo(String calledClass, long callingMethodHash, Constructor calledCon, long calledConHash) throws Exception
+      private ConByMethodInfo createConByMethodInfo(String calledClass, Method callingMethod, long callingMethodHash, Constructor calledCon, long calledConHash) throws Exception
       {
          //The standard ConstructorCalledByXXXXInvocation class calls by reflection and needs access
          calledCon.setAccessible(true);
@@ -2406,11 +2431,11 @@ public class ClassAdvisor extends Advisor
             int index = calledClass.lastIndexOf('.');
             String baseClassName = calledClass.substring(index + 1);
             Method wrapper = calledCon.getDeclaringClass().getDeclaredMethod(ConstructorExecutionTransformer.constructorFactory(baseClassName), calledCon.getParameterTypes());
-            return new ConByMethodInfo(ClassAdvisor.this, calledClazz, callingMethodHash, calledCon, calledConHash, wrapper, null);
+            return new ConByMethodInfo(ClassAdvisor.this, calledClazz, callingMethod, callingMethodHash, calledCon, calledConHash, wrapper, null);
          }
          catch (NoSuchMethodException e)
          {
-            return new ConByMethodInfo(ClassAdvisor.this, calledClazz, callingMethodHash, calledCon, calledConHash, null, null);
+            return new ConByMethodInfo(ClassAdvisor.this, calledClazz, callingMethod, callingMethodHash, calledCon, calledConHash, null, null);
          }
       }
 

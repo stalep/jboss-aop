@@ -278,7 +278,8 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             INITIALISE_CALLERS,
             EMPTY_SIG,
             EMPTY_EXCEPTIONS,
-            null, //"{" + GeneratedClassAdvisor.CLEAR_CALLERS + "();}",
+            (isBaseClass(clazz)) ?
+                  null : "{super." + INITIALISE_CALLERS + "();}",
             genadvisor);
       genadvisor.addMethod(initialiseCallers);
 
