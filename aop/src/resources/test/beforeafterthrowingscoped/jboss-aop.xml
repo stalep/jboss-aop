@@ -5,36 +5,67 @@
 	<aspect class="org.jboss.test.aop.beforeafterthrowingscoped.PerClassAspect" scope="PER_CLASS"/>
 	<aspect class="org.jboss.test.aop.beforeafterthrowingscoped.PerVmAspect" scope="PER_VM"/>
 	
-	<bind pointcut="all(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithPerInstanceAspects)">
-		<before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="before"/>
+   <stack name="PER_INSTANCE">
+      <before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="before"/>
 		<after aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="after"/>
 		<throwing aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="throwing"/>		
 		<finally aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" name="finaly"/>
+   </stack>
+   
+   <bind pointcut="all(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithPerInstanceAspects)">
+		<stack-ref name="PER_INSTANCE"/>
 	</bind>
 	
-	<bind pointcut="all(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithPerJoinpointAspects)">
-		<before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" name="before"/>
+   <stack name="PER_JOINPOINT">
+      <before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" name="before"/>
 		<after aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" name="after"/>
 		<throwing aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" name="throwing"/>		
 		<finally aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" name="finaly"/>
+   </stack>
+   
+	<bind pointcut="all(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithPerJoinpointAspects)">
+		<stack-ref name="PER_JOINPOINT"/>
 	</bind>
 	
-	<bind pointcut="all(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithPerClassJoinpointAspects)">
-		<before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassJoinpointAspect" name="before"/>
+   <stack name="PER_CLASS_JOINPOINT">
+      <before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassJoinpointAspect" name="before"/>
 		<after aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassJoinpointAspect" name="after"/>
 		<throwing aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassJoinpointAspect" name="throwing"/>		
 		<finally aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassJoinpointAspect" name="finaly"/>
+   </stack>
+         
+	<bind pointcut="all(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithPerClassJoinpointAspects)">
+		<stack-ref name="PER_CLASS_JOINPOINT"/>
 	</bind>
 	
-	<bind pointcut="all(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithPerClassAndPerVmAspects)">
-		<before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerVmAspect" name="before"/>
-		<after aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerVmAspect" name="after"/>
-		<throwing aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerVmAspect" name="throwing"/>		
-		<finally aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerVmAspect" name="finaly"/>
-		<before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassAspect" name="before"/>
+   <stack name="PER_CLASS">
+      <before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassAspect" name="before"/>
 		<after aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassAspect" name="after"/>
 		<throwing aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassAspect" name="throwing"/>		
 		<finally aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerClassAspect" name="finaly"/>
+   </stack>
+   
+   <stack name="PER_VM">
+      <before aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerVmAspect" name="before"/>
+		<after aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerVmAspect" name="after"/>
+		<throwing aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerVmAspect" name="throwing"/>		
+		<finally aspect="org.jboss.test.aop.beforeafterthrowingscoped.PerVmAspect" name="finaly"/>
+   </stack>      
+         
+	<bind pointcut="all(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithPerClassAndPerVmAspects)">
+		<stack-ref name="PER_CLASS"/>
+		<stack-ref name="PER_VM"/>
 	</bind>
-	
+
+   <aspect class="org.jboss.test.aop.beforeafterthrowingscoped.CallerAspect" scope="PER_VM"/>
+   
+   <bind pointcut="call(* org.jboss.test.aop.beforeafterthrowingscoped.*TargetPOJO*->*(boolean)) OR call(org.jboss.test.aop.beforeafterthrowingscoped.*TargetPOJO*->new(boolean))"> -->
+      <stack-ref name="PER_INSTANCE"/>
+      <stack-ref name="PER_JOINPOINT"/>
+      <stack-ref name="PER_CLASS_JOINPOINT"/>
+      <stack-ref name="PER_CLASS"/>
+      <stack-ref name="PER_VM"/>
+      <before aspect="org.jboss.test.aop.beforeafterthrowingscoped.CallerAspect" name="advice"/>
+   </bind>
+   
 </aop>
