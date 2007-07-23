@@ -62,13 +62,13 @@ public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
    }
    
    // TODO JBAOP-444
-//   public void testMethodCall() throws ThrownByTestException
-//   {
-//      for (int i = 0; i < 10; i++)
-//      {
-//         performCall(CallAction.CALL_METHOD);
-//      }
-//   }
+   public void testMethodCall() throws ThrownByTestException
+   {
+      for (int i = 0; i < 10; i++)
+      {
+         performCall(CallAction.CALL_METHOD);
+      }
+   }
    
    public void testStaticMethodCall() throws ThrownByTestException
    {

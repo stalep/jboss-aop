@@ -468,10 +468,11 @@ public abstract class JoinPointGenerator
          return;
       }
       
-      while (advisorSuperClazz != null && advisorSuperClazz.getDeclaringClass() != info.getClazz())
-      {
-         advisorSuperClazz = advisorSuperClazz.getSuperclass();
-      }
+      //while (advisorSuperClazz != null && advisorSuperClazz.getDeclaringClass() != info.getClazz())
+      //{
+      //   advisorSuperClazz = advisorSuperClazz.getSuperclass();
+      //}
+      advisorSuperClazz = AspectManager.instance().getAdvisor(info.getClazz()).getClass();
       try
       {
          try
@@ -757,10 +758,7 @@ public abstract class JoinPointGenerator
             return;
          }
 
-         //caller should always come before the target in the list for invokeJoinPoint(), if using
-         //a caller pointcut the instanceadvisor is the caller's, so it should be a safe assumption 
-         //to always use $1
-         String instanceAdvisor = "$1";
+         String instanceAdvisor = "$" + parameters.getContextIndex();
          
          code.append("if (!" + INITIALISED_LIGHTWEIGHT_INSTANCE_ASPECTS + "){");
          code.append("   if(" + IS_FOR_INSTANCE_ADVISOR + "){");
@@ -1999,6 +1997,22 @@ public abstract class JoinPointGenerator
       public final int getCallerIndex()
       {
          return callerIndex;
+      }
+      
+      /**
+       * Returns the index of the joinpoint context (the context where the
+       * intercepted joinpoint is executed). For caller joinpoints, the
+       * context is the caller; for other joinpoints, the context of the joinpoint is
+       * the target.
+       * 
+       * This method must be called only for per instance situations, i.e, situations
+       * where there is a context available.
+       * 
+       * @return the index of the joinpoint context
+       */
+      public final int getContextIndex()
+      {
+         return caller? callerIndex: targetIndex;
       }
       
       public final int getFirstArgIndex()
