@@ -24,6 +24,11 @@ package org.jboss.test.aop.beforeafterthrowingscoped;
 import org.jboss.aop.advice.annotation.Caller;
 
 /**
+ * Aspect that records the caller instance.
+ * 
+ * Useful when the caller is a constructor that throws an exception. In this type of 
+ * scenario, the test method cannot access the instance caller.
+ * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  *
  */

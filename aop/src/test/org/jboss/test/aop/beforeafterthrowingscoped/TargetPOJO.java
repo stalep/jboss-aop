@@ -30,7 +30,7 @@ class SuperTargetPOJO
 {
    // constructor whose call is not intercepted
    public SuperTargetPOJO() {}
-   
+
    public SuperTargetPOJO(boolean throwException) throws ThrownByTestException
    {
       if (throwException)

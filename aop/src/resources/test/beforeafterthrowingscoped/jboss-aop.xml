@@ -1,5 +1,6 @@
 <aop>
-	<aspect class="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" scope="PER_INSTANCE"/>
+
+   <aspect class="org.jboss.test.aop.beforeafterthrowingscoped.PerInstanceAspect" scope="PER_INSTANCE"/>
 	<aspect class="org.jboss.test.aop.beforeafterthrowingscoped.PerJoinpointAspect" scope="PER_JOINPOINT"/>
 	<aspect class="org.jboss.test.aop.beforeafterthrowingscoped.PerClassJoinpointAspect" scope="PER_CLASS_JOINPOINT"/>
 	<aspect class="org.jboss.test.aop.beforeafterthrowingscoped.PerClassAspect" scope="PER_CLASS"/>
@@ -57,6 +58,8 @@
 		<stack-ref name="PER_VM"/>
 	</bind>
 
+   <!-- Aspect used to record the caller instance
+      (useful when the caller is a constructor that throws an exception) -->
    <aspect class="org.jboss.test.aop.beforeafterthrowingscoped.CallerAspect" scope="PER_VM"/>
    
    <bind pointcut="call(* org.jboss.test.aop.beforeafterthrowingscoped.*TargetPOJO*->*(boolean)) OR call(org.jboss.test.aop.beforeafterthrowingscoped.*TargetPOJO*->new(boolean))"> -->

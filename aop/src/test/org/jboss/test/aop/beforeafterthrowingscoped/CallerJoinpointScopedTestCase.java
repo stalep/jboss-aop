@@ -31,6 +31,7 @@ import junit.textui.TestRunner;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
+ * Scoped aspect tests on call joinpoints scenarios. 
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
@@ -77,6 +78,14 @@ public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
       }
    }
    
+   /**
+    * Performs the specified call from inside all caller contexts (constructor,
+    * method and static method)
+    * 
+    * @param callAction the call action to be performed.
+    * 
+    * @throws ThrownByTestException if an unexpected exception is thrown by the call
+    */
    public void performCall(CallAction callAction) throws ThrownByTestException
    {
       // reset aspects
@@ -85,18 +94,25 @@ public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
       SuperTargetPOJO[] targets = new SuperTargetPOJO[]
       {new SuperTargetPOJO(), new TargetPOJO1(), new TargetPOJO2()};
       
-      
+      // for each possible target
       for (SuperTargetPOJO target: targets)
       {
+         // call from constructor and from method
          createAndExecuteMethod(callAction, target);
+         // call from static method
          executeStaticMethod(callAction, target);
       }
    }
 
    /**
-    * @param callAction
-    * @param target
-    * @throws ThrownByTestException
+    * Performs <code>callAction</code> on <code>target</code> from inside
+    * constructors and methods. 
+    * 
+    * @param callAction  the call action to be performed
+    * @param target      the target of the call
+    * 
+    * @throws ThrownByTestException if an unexpected exception is thrown from the
+    *                               call
     */
    private void createAndExecuteMethod(CallAction callAction, SuperTargetPOJO target) throws ThrownByTestException
    {
@@ -156,7 +172,8 @@ public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
       String superJoinPointByMethod = "super" + callAction + "bymethod";
       String joinPointByMethod1 = callAction + "bymethod1";
       String joinPointByMethod2 = callAction + "bymethod2";
-
+      // IMPORTANT: call some times using the same caller, to test PER_INSTANCE and
+      //            PER_JOINPOINT correctly
       for (int i = 0; i < 3; i++)
       {
          // super by method
@@ -246,6 +263,14 @@ public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
       }
    }
    
+   /**
+    * Performs <code>callAction</code> from inside static methods.
+    * 
+    * @param callAction the call action to be performed
+    * @param target     target of the action
+    * 
+    * @throws ThrownByTestException if an unexpected exception is thrown by the call
+    */
    public void executeStaticMethod(CallAction callAction, SuperTargetPOJO target) throws ThrownByTestException
    {
       String superJoinPoint = "super" + callAction;
@@ -339,6 +364,7 @@ public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
    }
    
    /**
+    * 
     * @param caller1
     */
    private void checkAspects(SuperPOJOCaller context, Class<?> contextClass,
@@ -349,7 +375,15 @@ public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
    }
 
    /**
-    * @param target
+    * Records the scoped aspect instances and performs assertion by comparing
+    * with aspect instances previously recorded.
+    * 
+    * @param context      the context from where the intercepted call was performed.
+    *                     Can be <code>null</code> if the call context is static
+    * @param contextClass the class of context (useful with context is a static
+    *                     method)
+    * @param joinPoint    a description that identifies uniquely the intercepted call
+    *                     joinpoint
     */
    private void recordAspects(SuperPOJOCaller context, Class<?> contextClass, String joinPoint)
    {
@@ -363,6 +397,12 @@ public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
       AspectRegister.addPerVmAspect();
    }
    
+   /**
+    * Checks null and non-null aspect instances.
+    *  
+    * @param exceptionThrown indicates whether the joinpoint threw an exception
+    * @param staticContext   indicates whether the call context (caller) was static
+    */
    private void assertAspects(boolean exceptionThrown, boolean staticContext)
    {
       Object afterAspect = null;
@@ -469,6 +509,9 @@ public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
       assertSame(afterAspect, PerVmAspect.finaly);
    }
    
+   /**
+    * Resets all aspect information regarding a previous joinpoint interception.
+    */
    private void resetAll()
    {
       PerInstanceAspect.reset();
@@ -479,39 +522,68 @@ public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
       CallerAspect.reset();
    }
    
+   /**
+    * Records scoped aspect instances for equality assertion.
+    * 
+    * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
+    */
    static class AspectRegister
    {
+      // map of per class aspect instances
       private static Map<Class, PerClassAspect> PER_CLASS =
          new HashMap<Class, PerClassAspect>();
+      // map of per joinpoitn aspect instances
       private static Map<String, PerJoinpointAspect> PER_JOINPOINT =
          new HashMap<String, PerJoinpointAspect>();
+      // map of per instance aspect instances
       private static Map<SuperPOJOCaller, PerInstanceAspect> PER_INSTANCE =
          new HashMap<SuperPOJOCaller, PerInstanceAspect>();
+      // map of per class joinpoint aspect instances
       private static Map<String, PerClassJoinpointAspect> PER_CLASS_JOINPOINT =
          new HashMap<String, PerClassJoinpointAspect>();
-      
+      // the single instance of per vm aspect
       private static PerVmAspect PER_VM = null;
       
+      /*
+       * Adds the PerJoinpointAspect instance used during the last joinpoint
+       * execution.
+       */
       public static void addPerJoinpointAspect(String joinpoint, SuperPOJOCaller instance)
       {
          addAspect(joinpoint + instance, PerJoinpointAspect.before, PER_JOINPOINT);
       }
       
+      /*
+       * Adds the PerInstanceAspect instance used during the last joinpoint
+       * execution.
+       */
       public static void addPerInstanceAspect(SuperPOJOCaller instance)
       {
          addAspect(instance, PerInstanceAspect.before, PER_INSTANCE);
       }
       
+      /*
+       * Adds the PerClassJoinpointAspect instance used during the last joinpoint
+       * execution.
+       */
       public static void addPerClassJoinpointAspect(Class clazz, String joinpoint)
       {
          addAspect(clazz + joinpoint, PerClassJoinpointAspect.before , PER_CLASS_JOINPOINT);
       }
       
+      /*
+       * Adds the PerClassAspect instance used during the last joinpoint
+       * execution.
+       */
       public static void addPerClassAspect(Class clazz)
       {
          addAspect(clazz, PerClassAspect.before, PER_CLASS);
       }
       
+      /*
+       * Adds the PerVMAspect instance used during the last joinpoint
+       * execution.
+       */
       public static void addPerVmAspect()
       {
          if (PER_VM != null)
@@ -521,16 +593,22 @@ public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
          PER_VM = PerVmAspect.before;
       }
       
+      /*
+       * Adds <code>aspect</code> to <code>map</code>.
+       */
       private static <K, V>void addAspect(K key, V aspect, Map<K, V> map)
       {
+         // if this instance is already registered, assert it is the same instance
          if (map.containsKey(key))
          {
             assertSame(map.get(key), aspect);
          }
+         // otherwise, add this instance to the map
          else
          {
             map.put(key, aspect);
          }
+         // check that this instance is different from all other instances in map
          for (Map.Entry<K, V> e: map.entrySet())
          {
             if (e.getKey() != key && !e.getKey().equals(key))

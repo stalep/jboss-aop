@@ -21,6 +21,11 @@
  */
 package org.jboss.test.aop.beforeafterthrowingscoped;
 
+/**
+ * Represents a call to be performed by the caller.
+ * 
+ * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
+ */
 enum CallAction
 {
    CALL_CONSTRUCTOR("constructor"),
@@ -99,6 +104,11 @@ class SuperPOJOCaller
    }
 }
 
+/**
+ * Caller1 (for call joinpoints)
+ * 
+ * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
+ */
 class POJOCaller1 extends SuperPOJOCaller
 {
    // constructor that is not intercepted
@@ -108,6 +118,7 @@ class POJOCaller1 extends SuperPOJOCaller
    
    public POJOCaller1(SuperTargetPOJO target, CallAction callAction, boolean throwException) throws ThrownByTestException
    {
+      // perform caller1 own calls (ignore super constructor calls)
       switch(callAction)
       {
          case CALL_CONSTRUCTOR:
@@ -155,6 +166,11 @@ class POJOCaller1 extends SuperPOJOCaller
    }
 }
 
+/**
+ * Caller2 (for call joinpoints)
+ * 
+ * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
+ */
 class POJOCaller2 extends SuperPOJOCaller
 {
    // constructor that is not intercepted
@@ -165,19 +181,8 @@ class POJOCaller2 extends SuperPOJOCaller
    
    public POJOCaller2(SuperTargetPOJO target, CallAction callAction, boolean throwException) throws ThrownByTestException
    {
+      // call super target constructor this time
       super(target, callAction, throwException);
-      /*switch(callAction)
-      {
-         case CALL_CONSTRUCTOR:
-            new TargetPOJO2(throwException);
-            break;
-         case CALL_METHOD:
-            target.method(throwException);
-            break;
-         case CALL_STATIC_METHOD:
-            TargetPOJO2.staticMethod(throwException);
-            break;
-      }*/
    }
    
    public void method2(SuperTargetPOJO target, CallAction callAction, boolean throwException) throws ThrownByTestException
