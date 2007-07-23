@@ -181,7 +181,7 @@ public abstract class JoinPointGenerator
       };
     
       initialiseJoinPointNames(info);
-      findAdvisedField(advisorClass, info);
+      findAdvisedField(info);
       initBaseJoinPointClassName(advisor);
    }
    
@@ -461,34 +461,34 @@ public abstract class JoinPointGenerator
       }
    }
    
-   private void findAdvisedField(Class advisorSuperClazz, JoinPointInfo info)
+   private void findAdvisedField(JoinPointInfo info)
    {
       if (info.getClazz() == null)
       {
          return;
       }
+      Class advisorClass = null;
+      if (info.getAdvisor().getClazz().equals(info.getClazz()))
+      {
+         // short cut, avoid cost of else block
+         advisorClass = info.getAdvisor().getClass();
+      }
+      else
+      {
+         AspectManager manager = info.getAdvisor().getManager();
+         advisorClass = manager.getAdvisor(info.getClazz()).getClass();
+      }
       
-      //while (advisorSuperClazz != null && advisorSuperClazz.getDeclaringClass() != info.getClazz())
-      //{
-      //   advisorSuperClazz = advisorSuperClazz.getSuperclass();
-      //}
-      advisorSuperClazz = AspectManager.instance().getAdvisor(info.getClazz()).getClass();
       try
       {
-         try
-         {
-            joinpointField = advisorSuperClazz.getDeclaredField(joinpointFieldName);
-            SecurityActions.setAccessible(joinpointField);
-            joinpointFqn = advisorSuperClazz.getDeclaringClass().getName() + "$" + joinpointClassName;
-         }
-         catch (NoSuchFieldException e)
-         {
-            //GeneratedClassAdvisor is the base class for all generated advisors
-            if (!advisorSuperClazz.getName().equals(GENERATED_CLASS_ADVISOR))
-            {
-               findAdvisedField(advisorSuperClazz.getSuperclass(), info);
-            }
-         }
+         joinpointField = advisorClass.getDeclaredField(joinpointFieldName);
+         SecurityActions.setAccessible(joinpointField);
+         System.out.println("JOINPOING FQN: " + joinpointFqn);
+         joinpointFqn = advisorClass.getDeclaringClass().getName() + "$" + joinpointClassName;
+      }
+      catch (NoSuchFieldException e)
+      {
+         throw new RuntimeException(e);
       }
       catch (NoClassDefFoundError e)
       {
