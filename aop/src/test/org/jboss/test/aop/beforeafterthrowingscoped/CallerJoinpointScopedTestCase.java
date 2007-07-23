@@ -61,7 +61,6 @@ public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
       }
    }
    
-   // TODO JBAOP-444
    public void testMethodCall() throws ThrownByTestException
    {
       for (int i = 0; i < 10; i++)
@@ -253,7 +252,7 @@ public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
       String joinPoint1 = callAction + "1";
       String joinPoint2 = callAction + "2";
       
-      // by static method
+      // super by static method
       SuperPOJOCaller.staticMethod(target, callAction, false);
       checkAspects(null, SuperPOJOCaller.class, superJoinPoint, false);
 
@@ -271,6 +270,40 @@ public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
       checkAspects(null, SuperPOJOCaller.class, superJoinPoint, exceptionThrown);
       exceptionThrown = false;
 
+      //super by static method
+      POJOCaller1.staticMethod(target, callAction, false);
+      checkAspects(null, SuperPOJOCaller.class, superJoinPoint, false);
+
+      // super by static method with exception
+      try
+      {
+         POJOCaller1.staticMethod(target, callAction, true);
+      }
+      catch(ThrownByTestException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      checkAspects(null, SuperPOJOCaller.class, superJoinPoint, exceptionThrown);
+      exceptionThrown = false;
+
+      //super by static method
+      POJOCaller2.staticMethod(target, callAction, false);
+      checkAspects(null, SuperPOJOCaller.class, superJoinPoint, false);
+
+      // super by static method with exception
+      try
+      {
+         POJOCaller2.staticMethod(target, callAction, true);
+      }
+      catch(ThrownByTestException e)
+      {
+         exceptionThrown = true;
+      }
+      assertTrue(exceptionThrown);
+      checkAspects(null, SuperPOJOCaller.class, superJoinPoint, exceptionThrown);
+      exceptionThrown = false;
+      
       // by static method1
       POJOCaller1.staticMethod1(target, callAction, false);
       checkAspects(null, POJOCaller1.class, joinPoint1, false);
