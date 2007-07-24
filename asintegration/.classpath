@@ -5,7 +5,10 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/aop"/>
 	<classpathentry kind="lib" path="/thirdparty/javassist/lib/javassist.jar" sourcepath="/javassist"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/common-core/lib/jboss-common-core.jar" sourcepath="/thirdparty/jboss/common-core/lib/jboss-common-core-sources.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-deployers.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-deployers-core-spi.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-deployers-spi.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-deployers-structure-spi.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-deployers-vfs-spi.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/test/lib/jboss-test.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/junit/lib/junit.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/common-logging-spi/lib/jboss-logging-spi.jar"/>

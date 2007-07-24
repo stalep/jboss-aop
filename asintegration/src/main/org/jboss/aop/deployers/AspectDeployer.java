@@ -21,53 +21,84 @@
 */
 package org.jboss.aop.deployers;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javassist.bytecode.ClassFile;
+
 import org.jboss.aop.AspectAnnotationLoader;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.AspectXmlLoader;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
-import org.jboss.deployers.plugins.deployer.AbstractSimpleDeployer;
-import org.jboss.deployers.spi.deployer.DeploymentUnit;
 import org.jboss.deployers.spi.DeploymentException;
+import org.jboss.deployers.spi.deployer.DeploymentStages;
+import org.jboss.deployers.vfs.spi.deployer.AbstractVFSRealDeployer;
+import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.virtual.VirtualFile;
 import org.jboss.virtual.VirtualFileFilter;
 import org.jboss.virtual.VisitorAttributes;
 import org.jboss.virtual.plugins.context.jar.JarUtils;
 import org.jboss.virtual.plugins.vfs.helpers.FilterVirtualFileVisitor;
 import org.jboss.virtual.plugins.vfs.helpers.SuffixesExcludeFilter;
-import org.jboss.logging.Logger;
 import org.w3c.dom.Document;
-
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.util.List;
-
-import javassist.bytecode.ClassFile;
 
 /**
  * Deployer for Aspects
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
+ * @author adrian@jboss.org
  */
-public class AspectDeployer extends AbstractSimpleDeployer
+public class AspectDeployer extends AbstractVFSRealDeployer
 {
-   private static final Logger log = Logger.getLogger(AspectDeployer.class);
    private static final String AOP_JAR_SUFFIX = ".aop";
    private static final String AOP_DD_SUFFIX = "-aop.xml";
 
+   /** The aspect manager */
+   private AspectManager aspectManager;
+   
    /**
-    * Set the relative order to POSTPROCESS_CLASSLOADING_DEPLOYER-900 (4100)
-    * by default
-    *
+    * Create a new AspectDeployer.
     */
    public AspectDeployer()
    {
-      setRelativeOrder(POSTPROCESS_CLASSLOADING_DEPLOYER-900);
+      setStage(DeploymentStages.POST_CLASSLOADER);
    }
 
-   public void deploy(DeploymentUnit unit) throws DeploymentException
+   /**
+    * Get the aspectManager.
+    * 
+    * @return the aspectManager.
+    */
+   public AspectManager getAspectManager()
+   {
+      return aspectManager;
+   }
+
+   /**
+    * Set the aspectManager.
+    * 
+    * @param aspectManager the aspectManager.
+    */
+   public void setAspectManager(AspectManager aspectManager)
+   {
+      this.aspectManager = aspectManager;
+   }
+
+   /**
+    * Validate the configuration
+    */
+   public void create()
+   {
+      if (aspectManager == null)
+         throw new IllegalStateException("No aspect manager configured");
+   }
+   
+   public void deploy(VFSDeploymentUnit unit) throws DeploymentException
    {
       List<VirtualFile> files = unit.getMetaDataFiles(null, AOP_DD_SUFFIX);
 
@@ -82,7 +113,7 @@ public class AspectDeployer extends AbstractSimpleDeployer
       }
    }
    
-   public void undeploy(DeploymentUnit unit)
+   public void undeploy(VFSDeploymentUnit unit)
    {
       List<VirtualFile> files = unit.getMetaDataFiles(null, AOP_DD_SUFFIX);
 
@@ -97,7 +128,7 @@ public class AspectDeployer extends AbstractSimpleDeployer
       }
    }
 
-   private void deployXml(DeploymentUnit unit, List<VirtualFile> files) throws DeploymentException
+   private void deployXml(VFSDeploymentUnit unit, List<VirtualFile> files) throws DeploymentException
    {
       ClassLoader scl = getScopedClassLoader(unit);
 
@@ -106,8 +137,10 @@ public class AspectDeployer extends AbstractSimpleDeployer
          log.info("AOP deployment is scoped using classloader " + scl);   
       }
       
+      ArrayList<VirtualFile> deployedFiles = new ArrayList<VirtualFile>(files.size());
       for (VirtualFile vf : files)
       {
+         deployedFiles.add(vf);
          try
          {
             log.debug("deploying: " + vf.toURL());
@@ -135,46 +168,63 @@ public class AspectDeployer extends AbstractSimpleDeployer
          }
          catch (Exception e)
          {
-            throw new DeploymentException(e);
+            //Unwind things already installed, in the reverse order
+            for (int i = deployedFiles.size() - 1 ; i >= 0 ; i--)
+            {
+               undeployXml(scl, deployedFiles.get(i));
+            }
+            
+            throw DeploymentException.rethrowAsDeploymentException("Error deploying xml " + vf.getName(), e);
          }
       }
    }
 
-   private void undeployXml(DeploymentUnit unit, List<VirtualFile> files)
+   private void undeployXml(VFSDeploymentUnit unit, List<VirtualFile> files)
    {
       ClassLoader scl = getScopedClassLoader(unit);
 
       for (VirtualFile vf : files)
       {
+         undeployXml(scl, vf);
+      }
+      
+      aspectManager.unregisterClassLoader(unit.getClassLoader());
+   }
+   
+   private void undeployXml(ClassLoader scl, VirtualFile vf)
+   {
+      try
+      {
+         log.debug("undeploying: " + vf.toURL());
+         InputStream is = vf.openStream();
          try
          {
-            log.debug("undeploying: " + vf.toURL());
-            InputStream is = vf.openStream();
+            Document doc = AspectXmlLoader.loadDocument(is);
+            AspectXmlLoader loader = new AspectXmlLoader();
+            
+            AspectManager manager = (scl != null) ? AspectManager.instance(scl) : aspectManager;
+            
+            loader.setManager(manager);
+            loader.undeployXML(doc, vf.toURL());
+         }
+         finally
+         {
             try
-            {
-               Document doc = AspectXmlLoader.loadDocument(is);
-               AspectXmlLoader loader = new AspectXmlLoader();
-               
-               AspectManager manager = (scl != null) ? AspectManager.instance(scl) : AspectManager.instance();
-               
-               loader.setManager(manager);
-               loader.undeployXML(doc, vf.toURL());
-            }
-            finally
             {
                is.close();
             }
-         }
-         catch (Exception e)
-         {
-            throw new RuntimeException(e);
+            catch(IOException ignore)
+            {
+            }
          }
       }
-      
-      AspectManager.instance().unregisterClassLoader(unit.getClassLoader());
+      catch (Exception e)
+      {
+         log.warn("Error undeploying xml " + vf.getName(), e);
+      }
    }
 
-   private void deployAnnotations(DeploymentUnit unit) throws DeploymentException
+   private void deployAnnotations(VFSDeploymentUnit unit) throws DeploymentException
    {
       ClassLoader scl = getScopedClassLoader(unit);
 
@@ -185,43 +235,52 @@ public class AspectDeployer extends AbstractSimpleDeployer
 
       AspectAnnotationLoader loader = getAnnotationLoader(scl); 
       List<VirtualFile> files = getClasses(unit);
+      ArrayList<VirtualFile> deployedFiles = new ArrayList<VirtualFile>(files.size());
       for(VirtualFile file : files)
       {
-         ClassFile cf = loadClassFile(file);
-         
          try
          {
+            ClassFile cf = loadClassFile(file);
             log.debug("Deploying possibly annotated class " + cf.getName());
             loader.deployClassFile(cf);
          }
          catch (Exception e)
          {
+            //Unwind things already installed, in the reverse order
+            for (int i = deployedFiles.size() ; i >= 0 ; i-- )
+            {
+               undeployAnnotation(loader, deployedFiles.get(i));
+            }
             throw new DeploymentException("Error reading annotations for " + file, e);
          }
       }
    }
    
-   private void undeployAnnotations(DeploymentUnit unit)
+   private void undeployAnnotations(VFSDeploymentUnit unit)
    {
       ClassLoader scl = getScopedClassLoader(unit);
       AspectAnnotationLoader loader = getAnnotationLoader(scl); 
       List<VirtualFile> files = getClasses(unit);
       for(VirtualFile file : files)
       {
-         ClassFile cf = loadClassFile(file);
-         
-         try
-         {
-            log.debug("Undeploying possibly annotated class " + cf.getName());
-            loader.undeployClassFile(cf);
-         }
-         catch (Exception e)
-         {
-            throw new RuntimeException("Error reading annotations for " + file, e);
-         }
+         undeployAnnotation(loader, file);
       }
    }
 
+   private void undeployAnnotation(AspectAnnotationLoader loader, VirtualFile file)
+   {
+      try
+      {
+         ClassFile cf = loadClassFile(file);
+         log.debug("Undeploying possibly annotated class " + cf.getName());
+         loader.undeployClassFile(cf);
+      }
+      catch (Exception e)
+      {
+         log.warn("Error reading annotations for " + file, e);
+      }
+   }
+   
    private AspectAnnotationLoader getAnnotationLoader(ClassLoader scl)
    {
       AspectManager manager = (scl != null) ? AspectManager.instance(scl) : AspectManager.instance();
@@ -250,16 +309,15 @@ public class AspectDeployer extends AbstractSimpleDeployer
          {
             din.close();
          }
-         catch (IOException e)
+         catch (IOException ignored)
          {
-            throw new RuntimeException("Error closing input stream for " + file, e);
          }
       }
       
       return cf;
    }
    
-   private List<VirtualFile> getClasses(DeploymentUnit unit)
+   private List<VirtualFile> getClasses(VFSDeploymentUnit unit)
    {
       VisitorAttributes va = new VisitorAttributes();
       va.setLeavesOnly(true);
@@ -268,7 +326,7 @@ public class AspectDeployer extends AbstractSimpleDeployer
       va.setRecurseFilter(noJars);
       FilterVirtualFileVisitor visitor = new FilterVirtualFileVisitor(filter, va);
 
-      for (VirtualFile vf : unit.getDeploymentContext().getClassPath())
+      for (VirtualFile vf : unit.getClassPath())
       {
          try
          {
@@ -283,7 +341,7 @@ public class AspectDeployer extends AbstractSimpleDeployer
 
    }
    
-   private boolean isAopArchiveOrFolder(DeploymentUnit unit)
+   private boolean isAopArchiveOrFolder(VFSDeploymentUnit unit)
    {
       String name = unit.getName();
       
@@ -302,7 +360,7 @@ public class AspectDeployer extends AbstractSimpleDeployer
       return (realName.endsWith(AOP_JAR_SUFFIX));
    }
    
-   private ClassLoader getScopedClassLoader(DeploymentUnit unit)
+   private ClassLoader getScopedClassLoader(VFSDeploymentUnit unit)
    {
       //Scoped AOP deployments are only available when deployed as part of a scoped sar, ear etc.
       //It can contain an aop.xml file, or it can be part of a .aop file
@@ -311,7 +369,7 @@ public class AspectDeployer extends AbstractSimpleDeployer
       ClassLoader cl = unit.getClassLoader();
       if (policy != null && policy.isScoped(cl))
       {
-         return cl;
+         return unit.getClassLoader();
       }
       
       return null;
@@ -327,7 +385,7 @@ public class AspectDeployer extends AbstractSimpleDeployer
          }
          catch (IOException e)
          {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error visiting file: " + file.getName(), e);
          }
       }
    }
