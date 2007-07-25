@@ -117,6 +117,8 @@ public class PerVmAdvice
             {
                if (methods[i].getName().equals(adviceName)) matches.add(methods[i]);
             }
+            if(matches.size() == 0)
+               throw new RuntimeException("Class "+aspect.getClass()+" didnt include any method called "+adviceName+", no interceptor will be created.");
 
             // TODO Need to have checks on whether the advice is overloaded and it is an argument type interception
             if (matches.size() == 1)
