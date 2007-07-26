@@ -71,7 +71,8 @@ public class AdvisorFactory
          {         
             try
             {
-               Class otherAdvisorClass = Thread.currentThread().getContextClassLoader().loadClass(property);
+               // FIXME ClassLoader - why should this class be visible from the context classloader?
+               Class otherAdvisorClass = SecurityActions.getContextClassLoader().loadClass(property);
                otherAdvisorConstructor = otherAdvisorClass.getConstructor(CONSTRUCTOR_SIG);
             }
             catch (ClassNotFoundException e)

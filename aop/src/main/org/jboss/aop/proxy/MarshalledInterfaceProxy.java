@@ -58,7 +58,8 @@ public class MarshalledInterfaceProxy implements Serializable
    {
       try
       {
-         return ProxyFactory.createInterfaceProxy(guid, Thread.currentThread().getContextClassLoader(), interfaces, mixins, advisor);
+         // FIXME ClassLoader - why should the class(es) be visible from the context classloader?
+         return ProxyFactory.createInterfaceProxy(guid, SecurityActions.getContextClassLoader(), interfaces, mixins, advisor);
       }
       catch (Exception e)
       {

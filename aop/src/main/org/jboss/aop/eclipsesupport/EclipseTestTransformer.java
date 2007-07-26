@@ -40,6 +40,7 @@ import javassist.CtNewMethod;
  * A transformer to weave the main method of the org.eclipse.jdt.internal.junit.runner.RemoteTestRunner, so that we can deploy the correct
  * -aop.xml files before the test case class itself is loaded when running within Eclipse
  *
+ * FIXME SecurityManager - privileged blocks
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision: 44099 $
  */

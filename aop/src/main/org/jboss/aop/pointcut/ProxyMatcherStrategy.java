@@ -51,6 +51,8 @@ public class ProxyMatcherStrategy extends MatcherStrategy
       {
          if (advisor != null)
          {
+            // FIXME ClassLoader - why should the class be visible from the context classloader?
+            ClassLoader cl = SecurityActions.getContextClassLoader();
             ArrayList intros = advisor.getInterfaceIntroductions();
             if (intros.size() > 0)
             {
@@ -62,7 +64,7 @@ public class ProxyMatcherStrategy extends MatcherStrategy
                   {
                      for (int i = 0 ; i < introductions.length ; i++)
                      {
-                        Class iface = Thread.currentThread().getContextClassLoader().loadClass(introductions[i]);
+                        Class iface = cl.loadClass(introductions[i]);
                         if (subtypeOf(iface, instanceOf, advisor)) return true;
                      }
                   }
@@ -77,7 +79,7 @@ public class ProxyMatcherStrategy extends MatcherStrategy
                         {
                            for (int i = 0 ; i < mixinInterfaces.length ; i++)
                            {
-                              Class iface = Thread.currentThread().getContextClassLoader().loadClass(mixinInterfaces[i]);
+                              Class iface = cl.loadClass(mixinInterfaces[i]);
                               if (subtypeOf(iface, instanceOf, advisor)) return true;                              
                            }
                         }

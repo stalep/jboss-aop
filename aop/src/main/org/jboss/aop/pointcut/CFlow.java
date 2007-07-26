@@ -121,6 +121,7 @@ public class CFlow
       }
       else
       {
+         // FIXME ClassLoader - why should the class be visible from the context classloader?
          Class clazz = loadClass(element.getClassName());
          
          if (Untransformable.class.isAssignableFrom(clazz))

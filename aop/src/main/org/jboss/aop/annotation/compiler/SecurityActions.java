@@ -19,30 +19,19 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.pointcut;
+package org.jboss.aop.annotation.compiler;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 /**
+ * SecurityActions.
  * 
- * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
- * @version $Revision$
+ * @author <a href="adrian@jboss.com">Adrian Brock</a>
+ * @version $Revision: 1.1 $
  */
-class SecurityActions
+public class SecurityActions
 {
-   static Class loadClass(String name)
-   {
-      try
-      {
-         return getContextClassLoader().loadClass(name);
-      }
-      catch (ClassNotFoundException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
-   
    public static class GetContextClassLoaderAction implements PrivilegedAction<ClassLoader>
    {
       public static GetContextClassLoaderAction INSTANCE = new GetContextClassLoaderAction();

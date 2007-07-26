@@ -101,7 +101,7 @@ public abstract class JoinPointGenerator
          {
             THROWS_THROWABLE = new CtClass[]{
                   AspectManager.instance().findClassPool(
-                        Thread.currentThread().getContextClassLoader()).
+                        SecurityActions.getContextClassLoader()).
                         get("java.lang.Throwable")};
          } catch (NotFoundException e)
          {

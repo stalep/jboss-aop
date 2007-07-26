@@ -99,12 +99,12 @@ public class AspectAnnotationLoader
       this.cl = cl;
    }
    
+   // REVIEW ClassLoader - This method doesn't seem to get used? - Generated code?
    public ClassLoader getClassLoader()
    {
+      // FIXME ClassLoader - shouldn't this always have the correct classloader? - the deployment classloader
       if (cl == null)
-      {
-         return Thread.currentThread().getContextClassLoader();
-      }
+         return SecurityActions.getContextClassLoader();
       return cl;
    }
 

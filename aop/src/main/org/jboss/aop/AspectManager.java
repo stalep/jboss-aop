@@ -227,7 +227,7 @@ public class AspectManager
 
    public static synchronized AspectManager instance()
    {
-      return instance(Thread.currentThread().getContextClassLoader());
+      return instance(SecurityActions.getContextClassLoader());
    }
    
    /**
@@ -711,7 +711,7 @@ public class AspectManager
       if (!(cl instanceof Translatable))
       {
          // findClassPool has problems with boot and system classes.
-         return registerClassLoader(Thread.currentThread().getContextClassLoader());
+         return registerClassLoader(SecurityActions.getContextClassLoader());
       }
       return registerClassLoader(cl);
    }

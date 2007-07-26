@@ -24,6 +24,8 @@ package org.jboss.aop.contrib;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 
 import javassist.CannotCompileException;
@@ -95,12 +97,19 @@ public class IDEClassPoolFactory implements ScopedClassPoolFactory
       private void loadClasspath()
       {
          childFirstLookup = true;
+         
+         AccessController.doPrivileged(new PrivilegedAction<Object>()
+         {
+            public Object run()
+            {
+               URL urlPaths[] = (URL[]) classPaths.toArray(new URL[classPaths.size()]);
+               loader = new Loader(urlPaths, Thread.currentThread().getContextClassLoader());
+               setClassLoader(loader);
 
-         URL urlPaths[] = (URL[]) classPaths.toArray(new URL[classPaths.size()]);
-         loader = new Loader(urlPaths, Thread.currentThread().getContextClassLoader());
-         setClassLoader(loader);
-
-         Thread.currentThread().setContextClassLoader(loader);
+               Thread.currentThread().setContextClassLoader(loader);
+               return null;
+            }
+         });
 
          classPath = new LoaderClassPath(loader);
          insertClassPath(classPath);

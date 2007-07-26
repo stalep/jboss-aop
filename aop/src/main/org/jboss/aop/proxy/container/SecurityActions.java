@@ -19,67 +19,19 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.proxy;
+package org.jboss.aop.proxy.container;
 
-import java.lang.reflect.AccessibleObject;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 
 /**
+ * SecurityActions.
  * 
- * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
+ * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision: 1.1 $
  */
 class SecurityActions
 {
-   interface SetAccessibleAction
-   {
-      void setAccessible(AccessibleObject accessibleObject);
-      
-      SetAccessibleAction PRIVILEGED = new SetAccessibleAction()
-      {
-         public void setAccessible(final AccessibleObject accessibleObject)
-         {
-            try
-            {
-               AccessController.doPrivileged(new PrivilegedExceptionAction()
-               {
-                  public Object run() throws Exception
-                  {
-                     accessibleObject.setAccessible(true);
-                     return null;
-                  }
-               });
-            }
-            catch (PrivilegedActionException e)
-            {
-               throw new RuntimeException("Error setting " + accessibleObject + " as accessible ", e.getException());
-            }
-         }
-      };
-
-      SetAccessibleAction NON_PRIVILEGED = new SetAccessibleAction()
-      {
-         public void setAccessible(AccessibleObject accessibleObject)
-         {
-            accessibleObject.setAccessible(true);
-         }
-      };
-   }
-
-   static void setAccessible(AccessibleObject accessibleObject)
-   {
-      if (System.getSecurityManager() == null)
-      {
-         SetAccessibleAction.NON_PRIVILEGED.setAccessible(accessibleObject);
-      }
-      else
-      {
-         SetAccessibleAction.PRIVILEGED.setAccessible(accessibleObject);
-      }
-   }
    
    public static class GetContextClassLoaderAction implements PrivilegedAction<ClassLoader>
    {

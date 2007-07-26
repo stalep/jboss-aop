@@ -69,7 +69,7 @@ public class ByteCodeAnnotationCompiler
       JavaDocBuilder builder = new JavaDocBuilder(new AnnotationDocletTagFactory());
       pool = new ClassPool();
       pool.appendSystemPath();
-      pool.appendClassPath(new LoaderClassPath(Thread.currentThread().getContextClassLoader()));
+      pool.appendClassPath(new LoaderClassPath(SecurityActions.getContextClassLoader()));
       for (int i = 0; i < args.length; i++)
       {
          if (args[i].equals("-bytecode"))
@@ -249,7 +249,7 @@ public class ByteCodeAnnotationCompiler
       if (modified)
       {
          String classFile = ctClass.getName().replace('.', '/') + ".class";
-         URL url = Thread.currentThread().getContextClassLoader().getResource(classFile);
+         URL url = SecurityActions.getContextClassLoader().getResource(classFile);
          if (!url.getProtocol().equals("file"))
          {
             throw new RuntimeException(".class file must not be in a jar: " + url.toString());

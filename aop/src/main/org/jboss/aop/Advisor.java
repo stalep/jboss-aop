@@ -382,7 +382,8 @@ public abstract class Advisor
          {
             if (annotationClass == null)
             {
-               annotationClass = Thread.currentThread().getContextClassLoader().loadClass(annotation);
+               // FIXME ClassLoader - this should use "tgt.getClassLoader()"
+               annotationClass = SecurityActions.getContextClassLoader().loadClass(annotation);
             }
             // FIXME The metadata should already include the class annotations
             //       so we should just return this result
@@ -490,7 +491,10 @@ public abstract class Advisor
          if (metadata != null)
          {
             if (annotationClass == null)
-               annotationClass = Thread.currentThread().getContextClassLoader().loadClass(annotation);
+            {
+               // FIXME ClassLoader - this should use "m.getClass().getClassLoader()"
+               annotationClass = SecurityActions.getContextClassLoader().loadClass(annotation);
+            }
             // FIXME The metadata should already include the class annotations
             //       so we should just return this result
             MethodSignature signature = new MethodSignature(m.getName(), m.getParameterTypes());

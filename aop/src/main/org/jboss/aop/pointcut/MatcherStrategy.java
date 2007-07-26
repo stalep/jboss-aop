@@ -63,7 +63,8 @@ public abstract class MatcherStrategy
          String sub = instanceOf.getInstanceOfAnnotation().substring(1);
          try
          {
-            Class annotation = Thread.currentThread().getContextClassLoader().loadClass(sub);
+            // FIXME ClassLoader - why should the class be visible from the context classloader? 
+            Class annotation = SecurityActions.getContextClassLoader().loadClass(sub);
             if (AnnotationElement.getAnyAnnotation(clazz, annotation) != null)
             {
                return true;

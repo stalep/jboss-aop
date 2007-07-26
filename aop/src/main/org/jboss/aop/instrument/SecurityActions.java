@@ -23,8 +23,11 @@ package org.jboss.aop.instrument;
 
 import java.lang.reflect.AccessibleObject;
 import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+
+import org.jboss.aop.hook.SecurityActions.GetContextClassLoaderAction;
 
 /**
  * 
@@ -77,5 +80,23 @@ class SecurityActions
       {
          SetAccessibleAction.PRIVILEGED.setAccessible(accessibleObject);
       }
+   }
+
+   public static class GetContextClassLoaderAction implements PrivilegedAction<ClassLoader>
+   {
+      public static GetContextClassLoaderAction INSTANCE = new GetContextClassLoaderAction();
+      
+      public ClassLoader run()
+      {
+         return Thread.currentThread().getContextClassLoader();
+      }
+   }
+
+   static ClassLoader getContextClassLoader()
+   {
+      if (System.getSecurityManager() == null)
+         return Thread.currentThread().getContextClassLoader();
+      else
+         return AccessController.doPrivileged(GetContextClassLoaderAction.INSTANCE);
    }
 }

@@ -66,7 +66,8 @@ public class InstrumentorFactory
             
             try
             {
-               Class otherInstrumentorClass = Thread.currentThread().getContextClassLoader().loadClass(property);
+               // FIXME ClassLoader - why should the class be visible from the context classloader?
+               Class otherInstrumentorClass = SecurityActions.getContextClassLoader().loadClass(property);
                otherInstrumentorConstructor = otherInstrumentorClass.getConstructor(CONSTRUCTOR_SIG);
                instrumentor = InstrumentorEnum.OTHER_INSTRUMENTOR;
             }

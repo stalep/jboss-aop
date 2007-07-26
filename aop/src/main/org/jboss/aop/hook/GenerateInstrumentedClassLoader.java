@@ -74,7 +74,7 @@ public class GenerateInstrumentedClassLoader
    {
       ClassPool classpool = ClassPool.getDefault();
       classpool = ClassPool.getDefault();
-      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      ClassLoader cl = SecurityActions.getContextClassLoader();
       classpool.insertClassPath(new LoaderClassPath(cl));
 
       final CtClass clazz = classpool.get(ClassLoader.class.getName());

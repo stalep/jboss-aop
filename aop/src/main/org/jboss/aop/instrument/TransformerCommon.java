@@ -82,7 +82,7 @@ public class TransformerCommon {
             URLClassLoader loader = Compiler.loader;
             if (loader == null)
             {
-               loader = new URLClassLoader(NO_URLS, Thread.currentThread().getContextClassLoader());
+               loader = new URLClassLoader(NO_URLS, SecurityActions.getContextClassLoader());
             }
             URL url = loader.getResource(
                   classForPackage.getName().replace('.', '/') + ".class");

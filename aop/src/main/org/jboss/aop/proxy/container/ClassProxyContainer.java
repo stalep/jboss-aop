@@ -134,9 +134,10 @@ public class ClassProxyContainer extends ClassContainer
 
    private void addMethodsFromInterfaces(String[] intf) throws Exception
    {
-      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      ClassLoader cl = SecurityActions.getContextClassLoader();
       for (int j = 0; intf != null && j < intf.length; ++j)
       {
+         // FIXME ClassLoader - why should the class be visible from the context classloader?
          Class iface = cl.loadClass(intf[j]);
          Method[] ifaceMethods = iface.getMethods();
          for (int k = 0; k < ifaceMethods.length; k++)

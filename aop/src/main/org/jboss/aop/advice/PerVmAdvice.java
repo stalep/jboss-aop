@@ -72,7 +72,7 @@ public class PerVmAdvice
       if (cl == null)
       {
          //The classloader will be null if loader by the booststrap classloader
-         cl = Thread.currentThread().getContextClassLoader();
+         cl = SecurityActions.getContextClassLoader();
       }
       synchronized (PerVmAdvice.class)
       {

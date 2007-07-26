@@ -80,7 +80,8 @@ public class GenericInterceptorFactory implements InterceptorFactory
          {
             if (clazz == null)
             {
-               clazz = Thread.currentThread().getContextClassLoader().loadClass(classname);
+               // FIXME ClassLoader - why should the class be visible from the context classloader?
+               clazz = SecurityActions.getContextClassLoader().loadClass(classname);
             }
          }
          Interceptor interceptor = (Interceptor)clazz.newInstance();

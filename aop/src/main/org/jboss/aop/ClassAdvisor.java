@@ -384,11 +384,13 @@ public class ClassAdvisor extends Advisor
          for (int i = 0; i < mixins.size(); i++)
          {
             InterfaceIntroduction.Mixin mixin = (InterfaceIntroduction.Mixin) mixins.get(i);
-            Thread.currentThread().getContextClassLoader().loadClass(mixin.getClassName());
+            // FIXME ClassLoader - how do we know the class is visible from the context classloader?
+            ClassLoader cl = SecurityActions.getContextClassLoader();
+            cl.loadClass(mixin.getClassName());
             String[] interfaces = mixin.getInterfaces();
             for (int j = 0; j < interfaces.length; j++)
             {
-               Class intf = Thread.currentThread().getContextClassLoader().loadClass(interfaces[j]);
+               Class intf = cl.loadClass(interfaces[j]);
                if (intf.isAssignableFrom(clazz))//This is a fix for JBAOP-365. Class may have been woven, with the extra mixin information only available at init time
                {
                   Method[] methods = intf.getMethods();
@@ -658,7 +660,8 @@ public class ClassAdvisor extends Advisor
 
       //The standard MethodCalledByXXXXInvocation class calls by reflection and needs access
       calledMethod.setAccessible(true);
-      Class calledClazz = Thread.currentThread().getContextClassLoader().loadClass(calledClass);
+      // FIXME ClassLoader - how do we know the class is visible from the context classloader?
+      Class calledClazz = SecurityActions.getContextClassLoader().loadClass(calledClass);
       MethodByConInfo info = new MethodByConInfo(this, calledClazz, callingClass, callingIndex, calledMethod, calledMethodHash, null);
       calledMethodsMap.put(calledMethodHash, info);
       return info;
@@ -688,7 +691,8 @@ public class ClassAdvisor extends Advisor
    {
       //The standard ConstructorCalledByXXXXInvocation class calls by reflection and needs access
       calledCon.setAccessible(true);
-      Class calledClazz = Thread.currentThread().getContextClassLoader().loadClass(calledClass);
+      // FIXME ClassLoader - how do we know the class is visible from the context classloader?
+      Class calledClazz = SecurityActions.getContextClassLoader().loadClass(calledClass);
 
       try
       {
@@ -1261,7 +1265,8 @@ public class ClassAdvisor extends Advisor
       {
          Constructor callingConstructor = constructors[callingIndex];
          if (callingConstructor == null) throw new RuntimeException("Unable to figure out calling method of a caller pointcut");
-         Class called = Thread.currentThread().getContextClassLoader().loadClass(calledClass);
+         // FIXME ClassLoader - how do we know the class is visible from the context classloader?
+         Class called = SecurityActions.getContextClassLoader().loadClass(calledClass);
          Method calledMethod = MethodHashing.findMethodByHash(called, calledMethodHash);
          if (calledMethod == null) throw new RuntimeException("Unable to figure out calledmethod of a caller pointcut");
 
@@ -1328,7 +1333,8 @@ public class ClassAdvisor extends Advisor
       {
          Constructor callingConstructor = constructors[callingIndex];
          if (callingConstructor == null) throw new RuntimeException("Unable to figure out calling method of a caller pointcut");
-         Class called = Thread.currentThread().getContextClassLoader().loadClass(calledClass);
+         // FIXME ClassLoader - how do we know the class is visible from the context classloader?
+         Class called = SecurityActions.getContextClassLoader().loadClass(calledClass);
          Constructor calledCon = MethodHashing.findConstructorByHash(called, calledConHash);
          if (calledCon == null) throw new RuntimeException("Unable to figure out calledcon of a caller pointcut");
 
@@ -2069,7 +2075,8 @@ public class ClassAdvisor extends Advisor
          {
             Method callingMethod = MethodHashing.findMethodByHash(clazz, callingMethodHash);
             if (callingMethod == null) throw new RuntimeException("Unable to figure out calling method of a caller pointcut");
-            Class called = Thread.currentThread().getContextClassLoader().loadClass(calledClass);
+            // FIXME ClassLoader - how do we know the class is visible from the context classloader?
+            Class called = SecurityActions.getContextClassLoader().loadClass(calledClass);
             Method calledMethod = MethodHashing.findMethodByHash(called, calledMethodHash);
             if (calledMethod == null) throw new RuntimeException("Unable to figure out calledmethod of a caller pointcut");
 
@@ -2176,7 +2183,8 @@ public class ClassAdvisor extends Advisor
          //The standard MethodCalledByXXXXInvocation class calls by reflection and needs access
          calledMethod.setAccessible(true);
 
-         Class calledClazz = Thread.currentThread().getContextClassLoader().loadClass(calledClass);
+         // FIXME ClassLoader - how do we know the class is visible from the context classloader?
+         Class calledClazz = SecurityActions.getContextClassLoader().loadClass(calledClass);
          MethodByMethodInfo info = new MethodByMethodInfo(ClassAdvisor.this, calledClazz, calledMethod, callingMethod, callingMethodHash, calledMethodHash, null);
          calledMethodsMap.put(calledMethodHash, info);
          return info;
@@ -2302,7 +2310,8 @@ public class ClassAdvisor extends Advisor
          {
             Method callingMethod = MethodHashing.findMethodByHash(clazz, callingMethodHash);
             if (callingMethod == null) throw new RuntimeException("Unable to figure out calling method of a constructor caller pointcut");
-            Class called = Thread.currentThread().getContextClassLoader().loadClass(calledClass);
+            // FIXME ClassLoader - how do we know the class is visible from the context classloader?
+            Class called = SecurityActions.getContextClassLoader().loadClass(calledClass);
             Constructor calledCon = MethodHashing.findConstructorByHash(called, calledConHash);
             if (calledCon == null) throw new RuntimeException("Unable to figure out calledcon of a constructor caller pointcut");
 
@@ -2425,7 +2434,8 @@ public class ClassAdvisor extends Advisor
          //The standard ConstructorCalledByXXXXInvocation class calls by reflection and needs access
          calledCon.setAccessible(true);
 
-         Class calledClazz = Thread.currentThread().getContextClassLoader().loadClass(calledClass);
+         // FIXME ClassLoader - how do we know the class is visible from the context classloader?
+         Class calledClazz = SecurityActions.getContextClassLoader().loadClass(calledClass);
          try
          {
             int index = calledClass.lastIndexOf('.');

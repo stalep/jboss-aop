@@ -74,7 +74,7 @@ public class Deployment
       {
          try
          {
-            Enumeration en = Thread.currentThread().getContextClassLoader().getResources("META-INF/jboss-aop.xml");
+            Enumeration en = SecurityActions.getContextClassLoader().getResources("META-INF/jboss-aop.xml");
             while (en.hasMoreElements())
             {
                URL url = (URL) en.nextElement();

@@ -83,7 +83,8 @@ public abstract class AspectFactoryWithClassLoaderSupport implements AspectFacto
       ClassLoader cl = getLoader();
       if (cl == null)
       {
-         ClassLoader tcl = Thread.currentThread().getContextClassLoader(); 
+         // FIXME ClassLoader - which should we always know the correct classloader?
+         ClassLoader tcl = SecurityActions.getContextClassLoader(); 
          if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Using context classloader " + tcl + " to load aspect " + name);
          return tcl.loadClass(name);
       }

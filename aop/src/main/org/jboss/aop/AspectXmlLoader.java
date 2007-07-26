@@ -117,9 +117,7 @@ public class AspectXmlLoader implements XmlLoader
    public ClassLoader getClassLoader()
    {
       if (cl == null)
-      {
-         return Thread.currentThread().getContextClassLoader();
-      }
+         return SecurityActions.getContextClassLoader();
       return cl;
    }
 

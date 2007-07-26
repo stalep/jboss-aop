@@ -61,7 +61,8 @@ public class DynamicCFlowDefinition
       {
          try
          {
-            pClass = Thread.currentThread().getContextClassLoader().loadClass(className);
+            // FIXME ClassLoader - why should the class be visible from the context classloader?
+            pClass = SecurityActions.getContextClassLoader().loadClass(className);
          }
          catch (ClassNotFoundException e)
          {
