@@ -51,9 +51,10 @@ import org.codehaus.plexus.util.cli.Commandline;
  *  - suppress (default false)
  *  - noopt (default false)
  *  - report (default false)
+ *  - includes 
  *  
  * 
- * @author <a href="mailto:stalep@gmail.com">Stale W. Pedersen</a>
+ * @author <a href="mailto:spederse@redhat.com">Stale W. Pedersen</a>
  * @goal compile
  * @phase process-classes
  * @requiresDependencyResolution
@@ -132,7 +133,7 @@ public class JBossAOPCMojo extends AbstractMojo
     * @required
     * @readonly
     */
-   private Set dependencies;
+   private Set<String> dependencies;
 
    /**
     * @parameter default-value="${project.compileDependencies}"
@@ -147,6 +148,11 @@ public class JBossAOPCMojo extends AbstractMojo
     * @readonly
     */
    private Dependency pDependency;
+   
+   /**
+    * @parameter
+    */
+   private String[] includes;
    
    private boolean test;
 
@@ -171,6 +177,23 @@ public class JBossAOPCMojo extends AbstractMojo
          sb.append(project.getBuild().getTestOutputDirectory());
       else
       sb.append(getCompileSourcepath());
+      
+      if(includes != null)
+      {
+         for(String inc : includes)
+         {
+            File f = new File(inc);
+            if(f.isFile())
+            {
+               sb.append(File.pathSeparator).append(f.getParent());
+            }
+            else if(f.isDirectory())
+            {
+               sb.append(File.pathSeparator).append(inc);
+            }
+         }
+      }
+      System.err.println("CLASSPATH: "+sb.toString());
       return sb.toString();
    }
 
@@ -182,7 +205,6 @@ public class JBossAOPCMojo extends AbstractMojo
       cl.setExecutable("java");
       cl.addArguments(new String[] { "-cp", createClassPathList(project.getArtifacts())});
       cl.addArguments(new String[] { "org.jboss.aop.standalone.Compiler"});
-      cl.addArguments(new String[] { "-classpath", createClassPathList(project.getArtifacts())});
       if(isVerbose())
          cl.addArguments(new String[] { "-verbose"});
       if(isSuppress())
@@ -198,6 +220,11 @@ public class JBossAOPCMojo extends AbstractMojo
          cl.addArguments(new String[] { project.getBuild().getTestOutputDirectory()});
       else
          cl.addArguments(new String[] { "target/classes"});
+      
+      if(includes != null && includes.length > 0)
+      {
+         cl.addArguments(includes);
+      }
 
       return cl;
    }
@@ -261,7 +288,7 @@ public class JBossAOPCMojo extends AbstractMojo
       return compileSourcepath;
    }
 
-   private Set getDependencies()
+   private Set<String> getDependencies()
    {
       return dependencies;
    }
