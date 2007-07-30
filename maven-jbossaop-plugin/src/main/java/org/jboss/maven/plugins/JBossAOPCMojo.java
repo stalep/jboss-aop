@@ -193,7 +193,7 @@ public class JBossAOPCMojo extends AbstractMojo
             }
          }
       }
-      System.err.println("CLASSPATH: "+sb.toString());
+      
       return sb.toString();
    }
 
@@ -219,7 +219,7 @@ public class JBossAOPCMojo extends AbstractMojo
       if(isTest())
          cl.addArguments(new String[] { project.getBuild().getTestOutputDirectory()});
       else
-         cl.addArguments(new String[] { "target/classes"});
+         cl.addArguments(new String[] { project.getBuild().getOutputDirectory()});
       
       if(includes != null && includes.length > 0)
       {
