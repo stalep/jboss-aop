@@ -117,23 +117,9 @@ public class JBossAOPCMojo extends AbstractMojo
 
    /** 
     * 
-    * @parameter expression="${aopClassPath}" default-value=""
+    * @parameter expression="${compilerClassPath}" default-value=""
     */
    private String compilerClasspath;
-
-   /** 
-    * 
-    * @parameter expression="${aopClassPath}" default-value="${project.build.outputDirectory}"
-    */
-   private String compileSourcepath;
-
-
-   /**
-    * @parameter default-value="${project.artifacts}"
-    * @required
-    * @readonly
-    */
-   private Set<String> dependencies;
 
    /**
     * @parameter default-value="${project.compileDependencies}"
@@ -173,27 +159,12 @@ public class JBossAOPCMojo extends AbstractMojo
       {
          sb.append(a.getFile().toString()).append(File.pathSeparator);
       }
+
       if(isTest())
          sb.append(project.getBuild().getTestOutputDirectory());
       else
-      sb.append(getCompileSourcepath());
-      
-      if(includes != null)
-      {
-         for(String inc : includes)
-         {
-            File f = new File(inc);
-            if(f.isFile())
-            {
-               sb.append(File.pathSeparator).append(f.getParent());
-            }
-            else if(f.isDirectory())
-            {
-               sb.append(File.pathSeparator).append(inc);
-            }
-         }
-      }
-      
+         sb.append(project.getBuild().getOutputDirectory());
+
       return sb.toString();
    }
 
@@ -216,14 +187,26 @@ public class JBossAOPCMojo extends AbstractMojo
       
       cl.addArguments(new String[] { "-aoppath", getAoppath()});
       
-      if(isTest())
-         cl.addArguments(new String[] { project.getBuild().getTestOutputDirectory()});
-      else
-         cl.addArguments(new String[] { project.getBuild().getOutputDirectory()});
-      
       if(includes != null && includes.length > 0)
       {
-         cl.addArguments(includes);
+         for(String include : includes)
+         {
+            File f = null;
+            if(isTest())
+               f = new File(project.getBuild().getTestOutputDirectory(), include);
+            else
+               f = new File(project.getBuild().getOutputDirectory(), include);
+            
+            cl.addArguments(new String[] {f.getAbsolutePath()});
+         }
+         
+      }
+      else
+      {
+         if(isTest())
+            cl.addArguments(new String[] { project.getBuild().getTestOutputDirectory()});
+         else
+            cl.addArguments(new String[] { project.getBuild().getOutputDirectory()});
       }
 
       return cl;
@@ -281,16 +264,6 @@ public class JBossAOPCMojo extends AbstractMojo
    private String getCompilerClasspath()
    {
       return compilerClasspath;
-   }
-
-   private String getCompileSourcepath()
-   {
-      return compileSourcepath;
-   }
-
-   private Set<String> getDependencies()
-   {
-      return dependencies;
    }
 
    private boolean isVerbose()
