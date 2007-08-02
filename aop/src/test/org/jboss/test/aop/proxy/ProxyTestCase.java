@@ -24,6 +24,7 @@ package org.jboss.test.aop.proxy;
 import java.io.Externalizable;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.rmi.MarshalledObject;
 
 import org.jboss.aop.AspectManager;
@@ -360,5 +361,38 @@ public class ProxyTestCase extends AOPTestWithSetup
          manager.removePointcut("perinstancepointcut");
          manager.removeInterceptorFactory("perinstanceaspect");
       }
+   }
+   
+   public void testAnnotationsExistInProxy() throws Exception
+   {
+      AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
+      params.setInterfaces(new Class[]{SomeInterface.class});
+      params.setTarget(new AnnotatedPOJO());
+      
+      GeneratedAOPProxyFactory factory = new GeneratedAOPProxyFactory();
+      AnnotatedPOJO pojo = (AnnotatedPOJO)factory.createAdvisedProxy(params);
+      
+      Class proxyClass = pojo.getClass();
+      assertNotSame(AnnotatedPOJO.class, proxyClass);
+      assertEquals(AnnotatedPOJO.class, proxyClass.getSuperclass());
+      
+      checkExpectedAnnotations(AnnotatedPOJO.class);
+      checkExpectedAnnotations(proxyClass);
+   }
+   
+    private void checkExpectedAnnotations(Class clazz) throws Exception
+   {
+      Annotation ann = (Annotation)clazz.getAnnotation(Annotation.class);
+      assertNotNull(ann);
+
+      Method getter = clazz.getMethod("getX");
+      assertNotNull(getter.getAnnotation(Annotation.class));
+      
+      Method setter = clazz.getMethod("setX", Object.class);
+      assertNotNull(setter.getAnnotation(Annotation.class));
+      assertEquals(1, setter.getParameterTypes().length);
+      assertEquals(1, setter.getParameterAnnotations().length);
+      assertEquals(1, setter.getParameterAnnotations()[0].length);
+      assertEquals(Annotation.class, setter.getParameterAnnotations()[0][0].annotationType());
    }
 }

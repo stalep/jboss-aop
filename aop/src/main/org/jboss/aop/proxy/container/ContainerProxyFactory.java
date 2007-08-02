@@ -42,6 +42,11 @@ import javassist.CtNewMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.SerialVersionUID;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ParameterAnnotationsAttribute;
+import javassist.bytecode.SignatureAttribute;
+import javassist.bytecode.annotation.Annotation;
 
 import org.jboss.aop.Advised;
 import org.jboss.aop.Advisor;
@@ -245,6 +250,9 @@ public class ContainerProxyFactory
          addMethodFromTemplate(template, "hashCode", hashCodeBody());
          addMethodFromTemplate(template, "toString", toStringBody());
       }
+      
+      copyAnnotations(superclass, proxy);
+      copySignature(superclass, proxy);
       
       return proxy;
    }
@@ -595,6 +603,8 @@ public class ContainerProxyFactory
                CtMethod newMethod = CtNewMethod.make(methods[m].getReturnType(), methods[m].getName(), methods[m].getParameterTypes(), methods[m].getExceptionTypes(), code, proxy);
                newMethod.setModifiers(Modifier.PUBLIC);
                proxy.addMethod(newMethod);
+
+               copySignature(methods[m], newMethod);
             }
 
             proxy.addInterface(intfClass);
@@ -661,6 +671,9 @@ public class ContainerProxyFactory
          CtMethod newMethod = CtNewMethod.make(m.getReturnType(), m.getName(), m.getParameterTypes(), m.getExceptionTypes(), code, proxy);
          newMethod.setModifiers(Modifier.PUBLIC);
          proxy.addMethod(newMethod);
+
+         copyAnnotations(m, newMethod);
+         copySignature(m, newMethod);
       }
    }
    
@@ -710,6 +723,8 @@ public class ContainerProxyFactory
             CtMethod newMethod = CtNewMethod.make(methods[m].getReturnType(), methods[m].getName(), methods[m].getParameterTypes(), methods[m].getExceptionTypes(), code, proxy);
             newMethod.setModifiers(Modifier.PUBLIC);
             proxy.addMethod(newMethod);
+            
+            copySignature(methods[m], newMethod);
          }
 
          proxy.addInterface(intfClass);
@@ -794,6 +809,87 @@ public class ContainerProxyFactory
                }
             }
          }
+      }
+   }
+   
+   private void copyAnnotations(CtMethod src, CtMethod dest) throws NotFoundException
+   {
+      javassist.bytecode.MethodInfo srcInfo = src.getMethodInfo2();
+      javassist.bytecode.MethodInfo destInfo = dest.getMethodInfo2();
+      copyAnnotations(srcInfo, destInfo, AnnotationsAttribute.invisibleTag);
+      copyAnnotations(srcInfo, destInfo, AnnotationsAttribute.visibleTag);
+
+      int numParams = src.getParameterTypes().length;
+      copyParameterAnnotations(numParams, srcInfo, destInfo, ParameterAnnotationsAttribute.visibleTag);
+      copyParameterAnnotations(numParams, srcInfo, destInfo, ParameterAnnotationsAttribute.invisibleTag);
+
+   }
+   
+   private void copyAnnotations(javassist.bytecode.MethodInfo src, javassist.bytecode.MethodInfo dest, String annotationTag)
+   {
+      AnnotationsAttribute attribute = (AnnotationsAttribute) src.getAttribute(annotationTag);
+      if (attribute != null)
+      {
+         dest.addAttribute(attribute.copy(dest.getConstPool(), new HashMap()));
+      }
+   }
+   
+   private void copyParameterAnnotations(int numParams, javassist.bytecode.MethodInfo src, javassist.bytecode.MethodInfo dest, String paramsTag)
+   {
+      ParameterAnnotationsAttribute params = (ParameterAnnotationsAttribute)src.getAttribute(paramsTag);
+      if (params != null)
+      {
+         dest.addAttribute(params.copy(dest.getConstPool(), new HashMap()));
+         ParameterAnnotationsAttribute srcParams = new ParameterAnnotationsAttribute(src.getConstPool(), paramsTag);
+         Annotation[][] emptyParamAnnotations = new Annotation[numParams][];
+         for (int i = 0 ; i < numParams ; i++)
+         {
+            emptyParamAnnotations[i] = new Annotation[0];
+         }
+         srcParams.setAnnotations(emptyParamAnnotations);
+         src.addAttribute(srcParams);
+      }
+   }
+
+   private void copyAnnotations(CtClass src, CtClass dest) throws NotFoundException
+   {
+      ClassFile srcFile = src.getClassFile2();
+      ClassFile destFile = dest.getClassFile2();
+      copyAnnotations(srcFile, destFile, AnnotationsAttribute.invisibleTag);
+      copyAnnotations(srcFile, destFile, AnnotationsAttribute.visibleTag);
+   }
+   
+   private void copyAnnotations(ClassFile src, ClassFile dest, String annotationTag)
+   {
+      AnnotationsAttribute attribute = (AnnotationsAttribute) src.getAttribute(annotationTag);
+      if (attribute != null)
+      {
+         dest.addAttribute(attribute.copy(dest.getConstPool(), new HashMap()));
+      }
+   }
+   
+   
+   private void copySignature(CtMethod src, CtMethod dest)
+   {
+      javassist.bytecode.MethodInfo srcInfo = src.getMethodInfo2();
+      javassist.bytecode.MethodInfo destInfo = dest.getMethodInfo2();
+      
+      SignatureAttribute sig = (SignatureAttribute)srcInfo.getAttribute(SignatureAttribute.tag);
+      if (sig != null)
+      {
+         destInfo.addAttribute(sig.copy(destInfo.getConstPool(), new HashMap()));
+      }
+   }
+   
+   private void copySignature(CtClass src, CtClass dest)
+   {
+      ClassFile srcFile = src.getClassFile2();
+      ClassFile destFile = dest.getClassFile2();
+      
+      SignatureAttribute sig = (SignatureAttribute)srcFile.getAttribute(SignatureAttribute.tag);
+      if (sig != null)
+      {
+         destFile.addAttribute(sig.copy(destFile.getConstPool(), new HashMap()));
       }
    }
 }   
