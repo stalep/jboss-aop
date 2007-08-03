@@ -34,6 +34,8 @@ import org.jboss.test.AbstractTestDelegate;
  */
 public class AOPTestWithSetup extends AbstractTestCaseWithSetup
 {
+   public static final String DISABLE_SECURITY_KEY = "jboss.aop.disable.security";
+   
    public AOPTestWithSetup(String arg0)
    {
       super(arg0);
@@ -49,7 +51,11 @@ public class AOPTestWithSetup extends AbstractTestCaseWithSetup
    public static AbstractTestDelegate getDelegate(Class clazz) throws Exception
    {
       AOPTestDelegate delegate = new AOPTestDelegate(clazz);
-      delegate.enableSecurity = true;
+      boolean disableSecurity = Boolean.valueOf((String)System.getProperty(DISABLE_SECURITY_KEY, "false"));
+      if (!disableSecurity)
+      {
+         delegate.enableSecurity = true;
+      }
       return delegate;
    }
    
