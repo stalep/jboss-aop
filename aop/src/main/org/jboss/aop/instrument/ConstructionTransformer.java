@@ -23,6 +23,8 @@ package org.jboss.aop.instrument;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
 import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.pointcut.Pointcut;
 
@@ -147,13 +149,18 @@ public abstract class ConstructionTransformer
    // currently used by CallerTransformer
    public static boolean isAdvisableConstructor(CtConstructor con, ClassAdvisor advisor) throws NotFoundException
    {
-      Iterator pointcuts = advisor.getManager().getPointcuts().values().iterator();
-      while (pointcuts.hasNext())
+      
+      Map pointcuts = advisor.getManager().getPointcuts();
+      synchronized (pointcuts)
       {
-         Pointcut pointcut = (Pointcut) pointcuts.next();
-         if (pointcut.matchesConstruction(advisor, con))
+         Iterator it = pointcuts.values().iterator();
+         while (it.hasNext())
          {
-            return true;
+            Pointcut pointcut = (Pointcut) it.next();
+            if (pointcut.matchesConstruction(advisor, con))
+            {
+               return true;
+            }
          }
       }
       return false;

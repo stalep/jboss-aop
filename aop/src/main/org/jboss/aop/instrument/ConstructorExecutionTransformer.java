@@ -24,6 +24,7 @@ package org.jboss.aop.instrument;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javassist.CannotCompileException;
 import javassist.CtClass;
@@ -465,13 +466,17 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
    // currently used by CallerTransformer
    public static boolean isAdvisableConstructor(CtConstructor con, ClassAdvisor advisor) throws NotFoundException
    {
-      Iterator pointcuts = advisor.getManager().getPointcuts().values().iterator();
-      while (pointcuts.hasNext())
+      Map pointcuts = advisor.getManager().getPointcuts();
+      synchronized (pointcuts)
       {
-         Pointcut pointcut = (Pointcut) pointcuts.next();
-         if (pointcut.matchesExecution(advisor, con))
+         Iterator it = pointcuts.values().iterator();
+         while (it.hasNext())
          {
-            return true;
+            Pointcut pointcut = (Pointcut) it.next();
+            if (pointcut.matchesExecution(advisor, con))
+            {
+               return true;
+            }
          }
       }
       return false;

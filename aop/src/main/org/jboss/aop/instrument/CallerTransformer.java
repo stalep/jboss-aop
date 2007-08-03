@@ -24,6 +24,8 @@ package org.jboss.aop.instrument;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.pointcut.Pointcut;
@@ -339,18 +341,22 @@ public abstract class CallerTransformer
             DeclareChecker.checkDeclares(manager, call, advisor);
             
             // todo shouldn't iterate every time.  must be a better way
-            Iterator it = manager.getPointcuts().values().iterator();
-            while (it.hasNext())
+            Map pointcuts = manager.getPointcuts();
+            synchronized (pointcuts)
             {
-               Pointcut p = (Pointcut) it.next();
-               if (p.matchesCall(advisor, call))
+               Iterator it = pointcuts.values().iterator();
+               while (it.hasNext())
                {
-                  hasPointcut = true;
-                  break;
-               }
-               else
-               {
-                  if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("MethodCall does not match: " + p.getExpr());
+                  Pointcut p = (Pointcut) it.next();
+                  if (p.matchesCall(advisor, call))
+                  {
+                     hasPointcut = true;
+                     break;
+                  }
+                  else
+                  {
+                     if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("MethodCall does not match: " + p.getExpr());
+                  }
                }
             }
             if (hasPointcut)
@@ -438,14 +444,18 @@ public abstract class CallerTransformer
             boolean hasPointcut = false;
 
             // todo shouldn't iterate every time.  must be a better way
-            Iterator it = manager.getPointcuts().values().iterator();
-            while (it.hasNext())
+            Map pointcuts = manager.getPointcuts();
+            synchronized (pointcuts)
             {
-               Pointcut p = (Pointcut) it.next();
-               if (p.matchesCall(advisor, call))
+               Iterator it = pointcuts.values().iterator();
+               while (it.hasNext())
                {
-                  hasPointcut = true;
-                  break;
+                  Pointcut p = (Pointcut) it.next();
+                  if (p.matchesCall(advisor, call))
+                  {
+                     hasPointcut = true;
+                     break;
+                  }
                }
             }
             if (hasPointcut)

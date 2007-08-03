@@ -60,17 +60,20 @@ public class JoinpointSimpleClassifier extends JoinpointClassifier
    protected JoinpointClassification classifyJoinpoint(CtMember member, Advisor advisor, Matcher joinpointMatcher) throws NotFoundException
    {
       Collection pointcuts = advisor.getManager().getPointcuts().values();
-      for (Iterator it = pointcuts.iterator(); it.hasNext(); )
+      synchronized (pointcuts)
       {
-         Pointcut pointcut = (Pointcut) it.next();
-
-         if (joinpointMatcher.matches(pointcut, advisor, member))
+         for (Iterator it = pointcuts.iterator(); it.hasNext(); )
          {
-            if (AspectManager.verbose && logger.isDebugEnabled())
+            Pointcut pointcut = (Pointcut) it.next();
+   
+            if (joinpointMatcher.matches(pointcut, advisor, member))
             {
-               logger.debug(member + " matches pointcut: " + pointcut.getExpr());
+               if (AspectManager.verbose && logger.isDebugEnabled())
+               {
+                  logger.debug(member + " matches pointcut: " + pointcut.getExpr());
+               }
+               return JoinpointClassification.WRAPPED;
             }
-            return JoinpointClassification.WRAPPED;
          }
       }
       if (AspectManager.verbose && logger.isDebugEnabled())
