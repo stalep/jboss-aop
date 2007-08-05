@@ -119,7 +119,7 @@ public class JBossAOPCMojo extends AbstractMojo
     * 
     * @parameter expression="${compilerClassPath}" default-value=""
     */
-   private String compilerClasspath;
+   private String compilerClassPath;
 
    /**
     * @parameter default-value="${project.compileDependencies}"
@@ -185,6 +185,9 @@ public class JBossAOPCMojo extends AbstractMojo
       if(hasReport())
          cl.addArguments(new String[] { "-report"});
       
+      if(getAopClassPath() != null && getAopClassPath().length() > 0)
+         cl.addArguments(new String[] { "-aopclasspath", getAopClassPath()});
+      
       cl.addArguments(new String[] { "-aoppath", getAoppath()});
       
       if(includes != null && includes.length > 0)
@@ -209,6 +212,10 @@ public class JBossAOPCMojo extends AbstractMojo
             cl.addArguments(new String[] { project.getBuild().getOutputDirectory()});
       }
 
+      if(getLog().isDebugEnabled()) 
+      { 
+         getLog().debug("Executing aopc: "+cl.toString()); 
+      }
       return cl;
    }
 
@@ -227,7 +234,6 @@ public class JBossAOPCMojo extends AbstractMojo
       }
       catch (CommandLineException e)
       {
-         // TODO Auto-generated catch block
          e.printStackTrace();
       }
    }
@@ -261,9 +267,9 @@ public class JBossAOPCMojo extends AbstractMojo
       return classPath;
    }
 
-   private String getCompilerClasspath()
+   private String getCompilerClassPath()
    {
-      return compilerClasspath;
+      return compilerClassPath;
    }
 
    private boolean isVerbose()
@@ -284,6 +290,11 @@ public class JBossAOPCMojo extends AbstractMojo
    private boolean hasReport()
    {
       return report;
+   }
+   
+   private String getAopClassPath()
+   {
+      return aopClassPath;
    }
 
    protected boolean isTest()
