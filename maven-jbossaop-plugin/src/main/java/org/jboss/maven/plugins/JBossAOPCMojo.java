@@ -40,10 +40,8 @@ import org.codehaus.plexus.util.cli.Commandline;
 /**
  * A Simple mojo that use the JBoss AOP compiler to weave in AOP code
  * based on a jboss-aop.xml file.
- * NOTE: This mojo is not finished and will probably be rewritten or completly removed
- * when i learn more about maven...
  * 
- * Use it by running: mvn jbossaop:aopc
+ * Use it by running: mvn jbossaop:compile
  * 
  * Supported options:
  * - aoppath (default src/main/resources/jboss-aop.xml)
@@ -53,6 +51,9 @@ import org.codehaus.plexus.util.cli.Commandline;
  *  - report (default false)
  *  - includes 
  *  
+ *  TODO: multiple jboss-aop.xml files are supported as in ant. eg, they are provided in
+ *  the same element, and separated with File.pathSeparator. this is not portable and will
+ *  be looked into.
  * 
  * @author <a href="mailto:spederse@redhat.com">Stale W. Pedersen</a>
  * @goal compile
