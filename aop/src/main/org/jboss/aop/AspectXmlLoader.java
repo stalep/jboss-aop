@@ -225,6 +225,8 @@ public class AspectXmlLoader implements XmlLoader
    {
       String name = element.getAttribute("name");
       String aspect = element.getAttribute("aspect");
+      if(aspect == null || aspect.length() < 1)
+         throw new RuntimeException("Aspect couldnt be found for element: "+element.getNodeName()+", typo perhaps?");
       AspectDefinition def = manager.getAspectDefinition(aspect);
       if (def == null) throw new RuntimeException("advice " + name + " cannot find aspect " + aspect);
       
