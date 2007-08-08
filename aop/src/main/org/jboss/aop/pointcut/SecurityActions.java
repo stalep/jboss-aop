@@ -21,8 +21,11 @@
 */ 
 package org.jboss.aop.pointcut;
 
+import java.lang.reflect.AccessibleObject;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 
 /**
  * 
@@ -33,14 +36,58 @@ class SecurityActions
 {
    static Class loadClass(String name)
    {
-      try
+      if (System.getSecurityManager() == null)
       {
-         return getContextClassLoader().loadClass(name);
+         return LoadClassAction.NON_PRIVILEGED.loadClass(name);
       }
-      catch (ClassNotFoundException e)
+      else
       {
-         throw new RuntimeException(e);
+         return LoadClassAction.PRIVILEGED.loadClass(name);
       }
+   }
+
+   interface LoadClassAction
+   {
+      Class loadClass(String name);
+      
+      LoadClassAction PRIVILEGED = new LoadClassAction()
+      {
+         public Class loadClass(final String name)
+         {
+            try
+            {
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<Class>()
+               {
+                  public Class run() throws Exception
+                  {
+                     return Thread.currentThread().getContextClassLoader().loadClass(name);
+                  }
+               });
+            }
+            catch (PrivilegedActionException e)
+            {
+               throw new RuntimeException("Unable to load class " + name, e.getException());
+            }
+         }
+      };
+
+      LoadClassAction NON_PRIVILEGED = new LoadClassAction()
+      {
+         public Class loadClass(String name)
+         {
+            try
+            {
+               return Thread.currentThread().getContextClassLoader().loadClass(name);
+            }
+            catch (ClassNotFoundException e)
+            {
+               throw new RuntimeException("Unable to load class " + name, e);
+            }
+         }
+      };
+   }
+   static void setAccessible(AccessibleObject accessibleObject)
+   {
    }
    
    public static class GetContextClassLoaderAction implements PrivilegedAction<ClassLoader>
