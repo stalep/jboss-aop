@@ -86,9 +86,6 @@ class SecurityActions
          }
       };
    }
-   static void setAccessible(AccessibleObject accessibleObject)
-   {
-   }
    
    public static class GetContextClassLoaderAction implements PrivilegedAction<ClassLoader>
    {
