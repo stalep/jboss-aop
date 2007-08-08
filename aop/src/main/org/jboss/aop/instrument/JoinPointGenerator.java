@@ -62,11 +62,13 @@ import org.jboss.aop.util.JavassistUtils;
 import org.jboss.aop.util.ReflectToJavassist;
 import org.jboss.aop.util.logging.AOPLogger;
 import org.jboss.logging.Logger;
+import org.jboss.util.loading.Translatable;
 
 /**
  * Creates the Joinpoint invocation replacement classes used with Generated advisors
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
+ * @author adrian@jboss.org
  * @version $Revision$
  */
 public abstract class JoinPointGenerator
@@ -252,7 +254,8 @@ public abstract class JoinPointGenerator
       {
          if (classloader  == null)
          {
-            classloader = Thread.currentThread().getContextClassLoader();
+            logger.warn("No classloader specified " + info.getAdviceString());
+            classloader = SecurityActions.getContextClassLoader();
          }
 
          //Attempt to get the cached information so we don't have to recreate the class every time we rebind the joinpoint
@@ -483,7 +486,6 @@ public abstract class JoinPointGenerator
       {
          joinpointField = advisorClass.getDeclaredField(joinpointFieldName);
          SecurityActions.setAccessible(joinpointField);
-         System.out.println("JOINPOING FQN: " + joinpointFqn);
          joinpointFqn = advisorClass.getDeclaringClass().getName() + "$" + joinpointClassName;
       }
       catch (NoSuchFieldException e)
@@ -500,10 +502,17 @@ public abstract class JoinPointGenerator
    {
       HashMap<String, Integer> cflows = new HashMap<String, Integer>();
       AdviceSetup[] setups = new AdviceSetup[info.getInterceptors().length];
+      
+      ClassLoader classLoader = pool.getClassLoader();
+      if (classLoader == null)
+      {
+         logger.warn("No classloader specified " + clazz.getName(), new Throwable("STACKTRACE"));
+         classLoader = SecurityActions.getContextClassLoader();
+      }
 
       for (int i = 0 ; i < info.getInterceptors().length ; i++)
       {
-         setups[i] = new AdviceSetup(i, (GeneratedAdvisorInterceptor)info.getInterceptors()[i], info);
+         setups[i] = new AdviceSetup(i, (GeneratedAdvisorInterceptor)info.getInterceptors()[i], info, classLoader);
          addAspectFieldAndGetter(pool, clazz, setups[i]);
          addCFlowFieldsAndGetters(pool, setups[i], clazz, cflows);
       }
@@ -1308,7 +1317,7 @@ public abstract class JoinPointGenerator
       
       AdviceMethodProperties adviceMethodProperties;
       
-      AdviceSetup(int index, GeneratedAdvisorInterceptor ifw, JoinPointInfo info) throws ClassNotFoundException, NotFoundException
+      AdviceSetup(int index, GeneratedAdvisorInterceptor ifw, JoinPointInfo info, ClassLoader classLoader) throws ClassNotFoundException, NotFoundException
       {
          this.index = index;
          scope = ifw.getScope();
@@ -1323,7 +1332,7 @@ public abstract class JoinPointGenerator
          }
          else
          {
-            aspectClass = Thread.currentThread().getContextClassLoader().loadClass(ifw.getAspectClassName());
+            aspectClass = classLoader.loadClass(ifw.getAspectClassName());
          }
          aspectCtClass = ReflectToJavassist.classToJavassist(aspectClass);
 
