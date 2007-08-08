@@ -48,6 +48,8 @@ import javassist.CtMethod;
 
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AspectDefinition;
+import org.jboss.aop.advice.AspectFactory;
+import org.jboss.aop.advice.AspectFactoryWithClassLoaderSupport;
 import org.jboss.aop.advice.CFlowInterceptor;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.advice.InterceptorFactory;
@@ -78,6 +80,7 @@ import org.jboss.util.NotImplementedException;
 
 /**
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
+ * @author adrian@jboss.org
  * @version $Revision$
  */
 public abstract class Advisor
@@ -672,7 +675,21 @@ public abstract class Advisor
    public abstract void removeClassMetaData(ClassMetaDataBinding data);
 
    // This is aspect stuff.  Aspect again, is a class that encapsulates advices
-
+   
+   public Object getPerVMAspect(AspectDefinition def)
+   {
+      AspectFactoryWithClassLoaderSupport pushed = pushClassLoader(def);
+      try
+      {
+         return getManager().getPerVMAspect(def);
+      }
+      finally
+      {
+         if (pushed != null)
+            popClassLoader(pushed);
+      }
+   }
+   
    public void addPerInstanceAspect(AspectDefinition def)
    {
       initPerInstanceAspectDefinitionsSet();
@@ -741,9 +758,18 @@ public abstract class Advisor
    public void addPerClassAspect(AspectDefinition def)
    {
       if (aspects.containsKey(def.getName())) return;
-      Object aspect = def.getFactory().createPerClass(this);
-      aspects.put(def.getName(), aspect);
-      def.registerAdvisor(this);
+      AspectFactoryWithClassLoaderSupport pushed = pushClassLoader(def);
+      try
+      {
+         Object aspect = def.getFactory().createPerClass(this);
+         aspects.put(def.getName(), aspect);
+         def.registerAdvisor(this);
+      }
+      finally
+      {
+         if (pushed != null)
+            popClassLoader(pushed);
+      }
    }
 
    public void removePerClassAspect(AspectDefinition def)
@@ -1310,5 +1336,24 @@ public abstract class Advisor
             unlockWrite();
          }
       }
+   }
+
+   private AspectFactoryWithClassLoaderSupport pushClassLoader(AspectDefinition def)
+   {
+      if (getManager().isPushClassLoader() == false)
+         return null;
+      
+      AspectFactory factory = def.getFactory();
+      if (factory instanceof AspectFactoryWithClassLoaderSupport)
+      {
+         AspectFactoryWithClassLoaderSupport result = (AspectFactoryWithClassLoaderSupport) factory;
+         result.pushScopedClassLoader(getClazz().getClassLoader());
+      }
+      return null;
+   }
+   
+   private void  popClassLoader(AspectFactoryWithClassLoaderSupport factory)
+   {
+      factory.popScopedClassLoader();
    }
 }

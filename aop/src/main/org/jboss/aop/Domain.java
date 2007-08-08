@@ -1032,5 +1032,8 @@ public class Domain extends AspectManager
       return parent.isSet();
    }
 
-
+   public boolean isPushClassLoader()
+   {
+      return parent.isPushClassLoader();
+   }
 }

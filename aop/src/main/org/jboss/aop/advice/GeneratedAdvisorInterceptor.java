@@ -188,7 +188,7 @@ public class GeneratedAdvisorInterceptor implements Interceptor
       {
          if (instance == null)
          {
-            instance = advisor.getManager().getPerVMAspect(def);
+            instance = advisor.getPerVMAspect(def);
          }
          return instance;
       }
