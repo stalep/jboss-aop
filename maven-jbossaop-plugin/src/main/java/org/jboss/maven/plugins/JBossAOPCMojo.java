@@ -106,9 +106,9 @@ public class JBossAOPCMojo extends AbstractMojo
 
    /** 
     * 
-    * @parameter expression="${aopPath}" default-value="src/main/resources/jboss-aop.xml"
+    * @parameter expression="${aopPaths}" default-value={src/main/resources/jboss-aop.xml}
     */
-   private String aoppath;
+   private String[] aoppaths;
 
    /** 
     * 
@@ -240,8 +240,21 @@ public class JBossAOPCMojo extends AbstractMojo
    }
 
    private String getAoppath()
-   {
-      return aoppath;
+   { 
+      if(aoppaths.length > 0)
+      {
+         System.err.println("AOPPATH[0]: "+aoppaths[0]);
+         StringBuffer sb = new StringBuffer();
+         for(String aoppath : aoppaths)
+         {
+            if(sb.length() > 0)
+               sb.append(File.pathSeparator);
+            sb.append(aoppath);
+         }
+         return sb.toString();
+      }
+      else
+         return "src/main/resources/jboss-aop.xml";
    }
 
    private void processStream(BufferedReader input, boolean isError)
