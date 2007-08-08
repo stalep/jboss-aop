@@ -93,8 +93,7 @@ public class AOPClassPool extends ScopedClassPool
 
          if (cl != null)
          {
-            String classResourceName = getResourceName(classname);
-            isLocal = isLocalResource(classResourceName); 
+            isLocal = isLocalResource(classname); 
          }
          
          if (!isLocal)
