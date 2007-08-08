@@ -73,32 +73,4 @@ public class SimpleScopedParentLastUnitTestCase extends AOPIntegrationTest
          unregisterDomain("Scoped");
       }
    }
-
-   // FIXME Remove this test when the hack is no longer necessary
-   public void testScopedParentLastHacked() throws Exception
-   {
-      ClassLoaderDomain domain = createScopedClassLoaderDomainParentLast("Scoped");
-      try
-      {
-         MockClassLoaderPolicy policy = MockClassLoaderHelper.createMockClassLoaderPolicy("A");
-         policy.setPathsAndPackageNames(PACKAGE_A, PACKAGE_SUPPORT);
-         ClassLoader classLoader = createClassLoader(domain, policy);
-
-         // FIXME Remove this HACK
-         Thread.currentThread().setContextClassLoader(classLoader);
-         try
-         {
-            Class<?> classA = classLoader.loadClass(CLASS_A);
-            classA.newInstance();
-         }
-         finally
-         {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-         }
-      }
-      finally
-      {
-         unregisterDomain("Scoped");
-      }
-   }
 }

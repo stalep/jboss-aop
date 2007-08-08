@@ -72,31 +72,4 @@ public class SimplePrivateUnitTestCase extends AOPIntegrationTest
          unregisterClassLoader(classLoader);
       }
    }
-
-   // FIXME Remove this test when the hack is not necessary
-   public void testPrivateHacked() throws Exception
-   {
-      MockClassLoaderPolicy policy = MockClassLoaderHelper.createMockClassLoaderPolicy("A");
-      policy.setPackageNames(PACKAGE_A);
-      policy.setPaths(PACKAGE_A_RESOURCE, PACKAGE_SUPPORT_RESOURCE);
-      ClassLoader classLoader = createClassLoader(policy);
-      try
-      {
-         // FIXME THIS HACK SHOULD NOT BE NECESSARY
-         Thread.currentThread().setContextClassLoader(classLoader);
-         try
-         {
-            Class<?> classA = classLoader.loadClass(CLASS_A);
-            classA.newInstance();
-         }
-         finally
-         {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-         }
-      }
-      finally
-      {
-         unregisterClassLoader(classLoader);
-      }
-   }
 }

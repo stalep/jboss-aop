@@ -60,11 +60,10 @@ public class AOPIntegrationTestDelegate extends AbstractTestDelegate
    {
       super.setUp();
       
-      system.setTranslator(AspectManager.instance());
+      AspectManager manager = AspectManager.instance();
+      manager.setPushClassLoader(true);
       
-      // FIXME It should not be necessary to set the context classloader here
-      Thread.currentThread().setContextClassLoader(clazz.getClassLoader());
-      
+      system.setTranslator(manager);
       try
       {
          deploy();

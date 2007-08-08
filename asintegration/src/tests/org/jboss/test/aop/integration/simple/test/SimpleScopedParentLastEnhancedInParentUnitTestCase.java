@@ -65,7 +65,6 @@ public class SimpleScopedParentLastEnhancedInParentUnitTestCase extends AOPInteg
          policy.setPathsAndPackageNames(PACKAGE_A);
          ClassLoader classLoader = createClassLoader(domain, policy);
 
-         enableTrace("org.jboss.classloader");
          Class<?> classA = classLoader.loadClass(CLASS_A);
          classA.newInstance();
       }

@@ -19,58 +19,64 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
-package org.jboss.test.aop.integration.simple.test;
+package org.jboss.test.aop.integration.complex.test;
 
 import junit.framework.Test;
 
 import org.jboss.aop.integration.junit.AOPIntegrationTest;
-import org.jboss.classloader.spi.ClassLoaderDomain;
 import org.jboss.classloader.test.support.MockClassLoaderHelper;
 import org.jboss.classloader.test.support.MockClassLoaderPolicy;
 
 /**
- * SimpleScopedParentFirstUnitTestCase.
+ * ComplexImportAdviceUnitTestCase.
  * 
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision: 1.1 $
  */
-public class SimpleScopedParentFirstUnitTestCase extends AOPIntegrationTest
+public class ComplexImportAdviceUnitTestCase extends AOPIntegrationTest
 {
-   private static String PACKAGE_SUPPORT = "org.jboss.test.aop.integration.simple.support";
-   private static String PACKAGE_A = "org.jboss.test.aop.integration.simple.support.a";
-   private static String CLASS_A = PACKAGE_A + ".A";
+   private static String PACKAGE_SUPPORT = "org.jboss.test.aop.integration.complex.support";
+   private static String PACKAGE_B = PACKAGE_SUPPORT + ".b";
+   private static String CLASS_B = PACKAGE_B + ".B";
    
    public static Test suite()
    {
-      return suite(SimpleScopedParentFirstUnitTestCase.class);
+      return suite(ComplexImportAdviceUnitTestCase.class);
    }
    
-   public SimpleScopedParentFirstUnitTestCase(String name)
+   public ComplexImportAdviceUnitTestCase(String name)
    {
       super(name);
    }
 
    /*
-    * A simple test that loads a class that uses aop enhanced classes
-    * from a scoped classloader domain using parent first classloading rules
-    * 
-    * The aop enhanced classes are in the same classloader
+    * A complex test that loads classes from its own classloader
+    * but the advice is imported from a different classloader
     */
-   public void testScopedParentFirst() throws Exception
+   public void testImportAdvice() throws Exception
    {
-      ClassLoaderDomain domain = createScopedClassLoaderDomainParentFirst("Scoped");
+      MockClassLoaderPolicy supportPolicy = MockClassLoaderHelper.createMockClassLoaderPolicy("Support");
+      supportPolicy.setPathsAndPackageNames(PACKAGE_SUPPORT);
+      ClassLoader support = createClassLoader(supportPolicy);
       try
       {
-         MockClassLoaderPolicy policy = MockClassLoaderHelper.createMockClassLoaderPolicy("A");
-         policy.setPathsAndPackageNames(PACKAGE_A, PACKAGE_SUPPORT);
-         ClassLoader classLoader = createClassLoader(domain, policy);
-
-         Class<?> classA = classLoader.loadClass(CLASS_A);
-         classA.newInstance();
+         MockClassLoaderPolicy bPolicy = MockClassLoaderHelper.createMockClassLoaderPolicy("B");
+         bPolicy.setPathsAndPackageNames(PACKAGE_B);
+         bPolicy.setDelegates(createDelegates(supportPolicy));
+         ClassLoader b = createClassLoader(bPolicy);
+         try
+         {
+            Class<?> classB = b.loadClass(CLASS_B);
+            classB.newInstance();
+         }
+         finally
+         {
+            unregisterClassLoader(b);
+         }
       }
       finally
       {
-         unregisterDomain("Scoped");
+         unregisterClassLoader(support);
       }
    }
-}
+ }

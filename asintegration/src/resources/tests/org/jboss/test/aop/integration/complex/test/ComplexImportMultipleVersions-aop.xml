@@ -2,7 +2,7 @@
 
 <aop>
 
-   <interceptor class="org.jboss.test.aop.integration.complex.support.TestInterceptor"/>
+   <interceptor class="org.jboss.test.aop.integration.complex.support.TestInterceptor" scope="PER_CLASS"/>
 
    <bind pointcut="execution(* org.jboss.test.aop.integration.complex.support.TestIntercepted->*(..))">
       <interceptor-ref name="org.jboss.test.aop.integration.complex.support.TestInterceptor"/>
