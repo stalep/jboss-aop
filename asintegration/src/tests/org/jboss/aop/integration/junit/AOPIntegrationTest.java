@@ -21,6 +21,7 @@
 */
 package org.jboss.aop.integration.junit;
 
+import java.net.URL;
 import java.util.List;
 
 import junit.framework.Test;
@@ -96,9 +97,32 @@ public abstract class AOPIntegrationTest extends AbstractTestCaseWithSetup
     * 
     * @return the delegate
     */
-   protected AOPIntegrationTestDelegate getMCDelegate()
+   protected AOPIntegrationTestDelegate getAOPDelegate()
    {
       return (AOPIntegrationTestDelegate) getDelegate();
+   }
+   
+   /**
+    * Deploy the aop config
+    * 
+    * @param suffix the suffix
+    * @param classLoader the classloader
+    * @return the url
+    * @throws Exception for any error
+    */
+   protected URL deploy(String suffix, ClassLoader classLoader) throws Exception
+   {
+      return getAOPDelegate().deploy(suffix, classLoader);
+   }
+
+   /**
+    * Undeploy the aop config
+    * 
+    * @param url the url
+    */
+   protected void undeploy(URL url)
+   {
+      getAOPDelegate().undeploy(url);
    }
    
    /**

@@ -179,9 +179,6 @@ public class AspectManager
    protected DynamicAOPStrategy dynamicStrategy = new LoadInterceptedClassesStrategy();
    // indicates that the transformation process has begun
    protected boolean transformationStarted = false;
-
-   /** Whether to push the classloader of the advised class when generating aspects */
-   protected boolean pushClassLoader = false;
    
    @Deprecated // replaced by the temporary AOPClassLoaderScopingPolicy - no longer referenced
    protected static AOPScopedClassLoaderHelper scopedCLHelper;
@@ -369,26 +366,6 @@ public class AspectManager
    public static void setClassLoaderScopingPolicy(AOPClassLoaderScopingPolicy classLoaderScopingPolicy)
    {
       AspectManager.classLoaderScopingPolicy = classLoaderScopingPolicy;
-   }
-
-   /**
-    * Get the pushClassLoader.
-    * 
-    * @return the pushClassLoader.
-    */
-   public boolean isPushClassLoader()
-   {
-      return pushClassLoader;
-   }
-
-   /**
-    * Set the pushClassLoader.
-    * 
-    * @param pushClassLoader the pushClassLoader.
-    */
-   public void setPushClassLoader(boolean pushClassLoader)
-   {
-      this.pushClassLoader = pushClassLoader;
    }
 
    public InterceptionMarkers getInterceptionMarkers()

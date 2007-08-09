@@ -21,6 +21,8 @@
 */
 package org.jboss.test.aop.integration.complex.test;
 
+import java.net.URL;
+
 import junit.framework.Test;
 
 import org.jboss.aop.integration.junit.AOPIntegrationTest;
@@ -69,32 +71,48 @@ public class ComplexImportMultipleVersionsUnitTestCase extends AOPIntegrationTes
          ClassLoader a1 = createClassLoader(a1Policy);
          try
          {
-            MockClassLoaderPolicy support2Policy = MockClassLoaderHelper.createMockClassLoaderPolicy("Support2");
-            support2Policy.setPathsAndPackageNames(PACKAGE_SUPPORT);
-            ClassLoader support2 = createClassLoader(support2Policy);
+            URL url1 = deploy("1", a1);
             try
             {
-               MockClassLoaderPolicy a2Policy = MockClassLoaderHelper.createMockClassLoaderPolicy("A2");
-               a2Policy.setPathsAndPackageNames(PACKAGE_A);
-               a2Policy.setDelegates(createDelegates(support2Policy));
-               ClassLoader a2 = createClassLoader(a2Policy);
+               MockClassLoaderPolicy support2Policy = MockClassLoaderHelper.createMockClassLoaderPolicy("Support2");
+               support2Policy.setPathsAndPackageNames(PACKAGE_SUPPORT);
+               ClassLoader support2 = createClassLoader(support2Policy);
                try
                {
-                  Class<?> classA1 = a1.loadClass(CLASS_A);
-                  classA1.newInstance();
+                  MockClassLoaderPolicy a2Policy = MockClassLoaderHelper.createMockClassLoaderPolicy("A2");
+                  a2Policy.setPathsAndPackageNames(PACKAGE_A);
+                  a2Policy.setDelegates(createDelegates(support2Policy));
+                  ClassLoader a2 = createClassLoader(a2Policy);
+                  try
+                  {
+                     URL url2 = deploy("2", a2);
+                     try
+                     {
+                        Class<?> classA1 = a1.loadClass(CLASS_A);
+                        classA1.newInstance();
 
-                  Class<?> classA2 = a2.loadClass(CLASS_A);
-                  assertNotSame(classA2, classA1);
-                  classA2.newInstance();
+                        Class<?> classA2 = a2.loadClass(CLASS_A);
+                        assertNotSame(classA2, classA1);
+                        classA2.newInstance();
+                     }
+                     finally
+                     {
+                        undeploy(url2);
+                     }
+                  }
+                  finally
+                  {
+                     unregisterClassLoader(a2);
+                  }
                }
                finally
                {
-                  unregisterClassLoader(a2);
+                  unregisterClassLoader(support2);
                }
             }
             finally
             {
-               unregisterClassLoader(support2);
+               undeploy(url1);
             }
          }
          finally

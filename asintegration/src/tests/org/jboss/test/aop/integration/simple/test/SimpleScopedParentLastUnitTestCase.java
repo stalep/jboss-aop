@@ -21,6 +21,8 @@
 */
 package org.jboss.test.aop.integration.simple.test;
 
+import java.net.URL;
+
 import junit.framework.Test;
 
 import org.jboss.aop.integration.junit.AOPIntegrationTest;
@@ -64,9 +66,16 @@ public class SimpleScopedParentLastUnitTestCase extends AOPIntegrationTest
          MockClassLoaderPolicy policy = MockClassLoaderHelper.createMockClassLoaderPolicy("A");
          policy.setPathsAndPackageNames(PACKAGE_A, PACKAGE_SUPPORT);
          ClassLoader classLoader = createClassLoader(domain, policy);
-
-         Class<?> classA = classLoader.loadClass(CLASS_A);
-         classA.newInstance();
+         URL url = deploy("a", classLoader);
+         try
+         {
+            Class<?> classA = classLoader.loadClass(CLASS_A);
+            classA.newInstance();
+         }
+         finally
+         {
+            undeploy(url);
+         }
       }
       finally
       {

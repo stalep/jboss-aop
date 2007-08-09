@@ -61,12 +61,11 @@ public class AOPIntegrationTestDelegate extends AbstractTestDelegate
       super.setUp();
       
       AspectManager manager = AspectManager.instance();
-      manager.setPushClassLoader(true);
       
       system.setTranslator(manager);
       try
       {
-         deploy();
+         deploy(clazz.getClassLoader());
       }
       catch (RuntimeException e)
       {
@@ -97,9 +96,10 @@ public class AOPIntegrationTestDelegate extends AbstractTestDelegate
    /**
     * Deploy the aop config
     * 
+    * @param classLoader
     * @throws Exception for any error
     */
-   protected void deploy() throws Exception
+   protected void deploy(ClassLoader classLoader) throws Exception
    {
       String testName = clazz.getName();
       int index = testName.indexOf("UnitTestCase");
@@ -108,9 +108,32 @@ public class AOPIntegrationTestDelegate extends AbstractTestDelegate
       testName = testName.replace('.', '/') + "-aop.xml";
       URL url = clazz.getClassLoader().getResource(testName);
       if (url != null)
-         deploy(url);
+         deploy(url, classLoader);
       else
          log.debug("No test specific deployment " + testName);
+   }
+   
+   /**
+    * Deploy the aop config
+    * 
+    * @param suffix the suffix
+    * @param classLoader the classloader
+    * @return the url
+    * @throws Exception for any error
+    */
+   protected URL deploy(String suffix, ClassLoader classLoader) throws Exception
+   {
+      String testName = clazz.getName();
+      int index = testName.indexOf("UnitTestCase");
+      if (index != -1)
+         testName = testName.substring(0, index);
+      testName = testName.replace('.', '/') + "-" + suffix + "-aop.xml";
+      URL url = clazz.getClassLoader().getResource(testName);
+      if (url != null)
+         deploy(url, classLoader);
+      else
+         throw new RuntimeException(testName + " not found");
+      return url;
    }
    
    protected void undeploy()
@@ -126,13 +149,14 @@ public class AOPIntegrationTestDelegate extends AbstractTestDelegate
     * Deploy the aop config
     *
     * @param url the url
+    * @param classLoader
     * @throws Exception for any error
     */
-   protected void deploy(URL url) throws Exception
+   protected void deploy(URL url, ClassLoader classLoader) throws Exception
    {
       log.debug("Deploying " + url);
       urls.add(url);
-      AspectXmlLoader.deployXML(url);
+      AspectXmlLoader.deployXML(url, classLoader);
    }
 
    /**

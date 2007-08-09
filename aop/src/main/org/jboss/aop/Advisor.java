@@ -678,16 +678,7 @@ public abstract class Advisor
    
    public Object getPerVMAspect(AspectDefinition def)
    {
-      AspectFactoryWithClassLoaderSupport pushed = pushClassLoader(def);
-      try
-      {
-         return getManager().getPerVMAspect(def);
-      }
-      finally
-      {
-         if (pushed != null)
-            popClassLoader(pushed);
-      }
+      return getManager().getPerVMAspect(def);
    }
    
    public void addPerInstanceAspect(AspectDefinition def)
@@ -758,18 +749,9 @@ public abstract class Advisor
    public void addPerClassAspect(AspectDefinition def)
    {
       if (aspects.containsKey(def.getName())) return;
-      AspectFactoryWithClassLoaderSupport pushed = pushClassLoader(def);
-      try
-      {
-         Object aspect = def.getFactory().createPerClass(this);
-         aspects.put(def.getName(), aspect);
-         def.registerAdvisor(this);
-      }
-      finally
-      {
-         if (pushed != null)
-            popClassLoader(pushed);
-      }
+      Object aspect = def.getFactory().createPerClass(this);
+      aspects.put(def.getName(), aspect);
+      def.registerAdvisor(this);
    }
 
    public void removePerClassAspect(AspectDefinition def)
@@ -1336,24 +1318,5 @@ public abstract class Advisor
             unlockWrite();
          }
       }
-   }
-
-   private AspectFactoryWithClassLoaderSupport pushClassLoader(AspectDefinition def)
-   {
-      if (getManager().isPushClassLoader() == false)
-         return null;
-      
-      AspectFactory factory = def.getFactory();
-      if (factory instanceof AspectFactoryWithClassLoaderSupport)
-      {
-         AspectFactoryWithClassLoaderSupport result = (AspectFactoryWithClassLoaderSupport) factory;
-         result.pushScopedClassLoader(getClazz().getClassLoader());
-      }
-      return null;
-   }
-   
-   private void  popClassLoader(AspectFactoryWithClassLoaderSupport factory)
-   {
-      factory.popScopedClassLoader();
    }
 }
