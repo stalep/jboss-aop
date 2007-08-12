@@ -105,41 +105,41 @@ public class ArgAspect implements ArgPOJOInterface
       return (Integer) invocation.invokeNext();
    }
 
-   public int bunch(@Arg int x, @Arg double y, @Arg float z, @Arg String str, @Arg int q)
-   {
-      bunchCalled = true;
-
-      Assert.assertEquals("Arguments don't match", 1, x);
-      Assert.assertEquals("Arguments don't match", 2.2, y);
-      Assert.assertEquals("Arguments don't match", 3.3F, z);
-      Assert.assertEquals("Arguments don't match", "four", str);
-      try
-      {
-         return ((Integer) CurrentInvocation.proceed()).intValue();
-      }
-      catch (Throwable throwable)
-      {
-         throw new RuntimeException(throwable);
-      }
-   }
-
-   public int bunch1(@Arg int x, @Arg int q, @Arg String str, @Arg double y, @Arg float z)
-   {
-      bunch2Called = true;
-
-      Assert.assertEquals("Arguments don't match", 1, x);
-      Assert.assertEquals("Arguments don't match", 2.2, y);
-      Assert.assertEquals("Arguments don't match", 3.3F, z);
-      Assert.assertEquals("Arguments don't match", "four", str);
-      try
-      {
-         return ((Integer) CurrentInvocation.proceed()).intValue();
-      }
-      catch (Throwable throwable)
-      {
-         throw new RuntimeException(throwable);
-      }
-   }
+//   public int bunch(@Arg int x, @Arg double y, @Arg float z, @Arg String str, @Arg int q)
+//   {
+//      bunchCalled = true;
+//
+//      Assert.assertEquals("Arguments don't match", 1, x);
+//      Assert.assertEquals("Arguments don't match", 2.2, y);
+//      Assert.assertEquals("Arguments don't match", 3.3F, z);
+//      Assert.assertEquals("Arguments don't match", "four", str);
+//      try
+//      {
+//         return ((Integer) CurrentInvocation.proceed()).intValue();
+//      }
+//      catch (Throwable throwable)
+//      {
+//         throw new RuntimeException(throwable);
+//      }
+//   }
+//
+//   public int bunch1(@Arg int x, @Arg int q, @Arg String str, @Arg double y, @Arg float z)
+//   {
+//      bunch2Called = true;
+//
+//      Assert.assertEquals("Arguments don't match", 1, x);
+//      Assert.assertEquals("Arguments don't match", 2.2, y);
+//      Assert.assertEquals("Arguments don't match", 3.3F, z);
+//      Assert.assertEquals("Arguments don't match", "four", str);
+//      try
+//      {
+//         return ((Integer) CurrentInvocation.proceed()).intValue();
+//      }
+//      catch (Throwable throwable)
+//      {
+//         throw new RuntimeException(throwable);
+//      }
+//   }
    
    public Object arg1(@Arg int x) throws Throwable
    {

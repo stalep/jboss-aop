@@ -37,25 +37,25 @@ public class POJO implements ArgPOJOInterface
       return echo;
    }
 
-   public int bunch(int x, double y, float z, String str, int q)
-   {
-      return x + (int) y + (int) z + q;
-   }
-
-   public int bunchArgs(int x, double y, float z, String str, int q)
-   {
-      return x + (int) y + (int) z + q;
-   }
-
-   public int bunchArgsWithInvocation(int x, double y, float z, String str, int q)
-   {
-      return x + (int) y + (int) z + q;
-   }
-
-   public int bunchWrapped(int x, double y, float z, String str, int q)
-   {
-      return x + (int) y + (int) z + q;
-   }
+//   public int bunch(int x, double y, float z, String str, int q)
+//   {
+//      return x + (int) y + (int) z + q;
+//   }
+//
+//   public int bunchArgs(int x, double y, float z, String str, int q)
+//   {
+//      return x + (int) y + (int) z + q;
+//   }
+//
+//   public int bunchArgsWithInvocation(int x, double y, float z, String str, int q)
+//   {
+//      return x + (int) y + (int) z + q;
+//   }
+//
+//   public int bunchWrapped(int x, double y, float z, String str, int q)
+//   {
+//      return x + (int) y + (int) z + q;
+//   }
    
    /* InvocationTestCase */
    

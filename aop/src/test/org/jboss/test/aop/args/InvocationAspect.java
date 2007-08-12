@@ -28,6 +28,7 @@ import org.jboss.aop.joinpoint.ConstructorInvocation;
 import org.jboss.aop.joinpoint.FieldInvocation;
 import org.jboss.aop.joinpoint.FieldReadInvocation;
 import org.jboss.aop.joinpoint.Invocation;
+import org.jboss.aop.joinpoint.MethodInvocation;
 
 /**
  * Aspect used on @org.jboss.aop.advice.annotation.Invocation parameter tests.
@@ -45,7 +46,7 @@ public class InvocationAspect
       invokeReturn = null;
    }
    
-   public Object aroundMethodExecution1()
+   public Object aroundMethodExecution1(@JoinPoint MethodInvocation invocation)
    {
       advice = "aroundMethodExecution1";
       return "aroundMethodExecution1";
