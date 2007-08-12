@@ -120,20 +120,15 @@ public class PerVmAdvice
             if(matches.size() == 0)
                throw new RuntimeException("Class "+aspect.getClass()+" didnt include any method called "+adviceName+", no interceptor will be created.");
 
-            // TODO Need to have checks on whether the advice is overloaded and it is an argument type interception
-            if (matches.size() == 1)
+            for(int i=0; i < matches.size(); i++)
             {
-               Method method = (Method) matches.get(0);
-               if (joinpoint instanceof MethodJoinpoint)
+               Method method = (Method) matches.get(i);
+               if(method.getParameterTypes().length != 1)
                {
-                  if (method.getParameterTypes().length == 0 || method.getParameterTypes().length > 1 || !Invocation.class.isAssignableFrom(method.getParameterTypes()[0]))
-                  {
-                     return generateArgsInterceptor(aspect, method, joinpoint);
-                  }
+                  throw new RuntimeException("Only one argument of type invocations is supported. Method "+method.toString()+" does not comply!");
                }
             }
 
-//            ClassPool pool = AspectManager.instance().findClassPool(cl);
             CtClass clazz = TransformerCommon.makeClass(pool, name);
 
             // We need to know whether this Interceptor is actually advice.
@@ -202,165 +197,4 @@ public class PerVmAdvice
       return rtn;
    }
 
-   public static Interceptor generateArgsInterceptor(Object aspect, Method advice, Joinpoint joinpoint) throws Exception
-   {
-      
-
-      ClassPool pool = AspectManager.instance().findClassPool(aspect.getClass().getClassLoader());
-      CtClass clazz = TransformerCommon.makeClass(pool, "org.jboss.aop.advice." + aspect.getClass().getName() + counter++);
-
-      // We need to know whether this Interceptor is actually advice.
-      CtClass interceptorInterface = pool.get("org.jboss.aop.advice.Interceptor");
-      clazz.addInterface(interceptorInterface);
-
-      // aspect field
-      CtClass aspectClass = pool.get(aspect.getClass().getName());
-      CtField field = new CtField(aspectClass, "aspectField", clazz);
-      field.setModifiers(javassist.Modifier.PUBLIC);
-      clazz.addField(field);
-      // getName()
-      CtMethod getNameTemplate = interceptorInterface.getDeclaredMethod("getName");
-      String getNameBody =
-      "{ " +
-      "   return \"" + aspect.getClass().getName() + "." + advice.getName() + "\"; " +
-      "}";
-      CtMethod getName = CtNewMethod.make(getNameTemplate.getReturnType(), "getName", getNameTemplate.getParameterTypes(), getNameTemplate.getExceptionTypes(), getNameBody, clazz);
-      getName.setModifiers(javassist.Modifier.PUBLIC);
-      clazz.addMethod(getName);
-
-      // invoke
-      Method method = ((MethodJoinpoint) joinpoint).getMethod();
-      String invocationType = null;
-      if (AspectManager.optimize)
-      {
-         invocationType =   OptimizedMethodInvocations.getOptimizedInvocationClassName(method);
-      }
-      else
-      {
-         invocationType = MethodInvocation.class.getName();
-      }
-      
-      StringBuffer invokeBody = new StringBuffer("public Object invoke(org.jboss.aop.joinpoint.Invocation invocation) throws java.lang.Throwable ");
-      invokeBody.append("{     ").append(invocationType).append(" typedInvocation = (");
-      invokeBody.append(invocationType).append(")invocation; ");
-      if (!AspectManager.optimize)
-      {
-         invokeBody.append("   Object[] arguments = typedInvocation.getArguments();");
-      }
-      if (advice.getParameterTypes().length > 0 &&
-         Invocation.class.isAssignableFrom(advice.getParameterTypes()[0]))
-      {
-         fillInvocationBody(invokeBody, advice, method);
-      }
-      else
-      {
-         fillThreadStackBody(invokeBody, advice, method);
-      }
-      invokeBody.append('}');
-      CtMethod invoke = null;
-      try
-      {
-         invoke = CtNewMethod.make(invokeBody.toString(), clazz);
-      }
-      catch(CannotCompileException e)
-      {
-         logger.error("Could not compile " + invokeBody);
-         throw e;
-      }
-      invoke.setModifiers(javassist.Modifier.PUBLIC);
-      clazz.addMethod(invoke);
-      ProtectionDomain pd = aspect.getClass().getProtectionDomain();
-      Class iclass = TransformerCommon.toClass(clazz, pd);
-
-      Interceptor rtn = (Interceptor) iclass.newInstance();
-      Field f = iclass.getField("aspectField");
-      f.set(rtn, aspect);
-      return rtn;
-   }
-
-   private static void fillThreadStackBody(StringBuffer invokeBody, Method advice, Method method) throws Exception
-   {
-      invokeBody.append("   org.jboss.aop.joinpoint.CurrentInvocation.push(invocation); ");
-      invokeBody.append("   try {");
-      invokeBody.append("return ($w)aspectField.").append(advice.getName());
-      invokeBody.append("(");
-      appendParamList(invokeBody, 0, advice.getParameterTypes(), method.getParameterTypes());
-      invokeBody.append(");");
-      invokeBody.append("   } finally { org.jboss.aop.joinpoint.CurrentInvocation.pop(); }");
-   }
-
-   private static void fillInvocationBody(StringBuffer invokeBody, Method advice, Method method)
-   {
-      invokeBody.append("   return ($w)aspectField.").append(advice.getName());
-      invokeBody.append("(typedInvocation, ");
-      appendParamList(invokeBody, 1, advice.getParameterTypes(), method.getParameterTypes());
-      invokeBody.append(");");
-   }
-   
-   /**
-    * Appends the joinpoint parameter list to <code>code</code>.
-    * 
-    * @param code             buffer to where generated code is appended
-    * @param offset           indicates from which advice parameter index are the
-    *                         joinpoint parameters. All advice parameters that 
-    *                         come before the <code>offset</code> stand for other
-    *                         values, that are not joinpoint parameters.
-    * @param adviceParams     list of advice parameter types
-    * @param joinPointParams  list of joinpoint parameter types
-    */
-   private static void appendParamList(StringBuffer code, int offset, Class adviceParams[], Class[] joinPointParams)
-   {
-      if (adviceParams.length > 0)
-      {
-         int [] paramIndexes = new int[adviceParams.length];
-         boolean[] assignedParams = new boolean[joinPointParams.length];
-         for (int i = offset; i < adviceParams.length; i++)
-         {
-            int j;
-            for (j = 0; j < joinPointParams.length; j++)
-            {
-               if (adviceParams[i].equals(joinPointParams[j]) && !assignedParams[j])
-               {
-                  break;
-               }
-            }
-            // if didn't find the same type, look for supertypes
-            if (j == joinPointParams.length)
-            {
-               for (j = 0; j < joinPointParams.length; j++)
-               {
-                  if (adviceParams[i].isAssignableFrom(joinPointParams[j]) && !assignedParams[j])
-                     break;
-               }
-               // didn't find super types either
-               if (j == joinPointParams.length)
-                  throw new RuntimeException();
-            }
-            assignedParams[j] = true;
-            paramIndexes[i] = j;
-         }
-         if (AspectManager.optimize)
-         {
-            code.append("typedInvocation.arg").append(paramIndexes[offset]);
-            for (int i = offset + 1; i < paramIndexes.length; i++)
-            {
-               code.append(", typedInvocation.arg");
-               code.append(paramIndexes[i]);
-            }
-         }
-         else
-         {
-            code.append(ReflectToJavassist.castInvocationValueToTypeString(
-                  adviceParams[offset],
-                  "arguments[" + paramIndexes[offset] + "]"));
-            for (int i = offset + 1; i < paramIndexes.length; i++)
-            {
-               code.append(", ");
-               code.append(ReflectToJavassist.castInvocationValueToTypeString(
-                     adviceParams[i],
-                     "arguments[" + paramIndexes[i] + "]"));
-            }
-         }
-      }
-   }  
 }
