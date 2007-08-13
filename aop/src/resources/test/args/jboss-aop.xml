@@ -91,11 +91,11 @@
       <advice name="arg24" aspect="org.jboss.test.aop.args.ArgAspect"/>
       <advice name="emptyArg" aspect="org.jboss.test.aop.args.ArgAspect"/>
    </bind>
-    -->
+
    <bind pointcut="execution(java.lang.String org.jboss.test.aop.args.POJO->echo(java.lang.String))">
       <advice name="echo" aspect="org.jboss.test.aop.args.ArgAspect"/>
    </bind>
-
+-->
    <!-- @Invocation test -->
 	<aspect class="org.jboss.test.aop.args.InvocationAspect" scope="PER_VM"/>
 	
