@@ -64,11 +64,6 @@ public class ReturnAspect
       Assert.fail("This advice should never be executed");
    }
    
-   public void around1(Invocation invocation) throws Exception
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    public void around2(@JoinPoint
          Invocation invocation) throws Exception
    {
@@ -227,12 +222,7 @@ public class ReturnAspect
    {
       finallyAdvice = "finally1";
    }
-   
-   public void finally2(@Return String returnedValue)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
+      
    public String finally3(@Return Object returnedValue, @Thrown Throwable thrown)
    {
       finallyAdvice = "finally3";

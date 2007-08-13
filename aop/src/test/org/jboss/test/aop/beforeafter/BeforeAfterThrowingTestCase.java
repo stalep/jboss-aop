@@ -21,6 +21,7 @@
 */ 
 package org.jboss.test.aop.beforeafter;
 
+import org.jboss.aop.advice.NoMatchingAdviceException;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
@@ -102,6 +103,154 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       assertTrue(SimpleAspect.finallyAdvice);
    }
 
+   public void testNoMatchingSimple() throws Exception
+   {
+      System.out.println("=== TESING NO MATCHING SIMPLE");
+      boolean thrown = false;
+      try
+      {
+         new InvalidPOJO();
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         new InvalidPOJO((short) 5);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         new InvalidPOJO(5l);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      InvalidPOJO invalidPojo = new InvalidPOJO("");
+      thrown = false;
+      try
+      {
+         invalidPojo.methodBefore();
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         invalidPojo.methodBefore(true);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         invalidPojo.methodAfter();
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         invalidPojo.methodAfter(true);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         new InvalidAdviceNamePOJO();
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         System.out.println(invalidPojo.i);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         System.out.println(invalidPojo.superValue);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         invalidPojo.superValue = new SuperValue(5);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         invalidPojo.subValue = new SubValue(5);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         invalidPojo.methodAfter(new SubValue(1), 1);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+   }
+   
    public void testArgs() throws Exception
    {
       System.out.println("=== TESTING WITH ARGUMENTS");
@@ -130,54 +279,6 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       assertEquals("after2", ArgsAspect.after);
       assertNull(ArgsAspect.throwing);
       
-      
-      System.out.println("* Testing method()");
-      ArgsAspect.clear();
-      pojo.method();
-      assertNull(ArgsAspect.before);
-      assertNull(ArgsAspect.after);
-      assertNull(ArgsAspect.throwing);
-      
-      assertFalse(SimpleAspect.before);
-      assertFalse(SimpleAspect.around);
-      assertFalse(SimpleAspect.after);
-      assertFalse(SimpleAspect.throwing);
-      
-
-      System.out.println("* Testing method1(boolean) with exception");
-      ArgsAspect.clear();
-      SimpleAspect.clear();
-      try
-      {
-         pojo.method1(true);
-         throw new RuntimeException("TestException not thrown");
-      }
-      catch (TestException e)
-      {
-         assertSame(e, ArgsAspect.exception);
-         assertSame(e, SimpleAspect.exception);
-      }
-      assertNull(ArgsAspect.before);
-      assertNull(ArgsAspect.after);
-      assertEquals("throwing2", ArgsAspect.throwing);
-      assertTrue(SimpleAspect.before);
-      assertTrue(SimpleAspect.around);
-      assertFalse(SimpleAspect.after);
-      assertTrue(SimpleAspect.throwing);
-
-      System.out.println("* Testing method1(boolean)");
-      ArgsAspect.clear();
-      SimpleAspect.clear();
-      pojo.method1(false);
-      assertNull(ArgsAspect.before);
-      assertNull(ArgsAspect.after);
-      assertNull(ArgsAspect.throwing);
-      assertTrue(SimpleAspect.before);
-      assertTrue(SimpleAspect.around);
-      assertTrue(SimpleAspect.after);
-      assertFalse(SimpleAspect.throwing);
-
-
       SimpleAspect.clear();
       System.out.println("* Testing method(boolean, int, long, String) with exception");
       ArgsAspect.clear();
@@ -237,7 +338,7 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       pojo.i = 5;
       assertEquals("before3", ArgsAspect.before);
       assertNull(ArgsAspect.throwing);
-      assertEquals("after3", ArgsAspect.after);
+      assertNull(ArgsAspect.after);
       
       ArgsAspect.clear();
       System.out.println("* Reading i");
@@ -257,7 +358,7 @@ public class BeforeAfterThrowingTestCase extends AOPTestWithSetup
       pojo.superValue = new SuperValue(5);
       assertEquals("before4", ArgsAspect.before);
       assertNull(ArgsAspect.throwing);
-      assertEquals(null, ArgsAspect.after);
+      assertNull(null, ArgsAspect.after);
 
       ArgsAspect.clear();
       System.out.println("* Reading superValue");

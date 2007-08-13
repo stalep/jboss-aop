@@ -113,6 +113,7 @@ public class ConstructionJoinPointGenerator extends JoinPointGenerator
    {
       Constructor ctor = ((Construction)joinPoint).getConstructor();
       return new AdviceMethodProperties(
+            joinPoint,
             setup.getAspectClass(),
             setup.getAdviceName(),
             JOINPOINT_TYPE,

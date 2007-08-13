@@ -87,20 +87,20 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
    }
    
    /**
-    * Validate this advice, indicating whether it can be the answer to the method query
-    * contained in <code>properties</code>.
+    * Matches this advice with the joinpoint to be intercepted, indicating whether it
+    * can be the answer to the method query contained in <code>properties</code>.
     * 
     * @param properties        contains information about the queried method
     * @param returnType        the expected return type
     * @return                  <code>true</code> only if this advice is valid
     */
-   public abstract boolean validate(AdviceMethodProperties properties,
+   public abstract boolean matches(AdviceMethodProperties properties,
          ReturnType returnType);
    
    /**
-    * Resets all information that has been set during validation.
+    * Resets all information that has been set during matching.
     */
-   public abstract void resetValidation();
+   public abstract void resetMatching();
 
    /**
     * Returns the distance in hierarchy between the annotated parameter identified by

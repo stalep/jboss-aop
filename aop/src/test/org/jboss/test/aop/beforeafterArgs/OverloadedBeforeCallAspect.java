@@ -21,8 +21,6 @@
  */
 package org.jboss.test.aop.beforeafterArgs;
 
-import junit.framework.Assert;
-
 import org.jboss.aop.advice.annotation.Arg;
 import org.jboss.aop.advice.annotation.Args;
 import org.jboss.aop.advice.annotation.Caller;
@@ -82,8 +80,6 @@ public class OverloadedBeforeCallAspect
    static String before42 = null;
    static String before43 = null;
    static String before44 = null;
-   static String before45 = null;
-   static String before46 = null;
    
    public static void clear()
    {
@@ -131,8 +127,6 @@ public class OverloadedBeforeCallAspect
       before42 = null;
       before43 = null;
       before44 = null;
-      before45 = null;
-      before46 = null;
    }
    
    /* BEFORE1 ADVICE */
@@ -401,11 +395,6 @@ public class OverloadedBeforeCallAspect
       before1 = "Object[]";
    }
    
-   public void before1(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE2 ADVICE */
    
    public void before2(@JoinPoint MethodCallByMethod joinPoint,
@@ -665,11 +654,6 @@ public class OverloadedBeforeCallAspect
       before2 = "Object[]";
    }
    
-   public void before2(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE3 ADVICE */
    
    public void before3(@JoinPoint MethodCallByMethod joinPoint,
@@ -922,11 +906,6 @@ public class OverloadedBeforeCallAspect
       before3 = "Object[]";
    }
    
-   public void before3(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE4 ADVICE */
    
    public void before4(@JoinPoint MethodCallByMethod joinPoint,
@@ -1172,11 +1151,6 @@ public class OverloadedBeforeCallAspect
       before4 = "Object[]";
    }
    
-   public void before4(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE5 ADVICE */
    
    public void before5(@JoinPoint MethodCallByMethod joinPoint,
@@ -1415,11 +1389,6 @@ public class OverloadedBeforeCallAspect
       before5 = "Object[]";
    }
    
-   public void before5(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE6 ADVICE */
    
    public void before6(@JoinPoint MethodCallByMethod joinPoint,
@@ -1651,11 +1620,6 @@ public class OverloadedBeforeCallAspect
       before6 = "Object[]";
    }
    
-   public void before6(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE7 ADVICE */
    
    public void before7(@JoinPoint MethodCallByMethod joinPoint,
@@ -1880,11 +1844,6 @@ public class OverloadedBeforeCallAspect
       before7 = "Object[]";
    }
    
-   public void before7(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE8 ADVICE */
    
    public void before8(@JoinPoint MethodCallByMethod joinPoint,
@@ -2102,11 +2061,6 @@ public class OverloadedBeforeCallAspect
       before8 = "Object[]";
    }
    
-   public void before8(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE9 ADVICE */
    
    public void before9(@JoinPoint MethodCallByMethod joinPoint,
@@ -2317,11 +2271,6 @@ public class OverloadedBeforeCallAspect
       before9 = "Object[]";
    }
    
-   public void before9(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE10 ADVICE */
    
    public void before10(@JoinPoint MethodCallByMethod joinPoint,
@@ -2525,11 +2474,6 @@ public class OverloadedBeforeCallAspect
       before10 = "Object[]";
    }
    
-   public void before10(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE11 ADVICE */
    
    public void before11(@JoinPoint MethodCallByMethod joinPoint,
@@ -2727,11 +2671,6 @@ public class OverloadedBeforeCallAspect
       before11 = "Object[]";
    }
    
-   public void before11(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE12 ADVICE */
    
    public void before12(@JoinPoint MethodCallByMethod joinPoint,
@@ -2923,11 +2862,6 @@ public class OverloadedBeforeCallAspect
       before12 = "Object[]";
    }
    
-   public void before12(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE13 ADVICE */
    
    public void before13(@JoinPoint MethodCallByMethod joinPoint,
@@ -3113,11 +3047,6 @@ public class OverloadedBeforeCallAspect
       before13 = "Object[]";
    }
    
-   public void before13(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE14 ADVICE */
    
    public void before14(@JoinPoint MethodCallByMethod joinPoint,
@@ -3297,11 +3226,6 @@ public class OverloadedBeforeCallAspect
       before14 = "Object[]";
    }
    
-   public void before14(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE15 ADVICE */
    
    public void before15(@JoinPoint MethodCallByMethod joinPoint,
@@ -3475,11 +3399,6 @@ public class OverloadedBeforeCallAspect
       before15 = "Object[]";
    }
    
-   public void before15(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE16 ADVICE */
    
    public void before16(@JoinPoint MethodCallByMethod joinPoint,
@@ -3647,11 +3566,6 @@ public class OverloadedBeforeCallAspect
       before16 = "Object[]";
    }
    
-   public void before16(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE17 ADVICE */
    
    public void before17(@JoinPoint MethodCallByMethod joinPoint,
@@ -3813,11 +3727,6 @@ public class OverloadedBeforeCallAspect
       before17 = "Object[]";
    }
    
-   public void before17(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE18 ADVICE */
    
    public void before18(@JoinPoint MethodCallByMethod joinPoint,
@@ -3973,11 +3882,6 @@ public class OverloadedBeforeCallAspect
       before18 = "Object[]";
    }
    
-   public void before18(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE19 ADVICE */
    
    public void before19(@JoinPoint MethodCallByMethod joinPoint,
@@ -4127,11 +4031,6 @@ public class OverloadedBeforeCallAspect
       before19 = "Object[]";
    }
    
-   public void before19(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE20 ADVICE */
    
    public void before20(@JoinPoint MethodCallByMethod joinPoint,
@@ -4275,11 +4174,6 @@ public class OverloadedBeforeCallAspect
       before20 = "Object[]";
    }
    
-   public void before20(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-
    /* BEFORE21 ADVICE */
    
    public void before21(@JoinPoint MethodCallByMethod joinPoint, @Arg int arg)
@@ -4417,11 +4311,6 @@ public class OverloadedBeforeCallAspect
       before21 = "Object[]";
    }
    
-   public void before21(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE22 ADVICE */
    
    public void before22(@JoinPoint MethodCallByMethod joinPoint,
@@ -4554,11 +4443,6 @@ public class OverloadedBeforeCallAspect
       before22 = "Object[]";
    }
    
-   public void before22(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE23 ADVICE */
    
    public void before23(@JoinPoint MethodCallByMethod joinPoint)
@@ -4685,11 +4569,6 @@ public class OverloadedBeforeCallAspect
       before23 = "Object[]";
    }
    
-   public void before23(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE24 ADVICE */
    
    public void before24(@Target OverloadedAdvicePOJO target,
@@ -4811,11 +4690,6 @@ public class OverloadedBeforeCallAspect
       before24 = "Object[]";
    }
    
-   public void before24(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE25 ADVICE */
    
    public void before25(@Target OverloadedAdvicePOJO target,
@@ -4931,11 +4805,6 @@ public class OverloadedBeforeCallAspect
       before25 = "Object[]";
    }
    
-   public void before25(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE26 ADVICE */
    
    public void before26(@Target Object target,
@@ -5045,11 +4914,6 @@ public class OverloadedBeforeCallAspect
       before26 = "Object[]";
    }
    
-   public void before26(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE27 ADVICE */
    
    public void before27(@Target Object target, @Caller SuperClass caller,
@@ -5153,11 +5017,6 @@ public class OverloadedBeforeCallAspect
       before27 = "Object[]";
    }
    
-   public void before27(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE28 ADVICE */
    
    public void before28(@Target OverloadedAdvicePOJO target,
@@ -5255,11 +5114,6 @@ public class OverloadedBeforeCallAspect
       before28 = "Object[]";
    }
    
-   public void before28(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE29 ADVICE */
    
    public void before29(@Target OverloadedAdvicePOJO target,
@@ -5351,11 +5205,6 @@ public class OverloadedBeforeCallAspect
       before29 = "Object[]";
    }
    
-   public void before29(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE30 ADVICE */
    
    public void before30(@Target Object target,
@@ -5441,11 +5290,6 @@ public class OverloadedBeforeCallAspect
       before30 = "Object[]";
    }
    
-   public void before30(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE31 ADVICE */
    
    public void before31(@Target Object target, @Caller SuperClass caller,
@@ -5525,11 +5369,6 @@ public class OverloadedBeforeCallAspect
       before31 = "Object[]";
    }
    
-   public void before31(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE32 ADVICE */
    
    public void before32(@Target OverloadedAdvicePOJO target, @Arg int arg)
@@ -5603,11 +5442,6 @@ public class OverloadedBeforeCallAspect
       before32 = "Object[]";
    }
    
-   public void before32(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE33 ADVICE */
    
    public void before33(@Target Object target, @Arg int arg)
@@ -5676,11 +5510,6 @@ public class OverloadedBeforeCallAspect
       before33 = "Object[]";
    }
    
-   public void before33(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE34 ADVICE */
    
    public void before34(@Target OverloadedAdvicePOJO target, @Args Object[] args)
@@ -5744,11 +5573,6 @@ public class OverloadedBeforeCallAspect
       before34 = "Object[]";
    }
    
-   public void before34(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE35 ADVICE */
    
    public void before35(@Target Object target, @Args Object[] args)
@@ -5807,11 +5631,6 @@ public class OverloadedBeforeCallAspect
       before35 = "Object[]";
    }
    
-   public void before35(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE36 ADVICE */
    
    public void before36(@Target OverloadedAdvicePOJO target)
@@ -5865,11 +5684,6 @@ public class OverloadedBeforeCallAspect
       before36 = "Object[]";
    }
    
-   public void before36(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE37 ADVICE */
    
    public void before37(@Target Object target)
@@ -5918,11 +5732,6 @@ public class OverloadedBeforeCallAspect
       before37 = "Object[]";
    }
    
-   public void before37(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE38 ADVICE */
    
    public void before38(@Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
@@ -5966,11 +5775,6 @@ public class OverloadedBeforeCallAspect
       before38 = "Object[]";
    }
    
-   public void before38(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE39 ADVICE */
    
    public void before39(@Caller SuperClass caller, @Arg int arg)
@@ -6009,11 +5813,6 @@ public class OverloadedBeforeCallAspect
       before39 = "Object[]";
    }
    
-   public void before39(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE40 ADVICE */
    
    public void before40(@Caller OverloadedAdvicePOJOCaller caller,
@@ -6047,11 +5846,6 @@ public class OverloadedBeforeCallAspect
       before40 = "Object[]";
    }
    
-   public void before40(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE41 ADVICE */
    
    public void before41(@Caller SuperClass caller, @Args Object[] args)
@@ -6079,11 +5873,6 @@ public class OverloadedBeforeCallAspect
       before41 = "Object[]";
    }
    
-   public void before41(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE42 ADVICE */
    
    public void before42(@Caller OverloadedAdvicePOJOCaller caller)
@@ -6106,11 +5895,6 @@ public class OverloadedBeforeCallAspect
       before42 = "Object[]";
    }
    
-   public void before42(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE43 ADVICE */
    
    public void before43(@Caller SuperClass caller)
@@ -6128,11 +5912,6 @@ public class OverloadedBeforeCallAspect
       before43 = "Object[]";
    }
    
-   public void before43(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    /* BEFORE44 ADVICE */
    
    public void before44(@Arg int arg)
@@ -6143,22 +5922,5 @@ public class OverloadedBeforeCallAspect
    public void before44(@Args Object[] args)
    {
       before44 = "Object[]";
-   }
-   
-   public void before44(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
-   /* BEFORE45 ADVICE */
-   
-   public void before45(@Args Object[] args)
-   {
-      before45 = "Object[]";
-   }
-   
-   public void before45(@Arg int arg, @Args Object[] args)
-   {
-      Assert.fail("This advice should never be executed");
-   }
+   }  
 }

@@ -23,8 +23,6 @@ package org.jboss.test.aop.beforeafterArgs;
 
 import java.io.Serializable;
 
-import junit.framework.Assert;
-
 import org.jboss.aop.advice.annotation.Arg;
 import org.jboss.aop.advice.annotation.Args;
 import org.jboss.aop.advice.annotation.JoinPoint;
@@ -112,7 +110,6 @@ public class OverloadedFinallyAspect
    static String finally69 = null;
    static String finally70 = null;
    static String finally71 = null;
-   static String finally72 = null;
    
    static void clear()
    {
@@ -187,7 +184,6 @@ public class OverloadedFinallyAspect
       finally69 = null;
       finally70 = null;
       finally71 = null;
-      finally72 = null;
    }
    
    /* FINALLY1 ADVICE */
@@ -15601,17 +15597,5 @@ public class OverloadedFinallyAspect
    public void finally71()
    {
       finally71 = "void";
-   }
-   
-   /* FINALLY72 ADVICE */
-   
-   public void finally72()
-   {
-      finally72 = "void";
-   }
-   
-   public void finally72(@Return String valueReturned)
-   {
-      Assert.fail("This advice should never be executed");
    }
 }

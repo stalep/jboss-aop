@@ -126,11 +126,6 @@ public abstract class JoinPointInfo implements JoinPointBean
       return interceptorChain;
    }
 
-   public void setInterceptorChain(ArrayList interceptorChain) {
-      adviceString = null;
-      this.interceptorChain = interceptorChain;
-   }
-
    public Interceptor[] getInterceptors() {
       return interceptors;
    }

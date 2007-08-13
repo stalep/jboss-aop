@@ -394,7 +394,7 @@ public class AspectXmlLoader implements XmlLoader
                      message.append("\'\n\t\t\t\t\t   should be one of: \n\t\t\t\t\t\t'interceptor\', \n\t\t\t\t\t\t'interceptor-ref\', \n\t\t\t\t\t\t'advice\', \n\t\t\t\t\t\t'");
                      for (AdviceType adviceType : AdviceType.values())
                      {
-                        message.append(adviceType.getDescription());
+                        message.append(adviceType.getName());
                         message.append("\', \n\t\t\t\t\t\t'");
                      }
                      message.append("stack-ref\'.\n");

@@ -82,11 +82,6 @@ public class POJO
       return this;
    }
    
-   public void method()
-   {
-      joinPointRun = true;   
-   }
-
    public SuperValue method(SubValue sup, SubValue sub)
    {
       joinPointRun = true;

@@ -4,8 +4,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.advice.AdviceType;
+import org.jboss.aop.advice.InvalidAdviceException;
 import org.jboss.aop.advice.annotation.AdviceMethodFactory.ReturnType;
 import org.jboss.aop.advice.annotation.assignability.AssignabilityAlgorithm;
 import org.jboss.aop.advice.annotation.assignability.VariableHierarchy;
@@ -22,14 +23,13 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
    private ParameterAnnotationType paramTypes[];
    // the context dependent annotated parameter types
    private ParameterAnnotationType contextParamTypes[];
-   // muttually exclusive context parameter rules
-   private int[][] mutuallyExclusive;
-   // compusloriness rules: for each subarray, the first element is the precondition;
-   // the following elements are the annotations whose use is compulsory given
-   // that precondition is present among the annotated parameters
-   private int[][] compulsory;
+   // the type of advice this advice info represents
+   private AdviceType adviceType;
    // hierarchy of variable types
    private VariableHierarchy hierarchy;
+   // indicates whether this advice mthod was considered valid during the
+   // construction of this object
+   private boolean prevalidated;
    
    /**
     * Creates an annotated parameter advice info.
@@ -49,22 +49,76 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
     *         comply with a parameter annotation rule.
     */
    public AnnotatedParameterAdviceInfo(AdviceMethodProperties properties,
-         Method method, ParameterAnnotationRule[] rules,
+         AdviceType adviceType, Method method, ParameterAnnotationRule[] rules,
          ParameterAnnotationRule[] contextRules, int[][] mutuallyExclusive,
-         int[][] compulsory)
-      throws ParameterAnnotationRuleException
+         int[][] compulsory, ReturnType returnType)
+      throws ParameterAnnotationRuleException, InvalidAdviceException
    {
       super(method, 0);
       this.paramTypes = createParameterAnnotationTypes(rules);
       this.contextParamTypes = createParameterAnnotationTypes(contextRules);
-      this.mutuallyExclusive = mutuallyExclusive;
-      this.compulsory = compulsory;
+      this.adviceType = adviceType;
       this.hierarchy = new VariableHierarchy();
       this.applyRules(properties);
+      
+      if (returnType == ReturnType.VOID && method.getReturnType()!= void.class)
+      {
+         throw new InvalidAdviceException("The " + adviceType +
+               " advice method '" + method + "' return type must be void");
+      }
+      
+      for (int i = 0; i < mutuallyExclusive.length; i++)
+      {
+         int[] exclusiveParamTypes = mutuallyExclusive[i];
+         int found = -1;
+         for (int j = 0; j < exclusiveParamTypes.length; j++)
+         {
+            if (contextParamTypes[exclusiveParamTypes[j]].isSet())
+            {
+               if (found != -1)
+               {
+                  throw new InvalidAdviceException(
+                        "Mutually exclusive parameter annotations '"
+                        + contextParamTypes[exclusiveParamTypes[found]].rule
+                        + "' and '" + contextParamTypes[exclusiveParamTypes[j]].rule
+                        + "' found on " + adviceType + " advice method '" + method +
+                        "'");
+               }
+               found = j;
+            }
+         }
+      }
+      
+      if (compulsory != null)
+      {
+        for (int i = 0; i < compulsory.length; i++)
+        {
+           ParameterAnnotationType precondition = paramTypes[compulsory[i][0]];
+           if (precondition.isSet())
+           {
+              for (int j = 1; j < compulsory[i].length; j++)
+              {
+                 if (!paramTypes[compulsory[i][j]].isSet())
+                 {
+                    throw new InvalidAdviceException(
+                          "Compulsory " + paramTypes[compulsory[i][j]].rule
+                          + "-annotated parameter not found on " + adviceType + 
+                          " advice method '" + method +
+                          "' (this parameter is compulsory in the presence of a " + 
+                          precondition.rule + "-annotated parameter)");
+                 }
+              }
+           }
+        }
+      }
    }
       
-   public boolean validate(AdviceMethodProperties properties, ReturnType returnType)
+   public boolean matches(AdviceMethodProperties properties, ReturnType returnType)
    {
+      if (!prevalidated)
+      {
+         return false;
+      }
       for (ParameterAnnotationType paramType: paramTypes)
       {
          if (!paramType.validate(properties))
@@ -81,97 +135,112 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          }
       }
       
-      switch (returnType)
+      if (method.getReturnType() == void.class && returnType == ReturnType.NOT_VOID
+            && properties.getJoinpointReturnType() != void.class)
       {
-         case ANY:
-            if (method.getReturnType() == void.class)
-            {
-               break;
-            }
-         case NOT_VOID:
-            if (properties.getJoinpointReturnType() != void.class &&
-                  method.getReturnType() != Object.class &&
-                  !AssignabilityAlgorithm.FROM_VARIABLE.isAssignable(
-                        properties.getJoinpointReturnType(),
-                        method.getGenericReturnType(), hierarchy))
-            {
-               if (AspectManager.verbose)
-               {
-                  AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - return value of ");
-                  AdviceMethodFactory.adviceMatchingMessage.append(method);
-                  AdviceMethodFactory.adviceMatchingMessage.append(" can not be assigned to type ");
-                  AdviceMethodFactory.adviceMatchingMessage.append(properties.getJoinpointReturnType());
-               }
-               return false;
-            }
-            break;
-         case VOID:
-            if (method.getReturnType()!= void.class)
-            {
-               if (AspectManager.verbose)
-               {
-                  AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - '");
-                  AdviceMethodFactory.adviceMatchingMessage.append(method);
-                  AdviceMethodFactory.adviceMatchingMessage.append("' must return void");
-               }
-               return false;
-            }
+         AdviceMethodFactory.appendNewMatchingMessage(method,
+            "return value cannot be void (it must match the joinpoint return type)");
+         return false;
       }
+      else if(method.getReturnType() != void.class &&
+            method.getReturnType() != Object.class &&
+            !AssignabilityAlgorithm.FROM_VARIABLE.isAssignable(
+                  properties.getJoinpointReturnType(),
+                  method.getGenericReturnType(), hierarchy))
+      {
+         AdviceMethodFactory.appendNewMatchingMessage(method,
+               "return value cannot be assigned to type '");
+         AdviceMethodFactory.appendMatchingMessage(properties.getJoinpointReturnType());
+         AdviceMethodFactory.appendMatchingMessage("'");
+         return false;
+      }
+
       
-      for (int i = 0; i < mutuallyExclusive.length; i++)
-      {
-         int[] exclusiveParamTypes = mutuallyExclusive[i];
-         int found = -1;
-         for (int j = 0; j < exclusiveParamTypes.length; j++)
-         {
-            if (contextParamTypes[exclusiveParamTypes[j]].isSet())
-            {
-               if (found != -1)
-               {
-                  if (AspectManager.verbose)
-                  {
-                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - the use of parameter annotations ");
-                     AdviceMethodFactory.adviceMatchingMessage.append(contextParamTypes[exclusiveParamTypes[found]].rule.getAnnotation());
-                     AdviceMethodFactory.adviceMatchingMessage.append(" and ");
-                     AdviceMethodFactory.adviceMatchingMessage.append(contextParamTypes[exclusiveParamTypes[j]].rule.getAnnotation());
-                     AdviceMethodFactory.adviceMatchingMessage.append(" is mutually exclusive");
-                  }
-                  return false;
-               }
-               found = j;
-            }
-         }
-      }
+   
       
-      if (compulsory != null)
-      {
-    	  for (int i = 0; i < compulsory.length; i++)
-    	  {
-    		  ParameterAnnotationType precondition = paramTypes[compulsory[i][0]];
-    		  if (precondition.isSet())
-    		  {
-    			  for (int j = 1; j < compulsory[i].length; j++)
-    			  {
-    				  if (!paramTypes[compulsory[i][j]].isSet())
-    				  {
-    					  if (AspectManager.verbose)
-    	                  {
-    	                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - if parameter annotation ");
-    	                     AdviceMethodFactory.adviceMatchingMessage.append(precondition.rule.getAnnotation());
-    	                     AdviceMethodFactory.adviceMatchingMessage.append(" is used, the use of parameter annotation ");
-    	                     AdviceMethodFactory.adviceMatchingMessage.append(paramTypes[compulsory[i][j]].rule.getAnnotation());
-                             AdviceMethodFactory.adviceMatchingMessage.append(" is compulsory");
-    	                  }
-    	                  return false;
-    				  }
-    			  }
-    		  }
-    	  }
-      }
+//      switch (returnType)
+//      {
+//         case ANY:
+//            if (method.getReturnType() == void.class)
+//            {
+//               break;
+//            }
+//         case NOT_VOID:
+//            if (properties.getJoinpointReturnType() != void.class &&
+//                  method.getReturnType() != Object.class &&
+//                  !AssignabilityAlgorithm.FROM_VARIABLE.isAssignable(
+//                        properties.getJoinpointReturnType(),
+//                        method.getGenericReturnType(), hierarchy))
+//            {
+//               AdviceMethodFactory.appendNewMatchingMessage(method,
+//                     "return value cannot be assigned to type '");
+//               AdviceMethodFactory.appendMatchingMessage(properties.getJoinpointReturnType());
+//               AdviceMethodFactory.appendMatchingMessage("'");
+//               return false;
+//            }
+//            break;
+//         case VOID:
+//            if (method.getReturnType()!= void.class)
+//            {
+//               throw new InvalidAdviceException("The " + adviceType +
+//                     " advice method '" + method + "' return type must be void");
+//            }
+//      }
+//      
+//      for (int i = 0; i < mutuallyExclusive.length; i++)
+//      {
+//         int[] exclusiveParamTypes = mutuallyExclusive[i];
+//         int found = -1;
+//         for (int j = 0; j < exclusiveParamTypes.length; j++)
+//         {
+//            if (contextParamTypes[exclusiveParamTypes[j]].isSet())
+//            {
+//               if (found != -1)
+//               {
+//                  throw new InvalidAdviceException(
+//                        "Mutually exclusive parameter annotations '"
+//                        + contextParamTypes[exclusiveParamTypes[found]].rule
+//                        + "' and '" + contextParamTypes[exclusiveParamTypes[j]].rule
+//                        + "' found on " + adviceType + " advice method '" + method +
+//                        "'");
+//               }
+//               found = j;
+//            }
+//         }
+//      }
+//      
+//      if (compulsory != null)
+//      {
+//    	  for (int i = 0; i < compulsory.length; i++)
+//    	  {
+//    		  ParameterAnnotationType precondition = paramTypes[compulsory[i][0]];
+//    		  if (precondition.isSet())
+//    		  {
+//    			  for (int j = 1; j < compulsory[i].length; j++)
+//    			  {
+//    				  if (!paramTypes[compulsory[i][j]].isSet())
+//    				  {
+//                    AdviceMethodFactory.appendNewMatchingMessage(method, "compulsory");
+//                    AdviceMethodFactory.appendMatchingMessage(paramTypes[compulsory[i][j]].rule);
+//                    AdviceMethodFactory.appendMatchingMessage("-annotated parameter not found (this parameter is compulsory in the presence of a ");
+//                    AdviceMethodFactory.appendMatchingMessage(precondition.rule);
+//                    AdviceMethodFactory.appendMatchingMessage("-annotated parameter)");
+//                    return false;
+////    					  throw new InvalidAdviceException(
+////                          "Compulsory " + paramTypes[compulsory[i][j]].rule
+////                          + "-annotated parameter not found on " + adviceType + 
+////                          " advice method '" + method +
+////                          "' (this parameter is compulsory in the presence of a " + 
+////                          precondition.rule + "-annotated parameter)");
+//    				  }
+//    			  }
+//    		  }
+//    	  }
+//      }
       return true;
    }
 
-   public void resetValidation()
+   public void resetMatching()
    {
       for (int i = 0;  i < paramTypes.length; i++)
       {
@@ -259,38 +328,35 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             {
                typeFound = findAnnotationType(annotation, i);
             }
-            else
+            else if (findAnnotationType(annotation, i) != null)
             {
-               if (findAnnotationType(annotation, i) != null)
-               {
-                  if (AspectManager.verbose)
-                  {
-                     throw new ParameterAnnotationRuleException("\n[warn] -parameter " + i  +
-                           " of method " + method +  " contains more than one valid annotation");
-                  }
-                  else
-                  {
-                     throw new ParameterAnnotationRuleException(null);
-                  }
-               }
+               throw new ParameterAnnotationRuleException("Parameter " + i  +
+                     " of " + adviceType + " advice method '" + method + 
+                     "' contains more than one valid annotation");
             }
          }
          if (typeFound == null)
          {
-            if (AspectManager.verbose)
+            if (paramAnnotations[i].length == 0)
             {
-               if (paramAnnotations[i].length == 0)
-               {
-                  throw new ParameterAnnotationRuleException("\n[warn] -parameter "
-                        + i  + " of method " + method +  " is not annotated");
-               }
-               throw new ParameterAnnotationRuleException("\n[warn] -parameter "
-                     + i  + " of method " + method +  " is not annotated correctly" +
-                     "\n[warn]  Expecting one of: " + getDescription(paramTypes) +
-                     getDescription(contextParamTypes));
+               throw new ParameterAnnotationRuleException("Parameter "
+                     + i  + " of " + adviceType + " advice method '" + method +
+                     "' is not annotated\nFor interception of joinpoint " +
+                     properties.getJoinPoint() + " expecting one of annotations: " +
+                     getDescription(paramTypes) + getDescription(contextParamTypes));
             }
-            // no need to say the reason a rule's been broken
-            throw new ParameterAnnotationRuleException(null);
+            AdviceMethodFactory.appendNewMatchingMessage(method, "parameter ");
+            AdviceMethodFactory.appendMatchingMessage(i);
+            AdviceMethodFactory.appendMatchingMessage("' is not annotated correctly. Expecting one of: ");
+            AdviceMethodFactory.appendMatchingMessage(getDescription(paramTypes));
+            AdviceMethodFactory.appendMatchingMessage(getDescription(contextParamTypes));
+//            throw new ParameterAnnotationRuleException("Parameter " + i  + " of " +
+//                  adviceType + " advice method '" + method +
+//                  "' is not annotated correctly\nFor interception of joinpoint " +
+//                  properties.getJoinPoint() + " expecting one of: " +
+//                  getDescription(paramTypes) + getDescription(contextParamTypes));
+            this.prevalidated = false;
+            return;
          }
          // this happens when target or caller are nulls
          // in this case, this advice should have the smallest rank, since
@@ -301,6 +367,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       {
          rank = 0;
       }
+      this.prevalidated = true;
    }
    
    private String getDescription(ParameterAnnotationType[] types)
@@ -309,7 +376,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       for (int i = 1; i < types.length; i++)
       {
          buffer.append("\n          ");
-         buffer.append(types[i]);
+         buffer.append(types[i].rule);
       }
       return buffer.toString();
    }
@@ -396,21 +463,15 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       {
          if (rule.isMandatory() && !isSet())
          {
-            if (AspectManager.verbose)
-            {
-               AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - mandatory parameter annotation ");
-               AdviceMethodFactory.adviceMatchingMessage.append(rule.getAnnotation());
-               AdviceMethodFactory.adviceMatchingMessage.append(" not found on method ");
-               AdviceMethodFactory.adviceMatchingMessage.append(method);
-            }
+            AdviceMethodFactory.appendNewMatchingMessage(method, "mandatory ");
+            AdviceMethodFactory.appendMatchingMessage(rule);
+            AdviceMethodFactory.appendMatchingMessage("-annotated parameter  not found");
+//            throw new ParameterAnnotationRuleException(
+//                  "Mandatory " + rule + "-annotated parameter  not found on " +
+//                  adviceType + " advice method '" + method + "'");
             return false;
          }
          return internalValidate(properties);
-      }
-
-      public String toString()
-      {
-         return rule.getAnnotation().toString();
       }
       
       /**
@@ -481,13 +542,10 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       {
          if (this.index != -1)
          {
-            if (AspectManager.verbose)
-            {
-               throw new ParameterAnnotationRuleException("\n[warn] - found more than "
-                     + "one occurence of " + rule.getAnnotation().getName() +
-                     " on parameters of advice" + method);  
-            }
-            throw new ParameterAnnotationRuleException(null);
+            throw new ParameterAnnotationRuleException(
+                  "Found more than one occurence of '"
+                  + rule + "' on parameters of " + adviceType + " advice method '" +
+                  method + "'");
          }
          this.index = parameterIndex;
          rank += rule.getRankGrade();
@@ -506,15 +564,9 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
                method.getGenericParameterTypes()[index],
                (Type)rule.getAssignableFrom(properties), hierarchy))
          {
-            if (AspectManager.verbose)
-            {
-               AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - parameter annotated with ");
-               AdviceMethodFactory.adviceMatchingMessage.append(rule.getAnnotation());
-               AdviceMethodFactory.adviceMatchingMessage.append(" is not assignable from expected type ");
-               AdviceMethodFactory.adviceMatchingMessage.append(rule.getAssignableFrom(properties));   
-               AdviceMethodFactory.adviceMatchingMessage.append(" on  method ");
-               AdviceMethodFactory.adviceMatchingMessage.append(method);
-            }
+            AdviceMethodFactory.appendNewMatchingMessage(method, rule);
+            AdviceMethodFactory.appendMatchingMessage("-annotated parameter is not assignable from expected type ");
+            AdviceMethodFactory.appendMatchingMessage(((Class) rule.getAssignableFrom(properties)).getName());
             return false;
          }
          }
@@ -525,15 +577,10 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
                   method.getParameterTypes()[index],
                   (Type)rule.getAssignableFrom(properties), hierarchy))
             {
-               if (AspectManager.verbose)
-               {
-                  AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - parameter annotated with ");
-                  AdviceMethodFactory.adviceMatchingMessage.append(rule.getAnnotation());
-                  AdviceMethodFactory.adviceMatchingMessage.append(" is not assignable from expected type ");
-                  AdviceMethodFactory.adviceMatchingMessage.append(rule.getAssignableFrom(properties));   
-                  AdviceMethodFactory.adviceMatchingMessage.append(" on  method ");
-                  AdviceMethodFactory.adviceMatchingMessage.append(method);
-               }
+               AdviceMethodFactory.appendNewMatchingMessage(method, rule);
+               AdviceMethodFactory.appendNewMatchingMessage(method, rule);
+               AdviceMethodFactory.appendMatchingMessage("-annotated parameter is not assignable from expected type ");
+               AdviceMethodFactory.appendMatchingMessage(((Class) rule.getAssignableFrom(properties)).getName());
                return false;
             }
          }
@@ -572,13 +619,13 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       private int[] originalIndexValues; // for resetting purposes
       private int indexesLength;
       
-      // maximum size is the total number of parameters
-      public MultipleParameterType(ParameterAnnotationRule rule, int totalParams)
+      // maximum size is the total number of arguments
+      public MultipleParameterType(ParameterAnnotationRule rule, int totalArgs)
       {
          super(rule);
-         this.indexes = new int[totalParams][2];
+         this.indexes = new int[totalArgs][2];
          this.indexesLength = 0;
-         this.originalIndexValues = new int[totalParams];
+         this.originalIndexValues = new int[totalArgs];
       }
       
       public final void setIndex(int index, Annotation annotation)
@@ -586,7 +633,9 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       {
          if (indexesLength == indexes.length)
          {
-            throw new ParameterAnnotationRuleException("Found more @Arg annotated parameters than the number of parameters available on joinpoint");
+            throw new RuntimeException(
+                  "Unexpected call to setIndex method during processing of '" +
+                  method + "'");
          }
          indexes[indexesLength][0] = index;
          originalIndexValues[indexesLength] = ((Arg) annotation).index();
@@ -613,6 +662,21 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          {
             adviceTypes = method.getParameterTypes();
          }
+         if (indexesLength > 0 && expectedTypes.length == 0)
+         {
+            AdviceMethodFactory.appendNewMatchingMessage(method, "joinpoint has no arguments; unexpected ");
+            AdviceMethodFactory.appendMatchingMessage(this.rule);
+            AdviceMethodFactory.appendMatchingMessage("-annotated parameter found");
+            return false;
+         }
+         if (indexesLength > expectedTypes.length)
+         {
+            AdviceMethodFactory.appendNewMatchingMessage(method, "found more ");
+            AdviceMethodFactory.appendMatchingMessage(this.rule);
+            AdviceMethodFactory.appendMatchingMessage("-annotated parameters than the number of arguments available on the joinpoint");
+            return false;
+         }
+         
          boolean[] taken = new boolean[expectedTypes.length];
          for (int i = 0; i < indexesLength; i++)
          {
@@ -622,23 +686,19 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
                // negative index
                if (indexes[i][1] < 0)
                {
-                  if (AspectManager.verbose)
-                  {
-                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - Negative joinpoint parameter indexes are not allowed.");
-                  }
-                  return false;
+                  throw new ParameterAnnotationRuleException(
+                        "Negative joinpoint parameter index found at method '" +
+                        method + "'");
                }
                // wrong index
                if (indexes[i][1] >= expectedTypes.length)
                {
-                  if (AspectManager.verbose)
-                  {
-                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - There is no joinpoint parameter with index ");
-                     AdviceMethodFactory.adviceMatchingMessage.append(indexes[i][1]);
-                     AdviceMethodFactory.adviceMatchingMessage.append(", since there are ");
-                     AdviceMethodFactory.adviceMatchingMessage.append(expectedTypes.length == 0? "no": expectedTypes.length);
-                     AdviceMethodFactory.adviceMatchingMessage.append("joinpoint parameters available");
-                  }
+                  AdviceMethodFactory.appendNewMatchingMessage(method,
+                        "there is no joinpoint argument with index ");
+                  AdviceMethodFactory.appendMatchingMessage(indexes[i][1]);
+                  AdviceMethodFactory.appendMatchingMessage(", since there are ");
+                  AdviceMethodFactory.appendMatchingMessage(expectedTypes.length == 0? "no": expectedTypes.length);
+                  AdviceMethodFactory.appendMatchingMessage(" joinpoint arguments available");
                   return false;
                }
                // wrong type
@@ -646,29 +706,24 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
                      adviceTypes[indexes[i][0]], expectedTypes[indexes[i][1]],
                      hierarchy))
                {
-                  if (AspectManager.verbose)
-                  {
-                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - Advice parameter ");
-                     AdviceMethodFactory.adviceMatchingMessage.append(indexes[i][0]);
-                     AdviceMethodFactory.adviceMatchingMessage.append(", of type ");
-                     AdviceMethodFactory.adviceMatchingMessage.append(adviceTypes[indexes[i][0]]);
-                     AdviceMethodFactory.adviceMatchingMessage.append(", cannot be assigned to the value of joinpoint parameter with index ");
-                     AdviceMethodFactory.adviceMatchingMessage.append(indexes[i][1]);
-                     AdviceMethodFactory.adviceMatchingMessage.append(", whose type is ");
-                     AdviceMethodFactory.adviceMatchingMessage.append(expectedTypes[indexes[i][1]]);
-                  }
+                  AdviceMethodFactory.appendNewMatchingMessage(method, "advice parameter ");
+                  AdviceMethodFactory.appendMatchingMessage(indexes[i][0]);
+                  AdviceMethodFactory.appendMatchingMessage(", of type '");
+                  AdviceMethodFactory.appendMatchingMessage(adviceTypes[indexes[i][0]]);
+                  AdviceMethodFactory.appendMatchingMessage("', cannot be assigned to the value of joinpoint argument with index ");
+                  AdviceMethodFactory.appendMatchingMessage(indexes[i][1] + ", whose type is '");
+                  AdviceMethodFactory.appendMatchingMessage(expectedTypes[indexes[i][1]]);
+                  AdviceMethodFactory.appendMatchingMessage("'");
                   return false;
                }
                // index set more than once
                if (taken[indexes[i][1]])
                {
-                  if (AspectManager.verbose)
-                  {
-                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - Joinpoint parameter index '");
-                     AdviceMethodFactory.adviceMatchingMessage.append(indexes[i][0]);
-                     AdviceMethodFactory.adviceMatchingMessage.append("' cannot be assigned to more than one '@Arg' advice parameter");
-                  }
-                  return false;
+                  throw new ParameterAnnotationRuleException(
+                        "Joinpoint parameter index '" + indexes[i][0] +
+                        "' cannot be assigned to more than one " +  rule +
+                        "-annotated advice parameter (on " + adviceType +
+                        " advice method '" + method + "')");
                }
                // mark index as set
                taken[indexes[i][1]] = true;
@@ -709,17 +764,16 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
                }
                if (!found)
                {
-                  if (AspectManager.verbose)
+                  AdviceMethodFactory.appendNewMatchingMessage(method,
+                        "not found a match for argument ");
+                  AdviceMethodFactory.appendMatchingMessage(adviceTypes[indexes[i][0]]);
+                  AdviceMethodFactory.appendMatchingMessage("; expected one of types: ");
+                  for (int j = 0; j < expectedTypes.length; j++)
                   {
-                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn] - not found a match for argument ");
-                     AdviceMethodFactory.adviceMatchingMessage.append(adviceTypes[indexes[i][0]]);
-                     AdviceMethodFactory.adviceMatchingMessage.append(" of ");
-                     AdviceMethodFactory.adviceMatchingMessage.append(method);
-                     AdviceMethodFactory.adviceMatchingMessage.append("\n[warn]   expected one of types:");
-                     for (int j = 0; j < expectedTypes.length; j++)
+                     if (!taken[j])
                      {
-                        AdviceMethodFactory.adviceMatchingMessage.append(expectedTypes[j]);
-                        AdviceMethodFactory.adviceMatchingMessage.append(" ");
+                        AdviceMethodFactory.appendMatchingMessage(expectedTypes[j]);
+                        AdviceMethodFactory.appendMatchingMessage(" ");
                      }
                   }
                   return false;

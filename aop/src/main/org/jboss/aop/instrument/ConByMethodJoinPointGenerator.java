@@ -68,7 +68,7 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
    }
    
    private boolean hasCallingObject;
-   private WeakReference returnType;
+   private WeakReference<Class<?>> returnType;
 
    public ConByMethodJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
@@ -76,7 +76,7 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
             ((ConByMethodInfo) info).getConstructor().getParameterTypes().length,
             false);
       hasCallingObject = !java.lang.reflect.Modifier.isStatic(((ConByMethodInfo)info).getCallingMethod().getModifiers());
-      returnType = new WeakReference(((ConByMethodInfo)info).getCalledClass());
+      returnType = new WeakReference<Class<?>>(((ConByMethodInfo)info).getCalledClass());
    }
    
    private static JoinPointParameters getParameters(ConByMethodInfo info)
@@ -125,7 +125,7 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
 
    protected Class getReturnClassType()
    {
-      return (Class)returnType.get();
+      return returnType.get();
    }
 
    protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
@@ -133,6 +133,7 @@ public class ConByMethodJoinPointGenerator extends JoinPointGenerator
       ConstructorCallByMethod call = (ConstructorCallByMethod) joinPoint;
       Constructor ctor = call.getConstructor();
       AdviceMethodProperties properties = new AdviceMethodProperties(
+               joinPoint,
                setup.getAspectClass(),
                setup.getAdviceName(),
                JOINPOINT_TYPE,

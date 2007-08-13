@@ -1,31 +1,24 @@
 package org.jboss.aop.advice.annotation;
 
-import org.jboss.aop.AspectManager;
+import org.jboss.aop.advice.InvalidAdviceException;
 
 /**
  * Exception thrown when an advice method does not comply with a parameter rule.  
  * 
  * @author Flavia Rainone
  */
-class ParameterAnnotationRuleException extends Exception
+class ParameterAnnotationRuleException extends InvalidAdviceException
 {
-   private static final long serialVersionUID = 1L;
-   
+   private static final long serialVersionUID = 9190978361997650638L;
+
    /**
     * Constructor.
     * <p>
-    * Adds <code>errorMessage</code> to {@link AdviceMethodFactory#adviceMatchingMessage}
-    * on verbose mode.
-    * 
     * @param message a message describing why the parameter annotation rule could
     *                not be applied to an advice method
     */
    public ParameterAnnotationRuleException(String message)
    {
       super(message);
-      if (AspectManager.verbose)
-      {
-         AdviceMethodFactory.adviceMatchingMessage.append(message);
-      }
    }
 }

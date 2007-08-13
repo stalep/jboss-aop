@@ -23,7 +23,12 @@ package org.jboss.test.aop.beforeafterArgs;
 
 import junit.framework.Assert;
 
+import org.jboss.aop.advice.annotation.Arg;
+import org.jboss.aop.advice.annotation.Args;
 import org.jboss.aop.advice.annotation.JoinPoint;
+import org.jboss.aop.advice.annotation.Return;
+import org.jboss.aop.joinpoint.CurrentInvocation;
+import org.jboss.aop.joinpoint.Invocation;
 
 /**
  * Aspect whose advices must never be called.
@@ -46,6 +51,37 @@ public class InvalidAspect
    }
    
    public void throwing(@JoinPoint Object object)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void before1(@Arg int arg, @Args Object[] args)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+
+   public Object around1(@Arg int arg, @Args Object[] args) throws Throwable
+   {
+      Assert.fail("This advice should never be executed");
+      return CurrentInvocation.proceed();
+   }
+   
+   public void finally72(@Return String valueReturned)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void finally2(@Return String returnedValue)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void around1(Invocation invocation) throws Exception
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void throwing7(Throwable throwable)
    {
       Assert.fail("This advice should never be executed");
    }

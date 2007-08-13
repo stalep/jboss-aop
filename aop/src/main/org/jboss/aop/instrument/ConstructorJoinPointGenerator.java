@@ -68,14 +68,14 @@ public class ConstructorJoinPointGenerator extends JoinPointGenerator
       }
    }
 
-   WeakReference returnType;
+   WeakReference<Class<?>> returnType;
 
    public ConstructorJoinPointGenerator(GeneratedClassAdvisor advisor, JoinPointInfo info)
    {
       super(advisor, info, JoinPointParameters.ONLY_ARGS,
             ((ConstructorInfo) info).getConstructor().getParameterTypes().length,
             false);
-      returnType = new WeakReference(((ConstructorInfo)info).getConstructor().getDeclaringClass());
+      returnType = new WeakReference<Class<?>>(((ConstructorInfo)info).getConstructor().getDeclaringClass());
    }
 
 
@@ -109,13 +109,14 @@ public class ConstructorJoinPointGenerator extends JoinPointGenerator
 
    protected Class getReturnClassType()
    {
-      return (Class)returnType.get();
+      return returnType.get();
    }
 
    protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
    {
       Constructor ctor = ((ConstructorExecution)joinPoint).getConstructor();
       return new AdviceMethodProperties(
+            joinPoint,
             setup.getAspectClass(),
             setup.getAdviceName(),
             JOINPOINT_TYPE,

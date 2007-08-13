@@ -24,13 +24,65 @@
       <before name="before" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
       <after name="after" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
       <throwing name="throwing" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
-      <throwing name="throwingzzz" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
    </stack>
 
-   <bind pointcut="execution(org.jboss.test.aop.beforeafter.POJO->new(..)) OR execution(* org.jboss.test.aop.beforeafter.POJO->method*(..)) OR field(!static * org.jboss.test.aop.beforeafter.POJO->*)">
+   <bind pointcut="(execution(org.jboss.test.aop.beforeafter.POJO->new(boolean, int, long, java.lang.String)) AND ! execution(org.jboss.test.aop.beforeafter.POJO->new())) OR (execution(* org.jboss.test.aop.beforeafter.POJO->method*(..)) AND !execution(* *->method*(boolean)) AND !execution(int *->*(..)) AND !execution(* *->*(*SubValue,int))) OR (get(!static * org.jboss.test.aop.beforeafter.POJO->*) AND !get(int *->*) AND !field(*Value *->*))">
       <stack-ref name="argsStack"/>
    </bind>
    
+   <bind pointcut="set(!static * org.jboss.test.aop.beforeafter.POJO->*) AND !field(*Value *->*)">
+      <before name="before" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+      <throwing name="throwing" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(int org.jboss.test.aop.beforeafter.POJO->method*(..)) OR execution(* org.jboss.test.aop.beforeafter.POJO->method*(*SubValue, int))">
+      <throwing name="throwing" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="get(int org.jboss.test.aop.beforeafter.POJO->*) OR field(*Value org.jboss.test.aop.beforeafter.POJO->*) OR execution(* org.jboss.test.aop.beforeafter.POJO->method*(*SubValue, int))">
+      <before name="before" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+   </bind>
+
+   <bind pointcut="get(!static *Value org.jboss.test.aop.beforeafter.POJO->*)">
+      <after name="after" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(org.jboss.test.aop.beforeafter.InvalidPOJO->new())">
+      <before name="before" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(org.jboss.test.aop.beforeafter.InvalidPOJO->new(short))">
+      <after name="after" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(org.jboss.test.aop.beforeafter.InvalidPOJO->new(long))">
+      <throwing name="throwing" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafter.InvalidPOJO->methodBefore(..))">
+      <before name="before" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafter.InvalidPOJO->methodAfter(..))">
+      <after name="after" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+   </bind>
+
+   <bind pointcut="all(org.jboss.test.aop.beforeafter.InvalidAdviceNamePOJO)">
+      <throwing name="throwingzzz" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="field(int org.jboss.test.aop.beforeafter.InvalidPOJO->i)">
+      <after name="after" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="field(!static *SuperValue org.jboss.test.aop.beforeafter.InvalidPOJO->*)">
+      <throwing name="throwing" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+   </bind>
+
+   <bind pointcut="set(!static *Value org.jboss.test.aop.beforeafter.InvalidPOJO->*)">
+      <after name="after" aspect="org.jboss.test.aop.beforeafter.ArgsAspect"/>
+   </bind>
+
    <bind pointcut="execution(org.jboss.test.aop.beforeafter.POJO->new($instanceof{org.jboss.test.aop.beforeafter.SuperValue}, int)) OR execution(* org.jboss.test.aop.beforeafter.POJO->method($instanceof{org.jboss.test.aop.beforeafter.SuperValue}, int))">
       <before name="before" aspect="org.jboss.test.aop.beforeafter.GeneralAspect"/>
       <after name="after" aspect="org.jboss.test.aop.beforeafter.GeneralAspect"/>

@@ -21,8 +21,6 @@
  */
 package org.jboss.test.aop.beforeafterArgs;
 
-import junit.framework.Assert;
-
 import org.jboss.aop.advice.annotation.Arg;
 import org.jboss.aop.advice.annotation.Args;
 import org.jboss.aop.advice.annotation.Caller;
@@ -85,8 +83,6 @@ public class OverloadedAroundCallAspect
    static String around43 = null;
    static String around44 = null;
    static String around45 = null;
-   static String around46 = null;
-   static String around47 = null;
    
    public static void clear()
    {
@@ -135,8 +131,6 @@ public class OverloadedAroundCallAspect
       around43 = null;
       around44 = null;
       around45 = null;
-      around46 = null;
-      around47 = null;
    }
    
    /* AROUND1 ADVICE */
@@ -468,12 +462,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around1(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND2 ADVICE */
    
    public Object around2(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -797,12 +785,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around2(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND3 ADVICE */
    
    public Object around3(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -1118,12 +1100,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around3(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND4 ADVICE */
    
    public Object around4(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -1431,12 +1407,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around4(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND5 ADVICE */
    
    public Object around5(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -1736,12 +1706,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around5(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND6 ADVICE */
    
    public Object around6(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -2032,12 +1996,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around6(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND7 ADVICE */
    
    public Object around7(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -2320,12 +2278,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around7(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND8 ADVICE */
    
    public Object around8(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -2600,12 +2552,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around8(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND9 ADVICE */
    
    public Object around9(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -2872,12 +2818,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around9(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND10 ADVICE */
    
    public Object around10(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -3136,12 +3076,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around10(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND11 ADVICE */
    
    public Object around11(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -3392,12 +3326,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around11(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND12 ADVICE */
    
    public Object around12(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -3640,12 +3568,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around12(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND13 ADVICE */
    
    public Object around13(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -3880,12 +3802,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around13(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND14 ADVICE */
    
    public Object around14(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -4113,12 +4029,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around14(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND15 ADVICE */
    
    public Object around15(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -4339,12 +4249,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around15(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND16 ADVICE */
    
    public Object around16(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -4558,12 +4462,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around16(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND17 ADVICE */
    
    public Object around17(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -4770,12 +4668,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around17(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND18 ADVICE */
    
    public Object around18(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -4975,12 +4867,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around18(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND19 ADVICE */
    
    public Object around19(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -5173,12 +5059,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around19(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND20 ADVICE */
    
    public Object around20(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -5364,12 +5244,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around20(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND21 ADVICE */
    
    public Object around21(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -5547,12 +5421,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around21(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND22 ADVICE */
    
    public Object around22(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -5723,12 +5591,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around22(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND23 ADVICE */
    
    public Object around23(@JoinPoint MethodCalledByMethodInvocation invocation,
@@ -5892,12 +5754,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around23(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND24 ADVICE */
    
    public Object around24(@JoinPoint MethodCalledByMethodInvocation invocation)
@@ -6054,12 +5910,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around24(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND25 ADVICE */
    
    public Object around25(@Target OverloadedAdvicePOJO target,
@@ -6209,12 +6059,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around25(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND26 ADVICE */
    
    public Object around26(@Target OverloadedAdvicePOJO target,
@@ -6357,12 +6201,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around26(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND27 ADVICE */
    
    public Object around27(@Target Object target,
@@ -6498,12 +6336,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around27(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND28 ADVICE */
    
    public Object around28(@Target Object target, @Caller SuperClass caller,
@@ -6632,12 +6464,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around28(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND29 ADVICE */
    
    public Object around29(@Target OverloadedAdvicePOJO target,
@@ -6759,12 +6585,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around29(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND30 ADVICE */
    
    public Object around30(@Target OverloadedAdvicePOJO target,
@@ -6878,12 +6698,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around30(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND31 ADVICE */
    
    public Object around31(@Target Object target,
@@ -6990,12 +6804,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around31(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND32 ADVICE */
    
    public Object around32(@Target Object target, @Caller SuperClass caller,
@@ -7094,12 +6902,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around32(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND33 ADVICE */
    
    public Object around33(@Target OverloadedAdvicePOJO target, @Arg int arg)
@@ -7191,12 +6993,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around33(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND34 ADVICE */
    
    public Object around34(@Target Object target, @Arg int arg) throws Throwable
@@ -7281,12 +7077,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around34(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND35 ADVICE */
    
    public Object around35(@Target OverloadedAdvicePOJO target, @Args Object[] args)
@@ -7365,12 +7155,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around35(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND36 ADVICE */
    
    public Object around36(@Target Object target, @Args Object[] args) throws Throwable
@@ -7442,12 +7226,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around36(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND37 ADVICE */
    
    public Object around37(@Target OverloadedAdvicePOJO target) throws Throwable
@@ -7513,12 +7291,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around37(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND38 ADVICE */
    
    public Object around38(@Target Object target) throws Throwable
@@ -7578,12 +7350,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around38(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND39 ADVICE */
    
    public Object around39(@Caller OverloadedAdvicePOJOCaller caller, @Arg int arg)
@@ -7637,12 +7403,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around39(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND40 ADVICE */
    
    public Object around40(@Caller SuperClass caller, @Arg int arg) throws Throwable
@@ -7689,12 +7449,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around40(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND41 ADVICE */
    
    public Object around41(@Caller OverloadedAdvicePOJOCaller caller,
@@ -7735,12 +7489,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around41(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND42 ADVICE */
    
    public Object around42(@Caller SuperClass caller, @Args Object[] args)
@@ -7774,12 +7522,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around42(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND43 ADVICE */
    
    public Object around43(@Caller OverloadedAdvicePOJOCaller caller) throws Throwable
@@ -7806,12 +7548,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around43(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND44 ADVICE */
    
    public Object around44(@Caller SuperClass caller) throws Throwable
@@ -7832,12 +7568,6 @@ public class OverloadedAroundCallAspect
       return CurrentInvocation.proceed();
    }
    
-   public Object around44(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
    /* AROUND45 ADVICE */
    
    public Object around45(@Arg int arg) throws Throwable
@@ -7849,26 +7579,6 @@ public class OverloadedAroundCallAspect
    public Object around45(@Args Object[] args) throws Throwable
    {
       around45 = "Object[]";
-      return CurrentInvocation.proceed();
-   }
-   
-   public Object around45(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
-      return CurrentInvocation.proceed();
-   }
-   
-   /* AROUND46 ADVICE */
-   
-   public Object around46(@Args Object[] args) throws Throwable
-   {
-      around46 = "Object[]";
-      return CurrentInvocation.proceed();
-   }
-   
-   public Object around46(@Arg int arg, @Args Object[] args) throws Throwable
-   {
-      Assert.fail("This advice should never be executed");
       return CurrentInvocation.proceed();
    }
 }

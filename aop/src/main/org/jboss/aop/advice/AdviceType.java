@@ -33,39 +33,43 @@ import org.jboss.aop.advice.annotation.AdviceMethodFactory;
  */
 public enum AdviceType
 {
-   BEFORE("before", AdviceMethodFactory.BEFORE, true),
-   AROUND("around", AdviceMethodFactory.AROUND, false),
-   AFTER("after", AdviceMethodFactory.AFTER, false),
-   THROWING("throwing", AdviceMethodFactory.THROWING, false),
-   FINALLY("finally", AdviceMethodFactory.FINALLY, false);
+   BEFORE("before", AdviceMethodFactory.BEFORE, true, "before"),
+   AROUND("around", AdviceMethodFactory.AROUND, false, "around"),
+   AFTER("after", AdviceMethodFactory.AFTER, false, "after"),
+   THROWING("throwing", AdviceMethodFactory.THROWING, false, "after-throwing"),
+   FINALLY("finally", AdviceMethodFactory.FINALLY, false, "finally");
    
+   private String name;
    private String description;
    private String accessor;
    private AdviceMethodFactory factory;
    private boolean generatedOnly;
    
-   AdviceType(String description, AdviceMethodFactory factory, boolean generatedOnly)
+   AdviceType(String name, AdviceMethodFactory factory, boolean generatedOnly,
+         String description)
    {
-      this.description = description;
-      this.accessor = "get" + Character.toUpperCase(description.charAt(0))
-         + description.substring(1);
+      this.name = name;
+      this.accessor = "get" + Character.toUpperCase(name.charAt(0))
+         + name.substring(1);
       this.factory = factory;
+      this.factory.setAdviceType(this);
       this.generatedOnly = generatedOnly;
+      this.description = description;
    }
    
    /**
-    * Returns a lower case description of this type.
+    * Returns a lower case name of this type.
     */
-   public final String getDescription()
+   public final String getName()
    {
-      return this.description;
+      return this.name;
    }
    
    /**
     * Returns an accessor string for this type.
     * 
     * This accessor is built by concatenating <code>"get"</code> with the
-    * the {@link #getDescription() description} starting with an upper case.
+    * the {@link #getName() description} starting with an upper case.
     * 
     * @return an accessor string for this type.
     */
@@ -95,5 +99,15 @@ public enum AdviceType
    public final boolean isGeneratedOnly()
    {
       return this.generatedOnly;
+   }
+   
+   /**
+    * Returns the verbose description of this type (for use on output).
+    * 
+    * @return the lower-case verbose description of this type
+    */
+   public String toString()
+   {
+      return this.description;
    }
 }

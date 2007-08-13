@@ -508,7 +508,7 @@ public class GeneratedAdvisorInterceptor implements Interceptor
       GeneratedOnlyInterceptor(String name, InterceptorFactory factory)
       {
          this.name = name;
-         logger.warn(factory.getType().getDescription() +
+         logger.warn(factory.getType().getName() +
                " interceptor:s'" + name +
                "' is ignored for dynamic invocation. Adding null GeneratedOnlyInterceptor in its place");
       }

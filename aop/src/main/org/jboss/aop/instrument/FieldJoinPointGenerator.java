@@ -88,8 +88,8 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       if (((FieldInfo)info).isRead())
       {
          read = true;
-         returnClassType = new WeakReference(((FieldInfo)info).getField().getType());
-         returnType = new WeakReference(((FieldInfo)info).getField().getGenericType());
+         returnClassType = new WeakReference<Class<?>>(((FieldInfo)info).getField().getType());
+         returnType = new WeakReference<Type>(((FieldInfo)info).getField().getGenericType());
       }
       hasTargetObject = !Modifier.isStatic(((FieldInfo)info).getField().getModifiers());
    }
@@ -137,16 +137,17 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       FieldAccess fieldAccess = (FieldAccess)joinPoint;
       Field field = fieldAccess.getField();
       return new AdviceMethodProperties(
-               setup.getAspectClass(),
-               setup.getAdviceName(),
-               JOINPOINT_TYPE,
-               (fieldAccess.isRead()) ? READ_INVOCATION_TYPE : WRITE_INVOCATION_TYPE,
-               (fieldAccess.isRead()) ? field.getGenericType() : Void.TYPE,
-               (fieldAccess.isRead()) ? new Type[] {} : new Type[] {field.getGenericType()},
-               (fieldAccess.isRead()) ? new Class[] {} : new Class[] {field.getType()},
-               null,
-               field.getDeclaringClass(),
-               hasTargetObject());
+            joinPoint,
+            setup.getAspectClass(),
+            setup.getAdviceName(),
+            JOINPOINT_TYPE,
+            (fieldAccess.isRead()) ? READ_INVOCATION_TYPE : WRITE_INVOCATION_TYPE,
+            (fieldAccess.isRead()) ? field.getGenericType() : Void.TYPE,
+            (fieldAccess.isRead()) ? new Type[] {} : new Type[] {field.getGenericType()},
+            (fieldAccess.isRead()) ? new Class[] {} : new Class[] {field.getType()},
+             null,
+             field.getDeclaringClass(),
+             hasTargetObject());
    }
 
 //   protected CtClass[] getJoinpointParameters() throws NotFoundException

@@ -66,7 +66,7 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
       }
    }
    
-   WeakReference returnType;
+   WeakReference<Class<?>> returnType;
    boolean hasTargetObject;
 
    public MethodJoinPointGenerator(GeneratedClassAdvisor advisor, MethodInfo info)
@@ -75,7 +75,7 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
             info.getMethod().getParameterTypes().length, false);
       if (!info.getUnadvisedMethod().getReturnType().equals(Void.TYPE))
       {
-         returnType = new WeakReference(info.getUnadvisedMethod().getReturnType());
+         returnType = new WeakReference<Class<?>>(info.getUnadvisedMethod().getReturnType());
       }
       hasTargetObject = !Modifier.isStatic(info.getMethod().getModifiers());
    }
@@ -122,23 +122,24 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
       {
          return null;
       }
-      return (Class)returnType.get();
+      return returnType.get();
    }
 
    protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
    {
       Method method = ((MethodExecution)joinPoint).getMethod();
       return new AdviceMethodProperties(
-               setup.getAspectClass(), 
-               setup.getAdviceName(), 
-               JOINPOINT_TYPE, 
-               INVOCATION_TYPE, 
-               method.getGenericReturnType(), 
-               method.getGenericParameterTypes(),
-               method.getParameterTypes(),
-               method.getGenericExceptionTypes(),
-               method.getDeclaringClass(),
-               hasTargetObject());
+            joinPoint,
+            setup.getAspectClass(), 
+            setup.getAdviceName(), 
+            JOINPOINT_TYPE, 
+            INVOCATION_TYPE, 
+            method.getGenericReturnType(), 
+            method.getGenericParameterTypes(),
+            method.getParameterTypes(),
+            method.getGenericExceptionTypes(),
+            method.getDeclaringClass(),
+            hasTargetObject());
    }
    
 

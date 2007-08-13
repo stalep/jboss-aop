@@ -27,6 +27,8 @@ import java.lang.reflect.Type;
 import javassist.CtClass;
 import javassist.NotFoundException;
 
+import org.jboss.aop.joinpoint.JoinPointBean;
+
 /** Contains the properties of an advice method that we want to find.
  * Once found it is populated with the arguments
  * 
@@ -48,9 +50,13 @@ public class AdviceMethodProperties
    
    public static enum OptionalParameters {TARGET, TARGET_CALLER}
    
+   // joinpoint this properties is associated with
+   private JoinPointBean joinPoint;
+   
    //find properties
    private Class aspectClass;
    private String adviceName;
+   private Class thrownType;
    private Class joinPointBeanType;
    private Class invocationType;
    private Type target;
@@ -68,10 +74,11 @@ public class AdviceMethodProperties
    private int[] args;
    
    private boolean overloadedMethod;
-
+   // TODO remove
    public AdviceMethodProperties(
-         Class aspectClass, 
-         String adviceName, 
+         JoinPointBean joinPoint,
+         Class aspectClass,
+         String adviceName,
          Class joinPointBeanType,
          Class invocationType,
          Type joinpointReturnType,
@@ -81,6 +88,26 @@ public class AdviceMethodProperties
          Type target,
          boolean targetAvailable)
    {
+      this(joinPoint, aspectClass, adviceName, null, joinPointBeanType, invocationType,
+            joinpointReturnType, joinpointParameters, joinpointParameterClassTypes,
+            joinpointExceptions, target, targetAvailable);
+   }
+   
+   public AdviceMethodProperties(
+         JoinPointBean joinPoint,
+         Class aspectClass,
+         String adviceName,
+         Class thrownType,
+         Class joinPointBeanType,
+         Class invocationType,
+         Type joinpointReturnType,
+         Type[] joinpointParameters,
+         Class[] joinpointParameterClassTypes,
+         Type[] joinpointExceptions,
+         Type target,
+         boolean targetAvailable)
+   {
+      this.joinPoint = joinPoint;
       this.aspectClass = aspectClass;
       this.adviceName = adviceName;
       this.joinPointBeanType = joinPointBeanType;
@@ -93,8 +120,9 @@ public class AdviceMethodProperties
       this.targetAvailable = targetAvailable;
       this.optionalParameters = OptionalParameters.TARGET;
    }
-   
+   // TODO remove
    public AdviceMethodProperties(
+         JoinPointBean joinPoint,
          Class aspectClass,
          String adviceName,
          Class joinPointBeanType,
@@ -108,9 +136,31 @@ public class AdviceMethodProperties
          Type caller,
          boolean callerAvailable)
    {
-      this (aspectClass, adviceName, joinPointBeanType, invocationType, joinpointReturnType,
-      joinpointParameters, joinpointParameterClassTypes, joinpointExceptions, target,
-      targetAvailable);
+      this (joinPoint, aspectClass, adviceName, null, joinPointBeanType, invocationType,
+            joinpointReturnType, joinpointParameters,
+            joinpointParameterClassTypes, joinpointExceptions, target,
+            targetAvailable, caller, callerAvailable);
+   }
+   
+   public AdviceMethodProperties(
+         JoinPointBean joinPoint,
+         Class aspectClass,
+         String adviceName,
+         Class thrownType,
+         Class joinPointBeanType,
+         Class invocationType,
+         Type joinpointReturnType,
+         Type[] joinpointParameters,
+         Class<?>[] joinpointParameterClassTypes,
+         Type[] joinpointExceptions,
+         Type target,
+         boolean targetAvailable,
+         Type caller,
+         boolean callerAvailable)
+   {
+      this (joinPoint, aspectClass, adviceName, thrownType, joinPointBeanType, invocationType,
+            joinpointReturnType, joinpointParameters,
+            joinpointParameterClassTypes, joinpointExceptions, target, targetAvailable);
       this.caller = caller;
       this.callerAvailable = callerAvailable;
       this.optionalParameters = OptionalParameters.TARGET_CALLER;
@@ -122,6 +172,11 @@ public class AdviceMethodProperties
       this.args = args;
    }
 
+   public JoinPointBean getJoinPoint()
+   {
+      return this.joinPoint;
+   }
+   
    public String getAdviceName()
    {
       return adviceName;
@@ -133,6 +188,10 @@ public class AdviceMethodProperties
       return aspectClass;
    }
 
+   public Class getThrownType()
+   {
+      return this.thrownType;
+   }
 
    public Class getJoinPointBeanType()
    {

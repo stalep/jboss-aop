@@ -35,6 +35,9 @@ import java.util.WeakHashMap;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.AdviceMethodProperties;
+import org.jboss.aop.advice.AdviceType;
+import org.jboss.aop.advice.InvalidAdviceException;
+import org.jboss.aop.advice.NoMatchingAdviceException;
 import org.jboss.aop.advice.annotation.assignability.DegreeAlgorithm;
 import org.jboss.aop.util.ReflectUtils;
 
@@ -105,15 +108,10 @@ public class AdviceMethodFactory
                // returning Object
                if (method.getReturnType() != Object.class)
                {
-                  if (AspectManager.verbose)
-                  {
-                     adviceMatchingMessage.append("\n[warn] - method ");
-                     adviceMatchingMessage.append(method);
-                     adviceMatchingMessage.append(" does not match default around signature because it returns ");
-                     adviceMatchingMessage.append(method.getReturnType());
-                     adviceMatchingMessage.append(" intead of java.lang.Object");
-                  }
-                  return false;
+                  throw new InvalidAdviceException("Method '"
+                     + method
+                     + "' does not match default around signature because it returns "
+                     + method.getReturnType() + " instead of java.lang.Object");
                }
                // throws Throwable
                for (Class exceptionType: method.getExceptionTypes())
@@ -123,13 +121,8 @@ public class AdviceMethodFactory
                      return true;
                   }
                }
-               if (AspectManager.verbose)
-               {
-                  adviceMatchingMessage.append("\n[warn] - method ");
-                  adviceMatchingMessage.append(method);
-                  adviceMatchingMessage.append(" does not match default around signature because it does not throw Throwable");
-               }
-               return false;
+               throw new InvalidAdviceException("Method '" + method +
+                  "' does not match default around signature because it does not throw java.lang.Throwable");
             }
             
             public AdviceInfo getAdviceInfo(Method method)
@@ -137,7 +130,7 @@ public class AdviceMethodFactory
                // creates an advice info with the greatest rank of all advices
                return new AdviceInfo(method, 2000)
                {
-                  public boolean validate(AdviceMethodProperties properties,
+                  public boolean matches(AdviceMethodProperties properties,
                         ReturnType adviceReturn)
                   {
                      if(parameterTypes[0].isAssignableFrom(properties.getInvocationType()))
@@ -146,15 +139,13 @@ public class AdviceMethodFactory
                      }
                      if (AspectManager.verbose)
                      {
-                        adviceMatchingMessage.append("\n[warn] - argument 0 of method ");
-                        adviceMatchingMessage.append(method);
-                        adviceMatchingMessage.append(" is not assignable from ");
-                        adviceMatchingMessage.append(properties.getInvocationType());
+                        appendNewMatchingMessage(method, "argument 0 is not assignable from ");
+                        appendMatchingMessage(properties.getInvocationType());
                      }
                      return false;
                   }
                   
-                  public void resetValidation() {}
+                  public void resetMatching() {}
 
                   public short getAssignabilityDegree(int typeIndex,
                         boolean isContextRule, AdviceMethodProperties properties)
@@ -185,20 +176,8 @@ public class AdviceMethodFactory
       ParameterAnnotationRule.ARGS, ParameterAnnotationRule.ARG};
    static final int[][] TCA_INCOMPATIBILITY = new int[][]{{2, 3}};
    
-   /** Stores advice matching failure messages on verbose mode. */
-   static StringBuffer adviceMatchingMessage;
-   
-   /**
-    * Method that returns log information about the last matching process executed.
-    * Should be called only if <code>Aspect.verbose</code> is <code>true</code>.
-    * 
-    * @return advice matching log information
-    */
-   public final static String getAdviceMatchingMessage()
-   {
-      String message = adviceMatchingMessage.toString();
-      return message;
-   }
+   /** Stores advice matching failure messages. */
+   private static StringBuffer adviceMatchingMessage = new StringBuffer();
    
    private HashMap<String, WeakHashMap<ParameterAnnotationRule[],
       Collection<AdviceInfo>>> adviceInfoCache;
@@ -207,6 +186,21 @@ public class AdviceMethodFactory
    private AdviceSignatureRule adviceSignatureRule;
    private ParameterAnnotationRule[] rules;
    private int[][] compulsory;
+   private AdviceType adviceType;
+   
+   static <T>void appendNewMatchingMessage(Method method, T message)
+   {
+      adviceMatchingMessage.append("\n  On method '");
+      adviceMatchingMessage.append(method);
+      adviceMatchingMessage.append("'\n    ");
+      adviceMatchingMessage.append(message);
+   }
+   
+   static <T>void appendMatchingMessage(T message)
+   {
+      
+      adviceMatchingMessage.append(message);
+   }
    
    
    /**
@@ -234,18 +228,33 @@ public class AdviceMethodFactory
    }
    
    /**
+    * Sets the type of advice this factory represents.
+    * 
+    * @param adviceType the type of the advice this factory is associated to
+    */
+   // weird code added because of mutual dependency between
+   // enums AdviceType and AdviceMethodFactory
+   // (AdviceMethodFactory needs AdviceType for outputing verbose messages)
+   public void setAdviceType(AdviceType adviceType)
+   {
+      if (this.adviceType != null)
+      {
+         throw new RuntimeException ("Unexpected call to setAdviceType method");
+      }
+      this.adviceType = adviceType;
+   }
+   
+   /**
     * Finds the more appropriate advice method.
     * 
     * @param properties contains information regarding the queried advice method
-    * @return           a properties fullfilled with the found method information. Can be
-    *                   <code>null</code> if no suitable method was found.
+    * @return           a properties fullfilled with the found method information.
+    * @throws NoMatchingAdviceException if no suitable method was found.
     */
    public final AdviceMethodProperties findAdviceMethod(AdviceMethodProperties properties)
+      throws NoMatchingAdviceException
    {
-      if (AspectManager.verbose)
-      {
-         adviceMatchingMessage = new StringBuffer();
-      }
+      adviceMatchingMessage.delete(0, adviceMatchingMessage.length());
       
       ParameterAnnotationRule[] contextRules = null;
       int[][] mutuallyExclusive = null;
@@ -270,7 +279,8 @@ public class AdviceMethodFactory
       // no advice method following the rules was found
       if (cacheCollection == null || cacheCollection.isEmpty())
       {
-         return null;
+         throw new NoMatchingAdviceException(properties, adviceType,
+               adviceMatchingMessage.toString());
       }
       synchronized(cacheCollection)
       {
@@ -281,7 +291,8 @@ public class AdviceMethodFactory
                contextRules);
          if (bestAdvice == null)
          {
-            return null;
+            throw new NoMatchingAdviceException(properties, adviceType,
+                  adviceMatchingMessage.toString());
          }
          // assign best Advice info to properties 
          bestAdvice.assignAdviceInfo(properties);
@@ -329,7 +340,7 @@ public class AdviceMethodFactory
             Collection<AdviceInfo> advices = map.get(contextRules);
             for(AdviceInfo adviceInfo: advices)
             {
-               adviceInfo.resetValidation();
+               adviceInfo.resetMatching();
             }
             return advices;
          }
@@ -347,11 +358,9 @@ public class AdviceMethodFactory
          {
             if (AspectManager.verbose)
             {
-               adviceMatchingMessage.append("\n[warn] - advice method ");
-               adviceMatchingMessage.append(properties.getAspectClass());
-               adviceMatchingMessage.append(".");
-               adviceMatchingMessage.append(properties.getAdviceName());
-               adviceMatchingMessage.append(" not found");
+               throw new NoMatchingAdviceException(properties, adviceType,
+                     ": no method named " + properties.getAdviceName() +
+                     " was found");
             }
             return null;
          }
@@ -366,17 +375,10 @@ public class AdviceMethodFactory
             }
             else
             {
-               try
-               {
-                  // advice applies to annotated parameter rules
-                  rankedAdvices.add(new AnnotatedParameterAdviceInfo(properties,
-                        methods[i], rules, contextRules, mutuallyExclusive,
-                        compulsory));
-               }catch (ParameterAnnotationRuleException pare)
-               {
-                  // no need to print messages -> 
-                  // exception prints automatically on verbose mode
-               }
+               // advice applies to annotated parameter rules
+               rankedAdvices.add(new AnnotatedParameterAdviceInfo(properties,
+                     adviceType, methods[i], rules, contextRules, mutuallyExclusive,
+                     compulsory, returnType));
             }
          }
          // sort according to rank
@@ -402,7 +404,7 @@ public class AdviceMethodFactory
       while (iterator.hasNext())
       {
          AdviceInfo advice = iterator.next();
-         if (advice.validate(properties, returnType))
+         if (advice.matches(properties, returnType))
          {
             bestAdvice = advice;
             break;
@@ -428,7 +430,7 @@ public class AdviceMethodFactory
          AdviceInfo advice = iterator.next();
          if (advice.getRank() == bestAdvice.getRank())
          {
-            if (!advice.validate(properties, returnType))
+            if (!advice.matches(properties, returnType))
             {
                iterator.remove();
             }
@@ -565,5 +567,10 @@ public class AdviceMethodFactory
    {
       boolean applies(Method method);
       AdviceInfo getAdviceInfo(Method method);
+   }
+   
+   interface MatchingRule
+   {
+      boolean matches(AdviceMethodProperties p);
    }
 }

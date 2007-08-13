@@ -92,11 +92,6 @@ public class ThrownAspect
       Assert.fail("This advice should never be executed");
    }
    
-   public void throwing7(Throwable throwable)
-   {
-      Assert.fail("This advice should never be executed");
-   }
-   
    public void throwing8(@Arg int i)
    {
       Assert.fail("This advice should never be executed");

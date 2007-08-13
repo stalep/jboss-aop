@@ -21,8 +21,6 @@
  */
 package org.jboss.test.aop.beforeafterArgs;
 
-import java.lang.reflect.Method;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;

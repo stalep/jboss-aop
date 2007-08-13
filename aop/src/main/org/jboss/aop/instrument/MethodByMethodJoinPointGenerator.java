@@ -62,7 +62,7 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
       }
    }
 
-   WeakReference returnType;
+   WeakReference<Class<?>> returnType;
    boolean hasCallingObject;
    boolean hasTargetObject;
    
@@ -73,7 +73,7 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
 
       if (!((MethodByMethodInfo)info).getMethod().getReturnType().equals(Void.TYPE))
       {
-         returnType = new WeakReference(((MethodByMethodInfo)info).getMethod().getReturnType());         
+         returnType = new WeakReference<Class<?>>(((MethodByMethodInfo)info).getMethod().getReturnType());         
       }
       hasCallingObject = !java.lang.reflect.Modifier.isStatic(((MethodByMethodInfo)info).getCallingMethod().getModifiers());
       hasTargetObject = !java.lang.reflect.Modifier.isStatic(((MethodByMethodInfo)info).getMethod().getModifiers());
@@ -136,25 +136,26 @@ public class MethodByMethodJoinPointGenerator extends JoinPointGenerator
       {
          return null;
       }
-      return (Class)returnType.get();
+      return returnType.get();
    }
 
    protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
    {
       Method method = ((MethodCallByMethod)joinPoint).getMethod();
       return new AdviceMethodProperties(
-               setup.getAspectClass(),
-               setup.getAdviceName(),
-               JOINPOINT_TYPE,
-               INVOCATION_TYPE,
-               method.getGenericReturnType(),
-               method.getGenericParameterTypes(),
-               method.getParameterTypes(),
-               method.getGenericExceptionTypes(),
-               method.getDeclaringClass(),
-               hasTargetObject(),
-               ((MethodCallByMethod) joinPoint).getCallingClass(),
-               hasCallingObject());
+            joinPoint,
+            setup.getAspectClass(),
+            setup.getAdviceName(),
+            JOINPOINT_TYPE,
+            INVOCATION_TYPE,
+            method.getGenericReturnType(),
+            method.getGenericParameterTypes(),
+            method.getParameterTypes(),
+            method.getGenericExceptionTypes(),
+            method.getDeclaringClass(),
+            hasTargetObject(),
+            ((MethodCallByMethod) joinPoint).getCallingClass(),
+            hasCallingObject());
    }
 
    protected boolean isCaller()

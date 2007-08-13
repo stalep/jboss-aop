@@ -558,7 +558,6 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
       assertEquals("Object,int", OverloadedFinallyAspect.finally69);
       assertEquals("void,Object[]", OverloadedFinallyAspect.finally70);
       assertEquals("void,Object", OverloadedFinallyAspect.finally71);
-      assertEquals("void", OverloadedFinallyAspect.finally72);
    }
    
    public void testBeforeCall()
@@ -647,7 +646,6 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
             OverloadedBeforeCallAspect.before42);
       assertEquals("SuperClass", OverloadedBeforeCallAspect.before43);
       assertEquals("int", OverloadedBeforeCallAspect.before44);
-      assertEquals("Object[]", OverloadedBeforeCallAspect.before45);
    }
    
    public void testAroundCall()
@@ -745,7 +743,6 @@ public class OverloadedAdviceTestCase extends AOPTestWithSetup
             OverloadedAroundCallAspect.around43);
       assertEquals("SuperClass", OverloadedAroundCallAspect.around44);
       assertEquals("int", OverloadedAroundCallAspect.around45);
-      assertEquals("Object[]", OverloadedAroundCallAspect.around46);
    }
    
    public void testAfterCall()

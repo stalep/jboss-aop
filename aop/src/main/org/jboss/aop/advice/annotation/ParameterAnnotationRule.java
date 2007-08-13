@@ -232,4 +232,9 @@ enum ParameterAnnotationRule
    {
       return singleEnforced;
    }
+   
+   public String toString()
+   {
+      return "@" + annotation.getSimpleName();
+   }
 }
