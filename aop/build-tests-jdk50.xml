@@ -383,6 +383,10 @@
          <param name="exclude" value="**/OverrideTestCase.class"/>
       </antcall>
       <antcall target="_run-javaagent-test" inheritRefs="true">
+         <param name="test" value="args"/>
+         <param name="caller" value="javaagent-genadvisor-tests"/>
+      </antcall>
+      <antcall target="_run-javaagent-test" inheritRefs="true">
          <param name="test" value="dynamicgenadvisor"/>
          <param name="caller" value="javaagent-genadvisor-tests"/>
       </antcall>
@@ -570,6 +574,10 @@
       <!-- Tests only applicable for this weaving mode -->
       <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="inforesolve"/>
+         <param name="caller" value="precompiled-genadvisor-tests"/>
+      </antcall>
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="args"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
       <antcall target="_run-precompiled-test" inheritRefs="true">

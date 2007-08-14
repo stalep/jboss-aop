@@ -127,6 +127,23 @@ public class PerVmAdvice
                {
                   throw new RuntimeException("Only one argument of type invocations is supported. Method "+method.toString()+" does not comply!");
                }
+               
+               // we only support params that implements org.jboss.aop.joinpoint.Invocation
+               Class paramClass = method.getParameterTypes()[0];
+               boolean foundInterface = false;
+               if(paramClass.isInterface() && paramClass.getName().equals("org.jboss.aop.joinpoint.Invocation"))
+                  foundInterface = true;
+               else
+               {
+                  Class superParamClass = findSuperClass(paramClass);
+                  for(Class iClass : superParamClass.getInterfaces())
+                  {
+                     if(iClass.getName().equals("org.jboss.aop.joinpoint.Invocation"))
+                        foundInterface = true;
+                  }
+               }
+               if(!foundInterface)
+                  throw new RuntimeException("Aspect method must have a parameter that implements Invocation. "+method.getName()+"class: "+paramClass.getCanonicalName());
             }
 
             CtClass clazz = TransformerCommon.makeClass(pool, name);
@@ -196,5 +213,15 @@ public class PerVmAdvice
       f.set(rtn, aspect);
       return rtn;
    }
+   
+   private static Class findSuperClass(Class clazz)
+   {
+      if(clazz.getSuperclass() == null || clazz.getSuperclass().getName().equals("java.lang.Object"))
+         return clazz;
+      else
+         return findSuperClass(clazz.getSuperclass());
+
+   }
+      
 
 }

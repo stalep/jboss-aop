@@ -62,59 +62,59 @@ public class ArgTestCase extends AOPTestWithSetup
       ArgAspect.clear();
    }
    
-//   public void testBench()
-//   {
-//      {
-//         long start = System.currentTimeMillis();
-//         for (int i = 0; i < 1000000; i++)
-//         {
-//            pojo.bunchArgs(1, 2.2, 3.3F, "four", 5);
-//         }
-//         long end = System.currentTimeMillis() - start;
-//         System.out.println("bunchArgs: " + end);
-//      }
-//
-//      {
-//         long start = System.currentTimeMillis();
-//         for (int i = 0; i < 1000000; i++)
-//         {
-//            pojo.bunchWrapped(1, 2.2, 3.3F, "four", 5);
-//         }
-//         long end = System.currentTimeMillis() - start;
-//         System.out.println("bunchWrapped: " + end);
-//      }
-//
-//      {
-//         long start = System.currentTimeMillis();
-//         for (int i = 0; i < 1000000; i++)
-//         {
-//            pojo.bunchArgsWithInvocation(1, 2.2, 3.3F, "four", 5);
-//         }
-//         long end = System.currentTimeMillis() - start;
-//         System.out.println("bunchArgsWithInvocation: " + end);
-//      }
-//      assertTrue(ArgAspect.argsWithInvocation);
-//      assertTrue(ArgAspect.args);
-//      assertTrue(ArgAspect.wrapped);
-//   }
+   public void testBench()
+   {
+      {
+         long start = System.currentTimeMillis();
+         for (int i = 0; i < 1000000; i++)
+         {
+            pojo.bunchArgs(1, 2.2, 3.3F, "four", 5);
+         }
+         long end = System.currentTimeMillis() - start;
+         System.out.println("bunchArgs: " + end);
+      }
+
+      {
+         long start = System.currentTimeMillis();
+         for (int i = 0; i < 1000000; i++)
+         {
+            pojo.bunchWrapped(1, 2.2, 3.3F, "four", 5);
+         }
+         long end = System.currentTimeMillis() - start;
+         System.out.println("bunchWrapped: " + end);
+      }
+
+      {
+         long start = System.currentTimeMillis();
+         for (int i = 0; i < 1000000; i++)
+         {
+            pojo.bunchArgsWithInvocation(1, 2.2, 3.3F, "four", 5);
+         }
+         long end = System.currentTimeMillis() - start;
+         System.out.println("bunchArgsWithInvocation: " + end);
+      }
+      assertTrue(ArgAspect.argsWithInvocation);
+      assertTrue(ArgAspect.args);
+      assertTrue(ArgAspect.wrapped);
+   }
 
    public void testEcho()
    {
       pojo.echo("hello");
-      //assertTrue(ArgAspect.echoCalled);
+      assertTrue(ArgAspect.echoCalled);
    }
 
-//   public void testBunch()
-//   {
-//      pojo.bunch(1, 2.2, 3.3F, "four", 5);
-//      assertTrue(ArgAspect.bunchCalled);
-//      assertTrue(ArgAspect.bunch2Called);
-//      assertTrue(ArgAspect.arg1Called);
-//      assertTrue(ArgAspect.arg2Called);
-//      assertTrue(ArgAspect.arg3Called);
-//      assertTrue(ArgAspect.arg4Called);
-//      assertTrue(ArgAspect.arg15Called);
-//      assertTrue(ArgAspect.arg24Called);
-//      assertTrue(ArgAspect.emptyArgCalled);
-//   }
+   public void testBunch()
+   {
+      pojo.bunch(1, 2.2, 3.3F, "four", 5);
+      assertTrue(ArgAspect.bunchCalled);
+      assertTrue(ArgAspect.bunch2Called);
+      assertTrue(ArgAspect.arg1Called);
+      assertTrue(ArgAspect.arg2Called);
+      assertTrue(ArgAspect.arg3Called);
+      assertTrue(ArgAspect.arg4Called);
+      assertTrue(ArgAspect.arg15Called);
+      assertTrue(ArgAspect.arg24Called);
+      assertTrue(ArgAspect.emptyArgCalled);
+   }
 }

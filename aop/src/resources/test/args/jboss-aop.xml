@@ -67,7 +67,7 @@
 
    <!-- @Arg test -->
    <aspect class="org.jboss.test.aop.args.ArgAspect" scope="PER_VM"/>
-<!--
+
    <bind pointcut="execution(* org.jboss.test.aop.args.POJO->bunchArgs(..))">
       <advice name="bunchArgs" aspect="org.jboss.test.aop.args.ArgAspect"/>
    </bind>
@@ -95,7 +95,7 @@
    <bind pointcut="execution(java.lang.String org.jboss.test.aop.args.POJO->echo(java.lang.String))">
       <advice name="echo" aspect="org.jboss.test.aop.args.ArgAspect"/>
    </bind>
--->
+
    <!-- @Invocation test -->
 	<aspect class="org.jboss.test.aop.args.InvocationAspect" scope="PER_VM"/>
 	

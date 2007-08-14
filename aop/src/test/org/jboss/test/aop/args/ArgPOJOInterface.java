@@ -31,6 +31,6 @@ public interface ArgPOJOInterface
 {
    String echo(String echo);
 
-//   int bunch(int x, double y, float z, String str, int q);
+   int bunch(int x, double y, float z, String str, int q);
 
 }
