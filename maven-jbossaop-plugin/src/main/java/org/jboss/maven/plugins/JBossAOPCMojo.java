@@ -147,16 +147,25 @@ public class JBossAOPCMojo extends AbstractMojo
     * @parameter expression="${project}"
     */
    private MavenProject project;
+   
+   /**
+    * The plugin dependencies.
+    *
+    * @parameter expression="${plugin.artifacts}"
+    * @required
+    * @readonly
+    */
+   private List<Artifact> pluginArtifacts; 
 
    public void execute() throws MojoExecutionException
    {
       compileOutOfProcess(createCommandLine());
    }
 
-   private String createClassPathList(Set<Artifact> artifacts)
+   private String createClassPathList()
    {
       StringBuffer sb = new StringBuffer();
-      for(Artifact a : artifacts)
+      for(Artifact a : pluginArtifacts)
       {
          sb.append(a.getFile().toString()).append(File.pathSeparator);
       }
@@ -175,7 +184,7 @@ public class JBossAOPCMojo extends AbstractMojo
    {
       Commandline cl = new Commandline();
       cl.setExecutable("java");
-      cl.addArguments(new String[] { "-cp", createClassPathList(project.getArtifacts())});
+      cl.addArguments(new String[] { "-cp", createClassPathList()});
       cl.addArguments(new String[] { "org.jboss.aop.standalone.Compiler"});
       if(isVerbose())
          cl.addArguments(new String[] { "-verbose"});
