@@ -254,7 +254,7 @@ public class JBossAOPCMojo extends AbstractMojo
          return sb.toString();
       }
       else
-         return "src/main/resources/jboss-aop.xml";
+         return new File(project.getBasedir(),"src/main/resources/jboss-aop.xml").getAbsolutePath();
    }
 
    private void processStream(BufferedReader input, boolean isError)
