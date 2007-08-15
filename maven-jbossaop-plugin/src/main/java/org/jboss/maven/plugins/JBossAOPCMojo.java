@@ -243,7 +243,6 @@ public class JBossAOPCMojo extends AbstractMojo
    { 
       if(aoppaths.length > 0)
       {
-         System.err.println("AOPPATH[0]: "+aoppaths[0]);
          StringBuffer sb = new StringBuffer();
          for(String aoppath : aoppaths)
          {
