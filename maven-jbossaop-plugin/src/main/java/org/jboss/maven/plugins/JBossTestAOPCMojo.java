@@ -38,7 +38,7 @@ package org.jboss.maven.plugins;
  *  - report (default false)
  *  
  * 
- * @author <a href="mailto:spederse@redhat.com">Stale W. Pedersen</a>
+ * @author <a href="mailto:stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @goal compile-test
  * @phase process-test-classes
  * @requiresDependencyResolution

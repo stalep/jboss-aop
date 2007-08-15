@@ -55,7 +55,7 @@ import org.codehaus.plexus.util.cli.Commandline;
  *  the same element, and separated with File.pathSeparator. this is not portable and will
  *  be looked into.
  * 
- * @author <a href="mailto:spederse@redhat.com">Stale W. Pedersen</a>
+ * @author <a href="mailto:stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @goal compile
  * @phase process-classes
  * @requiresDependencyResolution
