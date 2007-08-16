@@ -17,13 +17,20 @@ goto setupArgs
 :doneStart
 
 REM Setup AOP classpath
-SET AOPC_CLASSPATH=..\lib\concurrent.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\javassist.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-aop.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-aspect-library.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-common.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\qdox.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\trove.jar
+SET AOPC_CLASSPATH=..\lib-14\javassist.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-14\jboss-aop.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-14\jboss-backport-concurrent.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-14\jboss-common-core-jdk14.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-14\jboss-container14.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-14\jboss-container-metadata-spi14.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-14\jboss-logging-log4j.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-14\jboss-logging-spi.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-14\jbossretro-rt.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-14\jboss-standalone-aspect-library-jdk14.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-14\jdk14-pluggable-instrumentor.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-14\log4j.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-14\qdox.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-14\trove.jar
 SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%USER_CLASSPATH%
 
 

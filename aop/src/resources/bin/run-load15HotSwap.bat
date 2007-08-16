@@ -42,12 +42,17 @@ goto setupArgs
 
 
 REM Setup AOP classpath
-SET AOPC_CLASSPATH=..\lib-50\concurrent.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\javassist.jar
+SET AOPC_CLASSPATH=..\lib-50\javassist.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-aop-jdk50-client.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-container-metadata-spi.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-logging-log4j.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-logging-spi.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-standalone-aspect-library-jdk50.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\log4j.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\pluggable-instrumentor.jar
 SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-aop-jdk50.jar
 SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-aspect-library.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-common.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\qdox.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-common-core.jar
 SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\trove.jar
 SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%USER_CLASSPATH%
 

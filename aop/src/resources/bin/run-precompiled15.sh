@@ -69,12 +69,16 @@ fi
 
 
 
-AOPC_CLASSPATH=../lib-50/concurrent.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/javassist.jar
+AOPC_CLASSPATH=../lib-50/javassist.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-aop-jdk50-client.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-container-metadata-spi.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-logging-log4j.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-logging-spi.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-standalone-aspect-library-jdk50.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/log4j.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/pluggable-instrumentor.jar
 AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-aop-jdk50.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-aspect-library.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-common.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/qdox.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-common-core.jar
 AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/trove.jar
 AOPC_CLASSPATH=$AOPC_CLASSPATH:$USER_CLASSPATH
 

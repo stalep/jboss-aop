@@ -26,13 +26,20 @@ fi
 
 USER_CLASSPATH=$1
 
-AOPC_CLASSPATH=../lib/concurrent.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/javassist.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/jboss-aop.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/jboss-aspect-library.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/jboss-common.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/qdox.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/trove.jar
+AOPC_CLASSPATH=../lib-14/javassist.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-14/jboss-aop.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-14/jboss-backport-concurrent.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-14/jboss-common-core-jdk14.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-14/jboss-container14.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-14/jboss-container-metadata-spi14.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-14/jboss-logging-log4j.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-14/jboss-logging-spi.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-14/jbossretro-rt.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-14/jboss-standalone-aspect-library-jdk14.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-14/jdk14-pluggable-instrumentor.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-14/log4j.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-14/qdox.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-14/trove.jar
 AOPC_CLASSPATH=$AOPC_CLASSPATH:$USER_CLASSPATH
 
 CTR=0
