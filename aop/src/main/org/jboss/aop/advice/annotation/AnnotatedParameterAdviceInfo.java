@@ -558,8 +558,6 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       
       public final boolean internalValidate(AdviceMethodProperties properties)
       {
-         try
-         {
          if (index != -1 && !AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(
                method.getGenericParameterTypes()[index],
                (Type)rule.getAssignableFrom(properties), hierarchy))
@@ -568,21 +566,6 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             AdviceMethodFactory.appendMatchingMessage("-annotated parameter is not assignable from expected type ");
             AdviceMethodFactory.appendMatchingMessage(((Class) rule.getAssignableFrom(properties)).getName());
             return false;
-         }
-         }
-         // TODO this is a temporary fix until JBBUILD-384 is done
-         catch (RuntimeException e)
-         {
-            if (index != -1 && !AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(
-                  method.getParameterTypes()[index],
-                  (Type)rule.getAssignableFrom(properties), hierarchy))
-            {
-               AdviceMethodFactory.appendNewMatchingMessage(method, rule);
-               AdviceMethodFactory.appendNewMatchingMessage(method, rule);
-               AdviceMethodFactory.appendMatchingMessage("-annotated parameter is not assignable from expected type ");
-               AdviceMethodFactory.appendMatchingMessage(((Class) rule.getAssignableFrom(properties)).getName());
-               return false;
-            }
          }
          return  true;
       }
@@ -652,16 +635,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       public final boolean internalValidate(AdviceMethodProperties properties)
       {
          Type[] expectedTypes = (Type[]) rule.getAssignableFrom(properties);
-         Type[] adviceTypes = null;
-         try
-         {
-         adviceTypes = method.getGenericParameterTypes();
-         }
-         // TODO this is a temporary fix until JBBUILD-384 is done
-         catch (RuntimeException e)
-         {
-            adviceTypes = method.getParameterTypes();
-         }
+         Type[] adviceTypes = method.getGenericParameterTypes();
          if (indexesLength > 0 && expectedTypes.length == 0)
          {
             AdviceMethodFactory.appendNewMatchingMessage(method, "joinpoint has no arguments; unexpected ");

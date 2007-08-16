@@ -177,10 +177,6 @@
       <!-- Packages to include when generating api documentation -->
       <property name="javadoc.packages" value="org.jbos.aop.*"/>
     
-      <!-- TEMPORARY HACK TO RENAME THE NEW JBOSS RETRO JARS TO THE WAY THEY WERE, WITHOUT STUPID VERSION NUMBERS -->
-      <copy file="${org/jboss/jboss.retro.lib}/jboss-retro-1.1.1.jar" tofile="${org/jboss/jboss.retro.lib}/jbossretro.jar"/>
-      <copy file="${org/jboss/jboss.retro.lib}/jboss-retro-1.1.1-rt.jar" tofile="${org/jboss/jboss.retro.lib}/jbossretro-rt.jar"/>
-      
    </target>
 
 

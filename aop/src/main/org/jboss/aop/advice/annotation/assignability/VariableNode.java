@@ -262,8 +262,6 @@ class VariableNode
    
    private static boolean isSame(Type argument, Type fromArgument, boolean argumentAssigned)
    {
-      try
-      {
       if (argument instanceof WildcardType)
       {
          WildcardType wildcard = (WildcardType) argument;
@@ -328,9 +326,6 @@ class VariableNode
             return false;
          }
       }
-      }
-      // TODO this is a temporary fix until JBBUILD-384 is done
-      catch (NoClassDefFoundError e) {}
       return argument.equals(fromArgument); // TODO check this works correctly
    }
 
