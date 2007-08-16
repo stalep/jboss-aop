@@ -58,7 +58,7 @@ import org.codehaus.plexus.util.cli.Commandline;
  * @author <a href="mailto:stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @goal compile
  * @phase process-classes
- * @requiresDependencyResolution
+ * @requiresDependencyResolution compile
  */
 public class JBossAOPCMojo extends AbstractMojo
 {
@@ -170,11 +170,17 @@ public class JBossAOPCMojo extends AbstractMojo
          sb.append(a.getFile().toString()).append(File.pathSeparator);
       }
 
+//      for(Object o : project.getDependencyArtifacts())
+//      {
+//         sb.append(((Artifact) o).getFile().toString()).append(File.pathSeparator);
+//      }
+
       if(isTest())
          sb.append(project.getBuild().getTestOutputDirectory());
       else
          sb.append(project.getBuild().getOutputDirectory());
 
+      System.err.println("CLASSPATH: "+sb.toString());
       return sb.toString();
    }
 
