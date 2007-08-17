@@ -234,7 +234,7 @@
    </target>
 
 
-   <target name="jars14" depends="retrotranslate, source-jar">
+   <target name="jars14" depends="compile-classes, source-jar">
       <mkdir dir="${build.lib}"/>
 
       <!-- Build jboss-aop-as4deployer.jar for Jboss 4 with JDK 1.4 -->
