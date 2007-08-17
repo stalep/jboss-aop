@@ -121,8 +121,8 @@
       <property name="jboss-container14.location" value="${jboss.microcontainer14.lib}/jboss-container14.jar"/>
 
       <!-- Use the "old" jboss retro names, see "hack" in aop/build.xml/configure -->
-      <property name="jbossretro.location" value="${org/jboss/jboss.retro.lib}/jbossretro.jar"/>
-      <property name="jbossretro-rt.location" value="${org/jboss/jboss.retro.lib}/jbossretro-rt.jar"/>
+      <property name="jbossretro.location" value="${org/jboss/jboss.retro.lib}/jboss-retro.jar"/>
+      <property name="jbossretro-rt.location" value="${org/jboss/jboss.retro.lib}/jboss-retro-rt.jar"/>
 
       <property name="log4j.location" value="${apache.log4j.lib}/log4j.jar"/>
       <property name="qdox.location" value="${qdox.qdox.lib}/qdox.jar"/>
