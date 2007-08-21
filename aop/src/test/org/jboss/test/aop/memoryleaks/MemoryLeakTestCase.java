@@ -18,7 +18,7 @@
 * License along with this software; if not, write to the Free
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-*/ 
+*/
 package org.jboss.test.aop.memoryleaks;
 
 import java.io.File;
@@ -44,13 +44,13 @@ import junit.framework.TestCase;
 import org.jboss.profiler.jvmti.JVMTIInterface;
 
 /**
- * 
+ *
  * @author <a href="clebert.suconic@jboss.com">Clebert Suconic</a>
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  */
 public class MemoryLeakTestCase extends TestCase
 {
-   
+
    /**
     * Constructor for UndeployTester.
     * @param arg0
@@ -59,7 +59,7 @@ public class MemoryLeakTestCase extends TestCase
    {
       super(name);
    }
-   
+
    public MemoryLeakTestCase()
    {
       super();
@@ -67,7 +67,7 @@ public class MemoryLeakTestCase extends TestCase
 
    public void testWithClassLoader() throws Exception
    {
-	  
+
 	  LogManager.getLogManager(); // this is just to avoid a thread to be created using this ContextClassLoader inside LogManager
       WeakReference weakReferenceOnLoader = null;
       Class xmlLoader = null; // we need to keep that reference, so only the customer's classLoader will go away.
@@ -80,45 +80,45 @@ public class MemoryLeakTestCase extends TestCase
             ClassLoader oldloader = Thread.currentThread().getContextClassLoader();
             ClassLoader loader = newClassLoader();
             weakReferenceOnLoader = new WeakReference(loader);
-            
+
             Thread.currentThread().setContextClassLoader(loader);
-      
+
             Class testClass = getTestCaseClass(loader);
             className = testClass.getName();
-            
+
             Class aspectManagerClass = loader.loadClass("org.jboss.aop.AspectManager");
             assertNotSame(aspectManagerClass.getClassLoader(), this.getClass().getClassLoader());
-            
+
             System.out.println("oldLoader");
-   
+
             xmlLoader = loader.loadClass("org.jboss.aop.AspectXmlLoader");
             assertNotSame(xmlLoader.getClassLoader(),loader);
-   
+
             ArrayList methods = getTestMethods(testClass);
             Object testInstance = getTestInstance(testClass);
-            
+
             boolean passed = runTests(testInstance, methods);
             assertTrue(passed);
-            
+
             undeploy(xmlLoader);
-   
+
             passed = runTests(testInstance, methods, true);
             System.out.println("============ Ran tests after undeploy with errors: " + passed);
-            
+
             unregisterClassLoader(aspectManagerClass, loader);
-            
+
             loader=null;
             testClass=null;
             testInstance = null;
             methods.clear();
-            //xmlLoader = null; 
+            //xmlLoader = null;
             Thread.currentThread().setContextClassLoader(oldloader);
          }
 
          assertEquals(1, countInstances("org.jboss.aop.AspectManager", true));
          //checkUnload( weakReferenceOnLoader,"org.jboss.test.aop.memoryleaks.Test");
          checkUnload( weakReferenceOnLoader, className);
-         
+
          // I'm pretty sure nobody would clear that reference. I'm keeping this assertion here just to make it clear why we can't clear xmlLoader
          assertNotNull("The masterClassLoader needs to keep a reference, only the customer's classLoader needs to go away",xmlLoader);
       }
@@ -127,22 +127,22 @@ public class MemoryLeakTestCase extends TestCase
          e.printStackTrace();
          throw e;
       }
-      
+
       System.out.println("Done!");
    }
 
    private Object getTestInstance(Class testClass) throws Exception
    {
-      
+
       Constructor[] constructors = testClass.getConstructors();
       Constructor defaultConstructor =  null;
       Constructor nameConstructor =  null;
-      
+
       for (int i = 0 ; i < constructors.length ; i++)
       {
          System.out.println("found ctor " + constructors[i]);
          Class[] params = constructors[i].getParameterTypes();
-         
+
          if (params.length == 0)
          {
             defaultConstructor = constructors[i];
@@ -152,10 +152,10 @@ public class MemoryLeakTestCase extends TestCase
             nameConstructor = constructors[i];
          }
       }
-      
+
       if (nameConstructor != null)
       {
-         return nameConstructor.newInstance(new Object[] {testClass.getName()}); 
+         return nameConstructor.newInstance(new Object[] {testClass.getName()});
       }
       if (defaultConstructor != null)
       {
@@ -177,12 +177,12 @@ public class MemoryLeakTestCase extends TestCase
       }
       return testMethods;
    }
-   
+
    private boolean runTests(Object testInstance, ArrayList methods)
    {
       return runTests(testInstance, methods, false);
    }
-   
+
    private boolean runTests(Object testInstance, ArrayList methods, boolean breakOnError)
    {
       Method setup = null;
@@ -204,7 +204,7 @@ public class MemoryLeakTestCase extends TestCase
       catch (Exception e)
       {
       }
-      
+
       boolean passed = true;
       for (Iterator it = methods.iterator() ; it.hasNext() ; )
       {
@@ -212,12 +212,12 @@ public class MemoryLeakTestCase extends TestCase
          try
          {
             System.out.println("============ Running test " + testInstance.getClass().getName() + "." + test.getName());
-            
-            if (setup != null) 
+
+            if (setup != null)
             {
                setup.invoke(testInstance, new Object[0]);
             }
-            
+
             test.invoke(testInstance, new Object[0]);
             if (!breakOnError)
             {
@@ -239,7 +239,7 @@ public class MemoryLeakTestCase extends TestCase
          }
          finally
          {
-            if (tearDown != null) 
+            if (tearDown != null)
             {
                try
                {
@@ -252,15 +252,15 @@ public class MemoryLeakTestCase extends TestCase
 
          }
       }
-      
+
       return passed;
    }
-   
+
    private Class getTestCaseClass(ClassLoader loader) throws Exception
    {
       String className = System.getProperty("test.to.run");
       assertNotNull("Test to be run must be passed in test.to.run system property", className);
-      
+
       Class testClass  = loader.loadClass(className);
       assertSame("Fix your classpath, this test is not valid",loader, testClass.getClassLoader());
       assertNotSame(testClass.getClassLoader(), this.getClass().getClassLoader());
@@ -272,7 +272,7 @@ public class MemoryLeakTestCase extends TestCase
       JVMTIInterface jvmti = new JVMTIInterface();
       if (jvmti.isActive())
       {
-         
+
          //clearEverySingleFieldOnInstances("org.jboss.aop.AspectManager"); // This part is not intended to be commited. It could be used during debug, and you could use to release references on purpose, just to evaluate behavior
 
          jvmti.forceReleaseOnSoftReferences();
@@ -282,9 +282,9 @@ public class MemoryLeakTestCase extends TestCase
          {
             jvmti.heapSnapshot("snapshot", "mem");
             clazz=null;
-            
+
             String report =jvmti.exploreClassReferences(className, 15, true, false, false, false, false);
-            
+
             //System.out.println(report);
             String reportDir = System.getProperty("leak.report.dir");
             assertNotNull("You must pass in the directory for the reports as leak.report.dir", reportDir);
@@ -293,23 +293,23 @@ public class MemoryLeakTestCase extends TestCase
             PrintStream realoutput = new PrintStream(outfile);
             realoutput.println(report);
             realoutput.close();
-            
-            
+
+
             jvmti.forceGC();
-            
+
             clazz = jvmti.getClassByName(className);
-            
+
             if (clazz==null)
             {
                 System.out.println("Attention: After clearing every field on AspectManager, GC could release the classLoader");
             }
-            
+
             fail ("Class " + className + " still referenced. Look at report for more details");
          }
       }
       assertNull("The classLoader is supposed to be released. Something is holding a reference. If you activate -agentlib:jbossAgent this testcase will generate a report with referenceHolders.",weakReferenceOnLoader.get());
    }
-   
+
    public Field[] getDeclaredFields(Class clazz)
    {
       ArrayList list = new ArrayList();
@@ -321,20 +321,20 @@ public class MemoryLeakTestCase extends TestCase
              fields[i].setAccessible(true);
              list.add(fields[i]);
           }
-          
+
       }
-      
+
       return (Field[]) list.toArray(new Field[list.size()]);
    }
-   
-   
+
+
    private void clearEverySingleFieldOnInstances(String className)
    {
       System.out.println("Clearing " + className);
       JVMTIInterface jvmti = new JVMTIInterface();
       Class classes[] = jvmti.getLoadedClasses();
       Object objects[] = null;
-      
+
       for (int i=0;i<classes.length;i++)
       {
          if (classes[i].getName().equals(className))
@@ -385,7 +385,7 @@ public class MemoryLeakTestCase extends TestCase
             subClasses++;
          }
       }
-      
+
       return objects.length - subClasses;
    }
 
@@ -394,7 +394,7 @@ public class MemoryLeakTestCase extends TestCase
       System.out.println("============ Unregistering ClassLoader");
       Method instance = aspectManagerClass.getDeclaredMethod("instance", new Class[0]);
       Object aspectManager = instance.invoke(null, new Object[0]);
-      
+
       Method unregisterClassLoader = aspectManagerClass.getDeclaredMethod("unregisterClassLoader", new Class[] {ClassLoader.class});
       unregisterClassLoader.invoke(aspectManager, new Object[] {loader});
    }
@@ -403,7 +403,7 @@ public class MemoryLeakTestCase extends TestCase
    {
       Properties props = System.getProperties();
       Enumeration iter = props.keys();
-      
+
       System.out.println("properties:");
       while (iter.hasMoreElements())
       {
@@ -425,8 +425,8 @@ public class MemoryLeakTestCase extends TestCase
        {
           System.out.println("pathIgnore=" + pathIgnore);
        }
-       
-       
+
+
        ArrayList urls = new ArrayList();
        while (tokenString.hasMoreElements())
        {
@@ -438,42 +438,42 @@ public class MemoryLeakTestCase extends TestCase
              urls.add(itemLocation);
           }
        }
-       
+
        URL[] urlArray= (URL[])urls.toArray(new URL[urls.size()]);
-       
+
        ClassLoader masterClassLoader = URLClassLoader.newInstance(urlArray,null);
-       
-       
+
+
        ClassLoader appClassLoader = URLClassLoader.newInstance(new URL[] {classLocation},masterClassLoader);
-       
+
        return appClassLoader;
     }
-       
+
 
    private void undeploy(Class xmlLoader) throws Exception
    {
 
       String strurl = (String)AccessController.doPrivileged(new PrivilegedAction(){
-      
+
          public Object run()
          {
             return System.getProperty("jboss.aop.path");
          }
-      
+
       });
 //      String strurl = System.getProperty("jboss.aop.path");
       assertNotNull("Property jboss.aop.path should be defined",strurl);
       strurl = strurl.replace('\\','/');
-      URL url = new URL("file:/" + strurl);
-      
+      URL url = new URL("file://" + strurl);
+
       Method method = xmlLoader.getDeclaredMethod("undeployXML", new Class[] {URL.class});
       method.invoke(null, new Object[] {url});
-      
+
       System.out.println("\n====================================================================");
       System.out.println("!!!! Undeployed " + url);
       System.out.println("=====================================================================\n");
 
       //AspectXmlLoader.undeployXML(url); -- I need to use reflection operations as I don't want to take the chance on letting the JVM using a different classLoader
    }
-   
+
 }
