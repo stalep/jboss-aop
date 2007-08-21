@@ -111,15 +111,17 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       try
       {
          this.clazz = clazz;
-         super.transform(clazz, advisor);
-
-         if (genadvisor != null)
+         if (super.transform(clazz, advisor))
          {
-            addInstanceAdvisorWrappers(clazz);
-            TransformerCommon.compileOrLoadClass(clazz, genadvisor);
-            TransformerCommon.compileOrLoadClass(clazz, genInstanceAdvisor);
+            if (genadvisor != null)
+            {
+               addInstanceAdvisorWrappers(clazz);
+               TransformerCommon.compileOrLoadClass(clazz, genadvisor);
+               TransformerCommon.compileOrLoadClass(clazz, genInstanceAdvisor);
+            }
+            return true;
          }
-         return true;
+         return false;
       }
       catch (Throwable e)
       {
