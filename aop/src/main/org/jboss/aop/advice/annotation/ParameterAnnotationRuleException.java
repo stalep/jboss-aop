@@ -7,7 +7,7 @@ import org.jboss.aop.advice.InvalidAdviceException;
  * 
  * @author Flavia Rainone
  */
-class ParameterAnnotationRuleException extends InvalidAdviceException
+public class ParameterAnnotationRuleException extends InvalidAdviceException
 {
    private static final long serialVersionUID = 9190978361997650638L;
 

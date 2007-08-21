@@ -18,12 +18,27 @@
       <after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch1(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch1Around1(..))">
       <around name="around1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch1Around2(..))">
       <around name="around2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch1Around3(..))">
       <around name="around3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch1After2(..))">
       <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch1After3(..))">
       <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch1After5(..))">
       <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
@@ -38,11 +53,23 @@
       <finally name="finally1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch2(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch2Before3(..))">
       <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch2After1(..))">
       <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch2After2(..))">
       <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch2After3(..))">
       <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch2After5(..))">
       <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
 
@@ -56,11 +83,23 @@
       <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch3(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch3Before3(..))">
       <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch3After1(..))">/>
 		<after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch3After2(..))">
       <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch3After3(..))">
       <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch3After5(..))">
       <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
 
@@ -72,7 +111,7 @@
       <around name="around6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch4(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch4Before3(..))">
       <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
 
@@ -83,7 +122,7 @@
 		<before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch5(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch5Before3(..))">
       <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
@@ -93,10 +132,19 @@
       <after name="after6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch6(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch6After1(..))">
       <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch6After2(..))">
       <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch6After3(..))">
       <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch6After5(..))">
       <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
@@ -108,10 +156,19 @@
       <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch7(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch7After1(..))">
       <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch7After2(..))">
       <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch7After3(..))">
       <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch7After5(..))">
       <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
@@ -120,10 +177,19 @@
       <after name="after6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch8(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch8After1(..))">
       <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch8After2(..))">
       <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch8After3(..))">
       <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch8After5(..))">
       <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
@@ -134,10 +200,19 @@
       <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch9(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch9After1(..))">
       <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch9After2(..))">
       <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch9After3(..))">
       <after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch9After5(..))">
       <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
 
@@ -161,16 +236,43 @@
       <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInterfaces"/>
    </bind>
    
-   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*(org.jboss.test.aop.beforeafterArgs.Interface))">
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Before4(org.jboss.test.aop.beforeafterArgs.Interface))">
       <before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInterfaces"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Before5(org.jboss.test.aop.beforeafterArgs.Interface))">
       <before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInterfaces"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Around4(org.jboss.test.aop.beforeafterArgs.Interface))">
       <around name="around4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInterfaces"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Around5(org.jboss.test.aop.beforeafterArgs.Interface))">
       <around name="around5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInterfaces"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*After4(org.jboss.test.aop.beforeafterArgs.Interface))">
       <after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInterfaces"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*After5(org.jboss.test.aop.beforeafterArgs.Interface))">
       <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInterfaces"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Throwing4(org.jboss.test.aop.beforeafterArgs.Interface))">
       <throwing name="throwing4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInterfaces"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Throwing5(org.jboss.test.aop.beforeafterArgs.Interface))">
       <throwing name="throwing5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInterfaces"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Finally4(org.jboss.test.aop.beforeafterArgs.Interface))">
       <finally name="finally4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInterfaces"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Finally5(org.jboss.test.aop.beforeafterArgs.Interface))">
       <finally name="finally5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInterfaces"/>
    </bind>
    
@@ -184,11 +286,23 @@
       <finally name="finally1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInvertedArgs"/>
    </bind>
    
-   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*(java.lang.String,java.util.Collection))">
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Before2(java.lang.String,java.util.Collection))">
       <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInvertedArgs"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Around2(java.lang.String,java.util.Collection))">
       <around name="around2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInvertedArgs"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*After2(java.lang.String,java.util.Collection))">
       <after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInvertedArgs"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Throwing2(java.lang.String,java.util.Collection))">
       <throwing name="throwing2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInvertedArgs"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Finally2(java.lang.String,java.util.Collection))">
       <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectInvertedArgs"/>
    </bind>
    
@@ -222,20 +336,59 @@
       <finally name="finally6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*(java.util.List))">
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Before7(java.util.List))">
       <before name="before7" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Before8(java.util.List))">
       <before name="before8" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Around5(java.util.List))">
       <around name="around5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Around7(java.util.List))">
       <around name="around7" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Around8(java.util.List))">
       <around name="around8" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*After5(java.util.List))">/>
       <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*After7(java.util.List))">
       <after name="after7" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*After8(java.util.List))">
       <after name="after8" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Throwing2(java.util.List))">
       <throwing name="throwing2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Throwing7(java.util.List))">
       <throwing name="throwing7" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Throwing8(java.util.List))">
       <throwing name="throwing8" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Finally5(java.util.List))">
       <finally name="finally5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Finally7(java.util.List))">
       <finally name="finally7" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
+   </bind>
+   
+   <bind pointcut="execution(void org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->*Finally8(java.util.List))">
       <finally name="finally8" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspectGenerics"/>
    </bind>
    
@@ -248,8 +401,11 @@
 		<before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
    </bind>
    
-   <bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field1)">
+   <bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field1Before4)">
 		<before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field1Before5)">
 		<before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
    </bind>
    
@@ -259,8 +415,11 @@
       <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
    </bind>
    
-   <bind pointcut="set(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field2)">
+   <bind pointcut="set(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field2NonexistentAdvice)">
       <before name="XXX6" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="set(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field2Finally2)">
       <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
    </bind>
 
@@ -271,11 +430,14 @@
 		<after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
    </bind>
    
-   <bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field3)">
+   <bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field3After4)">
     	<after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
-		<after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
    </bind>
 
+   <bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field3After5)">
+		<after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+   </bind>
+   
 	<bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->field4)">
 		<before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
       <before name="before2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
@@ -287,11 +449,23 @@
       <finally name="finally1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
    </bind>
    
-   <bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field4)">
+   <bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field4Before4)">
 		<before name="before4" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field4Before5)">
 		<before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field4After4)">
 		<after name="after4" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field4After5)">
 		<after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
+   </bind>
+   
+   <bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->field4Finally2)">
       <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
    </bind>
 
@@ -308,7 +482,7 @@
       <finally name="finally1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 	</bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->method2(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->method2Finally2(..))">
 	   <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 	</bind>
    
@@ -325,7 +499,7 @@
       <finally name="finally1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 	</bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->method4(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->method4Finally2(..))">
 	   <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 	</bind>
 	
@@ -338,7 +512,7 @@
       <finally name="finally1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 	</bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->method6(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->method6Finally2(..))">
       <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 	</bind>
    
@@ -357,7 +531,7 @@
       <finally name="finally1" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 	</bind>
    
-   <bind pointcut="call(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->method6(..)) AND withincode(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->method8(..))">
+   <bind pointcut="call(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->method6Finally2(..)) AND withincode(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->method8Finally2(..))">
       <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.ArgsAspect"/>
 	</bind>
    

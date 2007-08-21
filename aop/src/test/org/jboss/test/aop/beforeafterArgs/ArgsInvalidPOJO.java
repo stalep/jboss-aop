@@ -32,92 +32,448 @@ import java.util.List;
  */
 public class ArgsInvalidPOJO
 {
-   public Object field1;
+   /* Object field1 */
+   public Object field1Before4;
+   public Object field1Before5;
    
-   public String field2;
+   /* String field2 */
+   public String field2NonexistentAdvice;
+   public String field2Finally2;
    
-   public int field3;
+   /* int field3 */
+   public int field3After4;
+   public int field3After5;
+
+   /* boolean field4 */
+   public static boolean field4Before4;
+   public static boolean field4Before5;
+   public static boolean field4After4;
+   public static boolean field4After5;
+   public static boolean field4Finally2;
    
-   public static boolean field4;
+   /* bunch1(int, double, float, String, int) */
    
-   public int bunch1(int x, double y, float z, String str, int q)
+   public int bunch1Around1(int x, double y, float z, String str, int q)
    {
       return x + (int) y + (int) z + q;
    }
    
-   public int bunch2(int x, double y, float z, int q)
+   public int bunch1Around2(int x, double y, float z, String str, int q)
+   {
+      return x + (int) y + (int) z + q;
+   }
+   
+   public int bunch1Around3(int x, double y, float z, String str, int q)
+   {
+      return x + (int) y + (int) z + q;
+   }
+   
+   public int bunch1After2(int x, double y, float z, String str, int q)
+   {
+      return x + (int) y + (int) z + q;
+   }
+   
+   public int bunch1After3(int x, double y, float z, String str, int q)
+   {
+      return x + (int) y + (int) z + q;
+   }
+   
+   public int bunch1After5(int x, double y, float z, String str, int q)
+   {
+      return x + (int) y + (int) z + q;
+   }
+   
+   /* bunch2(int, double, float, int) */
+   
+   public int bunch2Before3(int x, double y, float z, int q)
    {
       return x + (int) y * 2 + (int) z + q;
    }
    
-   public int bunch3(int x, double y, float z, int q)
+   public int bunch2After1(int x, double y, float z, int q)
+   {
+      return x + (int) y * 2 + (int) z + q;
+   }
+   
+   public int bunch2After2(int x, double y, float z, int q)
+   {
+      return x + (int) y * 2 + (int) z + q;
+   }
+   
+   public int bunch2After3(int x, double y, float z, int q)
+   {
+      return x + (int) y * 2 + (int) z + q;
+   }
+   
+   public int bunch2After5(int x, double y, float z, int q)
+   {
+      return x + (int) y * 2 + (int) z + q;
+   }
+   
+   /* bunch3(int, double, float, int) */
+   
+   public int bunch3Before3(int x, double y, float z, int q)
    {
       return x + (int) y * 3 + (int) z + q;
    }
    
-   public int bunch4(int x, double y, float z, int q)
+   public int bunch3After1(int x, double y, float z, int q)
+   {
+      return x + (int) y * 3 + (int) z + q;
+   }
+   
+   public int bunch3After2(int x, double y, float z, int q)
+   {
+      return x + (int) y * 3 + (int) z + q;
+   }
+   
+   public int bunch3After3(int x, double y, float z, int q)
+   {
+      return x + (int) y * 3 + (int) z + q;
+   }
+   
+   public int bunch3After5(int x, double y, float z, int q)
+   {
+      return x + (int) y * 3 + (int) z + q;
+   }
+   
+   /* bunch4(int, double, float, int) */
+   
+   public int bunch4Before3(int x, double y, float z, int q)
    {
       return x + (int) y * 4 + (int) z + q;
    }
    
-   public int bunch5(int x, double y, float z, int q)
+   /* bunch5(int, double, float, int) */
+   
+   public int bunch5Before3(int x, double y, float z, int q)
    {
       return x + (int) y * 5 + (int) z + q;
    }
    
-   public int bunch6(int x, double y, float z, int q)
+   /* bunch6(int, double, float, int) */
+   
+   public int bunch6After1(int x, double y, float z, int q)
    {
       return x + (int) y * 6 + (int) z + q;
    }
    
-   public int bunch7(int x, double y, float z, int q)
+   public int bunch6After2(int x, double y, float z, int q)
+   {
+      return x + (int) y * 6 + (int) z + q;
+   }
+   
+   public int bunch6After3(int x, double y, float z, int q)
+   {
+      return x + (int) y * 6 + (int) z + q;
+   }
+   
+   public int bunch6After5(int x, double y, float z, int q)
+   {
+      return x + (int) y * 6 + (int) z + q;
+   }
+   
+   /* bunch7(int, double, float, int) */
+   
+   public int bunch7After1(int x, double y, float z, int q)
    {
       return x + (int) y * 7 + (int) z + q;
    }
    
-   public int bunch8(int x, double y, float z, int q)
+   public int bunch7After2(int x, double y, float z, int q)
+   {
+      return x + (int) y * 7 + (int) z + q;
+   }
+   
+   public int bunch7After3(int x, double y, float z, int q)
+   {
+      return x + (int) y * 7 + (int) z + q;
+   }
+   
+   public int bunch7After5(int x, double y, float z, int q)
+   {
+      return x + (int) y * 7 + (int) z + q;
+   }
+   
+   /* bunch8(int, double, float, int) */
+   
+   public int bunch8After1(int x, double y, float z, int q)
    {
       return x + (int) y * 8 + (int) z + q;
    }
    
-   public int bunch9(int x, double y, float z, int q)
+   public int bunch8After2(int x, double y, float z, int q)
+   {
+      return x + (int) y * 8 + (int) z + q;
+   }
+   
+   public int bunch8After3(int x, double y, float z, int q)
+   {
+      return x + (int) y * 8 + (int) z + q;
+   }
+   
+   public int bunch8After5(int x, double y, float z, int q)
+   {
+      return x + (int) y * 8 + (int) z + q;
+   }
+   
+   /* bunch9(int, double, float, int) */
+   
+   public int bunch9After1(int x, double y, float z, int q)
    {
       return x + (int) y * 9 + (int) z + q;
    }
    
-   public void method2(String param1, int param2, boolean param3, ArgsPOJO[] param4)
+   public int bunch9After2(int x, double y, float z, int q)
+   {
+      return x + (int) y * 9 + (int) z + q;
+   }
+   
+   public int bunch9After3(int x, double y, float z, int q)
+   {
+      return x + (int) y * 9 + (int) z + q;
+   }
+   
+   public int bunch9After5(int x, double y, float z, int q)
+   {
+      return x + (int) y * 9 + (int) z + q;
+   }
+   
+   /* method2(String, int, boolean ArgsPOJO[]) */
+   
+   public void method2Finally2(String param1, int param2, boolean param3, ArgsPOJO[] param4)
    {}
    
-   public void method4(String param1, int param2, boolean param3, ArgsPOJO[] param4)
+   /* method4(String, int, boolean, ArgsPOJO[]) */
+   
+   public void method4Finally2(String param1, int param2, boolean param3, ArgsPOJO[] param4)
    {}
    
-   public void method6(short param1, long param2) throws POJOException
+   /* method6(short, long) */
+   
+   public void method6Finally2(short param1, long param2) throws POJOException
    {
       throw new POJOException();
    }
    
-   public void method8() throws POJOException
+   /* method8() */
+   
+   public void method8Finally2() throws POJOException
    {
-      this.method6((short) -4, (long) 4);
+      this.method6Finally2((short) -4, (long) 4);
    }
    
-   public void method9(Interface param) throws POJOException {}
+   /* method9(Interface) */
    
-   public void method10(Interface param) throws POJOException
+   public void method9Before4(Interface param) throws POJOException {}
+   
+   public void method9Before5(Interface param) throws POJOException {}
+   
+   public void method9Around4(Interface param) throws POJOException {}
+   
+   public void method9Around5(Interface param) throws POJOException {}
+   
+   public void method9After4(Interface param) throws POJOException {}
+   
+   public void method9After5(Interface param) throws POJOException {}
+   
+   public void method9Throwing4(Interface param) throws POJOException {}
+   
+   public void method9Throwing5(Interface param) throws POJOException {}
+   
+   public void method9Finally4(Interface param) throws POJOException {}
+   
+   public void method9Finally5(Interface param) throws POJOException {}
+   
+   /* method10(Interface) */
+   
+   public void method10Before4(Interface param) throws POJOException
    {
       throw new POJOException();
    }
    
-   public void method11(String param1, Collection param2) {}
-   
-   public void method12(String param1, Collection param2) throws POJOException
+   public void method10Before5(Interface param) throws POJOException
    {
       throw new POJOException();
    }
    
-   public void method13(List<SuperValue> arg) {}
+   public void method10Around4(Interface param) throws POJOException
+   {
+      throw new POJOException();
+   }
    
-   public void method14(List<SuperValue> arg) throws POJOException
+   public void method10Around5(Interface param) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method10After4(Interface param) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method10After5(Interface param) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method10Throwing4(Interface param) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method10Throwing5(Interface param) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method10Finally4(Interface param) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method10Finally5(Interface param) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   /* method11(String, Collection) */
+   
+   public void method11Before2(String param1, Collection param2) {}
+   
+   public void method11Around2(String param1, Collection param2) {}
+   
+   public void method11After2(String param1, Collection param2) {}
+   
+   public void method11Throwing2(String param1, Collection param2) {}
+   
+   public void method11Finally2(String param1, Collection param2) {}
+   
+   /* method12(String, Collection) */
+   
+   public void method12Before2(String param1, Collection param2) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method12Around2(String param1, Collection param2) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method12After2(String param1, Collection param2) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method12Throwing2(String param1, Collection param2) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method12Finally2(String param1, Collection param2) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   /* method13(List<SuperValue>) */
+   
+   public void method13Before7(List<SuperValue> arg) {}
+   
+   public void method13Before8(List<SuperValue> arg) {}
+   
+   public void method13Around5(List<SuperValue> arg) {}
+   
+   public void method13Around7(List<SuperValue> arg) {}
+   
+   public void method13Around8(List<SuperValue> arg) {}
+   
+   public void method13After5(List<SuperValue> arg) {}
+   
+   public void method13After7(List<SuperValue> arg) {}
+   
+   public void method13After8(List<SuperValue> arg) {}
+   
+   public void method13Throwing2(List<SuperValue> arg) {}
+   
+   public void method13Throwing7(List<SuperValue> arg) {}
+   
+   public void method13Throwing8(List<SuperValue> arg) {}
+   
+   public void method13Finally5(List<SuperValue> arg) {}
+   
+   public void method13Finally7(List<SuperValue> arg) {}
+   
+   public void method13Finally8(List<SuperValue> arg) {}
+   
+   /* method14(List<SuperValue>) */
+   
+   public void method14Before7(List<SuperValue> arg) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method14Before8(List<SuperValue> arg) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method14Around5(List<SuperValue> arg) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method14Around7(List<SuperValue> arg) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method14Around8(List<SuperValue> arg) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method14After5(List<SuperValue> arg) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method14After7(List<SuperValue> arg) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method14After8(List<SuperValue> arg) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method14Throwing2(List<SuperValue> arg) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method14Throwing7(List<SuperValue> arg) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method14Throwing8(List<SuperValue> arg) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method14Finally5(List<SuperValue> arg) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method14Finally7(List<SuperValue> arg) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   public void method14Finally8(List<SuperValue> arg) throws POJOException
    {
       throw new POJOException();
    }
