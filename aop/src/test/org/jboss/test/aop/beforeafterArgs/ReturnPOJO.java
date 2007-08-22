@@ -66,11 +66,6 @@ public class ReturnPOJO
       return new SubValue(8);
    }
    
-   public SubValue method9()
-   {
-      return new SubValue(9);
-   }
-   
    public SuperValue method10()
    {
       return new SuperValue(10);

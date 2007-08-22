@@ -167,21 +167,6 @@ public class ReturnTestCase extends AOPTestWithSetup
       assertNull(ReturnAspect.finallyThrown);
    }
    
-   public void test9()
-   {
-      SubValue value = pojo.method9();
-      assertNotNull(value);
-      assertEquals(9, value.i);
-      
-      assertNull(ReturnAspect.aroundAdvice);
-      assertNull(ReturnAspect.aroundReturn);
-      assertNull(ReturnAspect.afterAdvice);
-      assertNull(ReturnAspect.afterReturn);
-      assertNull(ReturnAspect.finallyAdvice);
-      assertNull(ReturnAspect.finallyReturn);
-      assertNull(ReturnAspect.finallyThrown);
-   }
-   
    public void test10()
    {
       SuperValue value = pojo.method10();

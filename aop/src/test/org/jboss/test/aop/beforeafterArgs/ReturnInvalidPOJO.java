@@ -29,65 +29,71 @@ package org.jboss.test.aop.beforeafterArgs;
  */
 public class ReturnInvalidPOJO
 {
-   public void method1() {}
+   /* method1() */
+   
+   public void method1Before() {}
 
-   public String method2()
+   /* method2() */
+   
+   public String method2Around2()
    {
       return "method2";
    }
    
-   public String method3()
+   /* method3() */
+   
+   public String method3Before()
    {
       return "method3";
    }
    
-   public String method4()
-   {
-      return "method4";
-   }
+   /* method5() */
    
-   public String method5()
+   public String method5Finally5()
    {
       return "method5";
    }
    
-   public String method6()
+   /* method6Around6() */
+   
+   public String method6Around6()
    {
       return "method6";
    }
    
-   public String method7()
-   {
-      return "method7";
-   }
+   /* method8() */
    
-   public SubValue method8()
+   public SubValue method8Before()
    {
       return new SubValue(8);
    }
    
-   public SubValue method9()
+   /* method9() */
+   
+   public SubValue method9Around9()
    {
       return new SubValue(9);
    }
    
-   public SuperValue method10()
+   public SubValue method9After9()
+   {
+      return new SubValue(9);
+   }
+   
+   public SubValue method9Finally9()
+   {
+      return new SubValue(9);
+   }
+   
+   /* method10() */
+   
+   public SuperValue method10Before()
    {
       return new SuperValue(10);
    }
    
-   public SuperValue method11()
+   public SuperValue method10After10()
    {
-      return new SuperValue(11);
-   }
-   
-   public SubValue method12() throws POJOException
-   {
-      throw new POJOException();
-   }
-   
-   public SubValue method13() throws POJOException
-   {
-      throw new POJOException();
+      return new SuperValue(10);
    }
 }
