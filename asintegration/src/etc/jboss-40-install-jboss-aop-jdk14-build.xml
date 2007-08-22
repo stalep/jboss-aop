@@ -81,8 +81,22 @@
          </and>
       </condition>
 
-      <property name="client.retro" value="${jboss.home}/client/jbossretro-rt.jar"/>
+		<!-- Older javassist versions were called jbossretro-rt.jar -->
+      <property name="client.old.retro" value="${jboss.home}/client/jbossretro-rt.jar"/>
+      <available file="${client.old.retro}" property="client.old.retro.exists"/>
+
+		<!-- Newer javassist versions are called jboss-retro-rt.jar -->
+      <property name="client.new.retro" value="${jboss.home}/client/jboss-retro-rt.jar"/>
+      <available file="${client.new.retro}" property="client.new.retro.exists"/>
+
+      <condition property="client.retro" value="client.old.retro">
+      	<isset property="client.old.retro.exists"/>
+      </condition>
+      <condition property="client.retro" value="client.new.retro">
+      	<isset property="client.new.retro.exists"/>
+      </condition>
       <available file="${client.retro}" property="client.retro.exists"/>
+      
       <property name="bak.client.retro" value="${jboss.home}/client/jbossretro-rt.bak"/>
       <available file="${bak.client.retro}" property="client.retro.bak.exists"/>
       
@@ -95,8 +109,22 @@
          </and>
       </condition>
 
-      <property name="lib.retro" value="${jboss.config.dir}/lib/jbossretro-rt.jar"/>
+		<!-- Older javassist versions were called jbossretro-rt.jar -->
+      <property name="lib.old.retro" value="${jboss.config.dir}/lib/jbossretro-rt.jar"/>
+      <available file="${lib.old.retro}" property="lib.old.retro.exists"/>
+      
+		<!-- Newer javassist versions are called jboss-retro-rt.jar -->
+      <property name="lib.new.retro" value="${jboss.config.dir}/lib/jboss-retro-rt.jar"/>
+      <available file="${lib.new.retro}" property="lib.new.retro.exists"/>
+      
+      <condition property="lib.retro" value="lib.old.retro">
+      	<isset property="lib.old.retro.exists"/>
+      </condition>
+      <condition property="lib.retro" value="lib.new.retro">
+      	<isset property="lib.new.retro.exists"/>
+      </condition>
       <available file="${lib.retro}" property="lib.retro.exists"/>
+
       <property name="bak.lib.retro" value="${old.deployer}/lib/jbossretro-rt.bak"/>
       <available file="${bak.lib.retro}" property="lib.retro.bak.exists"/>
       
@@ -177,7 +205,7 @@
          <classpath>
             <pathelement path="jboss-aop.jar"/>
             <pathelement path="javassist.jar"/>
-            <pathelement path="jbossretro-rt.jar"/>
+            <pathelement path="jboss-retro-rt.jar"/>
          </classpath>
 
          <arg value="${temp.dir}"/>
@@ -211,7 +239,7 @@
    </target>
 
    <target name="install.client.retro" depends="backup.client.retro" if="client.retro.exists">
-   	<copy file="jbossretro-rt.jar" tofile="${client.retro}" overwrite="true"/>
+   	<copy file="jboss-retro-rt.jar" tofile="${client.retro}" overwrite="true"/>
    </target>
 
    <target name="backup.lib.retro" depends="init" if="backup.lib.retro">
@@ -219,9 +247,9 @@
    </target>
    
    <target name="install.lib.retro" depends="backup.lib.retro" if="lib.retro.exists">
-      <delete file="${deploy.dir}/jboss-aop-jdk14.deployer/jbossretro-rt.jar"/>
+      <delete file="${deploy.dir}/jboss-aop-jdk14.deployer/jboss-retro-rt.jar"/>
       <delete file="${deploy.dir}/jboss-aop-jdk14.deployer/jboss-backport-concurrent.jar"/>
-   	<copy file="jbossretro-rt.jar" tofile="${lib.retro}" overwrite="true"/>
+   	<copy file="jboss-retro-rt.jar" tofile="${lib.retro}" overwrite="true"/>
    </target>
 
    <target name="install.post.4.0.4" depends="install.lib.javassist, install.client.javassist, install.client.retro, install.lib.retro"/>
