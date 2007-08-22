@@ -79,10 +79,7 @@ public class JoinPointPOJO
       calledStaticMethod(shouldThrow);
    }
    
-   public void method1()
-   {
-      
-   }
+   public void method1() {}
    
    public String method2(boolean shouldThrow) throws POJOException
    {

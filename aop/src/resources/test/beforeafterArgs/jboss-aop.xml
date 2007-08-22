@@ -747,7 +747,7 @@
 		<after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
 
-   <bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->number)">
+   <bind pointcut="field(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->numberBefore9)">
       <before name="before9" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
    
@@ -756,8 +756,11 @@
       <finally name="finally1" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
 
-   <bind pointcut="set(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->text)">
+   <bind pointcut="set(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->textAfter2)">
 		<after name="after2" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+   </bind>
+   
+   <bind pointcut="set(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->textAfter8)">
       <after name="after8" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
    
@@ -765,7 +768,7 @@
 		<after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
 	
-   <bind pointcut="get(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->text)">
+   <bind pointcut="get(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->textBefore5)">
 		<before name="before5" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
    
@@ -774,7 +777,7 @@
 		<after name="after3" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->method1(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->method1Finally9(..))">
 =      <finally name="finally9" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
    
@@ -790,7 +793,7 @@
       <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->method3(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->method3Throwing2(..))">
    	<throwing name="throwing2" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
    
@@ -803,7 +806,7 @@
    	<throwing name="throwing4" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->method5(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->method5Finally4(..))">
       <finally name="finally4" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
    
@@ -825,8 +828,11 @@
       <finally name="finally6" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
    
-   <bind pointcut="call(org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->new(boolean)) AND withincode(public void org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->*(..))">
+   <bind pointcut="call(org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->new(boolean)) AND withincode(public void org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->*Throwing9(..))">
       <throwing name="throwing9" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+   </bind>
+   
+   <bind pointcut="call(org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->new(boolean)) AND withincode(public void org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->*Throwing10(..))">
       <throwing name="throwing10" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
 
@@ -837,8 +843,11 @@
       <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
    
-   <bind pointcut="call(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->*Method(boolean)) AND withincode(org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->new(..))">
+   <bind pointcut="call(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->*MethodThrowing9(boolean)) AND withincode(org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->new(..))">
       <throwing name="throwing9" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+   </bind>
+   
+   <bind pointcut="call(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->*MethodThrowing10(boolean)) AND withincode(org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->new(..))">
       <throwing name="throwing10" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
    
