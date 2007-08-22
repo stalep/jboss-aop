@@ -100,6 +100,12 @@ public class CallerAspect
       before3Caller = caller;
    }
    
+   public void before3(@Caller TargetCallerInvalidPOJO caller)
+   {
+      before3 = true;
+      before3Caller = caller;
+   }
+   
    public void before4(@Caller ArgsPOJO caller)
    {
       Assert.fail("This advice should never be executed");
@@ -112,6 +118,13 @@ public class CallerAspect
    }
    
    public Object around2(@Caller TargetCallerPOJO caller) throws Throwable
+   {
+      around2 = true;
+      around2Caller = caller;
+      return CurrentInvocation.proceed();
+   }
+   
+   public Object around2(@Caller TargetCallerInvalidPOJO caller) throws Throwable
    {
       around2 = true;
       around2Caller = caller;
@@ -142,7 +155,7 @@ public class CallerAspect
       after2Caller = caller;
    }
    
-   public void after3(@Caller TargetCallerPOJO2 caller)
+   public void after3(@Caller TargetCallerInvalidPOJO2 caller)
    {
       Assert.fail("This advice should never be executed");
    }
@@ -164,6 +177,12 @@ public class CallerAspect
    }
    
    public void finally1(@Caller TargetCallerPOJO caller)
+   {
+      finally1 = true;
+      finally1Caller = caller;
+   }
+   
+   public void finally1(@Caller TargetCallerInvalidPOJO caller)
    {
       finally1 = true;
       finally1Caller = caller;
