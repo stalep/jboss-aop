@@ -24,6 +24,7 @@ package org.jboss.aop.deployment;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.jboss.aop.AspectManager;
@@ -33,6 +34,7 @@ import org.jboss.aop.deployment.LoaderRepositoryUrlUtil.UrlInfo;
 import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
 import org.jboss.mx.loading.LoaderRepository;
 import org.jboss.mx.loading.RepositoryClassLoader;
+import org.jboss.system.server.NoAnnotationURLClassLoader;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -73,7 +75,7 @@ public class ScopedJBossClassPool extends JBossClassPool
             }
             break;
          }
-         prnt = cl.getParent();
+         prnt = SecurityActions.getParent(cl);
       }
       
       super.childFirstLookup = !parentFirst;
@@ -92,8 +94,15 @@ public class ScopedJBossClassPool extends JBossClassPool
 
    private URL getResourceUrlForClass(String resourcename)
    {
-      HeirarchicalLoaderRepository3 repo = getRepository();
-      return repo.getResource(resourcename, super.getClassLoader());
+      try
+      {
+         HeirarchicalLoaderRepository3 repo = getRepository();
+         return repo.getResource(resourcename, super.getClassLoader());
+      }
+      catch(RuntimeException e)
+      {
+         throw e;
+      }
    }
    
    private boolean isMine(URL url)
@@ -124,6 +133,10 @@ public class ScopedJBossClassPool extends JBossClassPool
    public CtClass getCached(String classname)
    {
       if (classname == null)
+      {
+         return null;
+      }
+      if (isUnloadedClassLoader())
       {
          return null;
       }
@@ -164,7 +177,7 @@ public class ScopedJBossClassPool extends JBossClassPool
 
       try
       {
-         ClassPool pool = getCorrectPoolForResource(url);
+         ClassPool pool = getCorrectPoolForResource(classname, url);
          if (pool != lastPool.get())
          {
             lastPool.set(pool);
@@ -185,11 +198,15 @@ public class ScopedJBossClassPool extends JBossClassPool
 
       return null;
    }
-
-   private ClassPool getCorrectPoolForResource(URL url)
+   
+   private ClassPool getCorrectPoolForResource(String classname, URL url)
    {
       synchronized(AspectManager.getRegisteredCLs())
       {
+         //JBoss 5 has an extra NoAnnotationURLCLassLoader that is not on the default path, make sure that that is checked at the end
+         //FIXME This needs revisiting/removing once the 
+         ArrayList noAnnotationURLClassLoaderPools = null;
+         String resource = url.toString();
          for(Iterator it = AspectManager.getRegisteredCLs().values().iterator() ; it.hasNext() ; )
          {
             AOPClassPool candidate = (AOPClassPool)it.next();
@@ -204,18 +221,62 @@ public class ScopedJBossClassPool extends JBossClassPool
                //Sometimes the ClassLoader is a proxy for MBeanProxyExt?!
                RepositoryClassLoader rcl = (RepositoryClassLoader)candidate.getClassLoader();
                URL[] urls = rcl.getClasspath();
-               String resource = url.toString();
+               
                for (int i = 0 ; i < urls.length ; i++)
                {
-                  if (resource.indexOf(urls[i].toString()) >= 0)
+                  if (resource.indexOf(urls[i].getFile()) >= 0)
                   {
                      return candidate;
                   }
+               }
+            }
+            //FIXME Remove once we have the JBoss 5 version of pool
+            else if (isInstanceOfNoAnnotationURLClassLoader(candidate.getClassLoader()))
+            {
+               if (noAnnotationURLClassLoaderPools == null)
+               {
+                  noAnnotationURLClassLoaderPools = new ArrayList(); 
+               }
+               noAnnotationURLClassLoaderPools.add(candidate);
+            }
+         }
+         
+         //FIXME Remove once we have the JBoss 5 version of pool
+         if (noAnnotationURLClassLoaderPools != null)
+         {
+            for (Iterator it = noAnnotationURLClassLoaderPools.iterator() ; it.hasNext() ; )
+            {
+               ClassPool pool = (ClassPool)it.next();
+               
+               try
+               {
+                  pool.get(classname);
+                  return pool;
+               }
+               catch(NotFoundException ignoreTryNext)
+               {
                }
             }
          }
       }
 
       return AOPClassPool.createAOPClassPool(ClassPool.getDefault(), AOPClassPoolRepository.getInstance());
+   }
+   
+   /**
+    * NoAnnotationURLCLassLoader lives in different packages in JBoss 4 and 5
+    */
+   private boolean isInstanceOfNoAnnotationURLClassLoader(ClassLoader loader)
+   {
+      Class parent = loader.getClass();
+      while (parent != null)
+      {
+         if ("NoAnnotationURLClassLoader".equals(parent.getSimpleName()))
+         {
+            return true;
+         }
+         parent = parent.getSuperclass();
+      }
+      return false;
    }
 }

@@ -24,6 +24,9 @@ package org.jboss.aop.deployment;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
@@ -54,6 +57,7 @@ public class JBossClassPoolFactory implements ScopedClassPoolFactory
    }
    public ScopedClassPool create(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
    {
+      ClassPool parent = getCreateParentClassPools(cl, src, repository);
       if (cl instanceof RepositoryClassLoader)
       {
          File tempdir = getTempDirectory(cl);
@@ -70,13 +74,25 @@ public class JBossClassPoolFactory implements ScopedClassPoolFactory
          if (policy != null && policy.isScoped(cl))
          {
             //It is scoped
-            return new ScopedJBossClassPool(cl, src, repository, tempdir, tmpCP);
+            return new ScopedJBossClassPool(cl, /*src*/parent, repository, tempdir, tmpCP);
          }
-         return new JBossClassPool(cl, src, repository, tempdir, tmpCP);
+         return new JBossClassPool(cl, /*src*/parent, repository, tempdir, tmpCP);
       }
-      return new AOPClassPool(cl, src, repository);
+      return new AOPClassPool(cl, /*src*/parent, repository);
    }
 
+   private ClassPool getCreateParentClassPools(final ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
+   {
+      //Make sure that we get classpools for all the parent classloaders
+      ClassLoader parent = SecurityActions.getParent(cl);
+
+      if (parent != null)
+      {
+         return repository.registerClassLoader(parent);
+      }
+      return src;
+   }
+   
    private File getTempDirectory(ClassLoader cl)
    {
       File tempdir = null;
