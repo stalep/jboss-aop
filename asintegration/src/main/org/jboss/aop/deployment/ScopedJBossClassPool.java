@@ -94,15 +94,8 @@ public class ScopedJBossClassPool extends JBossClassPool
 
    private URL getResourceUrlForClass(String resourcename)
    {
-      try
-      {
-         HeirarchicalLoaderRepository3 repo = getRepository();
-         return repo.getResource(resourcename, super.getClassLoader());
-      }
-      catch(RuntimeException e)
-      {
-         throw e;
-      }
+      HeirarchicalLoaderRepository3 repo = getRepository();
+      return repo.getResource(resourcename, super.getClassLoader());
    }
    
    private boolean isMine(URL url)
