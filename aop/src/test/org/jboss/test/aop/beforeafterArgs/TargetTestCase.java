@@ -286,6 +286,68 @@ public class TargetTestCase extends AOPTestWithSetup
       assertTarget(null, false);
    }
    
+   public void test23()
+   {
+      boolean thrown = false;
+      try
+      {
+         new TargetCallerPOJO(CallType.CONSTRUCTOR, true);
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(true);
+      assertTarget(null, true);
+   }
+   
+   public void test24() throws POJOException
+   {
+      new TargetCallerPOJO(CallType.METHOD, false);
+      assertAllAdvices(false);
+      assertTarget(false);
+   }
+   
+   public void test25()
+   {
+      boolean thrown = false;
+      try
+      {
+         new TargetCallerPOJO(CallType.METHOD, true);
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(true);
+      assertTarget(true);
+   }
+   
+   public void test26() throws POJOException
+   {
+      new TargetCallerPOJO(CallType.STATIC_METHOD, false);
+      assertAllAdvices(false);
+      assertTarget(null, false);
+   }
+   
+   public void test27()
+   {
+      boolean thrown = false;
+      try
+      {
+         new TargetCallerPOJO(CallType.STATIC_METHOD, true);
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertAllAdvices(true);
+      assertTarget(null, true);
+   }
+   
    private void assertAllAdvices(boolean error)
    {
       assertTrue(TargetAspect.before1);
