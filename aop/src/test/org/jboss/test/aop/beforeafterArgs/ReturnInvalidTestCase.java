@@ -143,6 +143,7 @@ public class ReturnInvalidTestCase extends AOPTestWithSetup
       {
          thrown = true;
       }
+      assertTrue(thrown);
    }
    
    public void test9()
