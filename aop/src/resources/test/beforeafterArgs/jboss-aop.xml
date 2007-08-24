@@ -1005,10 +1005,19 @@
 		<stack-ref name="TargetAdvices"/>
    </bind>
 
-   <bind pointcut="execution(org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->new(int,..))">
+   <bind pointcut="execution(org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->new(short,..))">
       <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->new(int,..))">
       <around name="around3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->new(long,..))">
       <throwing name="throwing3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->new(double,..))">
       <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
    </bind>
    
@@ -1016,10 +1025,19 @@
 		<stack-ref name="TargetAdvices"/>
    </bind>
 	
-   <bind pointcut="field(int org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->*)">
+   <bind pointcut="field(int org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->*Before)">
       <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="field(int org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->*Around)">
       <around name="around3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="field(int org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->*Throwing)">
       <throwing name="throwing3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="field(int org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->*Finally)">
       <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
    </bind>
    
@@ -1027,10 +1045,19 @@
 		<stack-ref name="TargetAdvices"/>
    </bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method1(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method1Before(..))">
       <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method1Around(..))">
       <around name="around3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method1Throwing(..))">
       <throwing name="throwing3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method1Finally(..))">
       <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
    </bind>
 
@@ -1038,10 +1065,19 @@
 		<stack-ref name="TargetAdvices"/>
    </bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method2(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method2Before(..))">
       <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method2Around(..))">
       <around name="around3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method2Throwing(..))">
       <throwing name="throwing3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method2Finally(..))">
       <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
    </bind>
    
@@ -1049,10 +1085,19 @@
 		<stack-ref name="TargetAdvices"/>
    </bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method3(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method3Before(..))">
       <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method3Around(..))">
       <around name="around3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method3Throwing(..))">
       <throwing name="throwing3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method3Finally(..))">
       <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
    </bind>
    
@@ -1060,10 +1105,19 @@
 		<stack-ref name="TargetAdvices"/>
    </bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method4(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method4Before(..))">
       <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method4Around(..))">
       <around name="around3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method4Throwing(..))">
       <throwing name="throwing3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO->method4Finally(..))">
       <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
    </bind>
    
@@ -1071,26 +1125,39 @@
 		<stack-ref name="TargetAdvices"/>
    </bind>
    
-   <bind pointcut="call(org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO2->new(int,..))">
-		<stack-ref name="TargetAdvices"/>
+   <bind pointcut="call(org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO2->new(.., short))">
+      <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
    </bind>
    
-   <bind pointcut="call(void org.jboss.test.aop.beforeafterArgs.TargetCallerPOJO2->*()) AND !call(* *->method*_())">
-		<stack-ref name="TargetAdvices"/>
-      <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   <bind pointcut="call(org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO2->new(.., int))">
       <around name="around3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="call(org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO2->new(.., long))">
       <throwing name="throwing3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="call(org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO2->new(.., double))">
       <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
    </bind>
-   
+
    <bind pointcut="call(void org.jboss.test.aop.beforeafterArgs.TargetCallerPOJO2->method*_())">
 		<stack-ref name="TargetAdvices"/>
    </bind>
 
-   <bind pointcut="call(void org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO2->method*_())">
+   <bind pointcut="call(void org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO2->method*_Before())">
       <before name="before3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="call(void org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO2->method*_Around())">
       <around name="around3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="call(void org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO2->method*_Throwing())">
       <throwing name="throwing3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
+   </bind>
+   
+   <bind pointcut="call(void org.jboss.test.aop.beforeafterArgs.TargetCallerInvalidPOJO2->method*_Finally())">
       <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.TargetAspect"/>
    </bind>
    
