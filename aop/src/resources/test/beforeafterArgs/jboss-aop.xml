@@ -1168,7 +1168,7 @@
       <finally name="finally1" aspect="org.jboss.test.aop.beforeafterArgs.ThrownAspect"/>
 	</bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ThrownInvalidPOJO->method1(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ThrownInvalidPOJO->method1Throwing1(..))">
 		<throwing name="throwing1" aspect="org.jboss.test.aop.beforeafterArgs.ThrownAspect"/>
 	</bind>
    
@@ -1180,8 +1180,11 @@
 	<bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ThrownPOJO->method3(..))">
 	</bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ThrownInvalidPOJO->method3(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ThrownInvalidPOJO->method3Throwing3(..))">
 		<throwing name="throwing3" aspect="org.jboss.test.aop.beforeafterArgs.ThrownAspect"/>
+	</bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ThrownInvalidPOJO->method3Finally3(..))">
       <finally name="finally3" aspect="org.jboss.test.aop.beforeafterArgs.ThrownAspect"/>
 	</bind>
 	
@@ -1189,7 +1192,7 @@
       <finally name="finally4" aspect="org.jboss.test.aop.beforeafterArgs.ThrownAspect"/>
 	</bind>
 	
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ThrownInvalidPOJO->method4(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ThrownInvalidPOJO->method4Throwing4(..))">
 		<throwing name="throwing4" aspect="org.jboss.test.aop.beforeafterArgs.ThrownAspect"/>
 	</bind>
    
@@ -1197,7 +1200,7 @@
       <finally name="finally5" aspect="org.jboss.test.aop.beforeafterArgs.ThrownAspect"/>
 	</bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ThrownInvalidPOJO->method5(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ThrownInvalidPOJO->method5Throwing5(..))">
 		<throwing name="throwing5" aspect="org.jboss.test.aop.beforeafterArgs.ThrownAspect"/>
 	</bind>
 	
@@ -1209,7 +1212,7 @@
    <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ThrownPOJO->method7(..))">
 	</bind>
    
-	<bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ThrownInvalidPOJO->method7(..))">
+	<bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ThrownInvalidPOJO->method7Throwing8(..))">
 		<throwing name="throwing8" aspect="org.jboss.test.aop.beforeafterArgs.ThrownAspect"/>
 	</bind>
 
