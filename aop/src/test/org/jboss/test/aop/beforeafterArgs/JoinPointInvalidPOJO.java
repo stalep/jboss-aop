@@ -22,9 +22,17 @@
 package org.jboss.test.aop.beforeafterArgs;
 
 /**
- * Plain old java object used on @JoinPoint parameter tests.
+ * Plain old java object used on @JoinPoint parameter tests with invalid advices(its
+ * joinpoint executions will throw a NoMatchingAdviceException, due to the fact that
+ * there is no advice that matches the joinpoint).
+ * <br>
+ * This class is a "copy" of {@link ArgsPOJO} class. Each joinpoint of the original
+ * class is duplicated here to be matched by each invalid advice, in order to assert
+ * the invalidity of advices in an individual manner.
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
+ * 
+ * @see JoinPointInvalidTestCase
  */
 public class JoinPointInvalidPOJO
 {
