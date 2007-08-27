@@ -45,14 +45,14 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
     *                          compulsory only if the precondition annotation is
     *                          present among the annotated parameters.
     * 
-    * @throws ParameterAnnotationRuleException thrown when the advice method does not
-    *         comply with a parameter annotation rule.
+    * @throws InvalidAdviceException thrown when the advice method does not
+    *         comply with a rule regardless of the joinpoint being intercepted.
     */
    public AnnotatedParameterAdviceInfo(AdviceMethodProperties properties,
          AdviceType adviceType, Method method, ParameterAnnotationRule[] rules,
          ParameterAnnotationRule[] contextRules, int[][] mutuallyExclusive,
          int[][] compulsory, ReturnType returnType)
-      throws ParameterAnnotationRuleException, InvalidAdviceException
+      throws InvalidAdviceException
    {
       super(method, 0);
       this.paramTypes = createParameterAnnotationTypes(rules);
@@ -154,89 +154,6 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          AdviceMethodFactory.appendMatchingMessage("'");
          return false;
       }
-
-      
-   
-      
-//      switch (returnType)
-//      {
-//         case ANY:
-//            if (method.getReturnType() == void.class)
-//            {
-//               break;
-//            }
-//         case NOT_VOID:
-//            if (properties.getJoinpointReturnType() != void.class &&
-//                  method.getReturnType() != Object.class &&
-//                  !AssignabilityAlgorithm.FROM_VARIABLE.isAssignable(
-//                        properties.getJoinpointReturnType(),
-//                        method.getGenericReturnType(), hierarchy))
-//            {
-//               AdviceMethodFactory.appendNewMatchingMessage(method,
-//                     "return value cannot be assigned to type '");
-//               AdviceMethodFactory.appendMatchingMessage(properties.getJoinpointReturnType());
-//               AdviceMethodFactory.appendMatchingMessage("'");
-//               return false;
-//            }
-//            break;
-//         case VOID:
-//            if (method.getReturnType()!= void.class)
-//            {
-//               throw new InvalidAdviceException("The " + adviceType +
-//                     " advice method '" + method + "' return type must be void");
-//            }
-//      }
-//      
-//      for (int i = 0; i < mutuallyExclusive.length; i++)
-//      {
-//         int[] exclusiveParamTypes = mutuallyExclusive[i];
-//         int found = -1;
-//         for (int j = 0; j < exclusiveParamTypes.length; j++)
-//         {
-//            if (contextParamTypes[exclusiveParamTypes[j]].isSet())
-//            {
-//               if (found != -1)
-//               {
-//                  throw new InvalidAdviceException(
-//                        "Mutually exclusive parameter annotations '"
-//                        + contextParamTypes[exclusiveParamTypes[found]].rule
-//                        + "' and '" + contextParamTypes[exclusiveParamTypes[j]].rule
-//                        + "' found on " + adviceType + " advice method '" + method +
-//                        "'");
-//               }
-//               found = j;
-//            }
-//         }
-//      }
-//      
-//      if (compulsory != null)
-//      {
-//    	  for (int i = 0; i < compulsory.length; i++)
-//    	  {
-//    		  ParameterAnnotationType precondition = paramTypes[compulsory[i][0]];
-//    		  if (precondition.isSet())
-//    		  {
-//    			  for (int j = 1; j < compulsory[i].length; j++)
-//    			  {
-//    				  if (!paramTypes[compulsory[i][j]].isSet())
-//    				  {
-//                    AdviceMethodFactory.appendNewMatchingMessage(method, "compulsory");
-//                    AdviceMethodFactory.appendMatchingMessage(paramTypes[compulsory[i][j]].rule);
-//                    AdviceMethodFactory.appendMatchingMessage("-annotated parameter not found (this parameter is compulsory in the presence of a ");
-//                    AdviceMethodFactory.appendMatchingMessage(precondition.rule);
-//                    AdviceMethodFactory.appendMatchingMessage("-annotated parameter)");
-//                    return false;
-////    					  throw new InvalidAdviceException(
-////                          "Compulsory " + paramTypes[compulsory[i][j]].rule
-////                          + "-annotated parameter not found on " + adviceType + 
-////                          " advice method '" + method +
-////                          "' (this parameter is compulsory in the presence of a " + 
-////                          precondition.rule + "-annotated parameter)");
-//    				  }
-//    			  }
-//    		  }
-//    	  }
-//      }
       return true;
    }
 
@@ -309,11 +226,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
     * 
     * @param properties the properties which the searched advice method must comply
     *                   with
-    * 
-    * @throws ParameterAnnotationRuleException thrown when the advice method does not
-    *         comply with a parameter annotation rule.
     */
-   private void applyRules(AdviceMethodProperties properties) throws ParameterAnnotationRuleException
+   private void applyRules(AdviceMethodProperties properties)
    {
       Annotation[][] paramAnnotations = method.getParameterAnnotations();
       ParameterAnnotationType typeFound;
@@ -330,8 +244,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             }
             else if (findAnnotationType(annotation, i) != null)
             {
-               throw new ParameterAnnotationRuleException("Parameter " + i  +
-                     " of " + adviceType + " advice method '" + method + 
+               throw new InvalidAdviceException("Parameter " + i  + " of " +
+                     adviceType + " advice method '" + method + 
                      "' contains more than one valid annotation");
             }
          }
@@ -339,8 +253,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          {
             if (paramAnnotations[i].length == 0)
             {
-               throw new ParameterAnnotationRuleException("Parameter "
-                     + i  + " of " + adviceType + " advice method '" + method +
+               throw new InvalidAdviceException("Parameter " + i  + " of " +
+                     adviceType + " advice method '" + method +
                      "' is not annotated\nFor interception of joinpoint " +
                      properties.getJoinPoint() + " expecting one of annotations: " +
                      getDescription(paramTypes) + getDescription(contextParamTypes));
@@ -350,11 +264,6 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             AdviceMethodFactory.appendMatchingMessage("' is not annotated correctly. Expecting one of: ");
             AdviceMethodFactory.appendMatchingMessage(getDescription(paramTypes));
             AdviceMethodFactory.appendMatchingMessage(getDescription(contextParamTypes));
-//            throw new ParameterAnnotationRuleException("Parameter " + i  + " of " +
-//                  adviceType + " advice method '" + method +
-//                  "' is not annotated correctly\nFor interception of joinpoint " +
-//                  properties.getJoinPoint() + " expecting one of: " +
-//                  getDescription(paramTypes) + getDescription(contextParamTypes));
             this.prevalidated = false;
             return;
          }
@@ -392,12 +301,9 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
     * 
     * @return           the parameter type if there is a rule correspondent to
     *                   <code>annotation</code>; <code>null</code> otherwise
-    * 
-    * @throws ParameterAnnotationRuleException if a parameter annotation is found
-    *         more than once and the annotation rule forbides multiple occurences
     */
    private final ParameterAnnotationType findAnnotationType(Annotation annotation,
-         int i) throws ParameterAnnotationRuleException
+         int i)
    {
       
       for (int j = 0; j < paramTypes.length; j++)
@@ -438,11 +344,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
        * @param parameterAnnotation the parameter annotation
        * @param parameterIndex      the parameter index
        * @return <code>true</code> if <code>parameterAnnotation</code> is of this type
-       * @throws ParameterAnnotationRuleException if the parameter annotation has more
-       *         than one occurrence and this is forbidden by the annotation rule
        */
       public final boolean applies(Annotation parameterAnnotation, int parameterIndex)
-         throws ParameterAnnotationRuleException
       {
          if (parameterAnnotation.annotationType() == rule.getAnnotation())
          {
@@ -466,9 +369,6 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             AdviceMethodFactory.appendNewMatchingMessage(method, "mandatory ");
             AdviceMethodFactory.appendMatchingMessage(rule);
             AdviceMethodFactory.appendMatchingMessage("-annotated parameter  not found");
-//            throw new ParameterAnnotationRuleException(
-//                  "Mandatory " + rule + "-annotated parameter  not found on " +
-//                  adviceType + " advice method '" + method + "'");
             return false;
          }
          return internalValidate(properties);
@@ -479,12 +379,10 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
        * this type.
        * @param parameterIndex the index of the parameter
        * @param annotation     the annotation used on parameter <code>parameterIndex
-       *                       </code>        
-       * @throws ParameterAnnotationRuleException if the parameter annotation has more
-       *         than one occurrence and this is forbidden by the annotation rule
+       *                       </code>
        */
       public abstract void setIndex(int parameterIndex,
-            Annotation annotation) throws ParameterAnnotationRuleException;
+            Annotation annotation);
 
       /**
        * Returns <code>true</code> if there is a parameter of this type.
@@ -538,11 +436,10 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       }
       
       public final void setIndex(int parameterIndex, Annotation annotation)
-         throws ParameterAnnotationRuleException
       {
          if (this.index != -1)
          {
-            throw new ParameterAnnotationRuleException(
+            throw new InvalidAdviceException(
                   "Found more than one occurence of '"
                   + rule + "' on parameters of " + adviceType + " advice method '" +
                   method + "'");
@@ -612,7 +509,6 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       }
       
       public final void setIndex(int index, Annotation annotation)
-         throws ParameterAnnotationRuleException
       {
          if (indexesLength == indexes.length)
          {
@@ -660,7 +556,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
                // negative index
                if (indexes[i][1] < 0)
                {
-                  throw new ParameterAnnotationRuleException(
+                  throw new InvalidAdviceException(
                         "Negative joinpoint parameter index found at method '" +
                         method + "'");
                }
@@ -693,7 +589,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
                // index set more than once
                if (taken[indexes[i][1]])
                {
-                  throw new ParameterAnnotationRuleException(
+                  throw new InvalidAdviceException(
                         "Joinpoint parameter index '" + indexes[i][0] +
                         "' cannot be assigned to more than one " +  rule +
                         "-annotated advice parameter (on " + adviceType +

@@ -30,7 +30,6 @@ import junit.textui.TestRunner;
 
 import org.jboss.aop.advice.InvalidAdviceException;
 import org.jboss.aop.advice.NoMatchingAdviceException;
-import org.jboss.aop.advice.annotation.ParameterAnnotationRuleException;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
@@ -133,7 +132,7 @@ public class ArgInvalidTestCase extends AOPTestWithSetup
       {
          this.pojo.bunch1After5(5, (double) 1.3, (float) 0, "test1", 1);
       }
-      catch (ParameterAnnotationRuleException e)
+      catch (InvalidAdviceException e)
       {
          thrown = true;
       }
@@ -727,7 +726,7 @@ public class ArgInvalidTestCase extends AOPTestWithSetup
       {
          pojo.method11Before2("testInverted", null);
       }
-      catch (ParameterAnnotationRuleException e)
+      catch (InvalidAdviceException e)
       {
          thrown = true;
       }
@@ -738,7 +737,7 @@ public class ArgInvalidTestCase extends AOPTestWithSetup
       {
          pojo.method11Around2("testInverted", null);
       }
-      catch (ParameterAnnotationRuleException e)
+      catch (InvalidAdviceException e)
       {
          thrown = true;
       }
@@ -749,7 +748,7 @@ public class ArgInvalidTestCase extends AOPTestWithSetup
       {
          pojo.method11After2("testInverted", null);
       }
-      catch (ParameterAnnotationRuleException e)
+      catch (InvalidAdviceException e)
       {
          thrown = true;
       }
@@ -774,7 +773,7 @@ public class ArgInvalidTestCase extends AOPTestWithSetup
       {
          pojo.method12Before2("testInverted", null);
       }
-      catch(ParameterAnnotationRuleException e)
+      catch(InvalidAdviceException e)
       {
          thrown = true;
       }
@@ -785,7 +784,7 @@ public class ArgInvalidTestCase extends AOPTestWithSetup
       {
          pojo.method12Around2("testInverted", null);
       }
-      catch(ParameterAnnotationRuleException e)
+      catch(InvalidAdviceException e)
       {
          thrown = true;
       }
@@ -796,7 +795,7 @@ public class ArgInvalidTestCase extends AOPTestWithSetup
       {
          pojo.method12After2("testInverted", null);
       }
-      catch(ParameterAnnotationRuleException e)
+      catch(InvalidAdviceException e)
       {
          thrown = true;
       }
@@ -818,7 +817,7 @@ public class ArgInvalidTestCase extends AOPTestWithSetup
       {
          pojo.method12Finally2("testInverted", null);
       }
-      catch(ParameterAnnotationRuleException e)
+      catch(InvalidAdviceException e)
       {
          thrown = true;
       }
