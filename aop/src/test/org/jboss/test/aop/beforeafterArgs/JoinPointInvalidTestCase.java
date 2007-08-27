@@ -26,6 +26,7 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 import org.jboss.aop.Advised;
+import org.jboss.aop.advice.InvalidAdviceException;
 import org.jboss.aop.advice.NoMatchingAdviceException;
 import org.jboss.aop.joinpoint.JoinPointBean;
 import org.jboss.test.aop.AOPTestWithSetup;
@@ -168,6 +169,17 @@ public class JoinPointInvalidTestCase extends AOPTestWithSetup
    public void testMethodExecutionException2() throws POJOException
    {
       boolean thrown = false;
+      try
+      {
+         pojo.method5Around();
+      }
+      catch (InvalidAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
       try
       {
          pojo.method5Finally4();

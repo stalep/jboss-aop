@@ -143,6 +143,11 @@ public class ArgAspect
       before5Q = q;
    }
    
+   public void before6(@Arg int arg, @Args Object[] args)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+
    public int around1(@Arg int x, @Arg double y, @Arg float z, @Arg String str, @Arg long q)
    {
       Assert.fail("This advice should never be executed");
@@ -188,6 +193,12 @@ public class ArgAspect
       around6Args[3] = 48;
       invocation.setArguments(around6Args);
       return Integer.valueOf(((Integer) invocation.invokeNext()).intValue() + 6);
+   }
+   
+   public Object around7(@Arg int arg, @Args Object[] args) throws Throwable
+   {
+      Assert.fail("This advice should never be executed");
+      return CurrentInvocation.proceed();
    }
    
    public void after1(@Arg String str, @Arg(index = 0) int x)

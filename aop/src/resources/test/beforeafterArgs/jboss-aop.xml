@@ -200,6 +200,14 @@
       <finally name="finally2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
    
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch9Before6(..))">
+      <before name="before6" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch9Around7(..))">
+      <around name="around7" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+   
    <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch9After1(..))">
       <after name="after1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
    </bind>
@@ -806,6 +814,10 @@
    	<throwing name="throwing4" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>
 
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->method5Around(..))">
+      <around name="around" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
+   </bind>
+   
    <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.JoinPointInvalidPOJO->method5Finally4(..))">
       <finally name="finally4" aspect="org.jboss.test.aop.beforeafterArgs.JoinPointAspect"/>
    </bind>

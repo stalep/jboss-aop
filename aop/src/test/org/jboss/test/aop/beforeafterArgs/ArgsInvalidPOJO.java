@@ -227,6 +227,16 @@ public class ArgsInvalidPOJO
    
    /* bunch9(int, double, float, int) */
    
+   public int bunch9Before6(int x, double y, float z, int q)
+   {
+      return x + (int) y * 9 + (int) z + q;
+   }
+   
+   public int bunch9Around7(int x, double y, float z, int q)
+   {
+      return x + (int) y * 9 + (int) z + q;
+   }
+   
    public int bunch9After1(int x, double y, float z, int q)
    {
       return x + (int) y * 9 + (int) z + q;

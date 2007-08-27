@@ -81,6 +81,11 @@ public class JoinPointInvalidPOJO
    
    /* method5() */
    
+   public void method5Around() throws POJOException
+   {
+      throw new POJOException();
+   }
+   
    public void method5Finally4() throws POJOException
    {
       throw new POJOException();

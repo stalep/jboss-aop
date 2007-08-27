@@ -36,6 +36,7 @@ import org.jboss.aop.joinpoint.ConstructorCallByConstructor;
 import org.jboss.aop.joinpoint.ConstructorCallByMethod;
 import org.jboss.aop.joinpoint.ConstructorExecution;
 import org.jboss.aop.joinpoint.FieldAccess;
+import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.JoinPointBean;
 import org.jboss.aop.joinpoint.MethodCall;
 import org.jboss.aop.joinpoint.MethodCallByConstructor;
@@ -117,6 +118,11 @@ public class JoinPointAspect
    }
    
    public void before9(@JoinPoint FieldInfo joinPoint)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void around(Invocation invocation) throws Exception
    {
       Assert.fail("This advice should never be executed");
    }

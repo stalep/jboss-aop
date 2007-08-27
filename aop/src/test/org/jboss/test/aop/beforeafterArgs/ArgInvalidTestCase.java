@@ -28,6 +28,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
+import org.jboss.aop.advice.InvalidAdviceException;
 import org.jboss.aop.advice.NoMatchingAdviceException;
 import org.jboss.aop.advice.annotation.ParameterAnnotationRuleException;
 import org.jboss.test.aop.AOPTestWithSetup;
@@ -427,6 +428,28 @@ public class ArgInvalidTestCase extends AOPTestWithSetup
    public void test9()
    {
       boolean thrown = false;
+      try
+      {
+         this.pojo.bunch9Before6(15, (double) 3.5, (float) 16, 131);
+      }
+      catch(InvalidAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         this.pojo.bunch9Around7(15, (double) 3.5, (float) 16, 131);
+      }
+      catch(InvalidAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
       try
       {
          this.pojo.bunch9After1(15, (double) 3.5, (float) 16, 131);
