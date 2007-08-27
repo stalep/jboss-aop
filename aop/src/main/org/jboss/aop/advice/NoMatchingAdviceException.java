@@ -22,6 +22,21 @@
 package org.jboss.aop.advice;
 
 /**
+ * Exception thrown when no advice suitable to intercept a specific joinpoint was
+ * found.
+ * 
+ * This does not mean, however, that an advice is invalid or breaks a signature
+ * rule.
+ * <p>
+ * If your application is throwing this exception, you can either:
+ * <ul>
+ * <li> add a valid advice method if there is no advice method with the specified
+ * name;
+ * <li> change an existing advice method in order to make it suitable for the
+ * problematic joinpoint;</li>
+ * <li> add an overloaded advice method that is suitable for the problematic
+ * joinpoint.</li>
+ * </ul>
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
@@ -29,6 +44,13 @@ public class NoMatchingAdviceException extends RuntimeException
 {
    private static final long serialVersionUID = 2170206416883695862L;
 
+   /**
+    * Constructor.
+    * 
+    * @param adviceProperties properties of the queried advice
+    * @param adviceType       the type of the queried advice
+    * @param message          message explaining why no matching advice was found
+    */
    public NoMatchingAdviceException(AdviceMethodProperties adviceProperties,
          AdviceType adviceType, String message)
    {
@@ -36,5 +58,18 @@ public class NoMatchingAdviceException extends RuntimeException
             adviceProperties.getAdviceName() + "' could be found in " +
             adviceProperties.getAspectClass().getName() + " for joinpoint " +
             adviceProperties.getJoinPoint() + message);
+   }
+   
+   /**
+    * Constructor.
+    * 
+    * @param adviceProperties properties of the queried advice
+    * @param adviceType       the type of the queried advice
+    * @param message          message explaining why no matching advice was found
+    */
+   public NoMatchingAdviceException(Class aspectClass, String adviceName)
+   {
+      super("No matching advice called '" + adviceName + "' could be found in " +
+            aspectClass.getName() + ": method was not found");
    }
 }

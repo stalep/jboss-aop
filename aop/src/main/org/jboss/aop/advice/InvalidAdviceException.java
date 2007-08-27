@@ -22,13 +22,26 @@
 package org.jboss.aop.advice;
 
 /**
- * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
- *
+ * Exception thrown when an advice method does not comply with one or more rules
+ * regardless of the joinpoint to be intercepted.
+ * <p>
+ * If your application is throwing this exception, the solution is to fix the
+ * advice method so that it follows the required rule.
+ * 
+ * @author Flavia Rainone
  */
 public class InvalidAdviceException extends RuntimeException
 {
    private static final long serialVersionUID = -7761721818447236098L;
 
+   /**
+    * Constructor.
+    * <p>
+    * @param message a message describing why the advice method is considered
+    *                invalid. Message should specify clearly the rule that is broken,
+    *                the advice method that is invalid, and its type (if the rule
+    *                depends on the type).
+    */
    public InvalidAdviceException(String message)
    {
       super(message);
