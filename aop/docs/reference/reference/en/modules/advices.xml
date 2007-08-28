@@ -1225,4 +1225,54 @@ public Object [advice name]() throws Throable]]></programlisting>
          </para>
       </sect2>
    </sect1>
+   <sect1 id="adv-errors" revision="1">
+      <title>Common Mistakes</title>
+      <para>
+         While writing advices and bindings, it is possible to make some mistakes,
+         like, for example, mistyping the advice name, or writing an advice with an
+         invalid signature.
+      </para>
+      <para>
+         Whenever there is a mistake in the advice name or signature, JBoss AOP will
+         throw an exception with a message stating the cause of the error.
+         The exception thrown is a runtime exception and should not be treated.
+         Instead, it indicates a mistake that must be fixed.
+      </para>
+      <para>
+         There are two types of exceptions JBoss AOP can throw on those cases:
+      </para>
+      <itemizedlist>
+          <listitem>
+             <classname>org.jboss.InvalidAdviceException</classname>
+             <para>
+                This exception indicates that an advice's signature is considered
+                invalid for the type used on the binding.
+             </para>
+             <para>
+                This can happen when the advice is mistakenly declared to be of the
+                wrong type, or when one of the signature rules was not followed.
+             </para>
+          </listitem>
+          <listitem>
+             <classname>org.jboss.NoMatchingAdviceException</classname>
+             <para>
+                This exception is thrown when JBoss AOP can not find an advice method
+                suitable for a specific joinpoint to be intercepted.
+             </para>
+             <para>
+                A possible scenario is when there is no advice method with the
+                name used on the bind declaration. To solve it, just fix the advice
+                name on the declaration or add a method with the declared advice name.
+             </para>
+             <para>
+                When there is one or more methods with the advice name, this exception
+                indicates that JBoss was not able to find an advice with a signature
+                that suits the joinpoint to be intercepted. In this case, the
+                solution can be to alter the signature of one of the existent advice
+                methods, or to add an overloaded advice method that matches the
+                joinpoint to be intercepted.
+             </para>
+          </listitem>
+      </itemizedlist>
+   </sect1>
 </chapter>
