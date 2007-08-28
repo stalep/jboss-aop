@@ -27,34 +27,32 @@ package org.jboss.test.aop.rebuildingchain;
  * @author <a href="stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-public class SyncThread implements Runnable
+public class SyncThread extends Thread
 {
-   private static boolean status = false;
-   private static boolean done = false;
+   private static volatile boolean status = false;
+   private volatile boolean done = false;
 
    @Override
    public void run()
    {
-      while(!done)
-      {
+
+         for(int i=0; i < 30; i++)
+         {
          checkStatus();
-//        try
-//        {
-//           Thread.sleep(2);
-//        }
-//        catch(InterruptedException ie)
-//        {
-//           System.err.println("Exception during sleep "+ie.getMessage());
-//        }
+         
+         if(isDone())
+            return;
+         
       }
    }
    
    private void checkStatus()
    {
+//      System.out.println("checking status...");
       if(getStatus() == false)
       {
          RebuildingChainTestCase.setTestFailed();
-         throw new RuntimeException("Status wasnt true!!!!");
+         throw new RuntimeException("Status failed!!!!");
       }
    }
 
@@ -68,8 +66,13 @@ public class SyncThread implements Runnable
       status = b;
    }
    
-   public synchronized static void setDone(boolean b)
+   public void setDone(boolean b)
    {
       done = b;
+   }
+   
+   private boolean isDone()
+   {
+      return done;
    }
 }

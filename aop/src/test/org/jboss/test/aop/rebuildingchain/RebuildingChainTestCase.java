@@ -54,16 +54,14 @@ public class RebuildingChainTestCase extends AOPTestWithSetup
    public void testRebuildingChain() throws Exception
    {
       System.out.println("testing rebuildingchain!");
-      AspectManager.instance().verbose = true;
-      RebuildThread.linkNewAdvice();
-//      RebuildThread.unlinkAdvice();
-//      RebuildThread.linkNewAdvice();
-      
-      Thread t1 = new Thread(new SyncThread());
+//      AspectManager.instance().verbose = true;
+      SyncThread st = new SyncThread();
       RebuildThread rt = new RebuildThread();
-      Thread t2 = new Thread(rt);
-      t1.start();
-      t2.start();
+      rt.linkNewAdvice();
+      
+      rt.start();
+      st.start();
+      
       try
       {
          long start = System.currentTimeMillis();
@@ -75,29 +73,10 @@ public class RebuildingChainTestCase extends AOPTestWithSetup
          System.err.println("BAH "+ie.getMessage());
       }
       
-      SyncThread.setDone(false);
+      st.setDone(true);
       rt.setDone(true);
       
-      t2.join();
-      if(t2.isAlive())
-         System.out.println("rebuildingthread is still alive!!");
-      
-      t1.start();
-      
-      try
-      {
-         long start = System.currentTimeMillis();
-         Thread.sleep(20);
-         System.out.println("Slept for: "+(System.currentTimeMillis()-start));
-      }
-      catch(InterruptedException ie)
-      {
-         System.err.println("BAH "+ie.getMessage());
-      }
-      
-      SyncThread.setDone(false);
-      
-      assertFalse("All well....", failed);
+      assertFalse("Failed to match pointcut when rebuilding the chain....", failed);
    }
    
    public static void setTestFailed()
