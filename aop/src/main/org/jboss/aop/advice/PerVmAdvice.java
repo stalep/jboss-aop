@@ -35,8 +35,6 @@ import javassist.CtNewMethod;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.instrument.TransformerCommon;
 import org.jboss.aop.joinpoint.Joinpoint;
-import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -46,8 +44,6 @@ import org.jboss.logging.Logger;
  */
 public class PerVmAdvice
 {
-   private static final Logger logger = AOPLogger.getLogger(PerVmAdvice.class);
-   
    public static synchronized Interceptor generateOptimized(Joinpoint joinpoint, AspectManager manager, String adviceName, AspectDefinition a) throws Exception
    {
       Object aspect = manager.getPerVMAspect(a);
