@@ -33,13 +33,13 @@ import org.jboss.aop.joinpoint.Invocation;
 public class SyncInterceptor implements Interceptor
 {
    
-   @Override
+   //@Override
    public String getName()
    {
       return this.getClass().getName();
    }
 
-   @Override
+   //@Override
    public Object invoke(Invocation invocation) throws Throwable
    {
       try
