@@ -21,14 +21,13 @@
   */
 package org.jboss.test.aop.args;
 
-import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.joinpoint.FieldInvocation;
 import org.jboss.aop.joinpoint.FieldReadInvocation;
 import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.MethodInvocation;
 
 /**
- * Aspect used on @org.jboss.aop.advice.annotation.Invocation parameter tests.
+ * Aspect used on tests with typed Invocation parameters.
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
@@ -43,36 +42,33 @@ public class InvocationAspect
       invokeReturn = null;
    }
    
-   public Object aroundMethodExecution1(@JoinPoint MethodInvocation invocation)
+   public Object aroundMethodExecution1(MethodInvocation invocation) throws Throwable
    {
       advice = "aroundMethodExecution1";
       return "aroundMethodExecution1";
    }
    
-   public Object aroundMethodExecution2(@JoinPoint MethodInvocation invocation)
+   public Object aroundMethodExecution2(MethodInvocation invocation) throws Throwable
    {
       advice = "aroundMethodExecution1";
       return "aroundMethodExecution1";
    }
    
-   public Object aroundMethodCalledByMethod(@JoinPoint Invocation invocation)
-      throws Throwable
+   public Object aroundMethodCalledByMethod(Invocation invocation) throws Throwable
    {
       advice = "aroundMethodCalledByMethod";
       invokeReturn = invocation.invokeNext();
       return 15000;
    }
    
-   public Object aroundFieldWrite(@JoinPoint FieldInvocation invocation)
-      throws Throwable
+   public Object aroundFieldWrite(FieldInvocation invocation) throws Throwable
    {
       advice = "aroundFieldWrite";
       invokeReturn = invocation.invokeNext();
       return null;
    }
    
-   public Object aroundFieldRead(@JoinPoint FieldReadInvocation invocation)
-      throws Throwable
+   public Object aroundFieldRead(FieldReadInvocation invocation) throws Throwable
    {
       advice = "aroundFieldRead";
       invokeReturn = invocation.invokeNext();
