@@ -19,7 +19,7 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.test.aop.args;
+package org.jboss.test.aop.beforeafterArgs;
 
 import junit.framework.Assert;
 
@@ -32,9 +32,9 @@ import org.jboss.aop.joinpoint.MethodInvocation;
  * Aspect used on @Arg parameter tests.
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
- * @version $Revision$
+ * @version $Revision: 64564 $
  */
-public class ArgAspect implements ArgPOJOInterface
+public class ArgAspect2 implements ArgPOJOInterface
 {
    public static boolean echoCalled = false;
    public static boolean wrapped = false;

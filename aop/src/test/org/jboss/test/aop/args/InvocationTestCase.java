@@ -21,11 +21,11 @@
   */
 package org.jboss.test.aop.args;
 
-import org.jboss.test.aop.AOPTestWithSetup;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
+
+import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
  * Tests the use of @org.jboss.aop.advice.annotation.Invocation parameters.

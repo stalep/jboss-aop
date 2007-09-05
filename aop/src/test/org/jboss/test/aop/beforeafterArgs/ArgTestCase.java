@@ -41,7 +41,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  * 
  * @see ArgsTestCase
- * @see org.jboss.test.aop.args.ArgTestCase
+ * @see org.jboss.test.aop.beforeafterArgs.Arg2TestCase
  * @see org.jboss.test.aop.args.ArgumentsTestCase
  */
 public class ArgTestCase extends AOPTestWithSetup

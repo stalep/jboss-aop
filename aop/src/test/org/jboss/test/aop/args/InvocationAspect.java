@@ -21,10 +21,7 @@
   */
 package org.jboss.test.aop.args;
 
-import junit.framework.Assert;
-
 import org.jboss.aop.advice.annotation.JoinPoint;
-import org.jboss.aop.joinpoint.ConstructorInvocation;
 import org.jboss.aop.joinpoint.FieldInvocation;
 import org.jboss.aop.joinpoint.FieldReadInvocation;
 import org.jboss.aop.joinpoint.Invocation;
@@ -52,11 +49,10 @@ public class InvocationAspect
       return "aroundMethodExecution1";
    }
    
-   public int aroundMethodExecution2(@JoinPoint ConstructorInvocation invocation)
-      throws Throwable
+   public Object aroundMethodExecution2(@JoinPoint MethodInvocation invocation)
    {
-      Assert.fail("This advice should never be executed");
-      return 0;
+      advice = "aroundMethodExecution1";
+      return "aroundMethodExecution1";
    }
    
    public Object aroundMethodCalledByMethod(@JoinPoint Invocation invocation)

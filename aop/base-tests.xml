@@ -1,11 +1,9 @@
 <project name="code-generation" default="help">
 
    <target name="_base-tests">
-   <!-- only used with generated advisors
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="args"/>
       </antcall>
-      -->
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="packagedotdot"/>
       </antcall>

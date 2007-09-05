@@ -36,7 +36,7 @@ import org.jboss.aop.joinpoint.MethodInvocation;
  * only with generated advisors).
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
- * @see org.jboss.test.aop.args.ArgAspect
+ * @see org.jboss.test.aop.beforeafterArgs.ArgAspect
  */
 public class ArgAspect
 {

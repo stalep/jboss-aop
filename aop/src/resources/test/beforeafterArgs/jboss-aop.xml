@@ -4,7 +4,8 @@
 <aop>
 
    <!-- @Arg test -->
-	<aspect class="org.jboss.test.aop.beforeafterArgs.ArgAspect" scope="PER_VM"/>
+   
+   <aspect class="org.jboss.test.aop.beforeafterArgs.ArgAspect" scope="PER_VM"/>
    
    <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO->bunch1(..))">
       <before name="before1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
@@ -222,6 +223,36 @@
    
    <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsInvalidPOJO->bunch9After5(..))">
       <after name="after5" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect"/>
+   </bind>
+
+   <aspect class="org.jboss.test.aop.beforeafterArgs.ArgAspect2" scope="PER_VM"/>
+
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO2->bunchArgs(..))">
+      <advice name="bunchArgs" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect2"/>
+   </bind>
+
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO2->bunchArgsWithInvocation(..))">
+      <advice name="bunchArgsWithInvocation" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect2"/>
+   </bind>
+
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO2->bunchWrapped(..))">
+      <advice name="wrap" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect2"/>
+   </bind>
+ 
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterArgs.ArgsPOJO2->bunch(..))">
+      <advice name="bunch" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect2"/>
+      <advice name="bunch1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect2"/>
+      <advice name="arg1" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect2"/>
+      <advice name="arg2" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect2"/>
+      <advice name="arg3" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect2"/>
+      <advice name="arg4" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect2"/>
+      <advice name="arg15" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect2"/>
+      <advice name="arg24" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect2"/>
+      <advice name="emptyArg" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect2"/>
+   </bind>
+
+   <bind pointcut="execution(java.lang.String org.jboss.test.aop.beforeafterArgs.ArgsPOJO2->echo(java.lang.String))">
+      <advice name="echo" aspect="org.jboss.test.aop.beforeafterArgs.ArgAspect2"/>
    </bind>
 
  	<aspect class="org.jboss.test.aop.beforeafterArgs.ArgAspectInterfaces" scope="PER_VM"/>
