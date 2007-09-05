@@ -242,6 +242,7 @@
          <classpath refid="javac.classpath"/>
          <include name="**/*.java"/>
          <exclude name="org/jboss/test/aop/memoryleaks/**/*.java"/>
+         <exclude name="org/jboss/test/aop/**/*JDK50.java"/>
       </javac>
    </target>
 
@@ -716,7 +717,7 @@
             <pathelement location="${build.tests.retro}"/>
             <pathelement location="docs"/>
          </classpath>
-         <formatter type="plain" extension="-jdk14.xml"/>
+         <formatter type="plain" extension="-jdk14.txt"/>
          <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter"
                     usefile="true" extension="-jdk14.xml"/>
 
