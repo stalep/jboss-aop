@@ -93,8 +93,25 @@
       <!-- Defines jrockit.home -->
       <property file="local.properties"/>
 
-      <available file="${jrockit.home}/jre/lib/managementapi.jar" property="JROCKIT_API_AVAILABLE" value="managementapi.jar"/>
-      <available file="${jrockit.home}/jre/lib/management-agent.jar" property="JROCKIT_API_AVAILABLE" value="rt.jar"/>
+      <!-- in older versions of jrockit the weaving stuff lives in managementapi.jar, in newer in management-agent.jar -->
+      <available file="${jrockit.home}/jre/lib/managementapi.jar" property="OLD_JROCKIT" value="managementapi.jar"/>
+      <available file="${jrockit.home}/jre/lib/management-agent.jar" property="NEW_JROCKIT" value="rt.jar"/>
+      <condition property="JROCKIT_API_AVAILABLE" value="${OLD_JROCKIT}">
+         <and>
+            <isset property="OLD_JROCKIT"/>
+            <not>
+               <isset property="NEW_JROCKIT"/>
+             </not>
+         </and>
+      </condition>
+      <condition property="JROCKIT_API_AVAILABLE" value="${NEW_JROCKIT}">
+         <and>
+            <isset property="NEW_JROCKIT"/>
+            <not>
+               <isset property="OLD_JROCKIT"/>
+             </not>
+         </and>
+      </condition>
 
       <!-- ======= -->
       <!-- Modules -->
@@ -176,7 +193,7 @@
 
       <!-- Packages to include when generating api documentation -->
       <property name="javadoc.packages" value="org.jbos.aop.*"/>
-    
+
    </target>
 
 
