@@ -19,7 +19,7 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.test.aop.arguments;
+package org.jboss.test.aop.invocationParams;
 
 import org.jboss.aop.joinpoint.FieldInvocation;
 import org.jboss.aop.joinpoint.FieldReadInvocation;

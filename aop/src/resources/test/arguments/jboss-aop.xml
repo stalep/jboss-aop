@@ -2,7 +2,6 @@
 <!DOCTYPE aop SYSTEM "jboss-aop_1_0.dtd">
 
 <aop>
-   <!-- get/setArguments test -->
    <aspect class="org.jboss.test.aop.arguments.ArgumentsAspect" scope="PER_VM"/>
   
    <stack name="getAndChange">
@@ -64,25 +63,4 @@
 	<bind pointcut="call(static * org.jboss.test.aop.arguments.CalledPOJO->*(int))" cflow="(ArgumentsPOJO2_constructor OR ArgumentsPOJO2_method)">
       <advice name="getAndChangeArgumentsAdvice" aspect="org.jboss.test.aop.arguments.ArgumentsAspect"/>
    </bind>
-
-   <!-- @Invocation test -->
-	<aspect class="org.jboss.test.aop.arguments.InvocationAspect" scope="PER_VM"/>
-	
-	<bind pointcut="execution(* org.jboss.test.aop.arguments.POJO->method1(..))">
-		<advice name="aroundMethodExecution1" aspect="org.jboss.test.aop.arguments.InvocationAspect"/>
-   </bind>
-
-	<bind pointcut="get(* org.jboss.test.aop.arguments.POJO->number)">
-		<advice name="aroundFieldRead" aspect="org.jboss.test.aop.arguments.InvocationAspect"/>
-   </bind>
-
-	<bind pointcut="set(* org.jboss.test.aop.arguments.POJO->number)">
-		<advice name="aroundFieldWrite" aspect="org.jboss.test.aop.arguments.InvocationAspect"/>
-   </bind>
-   
-   <bind pointcut="call(* org.jboss.test.aop.arguments.POJO->calleeMethod(..)) AND
-      withincode(* org.jboss.test.aop.arguments.POJO->callerMethod(..))">
-		<advice name="aroundMethodCalledByMethod" aspect="org.jboss.test.aop.arguments.InvocationAspect"/>
-   </bind>
-   
 </aop>

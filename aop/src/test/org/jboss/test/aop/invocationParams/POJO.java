@@ -19,46 +19,17 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.test.aop.arguments;
+package org.jboss.test.aop.invocationParams;
 
 
 /**
- * Plain old java object used on the tests
+ * Plain old java object used on the typed invocation parameter tests
  * 
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
- * @version $Revision$
+ * @version $Revision:65192 $
  */
-public class POJO /*implements ArgPOJOInterface*/
+public class POJO
 {
-   /* ArgTestCase */
-   
-   public String echo(String echo)
-   {
-      return echo;
-   }
-
-   public int bunch(int x, double y, float z, String str, int q)
-   {
-      return x + (int) y + (int) z + q;
-   }
-
-   public int bunchArgs(int x, double y, float z, String str, int q)
-   {
-      return x + (int) y + (int) z + q;
-   }
-
-   public int bunchArgsWithInvocation(int x, double y, float z, String str, int q)
-   {
-      return x + (int) y + (int) z + q;
-   }
-
-   public int bunchWrapped(int x, double y, float z, String str, int q)
-   {
-      return x + (int) y + (int) z + q;
-   }
-   
-   /* InvocationTestCase */
-   
    public int number;
 
    public int callerMethod(int i)
@@ -80,8 +51,4 @@ public class POJO /*implements ArgPOJOInterface*/
    {
       return 2;
    }
-   
-   /* OverloadedTestCase */
-   
-   public void method3(int arg1, long arg2) {}
 }

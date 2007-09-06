@@ -19,7 +19,7 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.test.aop.arguments;
+package org.jboss.test.aop.invocationParams;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -28,7 +28,7 @@ import junit.textui.TestRunner;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
- * Tests the use of @org.jboss.aop.advice.annotation.Invocation parameters.
+ * Tests the use of typed invocation parameters.
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */

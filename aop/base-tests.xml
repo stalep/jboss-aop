@@ -5,6 +5,9 @@
          <param name="test" value="arguments"/>
       </antcall>
       <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="invocationParams"/>
+      </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="packagedotdot"/>
       </antcall>
       <antcall target="${test-target}" inheritRefs="true">

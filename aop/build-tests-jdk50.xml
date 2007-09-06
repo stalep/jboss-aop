@@ -1476,6 +1476,10 @@
          <param name="case" value="ArgsTestCase"/>
       </antcall>
       <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="invocationParams"/>
+         <param name="case" value="ArgsTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
          <param name="test" value="basic"/>
          <param name="case" value="AOPTester"/>
       </antcall>
