@@ -525,7 +525,7 @@
 
       <!-- Tests only applicable for this weaving mode -->
       <antcall target="_run-precompiled-test" inheritRefs="true">
-         <param name="test" value="beforeafter"/>
+         <param name="test" value="typedAdvices"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
       <antcall target="_run-precompiled-test" inheritRefs="true">

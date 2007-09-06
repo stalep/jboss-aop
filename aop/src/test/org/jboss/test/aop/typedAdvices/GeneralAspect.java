@@ -19,29 +19,44 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.test.aop.beforeafter;
+package org.jboss.test.aop.typedAdvices;
+
+import junit.framework.Assert;
+
+import org.jboss.aop.advice.annotation.Arg;
+import org.jboss.aop.advice.annotation.JoinPoint;
+import org.jboss.aop.advice.annotation.Return;
+import org.jboss.aop.joinpoint.JoinPointBean;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
-public class SuperValue
+public class GeneralAspect
 {
-   int i;
-   public SuperValue(int i)
-   {
-      this.i = i;
-   }
-   
-   public int getValue()
-   {
-      return i;
-   }
-   
-   public void doubleValue()
-   {
-      i *= 2;
-   }
+   public static String before;
+   public static String after;
 
+   public static void clear()
+   {
+      before = null;
+      after = null;
+      POJO.joinPointRun = false;
+   }
+   
+
+   public void before(@JoinPoint JoinPointBean jp, @Arg SuperValue superValue, @Arg int i)
+   {
+      before = "before";
+      Assert.assertFalse(POJO.joinPointRun);
+   }
+   
+   public Object after(@JoinPoint JoinPointBean jp, @Return Object ret,
+         @Arg SuperValue superValue, @Arg int i)
+   {
+      after = "after";
+      Assert.assertTrue(POJO.joinPointRun);
+      return ret;
+   }
 }
