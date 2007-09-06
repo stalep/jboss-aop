@@ -28,7 +28,7 @@ package org.jboss.test.aop.args;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public class POJO implements ArgPOJOInterface
+public class POJO /*implements ArgPOJOInterface*/
 {
    /* ArgTestCase */
    
