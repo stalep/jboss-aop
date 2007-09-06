@@ -477,11 +477,6 @@
       <!-- Tests only applicable for this weaving mode -->
 
       <antcall target="_run-precompiled-test" inheritRefs="true">
-         <param name="test" value="args"/>
-         <param name="caller" value="precompiled-tests"/>
-      </antcall>
-
-      <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="override"/>
          <param name="caller" value="precompiled-tests"/>
          <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
@@ -530,10 +525,6 @@
 
       <!-- Tests only applicable for this weaving mode -->
       <antcall target="_run-precompiled-test" inheritRefs="true">
-         <param name="test" value="args"/>
-         <param name="caller" value="precompiled-genadvisor-tests"/>
-      </antcall>
-      <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="beforeafter"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
@@ -565,7 +556,7 @@
 
    <target name="precompiled-genadvisor-test" depends="retroweave">
       <antcall target="_run-precompiled-test" inheritRefs="true">
-         <param name="test" value="args"/>
+         <param name="test" value="${test}"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
    </target>

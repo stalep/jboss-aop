@@ -1450,7 +1450,7 @@
                <exclude name="org/jboss/test/aop/basic/POJOAspectTester.class"/>
                <!-- This test won't work with JRockit, due to the limit on stack trace
                    length, which breaks cflow functionality on this test case -->
-               <exclude name="org/jboss/test/aop/args/ArgumentsTestCase.class"/>
+               <exclude name="org/jboss/test/aop/arguments/ArgumentsTestCase.class"/>
             </fileset>
          </batchtest>
       </junit>
@@ -1472,7 +1472,7 @@
          <param name="case" value="AnnotatedParamsTester"/>
       </antcall>
       <antcall  target="memory-test" inheritRefs="true">
-         <param name="test" value="args"/>
+         <param name="test" value="arguments"/>
          <param name="case" value="ArgsTestCase"/>
       </antcall>
       <antcall  target="memory-test" inheritRefs="true">

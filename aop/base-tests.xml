@@ -2,7 +2,7 @@
 
    <target name="_base-tests">
       <antcall target="${test-target}" inheritRefs="true">
-         <param name="test" value="args"/>
+         <param name="test" value="arguments"/>
       </antcall>
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="packagedotdot"/>
