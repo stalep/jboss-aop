@@ -4,7 +4,7 @@
 <aop>
 	<aspect class="org.jboss.test.aop.invocationParams.InvocationAspect" scope="PER_VM"/>
 	
-	<bind pointcut="execution(* org.jboss.test.aop.invocationParams.POJO->method 1(..))">
+	<bind pointcut="execution(* org.jboss.test.aop.invocationParams.POJO->method1(..))">
 		<advice name="aroundMethodExecution1" aspect="org.jboss.test.aop.invocationParams.InvocationAspect"/>
    </bind>
 
