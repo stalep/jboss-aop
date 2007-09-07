@@ -167,7 +167,8 @@
 
       <!-- 
       	The Annotation creator stuff indirectly uses some classes that do not exist until jboss-common-core.jar 2.2.1.GA, 
-      	create a jar containing these classes here
+      	create a jar containing these classes here.
+      	FIXME: This might be unnecessary to deploy in JBoss? The annotation creator is a client side thing...
       -->
       <mkdir dir="output/temp/jboss-common-core-classes"/>
       <mkdir dir="output/temp/jboss-common-core-classes14"/>
