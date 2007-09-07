@@ -399,7 +399,7 @@
          <param name="caller" value="javaagent-genadvisor-tests"/>
       </antcall>
       <antcall target="_run-javaagent-test" inheritRefs="true">
-         <param name="test" value="beforeafterArgs"/>
+         <param name="test" value="annotatedAdviceParams"/>
          <param name="caller" value="javaagent-genadvisor-tests"/>
       </antcall>
       <antcall target="_run-javaagent-test" inheritRefs="true">
@@ -577,7 +577,7 @@
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
       <antcall target="_run-precompiled-test" inheritRefs="true">
-         <param name="test" value="beforeafterArgs"/>
+         <param name="test" value="annotatedAdviceParams"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
       <antcall target="_run-precompiled-test" inheritRefs="true">

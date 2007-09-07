@@ -242,7 +242,7 @@
          <classpath refid="javac.classpath"/>
          <include name="**/*.java"/>
          <exclude name="org/jboss/test/aop/memoryleaks/**/*.java"/>
-         <exclude name="org/jboss/test/aop/**/*JDK50.java"/>
+         <exclude name="org/jboss/test/aop/**/*JDK50TestCase.java"/>
       </javac>
    </target>
 
@@ -529,7 +529,7 @@
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
       <antcall target="_run-precompiled-test" inheritRefs="true">
-         <param name="test" value="beforeafterArgs"/>
+         <param name="test" value="annotatedAdviceParams"/>
          <param name="caller" value="precompiled-genadvisor-tests"/>
       </antcall>
       <antcall target="_run-precompiled-test" inheritRefs="true">
