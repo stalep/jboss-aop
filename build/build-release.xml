@@ -118,7 +118,7 @@
       <property name="jboss-logging-log4j.location" value="${jboss/common.logging.log4j.lib}/jboss-logging-log4j.jar"/>
       <property name="jboss-logging-spi.location" value="${jboss/common.logging.spi.lib}/jboss-logging-spi.jar"/>
       <property name="jboss-container.location" value="${jboss.microcontainer.lib}/jboss-container.jar"/>
-      <property name="jboss-container14.location" value="${jboss.microcontainer14.lib}/jboss-container14.jar"/>
+      <property name="jboss-container14.location" value="${jboss.microcontainer14.lib}/jboss-container-jdk14.jar"/>
 
       <!-- Use the "old" jboss retro names, see "hack" in aop/build.xml/configure -->
       <property name="jbossretro.location" value="${org/jboss/jboss.retro.lib}/jboss-retro.jar"/>
