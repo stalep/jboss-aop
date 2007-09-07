@@ -159,11 +159,32 @@
       	basedir="output/temp/jboss-container-classes14"
       	includes="org/jboss/annotation/factory/**"
       	manifest="output/temp/jboss-container-classes14/META-INF/MANIFEST.MF"/>
-
+      	
       <property name="jboss-container-metadata-spi.location" value="output/temp/jboss-container-metadata-spi.jar"/>
       <property name="jboss-container-metadata-spi14.location" value="output/temp/jboss-container-metadata-spi14.jar"/>
       <property name="jboss-container-annotation.location" value="output/temp/jboss-container-annotation.jar"/>
       <property name="jboss-container-annotation14.location" value="output/temp/jboss-container-annotation14.jar"/>
+
+      <!-- 
+      	The Annotation creator stuff indirectly uses some classes that do not exist until jboss-common-core.jar 2.2.1.GA, 
+      	create a jar containing these classes here
+      -->
+      <mkdir dir="output/temp/jboss-common-core-classes"/>
+      <mkdir dir="output/temp/jboss-common-core-classes14"/>
+      <unjar src="${jboss-common-core.location}" dest="output/temp/jboss-common-core-classes"/>
+      <unjar src="${jboss-common-core14.location}" dest="output/temp/jboss-common-core-classes14"/>
+      <jar
+      	destfile="output/temp/jboss-common-core-2.2.1-backport.jar"
+      	basedir="output/temp/jboss-common-core-classes"
+      	includes="org/jboss/util/collection/WeakTypeCache.class org/jboss/util/collection/CollectionsFactory.class"
+      	manifest="output/temp/jboss-container-classes/META-INF/MANIFEST.MF"/>
+      <jar
+      	destfile="output/temp/jboss-common-core-2.2.1-backport14.jar"
+      	basedir="output/temp/jboss-common-core-classes14"
+      	includes="org/jboss/util/collection/WeakTypeCache.class org/jboss/util/collection/CollectionsFactory.class"
+      	manifest="output/temp/jboss-container-classes14/META-INF/MANIFEST.MF"/>
+      <property name="jboss-common-core-2.2.1-backport.location" value="output/temp/jboss-common-core-2.2.1-backport.jar"/>
+      <property name="jboss-common-core-2.2.1-backport14.location" value="output/temp/jboss-common-core-2.2.1-backport14.jar"/>
 
       <!-- Copy across the eula -->
       <copy todir="${project.release}" file="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
@@ -216,6 +237,7 @@
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-backport-concurrent.location}"/><!-- TODO figure out for what versions of jboss this is necessary, and if it exists in other locations -->
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-container-metadata-spi14.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-container-annotation14.location}"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-common-core-2.2.1-backport14.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${javassist.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jbossretro-rt.location}"/><!-- TODO figure out for what versions of jboss this is necessary, and if it exists in other locations -->
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${trove.location}"/>
@@ -235,6 +257,7 @@
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/" file="${aop.readme-as4.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-container-metadata-spi.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-container-annotation.location}"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-common-core-2.2.1-backport.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${javassist.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${trove.location}"/>
       <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/META-INF/jboss-service.xml" file="output/temp/jboss-service-jdk50.xml"/>
@@ -251,7 +274,7 @@
 
       <copy todir="${project.release}" file="RELEASE_NOTES.html"/>
 
-      <delete dir="output/temp"/>
+<!--      <delete dir="output/temp"/>  -->
 
   </target>
 
