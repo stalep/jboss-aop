@@ -249,7 +249,6 @@
          <src path="${source.tests.java}"/>
          <classpath refid="test.classpath"/>
          <include name="**/*.java"/>
-         <exclude name="org/jboss/test/aop/memoryleaks/**/*.java"/>
       </javac>
       <jar destfile="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
         basedir="${build.tests.classes}" includes="org/jboss/test/aop/jdk15/dynamic/common/scenario/**"/>
@@ -1462,7 +1461,6 @@
 
    <target name="memory-tests" depends="compile-test-classes">
       <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
-
       <antcall  target="memory-test" inheritRefs="true">
          <param name="test" value="annotatedcflow"/>
          <param name="case" value="AnnotatedCFlowTestCase"/>
@@ -1476,16 +1474,60 @@
          <param name="case" value="ArgsTestCase"/>
       </antcall>
       <antcall  target="memory-test" inheritRefs="true">
-         <param name="test" value="invocationParams"/>
-         <param name="case" value="ArgsTestCase"/>
-      </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
          <param name="test" value="basic"/>
          <param name="case" value="AOPTester"/>
       </antcall>
       <antcall  target="memory-test" inheritRefs="true">
          <param name="test" value="beanstyleconfig"/>
          <param name="case" value="ConfigTester"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="typedAdvices"/>
+         <param name="case" value="BeforeAfterThrowingTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="annotatedAdviceParams"/>
+         <param name="case" value="ArgsTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="annotatedAdviceParams"/>
+         <param name="case" value="ArgTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="annotatedAdviceParams"/>
+         <param name="case" value="CallerTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="annotatedAdviceParams"/>
+         <param name="case" value="JoinPointTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="annotatedAdviceParams"/>
+         <param name="case" value="OverloadedAdviceTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="annotatedAdviceParams"/>
+         <param name="case" value="ReturnTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="annotatedAdviceParams"/>
+         <param name="case" value="TargetTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="annotatedAdviceParams"/>
+         <param name="case" value="ThrownTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="beforeafterthrowingscoped"/>
+         <param name="case" value="BeforeAfterThrowingScopedTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="beforeafterthrowingstack"/>
+         <param name="case" value="BeforeAfterThrowingStackTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="bridgemethod"/>
+         <param name="case" value="BridgeMethodWeavingTestCase"/>
       </antcall>
       <antcall  target="memory-test" inheritRefs="true">
          <param name="test" value="callerargs"/>
@@ -1507,17 +1549,45 @@
          <param name="test" value="dotinpointcutname"/>
          <param name="case" value="DotInPointcutNameTestCase"/>
       </antcall>
+            <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="dynamicgenadvisor"/>
+         <param name="case" value="DynamicTester"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="extender"/>
+         <param name="case" value="ExtenderTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="field"/>
+         <param name="case" value="FieldTestCase"/>
+      </antcall>
       <antcall  target="memory-test" inheritRefs="true">
          <param name="test" value="implementz"/>
          <param name="case" value="ImplementsTester"/>
+      </antcall>
+            <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="inforesolve"/>
+         <param name="case" value="InfoResolveAnnotationTestCase"/>
       </antcall>
       <antcall  target="memory-test" inheritRefs="true">
          <param name="test" value="instanceofannotated"/>
          <param name="case" value="InstanceOfAnnotatedTester"/>
       </antcall>
       <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="instanceofintroduced"/>
+         <param name="case" value="InstanceofIntroducedTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
          <param name="test" value="introduction"/>
          <param name="case" value="IntroductionTester"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="invoketarget"/>
+         <param name="case" value="InvokeTargetTestCase"/>
+      </antcall>
+      <antcall  target="memory-test" inheritRefs="true">
+         <param name="test" value="marshalling"/>
+         <param name="case" value="MarshallingTester"/>
       </antcall>
       <antcall  target="memory-test" inheritRefs="true">
          <param name="test" value="override"/>
@@ -1538,7 +1608,10 @@
       <property name="aoppath" value="${source.res}/test/${test}/jboss-aop.xml"/>
       <property name="testcase" value="org.jboss.test.aop.${test}.${case}"/>
 
-
+      <condition property="extra.classes" value="${extraClasses}" else="">
+         <isset property="extraClasses"/>
+      </condition>
+      
       <aopc compilerclasspathref="aopc.task.classpath">
          <classpath refid="aopc.task.classpath"/>
          <classpath path="${build.tests.classes}"/>
@@ -1556,10 +1629,12 @@
          <sysproperty key="jboss.aop.path" value="${aoppath}"/>
          <sysproperty key="test.to.run" value="${testcase}"/>
          <sysproperty key="leak.report.dir" value="${report.dir}"/>
+         <sysproperty key="extraClasses" value="${extra.classes}"/>
          <classpath refid="test.classpath"/>
          <classpath path="${build.tests.classes}"/>
          <jvmarg value="-agentlib:jbossAgent"/>
-         <formatter usefile="true" type="xml" extension="-${testcase}.xml"/>
+         <sysproperty key="jboss-junit-configuration" value="${testcase}"/>
+         <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-${testcase}.xml"/>
          <formatter usefile="true" type="plain" extension="-${testcase}.txt"/>
          <test fork="yes" name="org.jboss.test.aop.memoryleaks.MemoryLeakTestCase" todir="${report.dir}"/>
       </junit>
