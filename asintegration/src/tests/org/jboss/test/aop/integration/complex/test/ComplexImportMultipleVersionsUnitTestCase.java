@@ -25,7 +25,7 @@ import java.net.URL;
 
 import junit.framework.Test;
 
-import org.jboss.aop.integration.junit.AOPIntegrationTest;
+import org.jboss.aop.integration.junit.WovenAOPIntegrationTest;
 import org.jboss.classloader.test.support.MockClassLoaderHelper;
 import org.jboss.classloader.test.support.MockClassLoaderPolicy;
 
@@ -35,7 +35,7 @@ import org.jboss.classloader.test.support.MockClassLoaderPolicy;
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision: 1.1 $
  */
-public class ComplexImportMultipleVersionsUnitTestCase extends AOPIntegrationTest
+public class ComplexImportMultipleVersionsUnitTestCase extends WovenAOPIntegrationTest
 {
    private static String PACKAGE_SUPPORT = "org.jboss.test.aop.integration.complex.support";
    private static String PACKAGE_A = PACKAGE_SUPPORT + ".a";
@@ -83,13 +83,26 @@ public class ComplexImportMultipleVersionsUnitTestCase extends AOPIntegrationTes
                   a2Policy.setPathsAndPackageNames(PACKAGE_A);
                   a2Policy.setDelegates(createDelegates(support2Policy));
                   ClassLoader a2 = createClassLoader(a2Policy);
+                  
+                  System.out.println("--------------> Support1\t" + support1);
+                  System.out.println("--------------> A1\t\t" + a1);
+                  System.out.println("--------------> Support2\t" + support2);
+                  System.out.println("--------------> A2\t\t" + a2);
+                  Class clazz = Thread.currentThread().getContextClassLoader().loadClass("org.jboss.test.aop.integration.complex.support.TestInterceptor");
+                  System.out.println("====== " + clazz + " " + clazz.getClassLoader());
+                  
+                  Class clazz1 = a1.loadClass("org.jboss.test.aop.integration.complex.support.TestInterceptor"); 
+                  System.out.println("====== " + clazz1 + " " + clazz1.getClassLoader());
+                  Class clazz2 = a2.loadClass("org.jboss.test.aop.integration.complex.support.TestInterceptor"); 
+                  System.out.println("====== " + clazz2 + " " + clazz2.getClassLoader());
+                  
                   try
                   {
                      URL url2 = deploy("2", a2);
                      try
                      {
                         Class<?> classA1 = a1.loadClass(CLASS_A);
-                        classA1.newInstance();
+                        Object instanceA1 = classA1.newInstance();
 
                         Class<?> classA2 = a2.loadClass(CLASS_A);
                         assertNotSame(classA2, classA1);

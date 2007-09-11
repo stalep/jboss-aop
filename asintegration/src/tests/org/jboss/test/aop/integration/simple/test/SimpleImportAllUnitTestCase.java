@@ -23,7 +23,7 @@ package org.jboss.test.aop.integration.simple.test;
 
 import junit.framework.Test;
 
-import org.jboss.aop.integration.junit.AOPIntegrationTest;
+import org.jboss.aop.integration.junit.WovenAOPIntegrationTest;
 import org.jboss.test.aop.integration.simple.support.TestIntercepted;
 
 /**
@@ -32,7 +32,7 @@ import org.jboss.test.aop.integration.simple.support.TestIntercepted;
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision: 1.1 $
  */
-public class SimpleImportAllUnitTestCase extends AOPIntegrationTest
+public class SimpleImportAllUnitTestCase extends WovenAOPIntegrationTest
 {
    private static String PACKAGE_A = "org.jboss.test.aop.integration.simple.support.a";
    private static String CLASS_A = PACKAGE_A + ".A";
@@ -65,5 +65,6 @@ public class SimpleImportAllUnitTestCase extends AOPIntegrationTest
       {
          unregisterClassLoader(classLoader);
       }
+      System.out.println("Hello");
    }
 }

@@ -50,7 +50,7 @@ public class AOPIntegrationTestDelegate extends AbstractTestDelegate
     * @param clazz the test class
     * @param system the classloader system
     */
-   public AOPIntegrationTestDelegate(Class clazz, ClassLoaderSystem system) 
+   public AOPIntegrationTestDelegate(Class clazz, boolean weaveClasses, ClassLoaderSystem system) 
    {
       super(clazz);
       this.system = system;
@@ -59,6 +59,7 @@ public class AOPIntegrationTestDelegate extends AbstractTestDelegate
    public void setUp() throws Exception
    {
       super.setUp();
+//      enableTrace("org.jboss.classloader");
       
       AspectManager manager = AspectManager.instance();
       
@@ -156,7 +157,7 @@ public class AOPIntegrationTestDelegate extends AbstractTestDelegate
    {
       log.debug("Deploying " + url);
       urls.add(url);
-      AspectXmlLoader.deployXML(url, classLoader);
+      AspectXmlLoader.deployXML(url, classLoader, AspectManager.instance());
    }
 
    /**

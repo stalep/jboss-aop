@@ -25,7 +25,7 @@ import java.net.URL;
 
 import junit.framework.Test;
 
-import org.jboss.aop.integration.junit.AOPIntegrationTest;
+import org.jboss.aop.integration.junit.WovenAOPIntegrationTest;
 import org.jboss.classloader.spi.ClassLoaderDomain;
 import org.jboss.classloader.test.support.MockClassLoaderHelper;
 import org.jboss.classloader.test.support.MockClassLoaderPolicy;
@@ -36,7 +36,7 @@ import org.jboss.classloader.test.support.MockClassLoaderPolicy;
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision: 1.1 $
  */
-public class SimpleScopedParentFirstUnitTestCase extends AOPIntegrationTest
+public class SimpleScopedParentFirstUnitTestCase extends WovenAOPIntegrationTest
 {
    private static String PACKAGE_SUPPORT = "org.jboss.test.aop.integration.simple.support";
    private static String PACKAGE_A = "org.jboss.test.aop.integration.simple.support.a";

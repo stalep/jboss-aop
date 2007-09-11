@@ -23,7 +23,7 @@ package org.jboss.test.aop.integration.complex.test;
 
 import junit.framework.Test;
 
-import org.jboss.aop.integration.junit.AOPIntegrationTest;
+import org.jboss.aop.integration.junit.WovenAOPIntegrationTest;
 import org.jboss.classloader.test.support.MockClassLoaderHelper;
 import org.jboss.classloader.test.support.MockClassLoaderPolicy;
 
@@ -33,7 +33,7 @@ import org.jboss.classloader.test.support.MockClassLoaderPolicy;
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision: 1.1 $
  */
-public class ComplexImportAdviceTransitivelyUnitTestCase extends AOPIntegrationTest
+public class ComplexImportAdviceTransitivelyUnitTestCase extends WovenAOPIntegrationTest
 {
    private static String PACKAGE_SUPPORT = "org.jboss.test.aop.integration.complex.support";
    private static String PACKAGE_B = PACKAGE_SUPPORT + ".b";

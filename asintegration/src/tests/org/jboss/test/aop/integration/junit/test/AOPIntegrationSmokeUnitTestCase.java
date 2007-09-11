@@ -23,7 +23,7 @@ package org.jboss.test.aop.integration.junit.test;
 
 import junit.framework.Test;
 
-import org.jboss.aop.integration.junit.AOPIntegrationTest;
+import org.jboss.aop.integration.junit.WovenAOPIntegrationTest;
 import org.jboss.test.aop.integration.junit.support.TestIntercepted;
 import org.jboss.test.aop.integration.junit.support.TestInterceptor;
 
@@ -33,7 +33,7 @@ import org.jboss.test.aop.integration.junit.support.TestInterceptor;
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision: 1.1 $
  */
-public class AOPIntegrationSmokeUnitTestCase extends AOPIntegrationTest
+public class AOPIntegrationSmokeUnitTestCase extends WovenAOPIntegrationTest
 {
    public static Test suite()
    {

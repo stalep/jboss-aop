@@ -34,7 +34,6 @@ import org.jboss.classloader.spi.filter.ClassFilter;
 import org.jboss.classloader.test.support.IsolatedClassLoaderTestHelper;
 import org.jboss.classloader.test.support.MockClassLoaderPolicy;
 import org.jboss.test.AbstractTestCaseWithSetup;
-import org.jboss.test.AbstractTestDelegate;
 
 /**
  * AOPIntegrationTest.
@@ -45,7 +44,7 @@ import org.jboss.test.AbstractTestDelegate;
 public abstract class AOPIntegrationTest extends AbstractTestCaseWithSetup
 {
    /** The classloader helper */
-   private static IsolatedClassLoaderTestHelper helper;
+   protected static IsolatedClassLoaderTestHelper helper;
    
    public static Test suite(Class<?> clazz)
    {
@@ -63,17 +62,6 @@ public abstract class AOPIntegrationTest extends AbstractTestCaseWithSetup
       ClassFilter aopFilter = new PatternClassFilter(new String[] { "org\\.jboss\\.aop\\..+"}, new String[] { "org/jboss/aop/.+" });
       Class<?> newClass = helper.initializeClassLoader(clazz, aopFilter, importAll, packages);
       return AbstractTestCaseWithSetup.suite(newClass);
-   }
-
-   /**
-    * Get the test delegate
-    * 
-    * @param clazz the test class
-    * @return the delegate
-    */
-   public static AbstractTestDelegate getDelegate(Class<?> clazz)
-   {
-      return new AOPIntegrationTestDelegate(clazz, helper.getSystem());
    }
 
    /**
