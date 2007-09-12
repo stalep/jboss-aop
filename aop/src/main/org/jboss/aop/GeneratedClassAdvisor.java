@@ -110,6 +110,28 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       advisorStrategy = new InstanceAdvisorStrategy(parent);
    }
 
+   @Override
+   public void cleanup()
+   {
+      System.out.println("===========> CLeaning advisor " + this.getClazz().getName());
+      super.cleanup();
+      methodInfos = null;
+      advisorStrategy = null;
+      
+      Map subscribedSubDomains = getManager().getSubscribedSubDomains();
+      System.out.println("---> Domains: " + subscribedSubDomains.size());
+      synchronized (subscribedSubDomains)
+      {
+         for (Iterator it = subscribedSubDomains.keySet().iterator() ; it.hasNext() ; )
+         {
+            GeneratedAdvisorDomain manager = (GeneratedAdvisorDomain)it.next();
+            Map advisors = manager.getAdvisors();
+            System.out.println("---> Advisors: " + advisors);
+            it.remove();
+         }
+      }
+   }
+
    protected void initialise(Class clazz, AspectManager manager)
    {
       advisorStrategy.initialise(clazz, manager);
@@ -1679,4 +1701,5 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    enum OldInfoMaps{
       INFOS, FIELD_READ_INFOS, CONSTRUCTION_INFOS;
    }
+
 }

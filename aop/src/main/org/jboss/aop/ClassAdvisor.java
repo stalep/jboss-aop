@@ -1690,7 +1690,23 @@ public class ClassAdvisor extends Advisor
       }
       throw new IllegalStateException("Unknown Invocation type: " + invocation.getClass().getName());
    }
-
+   
+   @Override
+   public void cleanup()
+   {
+      super.cleanup();
+      if (methodByMethodData != null)
+      {
+         methodByMethodData.cleanup();
+         methodByMethodData = null;
+      }
+      if (conByMethodData != null)
+      {
+         conByMethodData.cleanup();
+         conByMethodData = null;
+      }
+   }
+   
    // interceptor chain observer
    private InterceptorChainObserver interceptorChainObserver;
 
@@ -2220,6 +2236,13 @@ public class ClassAdvisor extends Advisor
          MethodByMethodInfo info = (MethodByMethodInfo) calledMethods.get(calledMethodHash);
          return info;
       }
+
+      public void cleanup()
+      {
+         methodCalledByMethodBindings.clear();
+         backrefMethodCalledByMethodBindings.clear();
+         methodCalledByMethodInterceptors.clear();
+      }
    }
    
    private class ConByMethodData
@@ -2462,5 +2485,10 @@ public class ClassAdvisor extends Advisor
          finalizeConCalledByMethodInterceptorChain(info);
       }
 
+      public void cleanup()
+      {
+         conCalledByMethodBindings.clear();
+         conCalledByMethodInterceptors.clear();
+      }
    }
 }

@@ -1987,6 +1987,11 @@ public class AspectManager
          subscribedSubDomains.remove(domain);
       }
    }
+      
+   public Map getSubscribedSubDomains()
+   {
+      return subscribedSubDomains;
+   }
 
    private Advisor getAdvisorFromAdvisorsKeySetIterator(Iterator it)
    {

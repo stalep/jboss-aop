@@ -1207,6 +1207,11 @@ public abstract class Advisor
             defs[i].unregisterAdvisor(this);
          }
       }
+            
+      if (methodInterceptors != null)
+      {
+         methodInterceptors.clear();
+      }
    }
    
    /**
