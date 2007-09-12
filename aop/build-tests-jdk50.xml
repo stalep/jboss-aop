@@ -1471,7 +1471,7 @@
       </antcall>
       <antcall  target="memory-test" inheritRefs="true">
          <param name="test" value="arguments"/>
-         <param name="case" value="ArgsTestCase"/>
+         <param name="case" value="ArgumentsTestCase"/>
       </antcall>
       <antcall  target="memory-test" inheritRefs="true">
          <param name="test" value="basic"/>
