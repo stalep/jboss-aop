@@ -21,6 +21,8 @@
   */
 package org.jboss.aop.advice;
 
+import java.lang.ref.WeakReference;
+
 import org.jboss.aop.Advisor;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.util.xml.XmlLoadable;
@@ -28,7 +30,7 @@ import org.w3c.dom.Element;
 
 public class GenericInterceptorFactory implements InterceptorFactory
 {
-   private Class clazz = null;
+   private WeakReference<Class> classRef = null;
    private String classname;
    private Element element;
    private boolean deployed = true;
@@ -45,7 +47,7 @@ public class GenericInterceptorFactory implements InterceptorFactory
 
    public GenericInterceptorFactory(Class clazz)
    {
-      this.clazz = clazz;
+      this.classRef = new WeakReference<Class>(clazz);
       this.classname = clazz.getName();
    }
 
@@ -76,12 +78,18 @@ public class GenericInterceptorFactory implements InterceptorFactory
    {
       try
       {
+         Class clazz = null;
          synchronized (this)
          {
-            if (clazz == null)
+            if (classRef != null)
+            {
+               clazz = classRef.get();
+            }
+            if (clazz != null)
             {
                // FIXME ClassLoader - why should the class be visible from the context classloader?
                clazz = SecurityActions.getContextClassLoader().loadClass(classname);
+               classRef = new WeakReference<Class>(clazz);
             }
          }
          Interceptor interceptor = (Interceptor)clazz.newInstance();
