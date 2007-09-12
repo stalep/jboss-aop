@@ -22,6 +22,7 @@
 package org.jboss.aop.advice.annotation;
 
 import java.lang.annotation.Annotation;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +32,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.WeakHashMap;
+import java.util.Map;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.AdviceMethodProperties;
@@ -179,8 +180,8 @@ public class AdviceMethodFactory
    /** Stores advice matching failure messages. */
    private static StringBuffer adviceMatchingMessage = new StringBuffer();
    
-   private HashMap<String, WeakHashMap<ParameterAnnotationRule[],
-      Collection<AdviceInfo>>> adviceInfoCache;
+   private Map<String, Map<ParameterAnnotationRule[],
+      WeakReference<Collection<AdviceInfo>>>> adviceInfoCache;
    
    private ReturnType returnType;
    private AdviceSignatureRule adviceSignatureRule;
@@ -223,7 +224,7 @@ public class AdviceMethodFactory
       this.rules = rules;
       this.returnType = returnType;
       this.adviceInfoCache = new HashMap
-         <String, WeakHashMap<ParameterAnnotationRule[], Collection<AdviceInfo>>>();
+         <String, Map<ParameterAnnotationRule[], WeakReference<Collection<AdviceInfo>>>>();
       this.compulsory = compulsory;
    }
    
@@ -320,7 +321,7 @@ public class AdviceMethodFactory
    private Collection<AdviceInfo> getRankedAdvices(AdviceMethodProperties properties,
          ParameterAnnotationRule[] contextRules, int[][] mutuallyExclusive)
    {
-      WeakHashMap<ParameterAnnotationRule[], Collection<AdviceInfo>> map;
+      Map<ParameterAnnotationRule[], WeakReference<Collection<AdviceInfo>>> map;
       synchronized(adviceInfoCache)
       {
          // verify if list is on cache
@@ -329,7 +330,7 @@ public class AdviceMethodFactory
          map = adviceInfoCache.get(key);
          if (map == null)
          {
-            map = new WeakHashMap<ParameterAnnotationRule[], Collection<AdviceInfo>>();
+            map = new HashMap<ParameterAnnotationRule[], WeakReference<Collection<AdviceInfo>>>();
             adviceInfoCache.put(key, map);
          }
       }
@@ -337,12 +338,16 @@ public class AdviceMethodFactory
       {
          if (map.containsKey(contextRules))
          {
-            Collection<AdviceInfo> advices = map.get(contextRules);
-            for(AdviceInfo adviceInfo: advices)
+            WeakReference<Collection<AdviceInfo>> advicesReference = map.get(contextRules);
+            Collection<AdviceInfo> advices = advicesReference.get();
+            if (advices != null)
             {
-               adviceInfo.resetMatching();
+               for(AdviceInfo adviceInfo: advices)
+               {
+                  adviceInfo.resetMatching();
+               }
+               return advices;
             }
-            return advices;
          }
 
          // create the list
@@ -351,7 +356,7 @@ public class AdviceMethodFactory
          ArrayList<AdviceInfo> rankedAdvices =
                new ArrayList<AdviceInfo>(methods.length);
          // add list to cache
-         map.put(contextRules, rankedAdvices);
+         map.put(contextRules, new WeakReference<Collection<AdviceInfo>>(rankedAdvices));
 
 
          if (methods.length == 0)
