@@ -86,6 +86,12 @@ public class MemoryLeakTestCase extends TestCase
       super.setUp();
    }
 
+   
+   private String getProfilerIdentify(Object obj)
+   {
+	   return obj.getClass().getName() + "@" + System.identityHashCode(obj);
+   }
+   
    public void testWithClassLoader() throws Exception
    {
 
@@ -104,13 +110,13 @@ public class MemoryLeakTestCase extends TestCase
             weakReferenceOnLoader = new WeakReference(loader);
 
             Thread.currentThread().setContextClassLoader(loader);
-            System.out.println("OLD Loader " + oldloader + ", profiler identify=" + oldloader.getClass().getName() + "@" + System.identityHashCode(oldloader));
-            System.out.println("NEW Loader " + loader + ", profiler identify==" + loader.getClass().getName() + "@" + System.identityHashCode(oldloader));
+            System.out.println("OLD Loader " + oldloader + ", profiler identify=" + getProfilerIdentify(oldloader));
+            System.out.println("NEW Loader " + loader + ", profiler identify==" + getProfilerIdentify(loader));
 
             ClassLoader parent = loader.getParent();
             while (parent != null)
             {
-               System.out.println("Parent " + parent);
+               System.out.println("Parent " + parent + " profilerIdentify=" + getProfilerIdentify(parent));
                parent = parent.getParent();
             }
 
