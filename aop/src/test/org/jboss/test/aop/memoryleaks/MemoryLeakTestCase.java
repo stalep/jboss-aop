@@ -100,11 +100,12 @@ public class MemoryLeakTestCase extends TestCase
          {
             final ClassLoader oldloader = Thread.currentThread().getContextClassLoader();
             ClassLoader loader = newClassLoader(oldloader);
+            
             weakReferenceOnLoader = new WeakReference(loader);
 
             Thread.currentThread().setContextClassLoader(loader);
-            System.out.println("OLD Loader " + oldloader);
-            System.out.println("NEW Loader " + loader);
+            System.out.println("OLD Loader " + oldloader + ", profiler identify=" + oldloader.getClass().getName() + "@" + System.identityHashCode(oldloader));
+            System.out.println("NEW Loader " + loader + ", profiler identify==" + loader.getClass().getName() + "@" + System.identityHashCode(oldloader));
 
             ClassLoader parent = loader.getParent();
             while (parent != null)
