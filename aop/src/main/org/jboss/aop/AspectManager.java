@@ -111,12 +111,6 @@ public class AspectManager
    /** Advisors registered with this manager/domain */
    protected final WeakHashMap advisors = new WeakHashMap();
    
-   /** A map of domains by loader repository, maintaned by the top level AspectManager */
-   // This seems to be maintained but not used, to avoid garbage collection of domains?
-   // I moved it to the AOPClassLoaderScopingPolicy for now 
-   @Deprecated 
-   protected WeakHashMap scopedClassLoaderDomains = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
-
    /** A map of domains by class, maintaned by the top level AspectManager */
    protected WeakHashMap subDomainsPerClass = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
    
@@ -731,18 +725,9 @@ public class AspectManager
       AOPClassPoolRepository.getInstance().registerClass(clazz);
    }
 
-   @Deprecated
-   // This is never invoked, it always referenced the scopedClassLoaderDomains directly?
-   protected Map getScopedClassLoaderDomains()
-   {
-      return scopedClassLoaderDomains;
-   }
-
    public void unregisterClassLoader(ClassLoader cl)
    {
       AOPClassPoolRepository.getInstance().unregisterClassLoader(cl);
-      //top-level only
-//      getScopedClassLoaderDomains().remove(cl);
    }
 
    public ArrayList getExclude()

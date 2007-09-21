@@ -34,10 +34,14 @@ import org.jboss.aop.AspectAnnotationLoader;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.AspectXmlLoader;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
+import org.jboss.classloader.spi.base.BaseClassLoader;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.jboss.metadata.spi.MetaData;
+import org.jboss.metadata.spi.MutableMetaData;
+import org.jboss.metadata.spi.scope.ScopeKey;
 import org.jboss.virtual.VirtualFile;
 import org.jboss.virtual.VirtualFileFilter;
 import org.jboss.virtual.VisitorAttributes;
@@ -100,6 +104,8 @@ public class AspectDeployer extends AbstractVFSRealDeployer
    
    public void deploy(VFSDeploymentUnit unit) throws DeploymentException
    {
+//      dumpDeploymentUnitStuffForTesting(unit);
+      
       List<VirtualFile> files = unit.getMetaDataFiles(null, AOP_DD_SUFFIX);
 
       if (isAopArchiveOrFolder(unit))
@@ -112,6 +118,25 @@ public class AspectDeployer extends AbstractVFSRealDeployer
          deployXml(unit, files);
       }
    }
+   
+//   public void dumpDeploymentUnitStuffForTesting(VFSDeploymentUnit unit)
+//   {
+//      ScopeKey scope = unit.getScope();
+//      ScopeKey mutable = unit.getMutableScope();
+//      
+//      MetaData metaData = unit.getMetaData();
+//      MutableMetaData mutableMetaData = unit.getMutableMetaData();
+//      System.out.println("====> SCOPE: " + scope + "\n\tMUTABLE_SCOPE: " + mutable + "\n\tMETADATA: " + metaData + "\n\tMUTABLE_METADATA: " + mutableMetaData);
+//      
+//      //Need to get information about the classloader
+//      ClassLoader loader = unit.getClassLoader();
+//      if (loader instanceof BaseClassLoader)
+//      {
+//         BaseClassLoader bcl = (BaseClassLoader)loader;
+////         bcl.get
+//      }
+//      
+//   }
    
    public void undeploy(VFSDeploymentUnit unit)
    {

@@ -22,6 +22,8 @@
 package org.jboss.test.aop;
 
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Properties;
 
 import org.jboss.aop.AspectXmlLoader;
@@ -41,7 +43,14 @@ public class AOPTestDelegate extends AbstractTestDelegate
    {
       // FIXME AOPTestDelegate constructor
       super(clazz);
-      systemProps = (Properties)System.getProperties().clone();
+      
+      systemProps = AccessController.doPrivileged(new PrivilegedAction<Properties>() 
+      {
+         public Properties run()
+         {
+            return (Properties)System.getProperties().clone();
+         }
+      });
    }
 
    public Properties getSystemProperties()

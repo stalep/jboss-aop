@@ -940,13 +940,6 @@ public class Domain extends AspectManager
       return parent.getInterceptionMarkers();
    }
 
-
-   @Deprecated
-   protected Map getScopedClassLoaderDomains()
-   {
-      return parent.getScopedClassLoaderDomains();
-   }
-
    /** Managed by the top-level aspect manager */
    protected Map getSubDomainsPerClass()
    {

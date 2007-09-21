@@ -1240,9 +1240,13 @@ public class AspectXmlLoader implements XmlLoader
 
    public static void deployXML(URL url) throws Exception
    {
-      deployXML(url, null);
+      deployXML(url, null, AspectManager.instance());
    }
 
+   /**
+    * @deprecated Should pass in AspectManager explicitly
+    */
+   @Deprecated
    public static void deployXML(URL url, ClassLoader cl) throws Exception
    {
       XmlLoader loader = null;
@@ -1255,11 +1259,10 @@ public class AspectXmlLoader implements XmlLoader
          loader = factory.create();
       }
       loader.setClassLoader(cl);
-      loader.deploy(url, AspectManager.instance());
-
+      deployXML(url, cl, AspectManager.instance());
    }
-
-   public static void undeployXML(URL url) throws Exception
+   
+   public static void deployXML(URL url, ClassLoader cl, AspectManager manager) throws Exception
    {
       XmlLoader loader = null;
       if (factory == null)
@@ -1270,7 +1273,27 @@ public class AspectXmlLoader implements XmlLoader
       {
          loader = factory.create();
       }
-      loader.undeploy(url, AspectManager.instance());
+      loader.setClassLoader(cl);
+      loader.deploy(url, manager);
+   }
+
+   public static void undeployXML(URL url) throws Exception
+   {
+      undeployXML(url, AspectManager.instance());
+   }
+
+   public static void undeployXML(URL url, AspectManager manager) throws Exception
+   {
+      XmlLoader loader = null;
+      if (factory == null)
+      {
+         loader = new AspectXmlLoader();
+      }
+      else
+      {
+         loader = factory.create();
+      }
+      loader.undeploy(url, manager);
    }
 
    private static class Resolver implements EntityResolver

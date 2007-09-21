@@ -26,6 +26,7 @@ import java.util.List;
 
 import junit.framework.Test;
 
+import org.jboss.aop.AspectManager;
 import org.jboss.classloader.plugins.filter.PatternClassFilter;
 import org.jboss.classloader.spi.ClassLoaderDomain;
 import org.jboss.classloader.spi.ClassLoaderPolicy;
@@ -59,7 +60,7 @@ public abstract class AOPIntegrationTest extends AbstractTestCaseWithSetup
    public static Test suite(Class<?> clazz, boolean importAll, Class<?>... packages)
    {
       helper = new IsolatedClassLoaderTestHelper();
-      ClassFilter aopFilter = new PatternClassFilter(new String[] { "org\\.jboss\\.aop\\..+"}, new String[] { "org/jboss/aop/.+" });
+      ClassFilter aopFilter = new PatternClassFilter(new String[] { "org\\.jboss\\.aop\\..+", "org\\.jboss\\.metadata\\..+"}, new String[] { "org/jboss/aop/.+", "org/jboss/metadata/.+"});
       Class<?> newClass = helper.initializeClassLoader(clazz, aopFilter, importAll, packages);
       return AbstractTestCaseWithSetup.suite(newClass);
    }
@@ -104,6 +105,20 @@ public abstract class AOPIntegrationTest extends AbstractTestCaseWithSetup
    }
 
    /**
+    * Deploy the aop config
+    * 
+    * @param suffix the suffix
+    * @param classLoader the classloader
+    * @param manager the AspectManager/Domain to deploy into
+    * @return the url
+    * @throws Exception for any error
+    */
+   protected URL deploy(String suffix, ClassLoader classLoader, AspectManager manager) throws Exception
+   {
+      return getAOPDelegate().deploy(suffix, classLoader, manager);
+   }
+
+   /**
     * Undeploy the aop config
     * 
     * @param url the url
@@ -111,6 +126,17 @@ public abstract class AOPIntegrationTest extends AbstractTestCaseWithSetup
    protected void undeploy(URL url)
    {
       getAOPDelegate().undeploy(url);
+   }
+   
+   /**
+    * Undeploy the aop config
+    * 
+    * @param url the url
+    * @param manager the AspectManager/Domain to undeploy from
+    */
+   protected void undeploy(URL url, AspectManager manager)
+   {
+      getAOPDelegate().undeploy(url, manager);
    }
    
    /**

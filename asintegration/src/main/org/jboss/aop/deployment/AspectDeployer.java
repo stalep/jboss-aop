@@ -165,16 +165,16 @@ implements SubDeployer, AspectDeployerMBean
          }
          
          Thread.currentThread().setContextClassLoader(di.ucl);
+         AspectManager manager = (scl != null) ? AspectManager.instance(scl) : AspectManager.instance();
          if (!di.isXML)
          {
             Iterator it = ArchiveBrowser.getBrowser(di.localUrl, new ClassFileFilter());
-            AspectManager manager = (scl != null) ? AspectManager.instance(scl) : AspectManager.instance();
             AspectAnnotationLoader loader = new AspectAnnotationLoader(manager);
             loader.setClassLoader(scl);
             loader.deployInputStreamIterator(it);
          }
          
-         AspectXmlLoader.deployXML(docURL, scl);
+         AspectXmlLoader.deployXML(docURL, scl, manager);
          Notification msg = new Notification("AOP Deploy", this, getNextNotificationSequenceNumber());
          sendNotification(msg);
          log.debug("Deployed AOP: " + di.url);

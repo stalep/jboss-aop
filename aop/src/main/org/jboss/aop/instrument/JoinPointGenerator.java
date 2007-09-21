@@ -301,6 +301,12 @@ public abstract class JoinPointGenerator
       }
       catch (Throwable e)
       {
+//         for (int i = 0 ; i < info.getInterceptors().length ; i++)
+//         {
+//            GeneratedAdvisorInterceptor icptr = (GeneratedAdvisorInterceptor)info.getInterceptors()[i]; 
+//            System.out.println(" - - - - - - - - - - - - - ");
+//            System.out.println(icptr.getName());
+//         }
          throw new RuntimeException("Error generating joinpoint class for joinpoint " + info, e);
       }
    }
@@ -321,6 +327,11 @@ public abstract class JoinPointGenerator
       catch (Exception e)
       {
          StringBuffer sb = new StringBuffer();
+//         Class advisedClass = info.getClazz();
+//         if (advisedClass != null)
+//         {
+//            sb.append("Target: " + advisedClass.getName() + " " + advisedClass.getClassLoader() + "\n");
+//         }
          throw new RuntimeException(debugClass(sb, clazz).toString(), e);
       }
       
