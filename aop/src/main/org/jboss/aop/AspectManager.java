@@ -1753,11 +1753,15 @@ public class AspectManager
    public Object getPerVMAspect(String def)
    {
       Object aspect = perVMAspects.get(def);
-      if (aspect instanceof AspectDefinition)
+      if (aspect == null)
       {
-         synchronized (aspect)
+         AspectDefinition adef = (AspectDefinition)aspectDefinitions.get(def);
+         if (adef != null && adef.getScope() == Scope.PER_VM)
          {
-            return createPerVmAspect(def, (AspectDefinition)aspect, null);
+            synchronized (adef)
+            {
+               aspect = createPerVmAspect(def, adef, null);
+            }
          }
       }
       return aspect;
@@ -1793,11 +1797,6 @@ public class AspectManager
    public void addAspectDefinition(AspectDefinition def)
    {
       removeAspectDefinition(def.getName());
-      if (def.getScope() == Scope.PER_VM)
-      {
-         initPerVMAspectsMap();
-         perVMAspects.put(def.getName(), def);
-      }
       initAspectDefintitionsMap();
       aspectDefinitions.put(def.getName(), def);
    }
