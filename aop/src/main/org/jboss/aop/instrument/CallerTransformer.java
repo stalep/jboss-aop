@@ -320,10 +320,10 @@ public abstract class CallerTransformer
 
       public void edit(MethodCall call) throws CannotCompileException
       {
+         String classname = call.getClassName();
+         String methodName = call.getMethodName();
          try
          {
-            String classname = call.getClassName();
-            String methodName = call.getMethodName();
             if (ClassAdvisor.isWithoutAdvisement(methodName)
             || methodName.startsWith("_")
             || classname.startsWith("org.jboss.aop")
@@ -368,7 +368,7 @@ public abstract class CallerTransformer
          }
          catch (Exception ex)
          {
-            System.err.println("error getting:" + call.getClassName() + ". '" + call.getMethodName() + "'");
+            System.err.println("error getting:" + classname + ". '" + methodName + "'");
             ex.printStackTrace();
             throw new CannotCompileException(ex);
          }
