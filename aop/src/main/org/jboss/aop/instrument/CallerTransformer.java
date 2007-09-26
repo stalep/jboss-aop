@@ -293,7 +293,7 @@ public abstract class CallerTransformer
          this.constructors = instrumentor.getConstructors(callingClass);
       }
 
-      private String getUniqueInvocationClassname(String classname)
+      private synchronized String getUniqueInvocationClassname(String classname)
       {
          return classname + "_" + (++invocationCounter) + "_";
       }
