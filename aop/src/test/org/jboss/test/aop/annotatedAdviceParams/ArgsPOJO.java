@@ -39,6 +39,8 @@ public class ArgsPOJO
    
    public static boolean field4;
    
+   public List<SuperValue> field5;
+   
    public int bunch1(int x, double y, float z, String str, int q)
    {
       return x + (int) y + (int) z + q;

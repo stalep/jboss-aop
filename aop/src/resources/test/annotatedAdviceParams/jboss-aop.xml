@@ -347,7 +347,7 @@
    
    <aspect class="org.jboss.test.aop.annotatedAdviceParams.ArgAspectGenerics" scope="PER_VM"/>
 
-   <bind pointcut="execution(void org.jboss.test.aop.annotatedAdviceParams.ArgsPOJO->*(java.util.List))">
+   <bind pointcut="execution(void org.jboss.test.aop.annotatedAdviceParams.ArgsPOJO->*(java.util.List)) OR set(java.util.List org.jboss.test.aop.annotatedAdviceParams.ArgsPOJO->*)">
       <before name="before1" aspect="org.jboss.test.aop.annotatedAdviceParams.ArgAspectGenerics"/>
       <before name="before2" aspect="org.jboss.test.aop.annotatedAdviceParams.ArgAspectGenerics"/>
       <before name="before4" aspect="org.jboss.test.aop.annotatedAdviceParams.ArgAspectGenerics"/>
