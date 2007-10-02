@@ -371,6 +371,17 @@ public abstract class JoinPointGenerator
       return ++increment;
    }
    
+   /**
+    * This method returns the code that access the joinpoint arg number
+    * <code>index</code> (for invocations).
+    * 
+    * @param index the index of the desired arg field
+    */
+   protected String getJoinPointArg(int index)
+   {
+      return "this.arg" + index;
+   }
+   
    protected abstract void initialiseJoinPointNames(JoinPointInfo info);
 
    private GeneratedClassInfo generateJoinpointClass(ClassPool pool, JoinPointInfo newInfo) throws NotFoundException,
@@ -1864,7 +1875,7 @@ public abstract class JoinPointGenerator
             AdviceMethodProperties properties,
             JoinPointGenerator generator)
       {
-         // method that avoids more than one repeated call to ASSURE_ARGS_CONSISTENCY
+         // method that avoids more than one repeated call to ENFORCE_ARGS_CONSISTENCY
          this.consistencyEnforced = false;
          int[] args = properties.getArgs();
          
@@ -1909,8 +1920,7 @@ public abstract class JoinPointGenerator
                beforeCall.append("();");
                consistencyEnforced = true;
             }
-            call.append("this.arg");
-            call.append(arg);
+            call.append(generator.getJoinPointArg(arg));
             return false;
          }
          return super.appendParameter(beforeCall, call, arg, adviceParam, properties, generator);

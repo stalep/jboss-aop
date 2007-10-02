@@ -62,6 +62,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
    private static final Class WRITE_INVOCATION_TYPE = FieldWriteInvocation.class;
    private static final CtClass READ_INVOCATION_CT_TYPE;
    private static final CtClass WRITE_INVOCATION_CT_TYPE;
+   private static final String TYPED_VALUE_FIELD = "typedValue";
    static
    {
       try
@@ -111,6 +112,17 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
 
       joinpointFieldName =
          getGeneratedJoinPointFieldName(fieldName(finfo), finfo.isRead());
+   }
+   
+   /**
+    * This method will be called only when an @Arg-annotated parameter is accepted.
+    * This happens only on FieldWrite interceptions, and index value will be zero.
+    * 
+    * @param index zero value
+    */
+   protected String getJoinPointArg(int index)
+   {
+      return "this." + TYPED_VALUE_FIELD;
    }
 
    private String fieldName(FieldInfo info)
@@ -284,7 +296,7 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
          return sb.toString();
       }
 
-      private CtClass setupClass()throws NotFoundException, CannotCompileException
+      protected CtClass setupClass()throws NotFoundException, CannotCompileException
       {
          String className = getGeneratedJoinPointClassName(advisedField.getName(), read);
 
@@ -553,12 +565,36 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
 
    private static class WriteBaseClassGenerator extends BaseClassGenerator
    {
+      private static final String GET_VALUE = "getValue";
+      private static final String SET_VALUE = "setValue";
+      
       WriteBaseClassGenerator(GeneratedAdvisorInstrumentor instrumentor,  CtClass advisedClass,
             CtField advisedField, String finame, int index) throws NotFoundException
       {
          super(instrumentor, advisedClass, advisedField, finame, index, false);
       }
 
+      protected CtClass setupClass()throws NotFoundException, CannotCompileException
+      {
+         CtClass setUp = super.setupClass();
+         CtField valueField = new CtField(getArgumentType(), TYPED_VALUE_FIELD, setUp);
+         jp.addField(valueField);
+         CtMethod oldGetValue = WRITE_INVOCATION_CT_TYPE.getDeclaredMethod(GET_VALUE);
+         CtMethod getValue = CtNewMethod.make(oldGetValue.getReturnType(),
+               GET_VALUE, oldGetValue.getParameterTypes(),
+               oldGetValue.getExceptionTypes(), "{return ($w)" + TYPED_VALUE_FIELD + ";}",
+               setUp);
+         setUp.addMethod(getValue);
+         CtMethod oldSetValue = WRITE_INVOCATION_CT_TYPE.getDeclaredMethod(SET_VALUE);
+         CtMethod setValue = CtNewMethod.make(oldSetValue.getReturnType(),
+               GET_VALUE, oldSetValue.getParameterTypes(),
+               oldSetValue.getExceptionTypes(), "{" + TYPED_VALUE_FIELD + " = " +
+               JavassistToReflect.castInvocationValueToTypeString(getArgumentType(),
+                     "$1") + ";}", setUp);
+         setUp.addMethod(setValue);
+         return setUp;
+      }
+      
       protected CtClass getSuperClass() throws NotFoundException
       {
          return WRITE_INVOCATION_CT_TYPE;
@@ -573,9 +609,9 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       {
          if (hasTargetObject)
          {
-            return "   super.value = ($w)$3;";
+            return TYPED_VALUE_FIELD + " = $3;";
          }
-         return "   super.value = ($w)$2;";
+         return TYPED_VALUE_FIELD + " = $2;";
       }
 
       protected CtClass[] getInvokeJoinPointParams() throws NotFoundException
@@ -600,14 +636,11 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
 
       protected String createInvokeNextDispatchMethodBody() throws NotFoundException
       {
-         CtClass type = advisedField.getType();
-         String value = JavassistToReflect.castInvocationValueToTypeString(type) + ";";
-
          return
             "{" +
             ((hasTargetObject) ?
-                  TYPED_TARGET_FIELD + "." + advisedField.getName() + " = " +  value:
-                     advisedClass.getName() + "." + advisedField.getName() + " = " +  value) +
+                  TYPED_TARGET_FIELD + "." + advisedField.getName() + " = " +  TYPED_VALUE_FIELD:
+                     advisedClass.getName() + "." + advisedField.getName() + " = " +  TYPED_VALUE_FIELD) +
 
             ((hasTargetObject) ?
                   "; return "  + TYPED_TARGET_FIELD + "." + advisedField.getName() + ";" :
@@ -622,18 +655,33 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
             "{" + advisedClass.getName() + "." + advisedField.getName() + " = $1;}";
       }
       
+      protected void addArgumentFieldAndAccessor() throws CannotCompileException, NotFoundException
+      {
+         // duplicated code (See OptimizedBehaviour class)
+         CtField inconsistentArgs = new CtField(CtClass.booleanType, "inconsistentArgs",
+               jp);
+         jp.addField(inconsistentArgs, CtField.Initializer.byExpr("false"));
+         super.addArgumentFieldAndAccessor();
+         CtMethod enforceArgsConsistency = CtNewMethod.make(
+               createEnforceArgsConsistencyBody(), jp);
+         enforceArgsConsistency.setModifiers(Modifier.PROTECTED);
+         jp.addMethod(enforceArgsConsistency);
+      }
+      
       protected String createGetArgumentsBody()
       {
          StringBuffer code = new StringBuffer("public java.lang.Object[] ");
          code.append(OptimizedBehaviourInvocations.GET_ARGUMENTS);
-         code.append("(){ ");
+         code.append("(){ inconsistentArgs = true;   ");
          code.append("   if(");
          code.append(ARGUMENTS);
          code.append("  == null)");
          code.append("   {");
          code.append("      ");
          code.append(ARGUMENTS);
-         code.append(" = new java.lang.Object[]{super.value};");
+         code.append(" = new java.lang.Object[]{");
+         code.append(GET_VALUE);
+         code.append("()};");
          code.append("   }");
          code.append("   return ");
          code.append(ARGUMENTS);
@@ -646,15 +694,24 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       {
          StringBuffer code = new StringBuffer(
          "public void setArguments(java.lang.Object[] args)");
-         code.append("{   ");
+         code.append("{   inconsistentArgs = true;   ");
          code.append("if (args == null || args.length != 1)");
          code.append("{throw new RuntimeException(");
          code.append("\"Field write arguments must be a non-null array containing");
          code.append(" a single element: the value of the field write\");}");
          code.append(ARGUMENTS);
          code.append("=args;");
-         code.append("   super.value=args[0];");
          code.append("}");
+         return code.toString();
+      }
+      
+      protected String createEnforceArgsConsistencyBody()
+      {
+         StringBuffer code = new StringBuffer("public void ");
+         code.append(OptimizedBehaviourInvocations.ENFORCE_ARGS_CONSISTENCY);
+         // duplicated code (See OptimizedBehaviour class)
+         code.append("() {if(inconsistentArgs) { this.");
+         code.append(SET_VALUE).append("(").append(ARGUMENTS).append("[0]);}}");
          return code.toString();
       }
    }
