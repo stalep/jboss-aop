@@ -49,6 +49,7 @@ public class ArgsInvalidPOJO
    public String field2Finally2;
    
    /* int field3 */
+   public int field3Before3;
    public int field3After4;
    public int field3After5;
 

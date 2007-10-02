@@ -369,6 +369,19 @@ public class ArgTestCase extends AOPTestWithSetup
       assertTrue(ArgAspectInterfaces.finally3);
    }
    
+   public void test12()
+   {
+      pojo.field3 = 12;
+      
+      assertTrue(ArgAspect.before1);
+      assertTrue(ArgAspect.before2);
+      assertTrue(ArgAspect.finally1);
+      
+      assertEquals(12, ArgAspect.before1X);
+      assertEquals(12, ArgAspect.before2X);
+      assertEquals(12, ArgAspect.finally1X);
+   }
+   
    public void testInverted1()
    {
       pojo.method11("testInverted", null);

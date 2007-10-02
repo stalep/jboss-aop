@@ -225,6 +225,16 @@
       <after name="after5" aspect="org.jboss.test.aop.annotatedAdviceParams.ArgAspect"/>
    </bind>
 
+   <bind pointcut="set(* org.jboss.test.aop.annotatedAdviceParams.ArgsPOJO->field3)">
+      <before name="before1" aspect="org.jboss.test.aop.annotatedAdviceParams.ArgAspect"/>
+      <before name="before2" aspect="org.jboss.test.aop.annotatedAdviceParams.ArgAspect"/>
+      <finally name="finally1" aspect="org.jboss.test.aop.annotatedAdviceParams.ArgAspect"/>
+   </bind>
+   
+   <bind pointcut="set(* org.jboss.test.aop.annotatedAdviceParams.ArgsInvalidPOJO->field3Before3)">
+      <before name="before3" aspect="org.jboss.test.aop.annotatedAdviceParams.ArgAspect"/>
+   </bind>
+   
    <aspect class="org.jboss.test.aop.annotatedAdviceParams.ArgAspect2" scope="PER_VM"/>
 
    <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ArgsPOJO2->bunchArgs(..))">

@@ -716,6 +716,21 @@ public class ArgInvalidTestCase extends AOPTestWithSetup
       assertTrue(thrown);
    }
    
+   public void test12()
+   {
+      boolean thrown = false;
+      try
+      {
+         pojo.field3Before3 = 10;
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+         e.printStackTrace();
+      }
+      assertTrue(thrown);
+   }
+   
    public void testInverted1()
    {
       boolean thrown = false;
