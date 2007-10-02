@@ -180,7 +180,6 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
       StringBuffer code = new StringBuffer("{");
       code.append("   inconsistentArgs = true;");
       code.append("   arguments = $1; ");
-      code.append("   inconsistentArgs = true;");
       code.append("}");
       CtMethod setArguments = null;
       try
@@ -287,10 +286,10 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
       }
       code.append('}');
       
-      CtMethod assureArgsConsistency = null;
+      CtMethod enforceArgsConsistency = null;
       try
       {
-         assureArgsConsistency = CtNewMethod.make(
+         enforceArgsConsistency = CtNewMethod.make(
                CtClass.voidType, ENFORCE_ARGS_CONSISTENCY,
                new CtClass[0],
                new CtClass[0], code.toString(),
@@ -301,8 +300,8 @@ public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
          logger.error(code.toString());
          throw e;
       }
-      assureArgsConsistency.setModifiers(javassist.Modifier.FINAL);
-      invocation.addMethod(assureArgsConsistency); 
+      enforceArgsConsistency.setModifiers(javassist.Modifier.FINAL);
+      invocation.addMethod(enforceArgsConsistency); 
    }
 
    /** Adds fields arg0, arg1 etc. to the invocation class for storing the parameters for a method
