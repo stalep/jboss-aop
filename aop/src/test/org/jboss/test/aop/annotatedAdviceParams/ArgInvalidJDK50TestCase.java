@@ -383,4 +383,162 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       }
       assertTrue(thrown);
    }
+   
+   public void testGenerics3()
+   {
+      List<SuperValue> list = new ArrayList<SuperValue>();
+      boolean thrown = false;
+      try
+      {
+         pojo.field5Before7 = list;
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.field5Before8 = list;
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.field5Around5 = list;
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.field5Around7 = list;
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.field5Around8 = list;
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.field5After5 = list;
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.field5After7 = list;
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.field5After8 = list;
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.field5Throwing2 = list;
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.field5Throwing7 = list;
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.field5Throwing8 = list;
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.field5Finally5 = list;
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.field5Finally7 = list;
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.field5Finally8 = list;
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+   }
 }

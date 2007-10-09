@@ -60,6 +60,22 @@ public class ArgsInvalidPOJO
    public static boolean field4After5;
    public static boolean field4Finally2;
    
+   /* List<SuperValue> field5 */
+   public List<SuperValue> field5Before7;
+   public List<SuperValue> field5Before8;
+   public List<SuperValue> field5Around5;
+   public List<SuperValue> field5Around7;
+   public List<SuperValue> field5Around8;
+   public List<SuperValue> field5After5;
+   public List<SuperValue> field5After7;
+   public List<SuperValue> field5After8;
+   public List<SuperValue> field5Throwing2;
+   public List<SuperValue> field5Throwing7;
+   public List<SuperValue> field5Throwing8;
+   public List<SuperValue> field5Finally5;
+   public List<SuperValue> field5Finally7;
+   public List<SuperValue> field5Finally8;
+   
    /* bunch1(int, double, float, String, int) */
    
    public int bunch1Around1(int x, double y, float z, String str, int q)

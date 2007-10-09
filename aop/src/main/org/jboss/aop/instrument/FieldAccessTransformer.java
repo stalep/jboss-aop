@@ -24,10 +24,6 @@ package org.jboss.aop.instrument;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import org.jboss.aop.AspectManager;
-import org.jboss.aop.ClassAdvisor;
-import org.jboss.aop.classpool.AOPClassPool;
-import org.jboss.aop.util.Advisable;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -38,8 +34,15 @@ import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
+import javassist.bytecode.MethodInfo;
+import javassist.bytecode.SignatureAttribute;
 import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
+
+import org.jboss.aop.AspectManager;
+import org.jboss.aop.ClassAdvisor;
+import org.jboss.aop.classpool.AOPClassPool;
+import org.jboss.aop.util.Advisable;
 
 /**
  * @author <a href="mailto:kabirkhan@bigfoot.com">Kabir Khan</a>
@@ -86,7 +89,6 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
          for (int index = 0; it.hasNext(); index++, fieldIndex++)
          {
             CtField field = (CtField) it.next();
-   
             JoinpointClassification classificationGet = instrumentor.joinpointClassifier.classifyFieldGet(field, advisor); 
             JoinpointClassification classificationSet = instrumentor.joinpointClassifier.classifyFieldSet(field, advisor); 
             if (!isPrepared(classificationGet) && !isPrepared(classificationSet))
@@ -580,6 +582,14 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
       CtMethod wmethod = CtNewMethod.make(CtClass.voidType, wrapperName, writeParam, null, "{}", clazz);
       wmethod.setModifiers(mod);
       clazz.addMethod(wmethod);
+      
+      SignatureAttribute ai = (SignatureAttribute) field.getFieldInfo2().getAttribute(SignatureAttribute.tag);
+      if (ai != null)
+      {
+         MethodInfo wrapperInfo = wmethod.getMethodInfo2();
+         SignatureAttribute methodAtt = new SignatureAttribute(wrapperInfo.getConstPool(), "(" + ai.getSignature() + ")V");
+         wrapperInfo.addAttribute(methodAtt);
+      }
       
       return wmethod;
    }
