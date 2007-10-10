@@ -414,14 +414,14 @@ public class ArgTestCase extends AOPTestWithSetup
       assertTrue(ArgAspectInvertedArgs.finally1);
    }
    
-   public void testGenerics1()
+   public void testGenericsOnMethod()
    {
       List<SuperValue> list = new ArrayList<SuperValue>();
       pojo.method13(list);
       assertGenericsAdvices(false);
    }
 
-   public void testGenerics2()
+   public void testGenericsOnMethodWithException()
    {
       boolean thrown = false;
       try
@@ -438,16 +438,80 @@ public class ArgTestCase extends AOPTestWithSetup
       assertGenericsAdvices(thrown);
    }
    
-   public void testGenerics3()
+   public void testGenericsOnField()
    {
       pojo.field5 = new ArrayList<SuperValue>();
       assertGenericsAdvices(false);
    }
    
-   public void testGenerics4()
+   public void testGenericsOnConsExec() throws POJOException
    {
-      new ArgsPOJO(new ArrayList<SuperValue>());
+      new ArgsPOJO(new ArrayList<SuperValue>(), false);
       assertGenericsAdvices(false);
+   }
+   
+   public void testGenericsOnConsExecWithException() throws POJOException
+   {
+      boolean thrown = false;
+      try
+      {
+         new ArgsPOJO(new ArrayList<SuperValue>(), true);
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      // verify precondition for this test
+      assertTrue(thrown);
+      assertGenericsAdvices(thrown);
+   }
+   
+   public void testGenericsOnConstruction() throws POJOException
+   {
+      new ArgsPOJO(false, new ArrayList<SuperValue>());
+      assertGenericsAdvices(false);
+   }
+   
+   public void testGenericsOnConstructionWithException() throws POJOException
+   {
+      boolean thrown = false;
+      try
+      {
+         new ArgsPOJO(true, new ArrayList<SuperValue>());
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      // verify precondition for this test
+      assertTrue(thrown);
+      // construction is executed in the end of constructor body. So, if this
+      // cons body throws an exception, advices are not called
+      assertFalse(ArgAspectGenerics.before1);
+      assertFalse(ArgAspectGenerics.before2);
+      assertFalse(ArgAspectGenerics.before4);
+      assertFalse(ArgAspectGenerics.before5);
+      assertFalse(ArgAspectGenerics.before6);
+      assertFalse(ArgAspectGenerics.around1);
+      assertFalse(ArgAspectGenerics.around2);
+      assertFalse(ArgAspectGenerics.around3);
+      assertFalse(ArgAspectGenerics.around4);
+      assertFalse(ArgAspectGenerics.around6);
+      assertFalse(ArgAspectGenerics.after1);
+      assertFalse(ArgAspectGenerics.after2);
+      assertFalse(ArgAspectGenerics.after3);
+      assertFalse(ArgAspectGenerics.after4);
+      assertFalse(ArgAspectGenerics.after6);
+      assertFalse(ArgAspectGenerics.throwing1);
+      assertFalse(ArgAspectGenerics.throwing3);
+      assertFalse(ArgAspectGenerics.throwing4);
+      assertFalse(ArgAspectGenerics.throwing5);
+      assertFalse(ArgAspectGenerics.throwing6);
+      assertFalse(ArgAspectGenerics.finally1);
+      assertFalse(ArgAspectGenerics.finally2);
+      assertFalse(ArgAspectGenerics.finally3);
+      assertFalse(ArgAspectGenerics.finally4);
+      assertFalse(ArgAspectGenerics.finally6);
    }
    
    private void assertGenericsAdvices(boolean thrown)

@@ -78,6 +78,8 @@ public class ArgsInvalidPOJO
    
    public ArgsInvalidPOJO() {}
    
+   /* Constructor Exceution */
+   
    // intercepted by advice ArgAspectGenerics.before7
    public ArgsInvalidPOJO(List<SuperValue> arg1, boolean arg2){}
 
@@ -120,7 +122,51 @@ public class ArgsInvalidPOJO
    // intercepted by advice ArgAspectGenerics.finally8
    public ArgsInvalidPOJO(List<SuperValue> arg1, boolean arg2, long arg3){}
    
+   /* Construction */
+   
+   // intercepted by advice ArgAspectGenerics.before7
+   public ArgsInvalidPOJO(boolean arg1, List<SuperValue> arg2){}
+
+   // intercepted by advice ArgAspectGenerics.before8
+   public ArgsInvalidPOJO(char arg1, List<SuperValue> arg2){}
+   
+   // intercepted by advice ArgAspectGenerics.around5_
+   public ArgsInvalidPOJO(byte arg1, List<SuperValue> arg2){}
+   
+   // intercepted by advice ArgAspectGenerics.around7_
+   public ArgsInvalidPOJO(short arg1, List<SuperValue> arg2){}
+   
+   // intercepted by advice ArgAspectGenerics.around8_
+   public ArgsInvalidPOJO(int arg1, List<SuperValue> arg2){}
       
+   // intercepted by advice ArgAspectGenerics.after5
+   public ArgsInvalidPOJO(long arg1, List<SuperValue> arg2){}
+   
+   // intercepted by advice ArgAspectGenerics.after7
+   public ArgsInvalidPOJO(float arg1, List<SuperValue> arg2){}
+   
+   // intercepted by advice ArgAspectGenerics.after8
+   public ArgsInvalidPOJO(double arg1, List<SuperValue> arg2){}
+   
+   // intercepted by advice ArgAspectGenerics.throwing2
+   public ArgsInvalidPOJO(boolean arg1, boolean arg2, List<SuperValue> arg3){}
+   
+   // intercepted by advice ArgAspectGenerics.throwing7
+   public ArgsInvalidPOJO(boolean arg1, char arg2, List<SuperValue> arg3){}
+   
+   // intercepted by advice ArgAspectGenerics.throwing8
+   public ArgsInvalidPOJO(boolean arg1, byte arg2, List<SuperValue> arg3){}
+   
+   // intercepted by advice ArgAspectGenerics.finally5
+   public ArgsInvalidPOJO(boolean arg1, short arg2, List<SuperValue> arg3){}
+   
+   // intercepted by advice ArgAspectGenerics.finally7
+   public ArgsInvalidPOJO(boolean arg1, int arg2, List<SuperValue> arg3){}
+   
+   // intercepted by advice ArgAspectGenerics.finally8
+   public ArgsInvalidPOJO(boolean arg1, long arg2, List<SuperValue> arg3){}
+   
+   
    /* bunch1(int, double, float, String, int) */
    
    public int bunch1Around1(int x, double y, float z, String str, int q)

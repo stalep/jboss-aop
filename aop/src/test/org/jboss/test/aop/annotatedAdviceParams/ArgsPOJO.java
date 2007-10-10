@@ -43,7 +43,21 @@ public class ArgsPOJO
    
    public ArgsPOJO() {}
    
-   public ArgsPOJO(List<SuperValue> arg) {}
+   public ArgsPOJO(List<SuperValue> arg, boolean throwException) throws POJOException
+   {
+      if (throwException)
+      {
+         throw new POJOException();
+      }
+   }
+   
+   public ArgsPOJO(boolean throwException, List<SuperValue> arg) throws POJOException
+   {
+      if (throwException)
+      {
+         throw new POJOException();
+      }
+   }
    
    public int bunch1(int x, double y, float z, String str, int q)
    {
