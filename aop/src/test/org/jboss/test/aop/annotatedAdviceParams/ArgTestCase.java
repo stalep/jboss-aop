@@ -517,4 +517,34 @@ public class ArgTestCase extends AOPTestWithSetup
       assertTrue(ArgAspectGenerics.finally4);
       assertTrue(ArgAspectGenerics.finally6);
    }
+   
+   public void testGenerics4()
+   {
+      new ArgsPOJO(new ArrayList<SuperValue>());
+      assertTrue(ArgAspectGenerics.before1);
+      assertTrue(ArgAspectGenerics.before2);
+      assertTrue(ArgAspectGenerics.before4);
+      assertTrue(ArgAspectGenerics.before5);
+      assertTrue(ArgAspectGenerics.before6);
+      assertTrue(ArgAspectGenerics.around1);
+      assertTrue(ArgAspectGenerics.around2);
+      assertTrue(ArgAspectGenerics.around3);
+      assertTrue(ArgAspectGenerics.around4);
+      assertTrue(ArgAspectGenerics.around6);
+      assertTrue(ArgAspectGenerics.after1);
+      assertTrue(ArgAspectGenerics.after2);
+      assertTrue(ArgAspectGenerics.after3);
+      assertTrue(ArgAspectGenerics.after4);
+      assertTrue(ArgAspectGenerics.after6);
+      assertFalse(ArgAspectGenerics.throwing1);
+      assertFalse(ArgAspectGenerics.throwing3);
+      assertFalse(ArgAspectGenerics.throwing4);
+      assertFalse(ArgAspectGenerics.throwing5);
+      assertFalse(ArgAspectGenerics.throwing6);
+      assertTrue(ArgAspectGenerics.finally1);
+      assertTrue(ArgAspectGenerics.finally2);
+      assertTrue(ArgAspectGenerics.finally3);
+      assertTrue(ArgAspectGenerics.finally4);
+      assertTrue(ArgAspectGenerics.finally6);
+   }
 }

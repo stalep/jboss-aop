@@ -190,6 +190,54 @@ public class ArgAspectGenerics
       Assert.fail("This advice should never be executed");
    }
    
+   public ArgsPOJO around1_Cons(@Arg Collection<SuperValue> arg) throws Throwable
+   {
+      around1 = true;
+      return (ArgsPOJO) CurrentInvocation.proceed();
+   }
+   
+   public ArgsPOJO around2_Cons(@Arg Collection arg) throws Throwable
+   {
+      around2 = true;
+      return (ArgsPOJO) CurrentInvocation.proceed();
+   }
+   
+   public ArgsPOJO around3_Cons(@Arg List<SuperValue> arg) throws Throwable
+   {
+      around3 = true;
+      return (ArgsPOJO) CurrentInvocation.proceed();
+   }
+   
+   public ArgsPOJO around4_Cons(@Arg List<? extends Object> arg) throws Throwable
+   {
+      around4 = true;
+      return (ArgsPOJO) CurrentInvocation.proceed();
+   }
+   
+   public ArgsPOJO around5_Cons(@Arg List<Interface> arg) throws Throwable
+   {
+      Assert.fail("This advice should never be executed");
+      return (ArgsPOJO) CurrentInvocation.proceed();
+   }
+   
+   public ArgsPOJO around6_Cons(@Arg List arg) throws Throwable
+   {
+      around6 = true;
+      return (ArgsPOJO) CurrentInvocation.proceed();
+   }
+   
+   public ArgsPOJO around7_Cons(@Arg ArrayList<Object> arg) throws Throwable
+   {
+      Assert.fail("This advice should never be executed");
+      return null;
+   }
+   
+   public ArgsPOJO around8_Cons(@Arg Set<Object> arg) throws Throwable
+   {
+      Assert.fail("This advice should never be executed");
+      return null;
+   }
+   
    public void after1(@Arg List<SuperValue> arg)
    {
       after1 = true;

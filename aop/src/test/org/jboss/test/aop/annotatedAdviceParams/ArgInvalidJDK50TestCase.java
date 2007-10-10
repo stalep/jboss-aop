@@ -541,4 +541,176 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       }
       assertTrue(thrown);
    }
+   
+   public void testGenerics4()
+   {
+      List<SuperValue> list = new ArrayList<SuperValue>();
+      boolean thrown = false;
+      try
+      {
+         // test before7
+         new ArgsInvalidPOJO(list, false);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         // test before8
+         new ArgsInvalidPOJO(list, '\0');
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         // test around5_
+         new ArgsInvalidPOJO(list, (byte)0);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         // test around7_
+         new ArgsInvalidPOJO(list, (short)0);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         // test around8_
+         new ArgsInvalidPOJO(list, 0);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         // test after5
+         new ArgsInvalidPOJO(list, 0l);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         // test after7
+         new ArgsInvalidPOJO(list, (float) 0.0);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         // test after8
+         new ArgsInvalidPOJO(list, 0.0);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         // test throwing2
+         new ArgsInvalidPOJO(list, false, false);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         // test throwing7
+         new ArgsInvalidPOJO(list, false, '\0');
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         // test throwing8
+         new ArgsInvalidPOJO(list, false, (byte) 0);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         // test finally5
+         new ArgsInvalidPOJO(list, false, (short) 0);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         // test finally7
+         new ArgsInvalidPOJO(list, false, 0);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         // test finally8
+         new ArgsInvalidPOJO(list, false, 0l);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+   }
 }

@@ -41,6 +41,10 @@ public class ArgsPOJO
    
    public List<SuperValue> field5;
    
+   public ArgsPOJO() {}
+   
+   public ArgsPOJO(List<SuperValue> arg) {}
+   
    public int bunch1(int x, double y, float z, String str, int q)
    {
       return x + (int) y + (int) z + q;

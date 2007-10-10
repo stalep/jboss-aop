@@ -76,6 +76,51 @@ public class ArgsInvalidPOJO
    public List<SuperValue> field5Finally7;
    public List<SuperValue> field5Finally8;
    
+   public ArgsInvalidPOJO() {}
+   
+   // intercepted by advice ArgAspectGenerics.before7
+   public ArgsInvalidPOJO(List<SuperValue> arg1, boolean arg2){}
+
+   // intercepted by advice ArgAspectGenerics.before8
+   public ArgsInvalidPOJO(List<SuperValue> arg1, char arg2){}
+   
+   // intercepted by advice ArgAspectGenerics.around5_
+   public ArgsInvalidPOJO(List<SuperValue> arg1, byte arg2){}
+   
+   // intercepted by advice ArgAspectGenerics.around7_
+   public ArgsInvalidPOJO(List<SuperValue> arg1, short arg2){}
+   
+   // intercepted by advice ArgAspectGenerics.around8_
+   public ArgsInvalidPOJO(List<SuperValue> arg1, int arg2){}
+      
+   // intercepted by advice ArgAspectGenerics.after5
+   public ArgsInvalidPOJO(List<SuperValue> arg1, long arg2){}
+   
+   // intercepted by advice ArgAspectGenerics.after7
+   public ArgsInvalidPOJO(List<SuperValue> arg1, float arg2){}
+   
+   // intercepted by advice ArgAspectGenerics.after8
+   public ArgsInvalidPOJO(List<SuperValue> arg1, double arg2){}
+   
+   // intercepted by advice ArgAspectGenerics.throwing2
+   public ArgsInvalidPOJO(List<SuperValue> arg1, boolean arg2, boolean arg3){}
+   
+   // intercepted by advice ArgAspectGenerics.throwing7
+   public ArgsInvalidPOJO(List<SuperValue> arg1, boolean arg2, char arg3){}
+   
+   // intercepted by advice ArgAspectGenerics.throwing8
+   public ArgsInvalidPOJO(List<SuperValue> arg1, boolean arg2, byte arg3){}
+   
+   // intercepted by advice ArgAspectGenerics.finally5
+   public ArgsInvalidPOJO(List<SuperValue> arg1, boolean arg2, short arg3){}
+   
+   // intercepted by advice ArgAspectGenerics.finally7
+   public ArgsInvalidPOJO(List<SuperValue> arg1, boolean arg2, int arg3){}
+   
+   // intercepted by advice ArgAspectGenerics.finally8
+   public ArgsInvalidPOJO(List<SuperValue> arg1, boolean arg2, long arg3){}
+   
+      
    /* bunch1(int, double, float, String, int) */
    
    public int bunch1Around1(int x, double y, float z, String str, int q)

@@ -22,6 +22,7 @@
 package org.jboss.aop.instrument;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,8 @@ import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
+import javassist.bytecode.MethodInfo;
+import javassist.bytecode.SignatureAttribute;
 
 import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.pointcut.Pointcut;
@@ -495,6 +498,15 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
       wmethod.setModifiers(mod);
       setTemporaryWrapperCode(type, wmethod);
       clazz.addMethod(wmethod);
+      
+      // copy attribute signature
+      MethodInfo constructorInfo = constructor.getMethodInfo2();
+      SignatureAttribute attribute = (SignatureAttribute) constructorInfo.getAttribute(SignatureAttribute.tag);
+      if (attribute != null)
+      {
+         MethodInfo wrapperInfo = wmethod.getMethodInfo2();
+         wrapperInfo.addAttribute(attribute.copy(wrapperInfo.getConstPool(), new HashMap()));
+      }
       
       // prepare ForWrapping
       getWrapper().prepareForWrapping(constructor, CONSTRUCTOR_STATUS);
