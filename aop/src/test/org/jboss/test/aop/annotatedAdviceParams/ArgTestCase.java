@@ -418,34 +418,9 @@ public class ArgTestCase extends AOPTestWithSetup
    {
       List<SuperValue> list = new ArrayList<SuperValue>();
       pojo.method13(list);
-      
-      assertTrue(ArgAspectGenerics.before1);
-      assertTrue(ArgAspectGenerics.before2);
-      assertTrue(ArgAspectGenerics.before4);
-      assertTrue(ArgAspectGenerics.before5);
-      assertTrue(ArgAspectGenerics.before6);
-      assertTrue(ArgAspectGenerics.around1);
-      assertTrue(ArgAspectGenerics.around2);
-      assertTrue(ArgAspectGenerics.around3);
-      assertTrue(ArgAspectGenerics.around4);
-      assertTrue(ArgAspectGenerics.around6);
-      assertTrue(ArgAspectGenerics.after1);
-      assertTrue(ArgAspectGenerics.after2);
-      assertTrue(ArgAspectGenerics.after3);
-      assertTrue(ArgAspectGenerics.after4);
-      assertTrue(ArgAspectGenerics.after6);
-      assertFalse(ArgAspectGenerics.throwing1);
-      assertFalse(ArgAspectGenerics.throwing3);
-      assertFalse(ArgAspectGenerics.throwing4);
-      assertFalse(ArgAspectGenerics.throwing5);
-      assertFalse(ArgAspectGenerics.throwing6);
-      assertTrue(ArgAspectGenerics.finally1);
-      assertTrue(ArgAspectGenerics.finally2);
-      assertTrue(ArgAspectGenerics.finally3);
-      assertTrue(ArgAspectGenerics.finally4);
-      assertTrue(ArgAspectGenerics.finally6);
+      assertGenericsAdvices(false);
    }
-   
+
    public void testGenerics2()
    {
       boolean thrown = false;
@@ -460,67 +435,23 @@ public class ArgTestCase extends AOPTestWithSetup
       }
       // verify precondition for this test
       assertTrue(thrown);
-      
-      assertTrue(ArgAspectGenerics.before1);
-      assertTrue(ArgAspectGenerics.before2);
-      assertTrue(ArgAspectGenerics.before4);
-      assertTrue(ArgAspectGenerics.before5);
-      assertTrue(ArgAspectGenerics.before6);
-      assertTrue(ArgAspectGenerics.around1);
-      assertTrue(ArgAspectGenerics.around2);
-      assertTrue(ArgAspectGenerics.around3);
-      assertTrue(ArgAspectGenerics.around4);
-      assertTrue(ArgAspectGenerics.around6);
-      assertFalse(ArgAspectGenerics.after1);
-      assertFalse(ArgAspectGenerics.after2);
-      assertFalse(ArgAspectGenerics.after3);
-      assertFalse(ArgAspectGenerics.after4);
-      assertFalse(ArgAspectGenerics.after6);
-      assertTrue(ArgAspectGenerics.throwing1);
-      assertTrue(ArgAspectGenerics.throwing3);
-      assertTrue(ArgAspectGenerics.throwing4);
-      assertTrue(ArgAspectGenerics.throwing5);
-      assertTrue(ArgAspectGenerics.throwing6);
-      assertTrue(ArgAspectGenerics.finally1);
-      assertTrue(ArgAspectGenerics.finally2);
-      assertTrue(ArgAspectGenerics.finally3);
-      assertTrue(ArgAspectGenerics.finally4);
-      assertTrue(ArgAspectGenerics.finally6);
+      assertGenericsAdvices(thrown);
    }
    
    public void testGenerics3()
    {
       pojo.field5 = new ArrayList<SuperValue>();
-      assertTrue(ArgAspectGenerics.before1);
-      assertTrue(ArgAspectGenerics.before2);
-      assertTrue(ArgAspectGenerics.before4);
-      assertTrue(ArgAspectGenerics.before5);
-      assertTrue(ArgAspectGenerics.before6);
-      assertTrue(ArgAspectGenerics.around1);
-      assertTrue(ArgAspectGenerics.around2);
-      assertTrue(ArgAspectGenerics.around3);
-      assertTrue(ArgAspectGenerics.around4);
-      assertTrue(ArgAspectGenerics.around6);
-      assertTrue(ArgAspectGenerics.after1);
-      assertTrue(ArgAspectGenerics.after2);
-      assertTrue(ArgAspectGenerics.after3);
-      assertTrue(ArgAspectGenerics.after4);
-      assertTrue(ArgAspectGenerics.after6);
-      assertFalse(ArgAspectGenerics.throwing1);
-      assertFalse(ArgAspectGenerics.throwing3);
-      assertFalse(ArgAspectGenerics.throwing4);
-      assertFalse(ArgAspectGenerics.throwing5);
-      assertFalse(ArgAspectGenerics.throwing6);
-      assertTrue(ArgAspectGenerics.finally1);
-      assertTrue(ArgAspectGenerics.finally2);
-      assertTrue(ArgAspectGenerics.finally3);
-      assertTrue(ArgAspectGenerics.finally4);
-      assertTrue(ArgAspectGenerics.finally6);
+      assertGenericsAdvices(false);
    }
    
    public void testGenerics4()
    {
       new ArgsPOJO(new ArrayList<SuperValue>());
+      assertGenericsAdvices(false);
+   }
+   
+   private void assertGenericsAdvices(boolean thrown)
+   {
       assertTrue(ArgAspectGenerics.before1);
       assertTrue(ArgAspectGenerics.before2);
       assertTrue(ArgAspectGenerics.before4);
@@ -531,20 +462,20 @@ public class ArgTestCase extends AOPTestWithSetup
       assertTrue(ArgAspectGenerics.around3);
       assertTrue(ArgAspectGenerics.around4);
       assertTrue(ArgAspectGenerics.around6);
-      assertTrue(ArgAspectGenerics.after1);
-      assertTrue(ArgAspectGenerics.after2);
-      assertTrue(ArgAspectGenerics.after3);
-      assertTrue(ArgAspectGenerics.after4);
-      assertTrue(ArgAspectGenerics.after6);
-      assertFalse(ArgAspectGenerics.throwing1);
-      assertFalse(ArgAspectGenerics.throwing3);
-      assertFalse(ArgAspectGenerics.throwing4);
-      assertFalse(ArgAspectGenerics.throwing5);
-      assertFalse(ArgAspectGenerics.throwing6);
+      assertEquals(!thrown, ArgAspectGenerics.after1);
+      assertEquals(!thrown, ArgAspectGenerics.after2);
+      assertEquals(!thrown, ArgAspectGenerics.after3);
+      assertEquals(!thrown, ArgAspectGenerics.after4);
+      assertEquals(!thrown, ArgAspectGenerics.after6);
+      assertEquals(thrown, ArgAspectGenerics.throwing1);
+      assertEquals(thrown, ArgAspectGenerics.throwing3);
+      assertEquals(thrown, ArgAspectGenerics.throwing4);
+      assertEquals(thrown, ArgAspectGenerics.throwing5);
+      assertEquals(thrown, ArgAspectGenerics.throwing6);
       assertTrue(ArgAspectGenerics.finally1);
       assertTrue(ArgAspectGenerics.finally2);
       assertTrue(ArgAspectGenerics.finally3);
       assertTrue(ArgAspectGenerics.finally4);
       assertTrue(ArgAspectGenerics.finally6);
-   }
+   }  
 }
