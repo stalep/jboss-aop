@@ -1,8 +1,8 @@
 /*
-* JBoss, Home of Professional Open Source
-* Copyright 2005, JBoss Inc., and individual contributors as indicated
-* by the @authors tag. See the copyright.txt in the distribution for a
-* full listing of individual contributors.
+* JBoss, Home of Professional Open Source.
+* Copyright 2006, Red Hat Middleware LLC, and individual contributors
+* as indicated by the @author tags. See the copyright.txt file in the
+* distribution for a full listing of individual contributors. 
 *
 * This is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.deployment;
+package org.jboss.aop.deployers.temp;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -27,98 +27,107 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.jboss.aop.AspectManager;
-import org.jboss.aop.classpool.AOPClassPool;
-import org.jboss.aop.classpool.AOPClassPoolRepository;
-import org.jboss.aop.deployment.LoaderRepositoryUrlUtil.UrlInfo;
-import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
-import org.jboss.mx.loading.LoaderRepository;
-import org.jboss.mx.loading.RepositoryClassLoader;
-
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import javassist.scopedpool.ScopedClassPoolRepository;
 
+import org.jboss.aop.AspectManager;
+import org.jboss.aop.classpool.AOPClassPool;
+import org.jboss.aop.classpool.AOPClassPoolRepository;
+import org.jboss.classloader.spi.ClassLoaderDomain;
+import org.jboss.classloader.spi.base.BaseClassLoader;
+import org.jboss.mx.loading.RepositoryClassLoader;
+
 /**
- * A classpool in JBoss backed by a scoped (HierarchicalLoaderRepository) loader repository
  * 
- * @deprecated TODO JBAOP-107 Need a different version for the JBoss5 classloader 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-@Deprecated
-public class ScopedJBossClassPool extends JBossClassPool 
+public class ScopedJBoss5ClassPool extends JBoss5ClassPool
 {
-   final static LoaderRepositoryUrlUtil LOADER_REPOSITORY_UTIL = new LoaderRepositoryUrlUtil();
-   
-   WeakReference repository = null;
-   UrlInfo urlInfo;
+//   final static LoaderRepositoryUrlUtil LOADER_REPOSITORY_UTIL = new LoaderRepositoryUrlUtil();
+//   
+//   WeakReference repository = null;
+//   UrlInfo urlInfo;
    ThreadLocal lastPool = new ThreadLocal();
+   WeakReference<ClassLoaderDomain> domainRef;
 
-   public ScopedJBossClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, File tmp, URL tmpURL)
+   public ScopedJBoss5ClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, File tmp,
+         URL tmpURL, boolean parentFirst, ClassLoaderDomain domain)
    {
       super(cl, src, repository, tmp, tmpURL);
-      
-      boolean parentFirst = false;
-      LoaderRepository loaderRepository = null;
-      ClassLoader prnt = cl;
-      while (prnt != null)
-      {
-         if (prnt instanceof RepositoryClassLoader)
-         {
-            loaderRepository = ((RepositoryClassLoader)prnt).getLoaderRepository();
-            if (loaderRepository instanceof HeirarchicalLoaderRepository3)
-            {
-               parentFirst = ((HeirarchicalLoaderRepository3)loaderRepository).getUseParentFirst();
-            }
-            break;
-         }
-         prnt = SecurityActions.getParent(cl);
-      }
-      
       super.childFirstLookup = !parentFirst;
+      this.domainRef = new WeakReference(domain);
    }
+
    
 
-   private HeirarchicalLoaderRepository3 getRepository()
-   {
-      ClassLoader cl = getClassLoader0();
-      if (cl != null)
-      {
-         return (HeirarchicalLoaderRepository3)((RepositoryClassLoader)cl).getLoaderRepository();
-      }
-      return null;
-   }
+//   public ScopedJBossClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, File tmp, URL tmpURL)
+//   {
+//      super(cl, src, repository, tmp, tmpURL);
+//      
+//      boolean parentFirst = false;
+//      LoaderRepository loaderRepository = null;
+//      ClassLoader prnt = cl;
+//      while (prnt != null)
+//      {
+//         if (prnt instanceof RepositoryClassLoader)
+//         {
+//            loaderRepository = ((RepositoryClassLoader)prnt).getLoaderRepository();
+//            if (loaderRepository instanceof HeirarchicalLoaderRepository3)
+//            {
+//               parentFirst = ((HeirarchicalLoaderRepository3)loaderRepository).getUseParentFirst();
+//            }
+//            break;
+//         }
+//         prnt = SecurityActions.getParent(cl);
+//      }
+//      
+//      super.childFirstLookup = !parentFirst;
+//   }
+   
+
+//   private HeirarchicalLoaderRepository3 getRepository()
+//   {
+//      ClassLoader cl = getClassLoader0();
+//      if (cl != null)
+//      {
+//         return (HeirarchicalLoaderRepository3)((RepositoryClassLoader)cl).getLoaderRepository();
+//      }
+//      return null;
+//   }
 
    private URL getResourceUrlForClass(String resourcename)
    {
-      HeirarchicalLoaderRepository3 repo = getRepository();
-      return repo.getResource(resourcename, super.getClassLoader());
+//      HeirarchicalLoaderRepository3 repo = getRepository();
+//      return repo.getResource(resourcename, super.getClassLoader());
+      ClassLoaderDomain domain = domainRef.get();
+      return domain.getResource(resourcename);
    }
    
    private boolean isMine(URL url)
    {
-      HeirarchicalLoaderRepository3 repo = getRepository();
-      if (repo != null)
-      {
-         //The URL of the class loaded with my scoped classloader
-         if (url != null)
-         {
-            urlInfo = LOADER_REPOSITORY_UTIL.getURLInfo(getRepository(), urlInfo);
-            
-            URL[] myUrls = urlInfo.getLocalUrls();
-            String resource = url.toString();
-            for (int i = 0 ; i < myUrls.length ; i++)
-            {
-               if (resource.indexOf(myUrls[i].toString()) >= 0)
-               {
-                  return true;
-               }
-            }
-            return false;
-         }
-      }
+//      HeirarchicalLoaderRepository3 repo = getRepository();
+//      if (repo != null)
+//      {
+//         //The URL of the class loaded with my scoped classloader
+//         if (url != null)
+//         {
+//            urlInfo = LOADER_REPOSITORY_UTIL.getURLInfo(getRepository(), urlInfo);
+//            
+//            URL[] myUrls = urlInfo.getLocalUrls();
+//            String resource = url.toString();
+//            for (int i = 0 ; i < myUrls.length ; i++)
+//            {
+//               if (resource.indexOf(myUrls[i].toString()) >= 0)
+//               {
+//                  return true;
+//               }
+//            }
+//            return false;
+//         }
+//      }
       return true;
    }
 
@@ -208,7 +217,7 @@ public class ScopedJBossClassPool extends JBossClassPool
                continue;
             }
             
-            if (candidate.getClassLoader() instanceof RepositoryClassLoader)
+            if (candidate.getClassLoader() instanceof BaseClassLoader)
             {
                //Sometimes the ClassLoader is a proxy for MBeanProxyExt?!
                RepositoryClassLoader rcl = (RepositoryClassLoader)candidate.getClassLoader();
@@ -271,4 +280,5 @@ public class ScopedJBossClassPool extends JBossClassPool
       }
       return false;
    }
+   
 }

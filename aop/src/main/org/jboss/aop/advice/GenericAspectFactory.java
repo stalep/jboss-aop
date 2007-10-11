@@ -96,6 +96,10 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
       this.element = element;
    }
 
+   @Deprecated
+   /**
+    * @deprecated Not public API
+    */
    public Class getClazz()
    {
       try
@@ -107,12 +111,39 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
          throw new RuntimeException(e);
       }
    }
+   
+   private Class getClazz(Advisor advisor)
+   {
+      try
+      {
+         ClassLoader cl = null;
+         if (advisor != null)
+         {
+            //Get the correct classloader based on the class of the advisor
+            Class clazz = advisor.getClazz();
+            cl = (clazz != null) ? clazz.getClassLoader() : advisor.getClass().getClassLoader(); 
+         }
+         if (cl != null)
+         {
+            pushScopedClassLoader(cl);
+         }
+         return loadClass(classname);
+      }
+      catch(ClassNotFoundException e)
+      {
+         throw new RuntimeException(e);
+      }
+      finally
+      {
+         popScopedClassLoader();
+      }
+   }
 
    public Object createPerVM()
    {
       try
       {
-         Object aspect = getClazz().newInstance();
+         Object aspect = getClazz(null).newInstance();
          configureInstance(aspect, null, null, null);
          return aspect;
       }
@@ -127,7 +158,7 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
    {
       try
       {
-         Object aspect = getClazz().newInstance();
+         Object aspect = getClazz(advisor).newInstance();
          configureInstance(aspect, advisor, null, null);
          return aspect;
       }
@@ -142,7 +173,7 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
    {
       try
       {
-         Object aspect = getClazz().newInstance();
+         Object aspect = getClazz(advisor).newInstance();
          configureInstance(aspect, advisor, instanceAdvisor, null);
          return aspect;
       }
@@ -157,7 +188,7 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
    {
       try
       {
-         Object aspect = getClazz().newInstance();
+         Object aspect = getClazz(advisor).newInstance();
          configureInstance(aspect, advisor, null, jp);
          return aspect;
       }
@@ -172,7 +203,7 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
    {
       try
       {
-         Object aspect = getClazz().newInstance();
+         Object aspect = getClazz(advisor).newInstance();
          configureInstance(aspect, advisor, instanceAdvisor, jp);
          return aspect;
       }

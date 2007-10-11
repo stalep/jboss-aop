@@ -38,8 +38,7 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
-import org.jboss.aop.classpool.AOPScopedClassLoaderHelper;
-import org.jboss.aop.classpool.AOPScopedClassLoaderHelperBridge;
+import org.jboss.aop.deployers.temp.RepositoryClassLoaderScopingPolicy;
 import org.jboss.mx.loading.RepositoryClassLoader;
 import org.jboss.mx.util.MBeanServerLocator;
 
@@ -52,9 +51,9 @@ import org.jboss.mx.util.MBeanServerLocator;
  * <ul>Related Classes:
  * <li> {@link JBossClassPool}
  * <li> {@link JBossClassPoolFactory}
- * <li> {@link JBossScopedClassLoaderHelper}
+ * <li> {@link ScopedRepositoryClassLoaderHelper}
  * <li> {@link LoaderRepositoryUrlUtil}
- * <li> {@link ScopedClassLoaderDomain}
+ * <li> {@link ScopedRepositoryClassLoaderDomain}
  * <li> {@link ScopedJBossClassPool}
  * </ul>
  * 
@@ -78,8 +77,7 @@ public class JBoss4Integration implements JBossIntegration, ScopedClassPoolFacto
 
    public AOPClassLoaderScopingPolicy createAOPClassLoaderScopingPolicy()
    {
-      AOPScopedClassLoaderHelper helper = new JBossScopedClassLoaderHelper();
-      return new AOPScopedClassLoaderHelperBridge(helper);
+      return new RepositoryClassLoaderScopingPolicy();
    }
 
    public ScopedClassPoolFactory createScopedClassPoolFactory(File tmpDir) throws Exception

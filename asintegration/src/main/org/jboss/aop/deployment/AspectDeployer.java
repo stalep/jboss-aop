@@ -303,7 +303,7 @@ implements SubDeployer, AspectDeployerMBean
       //Scoped AOP deployments are only available when deployed as part of a scoped sar, ear etc.
       //It can contain an aop.xml file, or it can be part of a .aop file
       //Linking a standalone -aop.xml file onto a scoped deployment is not possible at the moment
-      if (JBossScopedClassLoaderHelper.isScopedClassLoader(di.ucl))
+      if (ScopedRepositoryClassLoaderHelper.isScopedClassLoader(di.ucl))
       {
          return di.ucl;
       }

@@ -38,6 +38,7 @@ import javax.management.ObjectName;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.AspectXmlLoader;
 import org.jboss.aop.deployment.AspectManagerService;
+import org.jboss.aop.deployment.JBossIntegration;
 import org.jboss.deployment.DeploymentInfo;
 import org.jboss.logging.Logger;
 import org.w3c.dom.Document;
@@ -640,5 +641,23 @@ public abstract class AbstractAspectManager
    public String toString()
    {
       return delegate.toString();
+   }
+
+   /**
+    * @return
+    * @see org.jboss.aop.deployment.AspectManagerService#getJBossIntegration()
+    */
+   public JBossIntegration getJbossIntegration()
+   {
+      return delegate.getJBossIntegration();
+   }
+
+   /**
+    * @param integration
+    * @see org.jboss.aop.deployment.AspectManagerService#setJBossIntegration(org.jboss.aop.deployment.JBossIntegration)
+    */
+   public void setJbossIntegration(JBossIntegration integration)
+   {
+      delegate.setJBossIntegration(integration);
    }
 }

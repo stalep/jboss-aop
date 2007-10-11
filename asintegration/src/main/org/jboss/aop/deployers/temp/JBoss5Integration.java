@@ -23,40 +23,73 @@ package org.jboss.aop.deployers.temp;
 
 import java.io.File;
 
+import javassist.ClassPool;
+import javassist.scopedpool.ScopedClassPool;
 import javassist.scopedpool.ScopedClassPoolFactory;
+import javassist.scopedpool.ScopedClassPoolRepository;
 
+import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.deployment.JBossIntegration;
+import org.jboss.classloader.spi.ClassLoaderSystem;
+import org.jboss.mx.loading.RepositoryClassLoader;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBoss5Integration implements JBossIntegration
+public class JBoss5Integration implements JBossIntegration, ScopedClassPoolFactory
 {
-
-   public void attachDeprecatedTranslator()
+   /** The delegate classpool factory */
+   private ScopedClassPoolFactory delegateClassPoolFactory;
+   private AOPClassLoaderScopingPolicy policy;
+   
+   public boolean isValidClassLoader(ClassLoader loader)
    {
+      if (!(loader instanceof RepositoryClassLoader)) return false;
+      return ((RepositoryClassLoader) loader).getLoaderRepository() != null;
    }
 
+   public void setScopingPolicy(AOPClassLoaderScopingPolicy policy)
+   {
+      this.policy = policy;
+   }
+   
+   public AOPClassLoaderScopingPolicy getScopingPolicy()
+   {
+      return policy;
+   }
+   
    public AOPClassLoaderScopingPolicy createAOPClassLoaderScopingPolicy()
    {
-      return null;
+      return policy;
    }
 
    public ScopedClassPoolFactory createScopedClassPoolFactory(File tmpDir) throws Exception
    {
-      return null;
+      delegateClassPoolFactory = new JBoss5ClassPoolFactory(tmpDir);
+      return this;
+   }
+   
+   public ScopedClassPool create(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
+   {
+      return delegateClassPoolFactory.create(cl, src, repository);
+   }
+
+   public ScopedClassPool create(ClassPool src, ScopedClassPoolRepository repository)
+   {
+      return delegateClassPoolFactory.create(src, repository);
+   }
+   
+   public void attachDeprecatedTranslator()
+   {
+      AspectManager mgr = AspectManager.instance();
+      ClassLoaderSystem.getInstance().setTranslator(mgr);
    }
 
    public void detachDeprecatedTranslator()
    {
+      ClassLoaderSystem.getInstance().setTranslator(null);
    }
-
-   public boolean isValidClassLoader(ClassLoader loader)
-   {
-      return false;
-   }
-
 }

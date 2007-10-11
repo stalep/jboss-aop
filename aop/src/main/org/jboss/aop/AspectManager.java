@@ -57,7 +57,6 @@ import org.jboss.aop.advice.PrecedenceSorter;
 import org.jboss.aop.advice.Scope;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.AOPClassPoolRepository;
-import org.jboss.aop.classpool.AOPScopedClassLoaderHelper;
 import org.jboss.aop.instrument.GeneratedAdvisorInstrumentor;
 import org.jboss.aop.instrument.Instrumentor;
 import org.jboss.aop.instrument.InstrumentorFactory;
@@ -173,9 +172,6 @@ public class AspectManager
    protected DynamicAOPStrategy dynamicStrategy = new LoadInterceptedClassesStrategy();
    // indicates that the transformation process has begun
    protected boolean transformationStarted = false;
-   
-   @Deprecated // replaced by the temporary AOPClassLoaderScopingPolicy - no longer referenced
-   protected static AOPScopedClassLoaderHelper scopedCLHelper;
    
    /** The classloader scoping policy */
    // This shouldn't really be static (artifact of singleton and self-bootstrap design)

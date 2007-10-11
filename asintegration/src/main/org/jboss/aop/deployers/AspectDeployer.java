@@ -33,15 +33,15 @@ import javassist.bytecode.ClassFile;
 import org.jboss.aop.AspectAnnotationLoader;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.AspectXmlLoader;
+import org.jboss.aop.Domain;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
-import org.jboss.classloader.spi.base.BaseClassLoader;
+import org.jboss.aop.deployers.temp.NewClassLoaderDomainInitializer;
+import org.jboss.aop.deployers.temp.RepositoryClassLoaderDomainIntializer;
+import org.jboss.deployers.plugins.classloading.Module;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.metadata.spi.MetaData;
-import org.jboss.metadata.spi.MutableMetaData;
-import org.jboss.metadata.spi.scope.ScopeKey;
 import org.jboss.virtual.VirtualFile;
 import org.jboss.virtual.VirtualFileFilter;
 import org.jboss.virtual.VisitorAttributes;
@@ -104,22 +104,22 @@ public class AspectDeployer extends AbstractVFSRealDeployer
    
    public void deploy(VFSDeploymentUnit unit) throws DeploymentException
    {
-//      dumpDeploymentUnitStuffForTesting(unit);
+      AspectManager manager = getCorrectManager(unit);
       
       List<VirtualFile> files = unit.getMetaDataFiles(null, AOP_DD_SUFFIX);
 
       if (isAopArchiveOrFolder(unit))
       {
-         deployAnnotations(unit);
+         deployAnnotations(manager, unit);
       }
       
       if (files.size() > 0)
       {
-         deployXml(unit, files);
+         deployXml(manager, unit, files);
       }
    }
    
-//   public void dumpDeploymentUnitStuffForTesting(VFSDeploymentUnit unit)
+//   private void dumpDeploymentUnitStuffForTesting(VFSDeploymentUnit unit)
 //   {
 //      ScopeKey scope = unit.getScope();
 //      ScopeKey mutable = unit.getMutableScope();
@@ -128,39 +128,36 @@ public class AspectDeployer extends AbstractVFSRealDeployer
 //      MutableMetaData mutableMetaData = unit.getMutableMetaData();
 //      System.out.println("====> SCOPE: " + scope + "\n\tMUTABLE_SCOPE: " + mutable + "\n\tMETADATA: " + metaData + "\n\tMUTABLE_METADATA: " + mutableMetaData);
 //      
-//      //Need to get information about the classloader
-//      ClassLoader loader = unit.getClassLoader();
-//      if (loader instanceof BaseClassLoader)
+//      if (metaData == null)
 //      {
-//         BaseClassLoader bcl = (BaseClassLoader)loader;
-////         bcl.get
+//         System.out.println("Null metadata");
+//         return;
 //      }
-//      
+//      Module module = metaData.getMetaData(Module.class);
+//      System.out.println("MetaData module " + module);
+//      module = unit.getAttachment(Module.class);
+//      System.out.println("Attached module " + module);
 //   }
    
    public void undeploy(VFSDeploymentUnit unit)
    {
+      AspectManager manager = getCorrectManager(unit);
       List<VirtualFile> files = unit.getMetaDataFiles(null, AOP_DD_SUFFIX);
 
       if (isAopArchiveOrFolder(unit))
       {
-         undeployAnnotations(unit);
+         undeployAnnotations(manager, unit);
       }
       
       if (files.size() > 0)
       {
-         undeployXml(unit, files);
+         undeployXml(manager, unit, files);
       }
    }
 
-   private void deployXml(VFSDeploymentUnit unit, List<VirtualFile> files) throws DeploymentException
+   private void deployXml(AspectManager manager, VFSDeploymentUnit unit, List<VirtualFile> files) throws DeploymentException
    {
-      ClassLoader scl = getScopedClassLoader(unit);
-
-      if (scl != null)
-      {
-         log.info("AOP deployment is scoped using classloader " + scl);   
-      }
+      log.info("Deploying xml into " + manager + " for " + unit.getClassLoader());   
       
       ArrayList<VirtualFile> deployedFiles = new ArrayList<VirtualFile>(files.size());
       for (VirtualFile vf : files)
@@ -168,23 +165,16 @@ public class AspectDeployer extends AbstractVFSRealDeployer
          deployedFiles.add(vf);
          try
          {
-            log.debug("deploying: " + vf.toURL());
+            log.debug("deploying: " + vf.toURL() + " into " + manager);
             InputStream is = vf.openStream();
             try
             {
                Document doc = AspectXmlLoader.loadDocument(is);
                AspectXmlLoader loader = new AspectXmlLoader();
       
-               if (scl != null)
-               {
-                  loader.setManager(AspectManager.instance(scl));
-                  loader.setClassLoader(scl);
-               }
-               else
-               {
-                  loader.setManager(AspectManager.instance());
-               }
-               loader.deployXML(doc, vf.toURL(), scl);
+               loader.setManager(manager);
+               loader.setClassLoader(unit.getClassLoader());
+               loader.deployXML(doc, vf.toURL(), unit.getClassLoader());
             }
             finally
             {
@@ -196,38 +186,35 @@ public class AspectDeployer extends AbstractVFSRealDeployer
             //Unwind things already installed, in the reverse order
             for (int i = deployedFiles.size() - 1 ; i >= 0 ; i--)
             {
-               undeployXml(scl, deployedFiles.get(i));
+               undeployXml(manager, deployedFiles.get(i));
             }
             
-            throw DeploymentException.rethrowAsDeploymentException("Error deploying xml " + vf.getName(), e);
+            throw DeploymentException.rethrowAsDeploymentException("Error deploying xml " + vf.getName() + " into " + manager, e);
          }
       }
    }
 
-   private void undeployXml(VFSDeploymentUnit unit, List<VirtualFile> files)
+   private void undeployXml(AspectManager manager, VFSDeploymentUnit unit, List<VirtualFile> files)
    {
-      ClassLoader scl = getScopedClassLoader(unit);
-
       for (VirtualFile vf : files)
       {
-         undeployXml(scl, vf);
+         undeployXml(manager, vf);
       }
       
+      //FIXME isn't this a bit too early?
       aspectManager.unregisterClassLoader(unit.getClassLoader());
    }
    
-   private void undeployXml(ClassLoader scl, VirtualFile vf)
+   private void undeployXml(AspectManager manager, VirtualFile vf)
    {
       try
       {
-         log.debug("undeploying: " + vf.toURL());
+         log.debug("undeploying: " + vf.toURL() + " from " + manager);
          InputStream is = vf.openStream();
          try
          {
             Document doc = AspectXmlLoader.loadDocument(is);
             AspectXmlLoader loader = new AspectXmlLoader();
-            
-            AspectManager manager = (scl != null) ? AspectManager.instance(scl) : aspectManager;
             
             loader.setManager(manager);
             loader.undeployXML(doc, vf.toURL());
@@ -245,20 +232,15 @@ public class AspectDeployer extends AbstractVFSRealDeployer
       }
       catch (Exception e)
       {
-         log.warn("Error undeploying xml " + vf.getName(), e);
+         log.warn("Error undeploying xml " + vf.getName() + " from " + manager, e);
       }
    }
 
-   private void deployAnnotations(VFSDeploymentUnit unit) throws DeploymentException
+   private void deployAnnotations(AspectManager manager, VFSDeploymentUnit unit) throws DeploymentException
    {
-      ClassLoader scl = getScopedClassLoader(unit);
+      log.info("Deploying AOP annotations into " + manager + " for " + unit.getClassLoader());   
 
-      if (scl != null)
-      {
-         log.info("AOP deployment is scoped using classloader " + scl);   
-      }
-
-      AspectAnnotationLoader loader = getAnnotationLoader(scl); 
+      AspectAnnotationLoader loader = getAnnotationLoader(manager, unit); 
       List<VirtualFile> files = getClasses(unit);
       ArrayList<VirtualFile> deployedFiles = new ArrayList<VirtualFile>(files.size());
       for(VirtualFile file : files)
@@ -266,7 +248,7 @@ public class AspectDeployer extends AbstractVFSRealDeployer
          try
          {
             ClassFile cf = loadClassFile(file);
-            log.debug("Deploying possibly annotated class " + cf.getName());
+            log.debug("Deploying possibly annotated class " + cf.getName() + " into " + manager);
             loader.deployClassFile(cf);
          }
          catch (Exception e)
@@ -276,15 +258,14 @@ public class AspectDeployer extends AbstractVFSRealDeployer
             {
                undeployAnnotation(loader, deployedFiles.get(i));
             }
-            throw new DeploymentException("Error reading annotations for " + file, e);
+            throw new DeploymentException("Error reading annotations for " + file + " during deployment into " + manager, e);
          }
       }
    }
    
-   private void undeployAnnotations(VFSDeploymentUnit unit)
+   private void undeployAnnotations(AspectManager manager, VFSDeploymentUnit unit)
    {
-      ClassLoader scl = getScopedClassLoader(unit);
-      AspectAnnotationLoader loader = getAnnotationLoader(scl); 
+      AspectAnnotationLoader loader = getAnnotationLoader(manager, unit); 
       List<VirtualFile> files = getClasses(unit);
       for(VirtualFile file : files)
       {
@@ -306,11 +287,10 @@ public class AspectDeployer extends AbstractVFSRealDeployer
       }
    }
    
-   private AspectAnnotationLoader getAnnotationLoader(ClassLoader scl)
+   private AspectAnnotationLoader getAnnotationLoader(AspectManager manager, VFSDeploymentUnit unit)
    {
-      AspectManager manager = (scl != null) ? AspectManager.instance(scl) : AspectManager.instance();
       AspectAnnotationLoader loader = new AspectAnnotationLoader(manager);
-      loader.setClassLoader(scl);
+      loader.setClassLoader(unit.getClassLoader());
       return loader;
    }
    
@@ -385,21 +365,40 @@ public class AspectDeployer extends AbstractVFSRealDeployer
       return (realName.endsWith(AOP_JAR_SUFFIX));
    }
    
-   private ClassLoader getScopedClassLoader(VFSDeploymentUnit unit)
+   private AspectManager getCorrectManager(VFSDeploymentUnit unit)
    {
       //Scoped AOP deployments are only available when deployed as part of a scoped sar, ear etc.
       //It can contain an aop.xml file, or it can be part of a .aop file
       //Linking a standalone -aop.xml file onto a scoped deployment is not possible at the moment
-      AOPClassLoaderScopingPolicy policy = AspectManager.instance().getClassLoaderScopingPolicy();
+      AOPClassLoaderScopingPolicy policy = AspectManager.getClassLoaderScopingPolicy();
+
       ClassLoader cl = unit.getClassLoader();
-      if (policy != null && policy.isScoped(cl))
+      Module module = unit.getTopLevel().getAttachment(Module.class);
+      Domain domain = null;
+      if (policy != null)
       {
-         return unit.getClassLoader();
+         if (policy instanceof NewClassLoaderDomainInitializer)
+         {
+            domain = ((NewClassLoaderDomainInitializer)policy).initScopedDomain(cl, module);
+         }
+         else if (policy instanceof RepositoryClassLoaderDomainIntializer)
+         {
+            domain = ((RepositoryClassLoaderDomainIntializer)policy).initScopedDomain(cl);
+         }
+         else
+         {
+            throw new RuntimeException("No domain intitialiser could be found");
+         }
       }
       
-      return null;
+      if (domain != null)
+      {
+         return domain;
+      }
+      
+      return aspectManager;
    }
-
+   
    private static class ClassFileFilter implements VirtualFileFilter
    {
       public boolean accepts(VirtualFile file)

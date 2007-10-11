@@ -19,43 +19,35 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.deployers;
+package org.jboss.aop.deployers.temp;
 
-import org.jboss.logging.Logger;
+import java.util.Map;
 
 /**
- * A bean to be deployed with the aspect library in jboss 5 to be able to deploy the 
- * base-aspects.xml file and so that other things like EJB 3 can depend on this. 
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBossAspectLibrary
+public class ExtraClassPoolFactoryParameters
 {
-   private static final Logger log = Logger.getLogger(JBossAspectLibrary.class);
-   AbstractAspectManager aspectManager;
-
-   public AbstractAspectManager getAspectManager()
+   /** A map of properties that can be used to configure the classpool factories further */
+   private static ThreadLocal<Map> properties = new ThreadLocal<Map>();
+   
+   public static void pushThreadProperties(Map props)
    {
-      return aspectManager;
-   }
-
-   public void setAspectManager(AbstractAspectManager aspectManagerBean)
-   {
-      this.aspectManager = aspectManagerBean;
+      properties.set(props);
    }
    
-   /**
-    * @throws Exception
-    * @see org.jboss.system.ServiceMBeanSupport#start()
-    */
-   public void start() throws Exception
+   public static Map peekThreadProperties()
    {
-      System.out.println("***************************");
-      System.out.println("TCL  " + Thread.currentThread().getContextClassLoader() + " - " + Thread.currentThread().getContextClassLoader());
-      System.out.println("MyCl " + this.getClass().getClassLoader() + " - " + this.getClass().getClassLoader());
-      
-      aspectManager.deployBaseAspects();
+      return properties.get();
+   }
+   
+   public static Map popThreadProperties()
+   {
+      Map props = properties.get();
+      properties.remove();
+      return props;
    }
 
 }

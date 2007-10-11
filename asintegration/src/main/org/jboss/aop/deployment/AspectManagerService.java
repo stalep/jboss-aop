@@ -45,6 +45,7 @@ import org.jboss.aop.hook.JDK14Transformer;
 import org.jboss.aop.hook.JDK14TransformerManager;
 import org.jboss.aop.instrument.InstrumentorFactory;
 import org.jboss.aop.instrument.TransformerCommon;
+import org.jboss.logging.Logger;
 import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
 import org.jboss.mx.server.ServerConstants;
 import org.jboss.mx.util.ObjectNameFactory;
@@ -61,6 +62,8 @@ public class AspectManagerService
         implements AspectManagerServiceMBean, AspectNotificationHandler
 {
 
+   Logger log = Logger.getLogger(AspectManagerService.class);
+   
    static {
       //pre-load necessary classes so that we avoid NoClassDefFoundErrors on JRockit when using the RepositoryClassloader hook
       //When AspectManager.translate() is called the first time, these classes have not been loaded yet, and this is what causes
@@ -220,7 +223,7 @@ public class AspectManagerService
          }
          else
          {
-            System.out.println("Could not find " + xml + " file in the resources of " + cl);
+            log.warn("Could not find " + xml + " file in the resources of " + cl);
          }
       }
       catch (Exception e)

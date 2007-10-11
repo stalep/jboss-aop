@@ -19,43 +19,18 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.deployers;
+package org.jboss.aop.deployers.temp;
 
-import org.jboss.logging.Logger;
+import org.jboss.aop.Domain;
+import org.jboss.deployers.plugins.classloading.Module;
 
 /**
- * A bean to be deployed with the aspect library in jboss 5 to be able to deploy the 
- * base-aspects.xml file and so that other things like EJB 3 can depend on this. 
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBossAspectLibrary
+public interface NewClassLoaderDomainInitializer
 {
-   private static final Logger log = Logger.getLogger(JBossAspectLibrary.class);
-   AbstractAspectManager aspectManager;
-
-   public AbstractAspectManager getAspectManager()
-   {
-      return aspectManager;
-   }
-
-   public void setAspectManager(AbstractAspectManager aspectManagerBean)
-   {
-      this.aspectManager = aspectManagerBean;
-   }
+   Domain initScopedDomain(ClassLoader loader, Module module);
    
-   /**
-    * @throws Exception
-    * @see org.jboss.system.ServiceMBeanSupport#start()
-    */
-   public void start() throws Exception
-   {
-      System.out.println("***************************");
-      System.out.println("TCL  " + Thread.currentThread().getContextClassLoader() + " - " + Thread.currentThread().getContextClassLoader());
-      System.out.println("MyCl " + this.getClass().getClassLoader() + " - " + this.getClass().getClassLoader());
-      
-      aspectManager.deployBaseAspects();
-   }
-
 }

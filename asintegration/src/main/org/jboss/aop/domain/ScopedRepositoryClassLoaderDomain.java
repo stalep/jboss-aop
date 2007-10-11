@@ -19,14 +19,10 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.deployment;
+package org.jboss.aop.domain;
 
-import java.lang.ref.WeakReference;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.aop.AspectManager;
-import org.jboss.aop.Domain;
-import org.jboss.aop.InterceptionMarkers;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
 import org.jboss.mx.loading.LoaderRepository;
@@ -42,36 +38,13 @@ import org.jboss.mx.loading.RepositoryClassLoader;
  * @version $Revision: 1.1 $
  */
 @Deprecated
-public class ScopedClassLoaderDomain extends Domain
+public class ScopedRepositoryClassLoaderDomain extends ScopedClassLoaderDomain
 {
-   
-   WeakReference<ClassLoader> loader;
-   boolean parentDelegation;
-   ConcurrentHashMap<String, Object> myPerVMAspects = new ConcurrentHashMap<String, Object>();
-   ConcurrentHashMap<String, Boolean> notMyPerVMAspects = new ConcurrentHashMap<String, Boolean>();
-   InterceptionMarkers interceptionMarkers = new InterceptionMarkers();
-   String classLoaderString;
-   
-   public ScopedClassLoaderDomain(ClassLoader loader, String name, boolean parentDelegation, AspectManager manager, boolean parentFirst)
+   public ScopedRepositoryClassLoaderDomain(ClassLoader loader, String name, boolean parentDelegation, AspectManager manager, boolean parentFirst)
    {
-      super(manager, name, parentFirst);
-      if (loader == null)
-         throw new IllegalArgumentException("Null classloader");
-      this.loader = new WeakReference<ClassLoader>(loader);
-      this.parentDelegation = parentDelegation;
-      classLoaderString = loader.toString();
+      super(loader, name, parentDelegation, manager, parentFirst);
    }
 
-   protected ClassLoader getClassLoader()
-   {
-      ClassLoader cl = loader.get();
-      if (cl != null)
-      {
-         return cl;
-      }
-      return null;
-   }
-   
    // FIXME: JBAOP-107 REMOVE THIS HACK
    public boolean isValid()
    {
@@ -81,41 +54,7 @@ public class ScopedClassLoaderDomain extends Domain
       return cl.getLoaderRepository() != null;
    }
 
-   public void removeAspectDefinition(String name)
-   {
-      AspectDefinition def = super.internalRemoveAspectDefintion(name);
-      if (def != null)
-      {
-         myPerVMAspects.remove(name);
-      }
-   }
-
-   public Object getPerVMAspect(AspectDefinition def)
-   {
-      return getPerVMAspect(def.getName());
-   }
-
-   @Override
-   public InterceptionMarkers getInterceptionMarkers()
-   {
-      return interceptionMarkers;
-   }
-
-   public Object getPerVMAspect(String def)
-   {
-      if (parentDelegation == true)
-      {
-         //We will alway be loading up the correct class
-         Object aspect = super.getPerVMAspect(def);
-         return aspect;
-      }
-      else
-      {
-         return getPerVmAspectWithNoParentDelegation(def);
-      }
-   }
-   
-   private Object getPerVmAspectWithNoParentDelegation(String def)
+   protected Object getPerVmAspectWithNoParentDelegation(String def)
    {
       Object aspect = myPerVMAspects.get(def);
       if (aspect != null)
@@ -123,7 +62,7 @@ public class ScopedClassLoaderDomain extends Domain
          return aspect;
       }
 
-      aspect = super.getPerVMAspect(def);
+      aspect = super.getSuperPerVmAspect(def);
       if (aspect != null)
       {
          LoaderRepository loadingRepository = getAspectRepository(aspect);
@@ -161,6 +100,8 @@ public class ScopedClassLoaderDomain extends Domain
       
       return aspect;
    }
+   
+   
    
    private LoaderRepository getAspectRepository(Object aspect)
    {
