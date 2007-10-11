@@ -1004,7 +1004,8 @@
 		<before name="before" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
    
-	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method2(..))">
+	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method2(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->field1)">
       <after name="after2" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
 
@@ -1012,7 +1013,8 @@
 		<around name="around2" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
    
-	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method3(..))">
+	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method3(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->field2)">
 		<around name="around3" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
       <after name="after3" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
       <finally name="finally3" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
@@ -1022,13 +1024,15 @@
 		<before name="before" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
    
-	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method4(..))">
+	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method4(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->field3)">
 		<around name="around4" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 		<after name="after4" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
       <finally name="finally4" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
 
-	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method5(..))">
+	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method5(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->field4)">
 		<around name="around5" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 		<after name="after5" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
@@ -1037,7 +1041,8 @@
       <finally name="finally5" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
    
-	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method6(..))">
+	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method6(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->field5)">
 		<after name="after6" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
       <finally name="finally6" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
@@ -1046,13 +1051,15 @@
 		<around name="around6" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
    
-	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method7(..))">
+	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method7(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->field6)">
 		<around name="around7" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 		<after name="after7" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
       <finally name="finally7" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
 
-	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method8(..))">
+	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method8(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->field7)">
 		<around name="around8" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 		<after name="after8" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
       <finally name="finally8" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
@@ -1074,7 +1081,8 @@
       <finally name="finally9" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
   	</bind>
    
-	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method10(..))">
+	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method10(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->field9)">
 		<around name="around10" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
       <finally name="finally10" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
@@ -1087,7 +1095,8 @@
 		<after name="after10" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
 
-	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method11(..))">
+	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->method11(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->field10)">
 		<around name="around11" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 		<after name="after11" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
       <finally name="finally11" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>

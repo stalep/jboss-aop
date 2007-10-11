@@ -52,6 +52,7 @@ public class ReturnAspect
       afterReturn = null;
       finallyAdvice = null;
       finallyReturn = null;
+      finallyThrown = null;
    }
    
    public void before(@Return Object object)

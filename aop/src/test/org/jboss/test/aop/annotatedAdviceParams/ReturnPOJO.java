@@ -31,6 +31,17 @@ import java.util.List;
  */
 public class ReturnPOJO
 {
+   public String field1 = "field1";
+   public String field2 = "field2";
+   public String field3 = "field3";
+   public String field4 = "field4";
+   public String field5 = "field5";
+   public String field6 = "field6";
+   
+   public SubValue field7 = new SubValue(7);
+   public SuperValue field9 = new SuperValue(9);
+   public SuperValue field10 = new SuperValue(10);
+   
    public void method1() {}
 
    public String method2()
