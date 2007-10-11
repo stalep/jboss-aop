@@ -502,105 +502,63 @@ public class ArgsInvalidPOJO
       throw new POJOException();
    }
    
-   /* method13(List<SuperValue>) */
+   /* methodGenericsExecution1(List<SuperValue>) */
    
-   public void method13Before7(List<SuperValue> arg) {}
+   public void methodGenericsExecutionBefore7(List<SuperValue> arg) {}
    
-   public void method13Before8(List<SuperValue> arg) {}
+   public void methodGenericsExecutionBefore8(List<SuperValue> arg) {}
    
-   public void method13Around5(List<SuperValue> arg) {}
+   public void methodGenericsExecutionAround5(List<SuperValue> arg) {}
    
-   public void method13Around7(List<SuperValue> arg) {}
+   public void methodGenericsExecutionAround7(List<SuperValue> arg) {}
    
-   public void method13Around8(List<SuperValue> arg) {}
+   public void methodGenericsExecutionAround8(List<SuperValue> arg) {}
    
-   public void method13After5(List<SuperValue> arg) {}
+   public void methodGenericsExecutionAfter5(List<SuperValue> arg) {}
    
-   public void method13After7(List<SuperValue> arg) {}
+   public void methodGenericsExecutionAfter7(List<SuperValue> arg) {}
    
-   public void method13After8(List<SuperValue> arg) {}
+   public void methodGenericsExecutionAfter8(List<SuperValue> arg) {}
    
-   public void method13Throwing2(List<SuperValue> arg) {}
+   public void methodGenericsExecutionThrowing2(List<SuperValue> arg) {}
    
-   public void method13Throwing7(List<SuperValue> arg) {}
+   public void methodGenericsExecutionThrowing7(List<SuperValue> arg) {}
    
-   public void method13Throwing8(List<SuperValue> arg) {}
+   public void methodGenericsExecutionThrowing8(List<SuperValue> arg) {}
    
-   public void method13Finally5(List<SuperValue> arg) {}
+   public void methodGenericsExecutionFinally5(List<SuperValue> arg) {}
    
-   public void method13Finally7(List<SuperValue> arg) {}
+   public void methodGenericsExecutionFinally7(List<SuperValue> arg) {}
    
-   public void method13Finally8(List<SuperValue> arg) {}
+   public void methodGenericsExecutionFinally8(List<SuperValue> arg) {}
    
-   /* method14(List<SuperValue>) */
+   /* methodGenericsCall1(List<SuperValue>) */
    
-   public void method14Before7(List<SuperValue> arg) throws POJOException
-   {
-      throw new POJOException();
-   }
+   public void methodGenericsCallBefore7(List<SuperValue> arg) {}
    
-   public void method14Before8(List<SuperValue> arg) throws POJOException
-   {
-      throw new POJOException();
-   }
+   public void methodGenericsCallBefore8(List<SuperValue> arg) {}
    
-   public void method14Around5(List<SuperValue> arg) throws POJOException
-   {
-      throw new POJOException();
-   }
+   public void methodGenericsCallAround5(List<SuperValue> arg) {}
    
-   public void method14Around7(List<SuperValue> arg) throws POJOException
-   {
-      throw new POJOException();
-   }
+   public void methodGenericsCallAround7(List<SuperValue> arg) {}
    
-   public void method14Around8(List<SuperValue> arg) throws POJOException
-   {
-      throw new POJOException();
-   }
+   public void methodGenericsCallAround8(List<SuperValue> arg) {}
    
-   public void method14After5(List<SuperValue> arg) throws POJOException
-   {
-      throw new POJOException();
-   }
+   public void methodGenericsCallAfter5(List<SuperValue> arg) {}
    
-   public void method14After7(List<SuperValue> arg) throws POJOException
-   {
-      throw new POJOException();
-   }
+   public void methodGenericsCallAfter7(List<SuperValue> arg) {}
    
-   public void method14After8(List<SuperValue> arg) throws POJOException
-   {
-      throw new POJOException();
-   }
+   public void methodGenericsCallAfter8(List<SuperValue> arg) {}
    
-   public void method14Throwing2(List<SuperValue> arg) throws POJOException
-   {
-      throw new POJOException();
-   }
+   public void methodGenericsCallThrowing2(List<SuperValue> arg) {}
    
-   public void method14Throwing7(List<SuperValue> arg) throws POJOException
-   {
-      throw new POJOException();
-   }
+   public void methodGenericsCallThrowing7(List<SuperValue> arg) {}
    
-   public void method14Throwing8(List<SuperValue> arg) throws POJOException
-   {
-      throw new POJOException();
-   }
+   public void methodGenericsCallThrowing8(List<SuperValue> arg) {}
    
-   public void method14Finally5(List<SuperValue> arg) throws POJOException
-   {
-      throw new POJOException();
-   }
+   public void methodGenericsCallFinally5(List<SuperValue> arg) {}
    
-   public void method14Finally7(List<SuperValue> arg) throws POJOException
-   {
-      throw new POJOException();
-   }
+   public void methodGenericsCallFinally7(List<SuperValue> arg) {}
    
-   public void method14Finally8(List<SuperValue> arg) throws POJOException
-   {
-      throw new POJOException();
-   }
+   public void methodGenericsCallFinally8(List<SuperValue> arg) {}
 }

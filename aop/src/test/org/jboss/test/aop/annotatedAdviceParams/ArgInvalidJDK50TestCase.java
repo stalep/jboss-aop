@@ -68,13 +68,13 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       ArgAspectGenerics.clear();
    }
 
-   public void testGenerics1()
+   public void testGenericsExecution()
    {
       List<SuperValue> list = new ArrayList<SuperValue>();
       boolean thrown = false;
       try
       {
-         pojo.method13Before7(list);
+         pojo.methodGenericsExecutionBefore7(list);
       }
       catch(NoMatchingAdviceException e)
       {
@@ -85,7 +85,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.method13Before8(list);
+         pojo.methodGenericsExecutionBefore8(list);
       }
       catch(NoMatchingAdviceException e)
       {
@@ -96,7 +96,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.method13Around5(list);
+         pojo.methodGenericsExecutionAround5(list);
       }
       catch(NoMatchingAdviceException e)
       {
@@ -107,7 +107,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.method13Around7(list);
+         pojo.methodGenericsExecutionAround7(list);
       }
       catch(NoMatchingAdviceException e)
       {
@@ -118,7 +118,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.method13Around8(list);
+         pojo.methodGenericsExecutionAround8(list);
       }
       catch(NoMatchingAdviceException e)
       {
@@ -129,7 +129,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.method13After5(list);
+         pojo.methodGenericsExecutionAfter5(list);
       }
       catch(NoMatchingAdviceException e)
       {
@@ -140,7 +140,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.method13After7(list);
+         pojo.methodGenericsExecutionAfter7(list);
       }
       catch(NoMatchingAdviceException e)
       {
@@ -151,7 +151,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.method13After8(list);
+         pojo.methodGenericsExecutionAfter8(list);
       }
       catch(NoMatchingAdviceException e)
       {
@@ -162,7 +162,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.method13Throwing2(list);
+         pojo.methodGenericsExecutionThrowing2(list);
       }
       catch(NoMatchingAdviceException e)
       {
@@ -173,7 +173,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.method13Throwing7(list);
+         pojo.methodGenericsExecutionThrowing7(list);
       }
       catch(NoMatchingAdviceException e)
       {
@@ -184,7 +184,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.method13Throwing8(list);
+         pojo.methodGenericsExecutionThrowing8(list);
       }
       catch(NoMatchingAdviceException e)
       {
@@ -195,7 +195,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.method13Finally5(list);
+         pojo.methodGenericsExecutionFinally5(list);
       }
       catch(NoMatchingAdviceException e)
       {
@@ -206,7 +206,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.method13Finally7(list);
+         pojo.methodGenericsExecutionFinally7(list);
       }
       catch(NoMatchingAdviceException e)
       {
@@ -217,7 +217,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.method13Finally8(list);
+         pojo.methodGenericsExecutionFinally8(list);
       }
       catch(NoMatchingAdviceException e)
       {
@@ -226,165 +226,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       assertTrue(thrown);
    }
    
-   public void testGenerics2() throws POJOException
-   {
-      List<SuperValue> list = new ArrayList<SuperValue>();
-      boolean thrown = false;
-      try
-      {
-         pojo.method14Before7(list);
-      }
-      catch(NoMatchingAdviceException e)
-      {
-         thrown = true;
-      }
-      assertTrue(thrown);
-      
-      thrown = false;
-      try
-      {
-         pojo.method14Before8(list);
-      }
-      catch(NoMatchingAdviceException e)
-      {
-         thrown = true;
-      }
-      assertTrue(thrown);
-      
-      thrown = false;
-      try
-      {
-         pojo.method14Around5(list);
-      }
-      catch(NoMatchingAdviceException e)
-      {
-         thrown = true;
-      }
-      assertTrue(thrown);
-      
-      thrown = false;
-      try
-      {
-         pojo.method14Around7(list);
-      }
-      catch(NoMatchingAdviceException e)
-      {
-         thrown = true;
-      }
-      assertTrue(thrown);
-      
-      thrown = false;
-      try
-      {
-         pojo.method14Around8(list);
-      }
-      catch(NoMatchingAdviceException e)
-      {
-         thrown = true;
-      }
-      assertTrue(thrown);
-      
-      thrown = false;
-      try
-      {
-         pojo.method14After5(list);
-      }
-      catch(NoMatchingAdviceException e)
-      {
-         thrown = true;
-      }
-      assertTrue(thrown);
-      
-      thrown = false;
-      try
-      {
-         pojo.method14After7(list);
-      }
-      catch(NoMatchingAdviceException e)
-      {
-         thrown = true;
-      }
-      assertTrue(thrown);
-      
-      thrown = false;
-      try
-      {
-         pojo.method14After8(list);
-      }
-      catch(NoMatchingAdviceException e)
-      {
-         thrown = true;
-      }
-      assertTrue(thrown);
-      
-      thrown = false;
-      try
-      {
-         pojo.method14Throwing2(list);
-      }
-      catch(NoMatchingAdviceException e)
-      {
-         thrown = true;
-      }
-      assertTrue(thrown);
-      
-      thrown = false;
-      try
-      {
-         pojo.method14Throwing7(list);
-      }
-      catch(NoMatchingAdviceException e)
-      {
-         thrown = true;
-      }
-      assertTrue(thrown);
-      
-      thrown = false;
-      try
-      {
-         pojo.method14Throwing8(list);
-      }
-      catch(NoMatchingAdviceException e)
-      {
-         thrown = true;
-      }
-      assertTrue(thrown);
-      
-      thrown = false;
-      try
-      {
-         pojo.method14Finally5(list);
-      }
-      catch(NoMatchingAdviceException e)
-      {
-         thrown = true;
-      }
-      assertTrue(thrown);
-      
-      thrown = false;
-      try
-      {
-         pojo.method14Finally7(list);
-      }
-      catch(NoMatchingAdviceException e)
-      {
-         thrown = true;
-      }
-      assertTrue(thrown);
-      
-      thrown = false;
-      try
-      {
-         pojo.method14Finally8(list);
-      }
-      catch(NoMatchingAdviceException e)
-      {
-         thrown = true;
-      }
-      assertTrue(thrown);
-   }
-   
-   public void testGenerics3()
+   public void testGenericsFieldWrite()
    {
       List<SuperValue> list = new ArrayList<SuperValue>();
       boolean thrown = false;
@@ -542,7 +384,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       assertTrue(thrown);
    }
    
-   public void testGenerics4()
+   public void testGenericsConstructorExecution()
    {
       List<SuperValue> list = new ArrayList<SuperValue>();
       boolean thrown = false;
@@ -714,7 +556,7 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       assertTrue(thrown);
    }
    
-   public void testGenerics5()
+   public void testGenericsConstruction()
    {
       List<SuperValue> list = new ArrayList<SuperValue>();
       boolean thrown = false;
@@ -878,6 +720,164 @@ public class ArgInvalidJDK50TestCase extends AOPTestWithSetup
       {
          // test finally8
          new ArgsInvalidPOJO(false, 0l, list);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+   }
+   
+   public void testGenericsCall()
+   {
+      List<SuperValue> list = new ArrayList<SuperValue>();
+      boolean thrown = false;
+      try
+      {
+         pojo.methodGenericsCallBefore7(list);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallBefore8(list);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAround5(list);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAround7(list);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAround8(list);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAfter5(list);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAfter7(list);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAfter8(list);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallThrowing2(list);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallThrowing7(list);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallThrowing8(list);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallFinally5(list);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallFinally7(list);
+      }
+      catch(NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallFinally8(list);
       }
       catch(NoMatchingAdviceException e)
       {

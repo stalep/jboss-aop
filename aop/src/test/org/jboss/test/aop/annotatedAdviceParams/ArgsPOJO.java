@@ -151,9 +151,17 @@ public class ArgsPOJO
    }
    
    // test of generics
-   public void method13(List<SuperValue> arg) {}
+   public void methodGenericsExecution1(List<SuperValue> arg) {}
    
-   public void method14(List<SuperValue> arg) throws POJOException
+   public void methodGenericsExecution2(List<SuperValue> arg) throws POJOException
+   {
+      throw new POJOException();
+   }
+   
+   // test of generics
+   public void methodGenericsCall1(List<SuperValue> arg) {}
+   
+   public void methodGenericsCall2(List<SuperValue> arg) throws POJOException
    {
       throw new POJOException();
    }

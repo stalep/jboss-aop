@@ -417,7 +417,7 @@ public class ArgTestCase extends AOPTestWithSetup
    public void testGenericsOnMethod()
    {
       List<SuperValue> list = new ArrayList<SuperValue>();
-      pojo.method13(list);
+      pojo.methodGenericsExecution1(list);
       assertGenericsAdvices(false);
    }
 
@@ -427,7 +427,7 @@ public class ArgTestCase extends AOPTestWithSetup
       try
       {
          List<SuperValue> list = new ArrayList<SuperValue>();
-         pojo.method14(list);
+         pojo.methodGenericsExecution2(list);
       }
       catch(POJOException e)
       {
