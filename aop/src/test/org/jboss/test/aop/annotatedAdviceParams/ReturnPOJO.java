@@ -21,6 +21,8 @@
  */
 package org.jboss.test.aop.annotatedAdviceParams;
 
+import java.util.List;
+
 /**
  * Plain old java object used both on @Return parameter tests, and on advice return
  * type tests.
@@ -84,5 +86,15 @@ public class ReturnPOJO
    public SubValue method13() throws POJOException
    {
       throw new POJOException();
+   }
+   
+   public List<SuperValue> methodGenerics(boolean throwException)
+   throws POJOException
+   {
+      if (throwException)
+      {
+         throw new POJOException();
+      }
+      return null;
    }
 }

@@ -298,6 +298,7 @@ public class ReturnAspect
    
    public SubValue finally13()
    {
+      finallyAdvice = "finally13";
       return new SubValue(13);
    }
 }

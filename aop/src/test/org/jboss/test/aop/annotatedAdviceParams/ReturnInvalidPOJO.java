@@ -21,6 +21,8 @@
  */
 package org.jboss.test.aop.annotatedAdviceParams;
 
+import java.util.List;
+
 /**
  * Plain old java object used both on @Return parameter tests with invalid advices(
  * its joinpoint executions will throw a NoMatchingAdviceException, due to the fact
@@ -102,5 +104,77 @@ public class ReturnInvalidPOJO
    public SuperValue method10After10()
    {
       return new SuperValue(10);
+   }
+   
+   /* methodGenerics() */
+   
+   public List<SuperValue> methodGenericsAround1()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsAround2()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsAround4()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsAround5()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsAround7()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsAround8()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsAfter5()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsAfter7()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsAfter8()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsFinally5()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsFinally7()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsFinally8()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsFinally9()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsFinally10()
+   {
+      return null;
    }
 }

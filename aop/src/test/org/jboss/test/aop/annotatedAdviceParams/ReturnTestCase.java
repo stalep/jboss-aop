@@ -224,18 +224,18 @@ public class ReturnTestCase extends AOPTestWithSetup
       assertSame(thrown, ReturnAspect.finallyThrown);
    }
    
-   public void method13()
+   public void test13()
    {
-      boolean thrown = false;
+      Throwable thrown = null;
       try
       {
          pojo.method13();
       }
       catch(POJOException e)
       {
-         thrown = true;
+         thrown = e;
       }
-      assertTrue(thrown);
+      assertNotNull(thrown);
       
       assertEquals("around12", ReturnAspect.aroundAdvice);
       assertNull(ReturnAspect.aroundReturn);
@@ -243,6 +243,6 @@ public class ReturnTestCase extends AOPTestWithSetup
       assertNull(ReturnAspect.afterReturn);
       assertEquals("finally13", ReturnAspect.finallyAdvice);
       assertNull(ReturnAspect.finallyReturn);
-      assertNull(ReturnAspect.finallyThrown);
+      assertSame(thrown, ReturnAspect.finallyThrown);
    }
 }
