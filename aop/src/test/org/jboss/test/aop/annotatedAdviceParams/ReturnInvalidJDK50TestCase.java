@@ -62,12 +62,12 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       this.pojo = new ReturnInvalidPOJO();
    }
    
-   public void testGenerics1()
+   public void testGenericsExecution()
    {
       boolean thrown = false;
       try
       {
-         pojo.methodGenericsAround1();
+         pojo.methodGenericsExecutionAround1();
       }
       catch (NoMatchingAdviceException e)
       {
@@ -78,7 +78,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.methodGenericsAround2();
+         pojo.methodGenericsExecutionAround2();
       }
       catch (NoMatchingAdviceException e)
       {
@@ -89,7 +89,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.methodGenericsAround4();
+         pojo.methodGenericsExecutionAround4();
       }
       catch (NoMatchingAdviceException e)
       {
@@ -100,7 +100,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.methodGenericsAround5();
+         pojo.methodGenericsExecutionAround5();
       }
       catch (NoMatchingAdviceException e)
       {
@@ -111,7 +111,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.methodGenericsAround7();
+         pojo.methodGenericsExecutionAround7();
       }
       catch (NoMatchingAdviceException e)
       {
@@ -122,7 +122,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.methodGenericsAround8();
+         pojo.methodGenericsExecutionAround8();
       }
       catch (NoMatchingAdviceException e)
       {
@@ -133,7 +133,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.methodGenericsAfter5();
+         pojo.methodGenericsExecutionAfter5();
       }
       catch (NoMatchingAdviceException e)
       {
@@ -144,7 +144,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.methodGenericsAfter7();
+         pojo.methodGenericsExecutionAfter7();
       }
       catch (NoMatchingAdviceException e)
       {
@@ -155,7 +155,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.methodGenericsAfter8();
+         pojo.methodGenericsExecutionAfter8();
       }
       catch (NoMatchingAdviceException e)
       {
@@ -166,7 +166,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.methodGenericsFinally5();
+         pojo.methodGenericsExecutionFinally5();
       }
       catch (NoMatchingAdviceException e)
       {
@@ -177,7 +177,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.methodGenericsFinally7();
+         pojo.methodGenericsExecutionFinally7();
       }
       catch (NoMatchingAdviceException e)
       {
@@ -188,7 +188,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.methodGenericsFinally8();
+         pojo.methodGenericsExecutionFinally8();
       }
       catch (NoMatchingAdviceException e)
       {
@@ -199,7 +199,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.methodGenericsFinally9();
+         pojo.methodGenericsExecutionFinally9();
       }
       catch (NoMatchingAdviceException e)
       {
@@ -210,7 +210,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       thrown = false;
       try
       {
-         pojo.methodGenericsFinally10();
+         pojo.methodGenericsExecutionFinally10();
       }
       catch (NoMatchingAdviceException e)
       {
@@ -219,7 +219,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       assertTrue(thrown);
    }
    
-   public void testGenerics2()
+   public void testGenericsFieldRead()
    {
       boolean thrown = false;
       try
@@ -368,6 +368,163 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       try
       {
          assertNull(pojo.fieldGenericsFinally10);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+   }
+   
+   public void testGenericsCall()
+   {
+      boolean thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAround1();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAround2();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAround4();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAround5();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAround7();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAround8();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAfter5();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAfter7();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallAfter8();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallFinally5();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallFinally7();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallFinally8();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallFinally9();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         pojo.methodGenericsCallFinally10();
       }
       catch (NoMatchingAdviceException e)
       {

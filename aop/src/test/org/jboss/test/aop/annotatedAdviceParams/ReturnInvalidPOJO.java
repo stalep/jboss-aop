@@ -154,74 +154,146 @@ public class ReturnInvalidPOJO
       return new SuperValue(10);
    }
    
-   /* methodGenerics() */
+   /* methodGenericsExecution() */
    
-   public List<SuperValue> methodGenericsAround1()
+   public List<SuperValue> methodGenericsExecutionAround1()
    {
       return null;
    }
    
-   public List<SuperValue> methodGenericsAround2()
+   public List<SuperValue> methodGenericsExecutionAround2()
    {
       return null;
    }
    
-   public List<SuperValue> methodGenericsAround4()
+   public List<SuperValue> methodGenericsExecutionAround4()
    {
       return null;
    }
    
-   public List<SuperValue> methodGenericsAround5()
+   public List<SuperValue> methodGenericsExecutionAround5()
    {
       return null;
    }
    
-   public List<SuperValue> methodGenericsAround7()
+   public List<SuperValue> methodGenericsExecutionAround7()
    {
       return null;
    }
    
-   public List<SuperValue> methodGenericsAround8()
+   public List<SuperValue> methodGenericsExecutionAround8()
    {
       return null;
    }
    
-   public List<SuperValue> methodGenericsAfter5()
+   public List<SuperValue> methodGenericsExecutionAfter5()
    {
       return null;
    }
    
-   public List<SuperValue> methodGenericsAfter7()
+   public List<SuperValue> methodGenericsExecutionAfter7()
    {
       return null;
    }
    
-   public List<SuperValue> methodGenericsAfter8()
+   public List<SuperValue> methodGenericsExecutionAfter8()
    {
       return null;
    }
    
-   public List<SuperValue> methodGenericsFinally5()
+   public List<SuperValue> methodGenericsExecutionFinally5()
    {
       return null;
    }
    
-   public List<SuperValue> methodGenericsFinally7()
+   public List<SuperValue> methodGenericsExecutionFinally7()
    {
       return null;
    }
    
-   public List<SuperValue> methodGenericsFinally8()
+   public List<SuperValue> methodGenericsExecutionFinally8()
    {
       return null;
    }
    
-   public List<SuperValue> methodGenericsFinally9()
+   public List<SuperValue> methodGenericsExecutionFinally9()
    {
       return null;
    }
    
-   public List<SuperValue> methodGenericsFinally10()
+   public List<SuperValue> methodGenericsExecutionFinally10()
+   {
+      return null;
+   }
+   
+   /* methodGenericsCall() */
+   
+   public List<SuperValue> methodGenericsCallAround1()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsCallAround2()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsCallAround4()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsCallAround5()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsCallAround7()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsCallAround8()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsCallAfter5()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsCallAfter7()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsCallAfter8()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsCallFinally5()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsCallFinally7()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsCallFinally8()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsCallFinally9()
+   {
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsCallFinally10()
    {
       return null;
    }

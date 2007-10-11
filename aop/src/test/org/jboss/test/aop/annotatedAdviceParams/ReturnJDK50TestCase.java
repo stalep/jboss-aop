@@ -61,67 +61,65 @@ public class ReturnJDK50TestCase extends AOPTestWithSetup
       this.pojo = new ReturnPOJO();
    }
    
-   public void testGenerics1() throws Exception
+   public void testGenericsExecution() throws POJOException
    {
-      pojo.methodGenerics(false);
-      assertTrue(ReturnAspectGenerics.around3);
-      assertTrue(ReturnAspectGenerics.after1);
-      assertTrue(ReturnAspectGenerics.after2);
-      assertTrue(ReturnAspectGenerics.after3);
-      assertTrue(ReturnAspectGenerics.after4);
-      assertTrue(ReturnAspectGenerics.after6);
-      assertTrue(ReturnAspectGenerics.after9);
-      assertTrue(ReturnAspectGenerics.after10);
-      assertTrue(ReturnAspectGenerics.finally1);
-      assertTrue(ReturnAspectGenerics.finally2);
-      assertTrue(ReturnAspectGenerics.finally3);
-      assertTrue(ReturnAspectGenerics.finally4);
-      assertTrue(ReturnAspectGenerics.finally6);
-      assertTrue(ReturnAspectGenerics.finally11);
+      pojo.methodGenericsExecution(false);
+      assertGenericsAdvices(false);
    }
    
-   public void testGenerics2() throws Exception
+   public void testGenericsExecutionWithException()
    {
       boolean thrown = false;
       try
       {
-         pojo.methodGenerics(true);
+         pojo.methodGenericsExecution(true);
       }
-      catch (Throwable t)
+      catch (POJOException e)
       {
          thrown = true;
       }
       assertTrue(thrown);
-      
-      assertTrue(ReturnAspectGenerics.around3);
-      assertTrue(ReturnAspectGenerics.around6);
-      assertFalse(ReturnAspectGenerics.after1);
-      assertFalse(ReturnAspectGenerics.after2);
-      assertFalse(ReturnAspectGenerics.after3);
-      assertFalse(ReturnAspectGenerics.after4);
-      assertFalse(ReturnAspectGenerics.after6);
-      assertFalse(ReturnAspectGenerics.after9);
-      assertFalse(ReturnAspectGenerics.after10);
-      assertTrue(ReturnAspectGenerics.finally1);
-      assertTrue(ReturnAspectGenerics.finally2);
-      assertTrue(ReturnAspectGenerics.finally3);
-      assertTrue(ReturnAspectGenerics.finally4);
-      assertTrue(ReturnAspectGenerics.finally6);
-      assertTrue(ReturnAspectGenerics.finally11);
+      assertGenericsAdvices(thrown);
    }
    
-   public void testGenerics3() throws Exception
+   public void testGenericsFieldRead()
    {
       assertNull(pojo.fieldGenerics);
-      
+      assertGenericsAdvices(false);
+   }
+   
+   public void testGenericsCall() throws POJOException
+   {
+      pojo.methodGenericsCall(false);
+      assertGenericsAdvices(false);
+   }
+   
+   public void testGenericsCallWithException()
+   {
+      boolean thrown = false;
+      try
+      {
+         pojo.methodGenericsCall(true);
+      }
+      catch (POJOException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertGenericsAdvices(thrown);
+   }
+
+   private void assertGenericsAdvices(boolean thrown)
+   {
       assertTrue(ReturnAspectGenerics.around3);
-      assertTrue(ReturnAspectGenerics.after1);
-      assertTrue(ReturnAspectGenerics.after2);
-      assertTrue(ReturnAspectGenerics.after3);
-      assertTrue(ReturnAspectGenerics.after4);
-      assertTrue(ReturnAspectGenerics.after6);
-      assertTrue(ReturnAspectGenerics.after9);
-      assertTrue(ReturnAspectGenerics.after10);
+      assertTrue(ReturnAspectGenerics.around6);
+      assertEquals(!thrown, ReturnAspectGenerics.after1);
+      assertEquals(!thrown, ReturnAspectGenerics.after2);
+      assertEquals(!thrown, ReturnAspectGenerics.after3);
+      assertEquals(!thrown, ReturnAspectGenerics.after4);
+      assertEquals(!thrown, ReturnAspectGenerics.after6);
+      assertEquals(!thrown, ReturnAspectGenerics.after9);
+      assertEquals(!thrown, ReturnAspectGenerics.after10);
       assertTrue(ReturnAspectGenerics.finally1);
       assertTrue(ReturnAspectGenerics.finally2);
       assertTrue(ReturnAspectGenerics.finally3);

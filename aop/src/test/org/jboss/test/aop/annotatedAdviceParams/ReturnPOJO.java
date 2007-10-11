@@ -101,7 +101,17 @@ public class ReturnPOJO
       throw new POJOException();
    }
    
-   public List<SuperValue> methodGenerics(boolean throwException)
+   public List<SuperValue> methodGenericsExecution(boolean throwException)
+   throws POJOException
+   {
+      if (throwException)
+      {
+         throw new POJOException();
+      }
+      return null;
+   }
+   
+   public List<SuperValue> methodGenericsCall(boolean throwException)
    throws POJOException
    {
       if (throwException)
