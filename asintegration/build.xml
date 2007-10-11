@@ -245,6 +245,7 @@
          <fileset dir="${build.classes.retro}">
             <!-- Include everything else -->
             <include name="org/jboss/aop/deploy*/**"/>
+            <include name="org/jboss/aop/domain/**"/>
             <exclude name="org/jboss/aop/deployers/*.class"/>
          </fileset>
          <fileset file ="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
