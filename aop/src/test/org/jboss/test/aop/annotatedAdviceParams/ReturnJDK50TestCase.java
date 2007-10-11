@@ -45,7 +45,7 @@ public class ReturnJDK50TestCase extends AOPTestWithSetup
    public static Test suite()
    {
       TestSuite suite = new TestSuite("ReturnJDK50TestCase");
-      suite.addTestSuite(ReturnTestCase.class);
+      suite.addTestSuite(ReturnJDK50TestCase.class);
       return suite;
    }
    
