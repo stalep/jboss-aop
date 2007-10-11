@@ -167,10 +167,14 @@ enum ParameterAnnotationRule
    }
 
    /**
-    * Returns the class from which the annotated parameter must be assignable.
+    * Returns the type from which the annotated parameter must be assignable.
     * 
     * @param properties describes the queried advice method
-    * @return the class from which the annotated parameter must be assignable
+    * 
+    * @return the type or types from which the annotated parameter must be assignable.
+    *         If this rule {@link #isSingleEnforced() is single enforced}, the return
+    *         type is <code>java.lang.reflect.Type</code>; otherwise, it is
+    *         <code>java.lang.reflect.Type[]</code>.
     */
    public Object getAssignableFrom(AdviceMethodProperties properties)
    {

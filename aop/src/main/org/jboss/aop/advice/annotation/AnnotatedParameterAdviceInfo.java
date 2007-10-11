@@ -461,7 +461,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          {
             AdviceMethodFactory.appendNewMatchingMessage(method, rule);
             AdviceMethodFactory.appendMatchingMessage("-annotated parameter is not assignable from expected type ");
-            AdviceMethodFactory.appendMatchingMessage(((Class) rule.getAssignableFrom(properties)).getName());
+            AdviceMethodFactory.appendMatchingMessage(((Type) rule.getAssignableFrom(properties)));
             return false;
          }
          return  true;
