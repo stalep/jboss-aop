@@ -40,6 +40,7 @@ public class ReturnInvalidTestCase extends AOPTestWithSetup
    
    public static void main(String[] args)
    {
+   
       TestRunner.run(suite());
    }
 
@@ -199,6 +200,137 @@ public class ReturnInvalidTestCase extends AOPTestWithSetup
       try
       {
          pojo.method10After10();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+   }
+   
+   public void test11()
+   {
+      boolean thrown = false;
+      try
+      {
+         assertNull(pojo.field1Around2);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+   }
+   
+   public void test12()
+   {
+      boolean thrown = false;
+      try
+      {
+         assertNull(pojo.field2Before);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+   }
+   
+   public void test13()
+   {
+      boolean thrown = false;
+      try
+      {
+         assertNull(pojo.field4Finally5);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+   }
+   
+   public void test14()
+   {
+      boolean thrown = false;
+      try
+      {
+         assertNull(pojo.field5Around6);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+   }
+   
+   public void test15()
+   {
+      boolean thrown = false;
+      try
+      {
+         assertNull(pojo.field7Before);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+   }
+   
+   public void test16()
+   {
+      boolean thrown = false;
+      try
+      {
+         assertNull(pojo.field8Around9);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         assertNull(pojo.field8After9);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         assertNull(pojo.field8Finally9);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+   }
+   
+   public void test17()
+   {
+      boolean thrown = false;
+      try
+      {
+         assertNull(pojo.field9Before);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         assertNull(pojo.field9After10);
       }
       catch (NoMatchingAdviceException e)
       {

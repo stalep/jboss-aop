@@ -62,7 +62,7 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       this.pojo = new ReturnInvalidPOJO();
    }
    
-   public void testGenerics()
+   public void testGenerics1()
    {
       boolean thrown = false;
       try
@@ -211,6 +211,163 @@ public class ReturnInvalidJDK50TestCase extends AOPTestWithSetup
       try
       {
          pojo.methodGenericsFinally10();
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+   }
+   
+   public void testGenerics2()
+   {
+      boolean thrown = false;
+      try
+      {
+         assertNull(pojo.fieldGenericsAround1);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+
+      thrown = false;
+      try
+      {
+         assertNull(pojo.fieldGenericsAround2);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+
+      thrown = false;
+      try
+      {
+         assertNull(pojo.fieldGenericsAround4);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+
+      thrown = false;
+      try
+      {
+         assertNull(pojo.fieldGenericsAround5);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+
+      thrown = false;
+      try
+      {
+         assertNull(pojo.fieldGenericsAround7);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+
+      thrown = false;
+      try
+      {
+         assertNull(pojo.fieldGenericsAround8);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+
+      thrown = false;
+      try
+      {
+         assertNull(pojo.fieldGenericsAfter5);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+
+      thrown = false;
+      try
+      {
+         assertNull(pojo.fieldGenericsAfter7);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         assertNull(pojo.fieldGenericsAfter8);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         assertNull(pojo.fieldGenericsFinally5);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         assertNull(pojo.fieldGenericsFinally7);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         assertNull(pojo.fieldGenericsFinally8);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         assertNull(pojo.fieldGenericsFinally9);
+      }
+      catch (NoMatchingAdviceException e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      
+      thrown = false;
+      try
+      {
+         assertNull(pojo.fieldGenericsFinally10);
       }
       catch (NoMatchingAdviceException e)
       {

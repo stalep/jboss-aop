@@ -109,4 +109,24 @@ public class ReturnJDK50TestCase extends AOPTestWithSetup
       assertTrue(ReturnAspectGenerics.finally6);
       assertTrue(ReturnAspectGenerics.finally11);
    }
+   
+   public void testGenerics3() throws Exception
+   {
+      assertNull(pojo.fieldGenerics);
+      
+      assertTrue(ReturnAspectGenerics.around3);
+      assertTrue(ReturnAspectGenerics.after1);
+      assertTrue(ReturnAspectGenerics.after2);
+      assertTrue(ReturnAspectGenerics.after3);
+      assertTrue(ReturnAspectGenerics.after4);
+      assertTrue(ReturnAspectGenerics.after6);
+      assertTrue(ReturnAspectGenerics.after9);
+      assertTrue(ReturnAspectGenerics.after10);
+      assertTrue(ReturnAspectGenerics.finally1);
+      assertTrue(ReturnAspectGenerics.finally2);
+      assertTrue(ReturnAspectGenerics.finally3);
+      assertTrue(ReturnAspectGenerics.finally4);
+      assertTrue(ReturnAspectGenerics.finally6);
+      assertTrue(ReturnAspectGenerics.finally11);
+   }
 }

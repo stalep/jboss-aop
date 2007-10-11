@@ -38,6 +38,54 @@ import java.util.List;
  */
 public class ReturnInvalidPOJO
 {
+   /* String field1 */
+   
+   public String field1Around2;
+   
+   /* String field2 */
+   
+   public String field2Before;
+   
+   /* String field4 */
+   
+   public String field4Finally5;
+   
+   /* String field5 */
+   
+   public String field5Around6;
+   
+   /* SubValue field7 */
+   
+   public SubValue field7Before;
+   
+   /* SubValue field8 */
+   
+   public SubValue field8Around9;
+   public SubValue field8After9;
+   public SubValue field8Finally9;
+   
+   /* SuperValue field9 */
+   
+   public SuperValue field9Before;
+   public SuperValue field9After10;
+   
+   /* List<SuperValue> fieldGenerics */
+   
+   public List<SuperValue> fieldGenericsAround1;
+   public List<SuperValue> fieldGenericsAround2;
+   public List<SuperValue> fieldGenericsAround4;
+   public List<SuperValue> fieldGenericsAround5;
+   public List<SuperValue> fieldGenericsAround7;
+   public List<SuperValue> fieldGenericsAround8;
+   public List<SuperValue> fieldGenericsAfter5;
+   public List<SuperValue> fieldGenericsAfter7;
+   public List<SuperValue> fieldGenericsAfter8;
+   public List<SuperValue> fieldGenericsFinally5;
+   public List<SuperValue> fieldGenericsFinally7;
+   public List<SuperValue> fieldGenericsFinally8;
+   public List<SuperValue> fieldGenericsFinally9;
+   public List<SuperValue> fieldGenericsFinally10;
+   
    /* method1() */
    
    public void method1Before() {}

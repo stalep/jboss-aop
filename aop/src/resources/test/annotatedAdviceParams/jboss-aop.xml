@@ -1009,7 +1009,8 @@
       <after name="after2" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method2Around2(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method2Around2(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->field1Around2)">
 		<around name="around2" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
    
@@ -1020,7 +1021,8 @@
       <finally name="finally3" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method3Before(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method3Before(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->field2Before)">
 		<before name="before" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
    
@@ -1037,7 +1039,8 @@
 		<after name="after5" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method5Finally5(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method5Finally5(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->field4Finally5)">
       <finally name="finally5" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
    
@@ -1047,7 +1050,8 @@
       <finally name="finally6" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method6Around6(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method6Around6(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->field5Around6)">
 		<around name="around6" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
    
@@ -1065,19 +1069,23 @@
       <finally name="finally8" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method8Before(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method8Before(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->field7Before)">
 		<before name="before" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method9Around9(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method9Around9(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->field8Around9)">
 		<around name="around9" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
   	</bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method9After9(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method9After9(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->field8After9)">
 		<after name="after9" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
   	</bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method9Finally9(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method9Finally9(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->field8Finally9)">
       <finally name="finally9" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
   	</bind>
    
@@ -1087,11 +1095,13 @@
       <finally name="finally10" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method10Before(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method10Before(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->field9Before)">
 		<before name="before" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method10After10(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->method10After10(..))
+      OR get(* org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->field9After10)">
 		<after name="after10" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspect"/>
 	</bind>
 
@@ -1116,7 +1126,8 @@
    
    <aspect class="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics" scope="PER_VM"/>
 
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->*(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->*(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnPOJO->*)">
       <around name="around3" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
       <around name="around6" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
       <after name="after1" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
@@ -1134,63 +1145,78 @@
       <finally name="finally11" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around1(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around1(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around1)">
       <around name="around1" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around2(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around2(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around2)">
       <around name="around2" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around4(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around4(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around4)">
       <around name="around4" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around5(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around5(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around5)">
       <around name="around5" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around6(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around6(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around6)">
       <around name="around6" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around7(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around7(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around7)">
       <around name="around7" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around8(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around8(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Around8)">
       <around name="around8" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*After5(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*After5(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*After5)">
       <after name="after5" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*After7(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*After7(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*After7)">
       <after name="after7" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*After8(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*After8(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*After8)">
       <after name="after8" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally5(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally5(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally5)">
       <after name="finally5" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally7(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally7(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally7)">
       <after name="finally7" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally8(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally8(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally8)">
       <after name="finally8" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally9(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally9(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally9)">
       <after name="finally9" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    
-   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally10(..))">
+   <bind pointcut="execution(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally10(..))
+      OR get(java.util.List org.jboss.test.aop.annotatedAdviceParams.ReturnInvalidPOJO->*Finally10)">
       <after name="finally10" aspect="org.jboss.test.aop.annotatedAdviceParams.ReturnAspectGenerics"/>
    </bind>
    

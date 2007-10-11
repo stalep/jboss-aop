@@ -42,6 +42,8 @@ public class ReturnPOJO
    public SuperValue field9 = new SuperValue(9);
    public SuperValue field10 = new SuperValue(10);
    
+   public List<SuperValue> fieldGenerics;
+   
    public void method1() {}
 
    public String method2()
