@@ -23,6 +23,7 @@ package org.jboss.aop.deployers.temp;
 
 
 import java.lang.ref.WeakReference;
+import java.net.URL;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.AspectDefinition;
@@ -93,8 +94,9 @@ public class ScopedNewClassLoaderDomain extends ScopedClassLoaderDomain
       aspect = super.getSuperPerVmAspect(def);
       if (aspect != null)
       {
-         ClassLoaderDomain loadingDomain = getAspectRepository(aspect);
-//         LoaderRepository myRepository = getScopedRepository();
+         Class superAspectClass = aspect.getClass();
+         ClassLoaderDomain loadingDomain = getAspectRepository(superAspectClass);
+
          ClassLoaderDomain myDomain = getClassLoaderDomain();
          
          if (loadingDomain == myDomain)
@@ -105,8 +107,9 @@ public class ScopedNewClassLoaderDomain extends ScopedClassLoaderDomain
          else
          {
             //The class has been loaded by a parent domain, find out if we also have a copy
-            Class clazz = myDomain.loadClass(aspect.getClass().getName());
-            if (clazz == aspect.getClass())
+            Class myAspectClazz = myDomain.loadClass(aspect.getClass().getName());
+            
+            if (myAspectClazz == superAspectClass)
             {
                notMyPerVMAspects.put(def, Boolean.TRUE);
             }
@@ -126,9 +129,9 @@ public class ScopedNewClassLoaderDomain extends ScopedClassLoaderDomain
    
    
    
-   private ClassLoaderDomain getAspectRepository(Object aspect)
+   private ClassLoaderDomain getAspectRepository(Class clazz)
    {
-      ClassLoader cl = aspect.getClass().getClassLoader();
+      ClassLoader cl = clazz.getClassLoader();
       ClassLoaderDomain domain = registry.getClassLoaderDomainForLoader(cl);
       return domain;
    }
