@@ -82,6 +82,14 @@
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="bridgemethod"/>
       </antcall>
+      <!--
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="rebuildingchain"/>
+      </antcall>
+      -->
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="array"/>
+      </antcall>
 
       <!-- Tests with special requirements for parameters -->
       <antcall target="${test-target}" inheritRefs="true">
