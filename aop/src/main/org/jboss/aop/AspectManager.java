@@ -55,6 +55,9 @@ import org.jboss.aop.advice.PrecedenceDef;
 import org.jboss.aop.advice.PrecedenceDefEntry;
 import org.jboss.aop.advice.PrecedenceSorter;
 import org.jboss.aop.advice.Scope;
+import org.jboss.aop.array.ArrayAdvisor;
+import org.jboss.aop.array.ArrayBinding;
+import org.jboss.aop.array.ArrayReplacement;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.AOPClassPoolRepository;
 import org.jboss.aop.instrument.GeneratedAdvisorInstrumentor;
@@ -124,6 +127,8 @@ public class AspectManager
    protected int subscribedDomainQueueRef;
 
    protected LinkedHashMap interfaceIntroductions = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected LinkedHashMap arrayReplacements = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected LinkedHashMap arrayBindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    protected LinkedHashMap annotationIntroductions =UnmodifiableEmptyCollections. EMPTY_LINKED_HASHMAP;
    protected LinkedHashMap annotationOverrides = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    protected LinkedHashMap bindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
@@ -1577,6 +1582,81 @@ public class AspectManager
          pointcut.clearAdvisors();
       }
    }
+   
+   /**
+    * Retrieve an introduction pointcut of a certain name
+    */
+   public InterfaceIntroduction getArrayReplacement(String name)
+   {
+      synchronized (arrayReplacements)
+      {
+         return (InterfaceIntroduction) arrayReplacements.get(name);
+      }
+   }
+
+   /**
+    * Register an introduction pointcut
+    */
+   public synchronized void addArrayReplacement(ArrayReplacement pointcut)
+   {
+      removeArrayReplacement(pointcut.getName());
+      initArrayReplacementMap();
+      synchronized (arrayReplacements)
+      {
+         arrayReplacements.put(pointcut.getName(), pointcut);
+      }
+   }
+
+   /**
+    * remove an introduction pointcut of a certain name
+    */
+   public void removeArrayReplacement(String name)
+   {
+      synchronized (arrayReplacements)
+      {
+         ArrayReplacement pointcut = (ArrayReplacement) arrayReplacements.remove(name);
+         if (pointcut == null) return;
+      }
+   }
+
+   /**
+    * Retrieve an introduction pointcut of a certain name
+    */
+   public InterfaceIntroduction getArrayBinding(String name)
+   {
+      synchronized (arrayBindings)
+      {
+         return (InterfaceIntroduction) arrayBindings.get(name);
+      }
+   }
+
+   /**
+    * Register an introduction pointcut
+    */
+   public synchronized void addArrayBinding(ArrayBinding binding)
+   {
+      removeArrayBinding(binding.getName());
+      initArrayBindingMap();
+      synchronized (arrayBindings)
+      {
+         arrayBindings.put(binding.getName(), binding);
+         ArrayAdvisor.addBinding(binding);
+      }
+   }
+
+   /**
+    * remove an introduction pointcut of a certain name
+    */
+   public void removeArrayBinding(String name)
+   {
+      synchronized (arrayBindings)
+      {
+         ArrayBinding pointcut = (ArrayBinding) arrayBindings.remove(name);
+         if (pointcut == null) return;
+         ArrayAdvisor.removeBinding(pointcut);
+      }
+   }
+
 
    /**
     * Register an annotation introduction
@@ -1852,6 +1932,11 @@ public class AspectManager
    public Map getInterfaceIntroductions()
    {
       return interfaceIntroductions;
+   }
+   
+   public Map getArrayReplacements()
+   {
+      return arrayReplacements;
    }
 
    public Map getTypedefs()
@@ -2177,6 +2262,45 @@ public class AspectManager
          }
       }
    }
+   
+   protected void initArrayReplacementMap()
+   {
+      if (arrayReplacements == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (arrayReplacements == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+            {
+               arrayReplacements = new LinkedHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
+   protected void initArrayBindingMap()
+   {
+      if (arrayBindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         lockWrite();
+         try
+         {
+            if (arrayBindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+            {
+               arrayBindings = new LinkedHashMap();
+            }
+         }
+         finally
+         {
+            unlockWrite();
+         }
+      }
+   }
+   
    
    protected void initAnnotationIntroductionsMap()
    {

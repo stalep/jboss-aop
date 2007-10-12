@@ -43,7 +43,7 @@ public class OptimizedFieldAccessTransformer extends FieldAccessTransformer
       super(instrumentor);
    }
 
-   protected void doBuildFieldWrappers(CtClass clazz, CtField field, int fieldIndex, JoinpointClassification classificationGet, JoinpointClassification classificationSet) throws NotFoundException, CannotCompileException
+   protected void doBuildFieldWrappers(CtClass clazz, CtField field, int fieldIndex, boolean shouldReplaceArrayAccess, JoinpointClassification classificationGet, JoinpointClassification classificationSet) throws NotFoundException, CannotCompileException
    {
       instrumentor.setupBasics(clazz);
       boolean wrappedGet = classificationGet.equals(JoinpointClassification.WRAPPED);

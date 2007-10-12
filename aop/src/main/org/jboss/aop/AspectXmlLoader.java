@@ -49,6 +49,9 @@ import org.jboss.aop.advice.PrecedenceDefEntry;
 import org.jboss.aop.advice.Scope;
 import org.jboss.aop.advice.ScopeUtil;
 import org.jboss.aop.advice.ScopedInterceptorFactory;
+import org.jboss.aop.array.ArrayBinding;
+import org.jboss.aop.array.ArrayReplacement;
+import org.jboss.aop.array.Type;
 import org.jboss.aop.introduction.AnnotationIntroduction;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.metadata.ClassMetaDataBinding;
@@ -295,6 +298,37 @@ public class AspectXmlLoader implements XmlLoader
       unloadInterceptors(element);
       String pointcut = getName("pointcut");
       manager.removePointcut(pointcut);
+   }
+   
+   public void deployArrayBinding(Element element) throws Exception
+   {
+      String name = getName(element, "arraybinding");
+      String type = element.getAttribute("type");
+      if (type == null || type.trim().equals(""))
+      {
+         throw new RuntimeException("Binding must have a type");
+      }
+      
+      Type theType = Type.valueOf(type);
+      
+      ArrayList interceptors = loadInterceptors(element);
+      InterceptorFactory[] inters = (InterceptorFactory[]) interceptors.toArray(new InterceptorFactory[interceptors.size()]);
+      for (int i = 0 ; i < inters.length ; i++)
+      {
+         if (!inters[i].getAspect().getScope().equals(Scope.PER_VM))
+         {
+            throw new RuntimeException("Only PER_VM scoped aspects/interceptors can be used in arraybindings");
+         }
+      }
+      ArrayBinding binding = new ArrayBinding(name, inters, theType);
+      manager.addArrayBinding(binding);
+   }
+
+   public void undeployArrayBinding(Element element) throws Exception
+   {
+      String binding = getName(element, "arraybinding");
+      if (binding == null) throw new RuntimeException("undeploying Arraybinding that is null!");
+      manager.removeArrayBinding(binding);//done in bulkUndeploy() step
    }
 
    private void deployPrecedence(Element element) throws Exception
@@ -692,6 +726,51 @@ public class AspectXmlLoader implements XmlLoader
       }
       manager.addPointcut(p);
    }
+   
+   public void undeployArrayReplacement(Element pointcut) throws Exception
+   {
+      String name = getName(pointcut, "arrayReplacement");
+      manager.removeArrayReplacement(name);
+   }
+   
+   public void deployArrayReplacement(Element pointcut) throws Exception
+   {
+      String name = getName(pointcut, "arrayReplacement");
+      String classExpr = pointcut.getAttribute("class");
+      if (classExpr != null && classExpr.trim().equals(""))
+      {
+         classExpr = null;
+      }
+
+      String ast = pointcut.getAttribute("expr");
+      if (ast != null && ast.trim().equals(""))
+      {
+         ast = null;
+      }
+
+      if (classExpr == null && ast == null)
+      {
+         throw new RuntimeException("A class nor a expr attribute is defined for this <arrayreplacement>");
+      }
+
+      if (classExpr != null && ast != null)
+      {
+         throw new RuntimeException("You cannot define both a class and expr attribute in the same <arrayreplacement>");
+      }
+
+      ArrayReplacement pcut = null;
+      if (classExpr != null)
+      {
+         pcut = new ArrayReplacement(name, classExpr);
+      }
+      else
+      {
+         ASTStart start = new TypeExpressionParser(new StringReader(ast)).Start();
+         pcut = new ArrayReplacement(name, start);
+      }
+      manager.addArrayReplacement(pcut);
+   }
+
 
    public void deployAnnotationIntroduction(Element pointcut) throws Exception
    {
@@ -1099,6 +1178,14 @@ public class AspectXmlLoader implements XmlLoader
             {
                //Handled by AspctDeployer in JBoss
             }
+            else if (tag.equals("arrayreplacement"))
+            {
+               deployArrayReplacement(element);
+            }
+            else if (tag.equals("arraybind"))
+            {
+               deployArrayBinding(element);
+            }
             else
             {
                throw new IllegalArgumentException("Unknown AOP tag: " + tag);
@@ -1212,6 +1299,14 @@ public class AspectXmlLoader implements XmlLoader
             else if (tag.equals("declare-error") || tag.equals("declare-warning"))
             {
                undeployDeclare(element);
+            }
+            else if (tag.equals("arrayreplacement"))
+            {
+               undeployArrayReplacement(element);
+            }
+            else if (tag.equals("arraybind"))
+            {
+               undeployArrayBinding(element);
             }
          }
       }

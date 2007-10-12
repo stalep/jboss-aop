@@ -288,6 +288,35 @@ public class Domain extends AspectManager
 
       return super.getAnnotationIntroductions();
    }
+   
+   public Map getArrayReplacements()
+   {
+      if (inheritsBindings)
+      {
+         HashMap map = new HashMap();
+         if (!parentFirst)
+         {
+            // when child first, parent bindings go in first so that they can be overridden by child.
+            map.putAll(parent.getArrayReplacements());
+            synchronized (arrayReplacements)
+            {
+               map.putAll(arrayReplacements);
+            }
+            return map;
+         }
+         else
+         {
+            synchronized (arrayReplacements)
+            {
+               map.putAll(arrayReplacements);
+            }
+            map.putAll(parent.getArrayReplacements());
+            return map;
+         }
+      }
+      return super.getArrayReplacements();
+   }
+
 
    public boolean hasOwnAnnotationIntroductions()
    {

@@ -407,12 +407,5 @@ public abstract class MethodExecutionTransformer
          return instrumentor;
       }
 
-      /**
-       * @param wmethod2
-       */
-      public void setMethod(CtMethod method)
-      {
-         this.method = method;
-      }
    }
 }

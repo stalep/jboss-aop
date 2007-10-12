@@ -77,7 +77,7 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
 
    // Public --------------------------------------------------------
 
-   protected void buildFieldWrappers(CtClass clazz, ClassAdvisor advisor) throws NotFoundException, CannotCompileException
+   protected void buildFieldWrappers(CtClass clazz, ClassAdvisor advisor, boolean shouldReplaceArrayAccess) throws NotFoundException, CannotCompileException
    {
       List fields = Instrumentor.getAdvisableFields(clazz);
 
@@ -101,7 +101,7 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
                skipFieldInterception = false;
             }
             
-            doBuildFieldWrappers(clazz, field, fieldIndex, classificationGet, classificationSet);
+            doBuildFieldWrappers(clazz, field, fieldIndex, shouldReplaceArrayAccess, classificationGet, classificationSet);
          }
       }
       
@@ -182,7 +182,17 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
       return classification != JoinpointClassification.NOT_INSTRUMENTED;
    }
    
-   protected abstract void doBuildFieldWrappers(CtClass clazz, CtField field, int index, JoinpointClassification classificationGet, JoinpointClassification classificationSet) throws NotFoundException, CannotCompileException;
+   protected abstract void doBuildFieldWrappers(CtClass clazz, CtField field, int index, boolean shouldReplaceArrayAccess, JoinpointClassification classificationGet, JoinpointClassification classificationSet) throws NotFoundException, CannotCompileException;
+   
+   protected String getArrayWriteRegistration(boolean shouldReplaceArrayAccess, String target, CtField field, String oldValue, String newValue) throws NotFoundException
+   {
+      if (shouldReplaceArrayAccess && (field.getType().isArray() || field.getType().getName().equals("java.lang.Object")))
+      {
+         return "org.jboss.aop.array.ArrayAdvisor.updateArrayField(" + target + ", \"" + field.getName() + "\", " + oldValue + ", " + newValue + ");";
+      }
+      return "";
+   }
+
    /**
     * replace field access for possible public/protected fields that are intercepted
     * don't need to replace access for private fields.

@@ -47,7 +47,7 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       super(instrumentor);
    }
 
-   protected void doBuildFieldWrappers(CtClass clazz, CtField field, int index, JoinpointClassification classificationGet, JoinpointClassification classificationSet) throws NotFoundException, CannotCompileException
+   protected void doBuildFieldWrappers(CtClass clazz, CtField field, int index, boolean shouldReplaceArrayAccess, JoinpointClassification classificationGet, JoinpointClassification classificationSet) throws NotFoundException, CannotCompileException
    {
       instrumentor.setupBasics(clazz);
       boolean wrappedGet = classificationGet.equals(JoinpointClassification.WRAPPED);
@@ -106,7 +106,7 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
 
       // executeWrapping
       replaceFieldAccessInternally(clazz, field, wrappedGet, wrappedSet, index);
-      buildWrappers(clazz, field, wrappedGet, wrappedSet, index);
+      buildWrappers(clazz, field, shouldReplaceArrayAccess, wrappedGet, wrappedSet, index);
    }
 
    protected String addFieldReadInfoFieldToGeneratedAdvisor(CtField field, int index)throws NotFoundException, CannotCompileException
@@ -298,7 +298,7 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       return code;
    }
 
-   private String getAdvisorWriteWrapperBody(CtClass clazz, CtField field, int index)
+   private String getAdvisorWriteWrapperBody(CtClass clazz, CtField field, int index, boolean shouldReplaceArrayAccess)
    throws NotFoundException, CannotCompileException
    {
       boolean isStatic = Modifier.isStatic(field.getModifiers());
@@ -307,15 +307,18 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       String infoName = getFieldWriteInfoFieldName(field.getName());
       if (isStatic)
       {
+         String targetString = "java.lang.Class.forName(\"" + clazz.getName() + "\")";
+         String fieldString = clazz.getName() +  "." + field.getName();
          code =
             "{" +
+            "    " + getArrayWriteRegistration(shouldReplaceArrayAccess, targetString, field, fieldString, "$2") +
             "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "   {" +
             "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
             "   }" +
             "   if (" + joinpointName + " == null)" +
             "   { " +
-            "   " + clazz.getName() + "." + field.getName() + " = $2;" +
+            "   " + fieldString + " = $2;" +
             "   }" +
             "   else" +
             "   {" +
@@ -325,15 +328,18 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       }
       else
       {
+         String targetString = "((" + clazz.getName() + ")$1)";
+         String fieldString = targetString + "." + field.getName();
          code =
             "{" +
+            "    " + getArrayWriteRegistration(shouldReplaceArrayAccess, targetString, field, fieldString, "$2") +
             "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "   {" +
             "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
             "   }" +
             "   if (" + joinpointName + " == null)" +
             "   { " +
-            "   ((" + clazz.getName() + ")$1)." + field.getName() + " = $2;" +
+            "       " + fieldString + " = $2;" +
             "   }" +
             "   else" +
             "   {" +
@@ -375,7 +381,7 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
 
 
 
-   private void buildWrappers(CtClass clazz, CtField field, boolean doGet, boolean doSet, int index) throws NotFoundException, CannotCompileException
+   private void buildWrappers(CtClass clazz, CtField field,  boolean shouldReplaceArrayAccess, boolean doGet, boolean doSet, int index) throws NotFoundException, CannotCompileException
    {
       if (doGet)
       {
@@ -400,7 +406,7 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       if (doSet)
       {
          //Set wrapper code in advisor
-         String code = getAdvisorWriteWrapperBody(clazz, field, index);
+         String code = getAdvisorWriteWrapperBody(clazz, field, index, shouldReplaceArrayAccess);
          CtMethod method = getGenadvisor().getDeclaredMethod(advisorFieldWrite(getGenadvisor(), field.getName()));
          try
          {

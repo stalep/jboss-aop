@@ -34,6 +34,8 @@ import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.annotation.compiler.AnnotationInfoCreator;
+import org.jboss.aop.array.ArrayAdvisor;
+import org.jboss.aop.array.ArrayReplacement;
 import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.aop.classpool.AOPClassPoolRepository;
 import org.jboss.aop.introduction.AnnotationIntroduction;
@@ -715,6 +717,10 @@ public abstract class Instrumentor
          instrumentIntroductions(clazz, advisor);
 
          converted = convertReferences(clazz) || converted;
+         
+         boolean shouldReplaceArrayAccess = replaceArrayAccess(clazz, advisor);
+         converted = converted || shouldReplaceArrayAccess;
+
          // need to instrument no matter what so that
          // previously declared field and constructor interceptions
          // get instrumented within this class.
@@ -725,7 +731,7 @@ public abstract class Instrumentor
 
          // create static wrapper methods after
          // clazz.instrument because the wrappers may call cons or fields
-         fieldAccessTransformer.buildFieldWrappers(clazz, advisor);
+         fieldAccessTransformer.buildFieldWrappers(clazz, advisor, shouldReplaceArrayAccess);
          if (constructorAccessConverted)
          {
             constructorExecutionTransformer.codeConverted();
@@ -996,6 +1002,28 @@ public abstract class Instrumentor
             }
          }
       }
+   }
+
+   private boolean replaceArrayAccess(CtClass clazz, Advisor advisor) throws Exception
+   {
+      boolean shouldReplaceArrayAccess = false;
+      Map arrayReplacements = manager.getArrayReplacements();
+      for (Iterator it = arrayReplacements.values().iterator() ; it.hasNext() ; )
+      {
+         ArrayReplacement arrayReplacement = (ArrayReplacement)it.next();
+         if (arrayReplacement.matches(advisor, clazz))
+         {
+            shouldReplaceArrayAccess = true;
+            break;
+         }
+      }
+
+      if (shouldReplaceArrayAccess)
+      {
+         if (AspectManager.verbose) System.out.println("[debug] Replacing array access in " + clazz.getName());
+         converter.replaceArrayAccess(classPool.get(ArrayAdvisor.class.getName()), new CodeConverter.DefaultArrayAccessReplacementMethodNames());
+      }
+      return shouldReplaceArrayAccess;
    }
 
    
