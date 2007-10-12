@@ -365,6 +365,17 @@ public class ProxyTestCase extends AOPTestWithSetup
    
    public void testAnnotationsExistInProxy() throws Exception
    {
+      //THis test fails if we run with jboss retro
+      try
+      {
+         Class.forName("org.jboss.lang.ClassRedirects");
+         System.out.println("IGNORING TEST ON JDK 1.4");
+         return;
+      }
+      catch(Exception ignoreWeAreRunningWithJDK5)
+      {
+      }  
+      
       AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
       params.setInterfaces(new Class[]{SomeInterface.class});
       params.setTarget(new AnnotatedPOJO());
