@@ -97,7 +97,7 @@ public class OptimizedFieldAccessTransformer extends FieldAccessTransformer
       
       // executeWrapping
       replaceFieldAccessInternally(clazz, field, wrappedGet, wrappedSet, fieldIndex);
-      buildWrappers(clazz, field, wrappedGet, wrappedSet, fieldIndex);
+      buildWrappers(clazz, field, shouldReplaceArrayAccess, wrappedGet, wrappedSet, fieldIndex);
    }
 
    /**
@@ -116,7 +116,8 @@ public class OptimizedFieldAccessTransformer extends FieldAccessTransformer
       {
          return getReadWrapperBody(clazz, field, index);
       }
-      return getWriteWrapperBody(clazz, field, index);
+      //TODO: set replaceArrayAccess=false as default, must be verified.
+      return getWriteWrapperBody(clazz, field, false, index);
    }
 
    /**
@@ -202,7 +203,7 @@ public class OptimizedFieldAccessTransformer extends FieldAccessTransformer
     * @param index the <code>field</code> index.
     * @return the optimized wrapper body.
     */
-   private String getWriteWrapperBody(CtClass clazz, CtField field, int index)
+   private String getWriteWrapperBody(CtClass clazz, CtField field, boolean shouldReplaceArrayAccess, int index)
            throws NotFoundException, CannotCompileException
    {
       String wrappedName = field.getName();
@@ -224,8 +225,11 @@ public class OptimizedFieldAccessTransformer extends FieldAccessTransformer
       String code;
       if (!isStatic)
       {
+         String targetString = "((" + clazz.getName() + ")$1)";
+         String fieldString = targetString + "." + field.getName();
          code =
          "{ "
+         + "   " + getArrayWriteRegistration(shouldReplaceArrayAccess, targetString, field, fieldString, "$2")
          + "   " + fieldInfoFromWeakReference("info", infoName)
          + "    org.jboss.aop.ClassInstanceAdvisor instAdv = (org.jboss.aop.ClassInstanceAdvisor)((org.jboss.aop.InstanceAdvised)$1)._getInstanceAdvisor();"
          + "    org.jboss.aop.advice.Interceptor[] interceptors = info.getInterceptors();"
@@ -249,8 +253,11 @@ public class OptimizedFieldAccessTransformer extends FieldAccessTransformer
       }
       else
       {
+         String targetString = "java.lang.Class.forName(\"" + clazz.getName() + "\")";
+         String fieldString = clazz.getName() +  "." + field.getName();
          code =
          "{ "
+         + "    " + getArrayWriteRegistration(shouldReplaceArrayAccess, targetString, field, fieldString, "$2")
          + "    org.jboss.aop.advice.Interceptor[] interceptors = " + Instrumentor.HELPER_FIELD_NAME + ".getFieldWriteInfos()[" + index + "].getInterceptors(); "
          + "    if (interceptors != (org.jboss.aop.advice.Interceptor[])null) "
          + "    { "
@@ -269,7 +276,7 @@ public class OptimizedFieldAccessTransformer extends FieldAccessTransformer
    }
    
    
-   private void buildWrappers(CtClass clazz, CtField field, boolean doGet, boolean doSet, int index) throws NotFoundException, CannotCompileException
+   private void buildWrappers(CtClass clazz, CtField field, boolean shouldReplaceArrayAccess, boolean doGet, boolean doSet, int index) throws NotFoundException, CannotCompileException
    {
       if (doGet)
       {
@@ -279,7 +286,7 @@ public class OptimizedFieldAccessTransformer extends FieldAccessTransformer
       }
       if (doSet)
       {
-         String code = getWriteWrapperBody(clazz, field, index);
+         String code = getWriteWrapperBody(clazz, field, shouldReplaceArrayAccess, index);
          CtMethod method = clazz.getDeclaredMethod(fieldWrite(field.getName()));
          method.setBody(code);
       }
