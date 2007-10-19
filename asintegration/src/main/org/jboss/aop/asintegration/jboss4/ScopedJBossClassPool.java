@@ -19,7 +19,7 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.asintegration.jboss4;
+package org.jboss.aop.asintegration.jboss4;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -30,7 +30,7 @@ import java.util.Iterator;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.aop.classpool.AOPClassPoolRepository;
-import org.jboss.asintegration.jboss4.LoaderRepositoryUrlUtil.UrlInfo;
+import org.jboss.aop.asintegration.jboss4.LoaderRepositoryUrlUtil.UrlInfo;
 import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
 import org.jboss.mx.loading.LoaderRepository;
 import org.jboss.mx.loading.RepositoryClassLoader;

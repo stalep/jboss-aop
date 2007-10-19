@@ -37,8 +37,8 @@ import javax.management.ObjectName;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.AspectXmlLoader;
+import org.jboss.aop.asintegration.JBossIntegration;
 import org.jboss.aop.deployment.AspectManagerService;
-import org.jboss.asintegration.JBossIntegration;
 import org.jboss.deployment.DeploymentInfo;
 import org.jboss.logging.Logger;
 import org.w3c.dom.Document;

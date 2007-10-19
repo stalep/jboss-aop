@@ -27,7 +27,7 @@ import junit.framework.Test;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.Domain;
-import org.jboss.aop.deployers.temp.MetaDataClassLoaderScopingPolicy;
+import org.jboss.aop.asintegration.jboss5.MetaDataClassLoaderScopingPolicy;
 import org.jboss.aop.integration.junit.NotWovenAOPIntegrationTest;
 import org.jboss.aop.proxy.container.AOPProxyFactory;
 import org.jboss.aop.proxy.container.AOPProxyFactoryParameters;

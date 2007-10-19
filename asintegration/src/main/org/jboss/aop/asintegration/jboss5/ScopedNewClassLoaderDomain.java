@@ -19,19 +19,15 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.asintegration.jboss5;
+package org.jboss.aop.asintegration.jboss5;
 
 
 import java.lang.ref.WeakReference;
-import java.net.URL;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.domain.ScopedClassLoaderDomain;
 import org.jboss.classloader.spi.ClassLoaderDomain;
-import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
-import org.jboss.mx.loading.LoaderRepository;
-import org.jboss.mx.loading.RepositoryClassLoader;
 
 
 /**

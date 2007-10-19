@@ -19,7 +19,7 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.asintegration.jboss5;
+package org.jboss.aop.asintegration.jboss5;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -100,10 +100,15 @@ public class JBoss5ClassPool extends AOPClassPool
             MemoryContextFactory factory = MemoryContextFactory.getInstance();
             factory.putFile(outputURL, classBytes);
 
-            clearCacheOnLoaderHack(myloader);
+            if (myloader instanceof BaseClassLoader)
+            {
+               //Update check to RealClassLoader once integration project catches up
+               ((BaseClassLoader)myloader).clearBlackList(classFileName);
+               
+            }
             
             Class clazz = myloader.loadClass(cc.getName());
-//System.out.println("====> created " + clazz.getName() + " on " + myloader + " loaded with " + clazz.getClassLoader());
+
             return clazz;
          }
       }
@@ -146,83 +151,6 @@ public class JBoss5ClassPool extends AOPClassPool
       }
    }
    
-   public Class toClassOld(CtClass cc, ClassLoader loader, ProtectionDomain domain)
-   throws CannotCompileException
-   {
-      ClassLoader useLoader = getClassLoader() == null ? loader : getClassLoader();
-      localResources.put(getResourceName(cc.getName()), Boolean.TRUE);
-      System.out.println("===> Creating class " + cc.getName() + " on loader " + useLoader);
-      
-      if ("org.jboss.test.aop.scopedextender.Child_A2$Child_A2Advisor".equals(cc.getName()))
-      {
-         try
-         {
-            useLoader.loadClass("org.jboss.test.aop.scopedextender.Base_A1$Base_A1Advisor");
-            System.out.println("Got BaseAdvisor");
-         }
-         catch (ClassNotFoundException e)
-         {
-            System.out.println("Could not get BaseAdvisor");
-         }
-      }
-      
-      Class clazz = super.toClass(cc, useLoader, domain);
-      try
-      {
-         if ("org.jboss.test.aop.scopedextender.Base_A1$Base_A1Advisor".equals(cc.getName()))
-         {
-            Class clazz2 = useLoader.loadClass(cc.getName());
-            System.out.println("Found recently created class");
-         }
-      }
-      catch (ClassNotFoundException e)
-      {
-         System.out.println("Not found recently created class");
-      }
-      return clazz;
-//      lockInCache(cc);
-//      if (getClassLoader() == null || tempdir == null)
-//      {
-//         return super.toClass(cc, loader, domain);
-//      }
-//      Class dynClass = null;
-//      try
-//      {
-//         File classFile = null;
-//         String classFileName = getResourceName(cc.getName());
-//         // Write the clas file to the tmpdir
-//         synchronized (tmplock)
-//         {
-//            classFile = new File(tempdir, classFileName);
-//            File pkgDirs = classFile.getParentFile();
-//            pkgDirs.mkdirs();
-//            FileOutputStream stream = new FileOutputStream(classFile);
-//            stream.write(cc.toBytecode());
-//            stream.flush();
-//            stream.close();
-//            classFile.deleteOnExit();
-//         }
-//         // We have to clear Blacklist caches or the class will never
-//         // be found
-//         //((UnifiedClassLoader)dcl).clearBlacklists();
-//         // To be backward compatible
-//         RepositoryClassLoader rcl = (RepositoryClassLoader) getClassLoader();
-//         rcl.clearClassBlackList();
-//         rcl.clearResourceBlackList();
-//
-//         // Now load the class through the cl
-//         dynClass = getClassLoader().loadClass(cc.getName());
-//      }
-//      catch (Exception ex)
-//      {
-//         ClassFormatError cfe = new ClassFormatError("Failed to load dyn class: " + cc.getName());
-//         cfe.initCause(ex);
-//         throw cfe;
-//      }
-//
-//      return dynClass;
-   }
-
 //   protected boolean isLocalResource(String resourceName)
 //   {
 //      if (super.isLocalResource(resourceName))

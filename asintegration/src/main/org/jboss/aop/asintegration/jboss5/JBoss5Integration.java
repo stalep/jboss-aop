@@ -19,7 +19,7 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.asintegration.jboss5;
+package org.jboss.aop.asintegration.jboss5;
 
 import java.io.File;
 
@@ -30,7 +30,7 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
-import org.jboss.asintegration.JBossIntegration;
+import org.jboss.aop.asintegration.JBossIntegration;
 import org.jboss.classloader.spi.ClassLoaderSystem;
 import org.jboss.mx.loading.RepositoryClassLoader;
 
