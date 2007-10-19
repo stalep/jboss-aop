@@ -21,14 +21,48 @@
 */ 
 package org.jboss.aop.deployers.temp;
 
-import org.jboss.aop.Domain;
+import java.security.ProtectionDomain;
+
+import org.jboss.aop.AspectManager;
+import org.jboss.util.loading.Translator;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public interface RepositoryClassLoaderDomainIntializer
+public class DefaultTranslator implements Translator
 {
-   Domain initScopedDomain(ClassLoader loader);
+   AspectManager manager;
+   boolean translate;
+   
+   public DefaultTranslator(AspectManager manager)
+   {
+      this.manager = manager;
+   }
+
+   public void setTranslate(boolean translate)
+   {
+      this.translate = translate;
+   }
+   
+   public boolean getTranslate()
+   {
+      return translate;
+   }
+   
+   public byte[] transform(ClassLoader loader, String className, Class classBeingRedefined,
+         ProtectionDomain protectionDomain, byte[] classfileBuffer) throws Exception
+   {
+      if (translate)
+      {
+         return manager.transform(loader, className, classBeingRedefined, protectionDomain, classfileBuffer);
+      }
+      return classfileBuffer;   
+   }
+
+   public void unregisterClassLoader(ClassLoader loader)
+   {
+      manager.unregisterClassLoader(loader);
+   }
 }

@@ -363,7 +363,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
    {
       String initBody =
          "{" +
-         "   String domainName = org.jboss.aop.Domain.getDomainName(" + DECLARING_CLASS + ", $2);" + 
+         "   java.lang.String domainName = org.jboss.aop.Domain.getDomainName(" + DECLARING_CLASS + ", $2);" + 
          "   " + DOMAIN + "= new org.jboss.aop.GeneratedAdvisorDomain($1, domainName, " + DECLARING_CLASS + ", $2); " +
          "   ((org.jboss.aop.Domain)" + DOMAIN + ").setInheritsBindings(true); " +
          "   super.initialise(" + DECLARING_CLASS + ", " + DOMAIN + ");" +

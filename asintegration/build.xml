@@ -216,6 +216,7 @@
          update="${jar.update}" index="${jar.index}">
          <fileset dir="${build.classes}">
             <!-- Include everything else -->
+            <include name="org/jboss/aop/classpool/**"/>
             <include name="org/jboss/aop/deploy*/**"/>
             <include name="org/jboss/aop/domain/**"/>
          </fileset>
@@ -227,6 +228,7 @@
          update="${jar.update}" index="${jar.index}">
          <fileset dir="${build.classes}">
             <!-- Include everything else -->
+            <include name="org/jboss/aop/classpool/**"/>
             <include name="org/jboss/aop/deploy*/**"/>
             <include name="org/jboss/aop/domain/**"/>
             <exclude name="org/jboss/aop/deployers/*.class"/>
@@ -244,6 +246,7 @@
          update="${jar.update}" index="${jar.index}">
          <fileset dir="${build.classes.retro}">
             <!-- Include everything else -->
+            <include name="org/jboss/aop/classpool/**"/>
             <include name="org/jboss/aop/deploy*/**"/>
             <include name="org/jboss/aop/domain/**"/>
             <exclude name="org/jboss/aop/deployers/*.class"/>

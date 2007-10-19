@@ -36,8 +36,9 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.aop.classpool.AOPClassPoolRepository;
 import org.jboss.classloader.spi.ClassLoaderDomain;
+import org.jboss.classloader.spi.Loader;
 import org.jboss.classloader.spi.base.BaseClassLoader;
-import org.jboss.mx.loading.RepositoryClassLoader;
+import org.jboss.logging.Logger;
 
 /**
  * 
@@ -46,91 +47,49 @@ import org.jboss.mx.loading.RepositoryClassLoader;
  */
 public class ScopedJBoss5ClassPool extends JBoss5ClassPool
 {
-//   final static LoaderRepositoryUrlUtil LOADER_REPOSITORY_UTIL = new LoaderRepositoryUrlUtil();
-//   
-//   WeakReference repository = null;
-//   UrlInfo urlInfo;
-   ThreadLocal lastPool = new ThreadLocal();
+   Logger log = Logger.getLogger(ScopedJBoss5ClassPool.class);
+   
+   ThreadLocal<ClassPool> lastPool = new ThreadLocal<ClassPool>();
    WeakReference<ClassLoaderDomain> domainRef;
 
-   public ScopedJBoss5ClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, File tmp,
+   public ScopedJBoss5ClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, 
          URL tmpURL, boolean parentFirst, ClassLoaderDomain domain)
    {
-      super(cl, src, repository, tmp, tmpURL);
+      super(cl, src, repository, tmpURL);
       super.childFirstLookup = !parentFirst;
-      this.domainRef = new WeakReference(domain);
+      this.domainRef = new WeakReference<ClassLoaderDomain>(domain);
    }
-
-   
-
-//   public ScopedJBossClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, File tmp, URL tmpURL)
-//   {
-//      super(cl, src, repository, tmp, tmpURL);
-//      
-//      boolean parentFirst = false;
-//      LoaderRepository loaderRepository = null;
-//      ClassLoader prnt = cl;
-//      while (prnt != null)
-//      {
-//         if (prnt instanceof RepositoryClassLoader)
-//         {
-//            loaderRepository = ((RepositoryClassLoader)prnt).getLoaderRepository();
-//            if (loaderRepository instanceof HeirarchicalLoaderRepository3)
-//            {
-//               parentFirst = ((HeirarchicalLoaderRepository3)loaderRepository).getUseParentFirst();
-//            }
-//            break;
-//         }
-//         prnt = SecurityActions.getParent(cl);
-//      }
-//      
-//      super.childFirstLookup = !parentFirst;
-//   }
-   
-
-//   private HeirarchicalLoaderRepository3 getRepository()
-//   {
-//      ClassLoader cl = getClassLoader0();
-//      if (cl != null)
-//      {
-//         return (HeirarchicalLoaderRepository3)((RepositoryClassLoader)cl).getLoaderRepository();
-//      }
-//      return null;
-//   }
 
    private URL getResourceUrlForClass(String resourcename)
    {
-//      HeirarchicalLoaderRepository3 repo = getRepository();
-//      return repo.getResource(resourcename, super.getClassLoader());
       ClassLoaderDomain domain = domainRef.get();
       return domain.getResource(resourcename);
    }
-   
-   private boolean isMine(URL url)
-   {
-//      HeirarchicalLoaderRepository3 repo = getRepository();
-//      if (repo != null)
-//      {
-//         //The URL of the class loaded with my scoped classloader
-//         if (url != null)
-//         {
-//            urlInfo = LOADER_REPOSITORY_UTIL.getURLInfo(getRepository(), urlInfo);
-//            
-//            URL[] myUrls = urlInfo.getLocalUrls();
-//            String resource = url.toString();
-//            for (int i = 0 ; i < myUrls.length ; i++)
-//            {
-//               if (resource.indexOf(myUrls[i].toString()) >= 0)
-//               {
-//                  return true;
-//               }
-//            }
-//            return false;
-//         }
-//      }
-      return true;
-   }
 
+   private boolean isMine(URL myURL, String resourceName)
+   {
+      if (myURL == null)
+      {
+         return false;
+      }
+      
+      ClassLoaderDomain domain = domainRef.get();
+      Loader parent = domain.getParent();
+      URL parentURL = parent.getResource(resourceName);
+      
+      if (parentURL == null)
+      {
+         return true;
+      }
+      
+      if (!myURL.equals(parentURL))
+      {
+         return true;
+      }
+      
+      return false;
+   }
+   
    public CtClass getCached(String classname)
    {
       if (classname == null)
@@ -151,9 +110,8 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
       //Is this from the scoped classloader itself of from the parent?
       String resourcename = getResourceName(classname);
       URL url = getResourceUrlForClass(resourcename);
-      boolean isMine = isMine(url);
       
-      if (isMine)
+      if (isMine(url, resourcename))
       {
          if (super.childFirstLookup)
          {
@@ -174,11 +132,15 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
          }
          return super.getCached(classname);
       }
+      else if (url == null)
+      {
+         return super.getCached(classname);
+      }
       
 
       try
       {
-         ClassPool pool = getCorrectPoolForResource(classname, url);
+         ClassPool pool = getCorrectPoolForResource(classname, resourcename, url);
          if (pool != lastPool.get())
          {
             lastPool.set(pool);
@@ -200,14 +162,49 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
       return null;
    }
    
-   private ClassPool getCorrectPoolForResource(String classname, URL url)
+   private ClassPool getCorrectPoolForResource(String classname, String resourceName, URL url)
    {
+      boolean trace = log.isTraceEnabled();
       synchronized(AspectManager.getRegisteredCLs())
       {
          //JBoss 5 has an extra NoAnnotationURLCLassLoader that is not on the default path, make sure that that is checked at the end
          //FIXME This needs revisiting/removing once the 
-         ArrayList noAnnotationURLClassLoaderPools = null;
-         String resource = url.toString();
+         ArrayList<ClassPool> noAnnotationURLClassLoaderPools = null;
+         
+//         //EXTRA DEBUG STUFF
+//         if (classname.equals("org.jboss.test.aop.scopedextender.Base_A1"))
+//         {
+//            System.out.println("********** Looking for proper pool for Base_A1 - this pool " + this);
+//            boolean found = false;
+//            for(Iterator it = AspectManager.getRegisteredCLs().values().iterator() ; it.hasNext() ; )
+//            {
+//               AOPClassPool candidate = (AOPClassPool)it.next();
+//               if (candidate.isUnloadedClassLoader())
+//               {
+//                  System.out.println("Found something unloaded " + candidate);
+//                  continue;
+//               }
+//
+//               if (candidate.getClassLoader() instanceof BaseClassLoader)
+//               {
+//                  BaseClassLoader bcl = (BaseClassLoader)candidate.getClassLoader();
+//                  URL foundUrl = bcl.getResourceLocally(resourceName);
+//                  if (foundUrl != null)
+//                  {
+//                     System.out.println("=============> Found in " + bcl);
+//                     if (url.equals(foundUrl))
+//                     {
+//                        if (!found)
+//                        {
+//                           System.out.println("^^^ The one returned ^^^");
+//                           found = true;
+//                        }
+//                     }
+//                  }
+//               }
+//            }
+//         }         
+         
          for(Iterator it = AspectManager.getRegisteredCLs().values().iterator() ; it.hasNext() ; )
          {
             AOPClassPool candidate = (AOPClassPool)it.next();
@@ -220,12 +217,15 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
             if (candidate.getClassLoader() instanceof BaseClassLoader)
             {
                //Sometimes the ClassLoader is a proxy for MBeanProxyExt?!
-               RepositoryClassLoader rcl = (RepositoryClassLoader)candidate.getClassLoader();
-               URL[] urls = rcl.getClasspath();
-               
-               for (int i = 0 ; i < urls.length ; i++)
+               BaseClassLoader bcl = (BaseClassLoader)candidate.getClassLoader();
+               URL foundUrl = bcl.getResourceLocally(resourceName);
+               if (trace)
                {
-                  if (resource.indexOf(urls[i].getFile()) >= 0)
+                  log.trace("Candidate classloader " + bcl + " has local resource " + foundUrl);
+               }
+               if (foundUrl != null)
+               {
+                  if (url.equals(foundUrl))
                   {
                      return candidate;
                   }
@@ -236,7 +236,7 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
             {
                if (noAnnotationURLClassLoaderPools == null)
                {
-                  noAnnotationURLClassLoaderPools = new ArrayList(); 
+                  noAnnotationURLClassLoaderPools = new ArrayList<ClassPool>(); 
                }
                noAnnotationURLClassLoaderPools.add(candidate);
             }
@@ -245,10 +245,8 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
          //FIXME Remove once we have the JBoss 5 version of pool
          if (noAnnotationURLClassLoaderPools != null)
          {
-            for (Iterator it = noAnnotationURLClassLoaderPools.iterator() ; it.hasNext() ; )
+            for (ClassPool pool : noAnnotationURLClassLoaderPools)
             {
-               ClassPool pool = (ClassPool)it.next();
-               
                try
                {
                   pool.get(classname);

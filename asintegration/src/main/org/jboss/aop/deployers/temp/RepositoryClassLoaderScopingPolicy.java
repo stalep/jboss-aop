@@ -29,6 +29,7 @@ import org.jboss.aop.Domain;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.AOPClassPoolRepository;
 import org.jboss.aop.deployment.ScopedRepositoryClassLoaderHelper;
+import org.jboss.aop.domain.RepositoryClassLoaderDomainIntializer;
 import org.jboss.aop.domain.ScopedRepositoryClassLoaderDomain;
 import org.jboss.logging.Logger;
 import org.jboss.mx.loading.HeirarchicalLoaderRepository3;

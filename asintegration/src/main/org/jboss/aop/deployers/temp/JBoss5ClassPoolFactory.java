@@ -23,12 +23,14 @@ package org.jboss.aop.deployers.temp;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.AOPClassPool;
+import org.jboss.aop.classpool.AbstractJBossClassPoolFactory;
 import org.jboss.aop.deployment.JBossClassPool;
 import org.jboss.aop.deployment.JBossClassPoolFactory;
 import org.jboss.aop.deployment.ScopedJBossClassPool;
@@ -51,13 +53,8 @@ import javassist.scopedpool.ScopedClassPoolRepository;
  * @version $Revision: 64815 $
  **/
 @Deprecated
-public class JBoss5ClassPoolFactory extends JBossClassPoolFactory implements ScopedClassPoolFactory
+public class JBoss5ClassPoolFactory extends AbstractJBossClassPoolFactory implements ScopedClassPoolFactory
 {
-   public JBoss5ClassPoolFactory(File tmpClassesDir) throws IOException
-   {
-      super(tmpClassesDir);
-   }
-   
    static ThreadLocal<Boolean> reentry = new ThreadLocal<Boolean>();    
    public ScopedClassPool create(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
    {
@@ -68,18 +65,6 @@ public class JBoss5ClassPoolFactory extends JBossClassPoolFactory implements Sco
          Map props = ExtraClassPoolFactoryParameters.peekThreadProperties();
          Module module = (Module)props.get(Module.class);
             
-         File tempdir = getTempDirectory(cl);
-         
-         //Do we need a way to add urls to the repository
-         URL tmpCP;
-         try
-         {
-            tmpCP = createURLAndAddToLoader(cl, tempdir);
-         }
-         catch (IOException e)
-         {
-            throw new RuntimeException(e);
-         }
          if (module != null && module.getParentDomain() != null)
          {
             //It is scoped
@@ -87,27 +72,23 @@ public class JBoss5ClassPoolFactory extends JBossClassPoolFactory implements Sco
             ClassLoaderDomain domain = sys.getDomain(module.getDomainName());
             boolean parentFirst = module.getMetadata().isJ2seClassLoadingCompliance();
             
-            return new ScopedJBoss5ClassPool(cl, parent, repository, tempdir, tmpCP, parentFirst, domain);
+            return new ScopedJBoss5ClassPool(cl, parent, repository, getTempURL(module), parentFirst, domain);
          }
-         return new JBoss5ClassPool(cl, parent, repository, tempdir, tmpCP);
+         return new JBoss5ClassPool(cl, parent, repository, getTempURL(module));
       }
       return new AOPClassPool(cl, parent, repository);
    }
-
-   private URL createURLAndAddToLoader(ClassLoader cl, File tempdir) throws IOException
+   
+   private URL getTempURL(Module module)
    {
-      URL tmpURL = tempdir.toURL();
-      URL tmpCP = new URL(tmpURL, "?dynamic=true");
-
-      //FIXME IS this needed
-//      RepositoryClassLoader ucl = (RepositoryClassLoader) cl;
-//
-//      // We may be undeploying.
-//      if (ucl.getLoaderRepository() != null)
-//      {
-//         ucl.addURL(tmpCP);
-//      }
-      
-      return tmpCP;
+      try
+      {
+         URL tempUrl = module.getDynamicClassRoot();
+         return new URL(tempUrl,  "/classes");
+      }
+      catch (MalformedURLException e)
+      {
+         throw new RuntimeException(e);
+      } 
    }
 }

@@ -44,6 +44,30 @@ public class JBoss5Integration implements JBossIntegration, ScopedClassPoolFacto
    /** The delegate classpool factory */
    private ScopedClassPoolFactory delegateClassPoolFactory;
    private AOPClassLoaderScopingPolicy policy;
+   private AspectManager manager = AspectManager.getTopLevelAspectManager();
+   DefaultTranslator translator = new DefaultTranslator(manager);
+
+   NewClassLoaderDomainRegistry registry;
+   
+   public NewClassLoaderDomainRegistry getRegistry()
+   {
+      return registry;
+   }
+
+   public void setRegistry(NewClassLoaderDomainRegistry registry)
+   {
+      this.registry = registry;
+   }
+   
+   public void start()
+   {
+      ClassLoaderSystem.getInstance().setTranslator(translator);
+   }
+
+   public void stop()
+   {
+      ClassLoaderSystem.getInstance().setTranslator(null);
+   }
    
    public boolean isValidClassLoader(ClassLoader loader)
    {
@@ -68,7 +92,7 @@ public class JBoss5Integration implements JBossIntegration, ScopedClassPoolFacto
 
    public ScopedClassPoolFactory createScopedClassPoolFactory(File tmpDir) throws Exception
    {
-      delegateClassPoolFactory = new JBoss5ClassPoolFactory(tmpDir);
+      delegateClassPoolFactory = new JBoss5ClassPoolFactory();
       return this;
    }
    
@@ -84,12 +108,11 @@ public class JBoss5Integration implements JBossIntegration, ScopedClassPoolFacto
    
    public void attachDeprecatedTranslator()
    {
-      AspectManager mgr = AspectManager.instance();
-      ClassLoaderSystem.getInstance().setTranslator(mgr);
+      translator.setTranslate(true);
    }
 
    public void detachDeprecatedTranslator()
    {
-      ClassLoaderSystem.getInstance().setTranslator(null);
+      translator.setTranslate(false);
    }
 }

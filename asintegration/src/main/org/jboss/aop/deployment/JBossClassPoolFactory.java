@@ -28,6 +28,7 @@ import java.net.URL;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.AOPClassPool;
+import org.jboss.aop.classpool.AbstractJBossClassPoolFactory;
 import org.jboss.mx.loading.RepositoryClassLoader;
 import javassist.ClassPool;
 import javassist.scopedpool.ScopedClassPool;
@@ -43,7 +44,7 @@ import javassist.scopedpool.ScopedClassPoolRepository;
  * @version $Revision$
  **/
 @Deprecated
-public class JBossClassPoolFactory implements ScopedClassPoolFactory
+public class JBossClassPoolFactory extends AbstractJBossClassPoolFactory implements ScopedClassPoolFactory
 {
    protected File tmpClassesDir;
 
@@ -78,18 +79,6 @@ public class JBossClassPoolFactory implements ScopedClassPoolFactory
       return new AOPClassPool(cl, parent, repository);
    }
 
-   protected ClassPool getCreateParentClassPools(final ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
-   {
-      //Make sure that we get classpools for all the parent classloaders
-      ClassLoader parent = SecurityActions.getParent(cl);
-
-      if (parent != null)
-      {
-         return repository.registerClassLoader(parent);
-      }
-      return src;
-   }
-   
    protected File getTempDirectory(ClassLoader cl)
    {
       File tempdir = null;
@@ -114,11 +103,6 @@ public class JBossClassPoolFactory implements ScopedClassPoolFactory
       }
       
       return tempdir;
-   }
-
-   public ScopedClassPool create(ClassPool src, ScopedClassPoolRepository repository)
-   {
-      return new TempJBossClassPool(src, repository);
    }
 
    public File createTempDir(ClassLoader cl) throws IOException

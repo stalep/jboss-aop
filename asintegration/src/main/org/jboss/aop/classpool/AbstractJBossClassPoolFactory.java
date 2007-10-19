@@ -19,18 +19,38 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.deployers.temp;
+package org.jboss.aop.classpool;
 
-import org.jboss.aop.Domain;
-import org.jboss.deployers.plugins.classloading.Module;
+import javassist.ClassPool;
+import javassist.scopedpool.ScopedClassPool;
+import javassist.scopedpool.ScopedClassPoolRepository;
+
+import org.jboss.aop.deployment.SecurityActions;
+import org.jboss.aop.deployment.TempJBossClassPool;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public interface NewClassLoaderDomainInitializer
+public abstract class AbstractJBossClassPoolFactory
 {
-   Domain initScopedDomain(ClassLoader loader, Module module);
+   protected ClassPool getCreateParentClassPools(final ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
+   {
+      //Make sure that we get classpools for all the parent classloaders
+      ClassLoader parent = SecurityActions.getParent(cl);
+
+      if (parent != null)
+      {
+         return repository.registerClassLoader(parent);
+      }
+      return src;
+   }
    
+   public ScopedClassPool create(ClassPool src, ScopedClassPoolRepository repository)
+   {
+      return new TempJBossClassPool(src, repository);
+   }
+
+
 }

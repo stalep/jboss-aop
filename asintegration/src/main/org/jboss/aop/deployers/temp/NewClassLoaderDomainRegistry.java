@@ -35,7 +35,7 @@ import org.jboss.deployers.plugins.classloading.Module;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-class NewClassLoaderDomainRegistry
+public class NewClassLoaderDomainRegistry
 {
    final static ClassLoaderDomain domain = new ClassLoaderDomain("NOT_USED_PLACEHOLDER");
    

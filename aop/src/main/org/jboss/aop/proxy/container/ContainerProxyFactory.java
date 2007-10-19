@@ -748,7 +748,7 @@ public class ContainerProxyFactory
    private String getClassName()
    {
       String packageName = clazz.getPackage().getName();
-      if (packageName.indexOf("java.") != -1 && packageName.indexOf("sun.") != -1)
+      if (!packageName.startsWith("java.") && !packageName.startsWith("sun."))
       {
          packageName += ".";
       }

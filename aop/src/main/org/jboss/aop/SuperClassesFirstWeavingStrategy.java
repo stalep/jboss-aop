@@ -66,6 +66,9 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 			AOPClassPool pool = (AOPClassPool) manager.registerClassLoader(loader);
 
 			CtClassTransformationInfo info = obtainCtClassInfo(pool, className, classfileBuffer);
+			
+//			if (className.startsWith("org.jboss.test.aop.scopedextender.")) System.out.println("********** Weaving " + className + " " + loader);
+			
 			CtClass clazz = instrumentClass(manager, pool, info, true);
 			if (clazz != null)
 			{
@@ -129,6 +132,9 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 			CtClass superClass = info.getClazz().getSuperclass();
 			if (superClass != null && !Instrumentor.implementsAdvised(info.getClazz()))
 			{
+//			   String DEBUGNAME = info.getClazz().getName();
+//	         if (DEBUGNAME.startsWith("org.jboss.test.aop.scopedextender.")) System.out.println("---- Instrument " + DEBUGNAME + " " + pool);
+//
 				CtClassTransformationInfo superInfo = new CtClassTransformationInfo(superClass, superClass.getName());
 
             ClassPool superPool = superClass.getClassPool();

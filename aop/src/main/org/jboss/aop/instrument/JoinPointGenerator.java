@@ -212,6 +212,15 @@ public abstract class JoinPointGenerator
       }
       catch (Exception e)
       {
+         e.printStackTrace();
+         StringBuffer sb = new StringBuffer();
+         debugClass(sb, newInfo.getAdvisor().getClass());
+         System.out.println("==================== Error");
+         System.out.println("Field: " + joinpointField);
+         System.out.println("Field: " + joinpointField.getDeclaringClass() + " " + joinpointField.getDeclaringClass().getClassLoader());
+         System.out.println("Value: " + newInfo.getAdvisor().getClass() + " " + newInfo.getAdvisor().getClass().getClassLoader());
+         System.out.println(sb.toString());
+         
          throw new RuntimeException(e);
       }   
    }

@@ -35,8 +35,8 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.AspectXmlLoader;
 import org.jboss.aop.Domain;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
-import org.jboss.aop.deployers.temp.NewClassLoaderDomainInitializer;
-import org.jboss.aop.deployers.temp.RepositoryClassLoaderDomainIntializer;
+import org.jboss.aop.domain.NewClassLoaderDomainInitializer;
+import org.jboss.aop.domain.RepositoryClassLoaderDomainIntializer;
 import org.jboss.deployers.plugins.classloading.Module;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
@@ -200,9 +200,6 @@ public class AspectDeployer extends AbstractVFSRealDeployer
       {
          undeployXml(manager, vf);
       }
-      
-      //FIXME isn't this a bit too early?
-      aspectManager.unregisterClassLoader(unit.getClassLoader());
    }
    
    private void undeployXml(AspectManager manager, VirtualFile vf)

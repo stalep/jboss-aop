@@ -37,7 +37,6 @@ import org.jboss.mx.loading.RepositoryClassLoader;
  * @author adrian@jboss.org
  * @version $Revision: 1.1 $
  */
-@Deprecated
 public class ScopedRepositoryClassLoaderDomain extends ScopedClassLoaderDomain
 {
    public ScopedRepositoryClassLoaderDomain(ClassLoader loader, String name, boolean parentDelegation, AspectManager manager, boolean parentFirst)

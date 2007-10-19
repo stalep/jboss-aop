@@ -21,14 +21,13 @@
 */ 
 package org.jboss.aop.deployers.temp;
 
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.Domain;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
+import org.jboss.aop.domain.NewClassLoaderDomainInitializer;
 import org.jboss.classloader.spi.ClassLoaderDomain;
 import org.jboss.classloader.spi.ClassLoaderSystem;
 import org.jboss.deployers.plugins.classloading.Module;
@@ -43,8 +42,18 @@ import org.jboss.logging.Logger;
 public class NewClassLoaderScopingPolicy implements AOPClassLoaderScopingPolicy, NewClassLoaderDomainInitializer
 {
    static Logger log = Logger.getLogger(NewClassLoaderScopingPolicy.class);
-   NewClassLoaderDomainRegistry registry = new NewClassLoaderDomainRegistry();
+   NewClassLoaderDomainRegistry registry;
    
+   public NewClassLoaderDomainRegistry getRegistry()
+   {
+      return registry;
+   }
+
+   public void setRegistry(NewClassLoaderDomainRegistry registry)
+   {
+      this.registry = registry;
+   }
+
    public Domain initScopedDomain(ClassLoader loader, Module module)
    {
       ScopedNewClassLoaderDomain scopedDomain = (ScopedNewClassLoaderDomain)registry.getRegisteredDomain(loader);
