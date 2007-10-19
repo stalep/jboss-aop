@@ -26,6 +26,7 @@ import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
+import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.expr.FieldAccess;
 
@@ -47,74 +48,95 @@ public class NonOptimizedFieldAccessTransformer extends FieldAccessTransformer
    throws NotFoundException, CannotCompileException
    {
       instrumentor.setupBasics(clazz);
-      
       boolean wrappedGet = classificationGet.equals(JoinpointClassification.WRAPPED);
       boolean wrappedSet = classificationSet.equals(JoinpointClassification.WRAPPED);
       int mod = getStaticModifiers(field);
-       
-      // executeWrapping
-      replaceFieldAccessInternally(clazz, field, wrappedGet, wrappedSet, fieldIndex);
-
-      // don't need wrappers if the field is private as we inline
-      // the conditional and interception directly within code.
-      if (!javassist.Modifier.isPrivate(field.getModifiers()))
-      {
-         // prepareForWrapping
+                  
+      //Create placeholder static wrappers, since without these methods replaceFieldAccessInternally() 
+      //will not compile. 
+      //If we add the actual static wrappers before calling replaceFieldAccessInternally()
+      //field access done in the inner invocation classes as well as in the static wrappers
+      //is replaced with a call to the wrapper instead, which means infinite recursion
+      buildWrapperPlaceHolders(clazz, field, isPrepared(classificationGet), isPrepared(classificationSet), mod);
+      try {
          if (isPrepared(classificationGet))
          {
+            addFieldReadInfoFieldWithAccessors(Modifier.PRIVATE | Modifier.STATIC, clazz, field);
+            OptimizedFieldInvocations.createOptimizedInvocationClass(instrumentor, clazz, field, true);
+            // prepareForWrapping
             wrapper.prepareForWrapping(field, GET_INDEX);
          }
+            
          if (isPrepared(classificationSet))
          {
+            addFieldWriteInfoField(Modifier.PRIVATE | Modifier.STATIC, clazz, field);
+            OptimizedFieldInvocations.createOptimizedInvocationClass(instrumentor, clazz, field, false);
+            // prepareForWrapping
             wrapper.prepareForWrapping(field, SET_INDEX);
-         }
-          
-         // wrap
-         if (wrappedGet)
-         {
-            wrapper.wrap(field, GET_INDEX);
-            if (classificationGet.equals(JoinpointClassification.DYNAMICALY_WRAPPED))
-            {
-               instrumentor.dynamicTransformationObserver.fieldReadDynamicalyWrapped(field);
-            }
-         }
-         if (wrappedSet)
-         {
-            wrapper.wrap(field, SET_INDEX);
-            if (classificationSet.equals(JoinpointClassification.DYNAMICALY_WRAPPED))
-            {
-               instrumentor.dynamicTransformationObserver.fieldWriteDynamicalyWrapped(field);
-            }
-         }
-         // generateWrapper
-         buildWrapperPlaceHolders(clazz, field, isPrepared(classificationGet), isPrepared(classificationSet), mod);
-         buildWrappers(clazz, field, isPrepared(classificationGet), isPrepared(classificationSet), fieldIndex);//mod);
+         }  
+      } catch (Exception e)
+      {
+         throw new CannotCompileException(e);
       }
+      
+      // wrap
+      if (wrappedGet)
+      {
+         wrapper.wrap(field, GET_INDEX);
+         if (classificationGet.equals(JoinpointClassification.DYNAMICALY_WRAPPED))
+         {
+            instrumentor.dynamicTransformationObserver.fieldReadDynamicalyWrapped(field);
+         }
+      }
+      if (wrappedSet)
+      {
+         wrapper.wrap(field, SET_INDEX);
+         if (classificationSet.equals(JoinpointClassification.DYNAMICALY_WRAPPED))
+         {
+            instrumentor.dynamicTransformationObserver.fieldWriteDynamicalyWrapped(field);
+         }
+      }
+      
+      // executeWrapping
+      replaceFieldAccessInternally(clazz, field, wrappedGet, wrappedSet, fieldIndex);
+      buildWrappers(clazz, field, shouldReplaceArrayAccess, wrappedGet, wrappedSet, fieldIndex);
+      
    }
    
-   private void buildWrappers(CtClass clazz, CtField field, boolean doGet, boolean doSet, int index)
+   private void buildWrappers(CtClass clazz, CtField field, boolean shouldReplaceArrayAccess, boolean doGet, boolean doSet, int index)
    throws NotFoundException, CannotCompileException
    {
       if (doGet)
       {
-         String code = getWrapperBody(clazz, field, true, index);
+         String code = getReadWrapperBody(clazz, field, index); 
          CtMethod method = clazz.getDeclaredMethod(fieldRead(field.getName()));
          method.setBody(code);
       }
       if (doSet)
       {
-         String code = getWrapperBody(clazz, field, false, index);
+         String code = getWriteWrapperBody(clazz, field, shouldReplaceArrayAccess, index);
          CtMethod method = clazz.getDeclaredMethod(fieldWrite(field.getName()));
          method.setBody(code);            
       }
    }
    
-   protected String getWrapperBody(CtClass clazz, CtField field, boolean get, int fieldIndex) throws NotFoundException, CannotCompileException
+   protected String getWrapperBody(CtClass clazz, CtField field, boolean get, int index) throws NotFoundException, CannotCompileException
    {
-      String name = field.getName();
-      boolean isStatic = (javassist.Modifier.isStatic(field.getModifiers()));
+      if (get)
+      {
+         return getReadWrapperBody(clazz, field, index);
+      }
+//    TODO: set replaceArrayAccess=false as default, must be verified.
+      return getWriteWrapperBody(clazz, field, false, index);
+   }
+   
+   private String getReadWrapperBody(CtClass clazz, CtField field, int index)
+   throws NotFoundException, CannotCompileException
+   {
       String access = "";
       String instanceCheck = "";
+      String name = field.getName();
+      boolean isStatic = (javassist.Modifier.isStatic(field.getModifiers()));
       if (!isStatic)
       {
          access = "((" + clazz.getName() + ")$1).";
@@ -122,30 +144,55 @@ public class NonOptimizedFieldAccessTransformer extends FieldAccessTransformer
       }
       
       // read wrapper
-      if (get)
-      {
+     
          return 
             "{ " +
             "    if (" + Instrumentor.HELPER_FIELD_NAME + ".hasAspects() " + instanceCheck + " ) " +
             "    { " +
-            "       return ($r)" + Instrumentor.HELPER_FIELD_NAME + ".invokeRead($1, (int)" + (fieldIndex) + "); " +
+            "       return ($r)" + Instrumentor.HELPER_FIELD_NAME + ".invokeRead($1, (int)" + (index) + "); " +
             "    } " +
             "    return " + access + name + "; " +
             "}";
+      
+   }
+   
+   private String getWriteWrapperBody(CtClass clazz, CtField field, boolean shouldReplaceArrayAccess, int index) 
+     throws NotFoundException, CannotCompileException
+   {
+      String name = field.getName();
+      boolean isStatic = (javassist.Modifier.isStatic(field.getModifiers()));
+      String access = "";
+      String instanceCheck = "";
+      String targetString;
+      String fieldString;
+      if (!isStatic)
+      {
+         access = "((" + clazz.getName() + ")$1).";
+         instanceCheck = " || ((org.jboss.aop.ClassInstanceAdvisor)((org.jboss.aop.InstanceAdvised)$1)._getInstanceAdvisor()).hasInstanceAspects";
+          targetString = "((" + clazz.getName() + ")$1)";
+          fieldString = targetString + "." + field.getName();
+      }
+      else
+      {
+          targetString = "java.lang.Class.forName(\"" + clazz.getName() + "\")";
+          fieldString = clazz.getName() +  "." + field.getName();
       }
       // write wrapper
       return 
-             "{ " +
-             "    if (" + Instrumentor.HELPER_FIELD_NAME + ".hasAspects() " + instanceCheck + " ) " +
-             "    { " +
-             "       " + Instrumentor.HELPER_FIELD_NAME + ".invokeWrite($1, (int)" + (fieldIndex) + ", ($w)$2); " +
-             "    } " +
-             "    else " +
-             "    { " +
-             "       " + access + name + " = $2; " +
-             "    } " +
-             "}";
+      "{ " +
+      "    System.out.println(\"INSIDE getWriteWrapperBody for class: "+clazz.getName()+", field: "+field.getName()+", modifier: "+field.getModifiers()+"\");\n" +
+      "    " + getArrayWriteRegistration(shouldReplaceArrayAccess, targetString, field, fieldString, "$2") +
+      "    if (" + Instrumentor.HELPER_FIELD_NAME + ".hasAspects() " + instanceCheck + " ) " +
+      "    { " +
+      "       " + Instrumentor.HELPER_FIELD_NAME + ".invokeWrite($1, (int)" + (index) + ", ($w)$2); " +
+      "    } " +
+      "    else " +
+      "    { " +
+      "       " + access + name + " = $2; " +
+      "    } " +
+      "}";
    }
+
 
    protected void replaceFieldAccessInternally(CtClass clazz, CtField field, boolean doGet, boolean doSet, int index) throws CannotCompileException
    {
@@ -163,78 +210,50 @@ public class NonOptimizedFieldAccessTransformer extends FieldAccessTransformer
 
       protected void replaceRead(FieldAccess fieldAccess) throws CannotCompileException
       {
-         String code = null;
-         try
-         {
-            if (fieldAccess.isStatic())
-            {
-               code =
-               "    if (" + Instrumentor.HELPER_FIELD_NAME + ".hasAspects()) " +
-               "    { " +
-               "       Object obj = null;" +
-               "       $_ = ($r)" + Instrumentor.HELPER_FIELD_NAME + ".invokeRead(obj, (int)" + (fieldIndex) + "); " +
-               "    } " +
-               "    else " +
-               "    { " +
-               "       $_ = " + clazz.getName() + "." + field.getName() + "; " +
-               "    } " +
-               "";
-               fieldAccess.replace(code);
-            }
-            else
-            {
-               code =
-               "    org.jboss.aop.ClassInstanceAdvisor instAdv = (org.jboss.aop.ClassInstanceAdvisor)((org.jboss.aop.InstanceAdvised)$0)._getInstanceAdvisor();" +
-               "    if (" + Instrumentor.HELPER_FIELD_NAME + ".hasAspects() || (instAdv != null && instAdv.hasInstanceAspects)) " +
-               "    { " +
-               "       $_ = ($r)" + Instrumentor.HELPER_FIELD_NAME + ".invokeRead($0, (int)" + (fieldIndex) + "); " +
-               "    } " +
-               "    else " +
-               "    { " +
-               "       $_ = $0." + fieldAccess.getFieldName() + "; " +
-               "    } ";
-               fieldAccess.replace(code);
-            }
-         }
-         catch (CannotCompileException e)
-         {
-            throw new RuntimeException("failed with: " + code, e);
-         }
-      }
-
-      protected void replaceWrite(FieldAccess fieldAccess) throws CannotCompileException
-      {
          if (fieldAccess.isStatic())
          {
             String code =
-                    "    if (" + Instrumentor.HELPER_FIELD_NAME + ".hasAspects()) " +
                     "    { " +
-                    "       Object obj = null;" +
-                    "      " + Instrumentor.HELPER_FIELD_NAME + ".invokeWrite(obj, (int)" + (fieldIndex) + ", ($w)$1); " +
+                    "       $_ = ($r)" + fieldRead(field.getName()) + "(null);" +
                     "    } " +
-                    "    else " +
-                    "    { " +
-                    "       " + clazz.getName() + "." + fieldAccess.getFieldName() + " = $1; " +
-                    "    } ";
+                     "";
             fieldAccess.replace(code);
          }
          else
          {
             String code =
-                    "    org.jboss.aop.ClassInstanceAdvisor instAdv = (org.jboss.aop.ClassInstanceAdvisor)((org.jboss.aop.InstanceAdvised)$0)._getInstanceAdvisor();" +
-                    "    if (" + Instrumentor.HELPER_FIELD_NAME + ".hasAspects() || (instAdv != null && instAdv.hasInstanceAspects)) " +
                     "    { " +
-                    "       " + Instrumentor.HELPER_FIELD_NAME + ".invokeWrite($0, (int)" + (fieldIndex) + ", ($w)$1); " +
+                    "       $_ = ($r)" + fieldRead(field.getName()) + "($0);" +
                     "    } " +
-                    "    else " +
-                    "    { " +
-                    "       $0." + fieldAccess.getFieldName() + " = $1; " +
-                    "    } ";
+                    "";
             fieldAccess.replace(code);
          }
       }
 
+      protected void replaceWrite(FieldAccess fieldAccess) throws CannotCompileException
+      {
+         String fieldWrite = fieldWrite(field.getName());
+         if (fieldAccess.isStatic())
+         {
+            String code =
+                    "    { " +
+                    "       " + fieldWrite + "(null, $1);" +
+                    "    } " +
+                    "";
+            fieldAccess.replace(code);
 
+         }
+         else
+         {
+            String code =
+                    "    { " +
+                    "       " + fieldWrite + "($0, $1);" +
+                    "    } " +
+                    "";
+            fieldAccess.replace(code);
+         }
+      }
+      
    }//End Inner class FieldAccessExprEditor
 
 }
