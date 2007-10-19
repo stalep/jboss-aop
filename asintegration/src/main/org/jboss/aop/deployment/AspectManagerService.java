@@ -45,6 +45,8 @@ import org.jboss.aop.hook.JDK14Transformer;
 import org.jboss.aop.hook.JDK14TransformerManager;
 import org.jboss.aop.instrument.InstrumentorFactory;
 import org.jboss.aop.instrument.TransformerCommon;
+import org.jboss.asintegration.JBossIntegration;
+import org.jboss.asintegration.jboss4.JBoss4Integration;
 import org.jboss.logging.Logger;
 import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
 import org.jboss.mx.server.ServerConstants;

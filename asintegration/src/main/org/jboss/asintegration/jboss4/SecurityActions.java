@@ -19,7 +19,7 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.deployment;
+package org.jboss.asintegration.jboss4;
 
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
@@ -30,7 +30,7 @@ import java.security.PrivilegedExceptionAction;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class SecurityActions
+class SecurityActions
 {
    interface GetParentAction
    {

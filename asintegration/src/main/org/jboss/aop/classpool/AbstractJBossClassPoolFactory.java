@@ -25,9 +25,6 @@ import javassist.ClassPool;
 import javassist.scopedpool.ScopedClassPool;
 import javassist.scopedpool.ScopedClassPoolRepository;
 
-import org.jboss.aop.deployment.SecurityActions;
-import org.jboss.aop.deployment.TempJBossClassPool;
-
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>

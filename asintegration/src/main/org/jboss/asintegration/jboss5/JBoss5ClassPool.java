@@ -19,16 +19,13 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.deployers.temp;
+package org.jboss.asintegration.jboss5;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.security.ProtectionDomain;
@@ -43,7 +40,6 @@ import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.classloader.spi.base.BaseClassLoader;
 import org.jboss.mx.loading.RepositoryClassLoader;
 import org.jboss.virtual.plugins.context.memory.MemoryContextFactory;
-import org.jboss.virtual.spi.VFSContext;
 
 /**
  * 

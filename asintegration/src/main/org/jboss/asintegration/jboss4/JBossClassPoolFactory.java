@@ -19,7 +19,7 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
-package org.jboss.aop.deployment;
+package org.jboss.asintegration.jboss4;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,12 +38,10 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 /**
  * Comment
  *
- * @deprecated TODO JBAOP-107 Need a different version for the JBoss5 classloader 
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @author adrian@jboss.org
  * @version $Revision$
  **/
-@Deprecated
 public class JBossClassPoolFactory extends AbstractJBossClassPoolFactory implements ScopedClassPoolFactory
 {
    protected File tmpClassesDir;

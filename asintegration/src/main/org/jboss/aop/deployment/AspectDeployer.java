@@ -35,6 +35,7 @@ import javax.management.ObjectName;
 import org.jboss.aop.AspectAnnotationLoader;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.AspectXmlLoader;
+import org.jboss.asintegration.jboss4.ScopedRepositoryClassLoaderHelper;
 import org.jboss.deployment.DeploymentException;
 import org.jboss.deployment.DeploymentInfo;
 import org.jboss.deployment.DeploymentState;

@@ -19,7 +19,7 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
-package org.jboss.aop.deployment;
+package org.jboss.asintegration.jboss4;
 
 import java.io.File;
 
@@ -38,7 +38,8 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
-import org.jboss.aop.deployers.temp.RepositoryClassLoaderScopingPolicy;
+import org.jboss.aop.deployment.AspectManagerService;
+import org.jboss.asintegration.JBossIntegration;
 import org.jboss.mx.loading.RepositoryClassLoader;
 import org.jboss.mx.util.MBeanServerLocator;
 
@@ -57,13 +58,11 @@ import org.jboss.mx.util.MBeanServerLocator;
  * <li> {@link ScopedJBossClassPool}
  * </ul>
  * 
- * @deprecated TODO JBAOP-107 need to write a JBoss5 version 
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-@Deprecated
 public class JBoss4Integration implements JBossIntegration, ScopedClassPoolFactory
 {
    /** The delegate classpool factory */

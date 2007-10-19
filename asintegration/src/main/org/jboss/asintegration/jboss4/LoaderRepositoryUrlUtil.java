@@ -19,7 +19,7 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.deployment;
+package org.jboss.asintegration.jboss4;
 
 import java.net.URL;
 
@@ -35,11 +35,9 @@ import org.jboss.mx.util.MBeanServerLocator;
 
 /**
  * 
- * @deprecated TODO JBAOP-107 Need a different version for the JBoss5 classloader 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-@Deprecated
 public class LoaderRepositoryUrlUtil implements NotificationListener
 {
    final static MBeanServer SERVER;

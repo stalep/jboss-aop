@@ -19,26 +19,19 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
-package org.jboss.aop.deployers.temp;
+package org.jboss.asintegration.jboss5;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-import org.jboss.aop.AspectManager;
-import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.aop.classpool.AbstractJBossClassPoolFactory;
-import org.jboss.aop.deployment.JBossClassPool;
-import org.jboss.aop.deployment.JBossClassPoolFactory;
-import org.jboss.aop.deployment.ScopedJBossClassPool;
+import org.jboss.aop.classpool.ExtraClassPoolFactoryParameters;
 import org.jboss.classloader.spi.ClassLoaderDomain;
 import org.jboss.classloader.spi.ClassLoaderSystem;
 import org.jboss.classloader.spi.base.BaseClassLoader;
 import org.jboss.deployers.plugins.classloading.Module;
-import org.jboss.mx.loading.RepositoryClassLoader;
 import javassist.ClassPool;
 import javassist.scopedpool.ScopedClassPool;
 import javassist.scopedpool.ScopedClassPoolFactory;
@@ -47,12 +40,10 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 /**
  * Comment
  *
- * @deprecated TODO JBAOP-107 Need a different version for the JBoss5 classloader 
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @author adrian@jboss.org
  * @version $Revision: 64815 $
  **/
-@Deprecated
 public class JBoss5ClassPoolFactory extends AbstractJBossClassPoolFactory implements ScopedClassPoolFactory
 {
    static ThreadLocal<Boolean> reentry = new ThreadLocal<Boolean>();    

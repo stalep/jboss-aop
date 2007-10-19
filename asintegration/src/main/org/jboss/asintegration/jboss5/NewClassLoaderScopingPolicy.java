@@ -19,7 +19,7 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.deployers.temp;
+package org.jboss.asintegration.jboss5;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +27,7 @@ import java.util.Map;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.Domain;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
+import org.jboss.aop.classpool.ExtraClassPoolFactoryParameters;
 import org.jboss.aop.domain.NewClassLoaderDomainInitializer;
 import org.jboss.classloader.spi.ClassLoaderDomain;
 import org.jboss.classloader.spi.ClassLoaderSystem;

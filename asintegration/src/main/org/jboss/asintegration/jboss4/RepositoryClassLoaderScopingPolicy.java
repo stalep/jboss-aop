@@ -19,7 +19,7 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.deployers.temp;
+package org.jboss.asintegration.jboss4;
 
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -28,12 +28,10 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.Domain;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.AOPClassPoolRepository;
-import org.jboss.aop.deployment.ScopedRepositoryClassLoaderHelper;
 import org.jboss.aop.domain.RepositoryClassLoaderDomainIntializer;
 import org.jboss.aop.domain.ScopedRepositoryClassLoaderDomain;
 import org.jboss.logging.Logger;
 import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
-import org.jboss.mx.loading.LoaderRepository;
 import org.jboss.mx.loading.RepositoryClassLoader;
 
 /**
