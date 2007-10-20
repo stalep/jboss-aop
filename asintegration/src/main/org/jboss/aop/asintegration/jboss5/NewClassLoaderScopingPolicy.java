@@ -28,7 +28,9 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.Domain;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.ExtraClassPoolFactoryParameters;
-import org.jboss.aop.domain.NewClassLoaderDomainInitializer;
+import org.jboss.aop.domain.DomainInitializer;
+import org.jboss.aop.domain.DomainInitializerCallback;
+import org.jboss.aop.domain.DomainInitializerCallbackHandler;
 import org.jboss.classloader.spi.ClassLoaderDomain;
 import org.jboss.classloader.spi.ClassLoaderSystem;
 import org.jboss.deployers.plugins.classloading.Module;
@@ -40,7 +42,7 @@ import org.jboss.logging.Logger;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class NewClassLoaderScopingPolicy implements AOPClassLoaderScopingPolicy, NewClassLoaderDomainInitializer
+public class NewClassLoaderScopingPolicy implements AOPClassLoaderScopingPolicy, DomainInitializer
 {
    static Logger log = Logger.getLogger(NewClassLoaderScopingPolicy.class);
    NewClassLoaderDomainRegistry registry;
@@ -55,8 +57,17 @@ public class NewClassLoaderScopingPolicy implements AOPClassLoaderScopingPolicy,
       this.registry = registry;
    }
 
-   public Domain initScopedDomain(ClassLoader loader, Module module)
+   
+   public Domain initializeDomain(DomainInitializerCallbackHandler handler)
    {
+      DomainInitializerCallback<ClassLoader> loaderCb = new DomainInitializerCallback<ClassLoader>(ClassLoader.class);
+      DomainInitializerCallback<Module> moduleCb = new DomainInitializerCallback<Module>(Module.class);
+      DomainInitializerCallback[] callbacks = new DomainInitializerCallback[]{loaderCb, moduleCb};
+      handler.handle(callbacks);
+      
+      ClassLoader loader = loaderCb.getValue();
+      Module module = moduleCb.getValue();
+
       ScopedNewClassLoaderDomain scopedDomain = (ScopedNewClassLoaderDomain)registry.getRegisteredDomain(loader);
       if (scopedDomain == null)
       {

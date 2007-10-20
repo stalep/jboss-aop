@@ -21,14 +21,33 @@
 */ 
 package org.jboss.aop.domain;
 
-import org.jboss.aop.Domain;
-
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public interface RepositoryClassLoaderDomainIntializer
+public class DomainInitializerCallback<T>
 {
-   Domain initScopedDomain(ClassLoader loader);
+   private Class<T> dataType;
+   T value;
+
+   public DomainInitializerCallback(Class<T> dataType)
+   {
+      this.dataType = dataType;
+   }
+   
+   public Class<T> getDataType()
+   {
+      return dataType;
+   }
+
+   public T getValue()
+   {
+      return value;
+   }
+
+   public void setValue(T value)
+   {
+      this.value = value;
+   }
 }

@@ -35,8 +35,9 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.AspectXmlLoader;
 import org.jboss.aop.Domain;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
-import org.jboss.aop.domain.NewClassLoaderDomainInitializer;
-import org.jboss.aop.domain.RepositoryClassLoaderDomainIntializer;
+import org.jboss.aop.domain.DomainInitializer;
+import org.jboss.aop.domain.DomainInitializerCallback;
+import org.jboss.aop.domain.DomainInitializerCallbackHandler;
 import org.jboss.deployers.plugins.classloading.Module;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
@@ -362,31 +363,43 @@ public class AspectDeployer extends AbstractVFSRealDeployer
       return (realName.endsWith(AOP_JAR_SUFFIX));
    }
    
-   private AspectManager getCorrectManager(VFSDeploymentUnit unit)
+   private AspectManager getCorrectManager(final VFSDeploymentUnit unit)
    {
       //Scoped AOP deployments are only available when deployed as part of a scoped sar, ear etc.
       //It can contain an aop.xml file, or it can be part of a .aop file
       //Linking a standalone -aop.xml file onto a scoped deployment is not possible at the moment
       AOPClassLoaderScopingPolicy policy = AspectManager.getClassLoaderScopingPolicy();
 
-      ClassLoader cl = unit.getClassLoader();
-      Module module = unit.getTopLevel().getAttachment(Module.class);
       Domain domain = null;
       if (policy != null)
       {
-         if (policy instanceof NewClassLoaderDomainInitializer)
+         if (policy instanceof DomainInitializer == false)
          {
-            domain = ((NewClassLoaderDomainInitializer)policy).initScopedDomain(cl, module);
+            throw new RuntimeException(policy + " must implement DomainInitializer");
          }
-         else if (policy instanceof RepositoryClassLoaderDomainIntializer)
-         {
-            domain = ((RepositoryClassLoaderDomainIntializer)policy).initScopedDomain(cl);
-         }
-         else
-         {
-            throw new RuntimeException("No domain intitialiser could be found");
-         }
+         DomainInitializer initializer = (DomainInitializer)policy;
+         domain = initializer.initializeDomain(new DomainInitializerCallbackHandler() {
+            public void handle(DomainInitializerCallback[] callbacks)
+            {
+               for (DomainInitializerCallback callback : callbacks)
+               {
+                  if (callback.getDataType() == Module.class)
+                  {
+                     callback.setValue(unit.getTopLevel().getAttachment(Module.class));
+                  }
+                  else if (callback.getDataType() == ClassLoader.class)
+                  {
+                     callback.setValue(unit.getClassLoader());
+                  }
+                  else
+                  {
+                     throw new RuntimeException("Invalid data type passed in by callback " + callback.getDataType());
+                  }
+               }
+            }
+         });
       }
+      
       
       if (domain != null)
       {
@@ -411,4 +424,6 @@ public class AspectDeployer extends AbstractVFSRealDeployer
       }
    }
 
+   
+   
 }

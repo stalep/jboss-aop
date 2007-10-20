@@ -28,7 +28,9 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.Domain;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.AOPClassPoolRepository;
-import org.jboss.aop.domain.RepositoryClassLoaderDomainIntializer;
+import org.jboss.aop.domain.DomainInitializer;
+import org.jboss.aop.domain.DomainInitializerCallback;
+import org.jboss.aop.domain.DomainInitializerCallbackHandler;
 import org.jboss.aop.domain.ScopedRepositoryClassLoaderDomain;
 import org.jboss.logging.Logger;
 import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
@@ -39,7 +41,7 @@ import org.jboss.mx.loading.RepositoryClassLoader;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class RepositoryClassLoaderScopingPolicy implements AOPClassLoaderScopingPolicy, RepositoryClassLoaderDomainIntializer
+public class RepositoryClassLoaderScopingPolicy implements AOPClassLoaderScopingPolicy, DomainInitializer
 {
    Logger log = Logger.getLogger(RepositoryClassLoaderScopingPolicy.class);
    
@@ -47,8 +49,13 @@ public class RepositoryClassLoaderScopingPolicy implements AOPClassLoaderScoping
    private Map<Object, Domain> scopedClassLoaderDomains = new WeakHashMap<Object, Domain>();
 
 
-   public Domain initScopedDomain(ClassLoader loader)
+   public Domain initializeDomain(DomainInitializerCallbackHandler handler)
    {
+      DomainInitializerCallback<ClassLoader> callback = new DomainInitializerCallback<ClassLoader>(ClassLoader.class);
+      DomainInitializerCallback[] callbacks = new DomainInitializerCallback[]{callback};
+      handler.handle(callbacks);
+      
+      ClassLoader loader = callback.getValue();
       Domain domain = getDomain(loader, AspectManager.getTopLevelAspectManager());
       
       AspectManager.instance().registerClassLoader(loader); //Ends up in classpool factory create method
@@ -154,4 +161,5 @@ public class RepositoryClassLoaderScopingPolicy implements AOPClassLoaderScoping
       }
       return null;
    }
+
 }
