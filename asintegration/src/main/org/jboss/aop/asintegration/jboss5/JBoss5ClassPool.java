@@ -23,13 +23,8 @@ package org.jboss.aop.asintegration.jboss5;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Field;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.security.ProtectionDomain;
-import java.util.Set;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -38,6 +33,7 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 
 import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.classloader.spi.base.BaseClassLoader;
+import org.jboss.logging.Logger;
 import org.jboss.mx.loading.RepositoryClassLoader;
 import org.jboss.virtual.plugins.context.memory.MemoryContextFactory;
 
@@ -48,6 +44,8 @@ import org.jboss.virtual.plugins.context.memory.MemoryContextFactory;
  */
 public class JBoss5ClassPool extends AOPClassPool
 {
+   Logger log = Logger.getLogger(JBoss5ClassPool.class);
+
    protected URL tempURL = null;
    // For loadClass tmpdir creation for UCL
    protected final Object tmplock = new Object();

@@ -41,9 +41,9 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 public class AOPClassPool extends ScopedClassPool
 {
    /** Classnames of classes that will be created - we do not want to look for these in other pools */
-   protected ConcurrentHashMap generatedClasses = new ConcurrentHashMap();
+   protected ConcurrentHashMap<String, String> generatedClasses = new ConcurrentHashMap<String, String>();
    
-   protected ConcurrentHashMap localResources = new ConcurrentHashMap();
+   protected ConcurrentHashMap<String, Boolean> localResources = new ConcurrentHashMap<String, Boolean>();
 
    static 
    {
@@ -68,7 +68,7 @@ public class AOPClassPool extends ScopedClassPool
 
    public void setClassLoader(ClassLoader cl)
    {
-      classLoader = new WeakReference(cl);
+      classLoader = new WeakReference<ClassLoader>(cl);
    }
    
    public void registerGeneratedClass(String className)

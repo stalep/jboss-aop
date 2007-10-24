@@ -91,18 +91,37 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
    
    public CtClass getCached(String classname)
    {
+      boolean trace = log.isTraceEnabled();
+      
+      if (trace)
+      {
+         log.trace("getCached() " + classname);
+      }
+      
       if (classname == null)
       {
+         if (trace)
+         {
+            log.trace("getCached() returning null (classname == null)");
+         }
          return null;
       }
       if (isUnloadedClassLoader())
       {
+         if (trace)
+         {
+            log.trace("getCached() returning null (unloaded)");
+         }
          return null;
       }
 
       if (generatedClasses.get(classname) != null)
       {
          //It is a new class, and this callback is probably coming from the frozen check when creating a new nested class
+         if (trace)
+         {
+            log.trace("getCached() In generated classes - check super");
+         }
          return super.getCached(classname);
       }
       
@@ -118,6 +137,10 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
             CtClass clazz = super.getCachedLocally(classname);
             if (clazz == null)
             {
+               if (trace)
+               {
+                  log.trace("getCached() Creating my class " + classname);
+               }
                clazz = createCtClass(classname, false);
                if (clazz != null)
                {
@@ -126,24 +149,45 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
             }
             if (clazz != null)
             {
+               if (trace)
+               {
+                  log.trace("getCached() Returning my class " + classname);
+               }
                return clazz;
             }
+         }
+         if (trace)
+         {
+            log.trace("getCached() Checking super for my class " + classname);
          }
          return super.getCached(classname);
       }
       else if (url == null)
       {
+         if (trace)
+         {
+            log.trace("getCached() Checking super for my class " + classname + " (no url)");
+         }
          return super.getCached(classname);
       }
       
 
       try
       {
-         ClassPool pool = getCorrectPoolForResource(classname, resourcename, url);
+         ClassPool pool = getCorrectPoolForResource(classname, resourcename, url, trace);
+         if (trace)
+         {
+            log.trace("getCached() Found pool for class " + classname + " " + pool);
+         }
          if (pool != lastPool.get())
          {
             lastPool.set(pool);
-            return pool.get(classname);
+            CtClass found = pool.get(classname);
+            if (trace)
+            {
+               log.trace("getCached() Found clazz " + classname + " in " + pool + " : " + found);
+            }
+            return found;
          }
       }
       catch (NotFoundException e)
@@ -167,49 +211,14 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
       return false;
    } 
    
-   private ClassPool getCorrectPoolForResource(String classname, String resourceName, URL url)
+   private ClassPool getCorrectPoolForResource(String classname, String resourceName, URL url, boolean trace)
    {
-      boolean trace = log.isTraceEnabled();
       synchronized(AspectManager.getRegisteredCLs())
       {
          //JBoss 5 has an extra NoAnnotationURLCLassLoader that is not on the default path, make sure that that is checked at the end
          //FIXME This needs revisiting/removing once the 
          ArrayList<ClassPool> noAnnotationURLClassLoaderPools = null;
-         
-//         //EXTRA DEBUG STUFF
-//         if (classname.equals("org.jboss.test.aop.scopedextender.Base_A1"))
-//         {
-//            System.out.println("********** Looking for proper pool for Base_A1 - this pool " + this);
-//            boolean found = false;
-//            for(Iterator it = AspectManager.getRegisteredCLs().values().iterator() ; it.hasNext() ; )
-//            {
-//               AOPClassPool candidate = (AOPClassPool)it.next();
-//               if (candidate.isUnloadedClassLoader())
-//               {
-//                  System.out.println("Found something unloaded " + candidate);
-//                  continue;
-//               }
-//
-//               if (candidate.getClassLoader() instanceof BaseClassLoader)
-//               {
-//                  BaseClassLoader bcl = (BaseClassLoader)candidate.getClassLoader();
-//                  URL foundUrl = bcl.getResourceLocally(resourceName);
-//                  if (foundUrl != null)
-//                  {
-//                     System.out.println("=============> Found in " + bcl);
-//                     if (url.equals(foundUrl))
-//                     {
-//                        if (!found)
-//                        {
-//                           System.out.println("^^^ The one returned ^^^");
-//                           found = true;
-//                        }
-//                     }
-//                  }
-//               }
-//            }
-//         }         
-         
+                 
          for(Iterator it = AspectManager.getRegisteredCLs().values().iterator() ; it.hasNext() ; )
          {
             AOPClassPool candidate = (AOPClassPool)it.next();
@@ -224,14 +233,14 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
                //Sometimes the ClassLoader is a proxy for MBeanProxyExt?!
                BaseClassLoader bcl = (BaseClassLoader)candidate.getClassLoader();
                URL foundUrl = bcl.getResourceLocally(resourceName);
-               if (trace)
-               {
-                  log.trace("Candidate classloader " + bcl + " has local resource " + foundUrl);
-               }
                if (foundUrl != null)
                {
                   if (url.equals(foundUrl))
                   {
+                     if (trace)
+                     {
+                        log.trace("getCorrectPoolForResource() Candidate classloader " + bcl + " has local resource " + foundUrl);
+                     }
                      return candidate;
                   }
                }
@@ -255,6 +264,10 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
                try
                {
                   pool.get(classname);
+                  if (trace)
+                  {
+                     log.trace("getCorrectPoolForResource(() Found  " + classname + " (no url)");
+                  }
                   return pool;
                }
                catch(NotFoundException ignoreTryNext)
@@ -263,8 +276,16 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
             }
          }
       }
-
-      return AOPClassPool.createAOPClassPool(ClassPool.getDefault(), AOPClassPoolRepository.getInstance());
+      return createTempPool();
+   }
+   
+   private ClassPool createTempPool()
+   {
+      //Rememeber that the stuff in jboss5/lib goes in a child classloader of the default classloader. We need
+      //to make this the parent of the temp classloader
+      ClassLoader aopLoader = AspectManager.class.getClassLoader();
+      ClassPool pool = AspectManager.instance().registerClassLoader(aopLoader);
+      return AOPClassPool.createAOPClassPool(pool, AOPClassPoolRepository.getInstance());
    }
    
    /**
