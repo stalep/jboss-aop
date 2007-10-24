@@ -189,6 +189,11 @@ public class ScopedJBossClassPool extends JBossClassPool
       return null;
    }
    
+   protected boolean includeInGlobalSearch()
+   {
+      return false;
+   }
+   
    private ClassPool getCorrectPoolForResource(String classname, URL url)
    {
       synchronized(AspectManager.getRegisteredCLs())

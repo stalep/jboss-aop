@@ -115,7 +115,7 @@ public class AOPClassPool extends ScopedClassPool
                      }
                      
                      //Do not check classpools for scoped classloaders
-                     if (pool.getClass().getName().equals("org.jboss.aop.deployment.ScopedJBossClassPool"))
+                     if (!includeInGlobalSearch())
                      {
                         continue;
                      }
@@ -132,6 +132,11 @@ public class AOPClassPool extends ScopedClassPool
       }
       // *NOTE* NEED TO TEST WHEN SUPERCLASS IS IN ANOTHER UCL!!!!!!
       return clazz;
+   }
+   
+   protected boolean includeInGlobalSearch()
+   {
+      return true;
    }
    
    protected String getResourceName(String classname)

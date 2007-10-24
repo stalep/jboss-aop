@@ -161,6 +161,11 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
       return null;
    }
    
+   protected boolean includeInGlobalSearch()
+   {
+      return false;
+   } 
+   
    private ClassPool getCorrectPoolForResource(String classname, String resourceName, URL url)
    {
       boolean trace = log.isTraceEnabled();
