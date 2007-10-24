@@ -120,26 +120,5 @@ public class NewClassLoaderScopingPolicy implements AOPClassLoaderScopingPolicy,
       Thread.currentThread().getContextClassLoader();
       return null;
    }
-
-//   public boolean isScoped(Module module)
-//   {
-//      String domainName = module.getDomainName();
-//      ClassLoaderMetaData cmd = module.getMetadata();
-////      boolean parentDelegation = cmd.isJ2seClassLoadingCompliance();
-//      
-//      System.out.println("****** DomainName: " + domainName + " parentDomain: " + module.getParentDomain());
-//      
-//      
-//      //FIXME There seems to be no way to navigate the tree of domains
-//      
-//      if (module.getParentDomain() != null && module.getParentDomain().equals(ClassLoaderSystem.DEFAULT_DOMAIN_NAME))
-//      {
-//         //Should probably check for more levels?
-//         return true;
-//      }
-//      return false;
-//   }
-
-
 }
    

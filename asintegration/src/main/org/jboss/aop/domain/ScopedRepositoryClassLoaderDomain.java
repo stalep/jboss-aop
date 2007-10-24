@@ -32,7 +32,6 @@ import org.jboss.mx.loading.RepositoryClassLoader;
 /**
  * A domain that is used for scoped classloaders
  * 
- * @deprecated TODO JBAOP-107 Need a different version for the JBoss5 classloader 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @author adrian@jboss.org
  * @version $Revision: 1.1 $

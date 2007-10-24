@@ -46,7 +46,6 @@ import javassist.scopedpool.ScopedClassPoolRepository;
  **/
 public class JBoss5ClassPoolFactory extends AbstractJBossClassPoolFactory implements ScopedClassPoolFactory
 {
-   static ThreadLocal<Boolean> reentry = new ThreadLocal<Boolean>();    
    public ScopedClassPool create(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
    {
       
