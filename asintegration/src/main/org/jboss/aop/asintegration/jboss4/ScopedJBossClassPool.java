@@ -188,7 +188,8 @@ public class ScopedJBossClassPool extends JBossClassPool
 
       return null;
    }
-   
+
+   @Override
    protected boolean includeInGlobalSearch()
    {
       return false;

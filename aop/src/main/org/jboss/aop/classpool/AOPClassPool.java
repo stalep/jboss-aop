@@ -115,7 +115,7 @@ public class AOPClassPool extends ScopedClassPool
                      }
                      
                      //Do not check classpools for scoped classloaders
-                     if (!includeInGlobalSearch())
+                     if (!pool.includeInGlobalSearch())
                      {
                         continue;
                      }

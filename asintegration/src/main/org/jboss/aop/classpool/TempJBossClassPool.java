@@ -67,5 +67,4 @@ public class TempJBossClassPool extends AOPClassPool
       }
       return clazz;
    }
-
 }

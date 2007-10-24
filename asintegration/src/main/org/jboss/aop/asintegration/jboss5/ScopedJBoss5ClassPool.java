@@ -161,6 +161,7 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
       return null;
    }
    
+   @Override
    protected boolean includeInGlobalSearch()
    {
       return false;
