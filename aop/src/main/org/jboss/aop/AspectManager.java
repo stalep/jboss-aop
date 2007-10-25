@@ -1364,7 +1364,7 @@ public class AspectManager
             if (ref != null) domain = (Domain)ref.get();
             if (domain != null)
             {
-               if (subscribedSubDomains.containsKey(domain))
+               if (subscribedSubDomains.containsKey(domain) || subscribedSubDomainsQueue.containsKey(domain))
                {
                   if (!domain.isAdvisorRegistered(advisor))continue;
                }

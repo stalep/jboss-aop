@@ -145,7 +145,7 @@ public class Domain extends AspectManager
          parent.unsubscribeSubDomain(this);
       }
    }
-
+   
    @Override
    public LinkedHashMap getBindings()
    {

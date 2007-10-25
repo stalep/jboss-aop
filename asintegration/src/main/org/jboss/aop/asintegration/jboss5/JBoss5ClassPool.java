@@ -32,9 +32,9 @@ import javassist.CtClass;
 import javassist.scopedpool.ScopedClassPoolRepository;
 
 import org.jboss.aop.classpool.AOPClassPool;
+import org.jboss.aop.classpool.AOPClassPoolRepository;
 import org.jboss.classloader.spi.base.BaseClassLoader;
 import org.jboss.logging.Logger;
-import org.jboss.mx.loading.RepositoryClassLoader;
 import org.jboss.virtual.plugins.context.memory.MemoryContextFactory;
 
 /**
@@ -49,6 +49,7 @@ public class JBoss5ClassPool extends AOPClassPool
    protected URL tempURL = null;
    // For loadClass tmpdir creation for UCL
    protected final Object tmplock = new Object();
+   boolean closed;
    
    protected JBoss5ClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, URL tmpURL)
    {
@@ -63,15 +64,15 @@ public class JBoss5ClassPool extends AOPClassPool
 
    public boolean isUnloadedClassLoader()
    {
-      if (getClassLoader() instanceof RepositoryClassLoader)
-      {
-         RepositoryClassLoader rcl = (RepositoryClassLoader) getClassLoader();
-         return rcl.getLoaderRepository() == null;
-      }
-      return false;
+      return closed;
    }
 
-   
+   public void close()
+   {
+      closed = true;
+      super.close();
+   }
+
    public Class toClass(CtClass cc, ClassLoader loader, ProtectionDomain domain) throws CannotCompileException
    {
       lockInCache(cc);
@@ -117,21 +118,4 @@ public class JBoss5ClassPool extends AOPClassPool
        throw cfe;
       }
    }
-   
-//   protected boolean isLocalResource(String resourceName)
-//   {
-//      if (super.isLocalResource(resourceName))
-//      {
-//         return true;
-//      }
-//      
-//      File file = new File(tempdir, resourceName);
-//      if (file.exists())
-//      {
-//         return true;
-//      }
-//      
-//      return false;
-//   }
-
 }
