@@ -63,6 +63,5 @@ public class DefaultTranslator implements Translator
 
    public void unregisterClassLoader(ClassLoader loader)
    {
-      manager.unregisterClassLoader(loader);
    }
 }

@@ -142,17 +142,27 @@ public class AspectDeployer extends AbstractVFSRealDeployer
    
    public void undeploy(VFSDeploymentUnit unit)
    {
-      AspectManager manager = getCorrectManager(unit);
-      List<VirtualFile> files = unit.getMetaDataFiles(null, AOP_DD_SUFFIX);
-
-      if (isAopArchiveOrFolder(unit))
+      try
       {
-         undeployAnnotations(manager, unit);
+         AspectManager manager = getCorrectManager(unit);
+         List<VirtualFile> files = unit.getMetaDataFiles(null, AOP_DD_SUFFIX);
+   
+         if (isAopArchiveOrFolder(unit))
+         {
+            undeployAnnotations(manager, unit);
+         }
+         
+         if (files.size() > 0)
+         {
+            undeployXml(manager, unit, files);
+         }
       }
-      
-      if (files.size() > 0)
+      finally
       {
-         undeployXml(manager, unit, files);
+         if (unit.getTopLevel() == unit)
+         {
+            aspectManager.unregisterClassLoader(unit.getClassLoader());
+         }
       }
    }
 

@@ -1368,6 +1368,10 @@ public class AspectManager
                {
                   if (!domain.isAdvisorRegistered(advisor))continue;
                }
+               else
+               {
+                  continue;//If advisor does not belong to a subscribed subdomain, we should not rebuild
+               }
             }
          }
          advisor.removeAdviceBindings(removedBindings);
