@@ -3,8 +3,51 @@
 <title>Release Notes - JBoss AOP - Version 2.0.0.alpha5</title>
 </head>
 <body>
+
+<h2>Release Notes - JBoss AOP - Version 2.0.0.beta2</h2>
+
+<h3>Bug</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-415'>JBAOP-415</a>] - Advice Matching algorithm is ignoring generics</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-464'>JBAOP-464</a>] - Call.getClassName() and Call.getMethodName() must not be called after Call is edited</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-471'>JBAOP-471</a>] - Method enforceArgsConsistency() not found on field interception with @Arg-annotated param</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-472'>JBAOP-472</a>] - Wrappers lack the generic type information</li>
+</ul>
+
+<h3>Feature Request</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-265'>JBAOP-265</a>] - Aspectize Java array</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-469'>JBAOP-469</a>] - Make sure @Aspect works in older versions of AS</li>
+</ul>
+
+<h3>Task</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-409'>JBAOP-409</a>] - Make a version of ScopedJbossClassPool that works with AS 5</li>
+</ul>
+
+
+<h2>Release Notes - JBoss AOP - Version 2.0.0.beta1</h2>
+
+<h3>Bug</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-450'>JBAOP-450</a>] - AOP/MC Proxies do not include original Annotation and Signature attributes</li>
+</ul>
+
+<h3>Feature Request</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-455'>JBAOP-455</a>] - Upgrade javassist to 3.6.0.GA</li>
+</ul>
+
+<h3>Task</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-226'>JBAOP-226</a>] - Memory leaks (advanced)</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-376'>JBAOP-376</a>] - Optimize AOP (SuperTask)</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-382'>JBAOP-382</a>] - Remove Complex Advice Signatures from Classic Mode</li>
+</ul>
+
+
 <h2>Release Notes - JBoss AOP - Version 2.0.0.alpha5</h2>
-    
+
 <h3>Bug</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-379'>JBAOP-379</a>] - Arguments array shouldn't be null when the joinpoint arguments list is empty</li>
@@ -15,13 +58,13 @@
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-408'>JBAOP-408</a>] - Advices with @Target should always be called</li>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-414'>JBAOP-414</a>] - Example implements is broken</li>
 </ul>
-        
+
 <h3>Feature Request</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-381'>JBAOP-381</a>] - Finally Advices</li>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-410'>JBAOP-410</a>] - Upgrade javassist to 3.6.0.beta1</li>
 </ul>
-                    
+
 <h3>Task</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-44'>JBAOP-44</a>] - document new ARGS features</li>
@@ -41,19 +84,19 @@
 
 
 <h2>Release Notes - JBoss AOP - Version 2.0.0.alpha4</h2>
-    
+
 <h3>Bug</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-368'>JBAOP-368</a>] - TransformerCommon.toClass calls need to use the aspect ProtectionDomain</li>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-369'>JBAOP-369</a>] - AOPC should use -Djava.io.tmpdir instead of the default /tmp</li>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-374'>JBAOP-374</a>] - AspectDefinition is keeping a reference to advisors after undeployment</li>
 </ul>
-        
+
 <h3>Feature Request</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-37'>JBAOP-37</a>] - Before, After, After Throwing support</li>
 </ul>
-                    
+
 <h3>Task</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-314'>JBAOP-314</a>] - Modify JoinPointInfo hierarchy so that we can call resolveAnnotation/resolveClassAnnotation on the underlying advisor</li>
@@ -61,7 +104,7 @@
 
 
 <h2>Release Notes - JBoss AOP - Version 2.0.0.alpha3</h2>
-    
+
 <h3>Bug</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-254'>JBAOP-254</a>] - IOException: Access is denied on creating temp.files</li>
@@ -82,7 +125,7 @@
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-362'>JBAOP-362</a>] - JBoss AOP does not bind interceptors to introduced interfaces consistently</li>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-365'>JBAOP-365</a>] - Compile-time woven class advisor initialization fails if mixins config is available at runtime</li>
 </ul>
-        
+
 <h3>Feature Request</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-276'>JBAOP-276</a>] - Construct to only match classes within a package</li>
@@ -90,7 +133,7 @@
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-340'>JBAOP-340</a>] - Enable chain overriding for container proxies</li>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-361'>JBAOP-361</a>] - AOPContainerProxy fails on final methods</li>
 </ul>
-                    
+
 <h3>Task</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-195'>JBAOP-195</a>] - Error running ArgsTestCase in Eclipse</li>
@@ -101,7 +144,7 @@
 
 
 <h2>Release Notes - JBoss AOP - Version 2.0.0.alpha2</h2>
-    
+
 <h3>Bug</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-284'>JBAOP-284</a>] - Error accessing overridden fields</li>
@@ -113,7 +156,7 @@
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-307'>JBAOP-307</a>] - Instantiating a proxy for a class that has no default constructors throws NPE</li>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-308'>JBAOP-308</a>] - Default values for mc annotations not picked up when running in jboss</li>
 </ul>
-                            
+
 <h3>Task</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-87'>JBAOP-87</a>] - Add @Depends to annotations that define dependencies</li>
@@ -129,7 +172,7 @@
 
 
 <h2>Release Notes - JBoss AOP - Version 2.0.0.alpha1</h2>
-    
+
 <h3>Bug</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-95'>JBAOP-95</a>] - Missing priviledged actions for isolating caller from permission checks</li>
@@ -141,14 +184,14 @@
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-248'>JBAOP-248</a>] - ClassAdvisor.attachClass() does not populate annotation overrides</li>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-264'>JBAOP-264</a>] - underscore prefix on member variables will throw an ArrayIndexOutOfBoundsException</li>
 </ul>
-        
+
 <h3>Feature Request</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-185'>JBAOP-185</a>] - Exception pointcut</li>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-260'>JBAOP-260</a>] - Make it possible to (un)deploy one aspect at a time using AspectAnnotationLoader</li>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-270'>JBAOP-270</a>] - Add invokeTarget() method to Invocation</li>
 </ul>
-                    
+
 <h3>Task</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-81'>JBAOP-81</a>] - InstanceAdvisor needs all the features of the ClassAdvisor</li>
