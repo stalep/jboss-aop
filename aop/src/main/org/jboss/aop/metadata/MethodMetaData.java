@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MethodMetaData implements MetaDataResolver
 {
-   Map methodMetaData = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   volatile Map methodMetaData = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
    HashMap inexactMatches;
 
    public boolean hasTag(String group)

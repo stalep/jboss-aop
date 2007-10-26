@@ -127,8 +127,8 @@ public abstract class Advisor
    protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
    protected HashSet adviceBindings = new HashSet();
-   protected ArrayList interfaceIntroductions = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-   protected ArrayList classMetaDataBindings = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+   protected volatile ArrayList interfaceIntroductions = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+   protected volatile ArrayList classMetaDataBindings = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
    protected SimpleMetaData defaultMetaData = new SimpleMetaData();
    protected MethodMetaData methodMetaData = new MethodMetaData();
    protected FieldMetaData fieldMetaData = new FieldMetaData();
@@ -142,11 +142,11 @@ public abstract class Advisor
    protected String name;
    protected ConcurrentHashMap aspects = new ConcurrentHashMap();
    protected HashMap adviceInterceptors = new HashMap();
-   protected CopyOnWriteArraySet perInstanceAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_COPYONWRITE_ARRAYSET;
-   protected ConcurrentHashMap perInstanceJoinpointAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   protected volatile CopyOnWriteArraySet perInstanceAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_COPYONWRITE_ARRAYSET;
+   protected volatile ConcurrentHashMap perInstanceJoinpointAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
 
    static Class cl = java.lang.String.class;
-   protected TLongObjectHashMap advisedMethods = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
+   protected volatile TLongObjectHashMap advisedMethods = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
    // The method signatures are sorted at transformation and load time to
    // make sure the tables line up.
    //Common sense suggests that this should be lazily initialised for generated advisors, profiling shows that is a major performance hit...

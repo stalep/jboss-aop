@@ -50,9 +50,9 @@ public class AnnotationRepository
    /** Read/Write lock to be used when lazy creating the collections */
    protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-   Map annotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
-   Map classAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
-   Map disabledAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   volatile Map annotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   volatile Map classAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   volatile Map disabledAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
    
    public Map getAnnotations()
    {

@@ -1991,9 +1991,9 @@ public class ClassAdvisor extends Advisor
    
    private class MethodByMethodData
    {
-      private TLongObjectHashMap methodCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
-      private HashMap backrefMethodCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
-      private TLongObjectHashMap methodCalledByMethodInterceptors = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
+      private volatile TLongObjectHashMap methodCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
+      private volatile HashMap backrefMethodCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+      private volatile TLongObjectHashMap methodCalledByMethodInterceptors = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
 
       public TLongObjectHashMap getMethodCalledByMethodInterceptors()
       {
@@ -2248,9 +2248,9 @@ public class ClassAdvisor extends Advisor
    private class ConByMethodData
    {
       // constructor caller pointcut support for methods calling constructors only
-      private TLongObjectHashMap conCalledByMethodBindings = new TLongObjectHashMap();
-      private HashMap backrefConCalledByMethodBindings = new HashMap();
-      private TLongObjectHashMap conCalledByMethodInterceptors = new TLongObjectHashMap();
+      private volatile TLongObjectHashMap conCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
+      private volatile HashMap backrefConCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+      private volatile TLongObjectHashMap conCalledByMethodInterceptors = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
       
       public TLongObjectHashMap getConCalledByMethodInterceptors()
       {

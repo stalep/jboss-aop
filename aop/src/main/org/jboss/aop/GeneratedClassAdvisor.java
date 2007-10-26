@@ -1277,7 +1277,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             generator = new MethodJoinPointGenerator(GeneratedClassAdvisor.this, info);
             initJoinPointGeneratorsMap();
-            joinPointGenerators.putIfAbsent(info.getJoinpoint(), generator);
+            MethodJoinPointGenerator existing = (MethodJoinPointGenerator)joinPointGenerators.putIfAbsent(info.getJoinpoint(), generator);
+            if (existing != null)
+            {
+               generator = existing;
+            }
          }
          return generator;
       }
@@ -1291,7 +1295,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
             {
                generator = new FieldJoinPointGenerator(GeneratedClassAdvisor.this, info);
                initFieldReadJoinPointGeneratorsMap();
-               fieldReadJoinPoinGenerators.putIfAbsent(info.getJoinpoint(), generator);
+               FieldJoinPointGenerator existing = (FieldJoinPointGenerator)fieldReadJoinPoinGenerators.putIfAbsent(info.getJoinpoint(), generator);
+               if (existing != null)
+               {
+                  generator = existing;
+               }
             }
             return generator;
          }
@@ -1302,7 +1310,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
             {
                generator = new FieldJoinPointGenerator(GeneratedClassAdvisor.this, info);
                initJoinPointGeneratorsMap();
-               joinPointGenerators.putIfAbsent(info.getJoinpoint(), generator);
+               FieldJoinPointGenerator existing = (FieldJoinPointGenerator)joinPointGenerators.putIfAbsent(info.getJoinpoint(), generator);
+               if (existing != null)
+               {
+                  generator = existing;
+               }
             }
             return generator;
          }
@@ -1316,7 +1328,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             generator = new ConstructorJoinPointGenerator(GeneratedClassAdvisor.this, info);
             initConstructionJoinPointGeneratorsMap();
-            constructionJoinPointGenerators.putIfAbsent(info.getJoinpoint(), generator);
+            ConstructorJoinPointGenerator existing = (ConstructorJoinPointGenerator)constructionJoinPointGenerators.putIfAbsent(info.getJoinpoint(), generator);
+            if (existing != null)
+            {
+               generator = existing;
+            }
          }
          return generator;
       }
@@ -1328,7 +1344,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             generator = new ConstructionJoinPointGenerator(GeneratedClassAdvisor.this, info);
             initJoinPointGeneratorsMap();
-            joinPointGenerators.putIfAbsent(info.getJoinpoint(), generator);
+            ConstructionJoinPointGenerator existing = (ConstructionJoinPointGenerator)joinPointGenerators.putIfAbsent(info.getJoinpoint(), generator);
+            if (existing != null)
+            {
+               generator = existing;
+            }
          }
          return generator;
       }
@@ -1342,16 +1362,22 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             map = new ConcurrentHashMap();
             initJoinPointGeneratorsMap();
-            joinPointGenerators.putIfAbsent(info.getJoinpoint(), map);
-            map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
+            ConcurrentHashMap existing = (ConcurrentHashMap)joinPointGenerators.putIfAbsent(info.getJoinpoint(), map);
+            if (existing != null)
+            {
+               map = existing;
+            }
          }
 
          MethodByMethodJoinPointGenerator generator = (MethodByMethodJoinPointGenerator)map.get(info.getCalledClass());
          if (generator == null)
          {
             generator = new MethodByMethodJoinPointGenerator(GeneratedClassAdvisor.this, info);
-            map.putIfAbsent(info.getCalledClass(), generator);
-            generator = (MethodByMethodJoinPointGenerator)map.get(info.getCalledClass());
+            MethodByMethodJoinPointGenerator existing = (MethodByMethodJoinPointGenerator)map.putIfAbsent(info.getCalledClass(), generator);
+            if (existing != null)
+            {
+               generator = existing;
+            }
          }
          return generator;
       }
@@ -1363,7 +1389,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             generator = new ConByMethodJoinPointGenerator(GeneratedClassAdvisor.this, info);
             initJoinPointGeneratorsMap();
-            joinPointGenerators.putIfAbsent(info.getJoinpoint(), generator);
+            ConByMethodJoinPointGenerator existing = (ConByMethodJoinPointGenerator)joinPointGenerators.putIfAbsent(info.getJoinpoint(), generator);
+            if (existing != null)
+            {
+               generator = existing;
+            }
          }
          return generator;
       }
@@ -1376,7 +1406,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             generator = new ConByConJoinPointGenerator(GeneratedClassAdvisor.this, info);
             initJoinPointGeneratorsMap();
-            joinPointGenerators.putIfAbsent(info.getJoinpoint(), generator);
+            ConByConJoinPointGenerator existing = (ConByConJoinPointGenerator)joinPointGenerators.putIfAbsent(info.getJoinpoint(), generator);
+            if (existing != null)
+            {
+               generator = existing;
+            }
          }
          return generator;
       }
@@ -1390,16 +1424,22 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             map = new ConcurrentHashMap();
             initJoinPointGeneratorsMap();
-            joinPointGenerators.putIfAbsent(info.getJoinpoint(), map);
-            map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
+            ConcurrentHashMap exisiting = (ConcurrentHashMap)joinPointGenerators.putIfAbsent(info.getJoinpoint(), map);
+            if (exisiting != null)
+            {
+               map = exisiting;
+            }
          }
 
          MethodByConJoinPointGenerator generator = (MethodByConJoinPointGenerator)map.get(info.getCalledClass());
          if (generator == null)
          {
             generator = new MethodByConJoinPointGenerator(GeneratedClassAdvisor.this, info);
-            map.putIfAbsent(info.getCalledClass(), generator);
-            generator = (MethodByConJoinPointGenerator)map.get(info.getCalledClass());
+            MethodByConJoinPointGenerator existing = (MethodByConJoinPointGenerator)map.putIfAbsent(info.getCalledClass(), generator);
+            if (existing != null)
+            {
+               generator = existing;
+            }
          }
          return generator;
       }

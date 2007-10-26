@@ -114,49 +114,49 @@ public class AspectManager
    protected final WeakHashMap advisors = new WeakHashMap();
    
    /** A map of domains by class, maintaned by the top level AspectManager */
-   protected WeakHashMap subDomainsPerClass = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
+   protected volatile WeakHashMap subDomainsPerClass = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
    
    /** A map of domains by name */
-   protected WeakValueHashMap subDomainsByName = UnmodifiableEmptyCollections.EMPTY_WEAK_VALUE_HASHMAP;
+   protected volatile WeakValueHashMap subDomainsByName = UnmodifiableEmptyCollections.EMPTY_WEAK_VALUE_HASHMAP;
 
    /** Each domain may have sub domains interested in changes happening in this manager/domain */
-   protected WeakHashMap subscribedSubDomains = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
+   protected volatile WeakHashMap subscribedSubDomains = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
 
    /** A queue for adding new subscribed subdomains to */
-   protected WeakHashMap subscribedSubDomainsQueue = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
+   protected volatile WeakHashMap subscribedSubDomainsQueue = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
    protected int subscribedDomainQueueRef;
 
-   protected LinkedHashMap interfaceIntroductions = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected LinkedHashMap arrayReplacements = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected LinkedHashMap arrayBindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected LinkedHashMap annotationIntroductions =UnmodifiableEmptyCollections. EMPTY_LINKED_HASHMAP;
-   protected LinkedHashMap annotationOverrides = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected LinkedHashMap bindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected LinkedHashMap typedefs = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected HashMap interceptorFactories = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
-   protected HashMap classMetaDataLoaders = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
-   protected HashMap interceptorStacks = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
-   protected HashMap declares = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
-   protected ConcurrentHashMap cflowStacks = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
-   protected ConcurrentHashMap dynamicCFlows = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
-   protected ConcurrentHashMap aspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
-   protected ConcurrentHashMap perVMAspects = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   protected volatile LinkedHashMap interfaceIntroductions = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap arrayReplacements = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap arrayBindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap annotationIntroductions =UnmodifiableEmptyCollections. EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap annotationOverrides = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap bindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap typedefs = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile HashMap interceptorFactories = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected volatile HashMap classMetaDataLoaders = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected volatile HashMap interceptorStacks = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected volatile HashMap declares = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected volatile ConcurrentHashMap cflowStacks = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   protected volatile ConcurrentHashMap dynamicCFlows = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   protected volatile ConcurrentHashMap aspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   protected volatile ConcurrentHashMap perVMAspects = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
 
    /** class name prefixes to explicitly exclude unless contained in include. Maintained by top-level AspectManager */
-   protected ArrayList exclude = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+   protected volatile ArrayList exclude = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
 
    /** class name prefixes to explicitly include, this overrides whatever was set in exclude. Maintained by top-level AspectManager */
-   protected ArrayList include = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+   protected volatile ArrayList include = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
 
    /** A set of wildcard enabled classnames that will be ignored no matter if they have been included. Maintained by top-level AspectManager */
-   protected ArrayList ignore = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+   protected volatile ArrayList ignore = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
 
    /** ClassExpressions built from ignore. Maintained by top-level AspectManager */
    protected ClassExpression[] ignoreExpressions = new ClassExpression[0];
 
-   protected LinkedHashMap pointcuts = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap pointcuts = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    // contains pointcuts-binding association info
-   protected LinkedHashMap pointcutInfos = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap pointcutInfos = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    // these fields represent whether there are certain pointcut types.
    // for performance reasons the transformers and binders can make a lot of us of this.
    protected boolean execution = false;
@@ -168,9 +168,9 @@ public class AspectManager
    protected boolean withincode = false;
    public static boolean classicOrder = false;
 
-   protected LinkedHashMap classMetaData = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected HashMap containers = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
-   protected LinkedHashMap precedenceDefs = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap classMetaData = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile HashMap containers = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected volatile LinkedHashMap precedenceDefs = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    protected PrecedenceDefEntry[] sortedPrecedenceDefEntries;
    protected WeavingStrategy weavingStrategy;
 
