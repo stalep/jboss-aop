@@ -102,6 +102,8 @@
       <property name="aop.aspect-library-beans.location" value="${project.root}/asintegration/src/resources/META-INF/jboss-aspect-library-beans.xml"/>
       <property name="aop.as4-deployer.location" value="${project.root}/asintegration/output/lib/jboss-aop-as4-deployer.jar"/>
       <property name="aop.as4-deployer-jdk14.location" value="${project.root}/asintegration/output/lib/jboss-aop-as4-deployer-jdk14.jar"/>
+      <property name="aop.jboss4.jdk50.location" value="${project.root}/asintegration/output/lib/jboss-aop-jboss4-jdk50.jar"/>
+      <property name="aop.jboss4.jdk14.location" value="${project.root}/asintegration/output/lib/jboss-aop-jboss4-jdk14.jar"/>
       <!-- TODO I would like to call this  jboss-aop-deployer.jar instead, and update name in appserver trunk -->
       <property name="aop.as5-deployer.location" value="${project.root}/asintegration/output/lib/jboss-aop-deployer-jdk50.jar"/>
       <property name="aop.jrockit-pluggable-instrumentor.location" value="${project.root}/aop/output/lib/jrockit-pluggable-instrumentor.jar"/>
@@ -200,7 +202,6 @@
       <copy todir="${project.release}/lib-14" file="${trove.location}"/>
 
       <!-- The JBoss 4.0.x libs for JDK 1.4 (JBoss 4.2.x needs JDK 5)-->
-
       <copy file="${aop.jboss-service.location}" tofile="output/temp/jboss-service-jdk4.xml" filtering="true">
          <filterset>
             <filter token="SERVICE_NAME" value="org.jboss.aop.deployment.AspectManagerService"/>
@@ -212,6 +213,7 @@
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.14.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.aspect-library14.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.as4-deployer-jdk14.location}"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.jboss4.jdk14.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/" file="${aop.readme-as4.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-backport-concurrent.location}"/><!-- TODO figure out for what versions of jboss this is necessary, and if it exists in other locations -->
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-container-metadata-spi14.location}"/>
@@ -232,6 +234,7 @@
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.50.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.aspect-library50.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.as4-deployer.location}"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.jboss4.jdk50.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/" file="${aop.readme-as4.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-container-metadata-spi.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-container-annotation.location}"/>

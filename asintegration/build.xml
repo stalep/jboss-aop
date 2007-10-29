@@ -211,12 +211,11 @@
       <mkdir dir="${build.lib}"/>
 
       <!-- Build jboss-aspect-deployer.jar for jboss 5 -->
-    <!-- TODO I would like to call this  jboss-aop-deployer.jar instead, and update name in appserver trunk -->
       <jar destfile="${build.lib}/jboss-aop-deployer-jdk50.jar" manifest="${build.etc}/default.mf"
          update="${jar.update}" index="${jar.index}">
          <fileset dir="${build.classes}">
             <!-- Include everything else -->
-			   <include name="org/jboss/aop/asintegration/**"/>
+			   <include name="org/jboss/aop/asintegration/*"/>
             <include name="org/jboss/aop/classpool/**"/>
             <include name="org/jboss/aop/deploy*/**"/>
             <include name="org/jboss/aop/domain/**"/>
@@ -229,7 +228,7 @@
          update="${jar.update}" index="${jar.index}">
          <fileset dir="${build.classes}">
             <!-- Include everything else -->
-			   <include name="org/jboss/aop/asintegration/**"/>
+			   <include name="org/jboss/aop/asintegration/*"/>
             <include name="org/jboss/aop/classpool/**"/>
             <include name="org/jboss/aop/deploy*/**"/>
             <include name="org/jboss/aop/domain/**"/>
@@ -237,6 +236,15 @@
          </fileset>
          <fileset file ="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
    	</jar>
+
+      <jar destfile="${build.lib}/jboss-aop-jboss4-jdk50.jar" manifest="${build.etc}/default.mf"
+         update="${jar.update}" index="${jar.index}">
+         <fileset dir="${build.classes}">
+            <!-- Include everything else -->
+			   <include name="org/jboss/aop/asintegration/jboss4/**"/>
+         </fileset>
+         <fileset file ="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
+      </jar>
    </target>
 
 
@@ -257,7 +265,16 @@
          <fileset file ="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
       </jar>
 
-      <!-- Generate checksums -->
+      <jar destfile="${build.lib}/jboss-aop-jboss4-jdk14.jar" manifest="${build.etc}/default.mf"
+         update="${jar.update}" index="${jar.index}">
+         <fileset dir="${build.classes.retro}">
+            <!-- Include everything else -->
+			   <include name="org/jboss/aop/asintegration/jboss4/**"/>
+         </fileset>
+         <fileset file ="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
+      </jar>
+
+		<!-- Generate checksums -->
       <call target="_default:compile-checksums"/>
 
    </target>

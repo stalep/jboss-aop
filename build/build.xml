@@ -350,6 +350,7 @@
          <fileset dir="../asintegration/output/lib">
             <include name="jboss-aop-as4-deployer.jar"/>
             <include name="jboss-aop-deployer-jdk50.jar"/>
+         	<include name="jboss-aop-jboss4-jdk50.jar"/>
             <include name="jboss-asintegration-src.zip"/>
          </fileset>
          <fileset dir="../aspects/output/lib">
@@ -372,6 +373,7 @@
          </fileset>
          <fileset dir="../asintegration/output/lib">
             <include name="jboss-aop-as4-deployer-jdk14.jar"/>
+         	<include name="jboss-aop-jboss4-jdk14.jar"/>
             <include name="jboss-asintegration-src.zip"/>
          </fileset>
          <fileset dir="../aspects/output/lib">
