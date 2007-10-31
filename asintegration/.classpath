@@ -25,5 +25,6 @@
 	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-deployers-client-spi.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-container-metadata.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-deployers-impl.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-managed.jar"/>
 	<classpathentry kind="output" path="output/eclipse-classes"/>
 </classpath>
