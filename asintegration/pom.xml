@@ -50,7 +50,7 @@
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-test</artifactId>
-      <version>1.0.3.GA</version>
+      <version>1.0.4.GA</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.jbossas</groupId>
