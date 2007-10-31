@@ -24,11 +24,9 @@ package org.jboss.aop.deployers;
 /**
  * Here so that the AspectAppParsingDeployer can have an "output"
  * 
- * @deprecated Use the one from the aop project instead
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-@Deprecated
 public class AspectDeployment
 {
 
