@@ -40,7 +40,7 @@
   <modules>
     <module>aop</module>
     <module>aspects</module>
-    <!--<module>asintegration</module>-->
+    <module>asintegration</module>
     <module>maven-jbossaop-plugin</module>
   </modules>
 </project>
