@@ -120,26 +120,6 @@ public class AspectDeployer extends AbstractVFSRealDeployer
       }
    }
    
-//   private void dumpDeploymentUnitStuffForTesting(VFSDeploymentUnit unit)
-//   {
-//      ScopeKey scope = unit.getScope();
-//      ScopeKey mutable = unit.getMutableScope();
-//      
-//      MetaData metaData = unit.getMetaData();
-//      MutableMetaData mutableMetaData = unit.getMutableMetaData();
-//      System.out.println("====> SCOPE: " + scope + "\n\tMUTABLE_SCOPE: " + mutable + "\n\tMETADATA: " + metaData + "\n\tMUTABLE_METADATA: " + mutableMetaData);
-//      
-//      if (metaData == null)
-//      {
-//         System.out.println("Null metadata");
-//         return;
-//      }
-//      Module module = metaData.getMetaData(Module.class);
-//      System.out.println("MetaData module " + module);
-//      module = unit.getAttachment(Module.class);
-//      System.out.println("Attached module " + module);
-//   }
-   
    public void undeploy(VFSDeploymentUnit unit)
    {
       try
