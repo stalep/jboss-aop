@@ -36,15 +36,6 @@ import org.jboss.aop.Domain;
  */
 public interface AOPClassLoaderScopingPolicy
 {
-//   /**
-//    * Is the classloader scoped?
-//    *
-//    * TODO Move ClassPool construction policy into here and remove this
-//    * @param classLoader the classLoader
-//    * @return true when scoped 
-//    */
-//   boolean isScoped(T classLoader);
-//   
    /**
     * Get the domain for classloader
     * 
