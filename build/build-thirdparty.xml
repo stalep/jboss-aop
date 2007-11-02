@@ -53,7 +53,7 @@
       <componentref name="jboss/common-logging-jdk" version="2.0.2.GA"/>
       <componentref name="jboss/common-logging-log4j" version="2.0.2.GA"/>
       <componentref name="jboss/common-logging-spi" version="2.0.2.GA"/>
-      <componentref name="org/jboss/jboss-retro" version="1.1.2"/>
+      <componentref name="jboss/jboss-retro" version="1.1.2"/>
       <componentref name="jboss/integration" version="5.0.0.Beta3"/>
       <componentref name="jboss/microcontainer" version="2.0.0.Beta5"/>
       <componentref name="jboss/microcontainer14" version="2.0.0.Beta4"/>
