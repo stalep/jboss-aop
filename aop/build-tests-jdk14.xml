@@ -172,13 +172,13 @@
       <path id="jbossretro.classpath">
          <path refid="apache.ant.classpath"/>
          <path refid="javassist.classpath"/>
-         <path refid="org/jboss/jboss.retro.classpath"/>
+         <path refid="jboss/jboss.retro.classpath"/>
          <path refid="jboss/backport.concurrent.classpath"/>
       </path>
 
       <path id="jbossretrort.classpath">
          <path refid="jboss/backport.concurrent.classpath"/>
-         <pathelement path="${org/jboss/jboss.retro.lib}/jboss-retro-rt.jar"/>
+         <pathelement path="${jboss/jboss.retro.lib}/jboss-retro-rt.jar"/>
          <path refid="jboss.microcontainer14.classpath"/>
          <path refid="jboss/common.core.14.classpath"/>
       </path>

@@ -139,10 +139,10 @@
       <path id="jbossretro.classpath">
          <path refid="apache.ant.classpath"/>
          <path refid="javassist.classpath"/>
-         <path refid="org/jboss/jboss.retro.classpath"/>
+         <path refid="jboss/jboss.retro.classpath"/>
          <path refid="jboss/backport.concurrent.classpath"/>
       </path>
-  
+
       <!-- xdoclet -->
       <path id="xdoclet.task.classpath">
          <path refid="javac.classpath"/>
@@ -190,7 +190,7 @@
          <classpath refid="javac.classpath"/>
       </javac>
    </target>
- 
+
    <!-- Compile manifests -->
    <target name="compile-etc" depends="init">
       <mkdir dir="${build.etc}"/>
@@ -200,7 +200,7 @@
          </fileset>
       </copy>
    </target>
-  
+
    <target name="retrotranslate" depends="compile-classes">
       <mkdir dir="${build.classes.retro}"/>
 
@@ -214,7 +214,7 @@
          <src path="${build.classes}"/>
       </retro>
    </target>
-   
+
 
    <!--+====================================================================+-->
    <!--| Generate Output                                                    |-->
@@ -333,7 +333,7 @@
    <target name="run-asynch-aspect" depends="compile">
 
       <delete dir="output/classes/test/asynchronous"/>
-      
+
       <javac destdir="${build.classes}"
          optimize="${javac.optimize}"
          target="${javac.target}"
@@ -350,7 +350,7 @@
          <src path="${source.test}"/>
          <classpath refid="javac.classpath"/>
       </javac>
-      
+
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
 
       <aopc compilerclasspathref="javac.classpath">
