@@ -21,10 +21,12 @@
   */
 package org.jboss.aop;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -228,7 +230,13 @@ public class ClassContainer extends Advisor
 
    protected void createConstructorTables()
    {
-      constructors = clazz.getDeclaredConstructors();
+      constructors = AccessController.doPrivileged(new PrivilegedAction<Constructor[]>() {
+
+         public Constructor[] run()
+         {
+            return clazz.getDeclaredConstructors();
+         }});
+      
       if (constructors.length > 0)
       {
          for (int i = 0; i < constructors.length; i++)
