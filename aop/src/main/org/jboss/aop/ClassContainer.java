@@ -230,12 +230,7 @@ public class ClassContainer extends Advisor
 
    protected void createConstructorTables()
    {
-      constructors = AccessController.doPrivileged(new PrivilegedAction<Constructor[]>() {
-
-         public Constructor[] run()
-         {
-            return clazz.getDeclaredConstructors();
-         }});
+      constructors = SecurityActions.getDeclaredConstructors();
       
       if (constructors.length > 0)
       {

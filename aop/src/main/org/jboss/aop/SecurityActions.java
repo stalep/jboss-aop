@@ -22,6 +22,7 @@
 package org.jboss.aop;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
@@ -146,5 +147,41 @@ class SecurityActions
          return Thread.currentThread().getContextClassLoader();
       else
          return AccessController.doPrivileged(GetContextClassLoaderAction.INSTANCE);
+   }
+   
+   interface GetDeclaredConstructorsAction 
+   {
+      Constructor[] getDeclaredConstructors(Class clazz);
+      
+      GetDeclaredConstructorsAction NON_PRIVILEGED = new GetDeclaredConstructorsAction() {
+
+         public Constructor[] getDeclaredConstructors(Class clazz)
+         {
+            return clazz.getDeclaredConstructors();
+         }};
+
+         GetDeclaredConstructorsAction PRIVILEGED = new GetDeclaredConstructorsAction() {
+
+            public Constructor[] getDeclaredConstructors(final Class clazz)
+            {
+               return AccessController.doPrivileged(new PrivilegedAction<Constructor[]>() {
+
+                  public Constructor[] run()
+                  {
+                     return clazz.getDeclaredConstructors();
+                  }});
+            }};
+   }
+   
+   static Constructor[] getDeclaredConstructors(Class clazz)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         return GetDeclaredConstructorsAction.NON_PRIVILEGED.getDeclaredConstructors(clazz);
+      }
+      else
+      {
+         return GetDeclaredConstructorsAction.PRIVILEGED.getDeclaredConstructors(clazz);
+      }
    }
 }
