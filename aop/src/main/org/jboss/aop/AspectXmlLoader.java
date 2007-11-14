@@ -183,7 +183,7 @@ public class AspectXmlLoader implements XmlLoader
          scope = ScopeUtil.parse(s);
          if (scope == null) throw new RuntimeException("Illegal scope attribute value: " + s);
       }
-      AspectDefinition def = (AspectDefinition) manager.getAspectDefinition(name);
+      AspectDefinition def = manager.getAspectDefinition(name);
 
       // if interceptor definition already exists, then just check to see if scopes are the same
       // todo deprecate <interceptor> within an advice stack
