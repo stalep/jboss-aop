@@ -112,7 +112,7 @@ public class AnnotationRepository
          }
          catch (Exception e)
          {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Bad annotation expression " + expr, e);
          }
       }
       return value;
