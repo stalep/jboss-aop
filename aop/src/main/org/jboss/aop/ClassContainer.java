@@ -76,6 +76,7 @@ public class ClassContainer extends Advisor
       createMethodMap();
       createConstructorTables();
       createFieldTable();
+      getManager().attachMetaData(this, clazz);
       rebindClassMetaData();
       deployAnnotationOverrides();
    }
