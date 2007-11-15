@@ -830,7 +830,8 @@ public class Domain extends AspectManager
       return parent.getPointcut(name);
    }
 
-   public void attachMetaData(ClassAdvisor advisor, Class clazz)
+   @Override
+   public void attachMetaData(Advisor advisor, Class clazz)
    {
       if (inheritsBindings)
       {

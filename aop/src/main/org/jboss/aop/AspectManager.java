@@ -1103,12 +1103,14 @@ public class AspectManager
 
    protected void attachMetaData(Advisor advisor, Class clazz)
    {
-      Map metaData = getClassMetaData();
-      Iterator it = metaData.values().iterator();
-      while (it.hasNext())
+      synchronized (classMetaData)
       {
-         ClassMetaDataBinding data = (ClassMetaDataBinding) it.next();
-         addAdvisorToClassMetaDataBinding(data, clazz, advisor, clazz);
+         Iterator it = classMetaData.values().iterator();
+         while (it.hasNext())
+         {
+            ClassMetaDataBinding data = (ClassMetaDataBinding) it.next();
+            addAdvisorToClassMetaDataBinding(data, clazz, advisor, clazz);
+         }
       }
    }
 
