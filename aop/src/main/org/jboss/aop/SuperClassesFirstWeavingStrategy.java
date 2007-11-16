@@ -50,8 +50,10 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 
    public byte[] translate(AspectManager manager, String className, ClassLoader loader, byte[] classfileBuffer) throws Exception
 	{
+//      System.out.println("-- Loading class " + className);
 		if (isReEntry())
 		{
+//		   System.out.println("XXXX REENTRY!!!!!!!!!!!!!");
 			return null;
 		}
 		setReEntry();
@@ -204,6 +206,7 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
             manager.attachMetaData(advisor, info.getClazz(), true);
             manager.applyInterfaceIntroductions(advisor, info.getClazz());
 				transformed = instrumentor.transform(info.getClazz(), advisor);
+//				System.out.println("-- woven " + info.getClazz().getName() + " " + transformed);
          }
 			if (transformed)
 			{
@@ -213,6 +216,13 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 				}
 				return info.getClazz();
 			}
+			
+			if (isLoadedClass)
+			{
+			   pool.setClassLoadedButNotWoven(info.getClassName());
+//			   System.out.println("NOT WOVEN " + info.getClassName());
+			}
+			
 			return null;
 		}
 		catch(Exception e)
