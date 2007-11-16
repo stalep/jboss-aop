@@ -46,90 +46,90 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
    private static final Logger logger = AOPLogger.getLogger(SuperClassesFirstWeavingStrategy.class);
    
    private boolean verbose = AspectManager.verbose;
-	public static final String AOP_PACKAGE = Advised.class.getPackage().getName();
+   public static final String AOP_PACKAGE = Advised.class.getPackage().getName();
 
    public byte[] translate(AspectManager manager, String className, ClassLoader loader, byte[] classfileBuffer) throws Exception
-	{
-		if (isReEntry())
-		{
-			return null;
-		}
-		setReEntry();
-		manager.transformationStarted = true;
-		try
-		{
-			if (manager.isNonAdvisableClassName(className))
-			{
-				return null;
-			}
+   {
+      if (isReEntry())
+      {
+         return null;
+      }
+      setReEntry();
+      manager.transformationStarted = true;
+      try
+      {
+         if (manager.isNonAdvisableClassName(className))
+         {
+            return null;
+         }
 
-			AOPClassPool pool = (AOPClassPool) manager.registerClassLoader(loader);
+         AOPClassPool pool = (AOPClassPool) manager.registerClassLoader(loader);
 
-			CtClass clazz = obtainCtClassInfo(pool, className, classfileBuffer);
-			
-			CtClass woven = instrumentClass(manager, pool, clazz, true);
-			if (woven != null)
-			{
-				pool.lockInCache(woven);
+         CtClass clazz = obtainCtClassInfo(pool, className, classfileBuffer);
+         
+         CtClass woven = instrumentClass(manager, pool, clazz, true);
+         if (woven != null)
+         {
+            pool.lockInCache(woven);
             if (AspectManager.debugClasses)
             {
                SecurityActions.debugWriteFile(clazz);
             }
-				byte[] rtn = woven.toBytecode();
-				if (AspectManager.getPrune()) woven.prune();
-				return rtn;
-			}
-			else
-			{
-				pool.soften(clazz);
-			}
-			return null;
-		}
-		catch (Exception ex)
-		{
-			if (!(ex instanceof NotFoundException))
-			{
-				if (verbose)
-					ex.printStackTrace();
-				else
-					System.err.println("[error] " + ex.getMessage() +
+            byte[] rtn = woven.toBytecode();
+            if (AspectManager.getPrune()) woven.prune();
+            return rtn;
+         }
+         else
+         {
+            pool.soften(clazz);
+         }
+         return null;
+      }
+      catch (Exception ex)
+      {
+         if (!(ex instanceof NotFoundException))
+         {
+            if (verbose)
+               ex.printStackTrace();
+            else
+               System.err.println("[error] " + ex.getMessage() +
                                        ".. Do verbose mode if you want full stack trace.");
-			}
-			throw ex;
-		}
-		finally
-		{
-			clearReEntry();
-		}
-	}
+         }
+         throw ex;
+      }
+      finally
+      {
+         clearReEntry();
+      }
+   }
 
-	private CtClass obtainCtClassInfo(AOPClassPool pool, String className, byte[] classfileBuffer) throws NotFoundException
-	{
-		try
-		{
-			return pool.getLocally(className);
-		}
-		catch (NotFoundException e)
-		{
-			// todo Bill Burke: this scares the shit out of me, but it must be done
-			// I think it will screw up hotdeployment at some time.  Then again, maybe not ;)
-			ByteArrayClassPath cp = new ByteArrayClassPath(className, classfileBuffer);
-			pool.insertClassPath(cp);
-			return pool.getLocally(className);
-		}
+   private CtClass obtainCtClassInfo(AOPClassPool pool, String className, byte[] classfileBuffer) throws NotFoundException
+   {
+      try
+      {
+         return pool.getLocally(className);
+      }
+      catch (NotFoundException e)
+      {
+         // todo Bill Burke: this scares the shit out of me, but it must be done
+         // I think it will screw up hotdeployment at some time.  Then again, maybe not ;)
+         ByteArrayClassPath cp = new ByteArrayClassPath(className, classfileBuffer);
+         pool.insertClassPath(cp);
+         return pool.getLocally(className);
+      }
       catch(Error e)
       {
          return null;
       }
-	}
+   }
 
-	private CtClass instrumentClass(AspectManager manager, AOPClassPool pool, CtClass clazz, boolean isLoadedClass) throws NotFoundException, Exception
-	{
-		try
-		{
-			CtClass superClass = clazz.getSuperclass();
-			if (superClass != null && !Instrumentor.implementsAdvised(clazz))
-			{
+   private CtClass instrumentClass(AspectManager manager, AOPClassPool pool, CtClass clazz, boolean isLoadedClass) throws NotFoundException, Exception
+   {
+      try
+      {
+         CtClass superClass = clazz.getSuperclass();
+         if (superClass != null && !Instrumentor.implementsAdvised(clazz))
+         {
             ClassPool superPool = superClass.getClassPool();
             if (superPool instanceof AOPClassPool)
             {
@@ -141,94 +141,94 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
                }
                instrumentClass(aspectManager, (AOPClassPool)superPool, superClass, false);
             }
-			}
+         }
 
-			if (manager.isNonAdvisableClassName(clazz.getName()))
-			{
-				return null;
-			}
+         if (manager.isNonAdvisableClassName(clazz.getName()))
+         {
+            return null;
+         }
 
-			if (clazz.isArray())
-			{
-				if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, isArray: " + clazz.getName());
-				pool.flushClass(clazz.getName());
-				return null;
-			}
-			if (clazz.isInterface())
-			{
-				if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, isInterface: " + clazz.getName());
-				//pool.flushClass(info.getClassName());
-				clazz.prune();
-				return null;
-			}
-			if (clazz.isFrozen())
-			{
-				if(isAdvised(pool, clazz))
-					return null;
-				if (verbose && logger.isDebugEnabled()) logger.debug("warning, isFrozen: " + clazz.getName() + " " + clazz.getClassPool());
-				if (!isLoadedClass)
-				{
-				   //What's the point of this?
-					clazz = obtainCtClassInfo(pool, clazz.getName(), null);
-				}
-				else
-					return null;
-				//info.getClazz().defrost();
-			}
+         if (clazz.isArray())
+         {
+            if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, isArray: " + clazz.getName());
+            pool.flushClass(clazz.getName());
+            return null;
+         }
+         if (clazz.isInterface())
+         {
+            if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, isInterface: " + clazz.getName());
+            //pool.flushClass(info.getClassName());
+            clazz.prune();
+            return null;
+         }
+         if (clazz.isFrozen())
+         {
+            if(isAdvised(pool, clazz))
+               return null;
+            if (verbose && logger.isDebugEnabled()) logger.debug("warning, isFrozen: " + clazz.getName() + " " + clazz.getClassPool());
+            if (!isLoadedClass)
+            {
+               //What's the point of this?
+               clazz = obtainCtClassInfo(pool, clazz.getName(), null);
+            }
+            else
+               return null;
+            //info.getClazz().defrost();
+         }
 
          boolean transformed = clazz.isModified();
          if (!transformed)
          {
             ClassAdvisor advisor =
                    AdvisorFactory.getClassAdvisor(clazz, manager);
-				Instrumentor instrumentor = InstrumentorFactory.getInstrumentor(
-				      pool,
+            Instrumentor instrumentor = InstrumentorFactory.getInstrumentor(
+                  pool,
                   manager,
                   manager.dynamicStrategy.getJoinpointClassifier(),
                   manager.dynamicStrategy.getDynamicTransformationObserver(clazz));
 
-				if (!Instrumentor.isTransformable(clazz))
-				{
-					if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, implements Untransformable: " + clazz.getName());
-					//Flushing the generated invocation classes breaks things further down the line
-					//pool.flushClass(info.getClassName());
-					return null;
-				}
+            if (!Instrumentor.isTransformable(clazz))
+            {
+               if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, implements Untransformable: " + clazz.getName());
+               //Flushing the generated invocation classes breaks things further down the line
+               //pool.flushClass(info.getClassName());
+               return null;
+            }
 
             manager.attachMetaData(advisor, clazz, true);
             manager.applyInterfaceIntroductions(advisor, clazz);
-				transformed = instrumentor.transform(clazz, advisor);
+            transformed = instrumentor.transform(clazz, advisor);
          }
-			if (transformed)
-			{
-				return clazz;
-			}
-			
-			if (isLoadedClass)
-			{
-			   pool.setClassLoadedButNotWoven(clazz.getName());
-			}
-			
-			return null;
-		}
-		catch(Exception e)
-		{
-			throw new RuntimeException("Error converting class ", e);
-		}
-		finally
-		{
-		}
-	}
+         if (transformed)
+         {
+            return clazz;
+         }
+         
+         if (isLoadedClass)
+         {
+            pool.setClassLoadedButNotWoven(clazz.getName());
+         }
+         
+         return null;
+      }
+      catch(Exception e)
+      {
+         throw new RuntimeException("Error converting class ", e);
+      }
+      finally
+      {
+      }
+   }
 
-	public boolean isAdvised(ClassPool pool, CtClass clazz) throws NotFoundException
-	{
-	   CtClass[] interfaces = clazz.getInterfaces();
-	   CtClass advised = pool.get(AOP_PACKAGE + ".Advised");
-	   for (int i = 0; i < interfaces.length; i++)
-	   {
-	      if (interfaces[i].equals(advised)) return true;
-	      if (interfaces[i].getName().equals(AOP_PACKAGE + ".Advised")) return true;
-	   }
-	   return false;
-	}
+   public boolean isAdvised(ClassPool pool, CtClass clazz) throws NotFoundException
+   {
+      CtClass[] interfaces = clazz.getInterfaces();
+      CtClass advised = pool.get(AOP_PACKAGE + ".Advised");
+      for (int i = 0; i < interfaces.length; i++)
+      {
+         if (interfaces[i].equals(advised)) return true;
+         if (interfaces[i].getName().equals(AOP_PACKAGE + ".Advised")) return true;
+      }
+      return false;
+   }
 }
