@@ -73,11 +73,15 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
    {
       super(advisor, info, getParameters(info),
             info.getMethod().getParameterTypes().length, false);
-      if (!info.getUnadvisedMethod().getReturnType().equals(Void.TYPE))
+      if (super.getJoinpointField() != null)
       {
-         returnType = new WeakReference<Class<?>>(info.getUnadvisedMethod().getReturnType());
+         if (!info.getUnadvisedMethod().getReturnType().equals(Void.TYPE))
+         {
+            returnType = new WeakReference<Class<?>>(info.getUnadvisedMethod().getReturnType());
+         }
+         hasTargetObject = !Modifier.isStatic(info.getMethod().getModifiers());
       }
-      hasTargetObject = !Modifier.isStatic(info.getMethod().getModifiers());
+
    }
    
    private static JoinPointParameters getParameters(MethodInfo info)

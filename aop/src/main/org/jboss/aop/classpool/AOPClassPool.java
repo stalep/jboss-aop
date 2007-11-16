@@ -44,6 +44,9 @@ public class AOPClassPool extends ScopedClassPool
    protected ConcurrentHashMap<String, String> generatedClasses = new ConcurrentHashMap<String, String>();
    
    protected ConcurrentHashMap<String, Boolean> localResources = new ConcurrentHashMap<String, Boolean>();
+   
+   /** Classnames of classes that have been loaded, but were not woven */
+   protected ConcurrentHashMap<String, Boolean> loadedButNotWovenClasses = new ConcurrentHashMap<String, Boolean>();
 
    static 
    {
@@ -180,6 +183,15 @@ public class AOPClassPool extends ScopedClassPool
       return clazz;
    }
 
+   public void setClassLoadedButNotWoven(String classname)
+   {
+      loadedButNotWovenClasses.put(classname, Boolean.TRUE);
+   }
+   
+   public boolean isClassLoadedButNotWoven(String classname)
+   {
+      return loadedButNotWovenClasses.get(classname) == Boolean.TRUE;
+   }
 
    public static AOPClassPool createAOPClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
    {

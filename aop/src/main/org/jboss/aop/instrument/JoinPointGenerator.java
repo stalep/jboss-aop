@@ -44,8 +44,10 @@ import javassist.CtNewMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
 
+import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.CallerConstructorInfo;
+import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.GeneratedClassAdvisor;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.JoinPointInfo;
@@ -517,7 +519,19 @@ public abstract class JoinPointGenerator
       else
       {
          AspectManager manager = info.getAdvisor().getManager();
-         advisorClass = manager.getAdvisor(info.getClazz()).getClass();
+         try
+         {
+            advisorClass = manager.getAdvisor(info.getClazz()).getClass();
+         }
+         catch(ClassCastException e)
+         {
+            Advisor advisor = manager.findAdvisor(info.getClazz());
+            if (advisor != null && !( advisor instanceof ClassAdvisor))
+            {
+               //The advisor is a ClassContainer or something like that, so ignore this joinpoint
+               return;
+            }
+         }
       }
       
       try
@@ -2203,5 +2217,10 @@ public abstract class JoinPointGenerator
             code.append("]");
          }
       }
+   }  
+   
+   protected Field getJoinpointField()
+   {
+      return joinpointField;
    }  
 }

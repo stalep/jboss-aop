@@ -171,4 +171,12 @@
    </bind>
    
    <prepare expr="all(org.jboss.test.aop.regression.jbaop442instancedomain.POJO)"/>
+   
+ 	<bind pointcut="execution(* org.jboss.test.aop.regression.jbaop484superproxyadvised.Child->*(..))">
+	   <interceptor class="org.jboss.test.aop.regression.jbaop484superproxyadvised.TestInterceptor"/>
+	</bind>
+	<bind pointcut="execution(* $instanceof{org.jboss.test.aop.regression.jbaop484superproxyadvised.ChildInterface}->$implements{org.jboss.test.aop.regression.jbaop484superproxyadvised.ChildInterface}(..))">
+	   <interceptor class="org.jboss.test.aop.regression.jbaop484superproxyadvised.TestInterceptor"/>
+	</bind>
+   
 </aop>
