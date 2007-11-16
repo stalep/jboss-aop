@@ -916,22 +916,19 @@ public class AspectManager
          }
          if (weavingStrategy == null)
          {
-//           synchronized (this)
-//            {
-               if (TransformerCommon.isCompileTime() || classicOrder)
-               {
-                  weavingStrategy = new ClassicWeavingStrategy();
-               }
-               else if(InstrumentorFactory.getInstrumentor(this,dynamicStrategy.getJoinpointClassifier())
-                     instanceof GeneratedAdvisorInstrumentor)
-               {
-                  weavingStrategy = new SuperClassesFirstWeavingStrategy();
-               }
-               else
-               {
-                  weavingStrategy = new ClassicWeavingStrategy();
-               }
-//            }
+            if (TransformerCommon.isCompileTime() || classicOrder)
+            {
+               weavingStrategy = new ClassicWeavingStrategy();
+            }
+            else if(InstrumentorFactory.getInstrumentor(this,dynamicStrategy.getJoinpointClassifier())
+                  instanceof GeneratedAdvisorInstrumentor)
+            {
+               weavingStrategy = new SuperClassesFirstWeavingStrategy();
+            }
+            else
+            {
+               weavingStrategy = new ClassicWeavingStrategy();
+            }
          }
 
          return weavingStrategy.translate(this, className, loader, classfileBuffer);

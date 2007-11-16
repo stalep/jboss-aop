@@ -50,10 +50,8 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 
    public byte[] translate(AspectManager manager, String className, ClassLoader loader, byte[] classfileBuffer) throws Exception
 	{
-//      System.out.println("-- Loading class " + className);
 		if (isReEntry())
 		{
-//		   System.out.println("XXXX REENTRY!!!!!!!!!!!!!");
 			return null;
 		}
 		setReEntry();
@@ -67,25 +65,23 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 
 			AOPClassPool pool = (AOPClassPool) manager.registerClassLoader(loader);
 
-			CtClassTransformationInfo info = obtainCtClassInfo(pool, className, classfileBuffer);
+			CtClass clazz = obtainCtClassInfo(pool, className, classfileBuffer);
 			
-//			if (className.startsWith("org.jboss.test.aop.scopedextender.")) System.out.println("********** Weaving " + className + " " + loader);
-			
-			CtClass clazz = instrumentClass(manager, pool, info, true);
-			if (clazz != null)
+			CtClass woven = instrumentClass(manager, pool, clazz, true);
+			if (woven != null)
 			{
-				pool.lockInCache(info.getClazz());
+				pool.lockInCache(woven);
             if (AspectManager.debugClasses)
             {
-               SecurityActions.debugWriteFile(info.getClazz());
+               SecurityActions.debugWriteFile(clazz);
             }
-				byte[] rtn = info.getClazz().toBytecode();
-				if (AspectManager.getPrune()) info.getClazz().prune();
+				byte[] rtn = woven.toBytecode();
+				if (AspectManager.getPrune()) woven.prune();
 				return rtn;
 			}
 			else
 			{
-				pool.soften(info.getClazz());
+				pool.soften(clazz);
 			}
 			return null;
 		}
@@ -107,11 +103,11 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 		}
 	}
 
-	private CtClassTransformationInfo obtainCtClassInfo(AOPClassPool pool, String className, byte[] classfileBuffer) throws NotFoundException
+	private CtClass obtainCtClassInfo(AOPClassPool pool, String className, byte[] classfileBuffer) throws NotFoundException
 	{
 		try
 		{
-			return new CtClassTransformationInfo(pool.getLocally(className), className);
+			return pool.getLocally(className);
 		}
 		catch (NotFoundException e)
 		{
@@ -119,7 +115,7 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 			// I think it will screw up hotdeployment at some time.  Then again, maybe not ;)
 			ByteArrayClassPath cp = new ByteArrayClassPath(className, classfileBuffer);
 			pool.insertClassPath(cp);
-			return new CtClassTransformationInfo(pool.getLocally(className), className);
+			return pool.getLocally(className);
 		}
       catch(Error e)
       {
@@ -127,18 +123,13 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
       }
 	}
 
-	private CtClass instrumentClass(AspectManager manager, AOPClassPool pool, CtClassTransformationInfo info, boolean isLoadedClass) throws NotFoundException, Exception
+	private CtClass instrumentClass(AspectManager manager, AOPClassPool pool, CtClass clazz, boolean isLoadedClass) throws NotFoundException, Exception
 	{
 		try
 		{
-			CtClass superClass = info.getClazz().getSuperclass();
-			if (superClass != null && !Instrumentor.implementsAdvised(info.getClazz()))
+			CtClass superClass = clazz.getSuperclass();
+			if (superClass != null && !Instrumentor.implementsAdvised(clazz))
 			{
-//			   String DEBUGNAME = info.getClazz().getName();
-//	         if (DEBUGNAME.startsWith("org.jboss.test.aop.scopedextender.")) System.out.println("---- Instrument " + DEBUGNAME + " " + pool);
-//
-				CtClassTransformationInfo superInfo = new CtClassTransformationInfo(superClass, superClass.getName());
-
             ClassPool superPool = superClass.getClassPool();
             if (superPool instanceof AOPClassPool)
             {
@@ -148,79 +139,74 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
                   //We are in a scoped classloader and the superclass is not
                   aspectManager = AspectManager.instance(superPool.getClassLoader());
                }
-               instrumentClass(aspectManager, (AOPClassPool)superPool, superInfo, false);
+               instrumentClass(aspectManager, (AOPClassPool)superPool, superClass, false);
             }
 			}
 
-			if (manager.isNonAdvisableClassName(info.getClassName()))
+			if (manager.isNonAdvisableClassName(clazz.getName()))
 			{
 				return null;
 			}
 
-			if (info.getClass().isArray())
+			if (clazz.isArray())
 			{
-				if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, isArray: " + info.getClassName());
-				pool.flushClass(info.getClassName());
+				if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, isArray: " + clazz.getName());
+				pool.flushClass(clazz.getName());
 				return null;
 			}
-			if (info.getClazz().isInterface())
+			if (clazz.isInterface())
 			{
-				if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, isInterface: " + info.getClassName());
+				if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, isInterface: " + clazz.getName());
 				//pool.flushClass(info.getClassName());
-				info.getClazz().prune();
+				clazz.prune();
 				return null;
 			}
-			if (info.getClazz().isFrozen())
+			if (clazz.isFrozen())
 			{
-				if(isAdvised(pool, info.getClazz()))
+				if(isAdvised(pool, clazz))
 					return null;
-				if (verbose && logger.isDebugEnabled()) logger.debug("warning, isFrozen: " + info.getClassName() + " " + info.getClazz().getClassPool());
+				if (verbose && logger.isDebugEnabled()) logger.debug("warning, isFrozen: " + clazz.getName() + " " + clazz.getClassPool());
 				if (!isLoadedClass)
 				{
-					info = obtainCtClassInfo(pool, info.getClassName(), null);
+				   //What's the point of this?
+					clazz = obtainCtClassInfo(pool, clazz.getName(), null);
 				}
 				else
 					return null;
 				//info.getClazz().defrost();
 			}
 
-         boolean transformed = info.getClazz().isModified();
+         boolean transformed = clazz.isModified();
          if (!transformed)
          {
             ClassAdvisor advisor =
-                   AdvisorFactory.getClassAdvisor(info.getClazz(), manager);
+                   AdvisorFactory.getClassAdvisor(clazz, manager);
 				Instrumentor instrumentor = InstrumentorFactory.getInstrumentor(
 				      pool,
                   manager,
                   manager.dynamicStrategy.getJoinpointClassifier(),
-                  manager.dynamicStrategy.getDynamicTransformationObserver(info.getClazz()));
+                  manager.dynamicStrategy.getDynamicTransformationObserver(clazz));
 
-				if (!Instrumentor.isTransformable(info.getClazz()))
+				if (!Instrumentor.isTransformable(clazz))
 				{
-					if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, implements Untransformable: " + info.getClassName());
+					if (verbose && logger.isDebugEnabled()) logger.debug("cannot compile, implements Untransformable: " + clazz.getName());
 					//Flushing the generated invocation classes breaks things further down the line
 					//pool.flushClass(info.getClassName());
 					return null;
 				}
 
-            manager.attachMetaData(advisor, info.getClazz(), true);
-            manager.applyInterfaceIntroductions(advisor, info.getClazz());
-				transformed = instrumentor.transform(info.getClazz(), advisor);
-//				System.out.println("-- woven " + info.getClazz().getName() + " " + transformed);
+            manager.attachMetaData(advisor, clazz, true);
+            manager.applyInterfaceIntroductions(advisor, clazz);
+				transformed = instrumentor.transform(clazz, advisor);
          }
 			if (transformed)
 			{
-				if (!isLoadedClass )
-				{
-					info.setTransformed(transformed);
-				}
-				return info.getClazz();
+				return clazz;
 			}
 			
 			if (isLoadedClass)
 			{
-			   pool.setClassLoadedButNotWoven(info.getClassName());
-//			   System.out.println("NOT WOVEN " + info.getClassName());
+			   pool.setClassLoadedButNotWoven(clazz.getName());
 			}
 			
 			return null;
@@ -245,46 +231,4 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 	   }
 	   return false;
 	}
-
-
-	private class CtClassTransformationInfo
-	{
-		boolean transformed;
-		CtClass clazz;
-		String className;
-		private CtClassTransformationInfo(CtClass clazz, String className)
-		{
-			this.clazz = clazz;
-			this.className = className;
-		}
-
-		private CtClassTransformationInfo(CtClass clazz, String className, boolean transformed)
-		{
-			this.clazz = clazz;
-			this.className = className;
-			this.transformed = transformed;
-		}
-
-		private CtClass getClazz()
-		{
-			return clazz;
-		}
-
-		private boolean isTransformed()
-		{
-			return transformed;
-		}
-
-		private void setTransformed(boolean transformed)
-		{
-			this.transformed = transformed;
-		}
-
-		private String getClassName()
-		{
-			return className;
-		}
-	}
-
-
 }
