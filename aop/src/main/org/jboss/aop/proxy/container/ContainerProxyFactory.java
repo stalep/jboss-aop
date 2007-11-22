@@ -248,12 +248,9 @@ public class ContainerProxyFactory
       {
          addMethodFromTemplate(template, "equals", equalsBody());
          addMethodFromTemplate(template, "hashCode", hashCodeBody());
-         addMethodFromTemplate(template, "toString", toStringBody());
       }
-      else
-      {
-         addMethodFromTemplate(template, "toString", toStringNotObjectAsSuperBody());
-      }
+
+      addMethodFromTemplate(template, "toString", toStringBody());
 
       copyAnnotations(superclass, proxy);
       copySignature(superclass, proxy);
@@ -351,17 +348,6 @@ public class ContainerProxyFactory
    }
    
    private String toStringBody()
-   {
-      return 
-         "{" +
-         "   if (delegate != null)" +
-         "      return delegate.toString();" +
-         "   else" +
-         "      return super.toString();" +
-         "}";
-   }
-
-   private String toStringNotObjectAsSuperBody()
    {
       return 
          "{" +

@@ -129,10 +129,18 @@ public class ProxyTemplate implements Delegate, AspectManaged
    public String toString()
    {
       if (delegate != null)
-         return delegate.toString();
+         return delegate.toString() + " (proxied by " + this.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(this)) + ")";
       else
-         return super.toString();
+         return super.toString() + "(empty proxy of " + this.getClass().getSuperclass().getName() + ")";
    }
+   
+//   "{" +
+//   "   if (delegate != null)" +
+//   "      return delegate.toString() + \" (proxied by \" + this.getClass().getName() + \"@\" + java.lang.Integer.toHexString(java.lang.System.identityHashCode(this)) + \")\";" +
+//   "   else" +
+//   "      return super.toString() + \" (empty proxy of \" + this.getClass().getSuperclass().getName() + \")\";" +
+//   "}";
+
    
    private void writeObject(java.io.ObjectOutputStream out) throws IOException
    {
