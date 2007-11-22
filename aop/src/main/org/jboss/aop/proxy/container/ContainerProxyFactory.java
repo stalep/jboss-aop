@@ -250,7 +250,11 @@ public class ContainerProxyFactory
          addMethodFromTemplate(template, "hashCode", hashCodeBody());
          addMethodFromTemplate(template, "toString", toStringBody());
       }
-      
+      else
+      {
+         addMethodFromTemplate(template, "toString", toStringNotObjectAsSuperBody());
+      }
+
       copyAnnotations(superclass, proxy);
       copySignature(superclass, proxy);
       
@@ -354,6 +358,17 @@ public class ContainerProxyFactory
          "      return delegate.toString();" +
          "   else" +
          "      return super.toString();" +
+         "}";
+   }
+
+   private String toStringNotObjectAsSuperBody()
+   {
+      return 
+         "{" +
+         "   if (delegate != null)" +
+         "      return delegate.toString() + \" (proxied by \" + this.getClass().getName() + \"@\" + java.lang.Integer.toHexString(java.lang.System.identityHashCode(this)) + \")\";" +
+         "   else" +
+         "      return super.toString() + \" (empty proxy of \" + this.getClass().getSuperclass().getName() + \")\";" +
          "}";
    }
 
