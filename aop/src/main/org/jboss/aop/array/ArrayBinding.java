@@ -41,7 +41,7 @@ public class ArrayBinding
 
    protected InterceptorFactory[] interceptorFactories = new InterceptorFactory[0];
 
-   public ArrayBinding(String name, InterceptorFactory[] factories, Type type) throws ParseException
+   public ArrayBinding(String name, InterceptorFactory[] factories, Type type)
    {
       this.name = name;
       interceptorFactories = factories;
