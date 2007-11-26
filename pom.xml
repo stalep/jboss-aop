@@ -17,30 +17,9 @@
   <scm>
     <connection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/aop/trunk/</connection>
   </scm>
-  <repositories>
-    <repository>
-      <id>repository.jboss.org</id>
-      <name>JBoss Repository</name>
-      <layout>default</layout>
-      <url>http://repository.jboss.org/maven2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>snapshots.jboss.org</id>
-      <name>JBoss Snapshots Repository</name>
-      <layout>default</layout>
-      <url>http://snapshots.jboss.org/maven2/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
   <modules>
     <module>aop</module>
     <module>aspects</module>
     <module>asintegration</module>
-    <module>maven-jbossaop-plugin</module>
   </modules>
 </project>
