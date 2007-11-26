@@ -1623,11 +1623,11 @@ public class AspectManager
    /**
     * Retrieve an introduction pointcut of a certain name
     */
-   public InterfaceIntroduction getArrayBinding(String name)
+   public ArrayBinding getArrayBinding(String name)
    {
       synchronized (arrayBindings)
       {
-         return (InterfaceIntroduction) arrayBindings.get(name);
+         return (ArrayBinding) arrayBindings.get(name);
       }
    }
 
