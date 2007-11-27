@@ -71,7 +71,7 @@ import javassist.bytecode.MethodInfo;
  * </pre>
  *
  * You can control which instrumentor to use by passing in the jboss.aop.instrumentor
- * system property. 
+ * system property.
  *
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
@@ -83,7 +83,7 @@ import javassist.bytecode.MethodInfo;
 public abstract class Instrumentor
 {
    private static final Logger logger = AOPLogger.getLogger(Instrumentor.class);
-   
+
    /**
     * Package of AOP classes.
     */
@@ -115,18 +115,18 @@ public abstract class Instrumentor
    ConstructorExecutionTransformer constructorExecutionTransformer;
    ConstructionTransformer constructionTransformer;
    FieldAccessTransformer fieldAccessTransformer;
-   CallerTransformer callerTransformer;  
+   CallerTransformer callerTransformer;
    DynamicTransformationObserver dynamicTransformationObserver;
-   
+
    /**
     * Constructs new instrumentor.
     * @param joinpointClassifier algorithm of joinpoint classification to be used.
     * @param observer need be notified of every joinpoint wrapping caused only
     * by pointcuts dynamicaly added.
     */
-   protected Instrumentor(AOPClassPool pool, 
-         AspectManager manager, 
-         JoinpointClassifier joinpointClassifier, 
+   protected Instrumentor(AOPClassPool pool,
+         AspectManager manager,
+         JoinpointClassifier joinpointClassifier,
          DynamicTransformationObserver observer)
    {
       this.classPool = pool;
@@ -137,17 +137,17 @@ public abstract class Instrumentor
       intitialiseTransformers();
    }
 
-   protected Instrumentor(AspectManager manager, 
+   protected Instrumentor(AspectManager manager,
          JoinpointClassifier joinpointClassifier)
    {
-      this(null, 
-            manager, 
-            joinpointClassifier, 
+      this(null,
+            manager,
+            joinpointClassifier,
             null);
    }
-   
+
    protected abstract void intitialiseTransformers();
-   
+
    public ClassPool getClassPool()
    {
       return classPool;
@@ -169,7 +169,7 @@ public abstract class Instrumentor
       }
       return false;
    }
-   
+
    public static boolean implementsAdvised(CtClass clazz) throws NotFoundException
    {
       CtClass[] interfaces = clazz.getInterfaces();
@@ -258,13 +258,13 @@ public abstract class Instrumentor
          }
          if (!correct)
          {
-            throw new RuntimeException("Could not find a method named '" + 
+            throw new RuntimeException("Could not find a method named '" +
                   pointcut.getConstructorMethod() + "' on class " +
-                  pointcut.getConstructorClass() + " that receives " + 
+                  pointcut.getConstructorClass() + " that receives " +
                   clazz.getName() + " or one of its superclasses as parameter.");
          }
       }
-      
+
       String initializer = null;
       if (mixin.getConstruction() == null)
       {
@@ -277,8 +277,8 @@ public abstract class Instrumentor
       }
       else
       {
-         initializer = mixin.getConstruction(); 
-      } 
+         initializer = mixin.getConstruction();
+      }
       CtClass type = forName(mixinClass.getName());
       CtField field = new CtField(type, mixinFieldName(mixinClass), clazz);
       int modifiers = Modifier.PRIVATE;
@@ -300,13 +300,13 @@ public abstract class Instrumentor
             Map.Entry entry = (Map.Entry) entries.next();
             Long hash = (Long) entry.getKey();
             CtMethod method = (CtMethod) entry.getValue();
-            CtMethod baseMethod = (CtMethod)baseMethods.get(hash); 
+            CtMethod baseMethod = (CtMethod)baseMethods.get(hash);
             if (baseMethod != null && !addedMethods.contains(hash))
             {
                String msg = "Mixin " + mixinClass.getName() +
                         " of pointcut " + pointcut.getName() +
                         " is trying to apply an already existing method" + method.getName() + " for class " + clazz.getName();
-               
+
                if (baseMethod.getDeclaringClass().equals(clazz))
                {
                   throw new RuntimeException(msg);
@@ -362,7 +362,7 @@ public abstract class Instrumentor
            throws Exception
    {
       ArrayList pointcuts = advisor.getInterfaceIntroductions();
-      
+
       if (pointcuts.size() == 0) return;
       HashMap baseMethods = JavassistMethodHashing.getDeclaredMethodMap(clazz);
       Iterator it = pointcuts.iterator();
@@ -578,7 +578,7 @@ public abstract class Instrumentor
    {
       return callerTransformer.applyCallerPointcuts(clazz, advisor);
    }
-   
+
    /**
     * Find all classes that this class references.  If any of those classes are advised and have field and/or constructor
     * interception, do instrumentation on this class so that those fields and constructors are instrumented
@@ -590,7 +590,7 @@ public abstract class Instrumentor
       try
       {
          AOPClassPool pool = AOPClassPool.createAOPClassPool(clazz.getClassPool(), AOPClassPoolRepository.getInstance());
-         
+
          //Class.getRefClasses() only gets classes explicitly referenced in the class. We need to check the super classes and do some extra handling
          for (ReferenceClassIterator it = new ReferenceClassIterator(clazz.getRefClasses()) ; it.hasNext() ; )
          {
@@ -623,12 +623,12 @@ public abstract class Instrumentor
                }
             }
             if (!isTransformable(ctRef)) continue;
-            
+
             it.addSuperClass(ctRef);
-            
+
             ClassAdvisor advisor = manager.getTempClassAdvisor(ctRef);
-            
-            
+
+
             if (!manager.getInterceptionMarkers().shouldSkipFieldAccess(ref) && !ref.equals(clazz.getName()))
             {
                List fields = getAdvisableFields(ctRef);
@@ -682,7 +682,7 @@ public abstract class Instrumentor
             isAdvised(clazz) ||
             !isTransformable(clazz));
    }
-   
+
    /**
     * Makes class advisable.
     */
@@ -693,7 +693,7 @@ public abstract class Instrumentor
       {
          if (shouldNotTransform(clazz)) return false;
          if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("trying to transform " + clazz.getName());
-         
+
          DeclareChecker.checkDeclares(manager, clazz, advisor);
 
          boolean converted = instrumentAnnotationIntroductions(clazz, advisor);
@@ -717,7 +717,7 @@ public abstract class Instrumentor
          instrumentIntroductions(clazz, advisor);
 
          converted = convertReferences(clazz) || converted;
-         
+
          boolean shouldReplaceArrayAccess = replaceArrayAccess(clazz, advisor);
          converted = converted || shouldReplaceArrayAccess;
 
@@ -752,7 +752,7 @@ public abstract class Instrumentor
          {
             processedClasses.add(clazz);
          }
-         
+
          if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("was " + clazz.getName() + " converted: " + (basicsSet || converted));
 
          if (basicsSet || converted)
@@ -900,10 +900,10 @@ public abstract class Instrumentor
 
       // add marker interface.
       clazz.addInterface(forName(AOP_PACKAGE + ".Advised"));
-      
+
       doSetupBasics(clazz);
    }
-   
+
    /**
     * Notifies the <code>Instrumentor</code> that some joinpoint status were updated.
     * This method hot swaps the code of afected classes.
@@ -923,7 +923,7 @@ public abstract class Instrumentor
             CtClass clazz = update.clazz;
             JoinpointStatusUpdate.ClassJoinpoints wrapTargets = update.newlyAdvisedJoinpoints;
             JoinpointStatusUpdate.ClassJoinpoints unwrapTargets = update.newlyUnadvisedJoinpoints;
-            
+
             clazz.defrost();
             fieldAccessTransformer.wrap(clazz, wrapTargets.fieldReads, wrapTargets.fieldWrites);
             fieldAccessTransformer.unwrap(clazz, unwrapTargets.fieldReads, unwrapTargets.fieldWrites);
@@ -943,7 +943,7 @@ public abstract class Instrumentor
          Collection conversionsRegistered = new HashSet();
          synchronized(this.processedClasses)
          {
-            for (Iterator iterator2 = processedClasses.iterator(); iterator2.hasNext(); ) {       
+            for (Iterator iterator2 = processedClasses.iterator(); iterator2.hasNext(); ) {
 
                CtClass clazz = (CtClass) iterator2.next();
                if (manager.isNonAdvisableClassName(clazz.getName()) || ! isTransformable(clazz))
@@ -970,7 +970,7 @@ public abstract class Instrumentor
          // notifies code conversion observers
          fieldAccessTransformer.codeConverted();
          constructorExecutionTransformer.codeConverted();
-         
+
          // registers the classes bytecodes to be hot swapped
          for (Iterator iterator = classes.iterator(); iterator.hasNext(); )
          {
@@ -1020,27 +1020,27 @@ public abstract class Instrumentor
 
       if (shouldReplaceArrayAccess)
       {
-         if (AspectManager.verbose) System.out.println("[debug] Replacing array access in " + clazz.getName());
+		  if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("[debug] Replacing array access in " + clazz.getName());
          converter.replaceArrayAccess(classPool.get(ArrayAdvisor.class.getName()), new CodeConverter.DefaultArrayAccessReplacementMethodNames());
       }
       return shouldReplaceArrayAccess;
    }
 
-   
+
    /**
     * Converts all processed classes to make wrapping of the appropriate joinpoints.
-    * This method must be called if some dynamic transformation ocurred (i. e. a 
+    * This method must be called if some dynamic transformation ocurred (i. e. a
     * class has just been loaded and one or more of its joinpoints were wrapped due
     * only to bindings added dynamicaly; in this case, the previously loaded classes
     * may not call the wrappers of this joinpoints, and need to be instrumented).
-    * 
+    *
     * @param hotSwapper responsible for performing any hot swapping operations when
     *                   needed.
     * @param clazz the clazz whose transformation involved dynamic wrapping.
     * @param fieldReads collection of fields whose read joinpoit was dynamicaly wrapped.
     * @param fieldWrites collection of fields whose read joinpoit was dynamicaly wrapped.
     * @param constructor <code>true</code> if the <code>clazz</code> constructors were
-    * dynamicaly wrapped. 
+    * dynamicaly wrapped.
     */
    public void convertProcessedClasses(HotSwapper hotSwapper, CtClass clazz,
          Collection fieldReads, Collection fieldWrites, boolean constructor)
@@ -1061,7 +1061,7 @@ public abstract class Instrumentor
       {
          codeConverter.replaceNew(clazz, clazz, ConstructorExecutionTransformer.constructorFactory(clazz.getSimpleName()));
       }
-         
+
       synchronized(processedClasses)
       {
       for (Iterator iterator = processedClasses.iterator(); iterator.hasNext();)
@@ -1109,9 +1109,9 @@ public abstract class Instrumentor
       }
       hotSwapper.hotSwap();
    }
-   
+
    protected abstract void doSetupBasics(CtClass clazz) throws CannotCompileException, NotFoundException;
-   
+
    /**
     * Creates generic invoke method to be wrapped by real signatures.
     */
@@ -1125,7 +1125,7 @@ public abstract class Instrumentor
       ArrayList classes;
       HashSet handledClasses;
       String currentEntry;
-      
+
       public ReferenceClassIterator(Collection refClasses)
       {
          size = refClasses.size();
@@ -1153,7 +1153,7 @@ public abstract class Instrumentor
       {
          return currentEntry;
       }
-      
+
       void addSuperClass(CtClass clazz)throws NotFoundException
       {
          if (clazz != null)
@@ -1171,7 +1171,7 @@ public abstract class Instrumentor
          }
       }
    }
-   
+
    AspectManager getManager()
    {
       return manager;

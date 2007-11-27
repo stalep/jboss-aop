@@ -43,7 +43,7 @@ public class NonOptimizedFieldAccessTransformer extends FieldAccessTransformer
    {
       super(instrumentor);
    }
-   
+
    protected void doBuildFieldWrappers(CtClass clazz, CtField field, int fieldIndex, boolean shouldReplaceArrayAccess, JoinpointClassification classificationGet, JoinpointClassification classificationSet)
    throws NotFoundException, CannotCompileException
    {
@@ -51,9 +51,9 @@ public class NonOptimizedFieldAccessTransformer extends FieldAccessTransformer
       boolean wrappedGet = classificationGet.equals(JoinpointClassification.WRAPPED);
       boolean wrappedSet = classificationSet.equals(JoinpointClassification.WRAPPED);
       int mod = getStaticModifiers(field);
-                  
-      //Create placeholder static wrappers, since without these methods replaceFieldAccessInternally() 
-      //will not compile. 
+
+      //Create placeholder static wrappers, since without these methods replaceFieldAccessInternally()
+      //will not compile.
       //If we add the actual static wrappers before calling replaceFieldAccessInternally()
       //field access done in the inner invocation classes as well as in the static wrappers
       //is replaced with a call to the wrapper instead, which means infinite recursion
@@ -66,19 +66,19 @@ public class NonOptimizedFieldAccessTransformer extends FieldAccessTransformer
             // prepareForWrapping
             wrapper.prepareForWrapping(field, GET_INDEX);
          }
-            
+
          if (isPrepared(classificationSet))
          {
             addFieldWriteInfoField(Modifier.PRIVATE | Modifier.STATIC, clazz, field);
             OptimizedFieldInvocations.createOptimizedInvocationClass(instrumentor, clazz, field, false);
             // prepareForWrapping
             wrapper.prepareForWrapping(field, SET_INDEX);
-         }  
+         }
       } catch (Exception e)
       {
          throw new CannotCompileException(e);
       }
-      
+
       // wrap
       if (wrappedGet)
       {
@@ -96,19 +96,19 @@ public class NonOptimizedFieldAccessTransformer extends FieldAccessTransformer
             instrumentor.dynamicTransformationObserver.fieldWriteDynamicalyWrapped(field);
          }
       }
-      
+
       // executeWrapping
       replaceFieldAccessInternally(clazz, field, wrappedGet, wrappedSet, fieldIndex);
       buildWrappers(clazz, field, shouldReplaceArrayAccess, wrappedGet, wrappedSet, fieldIndex);
-      
+
    }
-   
+
    private void buildWrappers(CtClass clazz, CtField field, boolean shouldReplaceArrayAccess, boolean doGet, boolean doSet, int index)
    throws NotFoundException, CannotCompileException
    {
       if (doGet)
       {
-         String code = getReadWrapperBody(clazz, field, index); 
+         String code = getReadWrapperBody(clazz, field, index);
          CtMethod method = clazz.getDeclaredMethod(fieldRead(field.getName()));
          method.setBody(code);
       }
@@ -116,10 +116,10 @@ public class NonOptimizedFieldAccessTransformer extends FieldAccessTransformer
       {
          String code = getWriteWrapperBody(clazz, field, shouldReplaceArrayAccess, index);
          CtMethod method = clazz.getDeclaredMethod(fieldWrite(field.getName()));
-         method.setBody(code);            
+         method.setBody(code);
       }
    }
-   
+
    protected String getWrapperBody(CtClass clazz, CtField field, boolean get, int index) throws NotFoundException, CannotCompileException
    {
       if (get)
@@ -129,7 +129,7 @@ public class NonOptimizedFieldAccessTransformer extends FieldAccessTransformer
 //    TODO: set replaceArrayAccess=false as default, must be verified.
       return getWriteWrapperBody(clazz, field, false, index);
    }
-   
+
    private String getReadWrapperBody(CtClass clazz, CtField field, int index)
    throws NotFoundException, CannotCompileException
    {
@@ -142,10 +142,10 @@ public class NonOptimizedFieldAccessTransformer extends FieldAccessTransformer
          access = "((" + clazz.getName() + ")$1).";
          instanceCheck = " || ((org.jboss.aop.ClassInstanceAdvisor)((org.jboss.aop.InstanceAdvised)$1)._getInstanceAdvisor()).hasInstanceAspects";
       }
-      
+
       // read wrapper
-     
-         return 
+
+         return
             "{ " +
             "    if (" + Instrumentor.HELPER_FIELD_NAME + ".hasAspects() " + instanceCheck + " ) " +
             "    { " +
@@ -153,10 +153,10 @@ public class NonOptimizedFieldAccessTransformer extends FieldAccessTransformer
             "    } " +
             "    return " + access + name + "; " +
             "}";
-      
+
    }
-   
-   private String getWriteWrapperBody(CtClass clazz, CtField field, boolean shouldReplaceArrayAccess, int index) 
+
+   private String getWriteWrapperBody(CtClass clazz, CtField field, boolean shouldReplaceArrayAccess, int index)
      throws NotFoundException, CannotCompileException
    {
       String name = field.getName();
@@ -178,9 +178,8 @@ public class NonOptimizedFieldAccessTransformer extends FieldAccessTransformer
           fieldString = clazz.getName() +  "." + field.getName();
       }
       // write wrapper
-      return 
+      return
       "{ " +
-      "    System.out.println(\"INSIDE getWriteWrapperBody for class: "+clazz.getName()+", field: "+field.getName()+", modifier: "+field.getModifiers()+"\");\n" +
       "    " + getArrayWriteRegistration(shouldReplaceArrayAccess, targetString, field, fieldString, "$2") +
       "    if (" + Instrumentor.HELPER_FIELD_NAME + ".hasAspects() " + instanceCheck + " ) " +
       "    { " +
@@ -253,7 +252,7 @@ public class NonOptimizedFieldAccessTransformer extends FieldAccessTransformer
             fieldAccess.replace(code);
          }
       }
-      
+
    }//End Inner class FieldAccessExprEditor
 
 }
