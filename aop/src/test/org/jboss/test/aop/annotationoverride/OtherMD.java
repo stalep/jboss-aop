@@ -26,15 +26,7 @@ package org.jboss.test.aop.annotationoverride;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-@SomeAnnotation
-public class Woven 
-{  
-   @OtherAnnotation("ctor")
-   Woven(){}
-   
-   @OtherAnnotation("field")
-   int field;
-   
-   @OtherAnnotation("method") 
-   void method() {}
+public @interface OtherMD 
+{
+   String value();
 }

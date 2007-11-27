@@ -14,6 +14,7 @@
 		@org.jboss.test.aop.annotationoverride.Other(value="field")
 	</annotation>
 
+
 	<annotation expr="class(org.jboss.test.aop.annotationoverride.Proxied)">
 		@org.jboss.test.aop.annotationoverride.Some
 	</annotation>

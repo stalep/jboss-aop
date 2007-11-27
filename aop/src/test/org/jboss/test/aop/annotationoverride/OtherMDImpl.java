@@ -21,20 +21,30 @@
 */ 
 package org.jboss.test.aop.annotationoverride;
 
+import java.lang.annotation.Annotation;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-@SomeAnnotation
-public class Woven 
-{  
-   @OtherAnnotation("ctor")
-   Woven(){}
+public class OtherMDImpl implements OtherMD
+{
+   String value;
    
-   @OtherAnnotation("field")
-   int field;
+   public OtherMDImpl(String value)
+   {
+      this.value = value;
+   }
    
-   @OtherAnnotation("method") 
-   void method() {}
+   public String value()
+   {
+      return value;
+   }
+
+   public Class<? extends Annotation> annotationType()
+   {
+      return OtherMD.class;
+   }
+
 }

@@ -21,20 +21,19 @@
 */ 
 package org.jboss.test.aop.annotationoverride;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-@SomeAnnotation
-public class Woven 
-{  
-   @OtherAnnotation("ctor")
-   Woven(){}
-   
-   @OtherAnnotation("field")
-   int field;
-   
-   @OtherAnnotation("method") 
-   void method() {}
+@Retention(RetentionPolicy.RUNTIME) @Target({ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD})
+public @interface OtherAnnotation
+{
+   String value();
 }
+ 

@@ -74,6 +74,8 @@ import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.metadata.spi.MetaData;
+import org.jboss.metadata.spi.signature.ConstructorSignature;
+import org.jboss.metadata.spi.signature.FieldSignature;
 import org.jboss.metadata.spi.signature.MethodSignature;
 import org.jboss.util.NestedRuntimeException;
 import org.jboss.util.NotImplementedException;
@@ -343,8 +345,6 @@ public abstract class Advisor
       if (metadata != null)
       {
          Object value = metadata.getAnnotation(annotation);
-         // FIXME The metadata should already include the class annotations
-         //       so we should just return this result
          if (value != null) return value;
       }
 
@@ -353,7 +353,10 @@ public abstract class Advisor
 
       Object value = annotations.resolveClassAnnotation(annotation);
       if (clazz == null) return null;
-      if (value == null) value = AnnotationElement.getVisibleAnnotation(clazz, annotation);
+      if (value == null && metadata == null)
+      {
+         value = AnnotationElement.getVisibleAnnotation(clazz, annotation);
+      }
       return value;
    }
 
@@ -385,12 +388,14 @@ public abstract class Advisor
          {
             if (annotationClass == null)
             {
-               // FIXME ClassLoader - this should use "tgt.getClassLoader()"
-               annotationClass = SecurityActions.getContextClassLoader().loadClass(annotation);
+               ClassLoader cl = SecurityActions.getClassLoader(tgt);
+               if (cl == null)
+               {
+                  cl = SecurityActions.getContextClassLoader();
+               }
+               annotationClass = cl.loadClass(annotation);
             }
-            // FIXME The metadata should already include the class annotations
-            //       so we should just return this result
-            if (metadata.isAnnotationPresent(annotationClass)) return true;
+            if (annotationClass != null && metadata.isAnnotationPresent(annotationClass)) return true;
          }
       }
       catch (ClassNotFoundException e)
@@ -407,12 +412,16 @@ public abstract class Advisor
       if (tgt == null) return false;
       try
       {
-         return AnnotationElement.isAnyAnnotationPresent(tgt, annotation);
+         if (metadata == null)
+         {
+            return AnnotationElement.isAnyAnnotationPresent(tgt, annotation);
+         }
       }
       catch (Exception e)
       {
          throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
       }
+      return false;
    }
 
    public Object resolveAnnotation(Method m, Class annotation)
@@ -428,8 +437,6 @@ public abstract class Advisor
          MetaData methodMD = metadata.getComponentMetaData(signature);
          if (methodMD != null)
          {
-            // FIXME The metadata should already include the class annotations
-            //       so we should just return this result
             Object val = methodMD.getAnnotation(annotation);
             if (val != null) return val;
          }
@@ -439,36 +446,64 @@ public abstract class Advisor
          return null;
 
       Object value = annotations.resolveAnnotation(m, annotation);
-      if (value == null) value = AnnotationElement.getVisibleAnnotation(m, annotation);
+      if (value == null && metadata == null) 
+      {
+         value = AnnotationElement.getVisibleAnnotation(m, annotation);
+      }
       return value;
    }
 
    public Object resolveAnnotation(Method m, Class[] annotationChoices)
    {
-      Object value = null;
-      int i = 0;
-      while (value == null && i < annotationChoices.length){
-         value = annotations.resolveAnnotation(m, annotationChoices[i++]);
+      for (Class ann : annotationChoices)
+      {
+         Object val = resolveAnnotation(m, annotationChoices);
+         if (val != null) return val;
       }
-
-      i = 0;
-      while (value == null && i < annotationChoices.length){
-         value = AnnotationElement.getVisibleAnnotation(m, annotationChoices[i++]);
-      }
-      return value;
+      return null;
    }
 
    public Object resolveAnnotation(Field f, Class annotation)
    {
-      Object value = annotations.resolveAnnotation(f, annotation);
-      if (value == null) value = AnnotationElement.getVisibleAnnotation(f, annotation);
+      Object value = null;
+      if (metadata != null)
+      {
+         FieldSignature signature = new FieldSignature(f);
+         MetaData fieldMD = metadata.getComponentMetaData(signature);
+         if (fieldMD != null)
+         {
+            value = fieldMD.getAnnotation(annotation);
+            if (value != null) return value;
+         }
+      }
+      
+      value = annotations.resolveAnnotation(f, annotation);
+      if (value == null && metadata == null)
+      {
+         value = AnnotationElement.getVisibleAnnotation(f, annotation);
+      }
       return value;
    }
 
    public Object resolveAnnotation(Constructor c, Class annotation)
    {
-      Object value = annotations.resolveAnnotation(c, annotation);
-      if (value == null) value = AnnotationElement.getVisibleAnnotation(c, annotation);
+      Object value = null;
+      if (metadata != null)
+      {
+         ConstructorSignature signature = new ConstructorSignature(c);
+         MetaData conMD = metadata.getComponentMetaData(signature);
+         if (conMD != null)
+         {
+            value = conMD.getAnnotation(annotation);
+            if (value != null) return value;
+         }
+      }
+      
+      value = annotations.resolveAnnotation(c, annotation);
+      if (value == null && metadata == null)
+      {
+         value = AnnotationElement.getVisibleAnnotation(c, annotation);
+      }
       return value;
    }
 
@@ -489,23 +524,104 @@ public abstract class Advisor
          throw new RuntimeException("annotation or annotationClass must be passed in");
       }
 
+      if (annotation == null)
+      {
+         annotation = annotationClass.getName();
+      }
+      if (metadata != null)
+      {
+         if (hasJoinPointAnnotationFromStringName(m.getDeclaringClass(), new MethodSignature(m), annotation))
+         {
+            return true;
+         }
+      }
+
+      if (annotations.hasAnnotation(m, annotation)) return true;
+      try
+      {
+         if (metadata == null)
+         {
+            return AnnotationElement.isAnyAnnotationPresent(m, annotation);
+         }
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
+      }
+      return false;
+   }
+
+   public boolean hasAnnotation(Field m, String annotation)
+   {
+      if (metadata != null)
+      {
+         if (hasJoinPointAnnotationFromStringName(m.getDeclaringClass(), new FieldSignature(m), annotation))
+         {
+            return true;
+         }
+      }
+      if (annotations.hasAnnotation(m, annotation)) return true;
+      try
+      {
+         if (metadata == null)
+         {
+            return AnnotationElement.isAnyAnnotationPresent(m, annotation);
+         }
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
+      }
+      return false;
+   }
+
+   public boolean hasAnnotation(Constructor<?> m, String annotation)
+   {
+      if (metadata != null)
+      {
+         if (hasJoinPointAnnotationFromStringName(m.getDeclaringClass(), new ConstructorSignature(m), annotation))
+         {
+            return true;
+         }
+      }
+      if (annotations.hasAnnotation(m, annotation)) return true;
+      try
+      {
+         if (metadata == null)
+         {
+            return AnnotationElement.isAnyAnnotationPresent(m, annotation);
+         }
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
+      }
+      return false;
+   }
+
+   private boolean hasJoinPointAnnotationFromStringName(Class declaringClass, org.jboss.metadata.spi.signature.Signature sig, String annotationName)
+   {
       try
       {
          if (metadata != null)
          {
-            if (annotationClass == null)
+            ClassLoader cl = SecurityActions.getClassLoader(declaringClass);
+            if (cl == null)
             {
-               // FIXME ClassLoader - this should use "m.getClass().getClassLoader()"
-               annotationClass = SecurityActions.getContextClassLoader().loadClass(annotation);
+               cl = SecurityActions.getContextClassLoader();
             }
-            // FIXME The metadata should already include the class annotations
-            //       so we should just return this result
-            MethodSignature signature = new MethodSignature(m.getName(), m.getParameterTypes());
-            MetaData methodMD = metadata.getComponentMetaData(signature);
-            if (methodMD != null)
+            if (cl != null)
             {
-               if (methodMD.isAnnotationPresent(annotationClass))
-                  return true;
+               Class annotationClass = cl.loadClass(annotationName);
+               if (annotationClass != null)
+               {
+                  MetaData md = metadata.getComponentMetaData(sig);
+                  if (md != null)
+                  {
+                     if (md.isAnnotationPresent(annotationClass))
+                        return true;
+                  }
+               }
             }
          }
       }
@@ -517,49 +633,9 @@ public abstract class Advisor
       {
          throw new RuntimeException(e);
       }
-
-      if (annotation == null)
-      {
-         annotation = annotationClass.getName();
-      }
-
-      if (annotations.hasAnnotation(m, annotation)) return true;
-      try
-      {
-         return AnnotationElement.isAnyAnnotationPresent(m, annotation);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
-      }
+      return false;
    }
-
-   public boolean hasAnnotation(Field m, String annotation)
-   {
-      if (annotations.hasAnnotation(m, annotation)) return true;
-      try
-      {
-         return AnnotationElement.isAnyAnnotationPresent(m, annotation);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
-      }
-   }
-
-   public boolean hasAnnotation(Constructor m, String annotation)
-   {
-      if (annotations.hasAnnotation(m, annotation)) return true;
-      try
-      {
-         return AnnotationElement.isAnyAnnotationPresent(m, annotation);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
-      }
-   }
-
+   
    public boolean hasAnnotation(CtClass clazz, String annotation)
    {
       if (annotations.hasClassAnnotation(annotation)) return true;
