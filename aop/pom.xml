@@ -10,7 +10,7 @@
   <groupId>org.jboss.aop</groupId>
   <artifactId>jboss-aop</artifactId>
   <packaging>jar</packaging>
-  <version>2.0.0-SNAPSHOT</version>
+  <version>2.0.0.CR1</version>
   <name>JBoss AOP</name>
   <description>JBoss AOP Framework</description>
   <url>http://labs.jboss.org/jbossaop</url>
@@ -343,17 +343,17 @@
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>javassist</artifactId>
-      <version>3.6.0.CR1</version>
+      <version>3.6.0.GA</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.microcontainer</groupId>
       <artifactId>jboss-container</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <version>2.0.0.Beta6</version>
     </dependency>
     <dependency>
-      <groupId>jboss</groupId>
+      <groupId>org.jboss</groupId>
       <artifactId>jboss-common-core</artifactId>
-      <version>2.2.0.GA</version>
+      <version>2.2.2.GA</version>
     </dependency>
     <dependency>
       <groupId>jboss</groupId>
