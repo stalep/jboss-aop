@@ -59,7 +59,7 @@
       <componentref name="jboss/microcontainer14" version="2.0.0.Beta4"/>
       <componentref name="jboss/profiler/jvmti" version="1.0.0.CR5"/>
       <componentref name="jboss/test" version="1.0.3.GA"/>
-      <componentref name="jboss/test14" version="1.0.4.GA"/>
+      <componentref name="jboss/test14" version="1.0.3.GA"/>
 		<componentref name="jboss/jboss-vfs" version="2.0.0.Beta6"/>
 		<componentref name="jbossas/core-libs" version="4.0.4.GA"/>
       <componentref name="junit" version="3.8.2-brew"/>
