@@ -1,8 +1,34 @@
 <html>
 <head>
-<title>Release Notes - JBoss AOP - Version 2.0.0.alpha5</title>
+<title>Release Notes - JBoss AOP - Version 2.0.0.CR1</title>
 </head>
 <body>
+
+<h2>Release Notes - JBoss AOP - Version 2.0.0.CR1</h2>
+
+<h3>Bug</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-305'>JBAOP-305</a>] - annotations not found for non-generic implementations of generic interface methods</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-434'>JBAOP-434</a>] - StackOverflow error on ScopedJbossClassPool.getCached</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-483'>JBAOP-483</a>] - Class(Proxy)Container does not populate the metadata</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-484'>JBAOP-484</a>] - GeneratedAdvisor advised class with a super class that is a ContainerProxy gives CCE in JoinpointGenerator</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-489'>JBAOP-489</a>] - Undeploy does not work if path has space characters</li>
+</ul>
+
+<h3>Feature Request</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-366'>JBAOP-366</a>] - Ability to attach a .aop deployment to a particular scoped classloader</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-482'>JBAOP-482</a>] - AOP gives non-descriptive exception when annotation creation of an expression fails</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-488'>JBAOP-488</a>] - Improve AOPContainerProxy.toString()</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-490'>JBAOP-490</a>] - Advisor.resolveAnnotation() and hasAnnotation() should check the MetaData in all cases</li>
+</ul>
+
+<h3>Task</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-107'>JBAOP-107</a>] - The different types of classloader integration for AOP belong in the related release not jboss-head</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-485'>JBAOP-485</a>] - Override Instrumentor.isBaseClass() in GeneratedAdvisorInstrumentor</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-486'>JBAOP-486</a>] - Get rid of SuperClassesWeavingStrategy$CtClassTransformationInfo</li>
+</ul>
 
 <h2>Release Notes - JBoss AOP - Version 2.0.0.beta2</h2>
 
