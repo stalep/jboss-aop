@@ -19,8 +19,7 @@
   </scm>
   <modules>
     <module>aop</module>
-    <!-- These don't work
-    module>aspects</module>
-    <module>asintegration</module-->
+    <module>aspects</module>
+    <module>asintegration</module>
   </modules>
 </project>
