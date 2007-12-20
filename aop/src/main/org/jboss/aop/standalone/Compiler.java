@@ -162,7 +162,8 @@ public class Compiler
             {
                String cpath = tokenizer.nextToken();
                File f = new File(cpath);
-               paths.add(f.toURL());
+               // use toURI().toURL() because of bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4273532
+               paths.add(f.toURI().toURL());
             }
             continue;
          }

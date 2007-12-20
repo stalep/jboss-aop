@@ -91,7 +91,8 @@ public class MemoryLeakTester extends TestCase
        while (tokenString.hasMoreElements())
        {
           String value = tokenString.nextToken();
-          URL itemLocation = new File(value).toURL();
+          // use toURI().toURL() because of bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4273532
+          URL itemLocation = new File(value).toURI().toURL();
           if (!itemLocation.equals(classLocation) && !itemLocation.toString().equals(pathIgnore))
           {
              //System.out.println("Location:" + itemLocation);

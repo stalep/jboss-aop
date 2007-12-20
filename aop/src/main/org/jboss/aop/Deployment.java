@@ -178,7 +178,8 @@ public class Deployment
 
    private static void deployXmlFile(File f) throws Exception
    {
-      URL url = f.toURL();
+      // use toURI().toURL() because of bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4273532
+      URL url = f.toURI().toURL();
       if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("deploying " + url);
       AspectXmlLoader.deployXML(url);
    }
