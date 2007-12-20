@@ -126,7 +126,7 @@ main() {
 	done
 
 	# make sure we get back
-	cd $_cwd
+	cd "$_cwd"
 
 	if [ "$cwd" != "$ROOT" ]; then
 	    found="true"
@@ -152,16 +152,16 @@ main() {
 
     # change to the directory where the script lives so users are not forced
     # to be in the same directory as build.xml
-    cd $DIRNAME
+    cd "$DIRNAME"
 
     # export some stuff for ant
     export ANT ANT_HOME ANT_OPTS
 
     # execute in debug mode, or simply execute
     if [ "x$ANT_DEBUG" != "x" ]; then
-	/bin/sh -x $ANT $ANT_OPTIONS "$@"
+	/bin/sh -x "$ANT" $ANT_OPTIONS "$@"
     else
-	exec $ANT $ANT_OPTIONS "$@"
+	exec "$ANT" $ANT_OPTIONS "$@"
     fi
 }
 

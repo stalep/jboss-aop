@@ -126,7 +126,7 @@ main() {
 	done
 
 	# make sure we get back
-	cd $_cwd
+	cd "$_cwd"
 
 	if [ "$cwd" != "$ROOT" ]; then
 	    found="true"
@@ -159,9 +159,9 @@ main() {
 
     # execute in debug mode, or simply execute
     if [ "x$ANT_DEBUG" != "x" ]; then
-       /bin/sh -x $ANT $ANT_OPTIONS "$@"
+       /bin/sh -x "$ANT" $ANT_OPTIONS "$@"
     else
-       exec $ANT $ANT_OPTIONS "$@"
+       exec "$ANT" $ANT_OPTIONS "$@"
     fi
 }
 
