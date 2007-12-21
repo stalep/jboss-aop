@@ -46,8 +46,8 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
 {
    static final long serialVersionUID = -3057976129116723527L;
 
-   protected ArrayList insertedInterceptors = null;
-   protected ArrayList appendedInterceptors = null;
+   protected ArrayList<Interceptor> insertedInterceptors = null;
+   protected ArrayList<Interceptor> appendedInterceptors = null;
    protected WeakReference instanceRef;
    public boolean hasInstanceAspects = false;
    private InterceptorChainObserver interceptorChainObserver;
@@ -198,7 +198,7 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
 
    public void appendInterceptor(Interceptor interceptor)
    {
-      ArrayList newList = new ArrayList();
+      ArrayList<Interceptor> newList = new ArrayList<Interceptor>();
       if (appendedInterceptors != null)
       {
          newList.addAll(appendedInterceptors);

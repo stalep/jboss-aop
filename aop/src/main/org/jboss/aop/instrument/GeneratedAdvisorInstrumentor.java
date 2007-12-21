@@ -65,7 +65,8 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
    private static final String CHECK_VERSION = "checkVersion";
    private static final String ADVICES_UPDATED = "advicesUpdated";
    private static final String INSTANCE_ADVISOR_MIXIN = "instanceAdvisorMixin";
-
+   private static final String PARENT = "parent";
+   
    //method names in advisor or GeneratedClassAdvisor
    private static final String CREATE_INSTANCE_ADVISOR = "createInstanceAdvisor";
    private static final String INITIALISE_CALLERS = "initialiseCallers";
@@ -77,7 +78,9 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
    private static final String INITIALISE_INFOS_FOR_INSTANCE = "initialiseInfosForInstance";
    public static final String GET_CLASS_ADVISOR = "_getClassAdvisor";
    private static final String DO_REBUILD_FOR_INSTANCE = "doRebuildForInstance";
-
+   private static final String LOCK_WRITE_CHAINS = "lockWriteInterceptorChains";
+   private static final String UNLOCK_WRITE_CHAINS = "unlockWriteInterceptorChains";
+   
    private static final String DECLARING_CLASS = "this.getClass().getDeclaringClass()";
 
 
@@ -337,15 +340,41 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             genInstanceAdvisor);
       genInstanceAdvisor.addMethod(advicesUpdated);
 
+      // method that enables the write locks on all interceptor chains
+      CtMethod lockWriteChains = CtNewMethod.make(
+            Modifier.PROTECTED,
+            CtClass.voidType,
+            LOCK_WRITE_CHAINS,
+            EMPTY_SIG,
+            EMPTY_EXCEPTIONS,
+            null,
+            genInstanceAdvisor);
+      genInstanceAdvisor.addMethod(lockWriteChains);
+      
+      // method that disables the write locks on all interceptor chains
+      CtMethod unlockWriteChains = CtNewMethod.make(
+            Modifier.PROTECTED,
+            CtClass.voidType,
+            UNLOCK_WRITE_CHAINS,
+            EMPTY_SIG,
+            EMPTY_EXCEPTIONS,
+            null,
+            genInstanceAdvisor);
+      genInstanceAdvisor.addMethod(unlockWriteChains);
+      
       implementInstanceAdvisorMethods();
-
+      
       String drfiBody =
          "{" +
-         "   internalRebuildInterceptors(); " +
-         "   if (" + INSTANCE_ADVISOR_MIXIN + ".hasInterceptors())" +
+         LOCK_WRITE_CHAINS + "();" +
+         "   try" +
          "   {" +
-         "       " + ADVICES_UPDATED + "();" +
-         "   }" +
+         "      internalRebuildInterceptors(); " +
+         "      if (" + INSTANCE_ADVISOR_MIXIN + ".hasInterceptors())" +
+         "      {" +
+         "          " + ADVICES_UPDATED + "();" +
+         "      }" +
+         "   } finally { " + UNLOCK_WRITE_CHAINS + "();}" +
          "}";
       CtMethod doRebuildForInstance = CtNewMethod.make(
             Modifier.PROTECTED,
@@ -356,11 +385,14 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             drfiBody,
             genInstanceAdvisor);
       genInstanceAdvisor.addMethod(doRebuildForInstance);
-
+      
+      CtField parentField = new CtField(this.getGenadvisor(), PARENT, genInstanceAdvisor);
+      genInstanceAdvisor.addField(parentField, "null");
       String body =
          "{" +
          "    super($2);" +
          "   " + INSTANCE_ADVISOR_MIXIN + " = new org.jboss.aop.GeneratedInstanceAdvisorMixin($1, $2);" +
+         "   " + PARENT + " = $2;" +
          "}";
       CtConstructor ctor = CtNewConstructor.make(new CtClass[]{forName("java.lang.Object"), genadvisor}, new CtClass[0], body, genInstanceAdvisor);
       genInstanceAdvisor.addConstructor(ctor);
@@ -480,8 +512,11 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
          String ret = (instanceAdvisorMethods[i].getReturnType().equals(CtClass.voidType)) ? "" : "return ";
          StringBuffer delegatingBody = new StringBuffer();
          delegatingBody.append("{");
+         boolean changeInterceptorChainsOperation = false;
          if (name.startsWith("insertInterceptor") || name.startsWith("removeInterceptor") || name.startsWith("appendInterceptor"))
          {
+            changeInterceptorChainsOperation = true;
+            delegatingBody.append(LOCK_WRITE_CHAINS).append("();").append("try {");
             delegatingBody.append(ADVICES_UPDATED + "();");
          }
          if (!instanceAdvisorMethods[i].getReturnType().equals(CtClass.voidType))
@@ -489,7 +524,11 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             delegatingBody.append("return ");
          }
          delegatingBody.append(INSTANCE_ADVISOR_MIXIN + "." + instanceAdvisorMethods[i].getName() + "($$);}");
-
+         if (changeInterceptorChainsOperation)
+         {
+            delegatingBody.append(" finally {").append(UNLOCK_WRITE_CHAINS).append("();}}");
+         }
+         
          CtMethod m = CtNewMethod.make(
                Modifier.PUBLIC,
                instanceAdvisorMethods[i].getReturnType(),
@@ -650,6 +689,8 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
 
       StringBuffer advicesUpdatedCode = new StringBuffer();
       StringBuffer initialiseInfosForInstanceCode = new StringBuffer();
+      StringBuffer lockWriteChainsCode = new StringBuffer();
+      StringBuffer unlockWriteChainsCode = new StringBuffer();
       initialiseInfosForInstanceCode.append("java.util.Collection fieldReadCol = new java.util.ArrayList();");
       initialiseInfosForInstanceCode.append("java.util.Collection fieldWriteCol = new java.util.ArrayList();");
       //initialiseInfosForInstanceCode.append("methodInfos = new org.jboss.aop.MethodInterceptors($0);");
@@ -682,6 +723,8 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             {
                String code = infoName + " = super.copyInfoFromClassAdvisor(((" + genadvisor.getName() + ")" + clazz.getName() + "." + GET_CLASS_ADVISOR + "())." + infoName + ");";
                initialiseInfosForInstanceCode.append(code);
+               lockWriteChainsCode.append(infoName).append(".getInterceptorChainReadWriteLock().writeLock().lock();");
+               unlockWriteChainsCode.append(infoName).append(".getInterceptorChainReadWriteLock().writeLock().unlock();");
             }
             if (infoClassName.equals(FieldInfo.class.getName()))
             {
@@ -711,6 +754,11 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       
       CtMethod advicesUpdated = genInstanceAdvisor.getDeclaredMethod(ADVICES_UPDATED);
       advicesUpdated.insertAfter(advicesUpdatedCode.toString());
+      
+      CtMethod lockWriteChains = genInstanceAdvisor.getDeclaredMethod(LOCK_WRITE_CHAINS);
+      lockWriteChains.insertAfter(lockWriteChainsCode.toString());
+      CtMethod unlockWriteChains = genInstanceAdvisor.getDeclaredMethod(UNLOCK_WRITE_CHAINS);
+      unlockWriteChains.insertAfter(unlockWriteChainsCode.toString());
    }
 
    private String addAdvicesUpdatedForJoinpointField(String infoName) throws NotFoundException, CannotCompileException
@@ -745,12 +793,15 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             CHECK_VERSION + "();" +
             "if (" + updatedAdvicesFieldName + ")" +
             "{ " +
-            "   " + JoinPointInfo.class.getName() + " copy = " + names.getInfoFieldName() + ".copy();" +
-            "   copy.setInterceptors( " + INSTANCE_ADVISOR_MIXIN + ".getWrappers(copy.getInterceptors()) );" +
-            "   " + updatedAdvicesFieldName + " = false;" +
-            "   " + names.getJoinPointField().getName() + " = null;" +
-//            "   " + names.getInfoFieldName() + ".setInterceptors(copy.getInterceptors());" +  //We need a way to make this "transient" 
-            "   super.rebindJoinPointWithInstanceInformation(copy);" +
+            "   " + names.getInfoFieldName() + ".getInterceptorChainReadWriteLock().writeLock().lock();" +
+            "   try" +
+            "   {" +
+            "      " + names.getInfoFieldName() + ".setInterceptors( " + INSTANCE_ADVISOR_MIXIN + ".getWrappers(" + PARENT + "." + names.getInfoFieldName() + ".getInterceptors()) );" +
+            "      " + names.getJoinPointField().getName() + " = null;" +
+            "      " + updatedAdvicesFieldName + " = false;" +
+            "      super.rebindJoinPointWithInstanceInformation(" + names.getInfoFieldName() + ");" +
+            "   } finally {" +
+            "   " + names.getInfoFieldName() + ".getInterceptorChainReadWriteLock().writeLock().unlock();}" +
             "}";
          instanceAdvisorMethod.insertBefore(code);
          genInstanceAdvisor.addMethod(instanceAdvisorMethod);
@@ -834,12 +885,12 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
    // TODO remove this code and put it somewhere common to all ga transformers.
    static String generateInterceptorChainLockCode(String infoName)
    {
-      return infoName + ".getInterceptorChainReadLock().lock();";
+      return infoName + ".getInterceptorChainReadWriteLock().readLock().lock();";
    }
    
    static String generateInterceptorChainUnlockCode(String infoName)
    {
-      return infoName + ".getInterceptorChainReadLock().unlock();";
+      return infoName + ".getInterceptorChainReadWriteLock().readLock().unlock();";
    }
    
    private void addCodeToInitialiseMethod(CtClass clazz, String code, String methodName) throws NotFoundException

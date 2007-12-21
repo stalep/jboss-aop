@@ -245,8 +245,8 @@ public abstract class JoinPointInfo implements JoinPointBean
       return adviceString; 
    }
    
-   public final ReentrantReadWriteLock.ReadLock getInterceptorChainReadLock()
+   public final ReentrantReadWriteLock getInterceptorChainReadWriteLock()
    {
-      return this.interceptorChainLock.readLock();
+      return this.interceptorChainLock;
    }
 }

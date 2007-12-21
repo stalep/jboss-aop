@@ -911,6 +911,26 @@ public abstract class Advisor
       }
    }
 
+   protected void lockWriteChain(MethodInterceptors methodInterceptors)
+   {
+      Object[] methodMatchInfos = methodInterceptors.infos.getValues();
+      for (int i = 0; i < methodMatchInfos.length; i++)
+      {
+         MethodMatchInfo methodMatchInfo = (MethodMatchInfo) methodMatchInfos[i];
+         methodMatchInfo.getInfo().getInterceptorChainReadWriteLock().writeLock().lock();
+      }
+   }
+   
+   protected void unlockWriteChain(MethodInterceptors methodInterceptors)
+   {
+      Object[] methodMatchInfos = methodInterceptors.infos.getValues();
+      for (int i = 0; i < methodMatchInfos.length; i++)
+      {
+         MethodMatchInfo methodMatchInfo = (MethodMatchInfo) methodMatchInfos[i];
+         methodMatchInfo.getInfo().getInterceptorChainReadWriteLock().writeLock().unlock();
+      }
+   }
+   
    protected void resetChain(MethodInterceptors methodInterceptors)
    {
       Object[] methodMatchInfos = methodInterceptors.infos.getValues();
@@ -1097,6 +1117,22 @@ public abstract class Advisor
           interceptors = applyPrecedence(list.toArray(new Interceptor[list.size()]));
          }
          info.setInterceptors(interceptors);
+      }
+   }
+   
+   protected void lockWriteChain(JoinPointInfo[] infos)
+   {
+      for (int i = 0; i < infos.length; i++)
+      {
+         infos[i].getInterceptorChainReadWriteLock().writeLock().lock();
+      }
+   }
+   
+   protected void unlockWriteChain(JoinPointInfo[] infos)
+   {
+      for (int i = 0; i < infos.length; i++)
+      {
+         infos[i].getInterceptorChainReadWriteLock().writeLock().unlock();
       }
    }
    

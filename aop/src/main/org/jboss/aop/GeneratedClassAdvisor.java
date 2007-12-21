@@ -1069,9 +1069,17 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    
    protected Object rebindJoinPointWithInstanceInformation(JoinPointInfo info)
    {
-      JoinPointGenerator generator = getJoinPointGenerator(info);
-      generator.rebindJoinpoint(info);
-      return generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+      info.getInterceptorChainReadWriteLock().readLock().lock();
+      try
+      {
+         JoinPointGenerator generator = getJoinPointGenerator(info);
+         generator.rebindJoinpoint(info);
+         return generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+      }
+      finally
+      {
+         info.getInterceptorChainReadWriteLock().readLock().unlock();
+      }
    }
    
    /**

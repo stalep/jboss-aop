@@ -653,54 +653,58 @@ public class DynamicTester extends AOPTestWithSetup
       POJO pojo1 = new POJO();
       AdviceBinding bindingTopA = new AdviceBinding("execution(* org.jboss.test.aop.dynamicgenadvisor.*POJO->someMethod*(..))", null);
       String nameTopA = bindingTopA.getName();
-      AspectDefinition myAspect = AspectManager.instance().getAspectDefinition("org.jboss.test.aop.dynamicgenadvisor.MyAspect"); 
-      bindingTopA.addInterceptorFactory(new AdviceFactory(myAspect, "intercept"));
-      AspectManager.instance().addBinding(bindingTopA);
-      
-      Interceptions.clear();
-      pojo1.someMethod(123);
-      assertEquals(1, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(0));
-      
-      System.out.println("---- Adding more interceptors");
-      
-      InstanceAdvisor pojoIa1 = ((Advised)pojo1)._getInstanceAdvisor();
-      pojoIa1.insertInterceptor(new MyInterceptor());
-      
-      Interceptions.clear();
-      pojo1.someMethod(123);
-      assertEquals(2, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
-      assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(1));
+      try
+      {
+         AspectDefinition myAspect = AspectManager.instance().getAspectDefinition("org.jboss.test.aop.dynamicgenadvisor.MyAspect"); 
+         bindingTopA.addInterceptorFactory(new AdviceFactory(myAspect, "intercept"));
+         AspectManager.instance().addBinding(bindingTopA);
 
-      pojoIa1.appendInterceptor(new YourInterceptor());
-      
-      Interceptions.clear();
-      pojo1.someMethod(123);
-      assertEquals(3, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
-      assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(1));
-      assertEquals(Interceptions.getMethodName("YourInterceptor", "POJO", "someMethod"), Interceptions.get(2));
+         Interceptions.clear();
+         pojo1.someMethod(123);
+         assertEquals(1, Interceptions.size());
+         assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(0));
 
-      System.out.println("Testing SubPOJO");
-      SubPOJO sub1 = new SubPOJO();
-      Interceptions.clear();
-      sub1.someMethod(123);
-      assertEquals(1, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(0));
-      
-      InstanceAdvisor subPojoIa1 = ((Advised)sub1)._getInstanceAdvisor();
-      subPojoIa1.insertInterceptor(new MyInterceptor());
-      subPojoIa1.appendInterceptor(new YourInterceptor());
-      
-      Interceptions.clear();
-      sub1.someMethod(123);
-      assertEquals(3, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
-      assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(1));
-      assertEquals(Interceptions.getMethodName("YourInterceptor", "POJO", "someMethod"), Interceptions.get(2));
-      
-      AspectManager.instance().removeBinding(nameTopA);
+         System.out.println("---- Adding more interceptors");
+
+         InstanceAdvisor pojoIa1 = ((Advised)pojo1)._getInstanceAdvisor();
+         pojoIa1.insertInterceptor(new MyInterceptor());
+
+         Interceptions.clear();
+         pojo1.someMethod(123);
+         assertEquals(2, Interceptions.size());
+         assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
+         assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(1));
+
+         pojoIa1.appendInterceptor(new YourInterceptor());
+
+         Interceptions.clear();
+         pojo1.someMethod(123);
+         assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
+         assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(1));
+         assertEquals(Interceptions.getMethodName("YourInterceptor", "POJO", "someMethod"), Interceptions.get(2));
+
+         System.out.println("Testing SubPOJO");
+         SubPOJO sub1 = new SubPOJO();
+         Interceptions.clear();
+         sub1.someMethod(123);
+         assertEquals(1, Interceptions.size());
+         assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(0));
+
+         InstanceAdvisor subPojoIa1 = ((Advised)sub1)._getInstanceAdvisor();
+         subPojoIa1.insertInterceptor(new MyInterceptor());
+         subPojoIa1.appendInterceptor(new YourInterceptor());
+
+         Interceptions.clear();
+         sub1.someMethod(123);
+         assertEquals(3, Interceptions.size());
+         assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
+         assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(1));
+         assertEquals(Interceptions.getMethodName("YourInterceptor", "POJO", "someMethod"), Interceptions.get(2));
+      }
+      finally
+      {
+         AspectManager.instance().removeBinding(nameTopA);
+      }
    }
    
    public void testAddAnnotation() throws Exception

@@ -623,31 +623,47 @@ public class ClassAdvisor extends Advisor
       {
          logger.debug("Updating chains for " + clazz + " " + ((clazz != null) ? clazz.getClassLoader() : null ));  
       }
-      logger.debug("Updating chains for " + clazz + " " + ((clazz != null) ? clazz.getClassLoader() : null ));
-      resetChain(methodInfos);
-      resetChain(fieldReadInfos);
-      resetChain(fieldWriteInfos);
-      resetChain(constructorInfos);
-      resetChain(constructionInfos);
-
-      synchronized (manager.getBindings())
+      
+      lockWriteChain(methodInfos);
+      lockWriteChain(fieldReadInfos);
+      lockWriteChain(fieldWriteInfos);
+      lockWriteChain(constructorInfos);
+      lockWriteChain(constructionInfos);
+      try
       {
-         Iterator it = manager.getBindings().values().iterator();
-         while (it.hasNext())
+         resetChain(methodInfos);
+         resetChain(fieldReadInfos);
+         resetChain(fieldWriteInfos);
+         resetChain(constructorInfos);
+         resetChain(constructionInfos);
+   
+         synchronized (manager.getBindings())
          {
-            AdviceBinding binding = (AdviceBinding) it.next();
-            if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName() + " " + binding.getPointcut().getExpr());
-            resolveMethodPointcut(binding);
-            resolveFieldPointcut(fieldReadInfos, binding, false);
-            resolveFieldPointcut(fieldWriteInfos, binding, true);
-            resolveConstructorPointcut(binding);
-            resolveConstructionPointcut(binding);
+            Iterator it = manager.getBindings().values().iterator();
+            while (it.hasNext())
+            {
+               AdviceBinding binding = (AdviceBinding) it.next();
+               if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName() + " " + binding.getPointcut().getExpr());
+               resolveMethodPointcut(binding);
+               resolveFieldPointcut(fieldReadInfos, binding, false);
+               resolveFieldPointcut(fieldWriteInfos, binding, true);
+               resolveConstructorPointcut(binding);
+               resolveConstructionPointcut(binding);
+            }
          }
+   
+         finalizeChains();
+         populateInterceptorsFromInfos();
       }
-
-      finalizeChains();
-      populateInterceptorsFromInfos();
-
+      finally
+      {
+         unlockWriteChain(methodInfos);
+         unlockWriteChain(fieldReadInfos);
+         unlockWriteChain(fieldWriteInfos);
+         unlockWriteChain(constructorInfos);
+         unlockWriteChain(constructionInfos);
+      }
+      
       doesHaveAspects = adviceBindings.size() > 0;
       // Notify observer about this change
       if (this.interceptorChainObserver != null)

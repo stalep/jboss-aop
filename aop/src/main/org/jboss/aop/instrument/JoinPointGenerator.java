@@ -272,7 +272,7 @@ public abstract class JoinPointGenerator
 
          //Attempt to get the cached information so we don't have to recreate the class every time we rebind the joinpoint
          String infoAdviceString = info.getAdviceString();
-         GeneratedClassInfo generatedClass = (GeneratedClassInfo)generatedJoinPointClassCache.get(infoAdviceString);
+         GeneratedClassInfo generatedClass = (GeneratedClassInfo) generatedJoinPointClassCache.get(infoAdviceString);
          Class clazz = null;
          if (generatedClass != null)
          {
