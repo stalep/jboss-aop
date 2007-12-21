@@ -42,8 +42,8 @@ public class RebuildThread extends Thread
    {
       for(int i=0; i < 30; i++)
       {
-         unlinkAdvice();
          linkNewAdvice();
+         unlinkAdvice();
 
          if(isDone())
             return;
