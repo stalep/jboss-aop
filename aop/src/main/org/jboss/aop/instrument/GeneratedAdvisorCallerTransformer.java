@@ -144,7 +144,16 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
                "{" +
                "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
                "   {" +
-               "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+               GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
+               "      try" +
+               "      {" + 
+               "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
+               "         {" +
+               "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+               "         }" +
+               "      } finally {" +
+               GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
+               "      }" +
                "   }" +
                "   if (" + joinpointName + " == null)" +
                "   { " +
@@ -246,7 +255,16 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
                "{" +
                "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
                "   {" +
-               "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+               GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
+               "      try" +
+               "      {" +
+               "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
+               "         {" +
+               "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+               "         }" +
+               "      } finally {" +
+               GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
+               "      }" +
                "   }" +
                "   if (" + joinpointName + " == null)" +
                "   { " +
@@ -338,7 +356,16 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          code.append("{");
          code.append("   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())");
          code.append("   {");
-         code.append("      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");");
+         code.append(GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName));
+         code.append("      try" );
+         code.append("      {");
+         code.append("         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())");
+         code.append("         {");
+         code.append("            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");");
+         code.append("         }");
+         code.append("      } finally {");
+         code.append(GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName));
+         code.append("      }");
          code.append("   }");
          code.append("   if (" + joinpointName + " == null)");
          code.append("   { ");
@@ -419,7 +446,16 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
                "{" +
                "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
                "   {" +
-               "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+               GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
+               "      try" +
+               "      {" +
+               "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
+               "         {" +
+               "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+               "         }" +
+               "       } finally {" +
+               GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
+               "       }" +
                "   }" +
                "   if (" + joinpointName + " == null)" +
                "   { " +

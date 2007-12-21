@@ -831,7 +831,17 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       addCodeToInitialiseMethod(genadvisor, infoName + " = " + init + ";", INITIALISE_CALLERS);
    }
 
-
+   // TODO remove this code and put it somewhere common to all ga transformers.
+   static String generateInterceptorChainLockCode(String infoName)
+   {
+      return infoName + ".getInterceptorChainReadLock().lock();";
+   }
+   
+   static String generateInterceptorChainUnlockCode(String infoName)
+   {
+      return infoName + ".getInterceptorChainReadLock().unlock();";
+   }
+   
    private void addCodeToInitialiseMethod(CtClass clazz, String code, String methodName) throws NotFoundException
    {
       CtMethod method = clazz.getDeclaredMethod(methodName);

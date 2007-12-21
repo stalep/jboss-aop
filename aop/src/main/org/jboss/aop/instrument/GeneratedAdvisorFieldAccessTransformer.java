@@ -264,7 +264,16 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
             "{" +
             "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "   {" +
-            "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+            GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
+            "      try" +
+            "      {" +
+            "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
+            "         {" +
+            "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+            "         }" +
+            "      } finally {" +
+            GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
+            "      }" +
             "   }" +
             "   if (" + joinpointName + " == null)" +
             "   { " +
@@ -282,7 +291,16 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
             "{" +
             "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "   {" +
-            "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+            GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
+            "      try" +
+            "      {" +
+            "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
+            "         {" +
+            "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+            "         }" +
+            "      } finally {" +
+            GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
+            "      }" +
             "   }" +
             "   if (" + joinpointName + " == null)" +
             "   { " +
@@ -314,7 +332,16 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
             "    " + getArrayWriteRegistration(shouldReplaceArrayAccess, targetString, field, fieldString, "$2") +
             "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "   {" +
-            "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+            GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
+            "      try" +
+            "      {" +
+            "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
+            "         {" +
+            "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+            "         }" +
+            "      } finally {" +
+            GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
+            "      }" +
             "   }" +
             "   if (" + joinpointName + " == null)" +
             "   { " +
@@ -335,7 +362,16 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
             "    " + getArrayWriteRegistration(shouldReplaceArrayAccess, targetString, field, fieldString, "$2") +
             "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "   {" +
-            "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+            GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
+            "      try" +
+            "      {" +
+            "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
+            "         {" +
+            "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+            "         }" +
+            "      } finally {" +
+            GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
+            "      }" +
             "   }" +
             "   if (" + joinpointName + " == null)" +
             "   { " +

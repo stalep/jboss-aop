@@ -23,7 +23,7 @@ package org.jboss.aop;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.jboss.aop.advice.GeneratedAdvisorInterceptor;
 import org.jboss.aop.advice.Interceptor;
@@ -32,6 +32,8 @@ import org.jboss.aop.joinpoint.Joinpoint;
 
 public abstract class JoinPointInfo implements JoinPointBean
 {
+   private ReentrantReadWriteLock interceptorChainLock = new ReentrantReadWriteLock();
+   
    private Interceptor[] interceptors;
 
    private ArrayList<Interceptor> interceptorChain = new ArrayList<Interceptor>();
@@ -97,21 +99,37 @@ public abstract class JoinPointInfo implements JoinPointBean
 
    public boolean hasAdvices()
    {
-      return (interceptors != null && interceptors.length > 0);
+      this.interceptorChainLock.readLock().lock();
+      try
+      {
+         return (interceptors != null && interceptors.length > 0);
+      }
+      finally
+      {
+         this.interceptorChainLock.readLock().unlock();
+      }
    }
    
    public boolean equalChains(Interceptor[] otherInterceptors)
    {
-      if (this.interceptors == null && otherInterceptors == null) return true;
-      if (!(this.interceptors != null && otherInterceptors != null))return false;
-      if (this.interceptors.length != otherInterceptors.length) return false;
-      
-      for (int i = 0 ; i < this.interceptors.length ; i++)
+      this.interceptorChainLock.readLock().lock();
+      try
       {
-         if(!this.interceptors[i].equals(otherInterceptors[i])) return false;
-      }
+         if (this.interceptors == null && otherInterceptors == null) return true;
+         if (!(this.interceptors != null && otherInterceptors != null))return false;
+         if (this.interceptors.length != otherInterceptors.length) return false;
+      
+         for (int i = 0 ; i < this.interceptors.length ; i++)
+         {
+            if(!this.interceptors[i].equals(otherInterceptors[i])) return false;
+         }
 
-      return true;
+         return true;
+      }
+      finally
+      {
+         this.interceptorChainLock.readLock().unlock();
+      }
    }
    
    public Joinpoint getJoinpoint()
@@ -124,16 +142,34 @@ public abstract class JoinPointInfo implements JoinPointBean
    }
    
    public ArrayList<Interceptor> getInterceptorChain() {
-      return interceptorChain;
+      this.interceptorChainLock.readLock().lock();
+      try
+      {
+         return interceptorChain;
+      }
+      finally
+      {
+         this.interceptorChainLock.readLock().unlock();
+      }
    }
 
    public Interceptor[] getInterceptors() {
-      return interceptors;
+      this.interceptorChainLock.readLock().lock();
+      try
+      {
+         return interceptors;
+      }
+      finally
+      {
+         this.interceptorChainLock.readLock().unlock();
+      }
    }
 
    public void setInterceptors(Interceptor[] interceptors) {
+      this.interceptorChainLock.writeLock().lock();
       adviceString = null;
       this.interceptors = interceptors;
+      this.interceptorChainLock.writeLock().unlock();
    }
 
    protected abstract Joinpoint internalGetJoinpoint();
@@ -161,14 +197,24 @@ public abstract class JoinPointInfo implements JoinPointBean
    
    public void cloneChains(JoinPointInfo other)
    {
-      interceptorChain = (ArrayList)other.interceptorChain.clone();
-      if (other.interceptors == null)
+      this.interceptorChainLock.writeLock().lock();
+      other.interceptorChainLock.readLock().lock();
+      try
       {
-         interceptors = null;
+         interceptorChain = (ArrayList) other.interceptorChain.clone();
+         if (other.interceptors == null)
+         {
+            interceptors = null;
+         }
+         else
+         {
+            interceptors = other.interceptors.clone();
+         }
       }
-      else
+      finally
       {
-         interceptors = other.interceptors.clone();
+         this.interceptorChainLock.writeLock().unlock();
+         other.interceptorChainLock.readLock().unlock();
       }
    }
    
@@ -197,5 +243,10 @@ public abstract class JoinPointInfo implements JoinPointBean
       }
       
       return adviceString; 
+   }
+   
+   public final ReentrantReadWriteLock.ReadLock getInterceptorChainReadLock()
+   {
+      return this.interceptorChainLock.readLock();
    }
 }

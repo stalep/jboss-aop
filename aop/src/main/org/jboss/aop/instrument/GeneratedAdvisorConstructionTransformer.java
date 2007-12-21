@@ -147,7 +147,16 @@ public class GeneratedAdvisorConstructionTransformer extends ConstructionTransfo
          "{" +
          "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
          "   {" +
-         "      super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+         GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
+         "      try" +
+         "      {" +
+         "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
+         "         {" +
+         "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+         "         }" +
+         "      } finally {" +
+         GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
+         "      }" +
          "   }" +
          "   if (" + joinpointName + " != null)" +
          "   { " +
