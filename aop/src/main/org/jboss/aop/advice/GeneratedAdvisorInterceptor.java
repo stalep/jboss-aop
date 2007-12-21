@@ -491,6 +491,7 @@ public class GeneratedAdvisorInterceptor implements Interceptor
                throw new RuntimeException("No such interceptor");
          }
          
+         buf.append(this.getScope());
          buf.append("~#$%");
          buf.append(getAspectClassName());
          buf.append("->");
