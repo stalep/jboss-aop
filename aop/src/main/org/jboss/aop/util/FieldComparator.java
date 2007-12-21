@@ -22,6 +22,7 @@
 package org.jboss.aop.util;
 
 import java.lang.reflect.Field;
+import java.util.Comparator;
 
 /**
  * Compares Fields. This is used to make sure the field IDs line up between
@@ -30,18 +31,13 @@ import java.lang.reflect.Field;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public class FieldComparator implements java.util.Comparator {
+public class FieldComparator implements Comparator<Field> {
 
     private FieldComparator() {}
 
-    public static final java.util.Comparator INSTANCE = new FieldComparator();
+    public static final Comparator<Field> INSTANCE = new FieldComparator();
         
-    private int compare(Field m1, Field m2) {
+    public int compare(Field m1, Field m2) {
        return m1.getName().compareTo(m2.getName());
     }
-
-    public int compare(Object o1, Object o2) {
-        return compare((Field) o1, (Field) o2);
-    }
-
 }

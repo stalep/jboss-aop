@@ -22,6 +22,7 @@
 package org.jboss.aop.util;
 
 import java.lang.reflect.Constructor;
+import java.util.Comparator;
 
 
 /**
@@ -31,13 +32,13 @@ import java.lang.reflect.Constructor;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public class ConstructorComparator implements java.util.Comparator
+public class ConstructorComparator implements Comparator<Constructor>
 {
    private ConstructorComparator() {}
 
-   public static final java.util.Comparator INSTANCE = new ConstructorComparator();
+   public static final java.util.Comparator<Constructor> INSTANCE = new ConstructorComparator();
         
-   private int compare(Constructor m1, Constructor m2) {
+   public int compare(Constructor m1, Constructor m2) {
       try {
          Class[] args1 = m1.getParameterTypes();
          Class[] args2 = m2.getParameterTypes();
@@ -54,9 +55,5 @@ public class ConstructorComparator implements java.util.Comparator
       }
       // unreachable.
       throw new Error();
-   }
-
-   public int compare(Object o1, Object o2) {
-      return compare((Constructor) o1, (Constructor) o2);
    }
 }

@@ -232,46 +232,54 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             genadvisor);
       genadvisor.addMethod(initialiseMethods);
 
+      CtMethod superInitialiseConstructors =
+            genadvisor.getSuperclass().getDeclaredMethod(INITIALISE_CONSTRUCTORS);
       CtMethod initialiseConstructors = CtNewMethod.make(
             Modifier.PROTECTED,
             CtClass.voidType,
             INITIALISE_CONSTRUCTORS,
-            EMPTY_SIG,
+            superInitialiseConstructors.getParameterTypes(),
             EMPTY_EXCEPTIONS,
             null,
             genadvisor);
       genadvisor.addMethod(initialiseConstructors);
 
+      CtMethod superInitialiseConstructions =
+         genadvisor.getSuperclass().getDeclaredMethod(INITIALISE_CONSTRUCTIONS);
       CtMethod initialiseConstructions = CtNewMethod.make(
             Modifier.PROTECTED,
             CtClass.voidType,
             INITIALISE_CONSTRUCTIONS,
-            EMPTY_SIG,
+            superInitialiseConstructions.getParameterTypes(),
             EMPTY_EXCEPTIONS,
             (isBaseClass(clazz)) ?
-                  null : "{super." + INITIALISE_CONSTRUCTIONS + "();}",
+                  null : "{super." + INITIALISE_CONSTRUCTIONS + "($1);}",
             genadvisor);
       genadvisor.addMethod(initialiseConstructions);
 
+      CtMethod superInitialiseFieldReads =
+         genadvisor.getSuperclass().getDeclaredMethod(INITIALISE_FIELD_READS);
       CtMethod initialiseFieldReads = CtNewMethod.make(
             Modifier.PROTECTED,
             CtClass.voidType,
             INITIALISE_FIELD_READS,
-            EMPTY_SIG,
+            superInitialiseFieldReads.getParameterTypes(),
             EMPTY_EXCEPTIONS,
             (isBaseClass(clazz)) ?
-                  null : "{super." + INITIALISE_FIELD_READS + "();}",
+                  null : "{super." + INITIALISE_FIELD_READS + "($1);}",
             genadvisor);
       genadvisor.addMethod(initialiseFieldReads);
 
+      CtMethod superInitialiseFieldWrites =
+         genadvisor.getSuperclass().getDeclaredMethod(INITIALISE_FIELD_WRITES);
       CtMethod initialiseFieldWrites = CtNewMethod.make(
             Modifier.PROTECTED,
             CtClass.voidType,
             INITIALISE_FIELD_WRITES,
-            EMPTY_SIG,
+            superInitialiseFieldWrites.getParameterTypes(),
             EMPTY_EXCEPTIONS,
             (isBaseClass(clazz)) ?
-                  null : "{super." + INITIALISE_FIELD_WRITES + "();}",
+                  null : "{super." + INITIALISE_FIELD_WRITES + "($1);}",
             genadvisor);
       genadvisor.addMethod(initialiseFieldWrites);
 
@@ -631,7 +639,8 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
 
       StringBuffer advicesUpdatedCode = new StringBuffer();
       StringBuffer initialiseInfosForInstanceCode = new StringBuffer();
-
+      initialiseInfosForInstanceCode.append("java.util.Collection fieldReadCol = new java.util.ArrayList();");
+      initialiseInfosForInstanceCode.append("java.util.Collection fieldWriteCol = new java.util.ArrayList();");
       while (true)
       {
          CtField[] fields = superAdvisor.getDeclaredFields();
@@ -662,6 +671,13 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
                String code = infoName + " = super.copyInfoFromClassAdvisor(((" + genadvisor.getName() + ")" + clazz.getName() + "." + GET_CLASS_ADVISOR + "())." + infoName + ");";
                initialiseInfosForInstanceCode.append(code);
             }
+            if (infoClassName.equals(FieldInfo.class.getName()))
+            {
+               initialiseInfosForInstanceCode.append("if (").append(infoName).append(".isRead()){");
+               initialiseInfosForInstanceCode.append("fieldReadCol.add(").append(infoName).append(");");
+               initialiseInfosForInstanceCode.append("} else { fieldWriteCol.add(");
+               initialiseInfosForInstanceCode.append(infoName).append(");}");
+            }
          }
 
          if (isBaseClass(superClass))
@@ -673,7 +689,8 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
          superClass = superClass.getSuperclass();
          superAdvisor = superAdvisor.getSuperclass();
       }
-      
+      initialiseInfosForInstanceCode.append("fieldReadInfos = (org.jboss.aop.FieldInfo[]) fieldReadCol.toArray(new org.jboss.aop.FieldInfo[fieldReadCol.size()]);");
+      initialiseInfosForInstanceCode.append("fieldWriteInfos = (org.jboss.aop.FieldInfo[]) fieldWriteCol.toArray(new org.jboss.aop.FieldInfo[fieldWriteCol.size()]);");
       if (initialiseInfosForInstanceCode.length() > 0)
       {
          initialiseInfosForInstanceCode.insert(0, genadvisor.getName() + " classAdvisor = (" + genadvisor.getName() + ")" + clazz.getName() + "." + GET_CLASS_ADVISOR + "();");
@@ -750,7 +767,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             index + ", " +
             "\"" + fieldName + "\", " +
             wrapperHash + "L, this, true);" +
-         GeneratedClassAdvisor.ADD_FIELD_READ_INFO + "(" + infoName + ");";
+         GeneratedClassAdvisor.ADD_FIELD_READ_INFO + "(" + infoName + ", $1);";
 
       addCodeToInitialiseMethod(genadvisor, code, INITIALISE_FIELD_READS);
    }
@@ -764,7 +781,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             index + ", " +
             "\"" + fieldName + "\", " +
             wrapperHash + "L, this, false);" +
-         GeneratedClassAdvisor.ADD_FIELD_WRITE_INFO + "(" + infoName + ");";
+         GeneratedClassAdvisor.ADD_FIELD_WRITE_INFO + "(" + infoName + ", $1);";
 
       addCodeToInitialiseMethod(genadvisor, code, INITIALISE_FIELD_WRITES);
    }
@@ -778,7 +795,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             index + ", " +
             wrapperHash + "L, " +
             constructorHash + "L, this);" +
-         GeneratedClassAdvisor.ADD_CONSTRUCTOR_INFO + "(" + infoName + ");";
+         GeneratedClassAdvisor.ADD_CONSTRUCTOR_INFO + "(" + infoName + ", $1);";
 
       addCodeToInitialiseMethod(genadvisor, code, INITIALISE_CONSTRUCTORS);
    }
@@ -791,7 +808,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             "java.lang.Class.forName(\"" + clazz.getName() + "\")," +
             index + ", " +
             constructorHash + "L, this);" +
-         GeneratedClassAdvisor.ADD_CONSTRUCTION_INFO + "(" + infoName + ");";
+         GeneratedClassAdvisor.ADD_CONSTRUCTION_INFO + "(" + infoName + ", $1);";
 
       addCodeToInitialiseMethod(genadvisor, code, INITIALISE_CONSTRUCTIONS);
    }

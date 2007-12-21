@@ -26,6 +26,7 @@ import gnu.trove.TLongObjectHashMap;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,9 +36,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.GeneratedAdvisorInterceptor;
+import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.PrecedenceSorter;
-import org.jboss.aop.advice.annotation.JoinPoint;
 import org.jboss.aop.instrument.ConByConJoinPointGenerator;
 import org.jboss.aop.instrument.ConByMethodJoinPointGenerator;
 import org.jboss.aop.instrument.ConstructionJoinPointGenerator;
@@ -69,10 +70,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    public static final String GET_PARENT_ADVISOR = "getParentAdvisor";
 
    MethodInterceptors methodInfos = new MethodInterceptors(this);
-   ArrayList constructorInfos = new ArrayList();
-   ArrayList constructionInfos = new ArrayList();
-   ArrayList fieldReadInfos = new ArrayList();
-   ArrayList fieldWriteInfos = new ArrayList();
+// TODO Flavia   
+//   ArrayList<ConstructorInfo> constructorInfos = new ArrayList();
+//   ArrayList<ConstructionInfo> constructionInfos = new ArrayList();
+//   ArrayList<FieldInfo> fieldReadInfos = new ArrayList();
+//   ArrayList<FieldInfo> fieldWriteInfos = new ArrayList();
    /** Super class methods that have been overrridden - these need special handling in this weaving mode */
    ArrayList overriddenMethods = new ArrayList(); 
 
@@ -84,9 +86,9 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    //Needs its own map to avoid crashing with the constructor generators
    private volatile ConcurrentHashMap constructionJoinPointGenerators = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
    
-   ConcurrentHashMap oldInfos = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
-   ConcurrentHashMap oldFieldReadInfos = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
-   ConcurrentHashMap oldConstructionInfos = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   ConcurrentHashMap<Joinpoint, Interceptor[]> oldInfos = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   ConcurrentHashMap<Joinpoint, Interceptor[]> oldFieldReadInfos = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   ConcurrentHashMap<Joinpoint, Interceptor[]> oldConstructionInfos = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
 
    boolean initialisedSuperClasses; 
 
@@ -169,14 +171,15 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       FieldInfo copy = (FieldInfo)info.copy();
       copy.setAdvisor(this);
-      if (copy.isRead())
-      {
-         addFieldReadInfo(copy);
-      }
-      else
-      {
-         addFieldWriteInfo(copy);
-      }
+// TODO Flavia
+//      if (copy.isRead())
+//      {
+//         addFieldReadInfo(copy);
+//      }
+//      else
+//      {
+//         addFieldWriteInfo(copy);
+//      }
       return copy;
    }
 
@@ -287,11 +290,10 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          super.resolveMethodPointcut(newMethodInterceptors, binding);
          handleOverriddenMethods(binding);
       }
-
    }
 
    @Override
-   protected void resolveFieldPointcut(ArrayList newFieldInfos, AdviceBinding binding, boolean write)
+   protected void resolveFieldPointcut(FieldInfo[] newFieldInfos, AdviceBinding binding, boolean write)
    {
       GeneratedClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
       if (classAdvisor == null)
@@ -302,15 +304,15 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    }
 
    @Override
-   protected void resolveConstructorPointcut(ArrayList newConstructorInfos, AdviceBinding binding)
+   protected void resolveConstructorPointcut( AdviceBinding binding)
    {
-      advisorStrategy.resolveConstructorPointcut(newConstructorInfos, binding);
+      advisorStrategy.resolveConstructorPointcut(binding);
    }
 
    @Override
-   protected void resolveConstructionPointcut(ArrayList newConstructionInfos, AdviceBinding binding)
+   protected void resolveConstructionPointcut(AdviceBinding binding)
    {
-      advisorStrategy.resolveConstructionPointcut(newConstructionInfos, binding);
+      advisorStrategy.resolveConstructionPointcut(binding);
    }
    
    /**
@@ -369,14 +371,14 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    /**
     * Generated class advisor sub class will override
     */
-   protected void initialiseConstructors()
+   protected void initialiseConstructors(Collection<ConstructorInfo> constructorInfos)
    {
    }
 
    /**
     * Called by initialiseConstructors() in generated advisor sub classes
     */
-   protected void addConstructorInfo(ConstructorInfo ci)
+   protected void addConstructorInfo(ConstructorInfo ci, Collection<ConstructorInfo> constructorInfos)
    {
       constructorInfos.add(ci);
       //If we do dynamic invokes the constructor will need to be accessible via reflection
@@ -386,69 +388,96 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    @Override
    protected void createInterceptorChains() throws Exception
    {
+      System.out.println("Creating interceptor chains on advisor " + this.getClass().getName());
       advisorStrategy.createInterceptorChains();
    }
    
-   @Override
-   protected ArrayList initializeConstructorChain()
-   {
-      if (super.initialized)
-      {
-         for (Iterator it = constructorInfos.iterator() ; it.hasNext() ; )
-         {
-            ((ConstructorInfo)it.next()).clear();
-         }
-      }
-      return constructorInfos;
-   }
+// TODO Flavia
+//   @Override
+//   protected ArrayList initializeConstructorChain()
+//   {
+//      if (super.initialized)
+//      {
+//         for (Iterator it = constructorInfos.iterator() ; it.hasNext() ; )
+//         {
+//            ((ConstructorInfo)it.next()).clear();
+//         }
+//      }
+//      return constructorInfos;
+//   }
 
    /**
     * Generated class advisor sub class will override
     */
-   protected void initialiseConstructions()
+   protected void initialiseConstructions(Collection<ConstructionInfo> constructorInfos)
    {
    }
 
    /**
     * Called by initialiseConstructions() in generated advisor sub classes
     */
-   protected void addConstructionInfo(ConstructionInfo ci)
+   protected void addConstructionInfo(ConstructionInfo ci, Collection<ConstructionInfo> constructionInfos)
    {
       constructionInfos.add(ci);
    }
 
-   @Override
-   protected ArrayList initializeConstructionChain()
-   {
-      if (super.initialized)
-      {
-         for (Iterator it = constructionInfos.iterator() ; it.hasNext() ; )
-         {
-            ((ConstructionInfo)it.next()).clear();
-         }
-      }
-      return constructionInfos;
-   }
+// TODO Flavia
+//   @Override
+//   protected ArrayList initializeConstructionChain()
+//   {
+//      if (super.initialized)
+//      {
+//         for (Iterator it = constructionInfos.iterator() ; it.hasNext() ; )
+//         {
+//            ((ConstructionInfo)it.next()).clear();
+//         }
+//      }
+//      return constructionInfos;
+//   }
 
    /**
     * Generated class advisor sub class will override
     */
-   protected void initialiseFieldReads()
+   protected void initialiseFieldReads(Collection<FieldInfo> fieldReadInfos)
    {
    }
 
    /**
     * Called by initialiseFieldReads() in generated advisor sub classes
     */
-   protected void addFieldReadInfo(FieldInfo fi)
+   protected void addFieldReadInfo(FieldInfo fi, Collection<FieldInfo> fieldReadInfos)
    {
       fieldReadInfos.add(fi);
       //If we do dynamic invokes the field will need to be accessible via reflection
       advisorStrategy.makeAccessibleField(fi);
    }
 
+   // TODO Flavia remove this once the process is complete
    @Override
-   protected ArrayList initializeFieldReadChain()
+   protected ConstructorInfo[] initializeConstructorChain()
+   {
+      // TODO remove this
+      if (this.constructorInfos != null)
+      {
+         return this.constructorInfos;
+      }
+      return super.initializeConstructorChain();
+   }
+   
+   // TODO remove this once the process is complete
+   @Override
+   protected ConstructionInfo[] initializeConstructionChain()
+   {
+      // TODO remove this
+      if (this.constructionInfos != null)
+      {
+         return this.constructionInfos;
+      }
+      return super.initializeConstructionChain();
+   }
+   
+   @Override
+   protected FieldInfo[] initializeFieldReadChain()
    {
       return mergeFieldInfos(fieldReadInfos, true);
    }
@@ -456,14 +485,14 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    /**
     * Generated class advisor sub class will override
     */
-   protected void initialiseFieldWrites()
+   protected void initialiseFieldWrites(Collection<FieldInfo> fieldWriteInfos)
    {
    }
 
    /**
     * Called by initialiseFieldWrites() in generated advisor sub classes
     */
-   protected void addFieldWriteInfo(FieldInfo fi)
+   protected void addFieldWriteInfo(FieldInfo fi, Collection<FieldInfo> fieldWriteInfos)
    {
       fieldWriteInfos.add(fi);
       //If we do dynamic invokes the field will need to be accessible via reflection
@@ -471,7 +500,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    }
 
    @Override
-   protected ArrayList initializeFieldWriteChain()
+   protected FieldInfo[] initializeFieldWriteChain()
    {
       return mergeFieldInfos(fieldWriteInfos, false);
    }
@@ -479,42 +508,31 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    /* Creates a full list of field infos for all fields, using the ones added by
     * generated advisor for advised fields.
     */
-   private ArrayList mergeFieldInfos(ArrayList advisedInfos, boolean read)
+   private FieldInfo[] mergeFieldInfos(FieldInfo[] advisedInfos, boolean read)
    {
-      ArrayList newInfos = new ArrayList(advisedFields.length);
+      FieldInfo[] newInfos = new FieldInfo[advisedFields.length];
 
-      FieldInfo nextFieldInfo = null;
-      Iterator it = advisedInfos.iterator();
-      if (it.hasNext())
-      {
-         nextFieldInfo = (FieldInfo)it.next();
-      }
+      int nextIndex = 0;
+      int advisedInfosLength = advisedInfos == null? 0: advisedInfos.length;
 
       for (int i = 0 ; i < advisedFields.length ; i++)
       {
-         if (nextFieldInfo != null && nextFieldInfo.getIndex() == i)
+         if (nextIndex < advisedInfosLength && advisedInfos[nextIndex].getIndex() == i)
          {
             if (super.initialized)
             {
-               nextFieldInfo.clear();
+               advisedInfos[nextIndex].clear();
             }
 
-            newInfos.add(nextFieldInfo);
-            if (it.hasNext())
-            {
-               nextFieldInfo = (FieldInfo)it.next();
-            }
-            else
-            {
-               nextFieldInfo = null;
-            }
+            newInfos[i] = advisedInfos[nextIndex];
+            nextIndex++;
          }
          else
          {
             FieldInfo info = new FieldInfo(this, read);
             info.setAdvisedField(advisedFields[i]);
             info.setIndex(i);
-            newInfos.add(info);
+            newInfos[i] = info;
          }
       }
 
@@ -522,7 +540,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    }
 
    @Override
-   protected void finalizeChains(MethodInterceptors newMethodInfos, ArrayList newFieldReadInfos, ArrayList newFieldWriteInfos, ArrayList newConstructorInfos, ArrayList newConstructionInfos)
+   protected void finalizeChains(MethodInterceptors newMethodInfos)
    {
       ClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
       if (classAdvisor != null)
@@ -540,7 +558,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
             }
          }
       }
-      super.finalizeChains(newMethodInfos, newFieldReadInfos, newFieldWriteInfos, newConstructorInfos, newConstructionInfos);
+      
+      finalizeMethodChain(newMethodInfos);
+      finalizeFieldReadChain();
+      finalizeFieldWriteChain();
+      advisorStrategy.finalizeConstructorChain(constructorInfos);
+      advisorStrategy.finalizeConstructionChain(constructionInfos);
    }
 
    @Override
@@ -608,79 +631,62 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          }
       }      
    }
-
-   @Override
-   protected void finalizeFieldReadChain(ArrayList newFieldInfos)
+   
+   private void finalizeFieldReadChain()
    {
       ClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
       if (classAdvisor != null)
       {
          //We are an instance advisor with no own data influencing the chains, copy these from the parent advisor
-         easyFinalizeFieldChainForInstance(oldFieldReadInfos, classAdvisor.getFieldReadInfos(), newFieldInfos, OldInfoMaps.FIELD_READ_INFOS);
+         easyFinalizeFieldChainForInstance(oldFieldReadInfos, classAdvisor.getFieldReadInfos(), fieldReadInfos, OldInfoMaps.FIELD_READ_INFOS);
       }
       else
       {
          //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
-         fullWorkFinalizeFieldChain(oldFieldReadInfos, newFieldInfos, OldInfoMaps.FIELD_READ_INFOS);
+         fullWorkFinalizeFieldChain(oldFieldReadInfos, fieldReadInfos, OldInfoMaps.FIELD_READ_INFOS);
       }
    }
 
-   @Override
-   protected void finalizeFieldWriteChain(ArrayList newFieldInfos)
+   protected void finalizeFieldWriteChain()
    {
       ClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
       if (classAdvisor != null)
       {
          //We are an instance advisor with no own data influencing the chains, copy these from the parent advisor
-         easyFinalizeFieldChainForInstance(oldInfos, classAdvisor.getFieldWriteInfos(), newFieldInfos, OldInfoMaps.INFOS);
+         easyFinalizeFieldChainForInstance(oldInfos, classAdvisor.getFieldWriteInfos(), fieldWriteInfos, OldInfoMaps.INFOS);
       }
       else
       {
          //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
-         fullWorkFinalizeFieldChain(oldInfos, newFieldInfos, OldInfoMaps.INFOS);
+         fullWorkFinalizeFieldChain(oldInfos, fieldWriteInfos, OldInfoMaps.INFOS);
       }
    }
 
-   private void easyFinalizeFieldChainForInstance(Map oldFieldInfos, FieldInfo[] classFieldInfos, ArrayList newFieldInfos, OldInfoMaps oldInfoMapInstance)
+   private void easyFinalizeFieldChainForInstance(Map<Joinpoint, Interceptor[]> oldFieldInfos, FieldInfo[] classFieldInfos, FieldInfo[] newFieldInfos, OldInfoMaps oldInfoMapInstance)
    {
       //We are an instance advisor with no own data influencing the chains, copy these from the parent advisor
-      if (newFieldInfos.size() > 0)
+      for (int i = 0; i < newFieldInfos.length; i++)
       {
-         for (int i = 0; i < newFieldInfos.size(); i++)
+         FieldInfo myInfo = (FieldInfo) newFieldInfos[i];
+         myInfo.cloneChains(classFieldInfos[i]);
+
+         if (updateOldInfo(oldFieldInfos, myInfo, oldInfoMapInstance))
          {
-            FieldInfo myInfo = (FieldInfo)newFieldInfos.get(i);
-            myInfo.cloneChains(classFieldInfos[i]);
-            
-            if (updateOldInfo(oldFieldInfos, myInfo, oldInfoMapInstance))
-            {
-               FieldJoinPointGenerator generator = getJoinPointGenerator(myInfo);
-               generator.rebindJoinpoint(myInfo);
-            }
+            FieldJoinPointGenerator generator = getJoinPointGenerator(myInfo);
+            generator.rebindJoinpoint(myInfo);
          }
       }
    }
    
-   private void fullWorkFinalizeFieldChain(Map oldFieldInfos, ArrayList newFieldInfos, OldInfoMaps oldInfoMapInstance)
+   private void fullWorkFinalizeFieldChain(Map<Joinpoint, Interceptor[]> oldFieldInfos, FieldInfo[] newFieldInfos, OldInfoMaps oldInfoMapInstance)
    {
       //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
-      for (int i = 0; i < newFieldInfos.size(); i++)
+      for (int i = 0; i < newFieldInfos.length; i++)
       {
-         FieldInfo info = (FieldInfo)newFieldInfos.get(i);
+         FieldInfo info = (FieldInfo)newFieldInfos[i];
          FieldJoinPointGenerator generator = getJoinPointGenerator(info);
          finalizeChainAndRebindJoinPoint(oldFieldInfos, info, generator, oldInfoMapInstance);
       }
-   }
-   
-   @Override
-   protected void finalizeConstructorChain(ArrayList newConstructorInfos)
-   {
-      advisorStrategy.finalizeConstructorChain(newConstructorInfos);
-   }
-
-   @Override
-   protected void finalizeConstructionChain(ArrayList newConstructionInfos)
-   {
-      advisorStrategy.finalizeConstructionChain(newConstructionInfos);
    }
 
    @Override
@@ -829,9 +835,9 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
    }
 
-   private void finalizeChainAndRebindJoinPoint(Map oldInfos, JoinPointInfo info, JoinPointGenerator generator, OldInfoMaps oldInfoMapInstance)
+   private void finalizeChainAndRebindJoinPoint(Map<Joinpoint, Interceptor[]> oldInfos, JoinPointInfo info, JoinPointGenerator generator, OldInfoMaps oldInfoMapInstance)
    {
-      ArrayList list = info.getInterceptorChain();
+      ArrayList<Interceptor> list = info.getInterceptorChain();
       GeneratedAdvisorInterceptor[] factories = null;
       if (list.size() > 0)
       {
@@ -978,18 +984,18 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    /**
     * Caches the old info and checks if the chains have been updated
     */
-   private boolean updateOldInfo(Map oldInfos, JoinPointInfo newInfo, OldInfoMaps oldInfoMapInstance)
+   private boolean updateOldInfo(Map<Joinpoint, Interceptor[]> oldInfos, JoinPointInfo newInfo, OldInfoMaps oldInfoMapInstance)
    {
-      JoinPointInfo oldInfo = (JoinPointInfo)oldInfos.get(newInfo.getJoinpoint());
-      if (oldInfo != null)
+      Interceptor[] oldChain = oldInfos.get(newInfo.getJoinpoint());
+      if (oldChain != null)
       {
          //We are not changing any of the bindings
-         if (oldInfo.equalChains(newInfo))
+         if (newInfo.equalChains(oldChain))
          {
             return false;
          }
       }
-      oldInfo = newInfo.copy();
+      Interceptor[] currentOldChain = newInfo.getInterceptors();
       
       if (oldInfoMapInstance == OldInfoMaps.INFOS) 
       {
@@ -1007,8 +1013,14 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       {
          throw new RuntimeException("Unrecognised map");
       }
-      
-      oldInfos.put(newInfo.getJoinpoint(), oldInfo);
+      if (currentOldChain != null)
+      {
+         oldInfos.put(newInfo.getJoinpoint(), currentOldChain);
+      }
+      else if (oldChain != null)
+      {
+         oldInfos.remove(newInfo.getJoinpoint());
+      }
       return true;
    }
 
@@ -1135,7 +1147,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       }
    }
    
-   protected ConcurrentHashMap initOldInfosMap()
+   protected ConcurrentHashMap<Joinpoint, Interceptor[]> initOldInfosMap()
    {
       if (oldInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
@@ -1144,7 +1156,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             if (oldInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               oldInfos = new ConcurrentHashMap();
+               oldInfos = new ConcurrentHashMap<Joinpoint, Interceptor[]>();
             }
          }
          finally
@@ -1155,7 +1167,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       return oldInfos;
    }
    
-   protected ConcurrentHashMap initOldFieldReadInfosMap()
+   protected ConcurrentHashMap<Joinpoint, Interceptor[]> initOldFieldReadInfosMap()
    {
       if (oldFieldReadInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
@@ -1164,7 +1176,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             if (oldFieldReadInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               oldFieldReadInfos = new ConcurrentHashMap();
+               oldFieldReadInfos = new ConcurrentHashMap<Joinpoint, Interceptor[]>();
             }
          }
          finally
@@ -1175,7 +1187,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       return oldFieldReadInfos;
    }
    
-   protected ConcurrentHashMap initOldConstructionInfosMap()
+   protected ConcurrentHashMap<Joinpoint, Interceptor[]> initOldConstructionInfosMap()
    {
       if (oldConstructionInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
@@ -1184,7 +1196,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             if (oldConstructionInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               oldConstructionInfos = new ConcurrentHashMap();
+               oldConstructionInfos = new ConcurrentHashMap<Joinpoint, Interceptor[]>();
             }
          }
          finally
@@ -1220,10 +1232,10 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       Set getPerInstanceAspectDefinitions();
       Map getPerInstanceJoinpointAspectDefinitions();
       void rebuildInterceptors();
-      void resolveConstructorPointcut(ArrayList newConstructorInfos, AdviceBinding binding);
-      void resolveConstructionPointcut(ArrayList newConstructionInfos, AdviceBinding binding);
-      void finalizeConstructorChain(ArrayList newConstructorInfos);
-      void finalizeConstructionChain(ArrayList newConstructionInfos);
+      void resolveConstructorPointcut(AdviceBinding binding);
+      void resolveConstructionPointcut(AdviceBinding binding);
+      void finalizeConstructorChain(ConstructorInfo[] newConstructorInfos);
+      void finalizeConstructionChain(ConstructionInfo[] newConstructionInfos);
       void makeAccessibleField(FieldInfo fi);
       void makeAccessibleMethod(MethodInfo mi);
    }
@@ -1235,10 +1247,22 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       public void initialise(Class clazz, AspectManager manager)
       {
          initialiseMethods();
-         initialiseConstructors();
-         initialiseConstructions();
-         initialiseFieldReads();
-         initialiseFieldWrites();
+         // initialise constructor info array
+         Collection<ConstructorInfo> constructorInfoCol = new ArrayList<ConstructorInfo>();
+         initialiseConstructors(constructorInfoCol);
+         constructorInfos = constructorInfoCol.toArray(new ConstructorInfo[constructorInfoCol.size()]);
+         // initialise construction info array
+         Collection<ConstructionInfo> constructionInfoCol = new ArrayList<ConstructionInfo>();
+         initialiseConstructions(constructionInfoCol);
+         constructionInfos = constructionInfoCol.toArray(new ConstructionInfo[constructionInfoCol.size()]);
+         // initalise field read info array
+         Collection<FieldInfo> fieldReadInfoCol = new ArrayList<FieldInfo>();
+         initialiseFieldReads(fieldReadInfoCol);
+         fieldReadInfos = fieldReadInfoCol.toArray(new FieldInfo[fieldReadInfoCol.size()]);
+         // initalise field write info array
+         Collection<FieldInfo> fieldWriteInfoCol = new ArrayList<FieldInfo>();
+         initialiseFieldWrites(fieldWriteInfoCol);
+         fieldWriteInfos = fieldWriteInfoCol.toArray(new FieldInfo[fieldWriteInfoCol.size()]);
          
          GeneratedClassAdvisor.super.setManager(manager);
 
@@ -1495,31 +1519,34 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          GeneratedClassAdvisor.super.rebuildInterceptors();
       }
 
-      public void resolveConstructorPointcut(ArrayList newConstructorInfos, AdviceBinding binding)
+      public void resolveConstructorPointcut(AdviceBinding binding)
       {
-         GeneratedClassAdvisor.super.resolveConstructorPointcut(newConstructorInfos, binding);
+         GeneratedClassAdvisor.super.resolveConstructorPointcut(binding);
       }
 
-      public void resolveConstructionPointcut(ArrayList newConstructionInfos, AdviceBinding binding)
+      public void resolveConstructionPointcut(AdviceBinding binding)
       {
-         GeneratedClassAdvisor.super.resolveConstructionPointcut(newConstructionInfos, binding);
+         GeneratedClassAdvisor.super.resolveConstructionPointcut(binding);
       }
 
-      public void finalizeConstructorChain(ArrayList newConstructorInfos)
+      public void finalizeConstructorChain(ConstructorInfo[] newConstructorInfos)
       {
-         for (int i = 0; i < newConstructorInfos.size(); i++)
+         for (int i = 0; i < newConstructorInfos.length; i++)
          {
-            ConstructorInfo info = (ConstructorInfo) newConstructorInfos.get(i);
+            ConstructorInfo info = newConstructorInfos[i];
             ConstructorJoinPointGenerator generator = getJoinPointGenerator(info);
+            Class clazz = info.getClazz();
+            if (clazz != null)
+            System.out.println("Finalizing constructor chain for constructor of class " + clazz.getName());
             finalizeChainAndRebindJoinPoint(oldInfos, info, generator, OldInfoMaps.INFOS);
          }
       }
 
-      public void finalizeConstructionChain(ArrayList newConstructionInfos)
+      public void finalizeConstructionChain(ConstructionInfo[] newConstructionInfos)
       {
-         for (int i = 0; i < newConstructionInfos.size(); i++)
+         for (int i = 0; i < newConstructionInfos.length; i++)
          {
-            ConstructionInfo info = (ConstructionInfo) newConstructionInfos.get(i);
+            ConstructionInfo info = newConstructionInfos[i];
             ConstructionJoinPointGenerator generator = getJoinPointGenerator(info);
             finalizeChainAndRebindJoinPoint(oldConstructionInfos, info, generator, OldInfoMaps.CONSTRUCTION_INFOS);
          }
@@ -1701,26 +1728,45 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          }
          else
          {
-            GeneratedClassAdvisor.super.rebuildInterceptors();
+            // check if it is initilized
+            if (GeneratedClassAdvisor.this.fieldReadInfos == null)
+            {
+               try
+               {
+                  GeneratedClassAdvisor.this.createInterceptorChains();
+               }
+               catch (Exception ex)
+               {
+                  if (ex instanceof RuntimeException)
+                  {
+                     throw (RuntimeException) ex;
+                  }
+                  throw new RuntimeException(ex);
+               }
+            }
+            else
+            {
+               GeneratedClassAdvisor.super.rebuildInterceptors();
+            }
          }
       }
 
-      public void resolveConstructorPointcut(ArrayList newConstructorInfos, AdviceBinding binding)
+      public void resolveConstructorPointcut(AdviceBinding binding)
       {
          //Since the instance already exists it makes no sense to have bindings for constructors
       }
 
-      public void resolveConstructionPointcut(ArrayList newConstructionInfos, AdviceBinding binding)
+      public void resolveConstructionPointcut(AdviceBinding binding)
       {
          //Since the instance already exists it makes no sense to have bindings for constructors         
       }
 
-      public void finalizeConstructorChain(ArrayList newConstructorInfos)
+      public void finalizeConstructorChain(ConstructorInfo[] newConstructorInfos)
       {
          //Since the instance already exists it makes no sense to have bindings for constructors
       }
 
-      public void finalizeConstructionChain(ArrayList newConstructionInfos)
+      public void finalizeConstructionChain(ConstructionInfo[] newConstructionInfos)
       {
          //Since the instance already exists it makes no sense to have bindings for constructors
       }

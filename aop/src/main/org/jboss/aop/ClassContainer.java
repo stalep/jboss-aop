@@ -21,12 +21,10 @@
   */
 package org.jboss.aop;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -83,7 +81,7 @@ public class ClassContainer extends Advisor
 
    protected Field[] advisedFields;
 
-   private void populateFieldTable(ArrayList fields, final Class superclass)
+   private void populateFieldTable(ArrayList<Field> fields, final Class superclass)
    {
       if (superclass == null) return;
       if (superclass.equals(Object.class)) return;
@@ -92,10 +90,10 @@ public class ClassContainer extends Advisor
 
       // if (!isAdvised(superclass)) return;
 
-      ArrayList temp = new ArrayList();
-      Field[] declaredFields = (Field[]) AccessController.doPrivileged(new PrivilegedAction()
+      ArrayList<Field> temp = new ArrayList<Field>();
+      Field[] declaredFields = AccessController.doPrivileged(new PrivilegedAction<Field[]>()
       {
-         public Object run()
+         public Field[] run()
          {
             return superclass.getDeclaredFields();
          }
@@ -116,11 +114,9 @@ public class ClassContainer extends Advisor
     */
    protected void createFieldTable()
    {
-      ArrayList fields = new ArrayList();
-
+      ArrayList<Field> fields = new ArrayList<Field>();
       populateFieldTable(fields, clazz);
-
-      advisedFields = (Field[]) fields.toArray(new Field[fields.size()]);
+      advisedFields = fields.toArray(new Field[fields.size()]);
 
    }
 
@@ -246,7 +242,7 @@ public class ClassContainer extends Advisor
    protected void createInterceptorChains()
    {
       MethodInterceptors newMethodInfos = initializeMethodChain();
-      ArrayList newConstructorInfos = initializeConstructorChain();
+      constructorInfos = initializeConstructorChain();
 
       LinkedHashMap bindings = manager.getBindings();
       synchronized (bindings)
@@ -259,16 +255,12 @@ public class ClassContainer extends Advisor
                AdviceBinding binding = (AdviceBinding) it.next();
                if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName());
                resolveMethodPointcut(newMethodInfos, binding);
-               resolveConstructorPointcut(newConstructorInfos, binding);
+               resolveConstructorPointcut(binding);
             }
          }
       }
-      finalizeConstructorChain(newConstructorInfos);
+      finalizeChain(constructorInfos);
       finalizeMethodChain(newMethodInfos);
-      constructorInfos = new ConstructorInfo[newConstructorInfos.size()];
-      if (constructorInfos.length > 0)
-         constructorInfos = (ConstructorInfo[]) newConstructorInfos.toArray(constructorInfos);
-
       populateInterceptorsFromInfos();
 
       doesHaveAspects = adviceBindings.size() > 0;

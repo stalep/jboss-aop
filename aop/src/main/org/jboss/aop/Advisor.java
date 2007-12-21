@@ -128,9 +128,9 @@ public abstract class Advisor
    /** Read/Write lock to be used when lazy creating the collections */
    protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-   protected HashSet adviceBindings = new HashSet();
+   protected Set<AdviceBinding> adviceBindings = new HashSet<AdviceBinding>();
    protected volatile ArrayList interfaceIntroductions = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-   protected volatile ArrayList classMetaDataBindings = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+   protected volatile ArrayList<ClassMetaDataBinding> classMetaDataBindings = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
    protected SimpleMetaData defaultMetaData = new SimpleMetaData();
    protected MethodMetaData methodMetaData = new MethodMetaData();
    protected FieldMetaData fieldMetaData = new FieldMetaData();
@@ -866,7 +866,7 @@ public abstract class Advisor
    }
 
 
-   protected void createInterceptorChain(InterceptorFactory[] factories, ArrayList newinterceptors, Joinpoint joinpoint)
+   protected void createInterceptorChain(InterceptorFactory[] factories, ArrayList<Interceptor> newinterceptors, Joinpoint joinpoint)
    {
       for (int i = 0; i < factories.length; i++)
       {
@@ -986,14 +986,14 @@ public abstract class Advisor
       return name.substring(lastIndex + 1);
    }
 
-   protected ArrayList initializeConstructorChain()
+   protected ConstructorInfo[] initializeConstructorChain()
    {
       if (clazz != null && constructors == null)
       {
           constructors = clazz.getDeclaredConstructors();
       }
 
-      ArrayList newInfos = new ArrayList(constructors.length);
+      ConstructorInfo[] newInfos = new ConstructorInfo[constructors.length];
       for (int i = 0; i < constructors.length; i++)
       {
          final ConstructorInfo info = new ConstructorInfo();
@@ -1003,9 +1003,9 @@ public abstract class Advisor
          {
             final String name = ConstructorExecutionTransformer.constructorFactory(getSimpleName(clazz));
             final Class[] types = constructors[i].getParameterTypes();
-            Method method = (Method) AccessController.doPrivileged(new PrivilegedExceptionAction()
+            Method method = AccessController.doPrivileged(new PrivilegedExceptionAction<Method>()
             {
-               public Object run() throws Exception
+               public Method run() throws Exception
                {
                   return clazz.getDeclaredMethod(name, types);
                }
@@ -1020,18 +1020,18 @@ public abstract class Advisor
          }
 
          info.setAdvisor(this);
-         newInfos.add(info);
+         newInfos[i] = info;
 
          try
          {
             final String name = ConstructorExecutionTransformer.getConstructorInfoFieldName(getSimpleName(clazz), i);
-            AccessController.doPrivileged(new PrivilegedExceptionAction()
+            AccessController.doPrivileged(new PrivilegedExceptionAction<Object>()
             {
                public Object run() throws Exception
                {
                   Field infoField = clazz.getDeclaredField(name);
                   infoField.setAccessible(true);
-                  infoField.set(null, new WeakReference(info));
+                  infoField.set(null, new WeakReference<ConstructorInfo>(info));
                   return null;
                }
             });
@@ -1047,22 +1047,22 @@ public abstract class Advisor
       return newInfos;
    }
 
-   protected ArrayList initializeConstructionChain()
+   protected ConstructionInfo[] initializeConstructionChain()
    {
-      ArrayList newInfos = new ArrayList(constructors.length);
+      ConstructionInfo[] newInfos = new ConstructionInfo[constructors.length];
       for (int i = 0; i < constructors.length; i++)
       {
          ConstructionInfo info = new ConstructionInfo();
          info.setConstructor(constructors[i]);
          info.setIndex(i);
          info.setAdvisor(this);
-         newInfos.add(info);
+         newInfos[i] = info;
 
          try
          {
             Field infoField = clazz.getDeclaredField(ConstructionTransformer.getConstructionInfoFieldName(getSimpleName(clazz), i));
             infoField.setAccessible(true);
-            infoField.set(null, new WeakReference(info));
+            infoField.set(null, new WeakReference<ConstructionInfo>(info));
          }
          catch (NoSuchFieldException e)
          {
@@ -1077,37 +1077,37 @@ public abstract class Advisor
       return newInfos;
    }
 
-   protected void finalizeConstructorChain(ArrayList newConstructorInfos)
+   protected void finalizeChain(JoinPointInfo[] infos)
    {
-      for (int i = 0; i < newConstructorInfos.size(); i++)
+      for (int i = 0; i < infos.length; i++)
       {
-         ConstructorInfo info = (ConstructorInfo) newConstructorInfos.get(i);
-         ArrayList list = info.getInterceptorChain();
+         JoinPointInfo info = infos[i];
+         ArrayList<Interceptor> list = info.getInterceptorChain();
          Interceptor[] interceptors = null;
          if (list.size() > 0)
          {
-          interceptors = applyPrecedence((Interceptor[]) list.toArray(new Interceptor[list.size()]));
+          interceptors = applyPrecedence(list.toArray(new Interceptor[list.size()]));
          }
          info.setInterceptors(interceptors);
       }
    }
 
-   protected void finalizeConstructionChain(ArrayList newConstructionInfos)
-   {
-      for (int i = 0; i < newConstructionInfos.size(); i++)
-      {
-         ConstructionInfo info = (ConstructionInfo) newConstructionInfos.get(i);
-         ArrayList list = info.getInterceptorChain();
-         Interceptor[] interceptors = null;
-         if (list.size() > 0)
-         {
-          interceptors = applyPrecedence((Interceptor[]) list.toArray(new Interceptor[list.size()]));
-         }
-         info.setInterceptors(interceptors);
-      }
-   }
+//   protected void finalizeConstructionChain(ArrayList newConstructionInfos)
+//   {
+//      for (int i = 0; i < newConstructionInfos.size(); i++)
+//      {
+//         ConstructionInfo info = (ConstructionInfo) newConstructionInfos.get(i);
+//         ArrayList list = info.getInterceptorChain();
+//         Interceptor[] interceptors = null;
+//         if (list.size() > 0)
+//         {
+//          interceptors = applyPrecedence((Interceptor[]) list.toArray(new Interceptor[list.size()]));
+//         }
+//         info.setInterceptors(interceptors);
+//      }
+//   }
 
-   protected void resolveConstructorPointcut(ArrayList newConstructorInfos, AdviceBinding binding)
+   protected void resolveConstructorPointcut(AdviceBinding binding)
    {
       for (int i = 0; i < constructors.length; i++)
       {
@@ -1117,19 +1117,18 @@ public abstract class Advisor
             if (AspectManager.verbose) System.err.println("[debug] constructor matched binding: " + constructor);
             adviceBindings.add(binding);
             binding.addAdvisor(this);
-            ConstructorInfo info = (ConstructorInfo)newConstructorInfos.get(i);
-            pointcutResolved(info, binding, new ConstructorJoinpoint(constructor));
+            pointcutResolved(constructorInfos[i], binding, new ConstructorJoinpoint(constructor));
          }
       }
    }
 
-   protected void resolveConstructionPointcut(ArrayList newConstructionInfos, AdviceBinding binding)
+   protected void resolveConstructionPointcut(AdviceBinding binding)
    {
-      if (newConstructionInfos.size() > 0)
+      if (constructionInfos.length > 0)
       {
-         for (Iterator it = newConstructionInfos.iterator() ; it.hasNext() ; )
+         for (int i = 0; i < constructionInfos.length ;i++)
          {
-            ConstructionInfo info = (ConstructionInfo)it.next();
+            ConstructionInfo info = constructionInfos[i];
             Constructor constructor = info.getConstructor();
             if (binding.getPointcut().matchesConstruction(this, constructor))
             {
@@ -1158,10 +1157,10 @@ public abstract class Advisor
     */
    protected void pointcutResolved(JoinPointInfo info, AdviceBinding binding, Joinpoint joinpoint)
    {
-      ArrayList curr = info.getInterceptorChain();
+      ArrayList<Interceptor> curr = info.getInterceptorChain();
       if (binding.getCFlow() != null)
       {
-         ArrayList cflowChain = new ArrayList();
+         ArrayList<Interceptor> cflowChain = new ArrayList<Interceptor>();
          createInterceptorChain(binding.getInterceptorFactories(), cflowChain, joinpoint);
          Interceptor[] cflowInterceptors = (Interceptor[]) cflowChain.toArray(new Interceptor[cflowChain.size()]);
          curr.add(new CFlowInterceptor(binding.getCFlowString(), binding.getCFlow(), cflowInterceptors));

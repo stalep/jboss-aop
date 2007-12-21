@@ -23,6 +23,7 @@ package org.jboss.aop;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.jboss.aop.advice.GeneratedAdvisorInterceptor;
 import org.jboss.aop.advice.Interceptor;
@@ -33,25 +34,25 @@ public abstract class JoinPointInfo implements JoinPointBean
 {
    private Interceptor[] interceptors;
 
-   private ArrayList interceptorChain = new ArrayList();
+   private ArrayList<Interceptor> interceptorChain = new ArrayList<Interceptor>();
    
-   private WeakReference advisor;
+   private WeakReference<Advisor> advisor;
    
    protected volatile Joinpoint joinpoint;
    
-   protected WeakReference clazz;
+   protected WeakReference<Class> clazz;
    
    private String adviceString;
 
    protected JoinPointInfo()
    {
-      this.clazz = new WeakReference(null);
+      this.clazz = new WeakReference<Class>(null);
    }
    
    protected JoinPointInfo(Advisor advisor, Class clazz)
    {
       setAdvisor(advisor);
-      this.clazz = new WeakReference(clazz); 
+      this.clazz = new WeakReference<Class>(clazz); 
    }
    
    /*
@@ -86,12 +87,12 @@ public abstract class JoinPointInfo implements JoinPointBean
 
    public Class getClazz()
    {
-      return (Class)clazz.get(); 
+      return clazz.get(); 
    }
    
    public void setAdvisor(Advisor advisor) 
    {
-      this.advisor = new WeakReference(advisor);
+      this.advisor = new WeakReference<Advisor>(advisor);
    }
 
    public boolean hasAdvices()
@@ -99,15 +100,15 @@ public abstract class JoinPointInfo implements JoinPointBean
       return (interceptors != null && interceptors.length > 0);
    }
    
-   public boolean equalChains(JoinPointInfo other)
+   public boolean equalChains(Interceptor[] otherInterceptors)
    {
-      if (this.interceptors == null && other.interceptors == null) return true;
-      if (!(this.interceptors != null && other.interceptors != null))return false;
-      if (this.interceptors.length != other.interceptors.length) return false;
+      if (this.interceptors == null && otherInterceptors == null) return true;
+      if (!(this.interceptors != null && otherInterceptors != null))return false;
+      if (this.interceptors.length != otherInterceptors.length) return false;
       
       for (int i = 0 ; i < this.interceptors.length ; i++)
       {
-         if(!this.interceptors[i].equals(other.interceptors[i])) return false;
+         if(!this.interceptors[i].equals(otherInterceptors[i])) return false;
       }
 
       return true;
@@ -122,7 +123,7 @@ public abstract class JoinPointInfo implements JoinPointBean
       return joinpoint;
    }
    
-   public ArrayList getInterceptorChain() {
+   public ArrayList<Interceptor> getInterceptorChain() {
       return interceptorChain;
    }
 
