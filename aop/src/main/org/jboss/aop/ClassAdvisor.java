@@ -252,9 +252,9 @@ public class ClassAdvisor extends Advisor
 
    public TLongObjectHashMap getMethodInterceptors()
    {
-      return methodInterceptors;
+      return methodInfos.infos;
    }
-
+   
 
    /**
     * Constructs a new helper.
@@ -444,10 +444,9 @@ public class ClassAdvisor extends Advisor
          }
       }
    }
-
-   protected MethodInterceptors initializeMethodChain()
+   
+   protected void initializeMethodChain()
    {
-      MethodInterceptors newInterceptors = new MethodInterceptors(this);
       long[] keys = advisedMethods.keys();
       for (int i = 0; i < keys.length; i++)
       {
@@ -460,12 +459,12 @@ public class ClassAdvisor extends Advisor
          info.setUnadvisedMethod(umethod);
          info.setHash(keys[i]);
          info.setAdvisor(this);
-         newInterceptors.put(keys[i], info);
+         methodInfos.put(keys[i], info);
          try
          {
             Field infoField = clazz.getDeclaredField(MethodExecutionTransformer.getMethodInfoFieldName(amethod.getName(), keys[i]));
             infoField.setAccessible(true);
-            infoField.set(null, new WeakReference(info));
+            infoField.set(null, new WeakReference<MethodInfo>(info));
          }
          catch (NoSuchFieldException e)
          {
@@ -476,12 +475,11 @@ public class ClassAdvisor extends Advisor
             throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
          }
       }
-      return newInterceptors;
    }
 
-   protected FieldInfo[] initializeFieldReadChain()
+   protected void initializeFieldReadChain()
    {
-      FieldInfo[] chain = new FieldInfo[advisedFields.length];
+      this.fieldReadInfos = new FieldInfo[advisedFields.length];
       for (int i = 0; i < advisedFields.length; i++)
       {
          FieldInfo info = new FieldInfo();
@@ -500,7 +498,7 @@ public class ClassAdvisor extends Advisor
             //Just means not advised
          }
 
-         chain[i] = info;
+         fieldReadInfos[i] = info;
 
          try
          {
@@ -517,12 +515,11 @@ public class ClassAdvisor extends Advisor
             throw new RuntimeException(e);
          }
       }
-      return chain;
    }
 
-   protected FieldInfo[] initializeFieldWriteChain()
+   protected void initializeFieldWriteChain()
    {
-      FieldInfo[] chain = new FieldInfo[advisedFields.length];
+      this.fieldWriteInfos = new FieldInfo[advisedFields.length];
       for (int i = 0; i < advisedFields.length; i++)
       {
          FieldInfo info = new FieldInfo();
@@ -541,7 +538,7 @@ public class ClassAdvisor extends Advisor
             //Just means not advised
          }
 
-         chain[i] = info;
+         fieldWriteInfos[i] = info;
 
          try
          {
@@ -559,7 +556,6 @@ public class ClassAdvisor extends Advisor
          }
 
       }
-      return chain;
    }
 
 //   protected void finalizeChain(JoinPointInfo[] infos)
@@ -580,18 +576,19 @@ public class ClassAdvisor extends Advisor
    protected void createInterceptorChains() throws Exception
    {
       if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Creating chains for " + clazz + " " + ((clazz != null) ? clazz.getClassLoader() : null ));
-      MethodInterceptors newMethodInfos = initializeMethodChain();
       // TODO flavia remove this
-      boolean buildFieldConsChain = true;
+      // this if is here because the subclass GeneratedClassAdvisor shouldn't be calling
+      // this method anymore: the infos are already created during this class initalization (initalise method)
+      // we call this method because we have the method chains
       if (fieldReadInfos == null)
       {
-         buildFieldConsChain = false;
-         this.fieldReadInfos = initializeFieldReadChain();
-         this.fieldWriteInfos = initializeFieldWriteChain();
+         initializeFieldReadChain();
+         initializeFieldWriteChain();
+         initializeMethodChain();
       }
       
-      this.constructorInfos = initializeConstructorChain();
-      this.constructionInfos = initializeConstructionChain();
+      initializeConstructorChain();
+      initializeConstructionChain();
 
       synchronized (manager.getBindings())
       {
@@ -600,7 +597,7 @@ public class ClassAdvisor extends Advisor
          {
             AdviceBinding binding = (AdviceBinding) it.next();
             if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName() + " " + binding.getPointcut().getExpr());
-            resolveMethodPointcut(newMethodInfos, binding);
+            resolveMethodPointcut(binding);
             resolveFieldPointcut(fieldReadInfos, binding, false);
             resolveFieldPointcut(fieldWriteInfos, binding, true);
             resolveConstructorPointcut(binding);
@@ -608,7 +605,7 @@ public class ClassAdvisor extends Advisor
          }
       }
 
-      finalizeChains(newMethodInfos);
+      finalizeChains();
       populateInterceptorsFromInfos();
 
       doesHaveAspects = adviceBindings.size() > 0;
@@ -620,21 +617,14 @@ public class ClassAdvisor extends Advisor
       }
    }
    
-   private void resetChain(JoinPointInfo[] infos)
-   {
-      for (int i = 0; i < infos.length; i++)
-      {
-         infos[i].getInterceptorChain().clear();
-      }
-   }
-   
    protected void updateInterceptorChains() throws Exception
    {
       if (AspectManager.verbose && logger.isDebugEnabled())
       {
          logger.debug("Updating chains for " + clazz + " " + ((clazz != null) ? clazz.getClassLoader() : null ));  
       }
-      MethodInterceptors newMethodInfos = initializeMethodChain();
+      logger.debug("Updating chains for " + clazz + " " + ((clazz != null) ? clazz.getClassLoader() : null ));
+      resetChain(methodInfos);
       resetChain(fieldReadInfos);
       resetChain(fieldWriteInfos);
       resetChain(constructorInfos);
@@ -647,7 +637,7 @@ public class ClassAdvisor extends Advisor
          {
             AdviceBinding binding = (AdviceBinding) it.next();
             if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName() + " " + binding.getPointcut().getExpr());
-            resolveMethodPointcut(newMethodInfos, binding);
+            resolveMethodPointcut(binding);
             resolveFieldPointcut(fieldReadInfos, binding, false);
             resolveFieldPointcut(fieldWriteInfos, binding, true);
             resolveConstructorPointcut(binding);
@@ -655,7 +645,7 @@ public class ClassAdvisor extends Advisor
          }
       }
 
-      finalizeChains(newMethodInfos);
+      finalizeChains();
       populateInterceptorsFromInfos();
 
       doesHaveAspects = adviceBindings.size() > 0;
@@ -667,9 +657,9 @@ public class ClassAdvisor extends Advisor
       }
    }
 
-   protected void finalizeChains(MethodInterceptors newMethodInfos)
+   protected void finalizeChains()
    {
-      finalizeMethodChain(newMethodInfos);
+      finalizeMethodChain();
       finalizeChain(fieldReadInfos);
       finalizeChain(fieldWriteInfos);
       finalizeChain(constructorInfos);
@@ -1475,7 +1465,7 @@ public class ClassAdvisor extends Advisor
          InstanceAdvised advised = (InstanceAdvised) target;
          advisor = advised._getInstanceAdvisor();
       }
-      MethodInfo info = (MethodInfo) methodInterceptors.get(methodHash);
+      MethodInfo info = methodInfos.getMethodInfo(methodHash);
       return invokeMethod(advisor, target, methodHash, arguments, info);
    }
 
@@ -1483,7 +1473,7 @@ public class ClassAdvisor extends Advisor
    public Object invokeMethod(InstanceAdvisor instanceAdvisor, Object target, long methodHash, Object[] arguments)
    throws Throwable
    {
-      MethodInfo info = (MethodInfo) methodInterceptors.get(methodHash);
+      MethodInfo info = (MethodInfo) methodInfos.getMethodInfo(methodHash);
       if (info == null && logger.isDebugEnabled())
       {
          logger.debug("info is null for hash: " + methodHash + " of " + clazz.getName());

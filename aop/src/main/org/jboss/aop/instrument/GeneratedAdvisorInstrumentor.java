@@ -31,6 +31,7 @@ import javassist.CtNewMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
 
+import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.ConByConInfo;
@@ -43,6 +44,7 @@ import org.jboss.aop.MethodByMethodInfo;
 import org.jboss.aop.MethodInfo;
 import org.jboss.aop.WeavingStrategySupport;
 import org.jboss.aop.classpool.AOPClassPool;
+import org.jboss.aop.instrument.MethodExecutionTransformer.MethodTransformation;
 
 /**
  * Comment
@@ -163,6 +165,15 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
    throws CannotCompileException, NotFoundException, Exception
    {
       return ((GeneratedAdvisorMethodExecutionTransformer)methodExecutionTransformer).addMixinWrappersAndInfo(this, clazz, mixinClass, initializer, genadvisor, method);
+   }
+ 
+   @Override
+   protected CtMethod addMixinMethod(Advisor advisor, CtMethod method, CtClass clazz, CtMethod delegate, long hash) throws Exception
+   {
+      //CtMethod newMethod = super.addMixinMethod(advisor, method, clazz, delegate, hash);
+      //((GeneratedAdvisorMethodExecutionTransformer) methodExecutionTransformer).
+      //   addMethodIntroductionInfo(this, clazz, newMethod, hash);
+      return ((GeneratedAdvisorMethodExecutionTransformer) methodExecutionTransformer).addMixinWrappersAndInfo(this, clazz, genadvisor, method, delegate);
    }
 
    protected static String getAdvisorName(CtClass clazz)
@@ -641,6 +652,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       StringBuffer initialiseInfosForInstanceCode = new StringBuffer();
       initialiseInfosForInstanceCode.append("java.util.Collection fieldReadCol = new java.util.ArrayList();");
       initialiseInfosForInstanceCode.append("java.util.Collection fieldWriteCol = new java.util.ArrayList();");
+      //initialiseInfosForInstanceCode.append("methodInfos = new org.jboss.aop.MethodInterceptors($0);");
       while (true)
       {
          CtField[] fields = superAdvisor.getDeclaredFields();

@@ -536,7 +536,7 @@ public abstract class JoinPointGenerator
       
       try
       {
-         joinpointField = advisorClass.getDeclaredField(joinpointFieldName);
+         joinpointField = advisorClass.getField(joinpointFieldName);
          SecurityActions.setAccessible(joinpointField);
          joinpointFqn = advisorClass.getDeclaringClass().getName() + "$" + joinpointClassName;
       }

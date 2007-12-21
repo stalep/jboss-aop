@@ -46,7 +46,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
       super(instrumentor);
    }
 
-   private String addMethodInfoFieldToGenAdvisor(MethodTransformation trans)throws NotFoundException, CannotCompileException
+   protected String addMethodInfoFieldToGenAdvisor(MethodTransformation trans)throws NotFoundException, CannotCompileException
    {
       GeneratedAdvisorInstrumentor instrumentor = (GeneratedAdvisorInstrumentor)trans.getInstrumentor();
       CtClass genadvisor = instrumentor.getGenadvisor();
@@ -79,7 +79,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
             joinpoint,
             getJoinPointFieldName(trans),
             genadvisor);
-      field.setModifiers(Modifier.PROTECTED);
+      field.setModifiers(Modifier.PUBLIC);
       genadvisor.addField(field);
    }
 
@@ -149,6 +149,131 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
       return wmethod;
    }
 
+   public CtMethod addMixinWrappersAndInfo(
+         GeneratedAdvisorInstrumentor instrumentor,
+         CtClass clazz,
+         CtClass genadvisor,
+         CtMethod mixinMethod,
+         CtMethod delegate) throws CannotCompileException, NotFoundException
+   {
+      String originalName = mixinMethod.getName();
+      String originalBody = "{ ";
+      CtClass returnType = mixinMethod.getReturnType();
+      if (!returnType.equals(CtClass.voidType))
+      {
+         if (returnType.isPrimitive())
+         {
+            if (returnType.equals(CtClass.booleanType))
+            {
+               originalBody += "return false;";
+            }
+            else if (returnType.equals(CtClass.byteType))
+            {
+               originalBody += "return (byte) 0;";
+            }
+            else if (returnType.equals(CtClass.charType))
+            {
+               originalBody += "return (char) 0;";
+            }
+            else if (returnType.equals(CtClass.doubleType))
+            {
+               originalBody += "return (double) 0.0;";
+            }
+            else if (returnType.equals(CtClass.floatType))
+            {
+               originalBody += "return (float) 0.0;";
+            }
+            else if (returnType.equals(CtClass.intType))
+            {
+               originalBody += "return 0;";
+            }
+            else if (returnType.equals(CtClass.longType))
+            {
+               originalBody += "return 0l;";
+            }
+            else if (returnType.equals(CtClass.shortType))
+            {
+               originalBody += "return (short) 0;";
+            }
+            else
+            {
+               throw new RuntimeException ("Unexpected primitive type: " + returnType.getName());
+            }
+         }
+         else
+         {
+            originalBody += "return null;";
+         }
+      }
+      originalBody += "}";
+
+      CtMethod original = CtNewMethod.make(
+            Modifier.PUBLIC,
+            mixinMethod.getReturnType(),
+            mixinMethod.getName(),
+            mixinMethod.getParameterTypes(),
+            mixinMethod.getExceptionTypes(),
+            originalBody,
+            clazz);
+      clazz.addMethod(original);
+      long hash = JavassistMethodHashing.methodHash(original);
+      moveAnnotationsAndCopySignature(mixinMethod, original);
+
+      String wrappedName = ClassAdvisor.notAdvisedMethodName(clazz.getName(), originalName);
+      CtMethod wmethod = CtNewMethod.copy(original, clazz, null);
+
+      wmethod.setName(wrappedName);
+      clazz.addMethod(wmethod);
+      moveAnnotationsAndCopySignature(original, wmethod);
+
+      original.setName(wrappedName);
+      wmethod.setName(originalName);
+
+      MethodTransformation trans = new MethodTransformation(instrumentor, clazz, original, originalName, wmethod, wrappedName, hash);
+
+      String methodInfoField = addMethodInfoFieldToGenAdvisor(trans);
+      //delegate = genadvisor.getSuperclass().getSuperclass().getDeclaredMethod("invokeMethod");
+      String body = "{ return ((org.jboss.aop.ClassAdvisor)this._getAdvisor()).invokeMethod($1, ";
+      body += trans.getHash() + "L";
+      for (int i = 0; i < mixinMethod.getParameterTypes().length; i++)
+      {
+         body +=  "$" + (i + 2);
+      }
+      body += ");}";
+      addMethodToGeneratedAdvisor(trans, methodInfoField, body);
+//      CtMethod newMethod = CtNewMethod.wrapped(trans.getWMethod().getReturnType(),
+//            getAdvisorMethodName(trans),
+//            addTargetToParamsForNonStaticMethod(trans.getClazz(), trans.getWMethod()),
+//            trans.getWMethod().getExceptionTypes(),
+//            delegate,
+//            CtMethod.ConstParameter.integer(hash),
+//            clazz);
+//      genadvisor.addMethod(newMethod);
+//      newMethod.setModifiers(Modifier.setProtected(newMethod.getModifiers()));
+//      
+      String wrapperBody =
+         "{" +
+         "   " + getReturnStr(trans.getMethod()) + " ((" + GeneratedAdvisorInstrumentor.getAdvisorFQN(trans.getClazz()) + ")" + GeneratedAdvisorInstrumentor.GET_CURRENT_ADVISOR + ")." + getAdvisorMethodName(trans) + "(this,$$);" +
+         "}";
+      wmethod.setBody(wrapperBody);
+      return wmethod;
+   }
+   
+   public void addMethodIntroductionInfo(
+         GeneratedAdvisorInstrumentor instrumentor,
+         CtClass clazz,
+         CtMethod introducedMethod,
+         long hash) throws CannotCompileException, NotFoundException
+   {
+      MethodTransformation trans = new MethodTransformation(instrumentor, clazz,
+            introducedMethod, introducedMethod.getName(), introducedMethod,
+            introducedMethod.getName(), hash);
+      String methodInfoField = addMethodInfoFieldToGenAdvisor(trans);
+      // TODO: this method is never called: we need to make interface introductions
+      // work in the new mode.
+      addMethodToGeneratedAdvisor(trans, methodInfoField);
+   }
+   
    protected void transformMethod(MethodTransformation trans, boolean wrap)
          throws CannotCompileException, NotFoundException
    {
@@ -257,6 +382,13 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
    }
 
    private void addMethodToGeneratedAdvisor(MethodTransformation trans, String methodInfoField)throws CannotCompileException, NotFoundException
+   {
+      // TODO send methodInfoField value to createAdvisorMethodBody as a parameter
+      String code = createAdvisorMethodBody(trans);
+      this.addMethodToGeneratedAdvisor(trans, methodInfoField, code);
+   }
+   
+   private void addMethodToGeneratedAdvisor(MethodTransformation trans, String methodInfoField, String body)throws CannotCompileException, NotFoundException
    {
       CtClass genadvisor = ((GeneratedAdvisorInstrumentor)trans.getInstrumentor()).getGenadvisor();
 

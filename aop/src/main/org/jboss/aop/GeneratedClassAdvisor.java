@@ -69,14 +69,14 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    public static final String ADD_FIELD_WRITE_INFO = "addFieldWriteInfo";
    public static final String GET_PARENT_ADVISOR = "getParentAdvisor";
 
-   MethodInterceptors methodInfos = new MethodInterceptors(this);
+   
 // TODO Flavia   
 //   ArrayList<ConstructorInfo> constructorInfos = new ArrayList();
 //   ArrayList<ConstructionInfo> constructionInfos = new ArrayList();
 //   ArrayList<FieldInfo> fieldReadInfos = new ArrayList();
 //   ArrayList<FieldInfo> fieldWriteInfos = new ArrayList();
    /** Super class methods that have been overrridden - these need special handling in this weaving mode */
-   ArrayList overriddenMethods = new ArrayList(); 
+   ArrayList<MethodInfo> overriddenMethods = new ArrayList<MethodInfo>(); 
 
    //TODO These are only needed for the class advisor really
    //All joinpoint generators apart from field reads and constructions go in here
@@ -281,13 +281,13 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    }
 
    @Override
-   protected void resolveMethodPointcut(MethodInterceptors newMethodInterceptors, AdviceBinding binding)
+   protected void resolveMethodPointcut(AdviceBinding binding)
    {
       GeneratedClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
       if (classAdvisor == null)
       {
          //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
-         super.resolveMethodPointcut(newMethodInterceptors, binding);
+         super.resolveMethodPointcut(binding);
          handleOverriddenMethods(binding);
       }
    }
@@ -333,12 +333,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          overriddenMethods.add(old);
       }
       methodInfos.put(mi.getHash(), mi);
-      
       advisorStrategy.makeAccessibleMethod(mi);
    }
 
    @Override
-   protected MethodInterceptors initializeMethodChain()
+   protected void initializeMethodChain()
    {
       //We have all the advised methods here, need to get all the others here too
 
@@ -363,8 +362,6 @@ public class GeneratedClassAdvisor extends ClassAdvisor
             methodInfos.put(keys[i], info);
          }
       }
-
-      return methodInfos;
    }
 
 
@@ -388,7 +385,6 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    @Override
    protected void createInterceptorChains() throws Exception
    {
-      System.out.println("Creating interceptor chains on advisor " + this.getClass().getName());
       advisorStrategy.createInterceptorChains();
    }
    
@@ -454,32 +450,30 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    // TODO Flavia remove this once the process is complete
    @Override
-   protected ConstructorInfo[] initializeConstructorChain()
+   protected void initializeConstructorChain()
    {
       // TODO remove this
-      if (this.constructorInfos != null)
+      if (this.constructorInfos == null)
       {
-         return this.constructorInfos;
+         super.initializeConstructorChain();
       }
-      return super.initializeConstructorChain();
    }
    
    // TODO remove this once the process is complete
    @Override
-   protected ConstructionInfo[] initializeConstructionChain()
+   protected void initializeConstructionChain()
    {
       // TODO remove this
-      if (this.constructionInfos != null)
+      if (this.constructionInfos == null)
       {
-         return this.constructionInfos;
+         super.initializeConstructionChain();
       }
-      return super.initializeConstructionChain();
    }
    
    @Override
-   protected FieldInfo[] initializeFieldReadChain()
+   protected void initializeFieldReadChain()
    {
-      return mergeFieldInfos(fieldReadInfos, true);
+      this.fieldReadInfos = mergeFieldInfos(fieldReadInfos, true);
    }
 
    /**
@@ -500,9 +494,9 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    }
 
    @Override
-   protected FieldInfo[] initializeFieldWriteChain()
+   protected void initializeFieldWriteChain()
    {
-      return mergeFieldInfos(fieldWriteInfos, false);
+      this.fieldWriteInfos = mergeFieldInfos(fieldWriteInfos, false);
    }
 
    /* Creates a full list of field infos for all fields, using the ones added by
@@ -540,7 +534,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    }
 
    @Override
-   protected void finalizeChains(MethodInterceptors newMethodInfos)
+   protected void finalizeChains()
    {
       ClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
       if (classAdvisor != null)
@@ -559,7 +553,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          }
       }
       
-      finalizeMethodChain(newMethodInfos);
+      finalizeMethodChain();
       finalizeFieldReadChain();
       finalizeFieldWriteChain();
       advisorStrategy.finalizeConstructorChain(constructorInfos);
@@ -567,18 +561,18 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    }
 
    @Override
-   protected void finalizeMethodChain(MethodInterceptors newMethodInterceptors)
+   protected void finalizeMethodChain()
    {
       ClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
       if (classAdvisor != null)
       {
          //We are an instance advisor with no own data influencing the chains, copy these from the parent advisor
-         easyFinalizeMethodChainForInstance(classAdvisor, newMethodInterceptors);
+         easyFinalizeMethodChainForInstance(classAdvisor, methodInfos);
       }
       else
       {
          //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
-         fullWorkFinalizeMethodChain(newMethodInterceptors);
+         fullWorkFinalizeMethodChain(methodInfos);
       }
    }
 
@@ -815,7 +809,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    @Override
    protected void pointcutResolved(JoinPointInfo info, AdviceBinding binding, Joinpoint joinpoint)
    {
-      ArrayList curr = info.getInterceptorChain();
+      ArrayList<Interceptor> curr = info.getInterceptorChain();
       if (binding.getCFlow() != null)
       {
          //TODO Handle CFlow
@@ -884,7 +878,8 @@ public class GeneratedClassAdvisor extends ClassAdvisor
     * Generated ClassAdvisors and InstanceAdvisors will be different instances,
     * so keep track of what per_class_joinpoint aspects have been added where
     */
-   ConcurrentHashMap perClassJoinpointAspectDefinitions = new ConcurrentHashMap();
+   ConcurrentHashMap<AspectDefinition,Map<Joinpoint, Object>> perClassJoinpointAspectDefinitions =
+         new ConcurrentHashMap<AspectDefinition, Map<Joinpoint, Object>>();
 
 
    public Object getPerClassJoinpointAspect(AspectDefinition def, Joinpoint joinpoint)
@@ -894,10 +889,10 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    public synchronized void addPerClassJoinpointAspect(AspectDefinition def, Joinpoint joinpoint)
    {
-      Map joinpoints = (Map)perClassJoinpointAspectDefinitions.get(def);
+      Map<Joinpoint, Object> joinpoints = perClassJoinpointAspectDefinitions.get(def);
       if (joinpoints == null)
       {
-         joinpoints = new ConcurrentHashMap();
+         joinpoints = new ConcurrentHashMap<Joinpoint, Object>();
          perClassJoinpointAspectDefinitions.put(def, joinpoints);
       }
 
@@ -1246,6 +1241,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
       public void initialise(Class clazz, AspectManager manager)
       {
+         methodInfos = new MethodInterceptors(GeneratedClassAdvisor.this);
          initialiseMethods();
          // initialise constructor info array
          Collection<ConstructorInfo> constructorInfoCol = new ArrayList<ConstructorInfo>();
@@ -1537,7 +1533,6 @@ public class GeneratedClassAdvisor extends ClassAdvisor
             ConstructorJoinPointGenerator generator = getJoinPointGenerator(info);
             Class clazz = info.getClazz();
             if (clazz != null)
-            System.out.println("Finalizing constructor chain for constructor of class " + clazz.getName());
             finalizeChainAndRebindJoinPoint(oldInfos, info, generator, OldInfoMaps.INFOS);
          }
       }

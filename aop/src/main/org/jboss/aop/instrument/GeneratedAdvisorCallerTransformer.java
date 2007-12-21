@@ -91,7 +91,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
                joinpoint,
                MethodByConJoinPointGenerator.getGeneratedJoinPointFieldName(cd.callingIndex, cd.classname, cd.calledHash),
                genadvisor);
-         field.setModifiers(Modifier.PROTECTED);
+         field.setModifiers(Modifier.PUBLIC);
          genadvisor.addField(field);
       }
 
@@ -194,7 +194,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
                joinpoint,
                MethodByMethodJoinPointGenerator.getGeneratedJoinPointFieldName(md.callingHash, md.classname, md.calledHash),
                genadvisor);
-         field.setModifiers(Modifier.PROTECTED);
+         field.setModifiers(Modifier.PUBLIC);
          genadvisor.addField(field);
       }
 
@@ -296,7 +296,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
                joinpoint,
                ConByMethodJoinPointGenerator.getGeneratedJoinPointFieldName(cd.callingHash, cd.classname, cd.calledHash),
                genadvisor);
-         field.setModifiers(Modifier.PROTECTED);
+         field.setModifiers(Modifier.PUBLIC);
          genadvisor.addField(field);
       }
 
@@ -388,7 +388,7 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
                joinpoint,
                ConByConJoinPointGenerator.getGeneratedJoinPointFieldName(cd.callingIndex, cd.classname, cd.calledHash),
                genadvisor);
-         field.setModifiers(Modifier.PROTECTED);
+         field.setModifiers(Modifier.PUBLIC);
          genadvisor.addField(field);
       }
 

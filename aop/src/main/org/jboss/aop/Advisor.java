@@ -48,8 +48,6 @@ import javassist.CtMethod;
 
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AspectDefinition;
-import org.jboss.aop.advice.AspectFactory;
-import org.jboss.aop.advice.AspectFactoryWithClassLoaderSupport;
 import org.jboss.aop.advice.CFlowInterceptor;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.advice.InterceptorFactory;
@@ -89,7 +87,7 @@ public abstract class Advisor
 {
    public MethodInfo getMethodInfo(long hash)
    {
-      return (MethodInfo)methodInterceptors.get(hash);
+      return methodInfos.getMethodInfo(hash);
    }
 
    private class AdviceInterceptorKey
@@ -129,7 +127,7 @@ public abstract class Advisor
    protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
    protected Set<AdviceBinding> adviceBindings = new HashSet<AdviceBinding>();
-   protected volatile ArrayList interfaceIntroductions = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+   protected volatile ArrayList<InterfaceIntroduction> interfaceIntroductions = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
    protected volatile ArrayList<ClassMetaDataBinding> classMetaDataBindings = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
    protected SimpleMetaData defaultMetaData = new SimpleMetaData();
    protected MethodMetaData methodMetaData = new MethodMetaData();
@@ -152,7 +150,9 @@ public abstract class Advisor
    // The method signatures are sorted at transformation and load time to
    // make sure the tables line up.
    //Common sense suggests that this should be lazily initialised for generated advisors, profiling shows that is a major performance hit...
+   /** @deprecated use methodInfos instead */
    protected TLongObjectHashMap methodInterceptors = new TLongObjectHashMap();
+   protected MethodInterceptors methodInfos = new MethodInterceptors(this);;
    protected AspectManager manager;
    protected Class clazz = null;
    protected Constructor[] constructors;
@@ -724,7 +724,7 @@ public abstract class Advisor
       doesHaveAspects = adviceBindings.size() > 0;
    }
 
-   public ArrayList getInterfaceIntroductions()
+   public ArrayList<InterfaceIntroduction> getInterfaceIntroductions()
    {
       return interfaceIntroductions;
    }
@@ -878,14 +878,14 @@ public abstract class Advisor
       }
    }
 
-   protected void resolveMethodPointcut(MethodInterceptors newMethodInterceptors, AdviceBinding binding)
+   protected void resolveMethodPointcut(AdviceBinding binding)
    {
-      long[] keys = advisedMethods.keys();
+      long[] keys = methodInfos.keys();
       for (int i = 0; i < keys.length; i++)
       {
          Method method = (Method) advisedMethods.get(keys[i]);
          PointcutMethodMatch match = binding.getPointcut().matchesExecution(this, method);
-
+         
          if (match != null && match.isMatch())
          {
             adviceBindings.add(binding);
@@ -905,34 +905,46 @@ public abstract class Advisor
                System.err.println("[debug] method matched binding: " + method.toString());
             }
             binding.addAdvisor(this);
-            MethodMatchInfo info = newMethodInterceptors.getMatchInfo(keys[i]);
+            MethodMatchInfo info = methodInfos.getMatchInfo(keys[i]);
             info.addMatchedBinding(binding, match);
          }
       }
    }
 
-   protected void finalizeMethodChain(MethodInterceptors newMethodInterceptors)
+   protected void resetChain(MethodInterceptors methodInterceptors)
    {
-      TLongObjectHashMap newMethodInfos = new TLongObjectHashMap();
-
-      long[] keys = newMethodInterceptors.keys();
+      Object[] methodMatchInfos = methodInterceptors.infos.getValues();
+      for (int i = 0; i < methodMatchInfos.length; i++)
+      {
+         MethodMatchInfo methodMatchInfo = (MethodMatchInfo) methodMatchInfos[i];
+         if (methodMatchInfo.bindings != null)
+         {
+            methodMatchInfo.bindings.clear();
+         }
+         if (methodMatchInfo.pointcutMethodMatches != null)
+         {
+            methodMatchInfo.pointcutMethodMatches.clear();
+         }
+         methodMatchInfo.getInfo().clear();
+      }
+   }
+   
+   protected void finalizeMethodChain()
+   {
+      long[] keys = methodInfos.keys();
       for (int i = 0; i < keys.length; i++)
       {
-         MethodMatchInfo matchInfo = newMethodInterceptors.getMatchInfo(keys[i]);
+         MethodMatchInfo matchInfo = methodInfos.getMatchInfo(keys[i]);
          matchInfo.populateBindings();
-
          MethodInfo info = matchInfo.getInfo();
-         newMethodInfos.put(keys[i], info);
-
-         ArrayList list = info.getInterceptorChain();
+         ArrayList<Interceptor> list = info.getInterceptorChain();
          Interceptor[] interceptors = null;
          if (list.size() > 0)
          {
-            interceptors = applyPrecedence((Interceptor[]) list.toArray(new Interceptor[list.size()]));
+            interceptors = applyPrecedence(list.toArray(new Interceptor[list.size()]));
          }
          info.setInterceptors(interceptors);
       }
-      methodInterceptors = newMethodInfos;
    }
 
    public InvocationResponse dynamicInvoke(Object target, Invocation invocation)
@@ -944,7 +956,7 @@ public abstract class Advisor
          Interceptor[] aspects = null;
          MethodInvocation methodInvocation = (MethodInvocation) invocation;
          long hash = methodInvocation.getMethodHash();
-         MethodInfo info = (MethodInfo) methodInterceptors.get(hash);
+         MethodInfo info = (MethodInfo) methodInfos.getMethodInfo(hash);
          aspects = info.getInterceptors();
          if (aspects == null) aspects = new Interceptor[0];
          if (target != null && target instanceof Advised)
@@ -986,14 +998,14 @@ public abstract class Advisor
       return name.substring(lastIndex + 1);
    }
 
-   protected ConstructorInfo[] initializeConstructorChain()
+   protected void initializeConstructorChain()
    {
       if (clazz != null && constructors == null)
       {
           constructors = clazz.getDeclaredConstructors();
       }
 
-      ConstructorInfo[] newInfos = new ConstructorInfo[constructors.length];
+      this.constructorInfos = new ConstructorInfo[constructors.length];
       for (int i = 0; i < constructors.length; i++)
       {
          final ConstructorInfo info = new ConstructorInfo();
@@ -1020,7 +1032,7 @@ public abstract class Advisor
          }
 
          info.setAdvisor(this);
-         newInfos[i] = info;
+         constructorInfos[i] = info;
 
          try
          {
@@ -1043,20 +1055,18 @@ public abstract class Advisor
                throw new NestedRuntimeException(e);
          }
       }
-
-      return newInfos;
    }
 
-   protected ConstructionInfo[] initializeConstructionChain()
+   protected void initializeConstructionChain()
    {
-      ConstructionInfo[] newInfos = new ConstructionInfo[constructors.length];
+      this.constructionInfos = new ConstructionInfo[constructors.length];
       for (int i = 0; i < constructors.length; i++)
       {
          ConstructionInfo info = new ConstructionInfo();
          info.setConstructor(constructors[i]);
          info.setIndex(i);
          info.setAdvisor(this);
-         newInfos[i] = info;
+         constructionInfos[i] = info;
 
          try
          {
@@ -1072,9 +1082,7 @@ public abstract class Advisor
          {
             throw new RuntimeException(e);
          }
-
       }
-      return newInfos;
    }
 
    protected void finalizeChain(JoinPointInfo[] infos)
@@ -1091,6 +1099,16 @@ public abstract class Advisor
          info.setInterceptors(interceptors);
       }
    }
+   
+   protected void resetChain(JoinPointInfo[] infos)
+   {
+      for (int i = 0; i < infos.length; i++)
+      {
+         infos[i].clear();
+      }
+   }
+   
+   
 
 //   protected void finalizeConstructionChain(ArrayList newConstructionInfos)
 //   {
@@ -1283,9 +1301,9 @@ public abstract class Advisor
          }
       }
             
-      if (methodInterceptors != null)
+      if (methodInfos != null)
       {
-         methodInterceptors.clear();
+         methodInfos. clear();
       }
    }
    
@@ -1314,7 +1332,7 @@ public abstract class Advisor
          {
             if (interfaceIntroductions == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
             {
-               interfaceIntroductions = new ArrayList();
+               interfaceIntroductions = new ArrayList<InterfaceIntroduction>();
             }
          }
          finally

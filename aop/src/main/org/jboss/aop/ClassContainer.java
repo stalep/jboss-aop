@@ -123,7 +123,14 @@ public class ClassContainer extends Advisor
    protected void rebuildInterceptors()
    {
       adviceBindings.clear();
-      createInterceptorChains();
+      if (this.constructorInfos == null)
+      {
+         createInterceptorChains();
+      }
+      else
+      {
+         updateInterceptorChains();
+      }
    }
 
    public void addClassMetaData(ClassMetaDataBinding data)
@@ -208,9 +215,8 @@ public class ClassContainer extends Advisor
       }
    }
 
-   protected MethodInterceptors initializeMethodChain()
+   protected void initializeMethodChain()
    {
-      MethodInterceptors newInterceptors = new MethodInterceptors(this);
       long[] keys = advisedMethods.keys();
       for (int i = 0; i < keys.length; i++)
       {
@@ -220,9 +226,8 @@ public class ClassContainer extends Advisor
          info.setUnadvisedMethod(amethod);
          info.setHash(keys[i]);
          info.setAdvisor(this);
-         newInterceptors.put(keys[i], info);
+         methodInfos.put(keys[i], info);
       }
-      return newInterceptors;
    }
 
    protected void createConstructorTables()
@@ -241,8 +246,8 @@ public class ClassContainer extends Advisor
 
    protected void createInterceptorChains()
    {
-      MethodInterceptors newMethodInfos = initializeMethodChain();
-      constructorInfos = initializeConstructorChain();
+      initializeMethodChain();
+      initializeConstructorChain();
 
       LinkedHashMap bindings = manager.getBindings();
       synchronized (bindings)
@@ -254,13 +259,40 @@ public class ClassContainer extends Advisor
             {
                AdviceBinding binding = (AdviceBinding) it.next();
                if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName());
-               resolveMethodPointcut(newMethodInfos, binding);
+               resolveMethodPointcut(binding);
                resolveConstructorPointcut(binding);
             }
          }
       }
       finalizeChain(constructorInfos);
-      finalizeMethodChain(newMethodInfos);
+      finalizeMethodChain();
+      populateInterceptorsFromInfos();
+
+      doesHaveAspects = adviceBindings.size() > 0;
+   }
+   
+   protected void updateInterceptorChains()
+   {
+      resetChain(this.methodInfos);
+      resetChain(this.constructorInfos);
+
+      LinkedHashMap bindings = manager.getBindings();
+      synchronized (bindings)
+      {
+         if (bindings.size() > 0)
+         {
+            Iterator it = bindings.values().iterator();
+            while (it.hasNext())
+            {
+               AdviceBinding binding = (AdviceBinding) it.next();
+               if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName());
+               resolveMethodPointcut(binding);
+               resolveConstructorPointcut(binding);
+            }
+         }
+      }
+      finalizeChain(constructorInfos);
+      finalizeMethodChain();
       populateInterceptorsFromInfos();
 
       doesHaveAspects = adviceBindings.size() > 0;

@@ -56,7 +56,6 @@ public class MethodInfo extends JoinPointInfo implements MethodExecution
       {
          throw new RuntimeException(e);
       }
-      
    }
    
    /*

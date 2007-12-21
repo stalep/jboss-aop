@@ -81,7 +81,7 @@ public class GeneratedAdvisorConstructorExecutionTransformer extends
             joinpoint,
             ConstructorJoinPointGenerator.getGeneratedJoinPointFieldName(clazz.getSimpleName(), index),
             genadvisor);
-      field.setModifiers(Modifier.PROTECTED);
+      field.setModifiers(Modifier.PUBLIC);
       genadvisor.addField(field);
    }
 

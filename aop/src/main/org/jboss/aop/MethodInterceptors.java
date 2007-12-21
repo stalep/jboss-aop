@@ -62,4 +62,9 @@ class MethodInterceptors
    {
       infos.put(hash, new MethodMatchInfo(advisor, info));
    }
+   
+   public void clear()
+   {
+      infos.clear();
+   }
 }

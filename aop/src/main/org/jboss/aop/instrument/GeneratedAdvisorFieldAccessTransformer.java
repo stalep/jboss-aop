@@ -138,7 +138,7 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
             joinpoint,
             FieldJoinPointGenerator.getGeneratedJoinPointFieldName(field.getName(), true),
             genadvisor);
-      jpfield.setModifiers(Modifier.PROTECTED);
+      jpfield.setModifiers(Modifier.PUBLIC);
       genadvisor.addField(jpfield);
    }
 
@@ -177,7 +177,7 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
             joinpoint,
             FieldJoinPointGenerator.getGeneratedJoinPointFieldName(field.getName(), false),
             genadvisor);
-      jpfield.setModifiers(Modifier.PROTECTED);
+      jpfield.setModifiers(Modifier.PUBLIC);
       genadvisor.addField(jpfield);
    }
 
