@@ -29,6 +29,22 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.CodeConverter;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.CtNewMethod;
+import javassist.Modifier;
+import javassist.NotFoundException;
+import javassist.SerialVersionUID;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.FieldInfo;
+import javassist.bytecode.MethodInfo;
+
 import org.jboss.aop.Advised;
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
@@ -46,21 +62,6 @@ import org.jboss.aop.util.CtFieldComparator;
 import org.jboss.aop.util.JavassistMethodHashing;
 import org.jboss.aop.util.logging.AOPLogger;
 import org.jboss.logging.Logger;
-
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CodeConverter;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.CtNewMethod;
-import javassist.Modifier;
-import javassist.NotFoundException;
-import javassist.SerialVersionUID;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.FieldInfo;
-import javassist.bytecode.MethodInfo;
 
 /**
  * Transforms byte code, making a class advisable. Implements
@@ -198,7 +199,14 @@ public abstract class Instrumentor
    {
       if (clazz.getSuperclass() != null)
       {
-         return !isAdvised(clazz.getSuperclass());
+         if (isAdvised(clazz.getSuperclass()))
+         {
+            return false;
+         }
+         else
+         {
+            return isBaseClass(clazz.getSuperclass());
+         }
       }
       return true;
    }
@@ -212,7 +220,7 @@ public abstract class Instrumentor
       return buf.toString();
    }
 
-   private void addMixinMethod(Advisor advisor, CtMethod method, CtClass clazz, CtMethod delegate, long hash) throws Exception
+   protected CtMethod addMixinMethod(Advisor advisor, CtMethod method, CtClass clazz, CtMethod delegate, long hash) throws Exception
    {
       CtClass[] exceptions = method.getExceptionTypes();
 
@@ -226,9 +234,10 @@ public abstract class Instrumentor
                                                clazz);
       newMethod.setModifiers(Modifier.PUBLIC);
       clazz.addMethod(newMethod);
+      return newMethod;
    }
 
-   private void addMixin(CtClass clazz, InterfaceIntroduction pointcut, InterfaceIntroduction.Mixin mixin, HashMap baseMethods) throws Exception
+   private void addMixin(CtClass clazz, InterfaceIntroduction pointcut, InterfaceIntroduction.Mixin mixin, HashMap<Long, CtMethod> baseMethods) throws Exception
    {
       // REVISIT:
       // Later on we should follow the same pattern as
@@ -285,7 +294,7 @@ public abstract class Instrumentor
       if (mixin.isTransient()) modifiers = modifiers | Modifier.TRANSIENT;
       field.setModifiers(modifiers);
       clazz.addField(field, CtField.Initializer.byExpr(initializer));
-      HashSet addedMethods = new HashSet();
+      HashSet<Long> addedMethods = new HashSet<Long>();
 
       String[] interfaces = mixin.getInterfaces();
       for (int i = 0; i < interfaces.length; i++)
@@ -336,7 +345,7 @@ public abstract class Instrumentor
       }
    }
 
-   private void addIntroductionPointcutInterface(CtClass clazz, Advisor advisor, String intf, HashMap baseMethods) throws Exception
+   private void addIntroductionPointcutInterface(CtClass clazz, Advisor advisor, String intf, HashMap<Long, CtMethod> baseMethods) throws Exception
    {
       CtClass iface = classPool.get(intf);
       if (!clazz.subtypeOf(iface) && !clazz.subclassOf(iface))
@@ -361,20 +370,19 @@ public abstract class Instrumentor
    private void instrumentIntroductions(CtClass clazz, Advisor advisor)
            throws Exception
    {
-      ArrayList pointcuts = advisor.getInterfaceIntroductions();
+      ArrayList<InterfaceIntroduction> pointcuts = advisor.getInterfaceIntroductions();
 
       if (pointcuts.size() == 0) return;
       HashMap baseMethods = JavassistMethodHashing.getDeclaredMethodMap(clazz);
-      Iterator it = pointcuts.iterator();
+      Iterator<InterfaceIntroduction> it = pointcuts.iterator();
       if (it.hasNext()) setupBasics(clazz);
       while (it.hasNext())
       {
 
-         InterfaceIntroduction pointcut = (InterfaceIntroduction) it.next();
-         ArrayList mixins = pointcut.getMixins();
-         for (int i = 0; i < mixins.size(); i++)
+         InterfaceIntroduction pointcut = it.next();
+         ArrayList<InterfaceIntroduction.Mixin> mixins = pointcut.getMixins();
+         for (InterfaceIntroduction.Mixin mixin: mixins)
          {
-            InterfaceIntroduction.Mixin mixin = (InterfaceIntroduction.Mixin) mixins.get(i);
             addMixin(clazz, pointcut, mixin, baseMethods);
          }
       }
@@ -384,7 +392,7 @@ public abstract class Instrumentor
       it = pointcuts.iterator();
       while (it.hasNext())
       {
-         InterfaceIntroduction pointcut = (InterfaceIntroduction) it.next();
+         InterfaceIntroduction pointcut = it.next();
          String[] interfaces = pointcut.getInterfaces();
          if (interfaces == null) continue;
          for (int i = 0; i < interfaces.length; i++)
@@ -828,7 +836,7 @@ public abstract class Instrumentor
    /**
     * Creates generic invoke method to be wrapped by real signatures.
     */
-   private CtMethod createInvokeMethod(CtClass clazz)
+   protected CtMethod createInvokeMethod(CtClass clazz)
            throws CannotCompileException
    {
       return CtNewMethod.make("public java.lang.Object invoke(java.lang.Object[] args, long i)" +
