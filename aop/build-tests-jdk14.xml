@@ -163,8 +163,8 @@
          <pathelement path="${local.classpath}"/>
          <path refid="thirdparty.classpath"/>
          <path refid="jboss.test14.classpath"/>
-         <path refid="jboss.microcontainer.classpath"/>
-         <path refid="jboss/common.core.classpath"/>
+         <path refid="jboss.microcontainer14.classpath"/>
+         <path refid="jboss/common.core.14.classpath"/>
          <pathelement path="${build.lib}/jboss-aop-jdk50.jar"/>
          <path refid="junit.junit.classpath"/>
       </path>
@@ -307,12 +307,12 @@
       <antcall target="clean"/>
       <antcall target="bootclasspath-genadvisor-tests" inheritRefs="true"/>
       <antcall target="bootclasspath-tests" inheritRefs="true"/>
-      <antcall target="system-classloader-test" inheritRefs="true"/>
       <antcall target="not-woven-tests" inheritRefs="true"/>
 
       <antcall target="clean"/>
       <antcall target="precompiled-tests" inheritRefs="true"/>
-
+     <antcall target="system-classloader-test" inheritRefs="true"/>
+ 
       <antcall target="clean"/>
       <antcall target="precompiled-genadvisor-tests" inheritRefs="true"/>
 
