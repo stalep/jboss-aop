@@ -12,7 +12,7 @@
   <property name="buildmagic.ant16.baseversion" value="1.6"/>
 
   <!-- Set the version of the release here -->
-  <property name="aop.version" value="jboss-aop-2.0.0.CR1"/>
+  <property name="aop.version" value="jboss-aop-2.0.0.CR2"/>
   <property name="aop.title" value="JBoss AOP Framework"/>
   <property name="module.version" value="j${aop.version}"/>
 
