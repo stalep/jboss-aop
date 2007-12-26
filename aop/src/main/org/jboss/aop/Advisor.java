@@ -530,7 +530,7 @@ public abstract class Advisor
       }
       if (metadata != null)
       {
-         if (hasJoinPointAnnotationFromStringName(m.getDeclaringClass(), new MethodSignature(m), annotation))
+         if (hasJoinPointAnnotation(m.getDeclaringClass(), new MethodSignature(m), annotationClass))
          {
             return true;
          }
@@ -615,12 +615,7 @@ public abstract class Advisor
                Class annotationClass = cl.loadClass(annotationName);
                if (annotationClass != null)
                {
-                  MetaData md = metadata.getComponentMetaData(sig);
-                  if (md != null)
-                  {
-                     if (md.isAnnotationPresent(annotationClass))
-                        return true;
-                  }
+                  return this.hasJoinPointAnnotation(declaringClass, sig, annotationClass);
                }
             }
          }
@@ -632,6 +627,23 @@ public abstract class Advisor
       catch(Exception e)
       {
          throw new RuntimeException(e);
+      }
+      return false;
+   }
+   
+   private boolean hasJoinPointAnnotation(Class declaringClass, org.jboss.metadata.spi.signature.Signature sig, Class annotationClass)
+   {
+      if (metadata != null)
+      {
+         if (annotationClass != null)
+         {
+            MetaData md = metadata.getComponentMetaData(sig);
+            if (md != null)
+            {
+               if (md.isAnnotationPresent(annotationClass))
+                  return true;
+            }
+         }
       }
       return false;
    }
