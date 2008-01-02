@@ -26,17 +26,42 @@ import org.jboss.aop.advice.annotation.AdviceMethodFactory;
 /**
  * Indicates whether the type of an advice is <i>before</i>, <i>around</i>,
  * <i>after</i>, <i>throwing</i> or <i>finally</i>.
- * 
+ * <br>
  * Notice that interceptors are a special type of <i>around</i> advices.
+ * <p><i>For internal use only.</i>
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
 public enum AdviceType
 {
+   /**
+    * Advice will be invoked before the joinpoint execution.
+    */
    BEFORE("before", AdviceMethodFactory.BEFORE, true, "before"),
+   
+   /**
+    * Advice will be invoked around the joinpoint execution, and as such is
+    * responsible for invoking the next advice in the chain and returning the
+    * joinpoint result value.
+    */
    AROUND("around", AdviceMethodFactory.AROUND, false, "around"),
+   
+   /**
+    * Advice will be invoked after the joinpoint execution, only if it returns
+    * normally.
+    */
    AFTER("after", AdviceMethodFactory.AFTER, false, "after"),
+   
+   /**
+    * Advice will be invoked after the joinpoint execution, only if it throws an
+    * exception.
+    */
    THROWING("throwing", AdviceMethodFactory.THROWING, false, "after-throwing"),
+   
+   /**
+    * Advice will be invoked after the joinpoint execution, regardless of how it
+    * returns.
+    */
    FINALLY("finally", AdviceMethodFactory.FINALLY, false, "finally");
    
    private String name;
@@ -67,7 +92,7 @@ public enum AdviceType
    
    /**
     * Returns an accessor string for this type.
-    * 
+    * <br>
     * This accessor is built by concatenating <code>"get"</code> with the
     * the {@link #getName() description} starting with an upper case.
     * 
@@ -91,7 +116,7 @@ public enum AdviceType
    
    /**
     * Indicates if the use of this advice type is restrictive to the generated
-    * advisor mode, or if can be used on all instrumentation modes.
+    * advisor mode, or if it can be used on all instrumentation modes.
     * 
     * @return <code>true</code> only if this advice type must be used on generated
     *         advisor mode.

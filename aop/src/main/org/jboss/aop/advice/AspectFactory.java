@@ -26,19 +26,121 @@ import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.joinpoint.Joinpoint;
 
 /**
- * Comment
- *
+ * Creates aspect instances.
+ * <p>
+ * This interface must be implemented by all aspect factories. Declare aspect
+ * factories instead of the real aspect class when you want:
+ * <ul>
+ * <li> to perform some specific action during aspect instance creation  (like some
+ *      initialization that could not be performed by the aspect constructor,
+ *      for example);</li>
+ * <li> to create instances of different classes, according to the context where
+ *      the aspect will be invoked.</li>
+ * <li> or to do anything else that could not be done without implementing a factory;
+ * </li>
+ * </ul>
+ * <p>
+ * This interface provides different methods. However, only the one(s) correspondent
+ * to the {@link Scope} of the aspect will be called. Hence, when writing an aspect
+ * factory whose scope is known (and is not intended to change), the implemention of
+ * the other methods can be empty. However, we advise throwing a runtime exception
+ * from those methods instead of simply returning {@code null}, to alert for
+ * unpredicted scenarios in case the {@code Scope} value is not the expected.  
+ * <p>
+ * 
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
 public interface AspectFactory
 {
+   /**
+    * Creates an aspect with scope value {@link Scope#PER_VM}.
+    * 
+    * @return the single aspect instance that will be invoked for all applicable
+    *         joinpoints during  Java VM execution
+    */
    Object createPerVM();
+   
+   /**
+    * Creates an aspect with scope value {@link Scope#PER_CLASS}.
+    * 
+    * @param advisor manages all the interceptions that should occur during execution
+    *                of a specific class
+    * @return        the aspect instance that will be invoked for all applicable
+    *                joinpoints contained in the class managed by {@code advisor}
+    * @see Advisor#getClazz() 
+    */
    Object createPerClass(Advisor advisor);
+   
+   /**
+    * Creates an aspect with scope value {@link Scope#PER_INSTANCE}.
+    * 
+    * @param advisor         manages all the interceptions that should occur during
+    *                        execution of a specific class
+    * @param instanceAdvisor manages all the interceptions that should occur during
+    *                        execution of a specific instance. The instance it
+    *                        manages is an object of the class managed by
+    *                        {@code advisor}
+    * @return                the aspect instance that will be invoked for all
+    *                        applicable joinpoints contained in the instance managed
+    *                        by {@code instanceAdvisor}
+    * @see Advisor#getClazz()
+    * @see InstanceAdvisor#getInstance()
+    */
    Object createPerInstance(Advisor advisor, InstanceAdvisor instanceAdvisor);
+   
+   /**
+    * Creates an aspect with scope value {@link Scope#PER_CLASS_JOINPOINT} or
+    * {@link Scope#PER_JOINPOINT}.
+    * <br>
+    * In case the scope value is {@code PER_CLASS_JOINPOINT}, this method will always
+    * be invoked to create the aspect instance. On the other hand, if the scope value
+    * is {@code PER_JOINPOINT}, this method is called only if the joinpoint
+    * to be intercepted is in a static context (like a static method, a static field
+    * access, or a constructor execution).
+    * 
+    * @param advisor manages all the interceptions that should occur during
+    *                execution of a specific class
+    * @param jp      the joinpoint to be intercepted by the created instance.
+    *                This joinpoint is contained in the class managed by
+    *                {@code advisor}
+    * @return        the aspect instance that will be invoked only to intercept
+    *                {@code jp}
+    * @see Advisor#getClazz()
+    * @see Joinpoint
+    */
    Object createPerJoinpoint(Advisor advisor, Joinpoint jp);
+   
+   /**
+    * Creates an aspect with scope value or {@link Scope#PER_JOINPOINT}.
+    * <br>
+    * This method is called only if the joinpoint to be intercepted is not in a
+    * static context (like a non-static method, for example).
+    * 
+    * @param advisor         manages all the interceptions that should occur
+    *                        during execution of a specific class
+    * @param instanceAdvisor manages all the interceptions that should occur during
+    *                        execution of a specific instance. The instance it
+    *                        manages is an object of the class managed by
+    *                        {@code advisor}
+    * @param jp              the joinpoint to be intercepted by the created instance.
+    *                        This joinpoint is contained in the class managed by
+    *                        {@code advisor}
+    * @return                the aspect instance that will be invoked only to
+    *                        intercept {@code jp} when it happens on the instance
+    *                        managed by {@code instanceAdvisor}
+    * @see Advisor#getClazz()
+    * @see InstanceAdvisor#getInstance()
+    * @see Joinpoint
+    */
    Object createPerJoinpoint(Advisor advisor, InstanceAdvisor instanceAdvisor, Joinpoint jp);
 
-   /** The name of the class */
+   /**
+    * The name that identifies the aspect in its domain. Typically, the name is the
+    * name of the class.
+    * 
+    * @return the name that identifies the aspect in its domain.
+    * @see org.jboss.aop.Domain
+    */
    String getName();
 }

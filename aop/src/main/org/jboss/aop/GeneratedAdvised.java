@@ -21,7 +21,24 @@
   */
 package org.jboss.aop;
 
+/**
+ * Interface implemented by all classes or interfaces
+ * that are AOP enabled in the generated-advisor mode.
+ * <br>
+ * In other words, every class that is generated-advisor weaved by JBoss AOP
+ * automatically implements  this interface, which allows the domain retrieval.
+ * 
+ * @author  <a href="kabir.khan@jboss.com">Kabir Khan</a>
+ */
 public interface GeneratedAdvised
 {
+   /**
+    * Returns the domain that is associated with this advised object.
+    * This domain contains all the bindings and other AOP configuration that has
+    * been used to weave this instance. Changes performed dynamically on the domain
+    * will automatically become efective on this advised object.
+    * 
+    * @return the domain where this advised object belongs.
+    */
    AspectManager getDomain();
 }
