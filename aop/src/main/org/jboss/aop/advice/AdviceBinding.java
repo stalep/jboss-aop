@@ -1,24 +1,24 @@
 /*
-  * JBoss, Home of Professional Open Source
-  * Copyright 2005, JBoss Inc., and individual contributors as indicated
-  * by the @authors tag. See the copyright.txt in the distribution for a
-  * full listing of individual contributors.
-  *
-  * This is free software; you can redistribute it and/or modify it
-  * under the terms of the GNU Lesser General Public License as
-  * published by the Free Software Foundation; either version 2.1 of
-  * the License, or (at your option) any later version.
-  *
-  * This software is distributed in the hope that it will be useful,
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  * Lesser General Public License for more details.
-  *
-  * You should have received a copy of the GNU Lesser General Public
-  * License along with this software; if not, write to the Free
-  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-  */
+ * JBoss, Home of Professional Open Source
+ * Copyright 2005, JBoss Inc., and individual contributors as indicated
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.jboss.aop.advice;
 
 import java.io.StringReader;
@@ -31,6 +31,7 @@ import java.util.WeakHashMap;
 
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
+import org.jboss.aop.Domain;
 import org.jboss.aop.pointcut.Pointcut;
 import org.jboss.aop.pointcut.PointcutExpression;
 import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
@@ -40,10 +41,12 @@ import org.jboss.aop.util.logging.AOPLogger;
 import org.jboss.logging.Logger;
 
 /**
- * Comment
+ * Binds a pointcut expression to one ore more advices/interceptors.
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
+ * @see AspectManager#addBinding(AdviceBinding)
+ * @see AspectManager#removeBinding(String)
  */
 public class AdviceBinding
 {
@@ -51,17 +54,56 @@ public class AdviceBinding
    
    private static volatile long counter = 0;
 
+   /**
+    * Name that identifies this binding in its {@link Domain domain}.
+    */
    protected String name;
+   
+   /**
+    * Identifies when the advices/interceptors contained in this binding should
+    * be invoked.
+    */
    protected Pointcut pointcut;
+   
+   /**
+    * A control flow restriction (in its AST form). Can be {@code null}.
+    */
    protected ASTCFlowExpression cflow;
+   
+   /**
+    * A control flow restriction (in its string form). Can be {@code null}
+    */
    protected String cflowString;
 
    // not list because of redundancy caused by successive calls of ClassAdvisor.rebuildInterceptors
-   protected Map advisors = new WeakHashMap();
+   /**
+    * Contains all the client advisors, mapped to a boolean value.
+    */
+   protected Map<Advisor, Boolean> advisors = new WeakHashMap<Advisor, Boolean>();
+   
+   /**
+    * The factories responsible for creating the bound interceptor instances.
+    */
    protected InterceptorFactory[] interceptorFactories = new InterceptorFactory[0];
 
+   
    public AdviceBinding() {}
 
+   /**
+    * Constructor to be used internally.
+    * 
+    * @param name             identifies this definition in its {@link Domain domain}
+    * @param p                pointcut expression. Only the joinpoints that satisfy
+    *                         this expression will be intercepted by the bound
+    *                         interceptors.
+    * @param cflow            a control flow condition in the form of an {@code AST}
+    *                         parser
+    * @param cflowString      a control flow expression
+    * @param factories        creates the objects that will perform interception
+    *                         on the matched joinpoints
+    * @throws ParseException  when {@code cflowString} is not {@code null} and
+    *                         contains a syntax error
+    */
    public AdviceBinding(String name, Pointcut p, ASTCFlowExpression cflow, String cflowString, InterceptorFactory[] factories) throws ParseException
    {
       this.name = name;
@@ -73,11 +115,27 @@ public class AdviceBinding
    }
 
    /**
-    * This constructor is used for creation of AdviceBinding programmatically
-    *
-    * @param pointcutExpression
-    * @param cflow
-    * @throws ParseException
+    * This constructor is used for creation of advice bindings programmatically on
+    * dynamic AOP operations.
+    * <p>
+    * The {@link #name name} of the advice will be generated automatically.
+    * <p>
+    * Bound interceptors will be invoked only on the joinpoints that are matched
+    * by {@code pointcutExpression}, and that satisfy {@code cflow} if it is not
+    * {@code null}.
+    * 
+    * @param pointcutExpression pointcut expression. Only the joinpoints that satisfy
+    *                           this expression will be intercepted by the bound
+    *                           interceptors. 
+    * @param cflow              a control flow expression. Can be {@code null} if no
+    *                           such condition is necessary. Notice that using
+    *                           control flow conditions requires runtime checks and
+    *                           may impact your system performance. Always prefer to
+    *                           use pointcut expressions of the form {@code call(...)
+    *                           AND within(...)} or {@code call(...) AND
+    *                           withincode(...)} instead, whenever applicable.
+    * @throws ParseException    when {@code cflow} is not {@code null} and contains a
+    *                           syntax error
     */
    public AdviceBinding(String pointcutExpression, String cflow) throws ParseException
    {
@@ -85,11 +143,27 @@ public class AdviceBinding
    }
 
    /**
-    * This constructor is used for creation of AdviceBinding programmatically
+    * This constructor is used for creation of advice bindings programmatically on
+    * dynamic AOP operations. Call this constructor when you want to define the
+    * binding's name.
+    * <p>
+    * Bound interceptors will be invoked only on the joinpoints that are matched
+    * by {@code pointcutExpression}, and that satisfy {@code cflow} if it is not
+    * {@code null}.
     *
-    * @param pointcutExpression
-    * @param cflow
-    * @throws ParseException
+    * @param name               identifies this binding in its {@link Domain domain}.
+    * @param pointcutExpression pointcut expression. Only the joinpoints that satisfy
+    *                           this expression can be intercepted by the bound
+    *                           interceptors. 
+    * @param cflow              a control flow expression. Can be {@code null} if no
+    *                           such condition is necessary. Notice that using
+    *                           control flow conditions requires runtime checks and
+    *                           may impact your system performance. Always prefer to
+    *                           use pointcut expressions of the form {@code call(...)
+    *                           AND within(...)} or {@code call(...) AND
+    *                           withincode(...)} instead, whenever applicable.
+    * @throws ParseException    when {@code cflow} is not {@code null} and contains a
+    *                           syntax error
     */
    public AdviceBinding(String name, String pointcutExpression, String cflow) throws ParseException
    {
@@ -99,6 +173,20 @@ public class AdviceBinding
       interceptorFactories = new InterceptorFactory[0];
    }
 
+   /**
+    * Defines a control-flow restriction to this binding.
+    * <br>
+    * Bound interceptors will not be invoked when this restriction is not satisfied.
+    * <br>
+    * Notice that using control flow conditions requires runtime checks and may
+    * impact your system performance. Always prefer to use pointcut expressions of
+    * the form {@code call(...) AND within(...)} or {@code call(...) AND
+    * withincode(...)} instead, whenever applicable.
+    * 
+    * @param cflow              a control flow expression.
+    * @throws ParseException    when {@code cflow} is not {@code null} and contains a
+    *                           syntax error
+    */
    public void setCFlowExpression(String cflow)
            throws ParseException
    {
@@ -109,48 +197,136 @@ public class AdviceBinding
       }
    }
 
+   /**
+    * Defines the pointcut expression to be used by this binding.
+    * <br>
+    * Bound interceptors will be invoked only on the joinpoints that are matched
+    * by this expression, and that satisfy the {@code cflow} condition if there is
+    * one. 
+    * 
+    * @param pointcutExpression pointcut expression. Only the joinpoints that satisfy
+    *                           this expression can be intercepted by the bound
+    *                           interceptors.
+    * @throws ParseException    when {@code cflow} is not {@code null} and contains a
+    *                           syntax error
+    */
    public void setPointcutExpression(String pointcutExpression)
            throws ParseException
    {
       pointcut = new PointcutExpression(Long.toString(System.currentTimeMillis()) + ":" + Long.toString(counter++), pointcutExpression);
    }
 
+   /**
+    * Adds an interceptor to the chain.
+    * 
+    * @param factory creates the interceptor instances that will be invoked during
+    *                interception
+    */
    public void addInterceptorFactory(InterceptorFactory factory)
    {
-      List list = Arrays.asList(interceptorFactories);
-      list = new ArrayList(list);
+      List<InterceptorFactory> list = Arrays.asList(interceptorFactories);
+      list = new ArrayList<InterceptorFactory>(list);
       list.add(factory);
-      interceptorFactories = (InterceptorFactory[]) list.toArray(new InterceptorFactory[list.size()]);
+      interceptorFactories = list.toArray(new InterceptorFactory[list.size()]);
    }
 
 
    /**
-    * Add an interceptor to chain.  This is an actual class
-    * that implements Interceptor.  A GenericInterceptorFactory will
-    * be created to wrap the class.
+    * Adds an interceptor to the chain.  
     *
-    * @param clazz
+    * @param clazz the actual class that implements {@link Interceptor}. This class
+    *              must provide a default constructor so it can be created.
+    *              A {@code GenericInterceptorFactory} will be used to create the
+    *              interceptor instances.
+    * @see GenericInterceptorFactory
     */
    public void addInterceptor(Class clazz)
    {
       addInterceptorFactory(new GenericInterceptorFactory(clazz));
    }
 
+   /**
+    * Returns the name of this binding. This name is unique inside the
+    * {@link Domain domain}.
+    * 
+    * @return name the name that identifies this binding in its {@link Domain domain}
+    */
    public String getName()
    {
       return name;
    }
 
+   /**
+    * Returns the interceptor factory chain.
+    * <p><i>For internal use only.</i>
+    * 
+    * @return an array containing the interceptor factory chain. This chain will
+    *         be used to create an equivalent chain (same order) of interceptor
+    *         instances. The generated interceptor chain is the one that will
+    *         be used on interception. This chain must not be edited this chain.
+    * @see #addInterceptor(Class)
+    * @see #addInterceptorFactory(InterceptorFactory)
+    */
    public InterceptorFactory[] getInterceptorFactories()
    {
       return interceptorFactories;
    }
 
+   /**
+    * Defines the name of this binding. This name must be unique inside the
+    * {@link Domain domain}.
+    * 
+    * @param name the name that identifies this binding in its {@link Domain domain}
+    */
    public void setName(String name)
    {
       this.name = name;
    }
 
+   /**
+    * Returns the pointcut that determines when the bound interceptor chain should
+    * be invoked.
+    * <p><i>For internal use only.</i>
+    * 
+    * @return the pointcut object
+    */
+   public Pointcut getPointcut()
+   {
+      return pointcut;
+   }
+
+   /**
+    * Returns the cflow condition in the form an {@code AST} parser.
+    * <p><i>For internal use only.</i>
+    * 
+    * @return the cflow condition that must be satisfied by joinpoints in order for
+    *         the bound interceptors to be invoked
+    */
+   public ASTCFlowExpression getCFlow()
+   {
+      return cflow;
+   }
+
+   /**
+    * Returns the cflow condition.
+    * 
+    * @return the cflow condition expression that must be satisfied by joinpoints in
+    *         order for the bound interceptors to be invoked
+    */
+   public String getCFlowString()
+   {
+      return cflowString;
+   }
+
+   
+   /**
+    * Adds an advisor as a client of this binding.
+    * <p>
+    * <i>For internal use only.</i>
+    * 
+    * @param advisor manages one or more joinpoints that are matched by
+    *                the bound {@link #pointcut}.
+    */
    public void addAdvisor(Advisor advisor)
    {
       if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("added advisor: " + advisor.getName() + " from binding: " + name);
@@ -163,14 +339,27 @@ public class AdviceBinding
       
    }
 
+   /**
+    * Indicates whether there are any advisors using this binding for interception.
+    * 
+    * @return {@code true} if and only if there are one or more advisors that use
+    *         this binding for interception
+    */
    public boolean hasAdvisors()
    {
       return advisors.size() > 0;
    }
 
-   public ArrayList getAdvisors()
+   /**
+    * Returns the list of the client advisors.
+    * <p>
+    * <i>For internal use only.</i>
+    * 
+    * @return the list of the advisors that use this binding for interception
+    */
+   public ArrayList<Advisor> getAdvisors()
    {
-      ArrayList list = new ArrayList(advisors.size());
+      ArrayList<Advisor> list = new ArrayList<Advisor>(advisors.size());
       synchronized (advisors)
       {
          list.addAll(advisors.keySet());
@@ -178,6 +367,11 @@ public class AdviceBinding
       return list;
    }
 
+   /**
+    * Clears the list of the client advisors.
+    * <p>
+    * <i>For internal use only.</i>
+    */
    public void clearAdvisors()
    {
       synchronized (advisors)
@@ -194,6 +388,13 @@ public class AdviceBinding
       }
    }
 
+   /**
+    * Compares this binding with {@code obj} for equality.
+    * 
+    * @param obj the object to be compared with this binding for equality
+    * @return {@code true} if and only if {@code obj} is a binding with a name that
+    *         is equal to the name of this binding.
+    */
    public boolean equals(Object obj)
    {
       if (obj == this) return true;
@@ -201,23 +402,9 @@ public class AdviceBinding
       return ((AdviceBinding) obj).getName().equals(name);
    }
 
+   
    public int hashCode()
    {
       return name.hashCode();
-   }
-
-   public Pointcut getPointcut()
-   {
-      return pointcut;
-   }
-
-   public ASTCFlowExpression getCFlow()
-   {
-      return cflow;
-   }
-
-   public String getCFlowString()
-   {
-      return cflowString;
    }
 }

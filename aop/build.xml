@@ -582,6 +582,7 @@
          <source file="${source.java}/org/jboss/aop/advice/GenericAspectFactory.java"/>
          <source file="${source.java}/org/jboss/aop/advice/GenericInterceptorFactory.java"/>
          <source file="${source.java}/org/jboss/aop/advice/Interceptor.java"/>
+         <source file="${source.java}/org/jboss/aop/advice/InterceptorFactory.java"/>
          <source file="${source.java}/org/jboss/aop/advice/InvalidAdviceException.java"/>
          <source file="${source.java}/org/jboss/aop/advice/NoMatchingAdviceException.java"/>
          <source file="${source.java}/org/jboss/aop/advice/Scope.java"/>
@@ -612,6 +613,9 @@
          <source file="${source.java}/org/jboss/aop/metadata/SimpleMetaData.java"/>
          <!-- TODO add metadata binding here -->
          <source file="${source.java}/org/jboss/aop/pointcut/DynamicCFlow.java"/>
+         <source file="${source.java}/org/jboss/aop/pointcut/Pointcut.java"/>
+         <source file="${source.java}/org/jboss/aop/pointcut/ast/ParseException.java"/>
+         
          
          <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
       </javadoc>
