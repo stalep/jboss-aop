@@ -4,13 +4,13 @@
   <parent>
     <groupId>org.jboss.aop</groupId>
     <artifactId>jboss-aop-parent</artifactId>
-    <version>1-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.aop</groupId>
   <artifactId>jboss-aop</artifactId>
   <packaging>jar</packaging>
-  <version>2.0.0.CR1</version>
+  <version>2.0.0-SNAPSHOT</version>
   <name>JBoss AOP</name>
   <description>JBoss AOP Framework</description>
   <url>http://labs.jboss.org/jbossaop</url>
@@ -49,8 +49,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <!--
-        <executions>
+        <!--<executions>
           <execution>
             <id>javaagent-genadvisor-tests</id>
             <goals>
@@ -309,26 +308,7 @@
       </plugin>
     </plugins>
   </build>
-  <repositories>
-    <repository>
-      <id>jboss</id>
-      <name>JBoss Inc. Repository</name>
-      <layout>default</layout>
-      <url>http://repository.jboss.org/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>jboss-snapshots</id>
-      <name>JBoss Inc. Repository</name>
-      <layout>default</layout>
-      <url>http://snapshots.jboss.org/maven2</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>ant</groupId>
@@ -403,20 +383,20 @@
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-test</artifactId>
-      <version>1.0.4.GA</version>
+      <version>1.0.5-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
   <profiles>
+    
   <!-- The test profiles are currently not working until some maven issues are fixed.
     -  For now the ant scripts can be used to run the tests.
     -->
-    <!--<profile>
+    <profile>
       <id>javaagent-genadvisor-tests</id>
       <activation>
         <property>
-          <name>test</name>
-          <value>javaagent-genadvisor-tests</value>
+          <name>all-tests</name>
         </property>
       </activation>
       <build>
@@ -424,17 +404,47 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.3</version>
             <executions>
               <execution>
                 <id>javaagent-genadvisor-tests</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
                 <configuration>
                   <skip>false</skip>
+                  <includes>
+                    <include>org/jboss/test/aop/**/GenAdvisorOverrideTestCase.java</include>
+                  </includes>
+                  <excludes>
+                    <exclude>org/jboss/test/aop/reflection/ReflectionAspectTester.java</exclude>
+                    <exclude>org/jboss/test/aop/basic/POJOAspectTester.java</exclude>
+                  </excludes>
+                  <argLine>-javaagent:target/jboss-aop-jdk50.jar</argLine>
+                  <systemProperties>
+                    <property>
+                      <name>jboss.aop.path</name>
+                      <value>src/resources/test/override/jboss-aop.xml</value>
+                    </property>
+                    <property>
+                      <name>jboss.aop.class.path</name>
+                      <value></value>
+                    </property>
+                    <property>
+                      <name>jboss.aop.instrumentor</name>
+                      <value>org.jboss.aop.instrument.GeneratedAdvisorInstrumentor</value>
+                    </property>
+                    <property>
+                      <name>jboss-junit-configuration</name>
+                      <value>javaagent-genadvisor-tests</value>
+                    </property>
+                  </systemProperties>
                 </configuration>
               </execution>
             </executions>
           </plugin>
         </plugins>
       </build>
-    </profile>-->
+    </profile>
   </profiles>
 </project>
