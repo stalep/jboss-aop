@@ -413,9 +413,11 @@
             <include name="org/jboss/aop/instrument/Untransformable.class"/>
             <include name="org/jboss/aop/joinpoint/Invocation*.class"/>
             <include name="org/jboss/aop/joinpoint/Joinpoint.class"/>
+            <include name="org/jboss/aop/joinpoint/JoinPointBean.class"/>
+            <include name="org/jboss/aop/joinpoint/MethodExecution.class"/>
             <include name="org/jboss/aop/joinpoint/MethodInvocation*.class"/>
             <include name="org/jboss/aop/joinpoint/MethodJoinpoint.class"/>
-            <include name="org/jboss/aop/metadata/SimpleMetaData.class"/>
+         	<include name="org/jboss/aop/metadata/SimpleMetaData.class"/>
             <include name="org/jboss/aop/metadata/SimpleMetaData$MetaDataValue.class"/>
             <include name="org/jboss/aop/metadata/MetaDataResolver.class"/>
             <include name="org/jboss/aop/metadata/ThreadMetaData.class"/>
