@@ -1,24 +1,24 @@
 /*
-  * JBoss, Home of Professional Open Source
-  * Copyright 2005, JBoss Inc., and individual contributors as indicated
-  * by the @authors tag. See the copyright.txt in the distribution for a
-  * full listing of individual contributors.
-  *
-  * This is free software; you can redistribute it and/or modify it
-  * under the terms of the GNU Lesser General Public License as
-  * published by the Free Software Foundation; either version 2.1 of
-  * the License, or (at your option) any later version.
-  *
-  * This software is distributed in the hope that it will be useful,
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  * Lesser General Public License for more details.
-  *
-  * You should have received a copy of the GNU Lesser General Public
-  * License along with this software; if not, write to the Free
-  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-  */
+ * JBoss, Home of Professional Open Source
+ * Copyright 2005, JBoss Inc., and individual contributors as indicated
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.jboss.aop.pointcut;
 
 import java.lang.reflect.Constructor;
@@ -628,13 +628,13 @@ public class Util
     * @param nodeExceptions  ArrayList of ASTException entries for a given ASTMethod or ASTConstructor
     * @param foundExceptions Array of Exceptions found for a method/constructor
     */
-   public static boolean matchExceptions(ArrayList nodeExceptions, Class[] foundExceptions)
+   public static boolean matchExceptions(ArrayList<ASTException> nodeExceptions, Class[] foundExceptions)
    {
       if (nodeExceptions.size() > foundExceptions.length) return false;
-      for (Iterator it = nodeExceptions.iterator(); it.hasNext();)
+      for (Iterator<ASTException> it = nodeExceptions.iterator(); it.hasNext();)
       {
          boolean found = false;
-         ASTException ex = (ASTException) it.next();
+         ASTException ex = it.next();
          for (int i = 0; i < foundExceptions.length; i++)
          {
             if (ex.getType().matches(foundExceptions[i].getName()))
@@ -707,13 +707,13 @@ public class Util
       return matcher.matches();
    }
    
-   private static class ParameterMatcher
+   private static abstract class ParameterMatcher
    {
       Advisor advisor;
       ArrayList astParameters;
       final long paramsLength;
-      int asti;
-      int actuali;
+      private int asti;
+      private int actuali;
       
       ParameterMatcher(Advisor advisor, ArrayList parameters, Object[] params)
       {
@@ -760,51 +760,54 @@ public class Util
          return ((ASTParameter)astParameters.get(index)).isAnyZeroOrMoreParameters();
       }
       
-      boolean doMatch(int astIndex, int actualIndex)
-      {
-         //Overridden by sub classes
-         return false;
-      }
+      abstract boolean doMatch(int astIndex, int actualIndex);
       
       private boolean wildcard()
       {
-         boolean match = true;
-         asti++;
+         // skip sequence of wildcards until the first non-wildcard parameter is
+         // found
+         do
+         {
+            asti++;
+         } while (asti < astParameters.size() && isAnyZeroOrMoreParameters(asti));
          
-         while (actuali < paramsLength && asti < astParameters.size() && isAnyZeroOrMoreParameters(asti))
+         // no actual parameters to compare
+         if (actuali == paramsLength)
          {
-            asti++;
+            // Didn't skip any actual parameter... so, if there are still
+            // non-wildcard astParameters to compare, return false
+            if (asti < astParameters.size())
+            {
+               return false;
+            }
+            //got to the end of both param list: return true
+            else
+            {
+               return true;
+            }
          }
-
-         while (asti < astParameters.size() && isAnyZeroOrMoreParameters(asti))
-         {
-            asti++;
-         }
-
-         if (actuali == paramsLength && asti < astParameters.size())
-            return false;
-         if (actuali == paramsLength && asti == astParameters.size())
-            return true; 
+         // one or more actual parameters to compare
          else
          {
-            if (!matches(asti, actuali))
+            // backtracking: try to compare as is; if result is false, use wildcard
+            // to skip unmatched parameters
+            int currentAsti = asti;
+            int currentActuali = actuali;
+            while(!matches(asti, actuali) && actuali < paramsLength)
             {
+               asti = currentAsti;
+               actuali = currentActuali;
                do
                {
                   actuali++;
-                  while (actuali < paramsLength && asti < astParameters.size() && !doMatch(asti, actuali))
-                  {
-                     actuali++;
-                  }
-                  
-               }while ( (actuali < paramsLength) ? !(match = matches(asti, actuali)) : false);
-               
+               }
+               // avoid extra backtracking steps here: the param expressions won't
+               // match
+               while (actuali < paramsLength && asti < astParameters.size() && !doMatch(asti, actuali));
+               currentAsti = asti;
+               currentActuali = actuali;
             }
-            if (actuali == paramsLength && asti == astParameters.size())
-            {
-               match = true;
-            }
-            return match;
+            return true;
          }
       }
    }
