@@ -48,7 +48,7 @@ public class OptimizedConstructionInvocations extends
     */
    protected static String getOptimizedInvocationClassName(CtClass declaringClazz, int constructorIndex)
    {
-      return declaringClazz.getName() + constructorIndex + "OptimizedConstructionInvocation";
+      return declaringClazz.getName() + ".AOP" + constructorIndex + "OptimizedConstructionInvocation";
    }
 
    protected static String createOptimizedInvocationClass(
@@ -61,7 +61,7 @@ public class OptimizedConstructionInvocations extends
       ////////////////
       //Create the class
       String className = getOptimizedInvocationClassName(clazz, index);
-      boolean makeInnerClass = !Modifier.isPublic(con.getModifiers());
+      boolean makeInnerClass = true; //!Modifier.isPublic(con.getModifiers());
       CtClass invocation = makeInvocationClassNoCtors(pool, makeInnerClass, clazz,
             className, conInvocation);
       CtConstructor template = null;

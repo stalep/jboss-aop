@@ -49,7 +49,7 @@ public class OptimizedConstructorInvocations extends
     */
    protected static String getOptimizedInvocationClassName(CtClass declaringClazz, int constructorIndex)
    {
-      return declaringClazz.getName() + "_" + constructorIndex + "OptimizedConstructorInvocation";
+      return declaringClazz.getName() + ".AOP" + constructorIndex + "OptimizedConstructorInvocation";
    }
 
    protected static String createOptimizedInvocationClass(Instrumentor instrumentor,
@@ -62,7 +62,7 @@ public class OptimizedConstructorInvocations extends
       ////////////////
       //Create the class
       String className = getOptimizedInvocationClassName(clazz, index);
-      boolean makeInnerClass = !Modifier.isPublic(con.getModifiers());
+      boolean makeInnerClass = true;//!Modifier.isPublic(con.getModifiers());
       CtClass invocation = makeInvocationClassNoCtors(pool, makeInnerClass,
             clazz, className, conInvocation);
       

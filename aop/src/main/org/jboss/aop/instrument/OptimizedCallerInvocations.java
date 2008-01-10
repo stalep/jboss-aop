@@ -112,7 +112,7 @@ public class OptimizedCallerInvocations extends OptimizedBehaviourInvocations
       ////////////////
       //Create the class
       CtClass invocation = makeInvocationClass(pool, 
-            Modifier.isPrivate(method.getModifiers()), callingClass, className,
+            true /*Modifier.isPrivate(method.getModifiers())*/, callingClass, className,
                   methodInvocation);
    
       ////////////////
@@ -163,7 +163,7 @@ public class OptimizedCallerInvocations extends OptimizedBehaviourInvocations
       ////////////////
       //Create the class
       CtClass invocation = makeInvocationClass(pool,
-            Modifier.isPrivate(con.getModifiers()), callingClass, className,
+            /*Modifier.isPrivate(con.getModifiers())*/ true, callingClass, className,
             conInvocation);
    
       ////////////////

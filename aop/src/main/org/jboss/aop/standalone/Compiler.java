@@ -258,6 +258,17 @@ public class Compiler
    
    private void addFile(File file)throws Exception
    {
+      int index = file.getName().indexOf('$');
+      if (index != -1)
+      {
+         String fileName = file.getName().substring(0, index) + ".class";
+         File superClassFile = new File(fileName);
+         if (!loadFile(superClassFile))
+         {
+            file.delete();
+            return;
+         }
+      }
       ClassFile cf = createClassFile(file);
       String className = cf.getName();
       String superClassName = cf.getSuperclass();
@@ -300,7 +311,13 @@ public class Compiler
       }
    }
 
-   public void loadFile(File file) throws Exception
+   /**
+    * Loads the file and, if it is an advised class, sets its advisor field as
+    * accessible.
+    * @param file the file of the class to be loaded
+    * @return {@code true} is {@code file} contains an advised class.
+    */
+   public boolean loadFile(File file) throws Exception
    {
       DataInputStream is = new DataInputStream(new FileInputStream(file));
       ClassFile cf = new ClassFile(is);
@@ -311,7 +328,9 @@ public class Compiler
          Field f = clazz.getDeclaredField("aop$classAdvisor$aop");
          f.setAccessible(true);
          f.get(null);
+         return true;
       }
+      return false;
    }
 
    public void compileFile(CompilerClassInfo info) throws Exception
