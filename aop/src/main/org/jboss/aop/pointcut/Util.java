@@ -570,32 +570,35 @@ public class Util
 
    public static boolean matchModifiers(ASTAttribute need, int have)
    {
-      if (Modifier.isAbstract(need.attribute) && need.not) return !Modifier.isAbstract(have);
-      if (Modifier.isAbstract(need.attribute) && !need.not) return Modifier.isAbstract(have);
-      if (Modifier.isFinal(need.attribute) && need.not) return !Modifier.isFinal(have);
-      if (Modifier.isFinal(need.attribute) && !need.not) return Modifier.isFinal(have);
-      if (Modifier.isInterface(need.attribute) && need.not) return !Modifier.isInterface(have);
-      if (Modifier.isInterface(need.attribute) && !need.not) return Modifier.isInterface(have);
-      if (Modifier.isNative(need.attribute) && need.not) return !Modifier.isNative(have);
-      if (Modifier.isNative(need.attribute) && !need.not) return Modifier.isNative(have);
-      if (Modifier.isPrivate(need.attribute) && need.not) return !Modifier.isPrivate(have);
-      if (Modifier.isPrivate(need.attribute) && !need.not) return Modifier.isPrivate(have);
-      if (Modifier.isProtected(need.attribute) && need.not) return !Modifier.isProtected(have);
-      if (Modifier.isProtected(need.attribute) && !need.not) return Modifier.isProtected(have);
-      if (Modifier.isPublic(need.attribute) && need.not) return !Modifier.isPublic(have);
-      if (Modifier.isPublic(need.attribute) && !need.not) return Modifier.isPublic(have);
-      if (Modifier.isStatic(need.attribute) && need.not) return !Modifier.isStatic(have);
-      if (Modifier.isStatic(need.attribute) && !need.not) return Modifier.isStatic(have);
-      if (Modifier.isStrict(need.attribute) && need.not) return !Modifier.isStrict(have);
-      if (Modifier.isStrict(need.attribute) && !need.not) return Modifier.isStrict(have);
-      if (Modifier.isSynchronized(need.attribute) && need.not) return !Modifier.isSynchronized(have);
-      if (Modifier.isSynchronized(need.attribute) && !need.not) return Modifier.isSynchronized(have);
-      if (Modifier.isTransient(need.attribute) && need.not) return !Modifier.isTransient(have);
-      if (Modifier.isTransient(need.attribute) && !need.not) return Modifier.isTransient(have);
-      if (Modifier.isVolatile(need.attribute) && need.not) return !Modifier.isVolatile(have);
-      if (Modifier.isVolatile(need.attribute) && !need.not) return Modifier.isVolatile(have);
-
-      return true;
+      switch (need.attribute)
+      {
+         case Modifier.ABSTRACT:
+            return Modifier.isAbstract(have) != need.not;
+         case Modifier.FINAL:
+            return Modifier.isFinal(have) != need.not;
+         case Modifier.INTERFACE:
+            return Modifier.isInterface(have) != need.not;
+         case Modifier.NATIVE:
+            return Modifier.isNative(have) != need.not;
+         case Modifier.PRIVATE:
+            return Modifier.isPrivate(have) != need.not;
+         case Modifier.PROTECTED:
+            return Modifier.isProtected(have) != need.not;
+         case Modifier.PUBLIC:
+            return Modifier.isPublic(have) != need.not;
+         case Modifier.STATIC:
+            return Modifier.isStatic(have) != need.not;
+         case Modifier.STRICT:
+            return Modifier.isStrict(have) != need.not;
+         case Modifier.SYNCHRONIZED:
+            return Modifier.isSynchronized(have) != need.not;
+         case Modifier.TRANSIENT:
+            return Modifier.isTransient(have) != need.not;
+         case Modifier.VOLATILE:
+            return Modifier.isVolatile(have) != need.not;
+         default:
+            throw new RuntimeException("Unexpected modifier value: " + need.attribute);
+      }
    }
 
    /**
