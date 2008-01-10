@@ -263,7 +263,12 @@ public class Compiler
       {
          String fileName = file.getName().substring(0, index) + ".class";
          File superClassFile = new File(fileName);
-         if (!loadFile(superClassFile))
+         // checking last modified date is not enough
+         // because these values can differ in some miliseconds sometimes
+         if (superClassFile.lastModified() > file.lastModified()
+         // so, check this class has been recompiled and, hence,
+         // is not Advised anymore
+               && !loadFile(superClassFile))
          {
             file.delete();
             return;
