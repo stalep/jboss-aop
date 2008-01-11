@@ -68,6 +68,10 @@ class SecurityActions
    
    public static ClassLoader getParent(ClassLoader loader)
    {
+      if (loader == null)
+      {
+         return null;
+      }
       if (System.getSecurityManager() == null)
       {
          return GetParentAction.NON_PRIVILEGED.getParent(loader);
