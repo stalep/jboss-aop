@@ -58,7 +58,7 @@
   </artifact:dependencies>
     
 	<!-- TODO: does this still need to be imported? -->
-   <import file="base-tests-maven.xml"/>
+   <import file="base-tests.xml"/>
 
    <!-- ================================================================== -->
    <!-- Initialization                                                     -->
