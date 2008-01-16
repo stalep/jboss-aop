@@ -56,17 +56,13 @@ public class RebuildCallerChainTestCase extends AOPTestWithSetup
       {
          new Caller1().execute();
 
-         // Tests with corresponding prepare statements in jboss-aop.xml. 
-         // Results are the same with <prepare expr="all(testCaseAOP.*)" /> 
-         // 2- Works only on classes that have not been already loaded 
-         // (Caller1) 
          AdviceBinding bindingCall = new AdviceBinding( 
-               "call(* org.jboss.test.aop.rebuildcallerchain.*->*(..))", null); 
+               "call(* org.jboss.test.aop.rebuildcallerchain.*->execute())", null); 
          bindingCall.addInterceptor(RebuildCallerChainInterceptor.class); 
 
          AspectManager.instance().addBinding(bindingCall); 
 
-//         new Caller1().execute(); // loaded before addBinding => not ok 
+         new Caller1().execute(); // loaded before addBinding => not ok 
          new Caller2().execute(); // loaded after addBindingok => ok 
 
          assertTrue("Rebuilded chain", true);

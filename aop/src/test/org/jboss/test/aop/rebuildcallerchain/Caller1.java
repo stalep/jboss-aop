@@ -32,6 +32,10 @@ public class Caller1
 
    public void execute() throws Exception
    {
-      throw new Exception("This method should not have been called!");
+//      throw new Exception("This method should not have been called!");
+   }
+   
+   public void foo() {
+      
    }
 }
