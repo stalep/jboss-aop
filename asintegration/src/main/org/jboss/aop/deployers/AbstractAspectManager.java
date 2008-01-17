@@ -167,7 +167,7 @@ public abstract class AbstractAspectManager
                Document doc = AspectXmlLoader.loadDocument(new BufferedInputStream(in));
                AspectXmlLoader loader = new AspectXmlLoader();
                loader.setManager(getAspectManager());
-               loader.deployXML(doc, null);
+               loader.undeployXML(doc, null);
             }
             finally
             {
