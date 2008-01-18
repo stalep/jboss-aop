@@ -269,7 +269,7 @@ public class MarshalledContainerProxy implements Serializable
       
       private String getExceptionExpression(MethodInfo info)
       {
-         Method m = info.getAdvisedMethod();
+         Method m = info.getMethod();
          StringBuilder expr = new StringBuilder();
          if (m == null)
          {
@@ -332,7 +332,7 @@ public class MarshalledContainerProxy implements Serializable
       {
          try
          {
-            this.advisedHash = MethodHashing.methodHash(info.getAdvisedMethod());
+            this.advisedHash = MethodHashing.methodHash(info.getMethod());
             this.unadvisedHash = MethodHashing.methodHash(info.getUnadvisedMethod());
          }
          catch (Exception e)
