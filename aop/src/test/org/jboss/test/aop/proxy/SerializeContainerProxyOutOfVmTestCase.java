@@ -152,9 +152,12 @@ public class SerializeContainerProxyOutOfVmTestCase extends SerializeContainerPr
    {
       if (File.separatorChar == '/')
       {
-         //Probably on Linuxx
-         //AFAIK on linux we have no extension after java in the bin directory?
-         String file = getFile(dirName + File.separator + "java");
+         //Probably on Linux
+         if (dirName.contains("jre"))
+         {
+            dirName = dirName.substring(0, dirName.indexOf(File.separatorChar + "jre"));
+         }
+         String file = getFile(dirName + File.separator + "bin" + File.separator + "java");
          if (file != null)
          {
             return file;
