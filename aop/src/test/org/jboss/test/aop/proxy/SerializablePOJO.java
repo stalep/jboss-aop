@@ -34,4 +34,9 @@ public class SerializablePOJO implements Serializable
    {
       return "error";
    }
+   
+   public String otherWorld()
+   {
+      return "otherWorld";
+   }
 }

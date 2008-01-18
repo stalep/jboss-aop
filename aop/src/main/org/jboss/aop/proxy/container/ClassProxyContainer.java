@@ -21,6 +21,8 @@
   */
 package org.jboss.aop.proxy.container;
 
+import gnu.trove.TLongObjectHashMap;
+
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ import org.jboss.aop.Advisor;
 import org.jboss.aop.ClassContainer;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassAdvisor;
+import org.jboss.aop.MethodInfo;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.util.ConstructorComparator;
@@ -213,5 +216,17 @@ public class ClassProxyContainer extends ClassContainer
    public boolean chainOverridingForInheritedMethods()
    {
       return true;
+   }
+
+   public MethodInfo[] getMethodInfos()
+   {
+      long[] keys = methodInfos.keys();
+      MethodInfo[] minfos = new MethodInfo[keys.length];
+      for (int i = 0 ; i < keys.length ; i++)
+      {
+         minfos[i] = methodInfos.getMethodInfo(keys[i]);
+         
+      }
+      return minfos;
    }
 }

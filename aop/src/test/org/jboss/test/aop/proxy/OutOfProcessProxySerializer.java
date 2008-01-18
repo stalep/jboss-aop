@@ -35,8 +35,10 @@ import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.GenericAspectFactory;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.Scope;
+import org.jboss.aop.advice.ScopedInterceptorFactory;
 import org.jboss.aop.pointcut.PointcutExpression;
 import org.jboss.aop.proxy.container.AOPProxyFactory;
+import org.jboss.aop.proxy.container.AOPProxyFactoryMixin;
 import org.jboss.aop.proxy.container.AOPProxyFactoryParameters;
 import org.jboss.aop.proxy.container.GeneratedAOPProxyFactory;
 
@@ -66,103 +68,7 @@ public class OutOfProcessProxySerializer extends Assert
       
       try
       {
-         
-//         InstanceDomain domain = new InstanceDomain(AspectManager.instance(), "blah", false);
-//
-//         
-//         InterfaceIntroduction intro = new InterfaceIntroduction("intro", "*", null);
-//         String[] intfs = {MixinInterface.class.getName()};
-//         InterfaceIntroduction.Mixin mixin = new InterfaceIntroduction.Mixin(Mixin.class.getName(), intfs, null, false);
-//         intro.getMixins().add(mixin);
-//         domain.addInterfaceIntroduction(intro);
-//
-//         
-//         AspectDefinition def = new AspectDefinition("aspect", Scope.PER_VM, new GenericAspectFactory(EchoInterceptor.class.getName(), null));
-//         domain.addAspectDefinition(def);
-//         AdviceFactory advice = new AdviceFactory(def, "invoke");
-//         domain.addInterceptorFactory(advice.getName(), advice);
-//         {
-//         PointcutExpression pointcut = new PointcutExpression("pointcut", "execution(java.lang.String " + POJO.class.getName() + "->helloWorld(..))");
-//         domain.addPointcut(pointcut);
-//         InterceptorFactory[] interceptors = {advice};
-//         AdviceBinding binding = new AdviceBinding("pojo-binding", pointcut, null, null, interceptors);
-//         domain.addBinding(binding);
-//         }
-//
-//         {
-//         PointcutExpression pointcut = new PointcutExpression("mixin-pointcut", "execution(java.lang.String $instanceof{" + MixinInterface.class.getName() + "}->intercepted(..))");
-//         domain.addPointcut(pointcut);
-//         InterceptorFactory[] interceptors = {advice};
-//         AdviceBinding binding = new AdviceBinding("mixin-binding", pointcut, null, null, interceptors);
-//         domain.addBinding(binding);
-//         }
-//
-//         
-//         AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
-//         AOPProxyFactory factory = new GeneratedAOPProxyFactory();
-//         params.set
-//         factory.createAdvisedProxy(params);
-//         
-//         Class proxyClass = ContainerProxyFactory.getProxyClass(POJO.class, domain);
-//         ClassProxyContainer container = new ClassProxyContainer("test", domain);
-//         domain.setAdvisor(container);
-//         container.setClass(proxyClass);
-//         container.initializeClassContainer();
-//         POJO proxy = (POJO) proxyClass.newInstance();
-//         AspectManaged cp = (AspectManaged)proxy;
-//         cp.setAdvisor(container);
-//         Delegate delegate = (Delegate)cp;
-//         delegate.setDelegate(new POJO());
-//
-//         MixinInterface mi = (MixinInterface) proxy;
-//         System.out.println("--- mixin");
-//         assertEquals(mi.hello("mixin"), "mixin");
-//         System.out.println("--- hw");
-//         assertEquals("echoed", proxy.helloWorld());
-//         System.out.println("--- icptd");
-//         assertEquals("echoed", mi.intercepted("error"));
-//         
-         
-         AspectManager manager = AspectManager.instance();
-//         AspectDefinition def = new AspectDefinition("perinstanceaspect", Scope.PER_INSTANCE, new GenericAspectFactory(TestInterceptor.class.getName(), null));
-         AspectDefinition def = new AspectDefinition("perinstanceaspect", Scope.PER_VM, new GenericAspectFactory(TestInterceptor.class.getName(), null));
-         AdviceFactory advice = new AdviceFactory(def, "invoke");
-         PointcutExpression pointcut = new PointcutExpression("perinstancepointcut", "execution(* $instanceof{" + SomeInterface.class.getName() + "}->*(..))");
-         InterceptorFactory[] interceptors = {advice};
-         AdviceBinding binding = new AdviceBinding("perinstancebinding", pointcut, null, null, interceptors);
-
-         manager.addAspectDefinition(def);
-         manager.addInterceptorFactory(advice.getName(), advice);
-         manager.addPointcut(pointcut);
-         manager.addBinding(binding);
-            
-         AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
-         params.setInterfaces(new Class[] {SomeInterface.class});
-         params.setTarget(new SerializablePOJO());
-         
-         AOPProxyFactory factory = new GeneratedAOPProxyFactory();
-         SomeInterface si = (SomeInterface)factory.createAdvisedProxy(params);
-         
-         si.helloWorld();
-         
-         assertTrue(TestInterceptor.invoked);
-         
-         ObjectOutputStream out = null;
-         try
-         {
-            out = new ObjectOutputStream(new FileOutputStream(file));
-            out.writeObject(si);
-         }
-         finally
-         {
-            try
-            {
-               out.close();
-            }
-            catch(Exception e)
-            {
-            }
-         }
+         createAndSerializeProxy(file);
       }
       catch (Throwable t)
       {
@@ -186,6 +92,73 @@ public class OutOfProcessProxySerializer extends Assert
             }
          }
          System.exit(GENERAL_ERROR);
+      }
+   }
+   
+   public static void createAndSerializeProxy(File file) throws Exception
+   {
+      AspectManager manager = AspectManager.instance();
+      AspectDefinition def = new AspectDefinition("icptr", Scope.PER_VM, new GenericAspectFactory(TestInterceptor.class.getName(), null));
+      InterceptorFactory advice = new ScopedInterceptorFactory(def);
+      PointcutExpression pointcut = new PointcutExpression("pc1", "execution(* $instanceof{" + SomeInterface.class.getName() + "}->helloWorld(..))");
+      InterceptorFactory[] interceptors = {advice};
+      AdviceBinding binding = new AdviceBinding("binding1", pointcut, null, null, interceptors);
+
+      manager.addAspectDefinition(def);
+      manager.addInterceptorFactory(advice.getName(), advice);
+      manager.addPointcut(pointcut);
+      manager.addBinding(binding);
+
+      System.out.println("===>  ENABLE ADDITION OF ASPECTS IN OUTOFPROCESSPROXYSERIALIZER");
+//      AspectDefinition def2 = new AspectDefinition("aspect", Scope.PER_VM, new GenericAspectFactory(TestAspect.class.getName(), null));
+//      AdviceFactory advice2 = new AdviceFactory(def2, "advice");
+//      PointcutExpression pointcut2 = new PointcutExpression("pc2", "execution(* $instanceof{" + SomeInterface.class.getName() + "}->otherWorld(..))");
+//      InterceptorFactory[] interceptors2 = {advice2};
+//      AdviceBinding binding2 = new AdviceBinding("binding2", pointcut2, null, null, interceptors2);
+//
+//      manager.addAspectDefinition(def2);
+//      manager.addInterceptorFactory(advice2.getName(), advice2);
+//      manager.addPointcut(pointcut2);
+//      manager.addBinding(binding2);
+         
+      AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
+      params.setInterfaces(new Class[] {SomeInterface.class});
+      params.setMixins(new AOPProxyFactoryMixin[] {
+            new AOPProxyFactoryMixin(OtherMixin.class, new Class[] {OtherMixinInterface.class, OtherMixinInterface2.class}, "20")
+      });
+      
+      params.setTarget(new SerializablePOJO());
+      AOPProxyFactory factory = new GeneratedAOPProxyFactory();
+      SomeInterface si = (SomeInterface)factory.createAdvisedProxy(params);
+      
+      TestInterceptor.invoked = false;
+      TestAspect.invoked = false;
+      si.helloWorld();
+      assertTrue(TestInterceptor.invoked);
+      assertFalse(TestAspect.invoked);
+      
+      System.out.println("===> ENABLE CHECKS OF ASPECTS IN OUTOFPROCESSPROXYSERIALIZER");
+//      TestInterceptor.invoked = false;
+//      TestAspect.invoked = false;
+//      si.otherWorld();
+//      assertFalse(TestInterceptor.invoked);
+//      assertTrue(TestAspect.invoked);
+      
+      ObjectOutputStream out = null;
+      try
+      {
+         out = new ObjectOutputStream(new FileOutputStream(file));
+         out.writeObject(si);
+      }
+      finally
+      {
+         try
+         {
+            out.close();
+         }
+         catch(Exception e)
+         {
+         }
       }
    }
 }

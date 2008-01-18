@@ -132,7 +132,6 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
       return proxyClass;
    }
 
-//   private Object instantiateAndConfigureProxy(Class proxyClass, ContainerCache cache, SimpleMetaData metadata, Object target, Constructor ctor, Object[] ctorArguments) throws Exception
    private Object instantiateAndConfigureProxy(Class proxyClass, AOPProxyFactoryParameters params) throws Exception
    {
       AspectManaged proxy;
@@ -166,6 +165,7 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
       {
          ((Delegate)proxy).setDelegate(new Object());
       }
+      ((Delegate)proxy).setContainerProxyCacheKey(params.getContainerCache().getKey());
 
       return proxy;
    }

@@ -41,7 +41,7 @@ public class ContainerCache
 {
    private static volatile int counter;
    public static final Object mapLock = new Object();
-   private static WeakHashMap containerCache = new WeakHashMap();
+   private static WeakHashMap<Class, HashMap<String, ClassProxyContainer>> containerCache = new WeakHashMap<Class, HashMap<String, ClassProxyContainer>>();
 
    private AspectManager manager;
    private ContainerProxyCacheKey key;
@@ -161,12 +161,22 @@ public class ContainerCache
       }
    }
 
-   private ClassProxyContainer getCachedContainer(AspectManager manager)
+   public static ClassProxyContainer getCachedContainer(ContainerProxyCacheKey key)
    {
-      HashMap managerContainers = (HashMap)containerCache.get(key.getClazz());
+      HashMap<String, ClassProxyContainer> managerContainers = containerCache.get(key.getClazz());
       if (managerContainers != null)
       {
-         return (ClassProxyContainer)managerContainers.get(manager.getManagerFQN());
+         return managerContainers.get(key.getManagerFQN());
+      }
+      return null;
+   }
+   
+   private ClassProxyContainer getCachedContainer(AspectManager manager)
+   {
+      HashMap<String, ClassProxyContainer> managerContainers = containerCache.get(key.getClazz());
+      if (managerContainers != null)
+      {
+         return managerContainers.get(manager.getManagerFQN());
       }
       return null;
    }
@@ -192,10 +202,10 @@ public class ContainerCache
 
    private void cacheContainer(ContainerProxyCacheKey key, ClassProxyContainer container)
    {
-      HashMap managerContainers = (HashMap)containerCache.get(key.getClazz());
+      HashMap<String, ClassProxyContainer> managerContainers = containerCache.get(key.getClazz());
       if (managerContainers == null)
       {
-         managerContainers = new HashMap();
+         managerContainers = new HashMap<String, ClassProxyContainer>();
          containerCache.put(key.getClazz(), managerContainers);
       }
       managerContainers.put(key.getManagerFQN(), container);

@@ -28,6 +28,9 @@ package org.jboss.aop.proxy.container;
  */
 public interface Delegate
 {
-   public Object getDelegate();
-   public void setDelegate(Object delegate);
+   Object getDelegate();
+   void setDelegate(Object delegate);
+   void setContainerProxyCacheKey(ContainerProxyCacheKey key);
+   void localUnmarshal(MarshalledContainerProxy proxy);
+   void remoteUnmarshal(MarshalledContainerProxy proxy, MarshalledProxyAdvisor advisor);
 }

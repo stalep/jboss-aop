@@ -29,5 +29,7 @@ package org.jboss.test.aop.proxy;
  */
 public interface SomeInterface
 {
-   public String helloWorld();
+   String helloWorld();
+   
+   String otherWorld();
 }

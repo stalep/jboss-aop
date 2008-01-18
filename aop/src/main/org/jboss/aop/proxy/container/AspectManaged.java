@@ -24,6 +24,7 @@ package org.jboss.aop.proxy.container;
 import org.jboss.aop.Advisor;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.metadata.SimpleMetaData;
+import org.jboss.util.id.GUID;
 
 /**
  * comment
@@ -32,6 +33,7 @@ import org.jboss.aop.metadata.SimpleMetaData;
  */
 public interface AspectManaged
 {
+   GUID GUID = new GUID();
    public Advisor getAdvisor();
    public void setAdvisor(Advisor advisor);
    public InstanceAdvisor getInstanceAdvisor();

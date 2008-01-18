@@ -33,7 +33,7 @@ import java.security.PrivilegedAction;
 class SecurityActions
 {
    
-   public static class GetContextClassLoaderAction implements PrivilegedAction<ClassLoader>
+   static class GetContextClassLoaderAction implements PrivilegedAction<ClassLoader>
    {
       public static GetContextClassLoaderAction INSTANCE = new GetContextClassLoaderAction();
       

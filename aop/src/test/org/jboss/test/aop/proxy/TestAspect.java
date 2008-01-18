@@ -21,9 +21,6 @@
 */ 
 package org.jboss.test.aop.proxy;
 
-import java.io.Serializable;
-
-import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.Invocation;
 
 /**
@@ -31,19 +28,13 @@ import org.jboss.aop.joinpoint.Invocation;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class TestInterceptor implements Interceptor, Serializable
+public class TestAspect
 {
-   private static final long serialVersionUID = 1L;
-   static boolean invoked;
-   
-   public String getName()
-   {
-      return null;
-   }
-   
-   public Object invoke(Invocation inv) throws Throwable
+   public static boolean invoked;
+   public Object advice(Invocation inv) throws Throwable
    {
       invoked = true;
       return inv.invokeNext();
    }
+
 }

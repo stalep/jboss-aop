@@ -21,6 +21,7 @@
 */ 
 package org.jboss.aop.proxy.container;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -36,12 +37,12 @@ import org.jboss.metadata.spi.MetaData;
 public class ContainerProxyCacheKey implements Serializable
 {
    private static final long serialVersionUID = 8758283842273747310L;
-   private static final WeakReference[] EMTPY_WR_ARRAY = new WeakReference[0];
+   private static final WeakReference<Class>[] EMTPY_WR_ARRAY = new WeakReference[0];
    private static final AOPProxyFactoryMixin[] EMPTY_MIXIN_ARRAY = new AOPProxyFactoryMixin[0];
    
    private String managerFqn;
-   private WeakReference clazzRef;
-   private WeakReference[] addedInterfaces = EMTPY_WR_ARRAY;
+   private WeakReference<Class> clazzRef;
+   private WeakReference<Class>[] addedInterfaces = EMTPY_WR_ARRAY;
    
    private MetaData metaData;
    
@@ -50,7 +51,7 @@ public class ContainerProxyCacheKey implements Serializable
    
    public ContainerProxyCacheKey(String managerFqn, Class clazz)
    {
-      this.clazzRef = new WeakReference(clazz);
+      this.clazzRef = new WeakReference<Class>(clazz);
       this.managerFqn = managerFqn;
    }
    
@@ -79,8 +80,7 @@ public class ContainerProxyCacheKey implements Serializable
 
    public Class getClazz()
    {
-      Class clazz = (Class)clazzRef.get();
-      return clazz; 
+      return clazzRef.get();
    }
    
    public String getManagerFQN()
@@ -239,6 +239,36 @@ public class ContainerProxyCacheKey implements Serializable
       
       return true;
    }
+   
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException
+    {
+       out.writeUTF(managerFqn);
+       out.writeObject(clazzRef.get());
+       Class[] ifs = new Class[addedInterfaces.length];
+       for (int i = 0 ; i < addedInterfaces.length ; i++)
+       {
+          ifs[i] = addedInterfaces[i].get();
+       }
+       out.writeObject(ifs);
+       out.writeObject(metaData);
+       out.writeObject(addedMixins);
+       out.writeInt(hashCode());
+    }
+    
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+       managerFqn = in.readUTF();
+       clazzRef = new WeakReference<Class>((Class)in.readObject());
+       Class[] ifs = (Class[])in.readObject();
+       addedInterfaces = new WeakReference[ifs.length];
+       for (int i = 0 ; i < ifs.length ; i++)
+       {
+          addedInterfaces[i] = new WeakReference<Class>(ifs[i]);
+       }
+       metaData = (MetaData)in.readObject();
+       addedMixins = (AOPProxyFactoryMixin[])in.readObject();
+       hashcode = in.readInt();
+    }
    
    static class MixinAlphabetical implements Comparator
    {

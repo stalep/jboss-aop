@@ -23,27 +23,25 @@ package org.jboss.test.aop.proxy;
 
 import java.io.Serializable;
 
-import org.jboss.aop.advice.Interceptor;
-import org.jboss.aop.joinpoint.Invocation;
-
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class TestInterceptor implements Interceptor, Serializable
+public class OtherMixin implements OtherMixinInterface, OtherMixinInterface2, Serializable
 {
-   private static final long serialVersionUID = 1L;
-   static boolean invoked;
-   
-   public String getName()
+   int i;
+   public OtherMixin(int i)
    {
-      return null;
+      this.i = i;
    }
    
-   public Object invoke(Invocation inv) throws Throwable
+   public void other()
    {
-      invoked = true;
-      return inv.invokeNext();
+   }
+   
+   public int other2()
+   {
+      return i;
    }
 }

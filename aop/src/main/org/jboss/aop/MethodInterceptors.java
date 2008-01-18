@@ -28,7 +28,7 @@ import gnu.trove.TLongObjectHashMap;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
-class MethodInterceptors
+public class MethodInterceptors
 {
    Advisor advisor;
    TLongObjectHashMap infos = new TLongObjectHashMap();

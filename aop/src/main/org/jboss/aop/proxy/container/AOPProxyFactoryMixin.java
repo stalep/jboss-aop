@@ -21,13 +21,15 @@
 */ 
 package org.jboss.aop.proxy.container;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 
-public class AOPProxyFactoryMixin
+public class AOPProxyFactoryMixin implements Serializable
 {
    private String construction;
-   private WeakReference mixinClassRef;
-   private WeakReference[] interfaceClassRefs;
+   private WeakReference<Class> mixinClassRef;
+   private WeakReference<Class>[] interfaceClassRefs;
    private int hashcode;
 
    public AOPProxyFactoryMixin(Class mixin, Class[] interfaces)
@@ -69,7 +71,7 @@ public class AOPProxyFactoryMixin
          Class[] interfaces = new Class[interfaceClassRefs.length];
          for (int i = 0 ; i < interfaces.length ; i++)
          {
-            interfaces[i] = (Class)interfaceClassRefs[i].get();
+            interfaces[i] = interfaceClassRefs[i].get();
          }
          return interfaces;
       }
@@ -165,4 +167,26 @@ public class AOPProxyFactoryMixin
       }
       return true;
    }
+   
+   private void writeObject(java.io.ObjectOutputStream out) throws IOException
+   {
+      out.writeObject(construction);
+      out.writeObject(mixinClassRef.get());
+      out.writeObject(getInterfaces());
+      out.writeInt(hashCode());
+   }
+   
+   private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+   {
+      construction = (String)in.readObject();
+      mixinClassRef = new WeakReference<Class>((Class)in.readObject());
+      Class[] ifs = (Class[])in.readObject();
+      interfaceClassRefs = new WeakReference[ifs.length];
+      for (int i = 0 ; i < ifs.length ; i++)
+      {
+         interfaceClassRefs[i] = new WeakReference<Class>(ifs[i]);
+      }
+      hashcode = in.readInt();
+   }
+   
 }

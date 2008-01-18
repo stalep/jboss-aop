@@ -53,8 +53,8 @@ public abstract class JoinPointInfo implements JoinPointBean
    
    protected JoinPointInfo(Advisor advisor, Class clazz)
    {
-      setAdvisor(advisor);
       this.clazz = new WeakReference<Class>(clazz); 
+      setAdvisor(advisor);
    }
    
    /*
@@ -95,6 +95,10 @@ public abstract class JoinPointInfo implements JoinPointBean
    public void setAdvisor(Advisor advisor) 
    {
       this.advisor = new WeakReference<Advisor>(advisor);
+      if (getClazz() == null && advisor != null)
+      {
+         this.clazz = new WeakReference<Class>(advisor.getClazz());
+      }
    }
 
    public boolean hasAdvices()

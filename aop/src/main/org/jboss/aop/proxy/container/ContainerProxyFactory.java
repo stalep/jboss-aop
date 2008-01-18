@@ -21,9 +21,12 @@
   */
 package org.jboss.aop.proxy.container;
 
+import java.io.Externalizable;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -92,11 +95,10 @@ public class ContainerProxyFactory
    /** The class pool for the proxy (i.e for the class we are proxying */
    private ClassPool pool;
    
-   /** The interface introductions and mixins that should be used for this proxy*/
-   private ArrayList mixins;
-   
    /** True if we are proxying a class already woven by jboss aop, false otherwise */
    private boolean isAdvised;
+   
+   ProxyStrategy proxyStrategy;
    
    private CtConstructor defaultCtor;
    
@@ -110,6 +112,12 @@ public class ContainerProxyFactory
    public static Class getProxyClass(boolean objectAsSuper, ContainerProxyCacheKey key, Advisor advisor)
            throws Exception
    {
+      return getProxyClass(objectAsSuper, key, advisor, null);
+   }
+   
+   public static Class getProxyClass(boolean objectAsSuper, ContainerProxyCacheKey key, Advisor advisor, MarshalledContainerProxy outOfVmProxy)
+   throws Exception
+   {   
       Class clazz = key.getClazz();
       // Don't make a proxy of a proxy !
       if (Delegate.class.isAssignableFrom(clazz)) clazz = clazz.getSuperclass();
@@ -130,17 +138,17 @@ public class ContainerProxyFactory
          
          if (proxyClass == null)
          {
-            proxyClass = generateProxy(objectAsSuper, clazz, advisor);
+            proxyClass = generateProxy(objectAsSuper, clazz, advisor, outOfVmProxy);
             map.put(key, proxyClass);
          }
       }
       return proxyClass;
    }
 
-   private static Class generateProxy(boolean objectAsSuper, Class clazz, Advisor advisor) throws Exception
+   private static Class generateProxy(boolean objectAsSuper, Class clazz, Advisor advisor, MarshalledContainerProxy outOfVmProxy) throws Exception
    {
       ArrayList introductions = advisor.getInterfaceIntroductions();
-      CtClass proxy = createProxyCtClass(objectAsSuper, introductions, clazz, advisor);
+      CtClass proxy = createProxyCtClass(objectAsSuper, introductions, clazz, advisor, outOfVmProxy);
       ProtectionDomain pd = clazz.getProtectionDomain();
       Class proxyClass = TransformerCommon.toClass(proxy, pd);
       return proxyClass;
@@ -164,21 +172,35 @@ public class ContainerProxyFactory
       return container;
    }
    
-   public static CtClass createProxyCtClass(boolean objectAsSuper, ArrayList mixins, Class clazz, Advisor advisor)
+   private static CtClass createProxyCtClass(boolean objectAsSuper, ArrayList mixins, Class clazz, Advisor advisor)
+   throws Exception
+   {
+      return createProxyCtClass(objectAsSuper, mixins, clazz, advisor, null);
+   }
+   
+   private static CtClass createProxyCtClass(boolean objectAsSuper, ArrayList mixins, Class clazz, Advisor advisor, MarshalledContainerProxy outOfVmProxy)
            throws Exception
    {
-      ContainerProxyFactory factory = new ContainerProxyFactory(objectAsSuper, mixins, clazz, advisor);
+      ContainerProxyFactory factory = new ContainerProxyFactory(objectAsSuper, mixins, clazz, advisor, outOfVmProxy);
       return factory.createProxyCtClass();
    }
 
    
-   private ContainerProxyFactory(boolean objectAsSuper, ArrayList mixins, Class clazz, Advisor advisor)
+   private ContainerProxyFactory(boolean objectAsSuper, ArrayList mixins, Class clazz, Advisor advisor, MarshalledContainerProxy outOfVmProxy)
    {
       this.objectAsSuper = objectAsSuper;
-      this.mixins = mixins;
       this.clazz = clazz;
       this.advisor = advisor;
       isAdvised = Advised.class.isAssignableFrom(clazz);
+      
+      if (outOfVmProxy == null)
+      {
+         proxyStrategy = new OriginalProxyStrategy(mixins);
+      }
+      else
+      {
+         proxyStrategy = new UnmarshalledInRemoteJVMProxyStrategy(outOfVmProxy);
+      }
    }
   
    
@@ -226,6 +248,10 @@ public class ContainerProxyFactory
       addMethodFromTemplate(template, "getDelegate", "{ return delegate; }");
       setDelegateMethod = addMethodFromTemplate(template, "setDelegate", "{ this.delegate = (" + proxySuper.getName() + ")$1; }");
 
+      addFieldFromTemplate(template, "key");
+      addMethodFromTemplate(template, "setContainerProxyCacheKey", "{this.key=$1;}");
+      
+      
       //Add methods/fields needed for AspectManaged interface 
       proxy.addInterface(pool.get("org.jboss.aop.proxy.container.AspectManaged"));
 
@@ -241,8 +267,9 @@ public class ContainerProxyFactory
       addMethodFromTemplate(template, "setInstanceAdvisor", instanceAdvisorSetterBody());
       addMethodFromTemplate(template, "getInstanceAdvisor", instanceAdvisorGetterBody());
       
-      addMethodFromTemplate(template, "writeObject", writeObjectBody());
-      addMethodFromTemplate(template, "readObject", readObjectBody(superclass));
+      addMethodFromTemplate(template, "writeReplace", writeReplaceObjectBody());
+      addMethodFromTemplate(template, "localUnmarshal", localUnmarshalObjectBody(superclass));
+      addMethodFromTemplate(template, "remoteUnmarshal", remoteUnmarshalObjectBody(superclass));
       
       if (objectAsSuper)
       {
@@ -294,31 +321,54 @@ public class ContainerProxyFactory
          "}";
    }
 
-   private String writeObjectBody()
+   private String writeReplaceObjectBody()
    {
       return 
          "{" +
-         "   $1.writeObject(delegate);" +
-         "   $1.writeObject(mixins);" +
-         "   $1.writeObject(metadata);"+
-         "   $1.writeObject(classAdvisor.getClazz());" +
+         "   return new " + MarshalledContainerProxy.class.getName() + "(" +
+         "      this.getClass()," +
+         "      this.key," +
+         "      this.mixins," +
+         "      this.delegate," +
+         "      this.classAdvisor.getClazz()," +
+         "      this.currentAdvisor," +
+         "      this.metadata);" +
          "}";
-//       TODO add support for the instance advisors
    }
    
-   private String readObjectBody(CtClass superclass)
+   private String localUnmarshalObjectBody(CtClass superclass)
    {
       return 
          "{" +
-         "   delegate = (" + superclass.getName() + ")$1.readObject();" +
-         "   mixins = (Object[])$1.readObject();" +
-         "   metadata = (org.jboss.aop.metadata.SimpleMetaData)$1.readObject();" +
-         "   java.lang.Class clazz = (java.lang.Class)$1.readObject();" + 
-         "   org.jboss.aop.AspectManager manager = org.jboss.aop.AspectManager.getTopLevelAspectManager();" +
-         "   classAdvisor = manager.findAdvisor(clazz);" +
-         "   currentAdvisor = classAdvisor;" +
+         "   this.delegate = (" + superclass.getName() + ")$1.getDelegate();" +
+         "   this.mixins = $1.getMixins();" +
+         "   this.metadata = $1.getMetadata();" +
+         "   this.key = $1.getKey();" +
+         "   java.lang.Class clazz = $1.getClazz();" +
+         "   this.classAdvisor = org.jboss.aop.proxy.container.ContainerCache.getCachedContainer(this.key);" +
+         "   this.currentAdvisor = classAdvisor;" +
+         "   if ($1.getInstanceAdvisorDomainName() != null)" +
+         "   {" +
+         "      org.jboss.aop.proxy.container.ProxyAdvisorDomain domain = (org.jboss.aop.proxy.container.ProxyAdvisorDomain)org.jboss.aop.AspectManager.getTopLevelAspectManager().findManagerByName($1.getInstanceAdvisorDomainName());" +
+         "      this.currentAdvisor = domain.getAdvisor();" +
+         "      this.instanceAdvisor = this.currentAdvisor;" +
+             "}" +
          "}";
-       //TODO add support for instance advisors
+   }
+   
+   private String remoteUnmarshalObjectBody(CtClass superclass)
+   {
+      return 
+         "{" +
+         "   this.delegate = (" + superclass.getName() + ")$1.getDelegate();" +
+         "   this.mixins = $1.getMixins();" +
+         "   this.metadata = $1.getMetadata();" +
+         "   this.key = $1.getKey();" +
+         "   java.lang.Class clazz = $1.getClazz();" +
+         "   this.classAdvisor = $2;" +
+         "   this.currentAdvisor = $2;" +
+         "   this.instanceAdvisor = $2;" +
+         "}";
    }
    
    private String equalsBody()
@@ -362,7 +412,7 @@ public class ContainerProxyFactory
    {
       return addFieldFromTemplate(template, name, null);
    }
-
+   
    private CtField addFieldFromTemplate(CtClass template, String name, CtClass type) throws Exception
    {
       CtField templateField = template.getField(name);
@@ -464,41 +514,22 @@ public class ContainerProxyFactory
    
    private void addMethodsAndMixins()throws Exception
    {
-      HashSet addedMethods = new HashSet();
+      HashSet<Long> addedMethods = new HashSet<Long>();
       createMixinsAndIntroductions(addedMethods);
       createProxyMethods(addedMethods);
    }
 
-   private void createMixinsAndIntroductions(HashSet addedMethods) throws Exception
+   private void createMixinsAndIntroductions(HashSet<Long> addedMethods) throws Exception
    {
-      HashSet addedInterfaces = new HashSet();
-      Set implementedInterfaces = interfacesAsSet();
+      HashSet<String> addedInterfaces = new HashSet<String>();
+      Set<String> implementedInterfaces = interfacesAsSet();
       
-      if (mixins != null)
+      if (proxyStrategy.hasIntroductions())
       {
-         HashMap intfs = new HashMap();
-         HashMap mixinIntfs = new HashMap();
-         ArrayList mixes = new ArrayList();
-         for (int i = 0; i < mixins.size(); i++)
-         {
-            InterfaceIntroduction introduction = (InterfaceIntroduction) mixins.get(i);
-            getIntroductionInterfaces(introduction, intfs, mixinIntfs, mixes, i);
-         }
-         if (mixes.size() > 0)
-         {
-            defaultCtor.insertAfter("mixins = new Object[" + mixes.size() + "];");
-            for (int i = 0; i < mixes.size(); i++)
-            {
-               //If using a constructor and passing "this" as the parameters, the proxy gets used. The delegate (instance wrapped by proxy) is not 
-               //set in the proxy until later, and if the mixin implements Delegate it will get set with the "real" instance at this point.
-               InterfaceIntroduction.Mixin mixin = (InterfaceIntroduction.Mixin) mixes.get(i);
-               String initializer = (mixin.getConstruction() == null) ? ("new " + mixin.getClassName() + "()") : mixin.getConstruction();
-               String code = "mixins[" + i + "] = " + initializer + ";";
-               defaultCtor.insertAfter(code);
-               setDelegateMethod.insertAfter("{if (org.jboss.aop.proxy.container.Delegate.class.isAssignableFrom(mixins[" + i + "].getClass())) " +
-                     "((org.jboss.aop.proxy.container.Delegate)mixins[" + i + "]).setDelegate($1);}");
-            }
-         }
+         HashMap<String, Integer> intfs = new HashMap<String, Integer>();
+         HashMap<String, Integer> mixinIntfs = new HashMap<String, Integer>();
+         ArrayList<MixinInfo> mixes = new ArrayList<MixinInfo>();
+         proxyStrategy.getMixins(intfs, mixinIntfs, mixes);
          
          //Now that we have added the mixins, add all the proxies methods to the added methods set
          HashMap allMethods = JavassistMethodHashing.getDeclaredMethodMap(proxy);
@@ -509,57 +540,13 @@ public class ContainerProxyFactory
       }
    }
    
-   /**
-    * Split the interface introduction into something we can work with
-    * 
-    * @param intro The InterfaceIntroduction
-    * @param intfs receives the interfaces from plain interface introductions
-    * @param mixins receives the interfaces from mixins
-    * @param mixes receives the actual InterfaceIntroduction.Mixin objects
-    * @@param the index interface introduction this data comes from 
-    */
-   private void getIntroductionInterfaces(InterfaceIntroduction intro, HashMap intfs, HashMap mixins, ArrayList mixes, int idx)
-   {
-      Iterator it = intro.getMixins().iterator();
-      while (it.hasNext())
-      {
-         InterfaceIntroduction.Mixin mixin = (InterfaceIntroduction.Mixin) it.next();
-         mixes.add(mixin);
-         for (int i = 0; i < mixin.getInterfaces().length; i++)
-         {
-            if (intfs.containsKey(mixin.getInterfaces()[i]))
-            {
-               intfs.remove(mixin.getInterfaces()[i]);
-               
-            }
-            if (mixins.containsKey(mixin.getInterfaces()[i]))
-            {
-               throw new RuntimeException("cannot have an IntroductionInterface that introduces several mixins with the same interfaces " + mixin.getInterfaces()[i]);
-            }
-            mixins.put(mixin.getInterfaces()[i], new Integer(idx));
-         }
-      }
-      if (intro.getInterfaces() != null)
-      {
-         for (int i = 0; i < intro.getInterfaces().length; i++)
-         {
-            if (intfs.containsKey(intro.getInterfaces()[i]) || mixins.containsKey(intro.getInterfaces()[i])) 
-            {
-               //Do nothing
-            }
-            else
-            {
-               intfs.put(intro.getInterfaces()[i], new Integer(idx));
-            }
-         }
-      }
-   }
-
-   private void createMixins(HashSet addedMethods, ArrayList mixes, HashSet addedInterfaces, Set implementedInterfaces) throws Exception
+   
+   
+   private void createMixins(HashSet<Long> addedMethods, ArrayList<MixinInfo> mixes, HashSet<String> addedInterfaces, Set<String> implementedInterfaces) throws Exception
    {
       for (int mixinId = 0 ; mixinId < mixes.size() ; mixinId++)
       {
-         InterfaceIntroduction.Mixin mixin = (InterfaceIntroduction.Mixin)mixes.get(mixinId);
+         MixinInfo mixin = mixes.get(mixinId);
          
          String[] intfs = mixin.getInterfaces();
          
@@ -614,7 +601,7 @@ public class ContainerProxyFactory
       }
    }
 
-   private void createProxyMethods(HashSet addedMethods) throws Exception
+   private void createProxyMethods(HashSet<Long> addedMethods) throws Exception
    {
       HashMap allMethods = JavassistMethodHashing.getMethodMap(proxy.getSuperclass());
 
@@ -678,7 +665,7 @@ public class ContainerProxyFactory
       }
    }
    
-   private void createIntroductions(HashSet addedMethods, HashMap intfs, HashSet addedInterfaces, Set implementedInterfaces) throws Exception
+   private void createIntroductions(HashSet<Long> addedMethods, HashMap<String, Integer> intfs, HashSet<String> addedInterfaces, Set<String> implementedInterfaces) throws Exception
    {
       Iterator it = intfs.keySet().iterator();
       while (it.hasNext())
@@ -733,9 +720,9 @@ public class ContainerProxyFactory
       }
    }
 
-   private Set interfacesAsSet() throws NotFoundException
+   private Set<String> interfacesAsSet() throws NotFoundException
    {
-      HashSet set = new HashSet();
+      HashSet<String> set = new HashSet<String>();
       CtClass[] interfaces = proxy.getInterfaces();
       
       for (int i = 0 ; i < interfaces.length ; i++)
@@ -891,6 +878,210 @@ public class ContainerProxyFactory
       if (sig != null)
       {
          destFile.addAttribute(sig.copy(destFile.getConstPool(), new HashMap()));
+      }
+   }
+   
+   private interface ProxyStrategy
+   {
+      /**
+       * Whether the proxy has introductions and/or mixins
+       * @return true if we have introductions and/or mixins
+       */
+      boolean hasIntroductions();
+      
+      /**
+       * @param intfs receives the interfaces from plain interface introductions
+       * @param mixinInterfaces receives the interfaces from mixins
+       * @param mixes receives the actual InterfaceIntroduction.Mixin objects
+       */
+      void getMixins(HashMap<String, Integer>  intfs, HashMap<String, Integer>  mixins, ArrayList<MixinInfo> mixes) throws Exception;
+   }
+   
+   private class OriginalProxyStrategy implements ProxyStrategy
+   {
+      ArrayList<InterfaceIntroduction> mixins;
+      
+      OriginalProxyStrategy(ArrayList<InterfaceIntroduction> mixins)
+      {
+         this.mixins = mixins;
+      }
+      
+      public boolean hasIntroductions()
+      {
+         if (mixins == null)
+         {
+            return false;
+         }
+         return mixins.size() > 0;
+      }
+
+      public void getMixins(HashMap<String, Integer>  intfs, HashMap<String, Integer>  mixinInterfaces, ArrayList<MixinInfo> mixes) throws Exception
+      {
+         if (mixins != null)
+         {
+            HashMap mixinIntfs = new HashMap();
+            for (int i = 0; i < mixins.size(); i++)
+            {
+               InterfaceIntroduction introduction = mixins.get(i);
+               getIntroductionInterfaces(introduction, intfs, mixinIntfs, mixes, i);
+            }
+            if (mixes.size() > 0)
+            {
+               defaultCtor.insertAfter("mixins = new Object[" + mixes.size() + "];");
+               for (int i = 0; i < mixes.size(); i++)
+               {
+                  //If using a constructor and passing "this" as the parameters, the proxy gets used. The delegate (instance wrapped by proxy) is not 
+                  //set in the proxy until later, and if the mixin implements Delegate it will get set with the "real" instance at this point.
+                  MixinInfo mixin = mixes.get(i);
+                  String initializer = (mixin.getConstruction() == null) ? ("new " + mixin.getClassName() + "()") : mixin.getConstruction();
+                  String code = "mixins[" + i + "] = " + initializer + ";";
+                  defaultCtor.insertAfter(code);
+                  setDelegateMethod.insertAfter("{if (org.jboss.aop.proxy.container.Delegate.class.isAssignableFrom(mixins[" + i + "].getClass())) " +
+                        "((org.jboss.aop.proxy.container.Delegate)mixins[" + i + "]).setDelegate($1);}");
+               }
+            }
+         }
+      }
+      
+      /**
+       * Split the interface introduction into something we can work with
+       * 
+       * @param intro The InterfaceIntroduction
+       * @param intfs receives the interfaces from plain interface introductions
+       * @param mixinInterfaces receives the interfaces from mixins
+       * @param mixes receives the actual InterfaceIntroduction.Mixin objects
+       * @@param the index interface introduction this data comes from 
+       */
+      private void getIntroductionInterfaces(InterfaceIntroduction intro, 
+            HashMap<String, Integer> intfs, 
+            HashMap<String, Integer> mixinInterfaces, 
+            ArrayList<MixinInfo> mixes, 
+            int idx)
+      {
+         Iterator it = intro.getMixins().iterator();
+         while (it.hasNext())
+         {
+            InterfaceIntroduction.Mixin mixin = (InterfaceIntroduction.Mixin) it.next();
+            mixes.add(new MixinInfo(mixin));
+            for (int i = 0; i < mixin.getInterfaces().length; i++)
+            {
+               if (intfs.containsKey(mixin.getInterfaces()[i]))
+               {
+                  intfs.remove(mixin.getInterfaces()[i]);
+                  
+               }
+               if (mixinInterfaces.containsKey(mixin.getInterfaces()[i]))
+               {
+                  throw new RuntimeException("cannot have an IntroductionInterface that introduces several mixins with the same interfaces " + mixin.getInterfaces()[i]);
+               }
+               mixinInterfaces.put(mixin.getInterfaces()[i], new Integer(idx));
+            }
+         }
+         if (intro.getInterfaces() != null)
+         {
+            for (int i = 0; i < intro.getInterfaces().length; i++)
+            {
+               if (intfs.containsKey(intro.getInterfaces()[i]) || mixinInterfaces.containsKey(intro.getInterfaces()[i])) 
+               {
+                  //Do nothing
+               }
+               else
+               {
+                  intfs.put(intro.getInterfaces()[i], new Integer(idx));
+               }
+            }
+         }
+      }
+   }
+   
+   private class UnmarshalledInRemoteJVMProxyStrategy implements ProxyStrategy
+   {
+      MarshalledContainerProxy outOfVmProxy;
+      
+      UnmarshalledInRemoteJVMProxyStrategy(MarshalledContainerProxy outOfVmProxy)
+      {
+         this.outOfVmProxy = outOfVmProxy;
+      }
+      
+      public boolean hasIntroductions()
+      {
+         if (outOfVmProxy == null)
+         {
+            return false;
+         }
+         return outOfVmProxy.getIntroducedInterfaces().length > 0;
+      }
+      
+      public void getMixins(HashMap<String, Integer>  intfs, HashMap<String, Integer>  mixinInterfaces, ArrayList<MixinInfo> mixes) throws Exception
+      {
+         HashSet<String> allInterfaces = new HashSet<String>();
+         String[] introducedInterfaces = outOfVmProxy.getIntroducedInterfaces();
+         allInterfaces.addAll(Arrays.asList(introducedInterfaces));
+         
+         Set<String> targetInterfaces = outOfVmProxy.getTargetInterfaces();
+         Object[] mixins = outOfVmProxy.getMixins();
+         int i = 0;
+         for ( ; i < mixins.length ; i++)
+         {
+            Class clazz = mixins[i].getClass();
+            Class[] ifs = clazz.getInterfaces(); 
+            ArrayList<String> interfaces = new ArrayList<String>(ifs.length);
+            for (Class iface : ifs)
+            {
+               String name = iface.getName();
+               if (name.equals(Serializable.class.getName()) || 
+                     name.equals(Externalizable.class.getName()) || 
+                     targetInterfaces.contains(name))
+               {
+                  continue;
+               }
+               interfaces.add(name);
+               allInterfaces.remove(name);
+               mixinInterfaces.put(name, i);
+            }
+            MixinInfo info = new MixinInfo(clazz.getName(), interfaces);
+            mixes.add(info);
+         }
+         
+         for (String iface : allInterfaces)
+         {
+            intfs.put(iface, ++i);
+         }
+      }
+   }
+   
+   private static class MixinInfo
+   {
+      String[] interfaces;
+      String className;
+      String construction;
+      
+      MixinInfo(InterfaceIntroduction.Mixin mixin)
+      {
+         this.interfaces = mixin.getInterfaces();
+         this.className = mixin.getClassName();
+         this.construction = mixin.getConstruction();
+      }
+      
+      MixinInfo(String className, ArrayList<String> interfaces)
+      {
+         this.className = className;
+         this.interfaces = interfaces.toArray(new String[interfaces.size()]);
+      }
+      
+      protected String[] getInterfaces()
+      {
+         return interfaces;
+      }
+
+      protected String getClassName()
+      {
+         return className;
+      }
+
+      protected String getConstruction()
+      {
+         return construction;
       }
    }
 }   

@@ -22,11 +22,13 @@
 package org.jboss.aop.proxy.container;
 
 import java.io.IOException;
+import java.io.ObjectStreamException;
 
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.metadata.SimpleMetaData;
+import org.jboss.util.id.GUID;
 
 /**
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
@@ -46,7 +48,7 @@ public class ProxyTemplate implements Delegate, AspectManaged
    private Object delegate;
    private Object[] mixins; // Do not remove this
    private SimpleMetaData metadata;
-
+   private ContainerProxyCacheKey key;
 
    public Object getDelegate()
    {
@@ -58,6 +60,11 @@ public class ProxyTemplate implements Delegate, AspectManaged
       this.delegate = delegate;
    }
 
+   public void setContainerProxyCacheKey(ContainerProxyCacheKey key)
+   {
+      this.key = key;
+   }
+   
    public Advisor getAdvisor()
    {
       return currentAdvisor;
@@ -134,34 +141,45 @@ public class ProxyTemplate implements Delegate, AspectManaged
          return super.toString() + "(empty proxy of " + this.getClass().getSuperclass().getName() + ")";
    }
    
-//   "{" +
-//   "   if (delegate != null)" +
-//   "      return delegate.toString() + \" (proxied by \" + this.getClass().getName() + \"@\" + java.lang.Integer.toHexString(java.lang.System.identityHashCode(this)) + \")\";" +
-//   "   else" +
-//   "      return super.toString() + \" (empty proxy of \" + this.getClass().getSuperclass().getName() + \")\";" +
-//   "}";
-
-   
-   private void writeObject(java.io.ObjectOutputStream out) throws IOException
+   private Object writeReplace() throws ObjectStreamException
    {
-      out.writeObject(delegate);
-      out.writeObject(mixins);
-      out.writeObject(metadata);
-      out.writeObject(classAdvisor.getClazz());
-      //TODO add support for the instance advisors
+      return new MarshalledContainerProxy(
+            this.getClass(), 
+            this.key,
+            this.mixins, 
+            this.delegate, 
+            this.classAdvisor.getClazz(),
+            this.currentAdvisor,
+            this.metadata);
    }
    
-   private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+   public void localUnmarshal(MarshalledContainerProxy proxy) 
    {
-      delegate = in.readObject();
-      mixins = (Object[])in.readObject();
-      metadata = (SimpleMetaData)in.readObject();
+      this.delegate = proxy.getDelegate();
+      this.mixins = proxy.getMixins();
+      this.metadata = proxy.getMetadata();
+      this.key = proxy.getKey();
+
+      Class clazz = proxy.getClazz();
+      this.classAdvisor = ContainerCache.getCachedContainer(this.key);
+      this.currentAdvisor = classAdvisor;
       
-      Class clazz = (Class)in.readObject();
-      AspectManager manager = AspectManager.getTopLevelAspectManager();
-      classAdvisor = manager.findAdvisor(clazz);
-      currentAdvisor = classAdvisor;
-      //TODO add support for instance advisors
+      if (proxy.getInstanceAdvisorDomainName() != null)
+      {
+         ProxyAdvisorDomain domain = (ProxyAdvisorDomain)AspectManager.getTopLevelAspectManager().findManagerByName(proxy.getInstanceAdvisorDomainName());
+         this.currentAdvisor = domain.getAdvisor();
+      }
+   }
+   
+   public void remoteUnmarshal(MarshalledContainerProxy proxy, MarshalledProxyAdvisor advisor)
+   {
+      this.delegate = proxy.getDelegate();
+      this.mixins = proxy.getMixins();
+      this.metadata = proxy.getMetadata();
+      this.key = proxy.getKey();
       
+      this.classAdvisor = advisor;
+      this.currentAdvisor = advisor;
+      this.instanceAdvisor = advisor;
    }
 }
