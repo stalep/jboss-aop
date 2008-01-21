@@ -256,10 +256,14 @@ public class ContainerProxyCacheKey implements Serializable
        out.writeUTF(managerFqn);
        out.writeObject(guid);
        out.writeObject(clazzRef.get());
-       Class[] ifs = new Class[addedInterfaces.length];
-       for (int i = 0 ; i < addedInterfaces.length ; i++)
+       Class[] ifs = null;
+       if (addedInterfaces != null)
        {
-          ifs[i] = addedInterfaces[i].get();
+          ifs = new Class[addedInterfaces.length];
+          for (int i = 0 ; i < addedInterfaces.length ; i++)
+          {
+             ifs[i] = addedInterfaces[i].get();
+          }
        }
        out.writeObject(ifs);
        out.writeObject(metaData);
@@ -273,10 +277,13 @@ public class ContainerProxyCacheKey implements Serializable
        guid = (GUID)in.readObject();
        clazzRef = new WeakReference<Class>((Class)in.readObject());
        Class[] ifs = (Class[])in.readObject();
-       addedInterfaces = new WeakReference[ifs.length];
-       for (int i = 0 ; i < ifs.length ; i++)
+       if (ifs != null)
        {
-          addedInterfaces[i] = new WeakReference<Class>(ifs[i]);
+          addedInterfaces = new WeakReference[ifs.length];
+          for (int i = 0 ; i < ifs.length ; i++)
+          {
+             addedInterfaces[i] = new WeakReference<Class>(ifs[i]);
+          }
        }
        metaData = (MetaData)in.readObject();
        addedMixins = (AOPProxyFactoryMixin[])in.readObject();
