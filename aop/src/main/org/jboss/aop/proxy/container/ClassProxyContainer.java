@@ -21,8 +21,6 @@
   */
 package org.jboss.aop.proxy.container;
 
-import gnu.trove.TLongObjectHashMap;
-
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;

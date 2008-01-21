@@ -50,6 +50,11 @@ class MarshalledProxyAdvisor extends Advisor implements InstanceAdvisor
       super(name, manager);
    }
 
+   public void setClazz(Class clazz)
+   {
+      super.clazz = clazz;
+   }
+   
    public void addMethodInfo(MethodInfo info)
    {
       methodInfos.put(info.getHash(), info);
@@ -83,6 +88,14 @@ class MarshalledProxyAdvisor extends Advisor implements InstanceAdvisor
    {
       MethodInfo info = (MethodInfo)methodInfos.get(hash);
       return info;
+   }
+   
+   public MethodInfo[] getMethodInfos()
+   {
+      Object[] vals = methodInfos.getValues();
+      MethodInfo[] infos = new MethodInfo[vals.length];
+      System.arraycopy(vals, 0, infos, 0, vals.length);
+      return infos;
    }
 
    public void appendInterceptor(Interceptor interceptor)

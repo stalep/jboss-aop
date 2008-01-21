@@ -148,7 +148,6 @@ public class ProxyTemplate implements Delegate, AspectManaged
             this.key,
             this.mixins, 
             this.delegate, 
-            this.classAdvisor.getClazz(),
             this.currentAdvisor,
             this.metadata);
    }

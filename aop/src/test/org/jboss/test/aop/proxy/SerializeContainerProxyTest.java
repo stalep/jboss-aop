@@ -24,6 +24,7 @@ package org.jboss.test.aop.proxy;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.rmi.MarshalledObject;
 
 import junit.framework.TestCase;
 
@@ -41,27 +42,33 @@ public abstract class SerializeContainerProxyTest extends TestCase
       super(name);
    }
 
+   private SomeInterface getProxy() throws Exception
+   {
+      File proxyFile = createProxyFile();
+      
+      ObjectInputStream in = new ObjectInputStream(new FileInputStream(proxyFile));
+      Object o = in.readObject();
+      assertNotNull(o);
+      SomeInterface si = (SomeInterface)o;
+      return si;
+   }
+   
    public void testContainerProxy() throws Exception
    {
       try
       {
-         File proxyFile = createProxyFile();
+         SomeInterface si = getProxy();
          
-         ObjectInputStream in = new ObjectInputStream(new FileInputStream(proxyFile));
-         Object o = in.readObject();
-         assertNotNull(o);
-         SomeInterface si = (SomeInterface)o;
-
          TestInterceptor.invoked = false;
          TestAspect.invoked = false;
          si.helloWorld();
          assertTrue(TestInterceptor.invoked);
          assertFalse(TestAspect.invoked);
          
-         OtherMixinInterface omi = (OtherMixinInterface)o;
+         OtherMixinInterface omi = (OtherMixinInterface)si;
          omi.other();
          
-         OtherMixinInterface2 omi2 = (OtherMixinInterface2)o;
+         OtherMixinInterface2 omi2 = (OtherMixinInterface2)si;
          int i = omi2.other2();
          assertEquals(20, i);
          
@@ -79,5 +86,43 @@ public abstract class SerializeContainerProxyTest extends TestCase
       }
    }
 
+   public void testReserializeProxy() throws Exception
+   {
+      try
+      {
+         SomeInterface si = getProxy();
+         
+         MarshalledObject mo = new MarshalledObject(si);
+         Object o = mo.get();
+         assertNotNull(o);
+         SomeInterface rsi = (SomeInterface)o;
+         
+         TestInterceptor.invoked = false;
+         TestAspect.invoked = false;
+         rsi.helloWorld();
+         assertTrue(TestInterceptor.invoked);
+         assertFalse(TestAspect.invoked);
+         
+         OtherMixinInterface omi = (OtherMixinInterface)si;
+         omi.other();
+         
+         OtherMixinInterface2 omi2 = (OtherMixinInterface2)si;
+         int i = omi2.other2();
+         assertEquals(20, i);
+         
+         System.out.println("--- ENABLE CHECKS OF ASPECTS IN SERIALIZECONTAINERPROXYTEST AND OUTOFPROCESSPROXYSERIALIZER");
+//         TestInterceptor.invoked = false;
+//         TestAspect.invoked = false;
+         rsi.otherWorld();
+//         assertFalse(TestInterceptor.invoked);
+//         assertTrue(TestAspect.invoked);
+      }
+      catch(Exception e)
+      {
+         e.printStackTrace();
+         throw e;
+      }
+   }
+   
    protected abstract File createProxyFile() throws Exception;
 }

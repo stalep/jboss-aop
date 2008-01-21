@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.jboss.metadata.spi.MetaData;
+import org.jboss.util.id.GUID;
 
 /**
  * 
@@ -48,6 +49,7 @@ public class ContainerProxyCacheKey implements Serializable
    
    private AOPProxyFactoryMixin[] addedMixins = EMPTY_MIXIN_ARRAY;
    private int hashcode = 0;
+   private GUID guid = MarshalledContainerProxy.GUID;
    
    public ContainerProxyCacheKey(String managerFqn, Class clazz)
    {
@@ -87,7 +89,12 @@ public class ContainerProxyCacheKey implements Serializable
    {
       return managerFqn;
    }
-   
+ 
+   protected GUID getGuid()
+   {
+      return guid;
+   }
+
    public boolean equals(Object obj)
    {
       if (this == obj)
@@ -119,6 +126,10 @@ public class ContainerProxyCacheKey implements Serializable
          return false;
       }
       if (!compareAddedMixins(other))
+      {
+         return false;
+      }
+      if(!guid.equals(other.guid))
       {
          return false;
       }
@@ -243,6 +254,7 @@ public class ContainerProxyCacheKey implements Serializable
     private void writeObject(java.io.ObjectOutputStream out) throws IOException
     {
        out.writeUTF(managerFqn);
+       out.writeObject(guid);
        out.writeObject(clazzRef.get());
        Class[] ifs = new Class[addedInterfaces.length];
        for (int i = 0 ; i < addedInterfaces.length ; i++)
@@ -258,6 +270,7 @@ public class ContainerProxyCacheKey implements Serializable
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
     {
        managerFqn = in.readUTF();
+       guid = (GUID)in.readObject();
        clazzRef = new WeakReference<Class>((Class)in.readObject());
        Class[] ifs = (Class[])in.readObject();
        addedInterfaces = new WeakReference[ifs.length];

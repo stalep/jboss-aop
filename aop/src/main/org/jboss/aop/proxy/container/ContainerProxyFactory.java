@@ -74,7 +74,7 @@ public class ContainerProxyFactory
    public static final String PROXY_NAME_PREFIX = "AOPContainerProxy$";
    
    private static Object maplock = new Object();
-   private static WeakHashMap proxyCache = new WeakHashMap();
+   private static WeakHashMap<Class, Map<ContainerProxyCacheKey, Class>> proxyCache = new WeakHashMap<Class, Map<ContainerProxyCacheKey, Class>>();
    private static volatile int counter = 0;
    
    private static CtMethod setDelegateMethod;
@@ -125,15 +125,15 @@ public class ContainerProxyFactory
       Class proxyClass = null;
       synchronized (maplock)
       {
-         Map map = (Map)proxyCache.get(clazz);
+         Map<ContainerProxyCacheKey, Class> map = proxyCache.get(clazz);
          if (map == null)
          {
-            map = new HashMap();
+            map = new HashMap<ContainerProxyCacheKey, Class>();
             proxyCache.put(clazz, map);
          }
          else
          {
-            proxyClass = (Class) map.get(key);
+            proxyClass = map.get(key);
          }
          
          if (proxyClass == null)
@@ -330,7 +330,6 @@ public class ContainerProxyFactory
          "      this.key," +
          "      this.mixins," +
          "      this.delegate," +
-         "      this.classAdvisor.getClazz()," +
          "      this.currentAdvisor," +
          "      this.metadata);" +
          "}";

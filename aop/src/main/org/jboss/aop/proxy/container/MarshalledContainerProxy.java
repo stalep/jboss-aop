@@ -53,8 +53,7 @@ public class MarshalledContainerProxy implements Serializable
    private static final long serialVersionUID = 1L;
 
    //Fields to check if we are unmarshalling in the same JVM
-   private final static GUID GUID = new GUID();
-   private GUID guid = GUID;
+   public final static GUID GUID = new GUID();
    
    //Fields from the proxy, used when unmarshalling in the same JVM
    private String proxyClassName;
@@ -74,13 +73,13 @@ public class MarshalledContainerProxy implements Serializable
    //The interceptor chains for each method used when unmarshalling in a different JVM
    MarshalledInterceptors marshalledInterceptors;
    
-   public MarshalledContainerProxy(Class proxyClass, ContainerProxyCacheKey key, Object[] mixins, Object delegate, Class clazz, Advisor currentAdvisor, SimpleMetaData metadata)
+   public MarshalledContainerProxy(Class proxyClass, ContainerProxyCacheKey key, Object[] mixins, Object delegate, Advisor currentAdvisor, SimpleMetaData metadata)
    {
       this.proxyClassName = proxyClass.getName();
       this.key = key;
       this.mixins = mixins;
       this.delegate = delegate;
-      this.clazz = clazz;
+      this.clazz = currentAdvisor.getClazz();
       
       if (currentAdvisor instanceof InstanceProxyContainer)
       {
@@ -149,9 +148,9 @@ public class MarshalledContainerProxy implements Serializable
       }
       
       MarshalledProxyAdvisor advisor = marshalledInterceptors.getMarshalledAdvisor();
+      advisor.setClazz(clazz);
 
-      //TODO Make this take into consideration, the super class
-      boolean objectAsSuper = false;
+      boolean objectAsSuper = key.getClazz().equals(Object.class);
       Class proxyClass = ContainerProxyFactory.getProxyClass(objectAsSuper, key, advisor, this);
    
       Delegate proxy = (Delegate)proxyClass.newInstance();
@@ -161,7 +160,7 @@ public class MarshalledContainerProxy implements Serializable
    
    private boolean isLocal()
    {
-      return guid.equals(GUID);
+      return key.getGuid().equals(GUID);
    }
 
    public ContainerProxyCacheKey getKey()
@@ -204,7 +203,7 @@ public class MarshalledContainerProxy implements Serializable
       return targetInterfaces;
    }
    
-   private static class MarshalledInterceptors implements Serializable
+   private class MarshalledInterceptors implements Serializable
    {
       private static final long serialVersionUID = 1L;
       transient Advisor currentAdvisor;
@@ -232,7 +231,7 @@ public class MarshalledContainerProxy implements Serializable
          ObjectOutputStream test = new ObjectOutputStream(new ByteArrayOutputStream());
          try
          {
-            MethodInfo[] methodInfos = ((ClassProxyContainer)currentAdvisor).getMethodInfos();
+            MethodInfo[] methodInfos = getMethodInfos();
             MarshalledMethodInfo[] marshalledInfos = new MarshalledMethodInfo[methodInfos.length];
 
             for (int i = 0 ; i < methodInfos.length ; i++)
@@ -265,6 +264,15 @@ public class MarshalledContainerProxy implements Serializable
             {
             }
          }
+      }
+      
+      private MethodInfo[] getMethodInfos()
+      {
+         if (currentAdvisor instanceof MarshalledProxyAdvisor)
+         {
+            return ((MarshalledProxyAdvisor)currentAdvisor).getMethodInfos();
+         }
+         return ((ClassProxyContainer)currentAdvisor).getMethodInfos();
       }
       
       private String getExceptionExpression(MethodInfo info)
@@ -340,7 +348,7 @@ public class MarshalledContainerProxy implements Serializable
             throw new MethodHashingException(e);
          }
          interceptors = info.getInterceptors();
-         clazz = info.getClazz();
+         clazz = info.getMethod().getDeclaringClass();
       }
       
       public MethodInfo getMethodInfo(Advisor advisor)
