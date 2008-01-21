@@ -189,7 +189,7 @@ public class MarshalledContainerProxy implements Serializable
       return metadata;
    }
 
-   protected String getInstanceAdvisorDomainName()
+   public String getInstanceAdvisorDomainName()
    {
       return instanceAdvisorDomainName;
    }
