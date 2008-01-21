@@ -23,6 +23,7 @@ package org.jboss.test.aop.proxy;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 
@@ -30,7 +31,6 @@ import junit.framework.Assert;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.AdviceBinding;
-import org.jboss.aop.advice.AdviceFactory;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.GenericAspectFactory;
 import org.jboss.aop.advice.InterceptorFactory;
@@ -49,15 +49,20 @@ import org.jboss.aop.proxy.container.GeneratedAOPProxyFactory;
  */
 public class OutOfProcessProxySerializer extends Assert
 {
-   final static int WRONG_ARGS = 1;
-   final static int NO_SUCH_FILE = 2;
-   final static int GENERAL_ERROR = 3;
-   
+   final static int FEW_ARGS = 1;
+   final static int MANY_ARGS = 2;
+   final static int NO_SUCH_FILE = 3;
+   final static int GENERAL_ERROR = 4;
+ 
    public static void main (String[] args)
    {
-      if (args.length != 1)
+      if (args.length == 0)
       {
-         System.exit(WRONG_ARGS);
+         System.exit(FEW_ARGS);
+      }
+      else if (args.length > 1)
+      {
+         System.exit(MANY_ARGS);
       }
       
       File file = new File(args[0]);

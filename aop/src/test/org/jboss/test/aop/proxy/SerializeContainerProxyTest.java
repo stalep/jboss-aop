@@ -27,6 +27,8 @@ import java.io.ObjectInputStream;
 
 import junit.framework.TestCase;
 
+import org.jboss.test.aop.AOPTestWithSetup;
+
 /**
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision: 64431 $

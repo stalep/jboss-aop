@@ -23,6 +23,10 @@ package org.jboss.test.aop.proxy;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -72,22 +76,30 @@ public class SerializeContainerProxyOutOfVmTestCase extends SerializeContainerPr
       File proxyFile = File.createTempFile("proxy", "err");
       proxyFile.deleteOnExit();
       
-//      System.out.println(classPath);
       boolean debugFlag = System.getProperty("jboss.aop.debug.classes", "false").equals("true"); 
       String debug = debugFlag ? "-Djboss.aop.debug.classes=true " : "";
+
+      if (classPath.contains(" "))
+      {
+         throw new RuntimeException("Classpath should not contain the space character for this test. " + classPath);
+      }
       
-      Process proc = Runtime.getRuntime().exec(
-            java + 
-            " -classpath " + classPath + " " + 
-            debug + 
-            OutOfProcessProxySerializer.class.getName() + " " + 
-            proxyFile.getAbsolutePath());
+      String run = java + 
+         " -classpath " + classPath + " " + 
+         debug + 
+         OutOfProcessProxySerializer.class.getName() + " " + 
+         proxyFile.getAbsolutePath().replace('\\', '/');
+      
+      Process proc = Runtime.getRuntime().exec(run);
+      
       int result = proc.waitFor();
-      
+
       switch (result)
       {
-         case OutOfProcessProxySerializer.WRONG_ARGS:
-            throw new RuntimeException("Wrong number of args passed in");
+         case OutOfProcessProxySerializer.FEW_ARGS:
+            throw new RuntimeException("Too few args passed in");
+         case OutOfProcessProxySerializer.MANY_ARGS:
+            throw new RuntimeException("Too many args passed in");
          case OutOfProcessProxySerializer.NO_SUCH_FILE:
             throw new RuntimeException("No file found " + proxyFile);
          case OutOfProcessProxySerializer.GENERAL_ERROR:
