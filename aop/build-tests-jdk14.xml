@@ -718,6 +718,9 @@
             fork="true">
             <fileset dir="${build.tests.retro}">
                <include name="org/jboss/test/aop/proxy/ProxyTestCase.class"/>
+               <include name="org/jboss/test/aop/proxy/SerializeContainerProxyCacheKeyTestCase.class"/>
+               <include name="org/jboss/test/aop/proxy/SerializeContainerProxyInVmTestCase.class"/>
+               <include name="org/jboss/test/aop/proxy/SerializeContainerProxyOutOfVmTestCase.class"/>
                <include name="org/jboss/test/aop/methodhashing/MethodHashingTestCase.class"/>
                <include name="org/jboss/test/aop/annotationc/AnnotationTester.class"/>
                <include name="org/jboss/test/aop/pointcut/PointcutTestCase.class"/>
