@@ -35,15 +35,13 @@ public class RebuildThread extends Thread
 {
    private static volatile boolean done = false;
 
-   private int id = 0;
-   
    @Override
    public void run()
    {
       for(int i=0; i < 30; i++)
       {
-         linkNewAdvice();
-         unlinkAdvice();
+         linkNewAdvice("Test" + i);
+         unlinkAdvice("Test" + i);
 
          if(isDone())
             return;
@@ -63,7 +61,12 @@ public class RebuildThread extends Thread
    
    public void linkNewAdvice()
    {
-//      System.out.println("adding new advice");
+      linkNewAdvice("Base");
+   }
+    
+   private void linkNewAdvice(String name)
+   {
+     System.out.println("adding new advice" + name);
       AdviceBinding binding1 = null;
       try
       {
@@ -74,15 +77,14 @@ public class RebuildThread extends Thread
          e.printStackTrace();
       }
       binding1.addInterceptor(SyncInterceptor.class);
-      binding1.setName(Integer.toString(id));
+      binding1.setName(name);
       AspectManager.instance().addBinding(binding1);
-      id++;
    }
    
-   public void unlinkAdvice()
+   private void unlinkAdvice(String name)
    {
-//      System.out.println("unlinking "+(id-1)); 
-      AspectManager.instance().removeBinding(Integer.toString((id-1)));
+      System.out.println("unlinking " + name); 
+      AspectManager.instance().removeBinding(name);
    }
   
 }

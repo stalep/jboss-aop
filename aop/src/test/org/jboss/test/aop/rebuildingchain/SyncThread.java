@@ -48,7 +48,7 @@ public class SyncThread extends Thread
    
    private void checkStatus()
    {
-//      System.out.println("checking status...");
+      System.out.println("ST checking status...");
       if(getStatus() == false)
       {
          RebuildingChainTestCase.setTestFailed();

@@ -44,6 +44,7 @@ public class SyncInterceptor implements Interceptor
    {
       try
       {
+         System.out.println("SyncInterceptor");
          SyncThread.setStatus(true);
          return invocation.invokeNext();
       }

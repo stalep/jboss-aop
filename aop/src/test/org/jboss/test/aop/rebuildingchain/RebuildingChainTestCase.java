@@ -23,6 +23,7 @@ package org.jboss.test.aop.rebuildingchain;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.test.aop.AOPTestWithSetup;
@@ -82,5 +83,18 @@ public class RebuildingChainTestCase extends AOPTestWithSetup
    public static void setTestFailed()
    {
       failed = true;
+   }
+   
+   public static void main(String[] args)throws Exception
+   {
+      try
+      {
+         RebuildingChainTestCase test = new RebuildingChainTestCase("XXX");
+         test.testRebuildingChain();
+      }
+      catch (RuntimeException e)
+      {
+         System.err.println(e);
+      }
    }
 }
