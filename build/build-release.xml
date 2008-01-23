@@ -13,6 +13,26 @@
       <!--           Add the files from 'aop'                  -->
       <!-- ==================================================  -->
 
+      <!-- build.xml that will compile src/tests and run tests from the dist package -->
+      <copy todir="${project.release}" filtering="no">
+         <fileset dir="${project.root}/build/build_for_dist">
+            <include name="build.xml"/>
+         </fileset>
+      </copy>
+
+      <!-- needed to build the source/tests from the dist package -->
+      <copy todir="${project.release}/lib-test" filtering="no">
+         <fileset dir="${project.root}/thirdparty/jboss/test/lib">
+            <include name="jboss-test.jar"/>
+         </fileset>
+         <fileset dir="${project.root}/thirdparty/junit/lib">
+            <include name="junit.jar"/>
+         </fileset>
+         <fileset dir="${project.root}/thirdparty/jboss/profiler/jvmti/lib">
+            <include name="jboss-profiler-jvmti.jar"/>
+         </fileset>
+      </copy>
+
       <copy todir="${project.release}/bin" filtering="no">
          <fileset dir="${project.root}/aop/src/resources/bin">
             <include name="**/*"/>
@@ -34,6 +54,7 @@
             <exclude name="reference/**"/>
          </fileset>
       </copy>
+
 
       <copy todir="${project.release}/src/aspect-framework" filtering="no">
          <fileset dir="${project.root}/aop/src">
