@@ -71,8 +71,14 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
 
    protected void init(String advice, Class aspectClass)
    {
-      this.aspectClass = aspectClass;
-      this.adviceName = advice;
+      if (aspectClass == null)
+      {
+         this.aspectClass = aspectClass;
+      }
+      if (adviceName == null)
+      {
+         this.adviceName = advice;
+      }
       invocationAdvice = findByInvocation(adviceName, aspectClass);
       if (invocationAdvice == null)
       {
@@ -317,4 +323,11 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       throw new RuntimeException("Should Be Unreachable, but unable to discover Advice");
 
    }
+   
+   public String getAdviceName()
+   {
+      return adviceName;
+   }
+   
+   public abstract Object getAspectInstance();
 }

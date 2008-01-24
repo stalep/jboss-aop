@@ -23,6 +23,8 @@ package org.jboss.test.aop.proxy;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -87,9 +89,14 @@ public class SerializeContainerProxyOutOfVmTestCase extends SerializeContainerPr
          proxyFile.getAbsolutePath().replace('\\', '/');
       
       Process proc = Runtime.getRuntime().exec(run);
+      InputStream sysout = proc.getInputStream();
+      InputStream syserr = proc.getErrorStream();
       
       int result = proc.waitFor();
 
+      outputStream("System.out", sysout);
+      outputStream("System.err", syserr);
+      
       switch (result)
       {
          case OutOfProcessProxySerializer.FEW_ARGS:
@@ -104,6 +111,18 @@ public class SerializeContainerProxyOutOfVmTestCase extends SerializeContainerPr
       }
       
       return proxyFile;
+   }
+   
+   private void outputStream(String type, InputStream in) throws IOException
+   {
+      System.out.println("= = = = = = = = = = Other process " + type);
+      int i = in.read();
+      while(i != -1)
+      {
+         System.out.print((char)i);
+         i = in.read();
+      }
+      System.out.println("= = = = = = = = = = END Other process " + type);
    }
    
    private String getExternalException(File proxyFile)

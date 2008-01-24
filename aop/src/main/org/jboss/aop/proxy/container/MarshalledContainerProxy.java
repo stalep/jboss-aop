@@ -37,7 +37,10 @@ import java.util.Set;
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.MethodInfo;
+import org.jboss.aop.advice.AbstractAdvice;
 import org.jboss.aop.advice.Interceptor;
+import org.jboss.aop.advice.PerInstanceAdvice;
+import org.jboss.aop.advice.PerJoinpointAdvice;
 import org.jboss.aop.instrument.Untransformable;
 import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.aop.util.MethodHashing;
@@ -144,7 +147,7 @@ public class MarshalledContainerProxy implements Serializable
    {
       if (marshalledInterceptors.getException() != null)
       {
-         throw new Exception(marshalledInterceptors.getException());
+         throw new Exception("Could not read object, an error happened when writing it on the server", marshalledInterceptors.getException());
       }
       
       MarshalledProxyAdvisor advisor = marshalledInterceptors.getMarshalledAdvisor();
@@ -347,8 +350,45 @@ public class MarshalledContainerProxy implements Serializable
          {
             throw new MethodHashingException(e);
          }
-         interceptors = info.getInterceptors();
          clazz = info.getMethod().getDeclaringClass();
+         populateInterceptors(info);
+//         interceptors = info.getInterceptors();
+//         System.out.println("Interceptors for " + info.getMethod() + " " + interceptors);
+      }
+      
+      private void populateInterceptors(MethodInfo info)
+      {
+         Interceptor[] icptrs = info.getInterceptors();
+         if (icptrs != null)
+         {
+            ArrayList<Interceptor> allIcptrs = new ArrayList<Interceptor>(icptrs.length);
+            
+            for (int i = 0 ; i < icptrs.length ; i++)
+            {
+               if (icptrs[i] instanceof AbstractAdvice == false)
+               {
+                  allIcptrs.add(icptrs[i]);
+               }
+               else
+               {
+                  AbstractAdvice advice = (AbstractAdvice)icptrs[i];  
+                  if (icptrs[i] instanceof PerInstanceAdvice)
+                  {
+                     throw new RuntimeException("Not yet supported PerInstanceAdvice");
+                  }
+                  else if (icptrs[i] instanceof PerJoinpointAdvice)
+                  {
+                     throw new RuntimeException("Not yet supported PerJoinpointAdvice");
+                  } 
+                  else 
+                  {
+                     MarshalledAdvice ma = new MarshalledAdvice(advice.getAspectInstance(), icptrs[i].getName(), advice.getAdviceName());
+                     allIcptrs.add(ma);
+                  }
+               }
+            }
+            interceptors = allIcptrs.toArray(new Interceptor[allIcptrs.size()]);
+         }
       }
       
       public MethodInfo getMethodInfo(Advisor advisor)
@@ -373,5 +413,6 @@ public class MarshalledContainerProxy implements Serializable
          super("Error hashing method");
          super.initCause(e);
       }
-   }   
+   }
+
 }

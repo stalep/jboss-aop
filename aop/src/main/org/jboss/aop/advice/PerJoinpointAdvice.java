@@ -176,5 +176,11 @@ public class PerJoinpointAdvice extends AbstractAdvice
       }
    }
 
+   @Override
+   public Object getAspectInstance()
+   {
+      return null;
+   }
+
 
 }

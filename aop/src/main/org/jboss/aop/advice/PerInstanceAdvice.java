@@ -124,4 +124,10 @@ public class PerInstanceAdvice extends AbstractAdvice
       }
    }
 
+   @Override
+   public Object getAspectInstance()
+   {
+      return null;
+   }
+
 }

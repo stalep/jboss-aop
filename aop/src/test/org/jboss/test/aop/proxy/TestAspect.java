@@ -21,6 +21,8 @@
 */ 
 package org.jboss.test.aop.proxy;
 
+import java.io.Serializable;
+
 import org.jboss.aop.joinpoint.Invocation;
 
 /**
@@ -28,7 +30,7 @@ import org.jboss.aop.joinpoint.Invocation;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class TestAspect
+public class TestAspect implements Serializable
 {
    public static boolean invoked;
    public Object advice(Invocation inv) throws Throwable

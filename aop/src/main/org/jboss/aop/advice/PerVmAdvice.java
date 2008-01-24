@@ -28,8 +28,10 @@ import java.util.ArrayList;
 
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
+import javassist.CtNewConstructor;
 import javassist.CtNewMethod;
 
 import org.jboss.aop.AspectManager;
@@ -144,6 +146,11 @@ public class PerVmAdvice
             CtField field = new CtField(aspectClass, "aspectField", clazz);
             field.setModifiers(javassist.Modifier.PUBLIC);
             clazz.addField(field);
+            
+            CtMethod getAspectFld = CtNewMethod.make(pool.get(Object.class.getName()), "getAspectInstance", new CtClass[0], new CtClass[0], "{return aspectField;}", clazz);
+            getAspectFld.setModifiers(javassist.Modifier.PUBLIC);
+            clazz.addMethod(getAspectFld);
+            
             // getName()
             CtMethod getNameTemplate = interceptorInterface.getDeclaredMethod("getName");
             String getNameBody =
@@ -190,6 +197,10 @@ public class PerVmAdvice
             invoke.setModifiers(javassist.Modifier.PUBLIC);
             clazz.addMethod(invoke);
 
+            CtConstructor ctor = CtNewConstructor.defaultConstructor(clazz);
+            ctor.setBody("{super.adviceName = \"" + adviceName + "\";}");
+            clazz.addConstructor(ctor);
+            
             ProtectionDomain pd = aspect.getClass().getProtectionDomain();
             iclass = TransformerCommon.toClass(clazz, cl, pd);
          }

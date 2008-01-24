@@ -339,19 +339,21 @@ public class ContainerProxyFactory
    {
       return 
          "{" +
-         "   this.delegate = (" + superclass.getName() + ")$1.getDelegate();" +
-         "   this.mixins = $1.getMixins();" +
-         "   this.metadata = $1.getMetadata();" +
-         "   this.key = $1.getKey();" +
-         "   java.lang.Class clazz = $1.getClazz();" +
-         "   this.classAdvisor = org.jboss.aop.proxy.container.ContainerCache.getCachedContainer(this.key);" +
-         "   this.currentAdvisor = classAdvisor;" +
-         "   if ($1.getInstanceAdvisorDomainName() != null)" +
-         "   {" +
-         "      org.jboss.aop.proxy.container.ProxyAdvisorDomain domain = (org.jboss.aop.proxy.container.ProxyAdvisorDomain)org.jboss.aop.AspectManager.getTopLevelAspectManager().findManagerByName($1.getInstanceAdvisorDomainName());" +
-         "      this.currentAdvisor = domain.getAdvisor();" +
-         "      this.instanceAdvisor = this.currentAdvisor;" +
-             "}" +
+         "   try{" +
+         "      this.delegate = (" + superclass.getName() + ")$1.getDelegate();" +
+         "      this.mixins = $1.getMixins();" +
+         "      this.metadata = $1.getMetadata();" +
+         "      this.key = $1.getKey();" +
+         "      java.lang.Class clazz = $1.getClazz();" +
+         "      this.classAdvisor = org.jboss.aop.proxy.container.ContainerCache.getCachedContainer(this.key);" +
+         "      this.currentAdvisor = classAdvisor;" +
+         "      if ($1.getInstanceAdvisorDomainName() != null)" +
+         "      {" +
+         "         org.jboss.aop.proxy.container.ProxyAdvisorDomain domain = (org.jboss.aop.proxy.container.ProxyAdvisorDomain)org.jboss.aop.AspectManager.getTopLevelAspectManager().findManagerByName($1.getInstanceAdvisorDomainName());" +
+         "         this.currentAdvisor = domain.getAdvisor();" +
+         "         this.instanceAdvisor = this.currentAdvisor;" +
+         "      }" +
+         "  }catch(java.lang.Exception e){throw e;}" +
          "}";
    }
    

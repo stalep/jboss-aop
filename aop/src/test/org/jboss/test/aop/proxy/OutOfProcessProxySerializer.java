@@ -31,12 +31,14 @@ import junit.framework.Assert;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.AdviceBinding;
+import org.jboss.aop.advice.AdviceFactory;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.GenericAspectFactory;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.Scope;
 import org.jboss.aop.advice.ScopedInterceptorFactory;
 import org.jboss.aop.pointcut.PointcutExpression;
+import org.jboss.aop.pointcut.ast.ParseException;
 import org.jboss.aop.proxy.container.AOPProxyFactory;
 import org.jboss.aop.proxy.container.AOPProxyFactoryMixin;
 import org.jboss.aop.proxy.container.AOPProxyFactoryParameters;
@@ -103,28 +105,19 @@ public class OutOfProcessProxySerializer extends Assert
    public static void createAndSerializeProxy(File file) throws Exception
    {
       AspectManager manager = AspectManager.instance();
-      AspectDefinition def = new AspectDefinition("icptr", Scope.PER_VM, new GenericAspectFactory(TestInterceptor.class.getName(), null));
-      InterceptorFactory advice = new ScopedInterceptorFactory(def);
-      PointcutExpression pointcut = new PointcutExpression("pc1", "execution(* $instanceof{" + SomeInterface.class.getName() + "}->helloWorld(..))");
-      InterceptorFactory[] interceptors = {advice};
-      AdviceBinding binding = new AdviceBinding("binding1", pointcut, null, null, interceptors);
+      addInterceptorBinding(manager, 
+            1, 
+            Scope.PER_VM, 
+            TestInterceptor.class.getName(), 
+            "execution(* $instanceof{" + SomeInterface.class.getName() + "}->helloWorld(..))");
 
-      manager.addAspectDefinition(def);
-      manager.addInterceptorFactory(advice.getName(), advice);
-      manager.addPointcut(pointcut);
-      manager.addBinding(binding);
-
-      System.out.println("===>  ENABLE ADDITION OF ASPECTS IN OUTOFPROCESSPROXYSERIALIZER");
-//      AspectDefinition def2 = new AspectDefinition("aspect", Scope.PER_VM, new GenericAspectFactory(TestAspect.class.getName(), null));
-//      AdviceFactory advice2 = new AdviceFactory(def2, "advice");
-//      PointcutExpression pointcut2 = new PointcutExpression("pc2", "execution(* $instanceof{" + SomeInterface.class.getName() + "}->otherWorld(..))");
-//      InterceptorFactory[] interceptors2 = {advice2};
-//      AdviceBinding binding2 = new AdviceBinding("binding2", pointcut2, null, null, interceptors2);
-//
-//      manager.addAspectDefinition(def2);
-//      manager.addInterceptorFactory(advice2.getName(), advice2);
-//      manager.addPointcut(pointcut2);
-//      manager.addBinding(binding2);
+      
+      addAspectBinding(manager, 
+            2, 
+            Scope.PER_VM, 
+            TestAspect.class.getName(),
+            "advice",
+            "execution(* $instanceof{" + SomeInterface.class.getName() + "}->otherWorld(..))");
          
       AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
       params.setInterfaces(new Class[] {SomeInterface.class});
@@ -142,12 +135,11 @@ public class OutOfProcessProxySerializer extends Assert
       assertTrue(TestInterceptor.invoked);
       assertFalse(TestAspect.invoked);
       
-      System.out.println("===> ENABLE CHECKS OF ASPECTS IN OUTOFPROCESSPROXYSERIALIZER");
-//      TestInterceptor.invoked = false;
-//      TestAspect.invoked = false;
-//      si.otherWorld();
-//      assertFalse(TestInterceptor.invoked);
-//      assertTrue(TestAspect.invoked);
+      TestInterceptor.invoked = false;
+      TestAspect.invoked = false;
+      si.otherWorld();
+      assertFalse(TestInterceptor.invoked);
+      assertTrue(TestAspect.invoked);
       
       ObjectOutputStream out = null;
       try
@@ -165,5 +157,25 @@ public class OutOfProcessProxySerializer extends Assert
          {
          }
       }
+   }
+   
+   private static void addInterceptorBinding(AspectManager manager, int index, Scope scope, String aspectClass, String pointcut) throws ParseException
+   {
+      addAspectBinding(manager, index, scope, aspectClass, null, pointcut);
+   }
+   
+   private static void addAspectBinding(AspectManager manager, int index, Scope scope, String aspectClass, String adviceName, String pointcut) throws ParseException
+   {
+      AspectDefinition def = new AspectDefinition("aspect" + index, scope, new GenericAspectFactory(aspectClass, null));
+      
+      InterceptorFactory advice = (adviceName != null) ? new AdviceFactory(def, "advice") : new ScopedInterceptorFactory(def);
+      PointcutExpression pc = new PointcutExpression("pc2" + index, pointcut);
+      InterceptorFactory[] interceptors = {advice};
+      AdviceBinding binding = new AdviceBinding("binding" + index, pc, null, null, interceptors);
+
+      manager.addAspectDefinition(def);
+      manager.addInterceptorFactory(advice.getName(), advice);
+      manager.addPointcut(pc);
+      manager.addBinding(binding);
    }
 }

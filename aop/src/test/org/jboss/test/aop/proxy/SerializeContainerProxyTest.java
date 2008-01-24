@@ -72,12 +72,11 @@ public abstract class SerializeContainerProxyTest extends TestCase
          int i = omi2.other2();
          assertEquals(20, i);
          
-         System.out.println("--- ENABLE CHECKS OF ASPECTS IN SERIALIZECONTAINERPROXYTEST AND OUTOFPROCESSPROXYSERIALIZER");
-//         TestInterceptor.invoked = false;
-//         TestAspect.invoked = false;
+         TestInterceptor.invoked = false;
+         TestAspect.invoked = false;
          si.otherWorld();
-//         assertFalse(TestInterceptor.invoked);
-//         assertTrue(TestAspect.invoked);
+         assertFalse(TestInterceptor.invoked);
+         assertTrue(TestAspect.invoked);
       }
       catch(Exception e)
       {
@@ -110,12 +109,11 @@ public abstract class SerializeContainerProxyTest extends TestCase
          int i = omi2.other2();
          assertEquals(20, i);
          
-         System.out.println("--- ENABLE CHECKS OF ASPECTS IN SERIALIZECONTAINERPROXYTEST AND OUTOFPROCESSPROXYSERIALIZER");
-//         TestInterceptor.invoked = false;
-//         TestAspect.invoked = false;
+         TestInterceptor.invoked = false;
+         TestAspect.invoked = false;
          rsi.otherWorld();
-//         assertFalse(TestInterceptor.invoked);
-//         assertTrue(TestAspect.invoked);
+         assertFalse(TestInterceptor.invoked);
+         assertTrue(TestAspect.invoked);
       }
       catch(Exception e)
       {
