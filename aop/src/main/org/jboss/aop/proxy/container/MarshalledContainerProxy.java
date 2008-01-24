@@ -42,7 +42,9 @@ import org.jboss.aop.MethodInfo;
 import org.jboss.aop.advice.AbstractAdvice;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.advice.PerInstanceAdvice;
+import org.jboss.aop.advice.PerInstanceInterceptor;
 import org.jboss.aop.advice.PerJoinpointAdvice;
+import org.jboss.aop.advice.PerJoinpointInterceptor;
 import org.jboss.aop.instrument.Untransformable;
 import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.aop.util.MethodHashing;
@@ -387,13 +389,30 @@ public class MarshalledContainerProxy implements Serializable
             {
                if (icptrs[i] instanceof AbstractAdvice == false)
                {
-                  allIcptrs.add(icptrs[i]);
+                  Interceptor icptr = null;
+                  if (icptrs[i] instanceof PerInstanceInterceptor && !Modifier.isStatic(info.getMethod().getModifiers()))
+                  {
+                     requiresInstanceAdvisor = true;
+                     InstanceAdvisor ia = getProxyInstanceAdvisor();
+                     icptr = ((PerInstanceInterceptor)icptrs[i]).getAspectInstance(ia);
+                  }
+                  else if (icptrs[i] instanceof PerJoinpointInterceptor && !Modifier.isStatic(info.getMethod().getModifiers()))
+                  {
+                     requiresInstanceAdvisor = true;
+                     InstanceAdvisor ia = getProxyInstanceAdvisor();
+                     icptr = ((PerJoinpointInterceptor)icptrs[i]).getAspectInstance(ia);
+                  }
+                  else
+                  {
+                     icptr = icptrs[i];
+                  }
+                  allIcptrs.add(icptr);
                }
                else
                {
                   AbstractAdvice advice = (AbstractAdvice)icptrs[i];
                   Object aspectInstance = null;
-                  if (icptrs[i] instanceof PerInstanceAdvice)
+                  if (icptrs[i] instanceof PerInstanceAdvice && !Modifier.isStatic(info.getMethod().getModifiers()))
                   {
                      requiresInstanceAdvisor = true;
                      InstanceAdvisor ia = getProxyInstanceAdvisor();

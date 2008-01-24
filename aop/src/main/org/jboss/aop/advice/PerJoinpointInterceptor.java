@@ -35,6 +35,8 @@ import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodCalledByMethodJoinpoint;
 import org.jboss.aop.joinpoint.MethodJoinpoint;
+import org.jboss.aop.proxy.container.ClassProxyContainer;
+import org.jboss.aop.proxy.container.ContainerProxyMethodInvocation;
 
 /**
  * Comment
@@ -123,10 +125,41 @@ public class PerJoinpointInterceptor implements Interceptor
          Object targetObject = invocation.getTargetObject();
          if (targetObject == null) return invocation.invokeNext(); // static method call or static field call
 
-         Advised advised = (Advised) targetObject;
-         InstanceAdvisor advisor = advised._getInstanceAdvisor();
-         Interceptor interceptor = (Interceptor) advisor.getPerInstanceJoinpointAspect(joinpoint, aspectDefinition);
+         InstanceAdvisor instanceAdvisor = null;
+         if (targetObject instanceof Advised)
+         {
+            Advised advised = (Advised) targetObject;
+            instanceAdvisor = advised._getInstanceAdvisor();
+         }
+         else
+         {
+            Advisor advisor = invocation.getAdvisor();
+            if (advisor == null)
+            {
+               return invocation.invokeNext();
+            }
+            else if (advisor instanceof InstanceAdvisor)
+            {
+               instanceAdvisor = (InstanceAdvisor) advisor;
+            }
+            else if (advisor instanceof ClassProxyContainer && invocation instanceof ContainerProxyMethodInvocation)
+            {
+               ContainerProxyMethodInvocation pi = (ContainerProxyMethodInvocation)invocation;
+               instanceAdvisor = pi.getProxy().getInstanceAdvisor();
+            }
+            else
+            {
+               return invocation.invokeNext();
+            }
+         }
+         Interceptor interceptor = getAspectInstance(instanceAdvisor);
          return interceptor.invoke(invocation);         
       }
    }
+   
+   public Interceptor getAspectInstance(InstanceAdvisor ia)
+   {
+      return (Interceptor) ia.getPerInstanceJoinpointAspect(joinpoint, aspectDefinition);
+   }
+   
 }

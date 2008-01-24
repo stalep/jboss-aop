@@ -102,9 +102,14 @@ public class PerInstanceInterceptor implements Interceptor
                }
             }
          }
-         Interceptor interceptor = (Interceptor) instanceAdvisor.getPerInstanceAspect(aspectDefinition);
+         Interceptor interceptor = getAspectInstance(instanceAdvisor);
          return interceptor.invoke(invocation);
       }
+   }
+   
+   public Interceptor getAspectInstance(InstanceAdvisor ia)
+   {
+      return (Interceptor) ia.getPerInstanceAspect(aspectDefinition);
    }
 
 }
