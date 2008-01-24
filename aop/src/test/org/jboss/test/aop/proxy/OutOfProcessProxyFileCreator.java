@@ -74,10 +74,11 @@ public class OutOfProcessProxyFileCreator implements ProxyFileCreator
          proxyFile.getAbsolutePath().replace('\\', '/');
       
       Process proc = Runtime.getRuntime().exec(run);
-      InputStream sysout = proc.getInputStream();
-      InputStream syserr = proc.getErrorStream();
       
       int result = proc.waitFor();
+
+      InputStream sysout = proc.getInputStream();
+      InputStream syserr = proc.getErrorStream();
 
       outputStream("System.out", sysout);
       outputStream("System.err", syserr);

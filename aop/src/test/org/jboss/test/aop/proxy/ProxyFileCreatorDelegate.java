@@ -112,7 +112,7 @@ public abstract class ProxyFileCreatorDelegate extends junit.framework.Assert
       InterceptorFactory[] interceptors = {advice};
       AdviceBinding binding = new AdviceBinding("binding" + index, pc, null, null, interceptors);
 
-      System.out.println("-----> Adding " + aspectClass + " to " + pointcut + " in " + this.getClass().getName());
+      System.out.println("-----> Adding: " + aspectClass);
       
       manager.addAspectDefinition(def);
       manager.addInterceptorFactory(advice.getName(), advice);

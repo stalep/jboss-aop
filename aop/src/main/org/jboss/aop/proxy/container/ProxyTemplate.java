@@ -144,7 +144,7 @@ public class ProxyTemplate implements Delegate, AspectManaged
    private Object writeReplace() throws ObjectStreamException
    {
       return new MarshalledContainerProxy(
-            this.getClass(), 
+            this, 
             this.key,
             this.mixins, 
             this.delegate, 

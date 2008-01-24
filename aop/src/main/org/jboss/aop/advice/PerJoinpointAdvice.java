@@ -179,8 +179,11 @@ public class PerJoinpointAdvice extends AbstractAdvice
    @Override
    public Object getAspectInstance()
    {
-      return null;
+      throw new RuntimeException("Use getAspectInstance(InstanceAdvisor instanceAdvisor) instead");
    }
-
-
+   
+   public Object getAspectInstance(InstanceAdvisor instanceAdvisor)
+   {
+      return instanceAdvisor.getPerInstanceJoinpointAspect(joinpoint, aspectDefinition);
+   }
 }

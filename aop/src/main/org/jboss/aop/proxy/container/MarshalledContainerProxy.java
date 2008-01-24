@@ -29,6 +29,7 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ import java.util.Set;
 
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
+import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.MethodInfo;
 import org.jboss.aop.advice.AbstractAdvice;
 import org.jboss.aop.advice.Interceptor;
@@ -58,13 +60,14 @@ public class MarshalledContainerProxy implements Serializable
    //Fields to check if we are unmarshalling in the same JVM
    public final static GUID GUID = new GUID();
    
+   private transient AspectManaged proxyInstance;
+   
    //Fields from the proxy, used when unmarshalling in the same JVM
    private String proxyClassName;
    private ContainerProxyCacheKey key;
    private Object mixins[];
    private Object delegate;
    private Class clazz;
-   private String instanceAdvisorDomainName;
    private SimpleMetaData metadata;
    
    //Interfaces resulting from a mixin or interface introduction
@@ -75,20 +78,21 @@ public class MarshalledContainerProxy implements Serializable
    
    //The interceptor chains for each method used when unmarshalling in a different JVM
    MarshalledInterceptors marshalledInterceptors;
+
+   //The instanceAdvisor domain name used when unmarshalling in a different JVM
+   private String instanceAdvisorDomainName;
    
-   public MarshalledContainerProxy(Class proxyClass, ContainerProxyCacheKey key, Object[] mixins, Object delegate, Advisor currentAdvisor, SimpleMetaData metadata)
+   public MarshalledContainerProxy(AspectManaged proxyInstance, ContainerProxyCacheKey key, Object[] mixins, Object delegate, Advisor currentAdvisor, SimpleMetaData metadata)
    {
+      this.proxyInstance = proxyInstance;
+      Class proxyClass = proxyInstance.getClass();
       this.proxyClassName = proxyClass.getName();
       this.key = key;
       this.mixins = mixins;
       this.delegate = delegate;
       this.clazz = currentAdvisor.getClazz();
-      
-      if (currentAdvisor instanceof InstanceProxyContainer)
-      {
-         AspectManager manager = currentAdvisor.getManager();
-         instanceAdvisorDomainName = manager.getManagerFQN();
-      }
+
+      checkInstanceAdvisor(currentAdvisor);
       this.metadata = metadata;
 
       marshalledInterceptors = new MarshalledInterceptors(currentAdvisor, mixins);
@@ -112,6 +116,15 @@ public class MarshalledContainerProxy implements Serializable
          ifs.add(proxyInterfaces[i].getName());
       }
       introducedInterfaces = ifs.toArray(new String[ifs.size()]);
+   }
+   
+   private void checkInstanceAdvisor(Advisor advisor)
+   {
+      if (advisor instanceof InstanceProxyContainer)
+      {
+         AspectManager manager = advisor.getManager();
+         instanceAdvisorDomainName = manager.getManagerFQN();
+      }
    }
    
    public Object readResolve() throws ObjectStreamException
@@ -237,9 +250,10 @@ public class MarshalledContainerProxy implements Serializable
             MethodInfo[] methodInfos = getMethodInfos();
             MarshalledMethodInfo[] marshalledInfos = new MarshalledMethodInfo[methodInfos.length];
 
+            boolean requiresInstanceAdvisor = false;
             for (int i = 0 ; i < methodInfos.length ; i++)
             {
-               MarshalledMethodInfo info = new MarshalledMethodInfo(methodInfos[i]);
+               MarshalledMethodInfo info = new MarshalledMethodInfo(MarshalledContainerProxy.this, methodInfos[i]);
 
                marshalledInfos[i] = info;
                try
@@ -334,13 +348,16 @@ public class MarshalledContainerProxy implements Serializable
       
    private static class MarshalledMethodInfo implements Serializable
    {
+      transient MarshalledContainerProxy proxy;
       long advisedHash;
       long unadvisedHash;
       Interceptor[] interceptors;
       Class clazz;
+      transient boolean requiresInstanceAdvisor;
       
-      public MarshalledMethodInfo(MethodInfo info) throws IOException
+      public MarshalledMethodInfo(MarshalledContainerProxy proxy, MethodInfo info) throws IOException
       {
+         this.proxy = proxy;
          try
          {
             this.advisedHash = MethodHashing.methodHash(info.getMethod());
@@ -352,8 +369,11 @@ public class MarshalledContainerProxy implements Serializable
          }
          clazz = info.getMethod().getDeclaringClass();
          populateInterceptors(info);
-//         interceptors = info.getInterceptors();
-//         System.out.println("Interceptors for " + info.getMethod() + " " + interceptors);
+      }
+      
+      public boolean getRequiresInstanceAdvisor()
+      {
+         return requiresInstanceAdvisor;
       }
       
       private void populateInterceptors(MethodInfo info)
@@ -371,24 +391,41 @@ public class MarshalledContainerProxy implements Serializable
                }
                else
                {
-                  AbstractAdvice advice = (AbstractAdvice)icptrs[i];  
+                  AbstractAdvice advice = (AbstractAdvice)icptrs[i];
+                  Object aspectInstance = null;
                   if (icptrs[i] instanceof PerInstanceAdvice)
                   {
-                     throw new RuntimeException("Not yet supported PerInstanceAdvice");
+                     requiresInstanceAdvisor = true;
+                     InstanceAdvisor ia = getProxyInstanceAdvisor();
+                     aspectInstance = ((PerInstanceAdvice)advice).getAspectInstance(ia);
                   }
-                  else if (icptrs[i] instanceof PerJoinpointAdvice)
+                  else if (icptrs[i] instanceof PerJoinpointAdvice && !Modifier.isStatic(info.getMethod().getModifiers()))
                   {
-                     throw new RuntimeException("Not yet supported PerJoinpointAdvice");
+                     requiresInstanceAdvisor = true;
+                     InstanceAdvisor ia = getProxyInstanceAdvisor();
+                     aspectInstance = ((PerJoinpointAdvice)advice).getAspectInstance(ia);
                   } 
                   else 
                   {
-                     MarshalledAdvice ma = new MarshalledAdvice(advice.getAspectInstance(), icptrs[i].getName(), advice.getAdviceName());
+                     aspectInstance = advice.getAspectInstance();
+                  }
+                  
+                  if (aspectInstance != null)
+                  {
+                     MarshalledAdvice ma = new MarshalledAdvice(aspectInstance, icptrs[i].getName(), advice.getAdviceName());
                      allIcptrs.add(ma);
                   }
                }
             }
             interceptors = allIcptrs.toArray(new Interceptor[allIcptrs.size()]);
          }
+      }
+      
+      private InstanceAdvisor getProxyInstanceAdvisor()
+      {
+         InstanceAdvisor ia = proxy.proxyInstance.getInstanceAdvisor();
+         proxy.checkInstanceAdvisor((InstanceProxyContainer)ia);
+         return ia;
       }
       
       public MethodInfo getMethodInfo(Advisor advisor)

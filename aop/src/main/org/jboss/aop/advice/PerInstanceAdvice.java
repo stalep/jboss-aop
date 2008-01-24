@@ -127,7 +127,11 @@ public class PerInstanceAdvice extends AbstractAdvice
    @Override
    public Object getAspectInstance()
    {
-      return null;
+      throw new RuntimeException("Use getAspectInstance(InstanceAdvisor instanceAdvisor) instead");
    }
-
+   
+   public Object getAspectInstance(InstanceAdvisor instanceAdvisor)
+   {
+      return instanceAdvisor.getPerInstanceAspect(aspectDefinition);
+   }
 }

@@ -326,7 +326,7 @@ public class ContainerProxyFactory
       return 
          "{" +
          "   return new " + MarshalledContainerProxy.class.getName() + "(" +
-         "      this.getClass()," +
+         "      this," +
          "      this.key," +
          "      this.mixins," +
          "      this.delegate," +
@@ -339,7 +339,7 @@ public class ContainerProxyFactory
    {
       return 
          "{" +
-         "   try{" +
+//         "   try{" +
          "      this.delegate = (" + superclass.getName() + ")$1.getDelegate();" +
          "      this.mixins = $1.getMixins();" +
          "      this.metadata = $1.getMetadata();" +
@@ -353,7 +353,7 @@ public class ContainerProxyFactory
          "         this.currentAdvisor = domain.getAdvisor();" +
          "         this.instanceAdvisor = this.currentAdvisor;" +
          "      }" +
-         "  }catch(java.lang.Exception e){throw e;}" +
+//         "  }catch(java.lang.Exception e){throw e;}" +
          "}";
    }
    
