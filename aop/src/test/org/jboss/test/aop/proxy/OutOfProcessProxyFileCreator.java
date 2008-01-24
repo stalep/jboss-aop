@@ -1,24 +1,24 @@
 /*
-  * JBoss, Home of Professional Open Source
-  * Copyright 2005, JBoss Inc., and individual contributors as indicated
-  * by the @authors tag. See the copyright.txt in the distribution for a
-  * full listing of individual contributors.
-  *
-  * This is free software; you can redistribute it and/or modify it
-  * under the terms of the GNU Lesser General Public License as
-  * published by the Free Software Foundation; either version 2.1 of
-  * the License, or (at your option) any later version.
-  *
-  * This software is distributed in the hope that it will be useful,
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  * Lesser General Public License for more details.
-  *
-  * You should have received a copy of the GNU Lesser General Public
-  * License along with this software; if not, write to the Free
-  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-  */
+* JBoss, Home of Professional Open Source.
+* Copyright 2006, Red Hat Middleware LLC, and individual contributors
+* as indicated by the @author tags. See the copyright.txt file in the
+* distribution for a full listing of individual contributors. 
+*
+* This is free software; you can redistribute it and/or modify it
+* under the terms of the GNU Lesser General Public License as
+* published by the Free Software Foundation; either version 2.1 of
+* the License, or (at your option) any later version.
+*
+* This software is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this software; if not, write to the Free
+* Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+* 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+*/ 
 package org.jboss.test.aop.proxy;
 
 import java.io.File;
@@ -29,36 +29,21 @@ import java.io.Reader;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.textui.TestRunner;
-
 /**
- * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
- * @version $Revision: 64431 $
+ * 
+ * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
+ * @version $Revision: 1.1 $
  */
-public class SerializeContainerProxyOutOfVmTestCase extends SerializeContainerProxyTest
+public class OutOfProcessProxyFileCreator implements ProxyFileCreator
 {
-
-   public static void main(String[] args)
+   String proxyCreatorClass;
+   
+   public OutOfProcessProxyFileCreator(String proxyCreatorClass)
    {
-      TestRunner.run(suite());
+      this.proxyCreatorClass = proxyCreatorClass;
    }
 
-   public static Test suite()
-   {
-      TestSuite suite = new TestSuite("SerializeContainerProxyOutOfVmTestCase");
-      suite.addTestSuite(SerializeContainerProxyOutOfVmTestCase.class);
-      return suite;
-   }
-
-   public SerializeContainerProxyOutOfVmTestCase(String name)
-   {
-      super(name);
-   }
-
-   @Override
-   protected File createProxyFile() throws Exception
+   public File createProxyFile() throws Exception
    {
       return runExternalProcess();
    }
@@ -85,7 +70,7 @@ public class SerializeContainerProxyOutOfVmTestCase extends SerializeContainerPr
       String run = java + 
          " -classpath " + classPath + " " + 
          debug + 
-         OutOfProcessProxySerializer.class.getName() + " " + 
+         proxyCreatorClass + " " + 
          proxyFile.getAbsolutePath().replace('\\', '/');
       
       Process proc = Runtime.getRuntime().exec(run);
@@ -99,13 +84,13 @@ public class SerializeContainerProxyOutOfVmTestCase extends SerializeContainerPr
       
       switch (result)
       {
-         case OutOfProcessProxySerializer.FEW_ARGS:
+         case ProxyFileCreatorDelegate.FEW_ARGS:
             throw new RuntimeException("Too few args passed in");
-         case OutOfProcessProxySerializer.MANY_ARGS:
+         case ProxyFileCreatorDelegate.MANY_ARGS:
             throw new RuntimeException("Too many args passed in");
-         case OutOfProcessProxySerializer.NO_SUCH_FILE:
+         case ProxyFileCreatorDelegate.NO_SUCH_FILE:
             throw new RuntimeException("No file found " + proxyFile);
-         case OutOfProcessProxySerializer.GENERAL_ERROR:
+         case ProxyFileCreatorDelegate.GENERAL_ERROR:
             String externalException = getExternalException(proxyFile);
             throw new RuntimeException(externalException);
       }

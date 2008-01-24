@@ -26,18 +26,8 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 
-import junit.framework.Assert;
-
 import org.jboss.aop.AspectManager;
-import org.jboss.aop.advice.AdviceBinding;
-import org.jboss.aop.advice.AdviceFactory;
-import org.jboss.aop.advice.AspectDefinition;
-import org.jboss.aop.advice.GenericAspectFactory;
-import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.Scope;
-import org.jboss.aop.advice.ScopedInterceptorFactory;
-import org.jboss.aop.pointcut.PointcutExpression;
-import org.jboss.aop.pointcut.ast.ParseException;
 import org.jboss.aop.proxy.container.AOPProxyFactory;
 import org.jboss.aop.proxy.container.AOPProxyFactoryMixin;
 import org.jboss.aop.proxy.container.AOPProxyFactoryParameters;
@@ -48,53 +38,12 @@ import org.jboss.aop.proxy.container.GeneratedAOPProxyFactory;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class OutOfProcessProxySerializer extends ProxyFileCreatorDelegate
+public class SerializeContainerProxyWithInterceptorsDelegate extends ProxyFileCreatorDelegate
 {
    public static void main (String[] args)
    {
-      if (args.length == 0)
-      {
-         System.exit(FEW_ARGS);
-      }
-      else if (args.length > 1)
-      {
-         System.exit(MANY_ARGS);
-      }
-      
-      File file = new File(args[0]);
-      if (!file.exists())
-      {
-         System.exit(NO_SUCH_FILE);
-      }
-      
-      try
-      {
-         OutOfProcessProxySerializer serializer = new OutOfProcessProxySerializer();
-         serializer.createAndSerializeProxy(file);
-      }
-      catch (Throwable t)
-      {
-         PrintStream out = null;
-         try
-         {
-            out = new PrintStream(new FileOutputStream(file));
-            t.printStackTrace(out);
-         }
-         catch(Exception e)
-         {
-         }
-         finally
-         {
-            try
-            {
-               out.close();
-            }
-            catch(Exception e)
-            {
-            }
-         }
-         System.exit(GENERAL_ERROR);
-      }
+      SerializeContainerProxyWithInterceptorsDelegate serializer = new SerializeContainerProxyWithInterceptorsDelegate();
+      serializer.createAndSerializeProxy(args);
    }
    
    public void createAndSerializeProxy(File file) throws Exception
@@ -107,11 +56,10 @@ public class OutOfProcessProxySerializer extends ProxyFileCreatorDelegate
             "execution(* $instanceof{" + SomeInterface.class.getName() + "}->helloWorld(..))");
 
       
-      addAspectBinding(manager, 
+      addInterceptorBinding(manager, 
             2, 
             Scope.PER_VM, 
-            TestAspect.class.getName(),
-            "advice",
+            TestInterceptor2.class.getName(),
             "execution(* $instanceof{" + SomeInterface.class.getName() + "}->otherWorld(..))");
          
       AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
@@ -125,16 +73,16 @@ public class OutOfProcessProxySerializer extends ProxyFileCreatorDelegate
       SomeInterface si = (SomeInterface)factory.createAdvisedProxy(params);
       
       TestInterceptor.invoked = false;
-      TestAspect.invoked = false;
+      TestInterceptor2.invoked = false;
       si.helloWorld();
       assertTrue(TestInterceptor.invoked);
-      assertFalse(TestAspect.invoked);
+      assertFalse(TestInterceptor2.invoked);
       
       TestInterceptor.invoked = false;
-      TestAspect.invoked = false;
+      TestInterceptor2.invoked = false;
       si.otherWorld();
       assertFalse(TestInterceptor.invoked);
-      assertTrue(TestAspect.invoked);
+      assertTrue(TestInterceptor2.invoked);
       
       ObjectOutputStream out = null;
       try

@@ -23,10 +23,7 @@ package org.jboss.test.aop.proxy;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintStream;
-
-import junit.framework.Assert;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.AdviceBinding;
@@ -38,19 +35,20 @@ import org.jboss.aop.advice.Scope;
 import org.jboss.aop.advice.ScopedInterceptorFactory;
 import org.jboss.aop.pointcut.PointcutExpression;
 import org.jboss.aop.pointcut.ast.ParseException;
-import org.jboss.aop.proxy.container.AOPProxyFactory;
-import org.jboss.aop.proxy.container.AOPProxyFactoryMixin;
-import org.jboss.aop.proxy.container.AOPProxyFactoryParameters;
-import org.jboss.aop.proxy.container.GeneratedAOPProxyFactory;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class OutOfProcessProxySerializer extends ProxyFileCreatorDelegate
+public abstract class ProxyFileCreatorDelegate extends junit.framework.Assert
 {
-   public static void main (String[] args)
+   public static final int FEW_ARGS = 1;
+   public static final int MANY_ARGS = 2;
+   public static final int NO_SUCH_FILE = 3;
+   public static final int GENERAL_ERROR = 4;
+
+   protected void createAndSerializeProxy(String[] args)
    {
       if (args.length == 0)
       {
@@ -69,8 +67,7 @@ public class OutOfProcessProxySerializer extends ProxyFileCreatorDelegate
       
       try
       {
-         OutOfProcessProxySerializer serializer = new OutOfProcessProxySerializer();
-         serializer.createAndSerializeProxy(file);
+         createAndSerializeProxy(file);
       }
       catch (Throwable t)
       {
@@ -97,60 +94,29 @@ public class OutOfProcessProxySerializer extends ProxyFileCreatorDelegate
       }
    }
    
-   public void createAndSerializeProxy(File file) throws Exception
-   {
-      AspectManager manager = AspectManager.instance();
-      addInterceptorBinding(manager, 
-            1, 
-            Scope.PER_VM, 
-            TestInterceptor.class.getName(), 
-            "execution(* $instanceof{" + SomeInterface.class.getName() + "}->helloWorld(..))");
 
+   
+   public abstract void createAndSerializeProxy(File file) throws Exception;
+
+   protected void addInterceptorBinding(AspectManager manager, int index, Scope scope, String aspectClass, String pointcut) throws ParseException
+   {
+      addAspectBinding(manager, index, scope, aspectClass, null, pointcut);
+   }
+   
+   protected void addAspectBinding(AspectManager manager, int index, Scope scope, String aspectClass, String adviceName, String pointcut) throws ParseException
+   {
+      AspectDefinition def = new AspectDefinition("aspect" + index, scope, new GenericAspectFactory(aspectClass, null));
       
-      addAspectBinding(manager, 
-            2, 
-            Scope.PER_VM, 
-            TestAspect.class.getName(),
-            "advice",
-            "execution(* $instanceof{" + SomeInterface.class.getName() + "}->otherWorld(..))");
-         
-      AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
-      params.setInterfaces(new Class[] {SomeInterface.class});
-      params.setMixins(new AOPProxyFactoryMixin[] {
-            new AOPProxyFactoryMixin(OtherMixin.class, new Class[] {OtherMixinInterface.class, OtherMixinInterface2.class}, "20")
-      });
+      InterceptorFactory advice = (adviceName != null) ? new AdviceFactory(def, "advice") : new ScopedInterceptorFactory(def);
+      PointcutExpression pc = new PointcutExpression("pc2" + index, pointcut);
+      InterceptorFactory[] interceptors = {advice};
+      AdviceBinding binding = new AdviceBinding("binding" + index, pc, null, null, interceptors);
+
+      System.out.println("-----> Adding " + aspectClass + " to " + pointcut + " in " + this.getClass().getName());
       
-      params.setTarget(new SerializablePOJO());
-      AOPProxyFactory factory = new GeneratedAOPProxyFactory();
-      SomeInterface si = (SomeInterface)factory.createAdvisedProxy(params);
-      
-      TestInterceptor.invoked = false;
-      TestAspect.invoked = false;
-      si.helloWorld();
-      assertTrue(TestInterceptor.invoked);
-      assertFalse(TestAspect.invoked);
-      
-      TestInterceptor.invoked = false;
-      TestAspect.invoked = false;
-      si.otherWorld();
-      assertFalse(TestInterceptor.invoked);
-      assertTrue(TestAspect.invoked);
-      
-      ObjectOutputStream out = null;
-      try
-      {
-         out = new ObjectOutputStream(new FileOutputStream(file));
-         out.writeObject(si);
-      }
-      finally
-      {
-         try
-         {
-            out.close();
-         }
-         catch(Exception e)
-         {
-         }
-      }
+      manager.addAspectDefinition(def);
+      manager.addInterceptorFactory(advice.getName(), advice);
+      manager.addPointcut(pc);
+      manager.addBinding(binding);
    }
 }
