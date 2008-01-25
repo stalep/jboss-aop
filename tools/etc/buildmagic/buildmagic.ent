@@ -49,7 +49,8 @@
   <property name="project.build" value="${project.root}/build"/>
   <property name="project.tools" value="${project.root}/tools"/>
   <property name="project.thirdparty" value="${project.root}/thirdparty"/>
-  <property name="project.release" value="${project.build}/output/${aop.version}"/>
+  <property name="project.output" value="${project.build}/output"/>
+  <property name="project.release" value="${project.output}/${aop.version}"/>
 
 
   <!-- Setup the module environment. -->

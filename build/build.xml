@@ -221,7 +221,9 @@
       <ant antfile="build-release.xml" target="release-reference-docs"/>
 
    	<zip destfile="${project.release}.zip">
-         <fileset dir="${project.release}"/>
+         <fileset dir="${project.output}">
+         	<include name="${aop.version}/**"/>
+   		</fileset>
       </zip>
    	<move file="${project.release}.zip" todir="${module.output}/lib"/>
   </target>
@@ -232,7 +234,7 @@
     <ant antfile="build-release.xml" target="release-no-reference-docs"/>
     <ant antfile="build-release.xml" target="release-reference-docs"/>
   </target>
-
+	
   <!-- ================================================================== -->
   <!-- Source Archives                                                    -->
   <!-- ================================================================== -->
