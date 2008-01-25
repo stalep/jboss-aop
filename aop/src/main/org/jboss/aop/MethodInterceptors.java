@@ -40,7 +40,7 @@ public class MethodInterceptors
 
    public long[] keys()
    {
-      return infos.keys();
+      return infos.keys ();
    }
    
    public MethodInfo getMethodInfo(long hash)
@@ -66,5 +66,10 @@ public class MethodInterceptors
    public void clear()
    {
       infos.clear();
+   }
+   
+   public int size()
+   {
+      return infos.size();
    }
 }

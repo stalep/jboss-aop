@@ -613,7 +613,7 @@ public class ClassAdvisor extends Advisor
       if (this.interceptorChainObserver != null)
       {
          this.interceptorChainObserver.interceptorChainsUpdated(fieldReadInterceptors, fieldWriteInterceptors,
-               constructorInterceptors, methodInterceptors);
+               constructorInterceptors, methodInfos);
       }
    }
    
@@ -669,7 +669,7 @@ public class ClassAdvisor extends Advisor
       if (this.interceptorChainObserver != null)
       {
          this.interceptorChainObserver.interceptorChainsUpdated(fieldReadInterceptors, fieldWriteInterceptors,
-               constructorInterceptors, methodInterceptors);
+               constructorInterceptors, methodInfos);
       }
    }
 
@@ -1777,7 +1777,7 @@ public class ClassAdvisor extends Advisor
       if (observer != null)
       {
          observer.initialInterceptorChains(this.clazz, fieldReadInterceptors, fieldWriteInterceptors,
-               constructorInterceptors, methodInterceptors);
+               constructorInterceptors, methodInfos);
       }
       this.interceptorChainObserver = observer;
    }

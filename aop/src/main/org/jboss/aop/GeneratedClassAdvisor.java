@@ -611,7 +611,10 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          MethodJoinPointGenerator generator = getJoinPointGenerator(info);
          finalizeChainAndRebindJoinPoint(oldInfos, info, generator, OldInfoMaps.INFOS);
       }
-      methodInterceptors = newMethodInfos;
+      if (AspectManager.maintainAdvisorMethodInterceptors)
+      {
+         methodInterceptors = newMethodInfos;
+      }
       
       //Handle the overridden methods
       if (overriddenMethods != null && overriddenMethods.size() > 0)

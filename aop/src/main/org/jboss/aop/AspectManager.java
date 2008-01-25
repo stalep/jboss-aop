@@ -199,6 +199,13 @@ public class AspectManager
     * logging switch.  We don't use log4j to avoid another heavy library
     */
    public static boolean verbose = false;
+   
+   /**
+    * Whether or not we should maintain the deprecated Advisor.methodInterceptors field
+    * This is required in jboss 4.x for backwards compatibility with EJB 3
+    * See JBAOP-517 
+    */
+   public static boolean maintainAdvisorMethodInterceptors;
 
    /**
     * Get the top level aspect manager
@@ -332,6 +339,8 @@ public class AspectManager
                {
                   classicOrder = (new Boolean(classic)).booleanValue();
                }
+               
+               maintainAdvisorMethodInterceptors = (new Boolean(System.getProperty("jboss.aop.advisor.methodInterceptors", "false"))).booleanValue();
 
 
                Deployment.deploy();

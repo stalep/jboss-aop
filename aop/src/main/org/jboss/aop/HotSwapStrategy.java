@@ -247,7 +247,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
       private Interceptor[][] fieldReadInterceptors;
       private Interceptor[][] fieldWriteInterceptors;
       private Interceptor[][] constructorInterceptors;
-      private TLongObjectHashMap methodInterceptors;
+      private MethodInterceptors methodInterceptors;
       private int[] constructorIndexMap;
       
       /**
@@ -265,7 +265,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
        * @see org.jboss.aop.InterceptorChainObserver#initialInterceptorChains(Interceptor[][], Interceptor[][], Interceptor[][], TLongObjectHashMap)
        */
       public synchronized void initialInterceptorChains(final Class reflectionClass, Interceptor[][] fieldReadInterceptors, Interceptor[][] fieldWriteInterceptors,
-            Interceptor[][] constructorInterceptors, TLongObjectHashMap methodInterceptors)
+            Interceptor[][] constructorInterceptors, MethodInterceptors methodInterceptors)
       {
          Constructor[] declaredConstructors = null;
          if (System.getSecurityManager() == null)
@@ -322,10 +322,10 @@ public class HotSwapStrategy implements DynamicAOPStrategy
       
       /**
        * Notification method.
-       * @see InterceptorChainObserver#interceptorChainsUpdated(Interceptor[][], Interceptor[][], Interceptor[][], TLongObjectHashMap)
+       * @see InterceptorChainObserver#interceptorChainsUpdated(Interceptor[][], Interceptor[][], Interceptor[][], MethodInterceptors)
        */
       public synchronized void interceptorChainsUpdated(Interceptor[][] newFieldReadInterceptors, Interceptor[][] newFieldWriteInterceptors,
-            Interceptor[][] newConstructorInterceptors, TLongObjectHashMap newMethodInterceptors)
+            Interceptor[][] newConstructorInterceptors, MethodInterceptors newMethodInterceptors)
       {
          if (instanceInterceptors == 0)
          {
@@ -333,8 +333,8 @@ public class HotSwapStrategy implements DynamicAOPStrategy
             for (int i = 0; i < methodKeys.length; i++)
             {
                long key = methodKeys[i];
-               MethodInfo oldMethodInfo = (MethodInfo) methodInterceptors.get(key);
-               MethodInfo newMethodInfo = (MethodInfo) newMethodInterceptors.get(key);
+               MethodInfo oldMethodInfo = (MethodInfo) methodInterceptors.getMethodInfo(key);
+               MethodInfo newMethodInfo = newMethodInterceptors.getMethodInfo(key);
                if (oldMethodInfo.getInterceptorChain().isEmpty() && !newMethodInfo.getInterceptorChain().isEmpty())
                {
                   newlyAdvised.methodExecutions.add(newMethodInfo);  
@@ -521,7 +521,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
             for (int i = 0; i < methodKeys.length; i++)
             {
                long key = methodKeys[i];
-               MethodInfo methodInfo = (MethodInfo) this.methodInterceptors.get(key);
+               MethodInfo methodInfo = (MethodInfo) this.methodInterceptors.getMethodInfo(key);
                if (methodInfo.getInterceptorChain().isEmpty())
                {
                   joinpoints.methodExecutions.add(methodInfo);  

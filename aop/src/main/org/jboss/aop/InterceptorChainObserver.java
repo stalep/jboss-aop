@@ -43,7 +43,7 @@ interface InterceptorChainObserver
     * @param clazz the reflection class whose joinpoints the interceptor chains will be applied to.
     */
    public void initialInterceptorChains(Class clazz, Interceptor[][] fieldReadInterceptors, Interceptor[][] fieldWriteInterceptors,
-         Interceptor[][] constructorInterceptors, TLongObjectHashMap methodInterceptors);
+         Interceptor[][] constructorInterceptors, MethodInterceptors methodInterceptors);
 
    /**
     * Notifies the observer that the class interceptor chains were updated.
@@ -53,7 +53,7 @@ interface InterceptorChainObserver
     * @param newMethodInterceptors new interceptor chains to be applied at methods' executions.
     */
    public void interceptorChainsUpdated(Interceptor[][] newFieldReadInterceptors, Interceptor[][] newFieldWriteInterceptors,
-         Interceptor[][] newConstructorInterceptors, TLongObjectHashMap newMethodInterceptors);
+         Interceptor[][] newConstructorInterceptors, MethodInterceptors newMethodInterceptors);
    
    /**
     * Notifies that an interceptor was added to an instance of

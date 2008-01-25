@@ -150,7 +150,9 @@ public abstract class Advisor
    // The method signatures are sorted at transformation and load time to
    // make sure the tables line up.
    //Common sense suggests that this should be lazily initialised for generated advisors, profiling shows that is a major performance hit...
-   /** @deprecated use methodInfos instead */
+   /** @deprecated use methodInfos instead. These remain here for compatibility with EJB 3 in JBoss 4.x. See JBAOP-517
+    * @see AspectManager#maintainAdvisorMethodInterceptors
+    */
    protected TLongObjectHashMap methodInterceptors = new TLongObjectHashMap();
    protected MethodInterceptors methodInfos = new MethodInterceptors(this);;
    protected AspectManager manager;
@@ -963,6 +965,9 @@ public abstract class Advisor
    
    protected void finalizeMethodChain()
    {
+      boolean maintain = AspectManager.maintainAdvisorMethodInterceptors;
+      TLongObjectHashMap newMethodInfos = (maintain) ? new TLongObjectHashMap() : null;
+      
       long[] keys = methodInfos.keys();
       for (int i = 0; i < keys.length; i++)
       {
@@ -976,7 +981,13 @@ public abstract class Advisor
             interceptors = applyPrecedence(list.toArray(new Interceptor[list.size()]));
          }
          info.setInterceptors(interceptors);
+         
+         if (maintain)
+         {
+            newMethodInfos.put(keys[i], info);
+         }
       }
+      methodInterceptors = newMethodInfos;
    }
 
    public InvocationResponse dynamicInvoke(Object target, Invocation invocation)

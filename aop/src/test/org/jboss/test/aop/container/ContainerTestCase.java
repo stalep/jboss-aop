@@ -21,6 +21,8 @@
   */
 package org.jboss.test.aop.container;
 
+import gnu.trove.TLongObjectHashMap;
+
 import java.lang.reflect.Method;
 
 import junit.framework.Test;
@@ -69,7 +71,19 @@ public class ContainerTestCase extends AOPTestWithSetup
       invokeContainer(true);
    }
 
-   public void invokeContainer(boolean overriding) throws Throwable
+   public void testMethodInterceptorsPopulated() throws Throwable
+   {
+      AspectManager.maintainAdvisorMethodInterceptors = true;
+      checkMethodInterceptors(true);
+   }
+   
+   public void testMethodInterceptorsNotPopulated() throws Throwable
+   {
+      AspectManager.maintainAdvisorMethodInterceptors = false;
+      checkMethodInterceptors(false);      
+   }
+   
+   private void invokeContainer(boolean overriding) throws Throwable
    {
          AspectManager manager = AspectManager.instance();
          ClassContainer container = (overriding ) ? new ContainerWithChainOverriding("X", manager) : new ClassContainer("X", manager);
@@ -86,6 +100,32 @@ public class ContainerTestCase extends AOPTestWithSetup
          TestInterceptor.invoked = false;
          container.dynamicInvoke(child, invocation);
          assertEquals(overriding, TestInterceptor.invoked);
+   }
+   
+   private void checkMethodInterceptors(boolean maintainAdvisorMethodInterceptors) throws Exception
+   {
+      AspectManager manager = AspectManager.instance();
+      TestContainer advisor = new TestContainer("X", manager);
+      advisor.setClass(Child.class);
+      advisor.initializeClassContainer();
+      Child child = new Child();
+      Method method = child.getClass().getMethod("childMethod", new Class[0]);
+      long hash = MethodHashing.calculateHash(method);
+      MethodInfo info = advisor.getMethodInfo(hash);
+      
+      TLongObjectHashMap methodInterceptors = advisor.getMethodInterceptors();
+      if (!maintainAdvisorMethodInterceptors)
+      {
+         assertNull(methodInterceptors);
+      }
+      else
+      {
+         assertNotNull(methodInterceptors);
+         MethodInfo info2 = (MethodInfo)methodInterceptors.get(hash);
+         assertNotNull(info2);
+         assertEquals(info, info2);
+      }
+      
    }
    
    private MethodInvocation getMethodInvocation(ClassContainer advisor, String methodName, Object target) throws Exception
