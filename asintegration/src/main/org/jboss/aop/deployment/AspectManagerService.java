@@ -103,6 +103,9 @@ public class AspectManagerService
    // Constructors -------------------------------------------------
    public AspectManagerService()
    {
+      //This constructor shouuld only get called when used in JBoss 4.x.x, not in JBoss 5.
+      //In JBoss 4 we need to maintain this field  
+      AspectManager.maintainAdvisorMethodInterceptors = true;
    }
 
    /**
