@@ -404,6 +404,10 @@ public abstract class Advisor
       {
          //The "annotation" is probably aop metadata for which there will be no corresponding class
       }
+      catch(IllegalStateException e)
+      {
+         //The classloader may be invalid, just ignore this
+      }
 
       if (annotation == null)
       {
@@ -625,6 +629,10 @@ public abstract class Advisor
       catch (ClassNotFoundException e)
       {
          //The "annotation" is probably aop metadata for which there will be no corresponding class
+      }
+      catch(IllegalStateException e)
+      {
+         //The classloader may be invalid, just ignore this
       }
       catch(Exception e)
       {
