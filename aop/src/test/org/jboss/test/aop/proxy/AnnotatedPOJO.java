@@ -42,4 +42,9 @@ public class AnnotatedPOJO<T>
    {
       return x;
    }
+   
+   public String toString()
+   {
+      return "TEST";
+   }
 }

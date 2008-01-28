@@ -60,6 +60,7 @@ import org.jboss.aop.MethodInfo;
 import org.jboss.aop.instrument.TransformerCommon;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.util.JavassistMethodHashing;
+import org.jboss.aop.util.MethodHashing;
 
 
 /**
@@ -101,6 +102,9 @@ public class ContainerProxyFactory
    ProxyStrategy proxyStrategy;
    
    private CtConstructor defaultCtor;
+
+   /** Methods hardcoded in createBasics */
+   private HashSet<Long> hardcodedMethods = new HashSet<Long>();
    
    public static Class getProxyClass(Class clazz, AspectManager manager) throws Exception
    {
@@ -281,7 +285,7 @@ public class ContainerProxyFactory
 
       copyAnnotations(superclass, proxy);
       copySignature(superclass, proxy);
-      
+
       return proxy;
    }
    
@@ -430,6 +434,7 @@ public class ContainerProxyFactory
       CtMethod method = CtNewMethod.make(templateMethod.getReturnType(), name, templateMethod.getParameterTypes(), templateMethod.getExceptionTypes(), body, proxy);
       method.setModifiers(templateMethod.getModifiers());
       proxy.addMethod(method);
+      hardcodedMethods.add(JavassistMethodHashing.methodHash(method));
       return method;
    }
    
@@ -615,6 +620,8 @@ public class ContainerProxyFactory
 
          Long hash = (Long) entry.getKey();
          if (addedMethods.contains(hash)) continue;
+         if (hardcodedMethods.contains(hash)) continue;
+         
          addedMethods.add(hash);
          String aopReturnStr = (m.getReturnType().equals(CtClass.voidType)) ? "" : "return ($r)";
          String returnStr = (m.getReturnType().equals(CtClass.voidType)) ? "" : "return ";
