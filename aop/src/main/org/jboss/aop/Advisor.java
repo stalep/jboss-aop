@@ -384,30 +384,8 @@ public abstract class Advisor
          throw new RuntimeException("annotation or annotationClass must be passed in");
       }
 
-      try
-      {
-         if (metadata != null)
-         {
-            if (annotationClass == null)
-            {
-               ClassLoader cl = SecurityActions.getClassLoader(tgt);
-               if (cl == null)
-               {
-                  cl = SecurityActions.getContextClassLoader();
-               }
-               annotationClass = cl.loadClass(annotation);
-            }
-            if (annotationClass != null && metadata.isAnnotationPresent(annotationClass)) return true;
-         }
-      }
-      catch (ClassNotFoundException e)
-      {
-         //The "annotation" is probably aop metadata for which there will be no corresponding class
-      }
-      catch(IllegalStateException e)
-      {
-         //The classloader may be invalid, just ignore this
-      }
+      annotationClass = loadAnnotationClass(tgt, annotation, annotationClass);
+      if (annotationClass != null && metadata != null && metadata.isAnnotationPresent(annotationClass)) return true;
 
       if (annotation == null)
       {
@@ -530,6 +508,8 @@ public abstract class Advisor
          throw new RuntimeException("annotation or annotationClass must be passed in");
       }
 
+      annotationClass = loadAnnotationClass(m.getDeclaringClass(), annotation, annotationClass);
+      
       if (annotation == null)
       {
          annotation = annotationClass.getName();
@@ -607,37 +587,12 @@ public abstract class Advisor
 
    private boolean hasJoinPointAnnotationFromStringName(Class declaringClass, org.jboss.metadata.spi.signature.Signature sig, String annotationName)
    {
-      try
+      Class annotationClass = loadAnnotationClass(declaringClass, annotationName, null);
+      if (annotationClass != null)
       {
-         if (metadata != null)
-         {
-            ClassLoader cl = SecurityActions.getClassLoader(declaringClass);
-            if (cl == null)
-            {
-               cl = SecurityActions.getContextClassLoader();
-            }
-            if (cl != null)
-            {
-               Class annotationClass = cl.loadClass(annotationName);
-               if (annotationClass != null)
-               {
-                  return this.hasJoinPointAnnotation(declaringClass, sig, annotationClass);
-               }
-            }
-         }
+         return this.hasJoinPointAnnotation(declaringClass, sig, annotationClass);
       }
-      catch (ClassNotFoundException e)
-      {
-         //The "annotation" is probably aop metadata for which there will be no corresponding class
-      }
-      catch(IllegalStateException e)
-      {
-         //The classloader may be invalid, just ignore this
-      }
-      catch(Exception e)
-      {
-         throw new RuntimeException(e);
-      }
+      
       return false;
    }
    
@@ -692,6 +647,42 @@ public abstract class Advisor
       return AnnotationElement.isAnyAnnotationPresent(member, annotation);
    }
 
+   private Class loadAnnotationClass(Class tgt, String annotation, Class annotationClass)
+   {
+      if (annotationClass != null)
+      {
+         return annotationClass;
+      }
+      if (annotation == null)
+      {
+         throw new RuntimeException("Both annotation and annotationClass were null");
+      }
+      try
+      {
+         if (metadata != null)
+         {
+            if (annotationClass == null)
+            {
+               ClassLoader cl = SecurityActions.getClassLoader(tgt);
+               if (cl == null)
+               {
+                  cl = SecurityActions.getContextClassLoader();
+               }
+               return cl.loadClass(annotation);
+            }
+         }
+      }
+      catch (ClassNotFoundException e)
+      {
+         //The "annotation" is probably aop metadata for which there will be no corresponding class
+      }
+      catch(IllegalStateException e)
+      {
+         //The classloader may be invalid, just ignore this
+      }
+      return null;
+   }
+   
    /**
     * Get the metadata
     * 
