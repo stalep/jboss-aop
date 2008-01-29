@@ -99,12 +99,12 @@ public class InstanceAdvisorDelegate implements Serializable
          }
       }
       Set defs = getClassAdvisor().getPerInstanceAspectDefinitions();
+      if (aspects == null)
+      {
+         aspects = new WeakHashMap();
+      }
       if (defs.size() > 0)
       {
-         if (aspects == null)
-         {
-            aspects = new WeakHashMap();
-         }
          Iterator it = defs.iterator();
          while (it.hasNext())
          {
@@ -147,6 +147,10 @@ public class InstanceAdvisorDelegate implements Serializable
             AspectDefinition def = (AspectDefinition) it.next();
             initJoinpointAspect(def, jpAspects);
          }
+      }
+      if (joinpointAspects != null)
+      {
+         joinpointAspects = new WeakHashMap();
       }
    }
    
