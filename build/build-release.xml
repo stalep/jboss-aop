@@ -20,6 +20,14 @@
          </fileset>
       </copy>
 
+      <copy todir="${project.release}/etc" filtering="no">
+         <fileset dir="${project.root}/aop/src/etc">
+            <include name="default.mf"/>
+            <include name="jbossorg-eula.txt"/>
+            <include name="pluggable-instrumentor.mf"/>
+         </fileset>
+      </copy>
+
       <!-- needed to build the source/tests from the dist package -->
       <copy todir="${project.release}/lib-test" filtering="no">
          <fileset dir="${project.root}/thirdparty/jboss/test/lib">
