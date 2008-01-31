@@ -41,7 +41,7 @@ package org.jboss.maven.plugins;
  * @author <a href="mailto:stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @goal compile-test
  * @phase process-test-classes
- * @requiresDependencyResolution
+ * @requiresDependencyResolution compile-test
  */
 public class JBossTestAOPCMojo extends JBossAOPCMojo
 {

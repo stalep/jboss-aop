@@ -44,16 +44,12 @@ import org.codehaus.plexus.util.cli.Commandline;
  * Use it by running: mvn jbossaop:compile
  * 
  * Supported options:
- * - aoppath (default src/main/resources/jboss-aop.xml)
+ * - aoppaths[] (default src/main/resources/jboss-aop.xml)
  *  - verbose (default true)
  *  - suppress (default false)
  *  - noopt (default false)
  *  - report (default false)
- *  - includes 
- *  
- *  TODO: multiple jboss-aop.xml files are supported as in ant. eg, they are provided in
- *  the same element, and separated with File.pathSeparator. this is not portable and will
- *  be looked into.
+ *  - includeProjectDependency (default false)
  * 
  * @author <a href="mailto:stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @goal compile
@@ -98,6 +94,14 @@ public class JBossAOPCMojo extends AbstractMojo
     */
    private boolean failOnError;
 
+   /** 
+    * If it is set to true all project dependencies will also be included to the aop classpath
+    * 
+    * @parameter expression="${includeProjectDependency}" default-value="false"
+    */
+   private boolean includeProjectDependency;
+
+   
    /** 
     * 
     * @parameter expression="${classPath}" default-value="${project.build.outputDirectory}"
@@ -170,10 +174,13 @@ public class JBossAOPCMojo extends AbstractMojo
          sb.append(a.getFile().toString()).append(File.pathSeparator);
       }
 
-//      for(Object o : project.getDependencyArtifacts())
-//      {
-//         sb.append(((Artifact) o).getFile().toString()).append(File.pathSeparator);
-//      }
+      if(includeProjectDependency)
+      {
+         for(Object o : project.getDependencyArtifacts())
+         {
+            sb.append(((Artifact) o).getFile().toString()).append(File.pathSeparator);
+         }
+      }
 
       if(isTest())
          sb.append(project.getBuild().getTestOutputDirectory());
