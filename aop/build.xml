@@ -426,6 +426,7 @@
             <include name="org/jboss/aop/proxy/Proxy.class"/>
             <include name="org/jboss/aop/proxy/ProxyFactory.class"/>
             <include name="org/jboss/aop/proxy/ProxyMixin.class"/>
+            <include name="org/jboss/aop/proxy/container/*.class"/>
             <include name="org/jboss/aop/util/SecurityActions*.class"/>
             <include name="org/jboss/aop/util/Marshalled*.class"/>
             <include name="org/jboss/aop/util/MethodHashing*.class"/>
