@@ -76,7 +76,7 @@ implements SubDeployer, AspectDeployerMBean
 
    /**
     * Set the suffixes and relative order attributes.
-    * 
+    *
     * Those are read at subdeployer registration time by the MainDeployer
     * to update its SuffixOrder list.
     */
@@ -162,9 +162,9 @@ implements SubDeployer, AspectDeployerMBean
 
          if (scl != null)
          {
-            log.info("AOP deployment is scoped using classloader " + scl);   
+            log.info("AOP deployment is scoped using classloader " + scl);
          }
-         
+
          Thread.currentThread().setContextClassLoader(di.ucl);
          AspectManager manager = (scl != null) ? AspectManager.instance(scl) : AspectManager.instance();
          if (!di.isXML)
@@ -174,7 +174,7 @@ implements SubDeployer, AspectDeployerMBean
             loader.setClassLoader(scl);
             loader.deployInputStreamIterator(it);
          }
-         
+
          AspectXmlLoader.deployXML(docURL, scl, manager);
          Notification msg = new Notification("AOP Deploy", this, getNextNotificationSequenceNumber());
          sendNotification(msg);
@@ -223,7 +223,7 @@ implements SubDeployer, AspectDeployerMBean
          log.debug("Ignoring request to stop '" + di.url + "', current state: " + di.state);
          return;
       }
-      
+
       log.debug("undeploying document " + di.url);
       ClassLoader old = Thread.currentThread().getContextClassLoader();
       try
@@ -243,9 +243,9 @@ implements SubDeployer, AspectDeployerMBean
          AspectManager.instance().unregisterClassLoader(di.ucl);
 
          /*
-         System.out.println("************************");
-         System.out.println("undeploy took: " + (System.currentTimeMillis() - start));
-         System.out.println("************************");
+//         System.out.println("************************");
+//         System.out.println("undeploy took: " + (System.currentTimeMillis() - start));
+//         System.out.println("************************");
          */
          Notification msg = new Notification("AOP Undeploy", this, getNextNotificationSequenceNumber());
          sendNotification(msg);
@@ -298,7 +298,7 @@ implements SubDeployer, AspectDeployerMBean
          throw new DeploymentException("Failed to find META-INF/jboss-aop.xml");
       return docURL;
    }
-   
+
    private ClassLoader getScopedClassLoader(DeploymentInfo di, URL docUrl) throws Exception
    {
       //Scoped AOP deployments are only available when deployed as part of a scoped sar, ear etc.
@@ -308,7 +308,7 @@ implements SubDeployer, AspectDeployerMBean
       {
          return di.ucl;
       }
-      
+
       LoaderRepository attachToRepository = getLoaderRepositoryIfAttaching(di, docUrl);
       if (attachToRepository != null)
       {
@@ -318,23 +318,23 @@ implements SubDeployer, AspectDeployerMBean
       }
       return null;
    }
-   
+
    private LoaderRepository getLoaderRepositoryIfAttaching(DeploymentInfo di, URL docUrl) throws Exception
    {
       if (di.parent == null)
       {
          //We are a top-level deployment, check if we are meant to be attaching to a scoped repository
-         
+
          Document doc = AspectXmlLoader.loadURL(docUrl);
          Element top = doc.getDocumentElement();
          NodeList children = top.getChildNodes();
          int childlength = children.getLength();
          for (int i = 0; i < childlength ; i++)
          {
-            Node child = children.item(i); 
+            Node child = children.item(i);
             if (child.getNodeType() == Node.ELEMENT_NODE)
             {
-               Element element = (Element)child;  
+               Element element = (Element)child;
                if (element.getTagName().equals("loader-repository"))
                {
                   String repositoryName = null;
@@ -359,7 +359,7 @@ implements SubDeployer, AspectDeployerMBean
                   {
                      throw new RuntimeException("loader-repository='" + repositoryName + "' is not a valid object name", e);
                   }
-                  
+
                   try
                   {
                      MBeanInfo info = server.getMBeanInfo(on);
@@ -368,7 +368,7 @@ implements SubDeployer, AspectDeployerMBean
                   {
                      log.warn("No scoped loader repository exists with the name " + on);
                   }
-                  
+
                   LoaderRepository repository = (LoaderRepository)server.getAttribute(on, "Instance");
                   if (repository instanceof HeirarchicalLoaderRepository3)
                   {
@@ -379,10 +379,10 @@ implements SubDeployer, AspectDeployerMBean
                      log.warn("Loader repository " + on + " is not a isolated loader repository. Deploying aspects in default domain.");
                   }
                }
-            }            
+            }
          }
       }
-      
+
       return null;
    }
 }

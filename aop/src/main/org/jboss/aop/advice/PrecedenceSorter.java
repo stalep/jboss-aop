@@ -42,11 +42,11 @@ public class PrecedenceSorter
       {
          InterceptorEntry entryA = (InterceptorEntry)objA;
          InterceptorEntry entryB = (InterceptorEntry)objB;
-         
+
          return entryA.precedenceOrder - entryB.precedenceOrder;
       }
    };
-   
+
    static class InterceptorEntry
    {
       Interceptor interceptor;
@@ -55,32 +55,32 @@ public class PrecedenceSorter
       int precedenceOrder = -1;
       String classname;
       String method;
-      
+
       InterceptorEntry(GeneratedAdvisorInterceptor factoryWrapper)
       {
          this.factoryWrapper = factoryWrapper;
          classname = factoryWrapper.getName();
-         
+
          InterceptorFactory ifac = factoryWrapper.getDelegate();
-         
+
          if (ifac instanceof GenericInterceptorFactory)
          {
             //Dynamically added interceptors
             classname = ((GenericInterceptorFactory)ifac).getClassName();
          }
-         else 
+         else
          {
             AspectFactory af = factoryWrapper.getAspect().getFactory();
             classname = af.getName();
          }
-         
+
          if (ifac instanceof AdviceFactory)
          {
             method = ((AdviceFactory)ifac).getAdvice();
          }
       }
-      
-      
+
+
       InterceptorEntry(Interceptor interceptor)
       {
          this.interceptor = interceptor;
@@ -105,7 +105,7 @@ public class PrecedenceSorter
          {
             interceptorName = interceptor.getClass().getName();
          }
-         
+
          try
          {
             boolean isAdvice = interceptorName.startsWith("org.jboss.aop.advice.");
@@ -120,21 +120,21 @@ public class PrecedenceSorter
             {
                classname = interceptorName;
             }
-         } 
+         }
          catch (RuntimeException e)
          {
             System.err.print(interceptor.getName());
             throw e;
          }
       }
-      
+
       public String toString()
       {
          return "Entry: " + precedenceOrder + " (" + originalOrder + ")interceptorClass=" + classname + "; adviceMethod=" + method;
       }
-      
+
    }
-   
+
    private static boolean matches(InterceptorEntry ientry, PrecedenceDefEntry pentry)
    {
       if (ientry.classname.equals(pentry.interceptorClass))
@@ -155,12 +155,12 @@ public class PrecedenceSorter
       }
       return false;
    }
-   
-   
+
+
    public static PrecedenceDefEntry[] createOverallPrecedence(AspectManager manager)
    {
       ArrayList overall = new ArrayList();
-      
+
       LinkedHashMap precedenceDefs = manager.getPrecedenceDefs();
       boolean first = true;
       for (Iterator it = precedenceDefs.values().iterator() ; it.hasNext(); )
@@ -178,13 +178,13 @@ public class PrecedenceSorter
             first = false;
             continue;
          }
-         
+
          overall = mergePrecedenceDef(overall, precedenceDef);
       }
       //System.out.println("OVERALL PRECEDENCE: " + overall);
       return (PrecedenceDefEntry[])overall.toArray(new PrecedenceDefEntry[overall.size()]);
    }
-   
+
    public static ArrayList mergePrecedenceDef(ArrayList overall, PrecedenceDef precedenceDef)
    {
       //TODO This can be improved. If you have the precedences
@@ -195,11 +195,11 @@ public class PrecedenceSorter
       //    i) A, D, C, E
       //After adding 3) to i) you end up with an overall precedence of
       //    ii) A, C, D, C, E,
-      //In practice this should be fine, since the applyPrecedence() looks for the 
+      //In practice this should be fine, since the applyPrecedence() looks for the
       //first matching entry, so the second (duplicate) occurrence of C is ignored.
       PrecedenceDefEntry[] entries = precedenceDef.getEntries();
       int start = 0, end = 0;
-      int size = overall.size(); 
+      int size = overall.size();
       for (int i = 0 ; i < size ; i++)
       {
          PrecedenceDefEntry global = (PrecedenceDefEntry)overall.get(i);
@@ -209,7 +209,7 @@ public class PrecedenceSorter
          for (int j = start ; j < entries.length ; j++)
          {
             PrecedenceDefEntry cur = entries[j];
-            
+
             if (cur.equals(global))
             {
                found = true;
@@ -217,8 +217,8 @@ public class PrecedenceSorter
                break;
             }
          }
-         
-         //We found it. Now insert everything until this into global and 
+
+         //We found it. Now insert everything until this into global and
          //reset the counters
          if (found)
          {
@@ -236,19 +236,19 @@ public class PrecedenceSorter
       {
          overall.add(entries[j]);
       }
-      
+
       return overall;
    }
-   
+
    public static Interceptor[] applyPrecedence(Interceptor[] interceptors, AspectManager manager)
    {
       if (interceptors.length == 0)
          return interceptors;
-      
+
       ArrayList all = new ArrayList(interceptors.length);
       ArrayList precedence = new ArrayList(interceptors.length);
       PrecedenceDefEntry[] precedenceEntries = manager.getSortedPrecedenceDefEntries();
-      
+
       //Figure out what interceptors have precedence
       for (int i = 0 ; i < interceptors.length ; i++)
       {
@@ -266,36 +266,36 @@ public class PrecedenceSorter
             }
          }
       }
-      
+
       //Sort the interceptors having precedence
       Collections.sort(precedence, interceptorComparator);
       Interceptor[] sortedInterceptors = new Interceptor[interceptors.length];
-      
-      //Build up new array of interceptors depending on their precedence 
+
+      //Build up new array of interceptors depending on their precedence
       int prec = 0;
       int allSize = all.size();
       int precedenceSize = precedence.size();
-      
+
       for (int i = 0 ; i < allSize ; i++)
       {
          InterceptorEntry entry = (InterceptorEntry)all.get(i);
-         
+
          if (entry.precedenceOrder >= 0 && prec < precedenceSize)
          {
             entry = (InterceptorEntry)precedence.get(prec++);
          }
          sortedInterceptors[i] = entry.interceptor;
       }
-      
+
       return sortedInterceptors;
    }
-   
+
    public static GeneratedAdvisorInterceptor[] applyPrecedence(GeneratedAdvisorInterceptor[] interceptors, AspectManager manager)
    {
       ArrayList all = new ArrayList(interceptors.length);
       ArrayList precedence = new ArrayList(interceptors.length);
       PrecedenceDefEntry[] precedenceEntries = manager.getSortedPrecedenceDefEntries();
-      
+
       //Figure out what interceptors have precedence
       for (int i = 0 ; i < interceptors.length ; i++)
       {
@@ -313,33 +313,33 @@ public class PrecedenceSorter
             }
          }
       }
-      
+
       //Sort the interceptors having precedence
       Collections.sort(precedence, interceptorComparator);
       GeneratedAdvisorInterceptor[] sortedInterceptors = new GeneratedAdvisorInterceptor[interceptors.length];
-      
-      //Build up new array of interceptors depending on their precedence 
+
+      //Build up new array of interceptors depending on their precedence
       int prec = 0;
       int allSize = all.size();
       int precedenceSize = precedence.size();
-      
+
       for (int i = 0 ; i < allSize ; i++)
       {
          InterceptorEntry entry = (InterceptorEntry)all.get(i);
-         
+
          if (entry.precedenceOrder >= 0 && prec < precedenceSize)
          {
             entry = (InterceptorEntry)precedence.get(prec++);
          }
          sortedInterceptors[i] = entry.factoryWrapper;
       }
-      
+
       return sortedInterceptors;
    }
-   
+
 /*   public static void main(String[] args)
    {
-      System.out.println("Hello");
+//      System.out.println("Hello");
       AspectManager manager = new AspectManager();
       PrecedenceDef def = new PrecedenceDef("3",new PrecedenceDefEntry[]{
             new PrecedenceDefEntry("A", null),
@@ -360,15 +360,15 @@ public class PrecedenceSorter
       outputOverAll(manager);
 
    }
-   
+
    private static void outputOverAll(AspectManager manager)
    {
       PrecedenceDefEntry[] entries = manager.getSortedPrecedenceDefEntries();
       for (int i = 0 ; i < entries.length ; i++)
       {
-         System.out.println("\t" + entries[i]);
+//         System.out.println("\t" + entries[i]);
       }
-      System.out.println("==================================");
+//      System.out.println("==================================");
    }
-*/   
+*/
 }

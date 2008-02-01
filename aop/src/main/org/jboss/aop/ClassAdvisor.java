@@ -86,7 +86,7 @@ import org.jboss.util.NotImplementedException;
 public class ClassAdvisor extends Advisor
 {
    private static final Logger logger = AOPLogger.getLogger(ClassAdvisor.class);
-   
+
    /**
     * Suffix added to unadvised methods.
     */
@@ -254,7 +254,7 @@ public class ClassAdvisor extends Advisor
    {
       return methodInfos.infos;
    }
-   
+
 
    /**
     * Constructs a new helper.
@@ -306,9 +306,9 @@ public class ClassAdvisor extends Advisor
             }
          });
          /*
-         System.out.println("******************");
-         System.out.println("attachClass: " + clazz.getName() + " took " + (System.currentTimeMillis() - start));
-         System.out.println("******************");
+//         System.out.println("******************");
+//         System.out.println("attachClass: " + clazz.getName() + " took " + (System.currentTimeMillis() - start));
+//         System.out.println("******************");
          */
       }
       catch (PrivilegedActionException e)
@@ -444,7 +444,7 @@ public class ClassAdvisor extends Advisor
          }
       }
    }
-   
+
    protected void initializeMethodChain()
    {
       long[] keys = advisedMethods.keys();
@@ -572,7 +572,7 @@ public class ClassAdvisor extends Advisor
 //         info.setInterceptors(interceptors);
 //      }
 //   }
-   
+
    protected void createInterceptorChains() throws Exception
    {
       if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Creating chains for " + clazz + " " + ((clazz != null) ? clazz.getClassLoader() : null ));
@@ -586,7 +586,7 @@ public class ClassAdvisor extends Advisor
          initializeFieldWriteChain();
          initializeMethodChain();
       }
-      
+
       initializeConstructorChain();
       initializeConstructionChain();
 
@@ -616,14 +616,14 @@ public class ClassAdvisor extends Advisor
                constructorInterceptors, methodInfos);
       }
    }
-   
+
    protected void updateInterceptorChains() throws Exception
    {
       if (AspectManager.verbose && logger.isDebugEnabled())
       {
-         logger.debug("Updating chains for " + clazz + " " + ((clazz != null) ? clazz.getClassLoader() : null ));  
+         logger.debug("Updating chains for " + clazz + " " + ((clazz != null) ? clazz.getClassLoader() : null ));
       }
-      
+
       lockWriteChain(methodInfos);
       lockWriteChain(fieldReadInfos);
       lockWriteChain(fieldWriteInfos);
@@ -636,7 +636,7 @@ public class ClassAdvisor extends Advisor
          resetChain(fieldWriteInfos);
          resetChain(constructorInfos);
          resetChain(constructionInfos);
-   
+
          synchronized (manager.getBindings())
          {
             Iterator it = manager.getBindings().values().iterator();
@@ -651,7 +651,7 @@ public class ClassAdvisor extends Advisor
                resolveConstructionPointcut(binding);
             }
          }
-   
+
          finalizeChains();
          populateInterceptorsFromInfos();
       }
@@ -663,7 +663,7 @@ public class ClassAdvisor extends Advisor
          unlockWriteChain(constructorInfos);
          unlockWriteChain(constructionInfos);
       }
-      
+
       doesHaveAspects = adviceBindings.size() > 0;
       // Notify observer about this change
       if (this.interceptorChainObserver != null)
@@ -681,7 +681,7 @@ public class ClassAdvisor extends Advisor
       finalizeChain(constructorInfos);
       finalizeChain(constructionInfos);
    }
-   
+
    private MethodByConInfo initializeConstructorCallerInterceptorsMap(Class callingClass, int callingIndex, String calledClass, long calledMethodHash, Method calledMethod) throws Exception
    {
       HashMap calledClassesMap = methodCalledByConInterceptors[callingIndex];
@@ -1296,7 +1296,7 @@ public class ClassAdvisor extends Advisor
    {
       return resolveConstructorCallerMethodInfo(this.getClazz(), callingIndex, calledClass, calledMethodHash);
    }
-   
+
    public MethodByConInfo resolveConstructorCallerMethodInfo(Class callingClass, int callingIndex, String calledClass, long calledMethodHash)
    {
       if (System.getSecurityManager() == null)
@@ -1364,7 +1364,7 @@ public class ClassAdvisor extends Advisor
    {
       return resolveConstructorCallerConstructorInfo(this.getClazz(), callingIndex, calledClass, calledConHash);
    }
-   
+
    public ConByConInfo resolveConstructorCallerConstructorInfo(Class callingClass, int callingIndex, String calledClass, long calledConHash)
    {
       if (System.getSecurityManager() == null)
@@ -1420,13 +1420,13 @@ public class ClassAdvisor extends Advisor
       //Javassist doesn't like this in a field initialiser hence this method
       return new WeakReference(resolveConstructorCallerConstructorInfo(callingIndex, calledClass, calledConHash));
    }
-   
+
    public WeakReference resolveConstructorCallerConstructorInfoAsWeakReference(Class callingClass, int callingIndex, String calledClass, long calledConHash)
    {
       //Javassist doesn't like this in a field initialiser hence this method
       return new WeakReference(resolveConstructorCallerConstructorInfo(callingClass, callingIndex, calledClass, calledConHash));
    }
-   
+
    /////////////////////////
    // Invoking
 
@@ -1740,7 +1740,7 @@ public class ClassAdvisor extends Advisor
       }
       throw new IllegalStateException("Unknown Invocation type: " + invocation.getClass().getName());
    }
-   
+
    @Override
    public void cleanup()
    {
@@ -1756,7 +1756,7 @@ public class ClassAdvisor extends Advisor
          conByMethodData = null;
       }
    }
-   
+
    // interceptor chain observer
    private InterceptorChainObserver interceptorChainObserver;
 
@@ -1801,7 +1801,7 @@ public class ClassAdvisor extends Advisor
       {
          constructionInterceptors[i] = constructionInfos[i].getInterceptors();
       }
-   
+
    }
 
    protected MethodByMethodData getMethodByMethodData()
@@ -2038,7 +2038,7 @@ public class ClassAdvisor extends Advisor
          }
       };
    }
-   
+
    private class MethodByMethodData
    {
       private volatile TLongObjectHashMap methodCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
@@ -2098,8 +2098,8 @@ public class ClassAdvisor extends Advisor
       public MethodByMethodInfo resolveCallerMethodInfo(long callingMethodHash, String calledClass, long calledMethodHash)
       {
          //The main entry point for adding data to the maps, let us initialise them here.
-         if (methodCalledByMethodBindings == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP || 
-               backrefMethodCalledByMethodBindings == UnmodifiableEmptyCollections.EMPTY_HASHMAP || 
+         if (methodCalledByMethodBindings == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP ||
+               backrefMethodCalledByMethodBindings == UnmodifiableEmptyCollections.EMPTY_HASHMAP ||
                methodCalledByMethodInterceptors == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP)
          {
             lockWrite();
@@ -2123,7 +2123,7 @@ public class ClassAdvisor extends Advisor
                unlockWrite();
             }
          }
-         
+
          if (System.getSecurityManager() == null)
          {
             return ResolveCallerMethodInfoAction.NON_PRIVILEGED.resolveInfo(this, callingMethodHash, calledClass, calledMethodHash);
@@ -2196,7 +2196,7 @@ public class ClassAdvisor extends Advisor
             createdBindings = true;
          }
          if (!bindings.contains(binding)) bindings.add(binding);
-      
+
          // this is so that we can undeploy a caller
          ArrayList backrefs = (ArrayList) backrefMethodCalledByMethodBindings.get(binding.getName());
          if (backrefs == null)
@@ -2294,14 +2294,14 @@ public class ClassAdvisor extends Advisor
          methodCalledByMethodInterceptors.clear();
       }
    }
-   
+
    private class ConByMethodData
    {
       // constructor caller pointcut support for methods calling constructors only
       private volatile TLongObjectHashMap conCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
       private volatile HashMap backrefConCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
       private volatile TLongObjectHashMap conCalledByMethodInterceptors = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
-      
+
       public TLongObjectHashMap getConCalledByMethodInterceptors()
       {
          return conCalledByMethodInterceptors;
@@ -2337,12 +2337,12 @@ public class ClassAdvisor extends Advisor
             }
          }
       }
-      
+
       public ConByMethodInfo resolveCallerConstructorInfo(long callingMethodHash, String calledClass, long calledConHash)
       {
          //The main entry point for adding data to the maps, let us initialise them here.
-         if (conCalledByMethodBindings == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP || 
-               backrefConCalledByMethodBindings == UnmodifiableEmptyCollections.EMPTY_HASHMAP || 
+         if (conCalledByMethodBindings == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP ||
+               backrefConCalledByMethodBindings == UnmodifiableEmptyCollections.EMPTY_HASHMAP ||
                conCalledByMethodInterceptors == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP)
          {
             lockWrite();
@@ -2366,7 +2366,7 @@ public class ClassAdvisor extends Advisor
                unlockWrite();
             }
          }
-         
+
          if (System.getSecurityManager() == null)
          {
             return ResolveCallerConstuctorInfoAction.NON_PRIVILEGED.resolveInfo(this, callingMethodHash, calledClass, calledConHash);
@@ -2440,7 +2440,7 @@ public class ClassAdvisor extends Advisor
             createdBindings = true;
          }
          if (!bindings.contains(binding)) bindings.add(binding);
-      
+
          // this is so that we can undeploy a caller
          ArrayList backrefs = (ArrayList) backrefConCalledByMethodBindings.get(binding.getName());
          if (backrefs == null)

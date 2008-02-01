@@ -106,16 +106,16 @@ public class AspectManager
         implements Translator
 {
    private static final Logger logger = AOPLogger.getLogger(AspectManager.class);
-   
+
    /** Read/Write lock to be used when lazy creating the collections */
    ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
    /** Advisors registered with this manager/domain */
    protected final WeakHashMap advisors = new WeakHashMap();
-   
+
    /** A map of domains by class, maintaned by the top level AspectManager */
    protected volatile WeakHashMap subDomainsPerClass = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
-   
+
    /** A map of domains by name */
    protected volatile WeakValueHashMap subDomainsByName = UnmodifiableEmptyCollections.EMPTY_WEAK_VALUE_HASHMAP;
 
@@ -177,14 +177,14 @@ public class AspectManager
    protected DynamicAOPStrategy dynamicStrategy = new LoadInterceptedClassesStrategy();
    // indicates that the transformation process has begun
    protected boolean transformationStarted = false;
-   
+
    /** The classloader scoping policy */
    // This shouldn't really be static (artifact of singleton and self-bootstrap design)
    private static AOPClassLoaderScopingPolicy classLoaderScopingPolicy;
-   
+
    //Keeps track of if we need to convert references etc for a given class. Domains for scoped classloaders will have their own version of this
    protected static InterceptionMarkers interceptionMarkers = new InterceptionMarkers();
-   
+
    // Static -------------------------------------------------------
 
    protected static AspectManager manager;
@@ -199,17 +199,17 @@ public class AspectManager
     * logging switch.  We don't use log4j to avoid another heavy library
     */
    public static boolean verbose = false;
-   
+
    /**
     * Whether or not we should maintain the deprecated Advisor.methodInterceptors field
     * This is required in jboss 4.x for backwards compatibility with EJB 3
-    * See JBAOP-517 
+    * See JBAOP-517
     */
    public static boolean maintainAdvisorMethodInterceptors;
 
    /**
     * Get the top level aspect manager
-    * 
+    *
     * @return the top level aspect manager
     */
    public static synchronized AspectManager getTopLevelAspectManager()
@@ -231,10 +231,10 @@ public class AspectManager
    {
       return instance(SecurityActions.getContextClassLoader());
    }
-   
+
    /**
     * Get the aspect manager for a classloader
-    * 
+    *
     * @param loadingClassLoader the classloader
     * @return the aspect manager
     */
@@ -252,9 +252,9 @@ public class AspectManager
 
    /**
     * Initialise the manager if not already dones so<p>
-    * 
+    *
     * This method should be invoked in a synchronized block
-    * 
+    *
     * @return the manager
     */
    private static AspectManager initManager()
@@ -339,7 +339,7 @@ public class AspectManager
                {
                   classicOrder = (new Boolean(classic)).booleanValue();
                }
-               
+
                maintainAdvisorMethodInterceptors = (new Boolean(System.getProperty("jboss.aop.advisor.methodInterceptors", "false"))).booleanValue();
 
 
@@ -353,7 +353,7 @@ public class AspectManager
 
    /**
     * Get the classLoaderScopingPolicy.
-    * 
+    *
     * @return the classLoaderScopingPolicy.
     */
    public static AOPClassLoaderScopingPolicy getClassLoaderScopingPolicy()
@@ -363,7 +363,7 @@ public class AspectManager
 
    /**
     * Set the classLoaderScopingPolicy.
-    * 
+    *
     * TODO does it make sense for this to be modified once it has been set?
     * @param classLoaderScopingPolicy the classLoaderScopingPolicy.
     */
@@ -549,11 +549,11 @@ public class AspectManager
          return (Advisor) ref.get();
       }
    }
-   
+
    /**
     * Takes a string of the form /sub1/sub2/sub3 of subdomains by name, where the leading "/" is the main AspectManager.
     * The main user of the naming of domains is (un)serialization of advisors/containers
-    * 
+    *
     * @param The FQN of the domain
     * @return the domain referenced by the FQN or null if it does not exist
     */
@@ -562,7 +562,7 @@ public class AspectManager
       String[] nameparts = fqn.split("/");
       return findManagerByName(nameparts);
    }
-   
+
    private AspectManager findManagerByName(String[] nameparts)
    {
       AspectManager found = this;
@@ -580,18 +580,18 @@ public class AspectManager
       }
       return found;
    }
-   
+
    private AspectManager findManagerByNameInternal(String name)
    {
       return (Domain)subDomainsByName.get(name);
    }
-   
+
    protected void addSubDomainByName(Domain domain)
    {
       initSubDomainsByNameMap();
       subDomainsByName.put(domain.getDomainName(), domain);
    }
-   
+
    public String getManagerFQN()
    {
       return "/";
@@ -907,9 +907,9 @@ public class AspectManager
    /**
     * This is to be backward compatible with JBoss 3.2.3 Translator interface
     * TODO: stalep, added a synchronized block for the entire method to prevent
-    *  a deadlock. its not optimal and should be further reviewed. 
+    *  a deadlock. its not optimal and should be further reviewed.
     *  (commented out sync block inside the method)
-    * 
+    *
     * @param className
     * @param loader
     * @return
@@ -960,7 +960,7 @@ public class AspectManager
          interceptorFactories.put(name, factory);
       }
    }
-   
+
    /**
     * Remove an interceptor factory that can be referenced by name.
     */
@@ -1397,7 +1397,7 @@ public class AspectManager
       {
          bindings.put(binding.getName(), binding);
       }
-      
+
       initPointcutsMap();
       initPointcutInfosMap();
       synchronized (pointcuts)
@@ -1491,7 +1491,7 @@ public class AspectManager
    {
       internalRemoveClassMetaData(meta.getName());
 
-      //Add the metadata before we update the advisors. Important for the generated instance advisors 
+      //Add the metadata before we update the advisors. Important for the generated instance advisors
       initClassMetaDataMap();
       synchronized (classMetaData)
       {
@@ -1592,7 +1592,7 @@ public class AspectManager
          pointcut.clearAdvisors();
       }
    }
-   
+
    /**
     * Retrieve an introduction pointcut of a certain name
     */
@@ -1852,7 +1852,7 @@ public class AspectManager
       }
       return aspect;
    }
-   
+
    protected Object createPerVmAspect(String def, AspectDefinition adef, ClassLoader scopedClassLoader)
    {
       Object instance = null;
@@ -1891,7 +1891,7 @@ public class AspectManager
    {
       internalRemoveAspectDefintion(name);
    }
-   
+
    protected AspectDefinition internalRemoveAspectDefintion(String name)
    {
       AspectDefinition def = (AspectDefinition) aspectDefinitions.remove(name);
@@ -1943,7 +1943,7 @@ public class AspectManager
    {
       return interfaceIntroductions;
    }
-   
+
    public Map getArrayReplacements()
    {
       return arrayReplacements;
@@ -2062,7 +2062,7 @@ public class AspectManager
          subscribedSubDomains.remove(domain);
       }
    }
-      
+
    public Map getSubscribedSubDomains()
    {
       return subscribedSubDomains;
@@ -2115,12 +2115,12 @@ public class AspectManager
    {
       lifecycleManager.addLifecycleDefinition(def);
    }
-   
+
    public void removeLifecycleDefinition(String name)
    {
       lifecycleManager.removeLifecycleDefinition(name);
    }
-   
+
    public void addLifecycleBinding(LifecycleCallbackBinding lifecycleBinding)
    {
       lifecycleManager.addLifecycleBinding(lifecycleBinding);
@@ -2135,52 +2135,52 @@ public class AspectManager
    {
       lifecycleManager.removeLifecycleBinding(name);
    }
-   
-   
-/*
-   public void dumpSubDomainsAndAdvisors(int indent)
-   {
-      indent(indent);
-      System.out.println("Manager: " + this);
-      indent++;
-      indent(indent);
-      System.out.println("<Advisors>");
-      //indent(indent);
 
-      for (Iterator it = advisors.keySet().iterator() ; it.hasNext() ; )
-      {
-         Class clazz = (Class) it.next();
-         Advisor advisor = null;
-         WeakReference ref = (WeakReference) advisors.get(clazz);
-         if (ref != null) advisor = (Advisor) ref.get();
-         indent(indent);
-         System.out.println(System.identityHashCode(advisor) + " " + advisor);
-         indent(indent);
-      }
-      indent--;
-      indent(indent);
-      System.out.println("</Advisors>");
 
-      indent(indent);
-      System.out.println("<Sub domains>");
-      indent++;
-      for (Iterator it = subscribedSubDomains.keySet().iterator(); it.hasNext() ; )
-      {
-         AspectManager manager = (AspectManager)it.next();
-         manager.dumpSubDomainsAndAdvisors(indent);
-      }
-      indent--;
-      indent(indent);
-      System.out.println("</Sub domains>");
-      indent--;
 
-   }
+//   public void dumpSubDomainsAndAdvisors(int indent)
+//   {
+//      indent(indent);
+//      System.out.println("Manager: " + this);
+//      indent++;
+//      indent(indent);
+//      System.out.println("<Advisors>");
+//      //indent(indent);
+//
+//      for (Iterator it = advisors.keySet().iterator() ; it.hasNext() ; )
+//      {
+//         Class clazz = (Class) it.next();
+//         Advisor advisor = null;
+//         WeakReference ref = (WeakReference) advisors.get(clazz);
+//         if (ref != null) advisor = (Advisor) ref.get();
+//         indent(indent);
+//         System.out.println(System.identityHashCode(advisor) + " " + advisor);
+//         indent(indent);
+//      }
+//      indent--;
+//      indent(indent);
+//      System.out.println("</Advisors>");
+//
+//      indent(indent);
+//      System.out.println("<Sub domains>");
+//      indent++;
+//      for (Iterator it = subscribedSubDomains.keySet().iterator(); it.hasNext() ; )
+//      {
+//         AspectManager manager = (AspectManager)it.next();
+//         manager.dumpSubDomainsAndAdvisors(indent);
+//      }
+//      indent--;
+//      indent(indent);
+//      System.out.println("</Sub domains>");
+//      indent--;
+//
+//   }
+//
+//   private void indent(int indent)
+//   {
+//      for (int i = 0 ; i < indent ; i++) System.out.print(" ");
+//   }
 
-   private void indent(int indent)
-   {
-      for (int i = 0 ; i < indent ; i++) System.out.print(" ");
-   }
-*/
    /**
     * Lock for write
     */
@@ -2215,7 +2215,7 @@ public class AspectManager
          }
       }
    }
-   
+
    protected void initSubscribedSubDomainsMap()
    {
       if (subscribedSubDomains == UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP)
@@ -2232,9 +2232,9 @@ public class AspectManager
          {
             unlockWrite();
          }
-      }      
+      }
    }
-   
+
    protected void initSubscribedSubDomainsQueueMap()
    {
       if (subscribedSubDomainsQueue == UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP)
@@ -2253,7 +2253,7 @@ public class AspectManager
          }
       }
    }
-   
+
    protected void initInterfaceIntroductionsMap()
    {
       if (interfaceIntroductions == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
@@ -2272,7 +2272,7 @@ public class AspectManager
          }
       }
    }
-   
+
    protected void initArrayReplacementMap()
    {
       if (arrayReplacements == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
@@ -2291,7 +2291,7 @@ public class AspectManager
          }
       }
    }
-   
+
    protected void initArrayBindingMap()
    {
       if (arrayBindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
@@ -2310,8 +2310,8 @@ public class AspectManager
          }
       }
    }
-   
-   
+
+
    protected void initAnnotationIntroductionsMap()
    {
       if (annotationIntroductions == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
@@ -2330,7 +2330,7 @@ public class AspectManager
          }
       }
    }
-   
+
    protected void initAnnotationOverridesMap()
    {
       if (annotationOverrides == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
@@ -2406,7 +2406,7 @@ public class AspectManager
          }
       }
    }
-   
+
    protected void initClassMetaDataLoadersMap()
    {
       if (classMetaDataLoaders == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
@@ -2425,7 +2425,7 @@ public class AspectManager
          }
       }
    }
-   
+
    protected void initInerceptorStacksMap()
    {
       if (interceptorStacks == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
@@ -2444,8 +2444,8 @@ public class AspectManager
          }
       }
    }
-   
-   
+
+
    protected void initDeclaresMap()
    {
       if (declares == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
@@ -2464,7 +2464,7 @@ public class AspectManager
          }
       }
    }
-   
+
    protected void initCflowStacksMap()
    {
       if (cflowStacks == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
@@ -2483,7 +2483,7 @@ public class AspectManager
          }
       }
    }
-   
+
    protected void initDynamicCflowsMap()
    {
       if (dynamicCFlows == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
@@ -2502,7 +2502,7 @@ public class AspectManager
          }
       }
    }
-   
+
    protected void initAspectDefintitionsMap()
    {
       if (aspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
@@ -2521,7 +2521,7 @@ public class AspectManager
          }
       }
    }
-   
+
    protected void initPerVMAspectsMap()
    {
       if (perVMAspects == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
@@ -2540,7 +2540,7 @@ public class AspectManager
          }
       }
    }
-   
+
    protected void initPointcutsMap()
    {
       if (pointcuts == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
@@ -2559,7 +2559,7 @@ public class AspectManager
          }
       }
    }
-   
+
    protected void initPointcutInfosMap()
    {
       if (pointcutInfos == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
@@ -2578,8 +2578,8 @@ public class AspectManager
          }
       }
    }
-   
-   
+
+
    protected void initClassMetaDataMap()
    {
       if (classMetaData == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
@@ -2616,7 +2616,7 @@ public class AspectManager
          }
       }
    }
-   
+
    protected void initPrecedenceDefsMap()
    {
       if (precedenceDefs == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
