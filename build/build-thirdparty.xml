@@ -55,7 +55,7 @@
       <componentref name="jboss/common-logging-spi" version="2.0.2.GA"/>
       <componentref name="jboss/jboss-retro" version="1.1.2"/>
       <componentref name="jboss/integration" version="5.0.0.Beta4"/>
-      <componentref name="jboss/microcontainer" version="2.0.0.Beta9"/>
+      <componentref name="jboss/microcontainer" version="2.0.0.Beta10"/>
       <componentref name="jboss/microcontainer14" version="2.0.0.Beta4"/>
       <componentref name="jboss/profiler/jvmti" version="1.0.0.CR5"/>
       <componentref name="jboss/test" version="1.0.3.GA"/>
