@@ -36,9 +36,6 @@ import org.jboss.aop.AspectXmlLoader;
 import org.jboss.aop.Domain;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.domain.DomainInitializer;
-import org.jboss.aop.domain.DomainInitializerCallback;
-import org.jboss.aop.domain.DomainInitializerCallbackHandler;
-import org.jboss.deployers.plugins.classloading.Module;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSRealDeployer;
@@ -368,28 +365,8 @@ public class AspectDeployer extends AbstractVFSRealDeployer
             throw new RuntimeException(policy + " must implement DomainInitializer");
          }
          DomainInitializer initializer = (DomainInitializer)policy;
-         domain = initializer.initializeDomain(new DomainInitializerCallbackHandler() {
-            public void handle(DomainInitializerCallback[] callbacks)
-            {
-               for (DomainInitializerCallback callback : callbacks)
-               {
-                  if (callback.getDataType() == Module.class)
-                  {
-                     callback.setValue(unit.getTopLevel().getAttachment(Module.class));
-                  }
-                  else if (callback.getDataType() == ClassLoader.class)
-                  {
-                     callback.setValue(unit.getClassLoader());
-                  }
-                  else
-                  {
-                     throw new RuntimeException("Invalid data type passed in by callback " + callback.getDataType());
-                  }
-               }
-            }
-         });
+         domain = initializer.initializeDomain(unit); 
       }
-      
       
       if (domain != null)
       {

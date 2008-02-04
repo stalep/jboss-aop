@@ -22,6 +22,7 @@
 package org.jboss.aop.domain;
 
 import org.jboss.aop.Domain;
+import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 
 /**
  * 
@@ -30,5 +31,5 @@ import org.jboss.aop.Domain;
  */
 public interface DomainInitializer
 {
-   Domain initializeDomain(DomainInitializerCallbackHandler handler);
+   Domain initializeDomain(VFSDeploymentUnit unit);
 }

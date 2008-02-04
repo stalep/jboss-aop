@@ -29,9 +29,8 @@ import org.jboss.aop.Domain;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.AOPClassPoolRepository;
 import org.jboss.aop.domain.DomainInitializer;
-import org.jboss.aop.domain.DomainInitializerCallback;
-import org.jboss.aop.domain.DomainInitializerCallbackHandler;
 import org.jboss.aop.domain.ScopedRepositoryClassLoaderDomain;
+import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
 import org.jboss.mx.loading.RepositoryClassLoader;
@@ -48,14 +47,9 @@ public class RepositoryClassLoaderScopingPolicy implements AOPClassLoaderScoping
    /** A map of domains by loader repository, maintaned by the top level AspectManager */
    private Map<Object, Domain> scopedClassLoaderDomains = new WeakHashMap<Object, Domain>();
 
-
-   public Domain initializeDomain(DomainInitializerCallbackHandler handler)
+   public Domain initializeDomain(VFSDeploymentUnit unit)
    {
-      DomainInitializerCallback<ClassLoader> callback = new DomainInitializerCallback<ClassLoader>(ClassLoader.class);
-      DomainInitializerCallback[] callbacks = new DomainInitializerCallback[]{callback};
-      handler.handle(callbacks);
-      
-      ClassLoader loader = callback.getValue();
+      ClassLoader loader = unit.getClassLoader();
       Domain domain = getDomain(loader, AspectManager.getTopLevelAspectManager());
       
       AspectManager.instance().registerClassLoader(loader); //Ends up in classpool factory create method
