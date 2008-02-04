@@ -45,7 +45,7 @@ import org.jboss.aop.metadata.SimpleMetaData;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-class MarshalledProxyAdvisor extends Advisor implements InstanceAdvisor
+public class MarshalledProxyAdvisor extends Advisor implements InstanceAdvisor
 {
    TLongObjectHashMap methodInfos = new TLongObjectHashMap();
    Object instance;
