@@ -50,7 +50,7 @@ import java.lang.reflect.Proxy;
  */
 public class PortableAnnotationElement
 {
-   private static transient boolean closingDownManager;
+   private static volatile boolean closingDownManager;
    
    public static void setClosingDownManager(boolean closing)
    {
