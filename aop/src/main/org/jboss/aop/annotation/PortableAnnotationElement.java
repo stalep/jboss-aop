@@ -50,15 +50,29 @@ import java.lang.reflect.Proxy;
  */
 public class PortableAnnotationElement
 {
+   private static transient boolean closingDownManager;
+   
+   public static void setClosingDownManager(boolean closing)
+   {
+      closingDownManager = closing; 
+   }
+   
    public static boolean isInvisibleAnnotationPresent(Field field, String annotation) throws Exception
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       CtField ctMethod = ReflectToJavassist.fieldToJavassist(field);
       return AnnotationElement.isInvisibleAnnotationPresent(ctMethod, annotation);
-
    }
 
    public static boolean isInvisibleAnnotationPresent(CtField field, String annotation)
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       FieldInfo mi = field.getFieldInfo2();
 
       AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
@@ -69,6 +83,10 @@ public class PortableAnnotationElement
 
    public static boolean isVisibleAnnotationPresent(CtField field, String annotation)
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       FieldInfo mi = field.getFieldInfo2();
 
       AnnotationsAttribute visible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.visibleTag);
@@ -79,6 +97,10 @@ public class PortableAnnotationElement
 
    public static boolean isAnyAnnotationPresent(CtField ctField, String annotation)
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       FieldInfo mi = ctField.getFieldInfo2();
 
       AnnotationsAttribute visible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.visibleTag);
@@ -98,6 +120,10 @@ public class PortableAnnotationElement
 
    public static boolean isInvisibleAnnotationPresent(Method method, String annotation) throws Exception
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
       if (ctMethod == null) return false;
       MethodInfo mi = ctMethod.getMethodInfo2();
@@ -112,6 +138,10 @@ public class PortableAnnotationElement
 
    public static boolean isAnyAnnotationPresent(Field field, String annotation) throws Exception
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       CtField ctField = ReflectToJavassist.fieldToJavassist(field);
       return AnnotationElement.isAnyAnnotationPresent(ctField, annotation);
 
@@ -119,6 +149,10 @@ public class PortableAnnotationElement
 
    public static boolean isAnyAnnotationPresent(Method method, String annotation) throws Exception
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
       if (ctMethod == null) return false;
       boolean present = AnnotationElement.isAnyAnnotationPresent(ctMethod, annotation);
@@ -128,6 +162,10 @@ public class PortableAnnotationElement
 
    public static boolean isAnyAnnotationPresent(CtMethod ctMethod, String annotation)
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       MethodInfo mi = ctMethod.getMethodInfo2();
 
       AnnotationsAttribute visible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.visibleTag);
@@ -147,16 +185,21 @@ public class PortableAnnotationElement
 
    public static boolean isInvisibleAnnotationPresent(Constructor con, String annotation) throws Exception
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
       return AnnotationElement.isInvisibleAnnotationPresent(ctMethod, annotation);
-
-
    }
 
    public static boolean isInvisibleAnnotationPresent(CtConstructor ctMethod, String annotation)
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       MethodInfo mi = ctMethod.getMethodInfo2();
-
 
       AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
       if (invisible == null) return false;
@@ -166,6 +209,10 @@ public class PortableAnnotationElement
 
    public static boolean isVisibleAnnotationPresent(CtConstructor ctMethod, String annotation)
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       MethodInfo mi = ctMethod.getMethodInfo2();
 
 
@@ -177,13 +224,20 @@ public class PortableAnnotationElement
 
    public static boolean isAnyAnnotationPresent(Constructor con, String annotation) throws Exception
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
       return AnnotationElement.isAnyAnnotationPresent(ctMethod, annotation);
-
    }
 
    public static boolean isAnyAnnotationPresent(CtConstructor ctMethod, String annotation)
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       MethodInfo mi = ctMethod.getMethodInfo2();
 
       AnnotationsAttribute visible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.visibleTag);
@@ -203,6 +257,10 @@ public class PortableAnnotationElement
 
    public static boolean isInvisibleAnnotationPresent(Class clazz, String annotation) throws Exception
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       if (clazz == Void.TYPE) return false;
       ClassFile cf = AnnotationElement.getClassFile(clazz);
 
@@ -214,6 +272,10 @@ public class PortableAnnotationElement
 
    public static boolean isAnyAnnotationPresent(CtClass clazz, String annotation) throws Exception
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       try
       {
          if (clazz == CtClass.voidType) return false;
@@ -250,6 +312,10 @@ public class PortableAnnotationElement
 
    public static boolean isAnyAnnotationPresent(Class clazz, String annotation) throws Exception
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       if (clazz == Void.TYPE) return false;
       ClassFile cf = AnnotationElement.getClassFile(clazz);
       AnnotationsAttribute visible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
@@ -285,6 +351,10 @@ public class PortableAnnotationElement
 
    public static Object getInvisibleAnnotation(Method method, Class annotation)
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       try
       {
          CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
@@ -307,6 +377,10 @@ public class PortableAnnotationElement
 
    public static Object getInvisibleAnnotation(Constructor con, Class annotation)
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       try
       {
          CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
@@ -326,6 +400,10 @@ public class PortableAnnotationElement
 
    public static Object getInvisibleAnnotation(Field field, Class annotation)
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       try
       {
          CtField ctField = ReflectToJavassist.fieldToJavassist(field);
@@ -345,6 +423,10 @@ public class PortableAnnotationElement
 
    public static Object getInvisibleAnnotation(Class clazz, Class annotation)
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       try
       {
          if (clazz == Void.TYPE) return null;
@@ -407,6 +489,10 @@ public class PortableAnnotationElement
    public static boolean isAnyAnnotationPresent(Field field, Class annotation) throws Exception
    {
       if (AnnotationElement.isVisibleAnnotationPresent(field, annotation)) return true;
+      if (closingDownManager)
+      {
+         return false;
+      }
       CtField ctMethod = ReflectToJavassist.fieldToJavassist(field);
       return isInvisibleAnnotationPresent(ctMethod, annotation.getName());
    }
@@ -415,6 +501,10 @@ public class PortableAnnotationElement
    {
       if (clazz == Void.TYPE) return false;
       if (AnnotationElement.isVisibleAnnotationPresent(clazz, annotation)) return true;
+      if (closingDownManager)
+      {
+         return false;
+      }
       ClassFile cf = getClassFile(clazz);
 
       AnnotationsAttribute invisible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.invisibleTag);
@@ -426,19 +516,24 @@ public class PortableAnnotationElement
    public static boolean isAnyAnnotationPresent(Constructor con, Class annotation) throws Exception
    {
       if (AnnotationElement.isVisibleAnnotationPresent(con, annotation)) return true;
+      if (closingDownManager)
+      {
+         return false;
+      }
       CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
       return isVisibleAnnotationPresent(ctMethod, annotation.getName());
-
-
    }
 
    public static boolean isAnyAnnotationPresent(Method method, Class annotation) throws Exception
    {
       if (AnnotationElement.isVisibleAnnotationPresent(method, annotation)) return true;
+      if (closingDownManager)
+      {
+         return false;
+      }
       CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
       if (ctMethod == null) return false;
       MethodInfo mi = ctMethod.getMethodInfo2();
-
 
       AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
       if (invisible == null) return false;
@@ -448,12 +543,20 @@ public class PortableAnnotationElement
 
    public static boolean isVisibleAnnotationPresent(Field field, String annotation) throws Exception
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       CtField ctMethod = ReflectToJavassist.fieldToJavassist(field);
       return isVisibleAnnotationPresent(ctMethod, annotation);
    }
 
    public static boolean isVisibleAnnotationPresent(Class clazz, String annotation) throws Exception
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       if (clazz == Void.TYPE) return false;
 
       ClassFile cf = getClassFile(clazz);
@@ -466,14 +569,20 @@ public class PortableAnnotationElement
 
    public static boolean isVisibleAnnotationPresent(Constructor con, String annotation) throws Exception
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
       return isVisibleAnnotationPresent(ctMethod, annotation);
-
-
    }
 
    public static boolean isVisibleAnnotationPresent(Method method, String annotation) throws Exception
    {
+      if (closingDownManager)
+      {
+         return false;
+      }
       CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
       if (ctMethod == null) return false;
       MethodInfo mi = ctMethod.getMethodInfo2();

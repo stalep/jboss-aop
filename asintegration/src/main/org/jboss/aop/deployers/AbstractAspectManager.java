@@ -37,6 +37,7 @@ import javax.management.ObjectName;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.AspectXmlLoader;
+import org.jboss.aop.annotation.PortableAnnotationElement;
 import org.jboss.aop.asintegration.JBossIntegration;
 import org.jboss.aop.deployment.AspectManagerService;
 import org.jboss.deployment.DeploymentInfo;
@@ -167,6 +168,7 @@ public abstract class AbstractAspectManager
                Document doc = AspectXmlLoader.loadDocument(new BufferedInputStream(in));
                AspectXmlLoader loader = new AspectXmlLoader();
                loader.setManager(getAspectManager());
+               PortableAnnotationElement.setClosingDownManager(true);
                loader.undeployXML(doc, null);
             }
             finally
