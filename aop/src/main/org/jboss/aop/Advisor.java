@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -384,8 +385,14 @@ public abstract class Advisor
          throw new RuntimeException("annotation or annotationClass must be passed in");
       }
 
-      annotationClass = loadAnnotationClass(tgt, annotation, annotationClass);
-      if (annotationClass != null && metadata != null && metadata.isAnnotationPresent(annotationClass)) return true;
+      if (metadata != null)
+      {
+         if (annotationClass == null)
+         {
+            annotationClass = loadAnnotationClass(tgt, annotation);
+         }
+         if (annotationClass != null && metadata.isAnnotationPresent(annotationClass)) return true;
+      }
 
       if (annotation == null)
       {
@@ -508,20 +515,23 @@ public abstract class Advisor
          throw new RuntimeException("annotation or annotationClass must be passed in");
       }
 
-      annotationClass = loadAnnotationClass(m.getDeclaringClass(), annotation, annotationClass);
-      
-      if (annotation == null)
-      {
-         annotation = annotationClass.getName();
-      }
       if (metadata != null)
       {
-         if (hasJoinPointAnnotation(m.getDeclaringClass(), new MethodSignature(m), annotationClass))
+         if (annotationClass == null)
+         {
+            annotationClass = loadAnnotationClass(m.getDeclaringClass(), annotation);
+         }
+         
+         if (annotationClass != null && hasJoinPointAnnotation(m.getDeclaringClass(), new MethodSignature(m), annotationClass))
          {
             return true;
          }
       }
 
+      if (annotation == null)
+      {
+         annotation = annotationClass.getName();
+      }
       if (annotations.hasAnnotation(m, annotation)) return true;
       try
       {
@@ -587,7 +597,7 @@ public abstract class Advisor
 
    private boolean hasJoinPointAnnotationFromStringName(Class declaringClass, org.jboss.metadata.spi.signature.Signature sig, String annotationName)
    {
-      Class annotationClass = loadAnnotationClass(declaringClass, annotationName, null);
+      Class annotationClass = loadAnnotationClass(declaringClass, annotationName);
       if (annotationClass != null)
       {
          return this.hasJoinPointAnnotation(declaringClass, sig, annotationClass);
@@ -647,30 +657,24 @@ public abstract class Advisor
       return AnnotationElement.isAnyAnnotationPresent(member, annotation);
    }
 
-   private Class loadAnnotationClass(Class tgt, String annotation, Class annotationClass)
+   private Class loadAnnotationClass(Class tgt, String annotation)
    {
-      if (annotationClass != null)
-      {
-         return annotationClass;
-      }
-      if (annotation == null)
-      {
-         throw new RuntimeException("Both annotation and annotationClass were null");
-      }
+      ClassLoader cl = null;
       try
       {
-         if (metadata != null)
+         cl = SecurityActions.getClassLoader(tgt);
+         if (cl == null)
          {
-            if (annotationClass == null)
-            {
-               ClassLoader cl = SecurityActions.getClassLoader(tgt);
-               if (cl == null)
-               {
-                  cl = SecurityActions.getContextClassLoader();
-               }
-               return cl.loadClass(annotation);
-            }
+            cl = SecurityActions.getContextClassLoader();
          }
+
+         if (isIgnored(cl, annotation))
+         {
+            return null;
+         }
+
+         Class clazz = cl.loadClass(annotation);
+         return clazz;
       }
       catch (ClassNotFoundException e)
       {
@@ -680,8 +684,49 @@ public abstract class Advisor
       {
          //The classloader may be invalid, just ignore this
       }
+      recordIgnored(cl, annotation);
       return null;
    }
+   
+   static WeakHashMap<ClassLoader, HashSet<String>> ignoredAnnotations = new WeakHashMap<ClassLoader, HashSet<String>>();
+   static ReentrantReadWriteLock ignoredAnnotationsLock = new ReentrantReadWriteLock();
+   private void recordIgnored(ClassLoader loader, String annotationName)
+   {
+      ignoredAnnotationsLock.writeLock().lock();
+      try
+      {
+         HashSet<String> annotationNames = ignoredAnnotations.get(loader);
+         if (annotationNames == null)
+         {
+            annotationNames = new HashSet<String>();
+            ignoredAnnotations.put(loader, annotationNames);
+         }
+         annotationNames.add(annotationName);
+      }
+      finally
+      {
+         ignoredAnnotationsLock.writeLock().unlock();
+      }
+   }
+   
+   private boolean isIgnored(ClassLoader loader, String annotationName)
+   {
+      ignoredAnnotationsLock.readLock().lock();
+      try
+      {
+         HashSet<String> annotationNames = ignoredAnnotations.get(loader);
+         if (annotationNames != null)
+         {
+            return annotationNames.contains(annotationName);
+         }
+      }
+      finally
+      {
+         ignoredAnnotationsLock.readLock().unlock();
+      }
+      return false;
+   }
+   
    
    /**
     * Get the metadata
