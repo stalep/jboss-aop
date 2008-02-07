@@ -23,12 +23,21 @@ package org.jboss.test.aop.proxy;
 
 import java.io.Externalizable;
 import java.rmi.MarshalledObject;
+import java.util.ArrayList;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.jboss.aop.proxy.container.AOPProxyFactoryMixin;
 import org.jboss.aop.proxy.container.ContainerProxyCacheKey;
+import org.jboss.metadata.plugins.loader.memory.MemoryMetaDataLoader;
+import org.jboss.metadata.plugins.repository.basic.BasicMetaDataRepository;
+import org.jboss.metadata.spi.MetaData;
+import org.jboss.metadata.spi.MutableMetaData;
+import org.jboss.metadata.spi.repository.MutableMetaDataRepository;
+import org.jboss.metadata.spi.scope.CommonLevels;
+import org.jboss.metadata.spi.scope.Scope;
+import org.jboss.metadata.spi.scope.ScopeKey;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
@@ -53,7 +62,7 @@ public class SerializeContainerProxyCacheKeyTestCase extends AOPTestWithSetup
    }
 
    
-   public void testSerializeKey() throws Exception
+   public void testSerializeKeyNoMetaData() throws Exception
    {
       ContainerProxyCacheKey original1 = new ContainerProxyCacheKey(
             "/", 
@@ -69,7 +78,7 @@ public class SerializeContainerProxyCacheKeyTestCase extends AOPTestWithSetup
             getMixins(),
             null);
       
-      assertNotSame(original1, original2);
+      assertFalse(original1.equals(original2));
       
       MarshalledObject mo1 = new MarshalledObject(original1);
       MarshalledObject mo2 = new MarshalledObject(original2);
@@ -78,8 +87,87 @@ public class SerializeContainerProxyCacheKeyTestCase extends AOPTestWithSetup
       ContainerProxyCacheKey deserialized2 = (ContainerProxyCacheKey)mo2.get();
       
       assertEquals(original1, deserialized1);
+      assertEquals(deserialized1, original1);
       assertEquals(original2, deserialized2);
+      assertEquals(deserialized2, original2);
+      assertFalse(deserialized1.equals(deserialized2));
+   }
+   
+   public void testEqualsMetaDataNotSerialized()
+   {
+      MetaData md = getMetaData("A", "testEqualsMetaDataNotSerialized");
+
+      ContainerProxyCacheKey original1 = new ContainerProxyCacheKey(
+            "/", 
+            SerializeContainerProxyCacheKeyTestCase.class, 
+            new Class[] {Externalizable.class, SomeInterface.class}, 
+            getMixins(),
+            md);
+
+      ContainerProxyCacheKey original2 = new ContainerProxyCacheKey(
+            "/", 
+            SerializeContainerProxyCacheKeyTestCase.class, 
+            new Class[] {Externalizable.class, SomeInterface.class}, 
+            getMixins(),
+            md);
       
+      assertEquals(original1, original2);
+      assertEquals(original2, original1);
+      
+      ContainerProxyCacheKey original3 = new ContainerProxyCacheKey(
+            "/", 
+            SerializeContainerProxyCacheKeyTestCase.class, 
+            new Class[] {Externalizable.class, SomeInterface.class}, 
+            getMixins(),
+            null);
+
+      assertFalse(original1.equals(original3));
+      
+      MetaData md2 = getMetaData("A", "testEqualsMetaDataNotSerialized2");
+      ContainerProxyCacheKey original4 = new ContainerProxyCacheKey(
+            "/", 
+            SerializeContainerProxyCacheKeyTestCase.class, 
+            new Class[] {Externalizable.class, SomeInterface.class}, 
+            getMixins(),
+            md2);
+      
+      assertFalse(original1.equals(original4));
+   }
+   
+   public void testSerializeKeyWithMetaData() throws Exception
+   {
+      MetaData md = getMetaData("A", "testSerializeKeyWithMetaData");
+      ContainerProxyCacheKey original1 = new ContainerProxyCacheKey(
+            "/", 
+            SerializeContainerProxyCacheKeyTestCase.class, 
+            new Class[] {Externalizable.class, SomeInterface.class}, 
+            getMixins(),
+            md);
+      
+      MarshalledObject mo1 = new MarshalledObject(original1);
+      
+      ContainerProxyCacheKey deserialized1 = (ContainerProxyCacheKey)mo1.get();
+      
+      assertEquals(original1, deserialized1);
+      assertEquals(deserialized1, original1);
+   }
+   
+   private MetaData getMetaData(String app, String instance)
+   {
+      MutableMetaDataRepository repository = new BasicMetaDataRepository();
+      ArrayList<Scope> scopes = new ArrayList<Scope>();
+      scopes.add(new Scope(CommonLevels.APPLICATION, app));
+      scopes.add(new Scope(CommonLevels.INSTANCE, instance));
+      ScopeKey scopeKey = new ScopeKey(scopes);
+      
+      MemoryMetaDataLoader loader = new MemoryMetaDataLoader(scopeKey);
+      repository.addMetaDataRetrieval(loader);
+      
+      ((MutableMetaData)loader).addAnnotation(new AnnotationImpl());
+      
+      MetaData md = repository.getMetaData(scopeKey);
+      
+      return md;
    }
 
    private AOPProxyFactoryMixin[] getMixins()

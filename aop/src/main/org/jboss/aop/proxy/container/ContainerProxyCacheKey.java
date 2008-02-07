@@ -46,6 +46,8 @@ public class ContainerProxyCacheKey implements Serializable
    private WeakReference<Class>[] addedInterfaces = EMTPY_WR_ARRAY;
    
    private MetaData metaData;
+   /** In case we are serializing with an unserializable MetaData in the same JVM, give a chance to make sure that the metaData is the same */
+   private long metaDataIdentityHashCode; 
    
    private AOPProxyFactoryMixin[] addedMixins = EMPTY_MIXIN_ARRAY;
    private int hashcode = 0;
@@ -197,21 +199,42 @@ public class ContainerProxyCacheKey implements Serializable
    
    private boolean compareMetadataContext(ContainerProxyCacheKey other)
    {
-      if (this.metaData == null && other.metaData == null)
+      if (this.metaData == null && this.metaDataIdentityHashCode == 0 && other.metaData == null && other.metaDataIdentityHashCode == 0)
       {
+         return true;
       }
-      else if ((this.metaData != null && other.metaData != null))
+      
+      if (this.metaData != null && other.metaData != null)
       {
-         if (!this.metaData.equals(other.metaData))
+         return this.metaData.equals(other.metaData);
+      }
+      
+      if (this.metaDataIdentityHashCode != 0 && other.metaDataIdentityHashCode != 0)
+      {
+         return this.metaDataIdentityHashCode == other.metaDataIdentityHashCode;
+      }
+      
+      if (this.metaData != null && other.metaData == null && other.metaDataIdentityHashCode != 0)
+      {
+         long oneHashCode = System.identityHashCode(this.metaData);
+         if (oneHashCode == other.metaDataIdentityHashCode)
          {
-            return false;
+            other.metaData = this.metaData;
+            return true;
          }
       }
-      else
+      
+      if (other.metaData != null && this.metaData == null && this.metaDataIdentityHashCode != 0)
       {
-         return false;
+         long twoHashCode = System.identityHashCode(other.metaData);
+         if (twoHashCode == this.metaDataIdentityHashCode)
+         {
+            this.metaData = other.metaData;
+            return true;
+         }
       }
-      return true;
+      
+      return false;
    }
    
    private boolean compareClass(ContainerProxyCacheKey other)
@@ -266,7 +289,16 @@ public class ContainerProxyCacheKey implements Serializable
           }
        }
        out.writeObject(ifs);
-       out.writeObject(metaData);
+       if (metaData instanceof Serializable)
+       {
+          out.writeObject(metaData);   
+       }
+       else
+       {
+          out.writeObject(null);
+       }
+       out.writeLong(System.identityHashCode(metaData));
+       
        out.writeObject(addedMixins);
        out.writeInt(hashCode());
     }
@@ -286,6 +318,7 @@ public class ContainerProxyCacheKey implements Serializable
           }
        }
        metaData = (MetaData)in.readObject();
+       metaDataIdentityHashCode = in.readLong();
        addedMixins = (AOPProxyFactoryMixin[])in.readObject();
        hashcode = in.readInt();
     }
