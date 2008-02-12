@@ -32,7 +32,8 @@ import org.jboss.aop.joinpoint.Invocation;
  */
 public class TestDupeInterceptor implements Interceptor
 {
-
+   public static boolean invoked;
+   
    public String getName()
    {
       // TODO Auto-generated method stub
@@ -41,6 +42,7 @@ public class TestDupeInterceptor implements Interceptor
 
    public Object invoke(Invocation invocation) throws Throwable
    {
+      invoked = true; 
       return invocation.invokeNext();
    }
 

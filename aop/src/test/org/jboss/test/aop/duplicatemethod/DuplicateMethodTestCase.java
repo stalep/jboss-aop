@@ -31,6 +31,7 @@ import javassist.util.proxy.ProxyFactory;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.jboss.aop.Advised;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
@@ -54,39 +55,11 @@ public class DuplicateMethodTestCase extends AOPTestWithSetup
       return suite;
    }
    
-   public void testDupe()
+   public void testDupe() throws Exception
    {
+      TestDupe testDupe = new TestDupe();
+      assertTrue(testDupe instanceof Advised);
       
-      if(System.getSecurityManager() != null)
-      {
-         try 
-         {
-            AccessController.doPrivileged(new PrivilegedExceptionAction()
-            {
-               public Object run()
-               {
-                  generateProxy();
-                  return null;
-               }
-            });
-         }
-         catch (PrivilegedActionException e)
-         {
-            Exception ex = e.getException();
-            if (ex instanceof RuntimeException)
-            {
-               throw (RuntimeException)ex;
-            }
-            throw new RuntimeException(ex);
-         }
-
-      }
-      else
-         System.out.println("SystemManager == NULL");
-   }
-   
-   public void generateProxy()
-   {
       System.out.println("Generating proxy");
       ProxyFactory f = new ProxyFactory();
       f.setSuperclass(TestDupe.class);
@@ -98,20 +71,9 @@ public class DuplicateMethodTestCase extends AOPTestWithSetup
       });
       Class c = f.createClass();
 
-      try
-      {
-         TestDupe td = (TestDupe) c.newInstance();
-         td.foo();
-      }
-      catch (InstantiationException e)
-      {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      }
-      catch (IllegalAccessException e)
-      {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      }
+      TestDupe td = (TestDupe) c.newInstance();
+      TestDupeInterceptor.invoked = false;
+      td.foo();
+      assertTrue(TestDupeInterceptor.invoked);
    }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aop>
-  <bind pointcut="execution(* TestDupe*->foo())">
-    <interceptor class="TestDupeInterceptor"/>
+  <bind pointcut="execution(* $instanceof{org.jboss.test.aop.duplicatemethod.TestDupe}->foo())">
+    <interceptor class="org.jboss.test.aop.duplicatemethod.TestDupeInterceptor"/>
   </bind>
 </aop>
