@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.Arrays;
 
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.ProxyFactory;
@@ -69,11 +70,15 @@ public class DuplicateMethodTestCase extends AOPTestWithSetup
             return !m.getName().equals("finalize");
          }
       });
+      
+      System.out.println("Create");
       Class c = f.createClass();
+      System.out.println("Created");
 
       TestDupe td = (TestDupe) c.newInstance();
       TestDupeInterceptor.invoked = false;
       td.foo();
+      //If it fails on this line - it probably means the proxy was not woven correctly
       assertTrue(TestDupeInterceptor.invoked);
    }
 }
