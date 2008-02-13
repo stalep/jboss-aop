@@ -325,8 +325,9 @@ $ java -cp=&lt;classpath as described above&gt; -Djboss.aop.path=&lt;path to jbo
                   </para>
                   <para>
                      To enable filtering, you can use the <literal>jboss.aop.exclude</literal> System Property. This System Property
-                     is a comma delimited list.  The strings in the list can be package names and/or classnames.  No wildcards
-                     are allowed. Packages/classes within this list will ignored by JBoss AOP.
+                     is a comma delimited list.  The strings in the list can be package names and/or classnames.  Packages/classes within
+                     this list will ignored by JBoss AOP. You can use the wildcard <literal>*</literal> in place of a classname, this
+                     will then exclude all classes. No other wildcards are supported.
                   </para>
                   <programlisting>
                      java -Djboss.aop.exclude=org.jboss,org.apache ...
