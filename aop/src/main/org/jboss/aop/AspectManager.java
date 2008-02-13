@@ -815,6 +815,7 @@ public class AspectManager
       for (int i = 0; i < exclude.size(); i++)
       {
          String str = (String) exclude.get(i);
+         if (str.equals("*")) return true;
          if (classname.startsWith(str)) return true;
       }
       return false;
