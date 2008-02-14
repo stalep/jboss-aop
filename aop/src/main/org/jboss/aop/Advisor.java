@@ -385,18 +385,14 @@ public abstract class Advisor
          throw new RuntimeException("annotation or annotationClass must be passed in");
       }
 
-      if (metadata != null)
-      {
-         if (annotationClass == null)
-         {
-            annotationClass = loadAnnotationClass(tgt, annotation);
-         }
-         if (annotationClass != null && metadata.isAnnotationPresent(annotationClass)) return true;
-      }
-
       if (annotation == null)
       {
          annotation = annotationClass.getName();
+      }
+
+      if (metadata != null)
+      {
+         if (metadata.isMetaDataPresent(annotation)) return true;
       }
 
       if (annotations.hasClassAnnotation(annotation)) return true;
@@ -515,23 +511,18 @@ public abstract class Advisor
          throw new RuntimeException("annotation or annotationClass must be passed in");
       }
 
+      if (annotation == null)
+      {
+         annotation = annotationClass.getName();
+      }
       if (metadata != null)
       {
-         if (annotationClass == null)
-         {
-            annotationClass = loadAnnotationClass(m.getDeclaringClass(), annotation);
-         }
-         
-         if (annotationClass != null && hasJoinPointAnnotation(m.getDeclaringClass(), new MethodSignature(m), annotationClass))
+         if (hasJoinPointAnnotation(m.getDeclaringClass(), new MethodSignature(m), annotation))
          {
             return true;
          }
       }
 
-      if (annotation == null)
-      {
-         annotation = annotationClass.getName();
-      }
       if (annotations.hasAnnotation(m, annotation)) return true;
       try
       {
@@ -551,7 +542,7 @@ public abstract class Advisor
    {
       if (metadata != null)
       {
-         if (hasJoinPointAnnotationFromStringName(m.getDeclaringClass(), new FieldSignature(m), annotation))
+         if (hasJoinPointAnnotation(m.getDeclaringClass(), new FieldSignature(m), annotation))
          {
             return true;
          }
@@ -575,7 +566,7 @@ public abstract class Advisor
    {
       if (metadata != null)
       {
-         if (hasJoinPointAnnotationFromStringName(m.getDeclaringClass(), new ConstructorSignature(m), annotation))
+         if (hasJoinPointAnnotation(m.getDeclaringClass(), new ConstructorSignature(m), annotation))
          {
             return true;
          }
@@ -595,27 +586,16 @@ public abstract class Advisor
       return false;
    }
 
-   private boolean hasJoinPointAnnotationFromStringName(Class declaringClass, org.jboss.metadata.spi.signature.Signature sig, String annotationName)
-   {
-      Class annotationClass = loadAnnotationClass(declaringClass, annotationName);
-      if (annotationClass != null)
-      {
-         return this.hasJoinPointAnnotation(declaringClass, sig, annotationClass);
-      }
-      
-      return false;
-   }
-   
-   private boolean hasJoinPointAnnotation(Class declaringClass, org.jboss.metadata.spi.signature.Signature sig, Class annotationClass)
+   private boolean hasJoinPointAnnotation(Class declaringClass, org.jboss.metadata.spi.signature.Signature sig, String annotation)
    {
       if (metadata != null)
       {
-         if (annotationClass != null)
+         if (annotation != null)
          {
             MetaData md = metadata.getComponentMetaData(sig);
             if (md != null)
             {
-               if (md.isAnnotationPresent(annotationClass))
+               if (md.isMetaDataPresent(annotation))
                   return true;
             }
          }
@@ -657,77 +637,6 @@ public abstract class Advisor
       return AnnotationElement.isAnyAnnotationPresent(member, annotation);
    }
 
-   private Class loadAnnotationClass(Class tgt, String annotation)
-   {
-      ClassLoader cl = null;
-      try
-      {
-         cl = SecurityActions.getClassLoader(tgt);
-         if (cl == null)
-         {
-            cl = SecurityActions.getContextClassLoader();
-         }
-
-         if (isIgnored(cl, annotation))
-         {
-            return null;
-         }
-
-         Class clazz = cl.loadClass(annotation);
-         return clazz;
-      }
-      catch (ClassNotFoundException e)
-      {
-         //The "annotation" is probably aop metadata for which there will be no corresponding class
-      }
-      catch(IllegalStateException e)
-      {
-         //The classloader may be invalid, just ignore this
-      }
-      recordIgnored(cl, annotation);
-      return null;
-   }
-   
-   static WeakHashMap<ClassLoader, HashSet<String>> ignoredAnnotations = new WeakHashMap<ClassLoader, HashSet<String>>();
-   static ReentrantReadWriteLock ignoredAnnotationsLock = new ReentrantReadWriteLock();
-   private void recordIgnored(ClassLoader loader, String annotationName)
-   {
-      ignoredAnnotationsLock.writeLock().lock();
-      try
-      {
-         HashSet<String> annotationNames = ignoredAnnotations.get(loader);
-         if (annotationNames == null)
-         {
-            annotationNames = new HashSet<String>();
-            ignoredAnnotations.put(loader, annotationNames);
-         }
-         annotationNames.add(annotationName);
-      }
-      finally
-      {
-         ignoredAnnotationsLock.writeLock().unlock();
-      }
-   }
-   
-   private boolean isIgnored(ClassLoader loader, String annotationName)
-   {
-      ignoredAnnotationsLock.readLock().lock();
-      try
-      {
-         HashSet<String> annotationNames = ignoredAnnotations.get(loader);
-         if (annotationNames != null)
-         {
-            return annotationNames.contains(annotationName);
-         }
-      }
-      finally
-      {
-         ignoredAnnotationsLock.readLock().unlock();
-      }
-      return false;
-   }
-   
-   
    /**
     * Get the metadata
     * 
