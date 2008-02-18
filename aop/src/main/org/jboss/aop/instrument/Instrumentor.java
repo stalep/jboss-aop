@@ -170,6 +170,28 @@ public abstract class Instrumentor
       }
       return false;
    }
+   
+   public boolean isProxyObject(CtClass clazz) throws NotFoundException
+   {
+      CtClass[] interfaces = clazz.getInterfaces();
+      CtClass proxyObject = forName("javassist.util.proxy.ProxyObject");
+      for (int i = 0; i < interfaces.length; i++)
+      {
+         if (interfaces[i].equals(proxyObject)) return true;
+         if (interfaces[i].getName().equals("javassist.util.proxy.ProxyObject")) return true;
+      }
+      return false;
+   }
+   
+   public void prepareClassForTransformation(CtClass clazz) throws NotFoundException
+   {
+      CtMethod[] methods = clazz.getDeclaredMethods();
+      for(int i=0; i < methods.length;i++)
+      {
+         if(methods[i].getName().equals("_getAdvisor"))
+            clazz.removeMethod(methods[i]);
+      }
+   }
 
    public static boolean implementsAdvised(CtClass clazz) throws NotFoundException
    {
@@ -688,6 +710,7 @@ public abstract class Instrumentor
             clazz.isArray() ||
             clazz.getName().startsWith("org.jboss.aop") ||
             isAdvised(clazz) ||
+//            isProxyObject(clazz) ||
             !isTransformable(clazz));
    }
 
@@ -700,6 +723,7 @@ public abstract class Instrumentor
       try
       {
          if (shouldNotTransform(clazz)) return false;
+         prepareClassForTransformation(clazz);
          if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("trying to transform " + clazz.getName());
 
          DeclareChecker.checkDeclares(manager, clazz, advisor);
