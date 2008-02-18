@@ -188,7 +188,8 @@ public abstract class Instrumentor
       CtMethod[] methods = clazz.getDeclaredMethods();
       for(int i=0; i < methods.length;i++)
       {
-         if(methods[i].getName().equals("_getAdvisor"))
+         if(methods[i].getName().equals("_getAdvisor") ||
+               methods[i].getName().equals("_getInstanceAdvisor"))
             clazz.removeMethod(methods[i]);
       }
    }
