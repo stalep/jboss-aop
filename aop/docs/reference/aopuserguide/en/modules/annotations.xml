@@ -1,0 +1,311 @@
+<chapter id="annotations">
+
+   <title>Aspect-Oriented Annotations</title>
+
+   <para>
+      Annotations are a new feature of JDK 5.0 that allow you to attach metadata to any Java construct.  They allow you
+      to define metadata in a typesafe way and apply it to a class, method, constructor, field, or parameter. For those
+      of you familiar with XDoclet, annotations will be very intuitive to you in that you are used to declaring tags to
+      generate code. The main difference between the two is that annotations are a typed part of the Java language,
+      while XDoclet tags can be mistyped and are harder to create.  In a nutshell, JDK 5.0 annotations allow you to
+      define new Java syntax.
+   </para>
+   <para>
+      AOP provides a unique way of encapsulating behavior and applying it transparently to your application code.  If
+      you combine it with annotations, you basically have a very structured, simple way of extending the Java language.
+      The annotation is the syntax, and the aspect provides the functionality for that aspect.  This chapter walks
+      through detailed examples on how you can use AOP and annotations to turn your frameworks into Java language
+      features.
+   </para>
+
+   <sect1 id="annotations1" revision="1">
+      <title>Methods and Annotations</title>
+      <para>
+         Let's take a look at how you can use method annotations with AOP. Using annotations and AOP together and
+         applying this to a method is very analogous to using Java's synchronized keyword with a method. When you tag
+         a method as synchronized, you are telling the JVM that you want that method to behave in a special way when it
+         is invoked. Annotations allow you to define new keywords that you want to have trigger your own special custom
+         behavior. AOP gives you the ability to encapsulate this behavior and weave it into the execution of the method.
+      </para>
+      <para>
+         Let's say we want to add a new syntax that will allow us to fire <literal>void</literal> methods in the
+         background, in another
+         thread, if they are tagged as <literal>@Oneway</literal>. Using this new syntax would look like this:
+      </para>
+      <programlisting><![CDATA[import org.jboss.aspects.Oneway;
+
+public class Foo
+{
+   @Oneway public static void someMethod() {...}
+
+   public static void main(String[] args)
+   {
+      someMethod(); // executes in background
+   }
+}]]></programlisting>
+      <para>
+         When <literal>someMethod()</literal> is invoked within main, it will run asynchronously so that the code in main is free to do
+         ther tasks in parallel.
+      </para>
+      <para>
+         To implement this functionality, the first thing that must be done is to define the new Java syntax for our
+         <literal>@Oneway</literal> tag within an annotation.
+      </para>
+      <programlisting>
+package org.jboss.aspects;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
+
+@Target({ElementType.METHOD})
+public @interface Oneway {}
+      </programlisting>
+      <para>
+         Simple enough. The <literal>@Target</literal> tag allows you to narrow down where the annotation is allowed to
+         be applied. In this case, our @Oneway annotation can only be applied to a method. Remember, this is all pure
+         100 percent Java that is available in J2SE 5.0.
+      </para>
+      <para>
+         The next thing we have to do is to define an aspect class that will encapsulate our <literal>@Oneway</literal>
+         behavior.
+      </para>
+      <programlisting>
+package org.jboss.aspects;
+
+public OnewayAspect
+{
+   private static class Task implements Runnable
+   {
+      private MethodInvocation invocation;
+
+      public Task(MethodInvocation invocation)
+      {
+        this.invocation = invocation;
+      }
+      public void run()
+      {
+        try { invocation.invokeNext(); }
+        catch (Throwable ignore) { }
+      }
+   }
+
+
+   public Object oneway(MethodInvocation invocation) throws Throwable
+   {
+      MethodInvocation copy = invocation.copy();
+      Thread t = new Thread(new Task(copy));
+      t.setDaemon(false);
+      t.start();
+      return null;
+   }
+}
+         </programlisting>
+      <para>
+         The aspect is simple enough. The oneway() method copies the invocation, creates a thread, fires off the complete
+         invocation in the background, and returns. We could imagine a more sophisticated example using some of the new
+         Executors within the J2SE 5.0 java.util.concurrent package, but hopefully this code illustrates how you could
+         build on this example to implement more complete implementations.
+      </para>
+      <para>
+         The last thing that must be done is to specify the pointcut expression that will trigger the application of the
+         <literal>OnewayAspect</literal> when the <literal>@Oneway</literal> annotation is declared on a method.
+      </para>
+      <programlisting><![CDATA[
+<aop>
+   <aspect class="org.jboss.aspects.OnewayAspect"/>
+
+   <bind pointcut="execution(void *->@org.jboss.Oneway(..))">
+      <advice name="oneway"
+              aspect="org.jboss.aspects.OnewayAspect"/>
+   </bind>
+</aop>]]></programlisting>
+      <para>
+         The pointcut expression states that any void method that is tagged as <literal>@Oneway</literal> should have
+         the <literal>OnewayAspect.oneway()</literal> method executed before it itself executes. With the annotation,
+         aspect, and pointcut expression now defined, the @Oneway syntax is now usable in your application. A simple,
+         clean, easy way of extending the Java language!
+      </para>
+   </sect1>
+
+   <sect1 id="annotations2" revision="1">
+      <title>Fields and Annotations</title>
+      <para>
+         Let's look at how you could use field annotations and AOP. Using annotations and AOP, you can can actually
+         change how a field is stored by an object or as a static member of a class. What we want to accomplish in this
+         example is that when you tag a field (static or member) as @ThreadBased, its value will behave as though it
+         were stored in a java.lang.ThreadLocal. Sure, you could use a ThreadLocal variable directly, but the problem
+         with ThreadLocal is that it is untyped and you have to use "verbose" (okay, they're not that verbose) get()
+         and set() methods. So what we'll do here is create a typed ThreadLocal field. Basically, we'll create a new
+         Java field type called the @Threadbased variable.
+      </para>
+      <para>
+         Using this new type would look like this:
+      </para>
+      <programlisting>
+import org.jboss.aspects.Threadbased;
+
+public class Foo
+{
+   @Threadbased private int counter;
+}</programlisting>
+      <para>
+         To implement this functionality, we must first define the annotation.
+      </para>
+      <programlisting>
+package org.jboss.aspects;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
+
+@Target({ElementType.FIELD})
+public @interface Threadbased {}
+</programlisting>
+      <para>
+         Simple enough. The @Target tag allows you to narrow down where the annotation is allowed to be applied. In this
+         case, our @Threadbased annotation can only be applied to fields.
+      </para>
+      <para>
+         The next thing to do is to define the aspect that will encapsulate our ThreadLocal behavior.
+      </para>
+      <programlisting>
+package org.jboss.aspects;
+
+import org.jboss.aop.joinpoint.*;
+import java.lang.reflect.Field;
+
+public class ThreadbasedAspect
+{
+   private ThreadLocal threadbased = new ThreadLocal();
+
+   public Object access(FieldReadInvocation invocation)
+       throws Throwable
+   {
+      // just in case we have a primitive,
+      // we can't return null
+      if (threadbased.get() == null)
+          return invocation.invokeNext();
+      return threadbased.get();
+   }
+
+   public Object access(FieldWriteInvocation invocation)
+       throws Throwable
+   {
+      threadbased.set(invocation.getValue());
+      return null;
+   }
+}</programlisting>
+      <para>
+         ThreadbasedAspect encapsulates the access to a Java field. It has a dedicated ThreadLocal variable within it to
+         track threadlocal changes to a particular field. It also has separate access() methods that are invoked
+         depending upon whether a get or set of the field is called. These methods delegate to the ThreadLocal to obtain
+         the current value of the field.
+      </para>
+      <para>
+         Finally, we must define a pointcut expression that will trigger the application of the ThreadbasedAspect when
+         the @Threadbased annotation is specified on a particular field.
+      </para>
+      <programlisting><![CDATA[
+<aop>
+   <aspect class="org.jboss.aspects.ThreadbasedAspect"
+           scope="PER_JOINPOINT"/>
+   <bind pointcut="field(* *->@org.jboss.aspects.Threadbased)">
+      <advice name="access"
+              aspect="org.jboss.aspects.ThreadbasedAspect"/>
+   </bind>
+</aop>]]></programlisting>
+      <para>
+         Just in case we have multiple @Threadbased variables defined in one class, we want an instance of
+         ThreadbasedAspect to be allocated per field for static fields. For member fields, we want an instance of
+         ThreadbasedAspect to be allocated per field, per object instance. To facilitate this behavior, the aspect
+         definition scopes the instance of when and where the aspect class will be allocated by setting it to
+         PER_JOINPOINT. If we didn't do this scoping, JBoss AOP would only allocate one instance of ThreadbasedAspect
+         and different fields would be sharing the same instance of the ThreadLocal -- something that we don't want.
+      </para>
+      <para>
+         Well that's it. A clean, easy way of extending Java to specify a new special type. Note: This particular aspect
+         comes bundled with JBoss AOP.
+      </para>
+   </sect1>
+   <sect1 id="annotations3" revision="1">
+      <title>Dependency Injection</title>
+      <para>
+         Another interesting place where field annotations and AOP can be used is with dependency injection. Dependency
+         injection is about objects declaring what information, configuration, or service references they need, and
+         having the runtime automagically inject those dependencies rather than having your code do explicit lookups on
+         a registry service. In J2EE-land, getting access to a javax.transaction.TransactionManager service is not
+         standardized and is actually different per vendor implementation. Many framework developers need to use the
+         TransactionManager to implement custom transactional services. The use of AOP with field annotations is a great
+         way to provide this dependency injection and to abstract away the details of how a TransactionManager is
+         referenced by components that need it. Let's define an aspect that will inject a reference to a
+         TransactionManager into the value of a field.
+      </para>
+      <para>
+         First, we must again define our annotation.
+      </para>
+      <programlisting>
+package org.jboss.aspects;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
+
+@Target({ElementType.FIELD})
+public @interface Inject {}</programlisting>
+      <para>
+         Next we will define the aspect class that will encapsulate the resolving of the TransactionManager. This aspect
+         will be specific to the JBoss application server, but you could define different implementations per vendor.
+      </para>
+      <programlisting><![CDATA[package org.jboss.aspects;
+
+import org.jboss.aop.joinpoint.*;
+import java.lang.reflect.Field;
+import javax.transaction.TransactionManager;
+import org.jboss.tm.TxManager;
+
+public InjectTMAspect
+{
+   private TransactionManager tm = TxManager.getInstance();
+
+   public Object access(FieldReadInvocation invocation)
+       throws Throwable
+   {
+      return tm;
+   }
+
+   public Object access(FieldWriteInvocation invocation)
+       throws Throwable
+   {
+      throw new RuntimeException(
+          "Setting an @Injected variable is illegal");
+   }
+}]]></programlisting>
+        <para>
+           Finally, we have to define the XML binding that will trigger the application of the InjectTMAspect when the
+           @Inject tag is applied to a field. The pointcut expression basically states that for any field of type
+           TransactionManager and tagged as @Inject, apply the InjectTMAspect.
+        </para>
+        <programlisting><![CDATA[<aop>
+  <aspect class="org.jboss.aspects.InjectTMAspect"/>
+
+  <bind pointcut="field(javax.transaction.TransactionManager *->@org.jboss.aspects.Inject)">
+     <advice name="access"
+             aspect="org.jboss.aspects.InjectTMAspect"/>
+  </bind>
+</aop>]]></programlisting>
+        <para>
+           Now that the annotation, aspect class, and XML binding have been defined, we can use it within our code.
+        </para>
+        <programlisting>import javax.transaction.TransactionManager;
+import org.jboss.aspects.Inject;
+
+public class MyTransactionalCache
+{
+   @Inject private TransactionManager tm;
+...
+}</programlisting>
+
+   </sect1>
+</chapter>
+
+
+
+

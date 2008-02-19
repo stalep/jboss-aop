@@ -1,0 +1,114 @@
+<chapter id="building">
+
+   <title>Building Aspects</title>
+   <para>
+      The last chapter had a basic boring introduction to aspects with the lame, commonly used example of metrics.  AOP
+      can be applied in a much broader sense than the overused examples of tracing and security and this chapter looks
+      into other more compelling examples of using basic AOP.
+   </para>
+   <sect1 id="identifying" revision="1">
+      <title>Identifying Aspects</title>
+      <para>
+         Aspect-Oriented programming is not a replacement
+         for object-oriented programming, but rather a compliment to it.  AOPers generally say that OOP solves 90% of problems
+         and AOP solves the 10% of problems that OOP isn't good at.  This section of the docbook will expand over time,
+         but let's discuss some ways in which you can identify whether
+         or not AOP is a good solution for a particular problem.
+      </para>
+      <variablelist spacing="compact">
+         <varlistentry>
+            <term>Cross-cutting Concerns</term>
+            <listitem>
+               <para>
+                  The metrics example in the previous chapter is an example of a cross-cutting concern in its purest form.
+                  Sometimes you see structure in your code that can't be expressed as an object because it completly wraps
+                  around the method you are invoking.  If the behavior in question is something that you want to be able to
+                  extend and maintain within its own structure then it may be a candidate for aspectizing.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>Layering Based on Deployment</term>
+            <listitem>
+               <para>
+                  Another place where AOP may be very useful is to layer your applications.  Sometimes you want to model
+                  a particular service or object that has many configuration options yet you don't want to bloat your service
+                  with unmaintainable code.  AOP provides a nice way to layer such complex services.  JBoss AOP provides
+                  a XML configurable mechanism to configure such aspects per deployment.  A good example of this is
+                  a caching service that might have different locking policies.  It is easier to encapsulate such
+                  locking policies as aspects so that the base caching code doesn't get polluted with locking concerns.
+                  This makes the code easier to maintain.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>Transparency</term>
+            <listitem>
+               <para>
+                  Many times you want to write plain Java code that focuses solely on business or application logic
+                  and do not want to introduce any concerns like middleware.  AOP allows you to apply things like
+                  middleware transparently to your code without polluting your code.  Some examples include
+                  the transaction demarcation and role-based security features in the JBoss AOP Aspect Library.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+   <sect1 id="exceptions" revision="1">
+      <title>Exception Handling</title>
+      <para>
+         Metrics and tracing are simple examples of building aspects.  Another great simple example is to use AOP
+         for exception handling.  For example, SQLException is an exception that contains error information like invalid
+         sql statement or deadlock that is similar per database vendor, but is expressed as different error codes
+         and string messages.  You can use AOP to intercept statement execution, catch SQLException errors, and turn
+         them into typed exceptions that application code can handle independent of database vendor.  So let's code
+         an example of this.
+      </para>
+      <programlisting>public class InvalidSQlException extends SQLException
+{
+   InvalidSQLException(SQLException ex)
+   {
+       super(ex.getMessage(), ex.getSQLState(), ex.getErrorCode());
+   }
+}</programlisting>
+      <para>
+         What we'll do is write an aspect that wraps calls to all
+         <literal>java.sql.Statement</literal> execute methods
+         and turn them into typed exceptions like the example above.  We'll leave some code up to your imagination
+         since such an aspect would be quite long to deal with every error code of every database vendor, but hopefully
+         you can get the idea here.
+      </para>
+      <programlisting>public class SQLExceptionAspect
+{
+   public Object handleSqlException(Invocation invocation) throws Throwable
+   {
+      try
+      {
+         return invocation.invokeNext();
+      }
+      catch (SQLException ex)
+      {
+         if (isVendorInvalidSqlErrorCode(ex.getErrorCode())) throw new InvalidSQLException(ex);
+         if (isVendorDeadlockErrorCode(ex.getErrorCode()) throw new SQLDeadlockException(ex);
+         ... and so on ...
+      }
+   }
+   ... impl of isVendor methods ...
+}</programlisting>
+      <para>
+         Now that the aspect is defined we use a
+         <literal>call</literal> pointcut expression to intercept all the
+         execute methods of
+         <literal>java.sql.Statement</literal>.
+      </para>
+      <programlisting><![CDATA[<aspect class="SQLExceptionAspect" scope="PER_VM"/>
+<bind pointcut="call(* $instanceof{java.sql.Statement}->execute*(..))">
+   <advice name="handleSqlException" aspect="SQLExceptionAspect"/>
+</bind>]]></programlisting>
+   </sect1>
+
+</chapter>
+
+
+
+

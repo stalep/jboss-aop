@@ -1,0 +1,285 @@
+<chapter id="maven">
+
+  <title>Building JBoss AOP with Maven2</title>
+  <para>
+    Since JBoss AOP requires either loadtime or compiletime weaving we need to customize maven a bit
+    to make it do what we want. JBoss AOP provides plugins to make this weaving as easy as possible.
+  </para>
+
+  <para>
+    The JBoss AOP plugin is named jbossaop and is provided under the maven2 jboss.org repository. 
+    For the final releases use:
+    <programlisting><![CDATA[
+<repository>
+   <id>maven.jboss.org</id>
+   <name>JBoss Maven Repository</name>
+   <url>http://repository.jboss.com/maven2</url>
+</repository> ]]></programlisting>
+    If you want to use the snapshot releases use:
+    <programlisting><![CDATA[
+<repository>
+   <id>snapshots.jboss.org</id>
+   <name>JBoss Maven Snapshot Repository</name>
+   <url>http://snapshots.jboss.org/maven2</url>
+</repository>]]></programlisting>
+
+    The jbossaop maven plugin will provide all the aop dependencies needed to weave and run. There is no need
+    to include aop dependencies other than the plugin.
+
+    NOTE: The version used in these examples may be obsolete, please check the latest release for the reference
+    version instead of using the version in these examples.
+
+  </para>
+
+
+  <sect1 id="compiling" revision="1">
+    <title>AOP Compile with Maven2</title>
+    <para>
+    The aop compile plugin is configured to run after the default maven compile phase has ended. By default it
+    will try to find the jboss-aop.xml file in <literal>src/main/resources/jboss-aop.xml</literal>. It will also
+    try to weave every class in <literal>$project.build.outputDirectory</literal> (usually target/classes).
+    List of options:
+    <itemizedlist>
+      <listitem>
+        <para>
+          <literal>aoppaths</literal> - an array of possible jboss-aop.xml files. Default is 
+          <literal>src/main/resources/jboss-aop.xml</literal>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>verbose</literal> - if set to true it will provide debug information during the aop weaving. '
+          Default set to true.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>suppress</literal> - suppress when a class cannot be found that a class references. 
+          This may happen if code in a class references something and the class is not in the classpath. 
+          Default set to true.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>noopt</literal> - do not optimize the weaving. Default set to false.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>report</literal> - store the output to a file (<literal>aop-report.xml</literal>).
+          Default set to false.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>includeProjectDependency</literal> - if set to true all project dependencies will also 
+          be included to the aop classpath. Only needed if a class inherits a class thats not defined in
+          the current module. Default set to false.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>classPath</literal> - classpath, by default set to null. If its set to null it will use
+          the plugin dependencies (and add project dependencies if <literal>includeProjectDependency</literal>
+          is set) + the output build path. Do not change this if you are not sure.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>aopClassPath</literal> - load xml files that adds aspects to the manager. Do not change this
+          if you are not sure. By default set to null.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>includes</literal> - an array of classes that will be weaved. Note that if this is specified
+          just the classes thats specified here will be weaved. Default set to null.
+        </para>
+      </listitem>
+    </itemizedlist>
+    There is a lot of options that can be set, but noone are mandatory (if they are mandatory 
+    they have a default value set). The average user would moste likely only change <literal>aoppaths</literal>.
+    A more complete example would look like:
+    <programlisting><![CDATA[
+<plugin>
+  <groupId>org.jboss.maven.plugins</groupId>
+  <artifactId>maven-jbossaop-plugin</artifactId>
+  <version>1.0</version>
+  <executions>
+    <execution>
+      <id>compile</id>
+      <configuration>
+      <!-- if you want to include dependencies from the current module
+           (only needed if a class inherits a class thats not defined in this module
+           -->
+        <includeProjectDependency>true</includeProjectDependency>
+        <aoppaths>
+          <aoppath>src/main/resources/jboss-aop_test2.xml</aoppath>
+          <!-- for a second jboss-aop.xml file
+          <aoppath>src/main/resources/jboss-aop.xml</aoppath>
+          -->
+        </aoppaths>
+        <!-- You can specify to only aopc a specific set of classes 
+        <includes>
+          <include>POJO.class</include>
+        </includes>
+        -->
+      </configuration>
+      <goals>
+        <goal>compile</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin> ]]></programlisting>
+    </para>
+  </sect1>
+
+  <sect1 id="compiletests" revision="1">
+    <title>AOP Compile tests with Maven2</title>
+    <para>
+    The only difference between aop compiling tests and non-tests are the name of the plugin. The options
+    are the same for tests and non-tests. A quick example:
+    <programlisting><![CDATA[
+<plugin>
+  <groupId>org.jboss.maven.plugins</groupId>
+  <artifactId>maven-jbossaop-plugin</artifactId>
+  <version>1.0</version>
+  <executions>
+    <execution>
+      <id>compile-test</id>
+      <configuration>
+        <aoppaths>
+          <aoppath>src/main/resources/jboss-aop_testcase.xml</aoppath>
+        </aoppaths>
+      </configuration>
+      <goals>
+        <goal>compile-test</goal>
+      </goals>
+    </execution> 
+  </executions>
+</plugin> ]]></programlisting>
+    </para>
+  </sect1>
+
+  <sect1 id="running" revision="1">
+    <title>Running precompiled with Maven2</title>
+    <para>
+    JBoss aop run plugin is configured to run after the package phase. There are less options here than for
+    the compile step and they are very similar.
+    <itemizedlist>
+      <listitem>
+        <para>
+          <literal>aoppaths</literal> - an array of possible jboss-aop.xml files. Default is 
+          <literal>src/main/resources/jboss-aop.xml</literal>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>includeProjectDependency</literal> - if set to true all project dependencies will also 
+          be included to the aop classpath. Only needed if a class inherits a class thats not defined in
+          the current module. Default set to false.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>classPath</literal> - classpath, by default set to null. If its set to null it will use
+          the plugin dependencies (and add project dependencies if <literal>includeProjectDependency</literal>
+          is set) + the output build path. Do not change this if you are not sure.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>executable</literal> - the java class that will be executed
+        </para>
+      </listitem>
+    </itemizedlist>
+    A small example using default jboss-aop.xml:
+    <programlisting><![CDATA[
+<plugin>
+  <groupId>org.jboss.maven.plugins</groupId>
+  <artifactId>maven-jbossaop-plugin</artifactId>
+  <version>1.0.CR1</version>
+  <executions>
+    <execution>
+      <id>run</id>
+      <configuration>
+        <executable>Foo</executable>
+      </configuration>
+      <goals>
+        <goal>run</goal>
+      </goals>
+    </execution> 
+  </executions>
+</plugin> ]]></programlisting>
+    </para>
+  </sect1>
+
+
+  <sect1 id="runningweaving" revision="1">
+    <title>Running loadtime weaving with Maven2</title>
+    <para>
+    Running a java application in loadtime weaving is almost identical to compile time (except that you dont need
+    to precompile it first). The only change is that we need an option to say that we want to run it loadtime.
+    <itemizedlist>
+      <listitem>
+        <para>
+          <literal>loadtime</literal> - set it to true if you want loadtime weaving. Default is set to false.
+        </para>
+      </listitem>
+    </itemizedlist>
+    A small example:
+    <programlisting><![CDATA[
+<plugin>
+  <groupId>org.jboss.maven.plugins</groupId>
+  <artifactId>maven-jbossaop-plugin</artifactId>
+  <version>1.0.CR1</version>
+  <executions>
+    <execution>
+      <id>run</id>
+      <configuration>
+        <aoppaths>
+          <aoppath>src/main/resources/jboss-aop_testcase.xml</aoppath>
+        </aoppaths>
+        <loadtime>true</loadtime>
+        <executable>Test</executable>
+      </configuration>
+      <goals>
+        <goal>run</goal>
+      </goals>
+    </execution> 
+  </executions>
+</plugin> ]]></programlisting>
+    </para>
+  </sect1>
+
+
+  <sect1 id="runningtests" revision="1">
+    <title>Running tests with Maven2</title>
+    <para>
+      Running tests with aop is a different matter since the maven tests plugin is rather complex. 
+      But we can add the hooks we need to run it both compiletime and loadtime with the maven tests too.
+      An example on how to run a test thats been aop compiled:
+      <programlisting><![CDATA[
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-surefire-plugin</artifactId>
+  <version>2.4</version>
+  <configuration>
+    <forkMode>always</forkMode>
+    <useSystemClassLoader>true</useSystemClassLoader>
+    <argLine>-Djboss.aop.path=src/main/resources/jboss-aop_testcase.xml</argLine>
+  </configuration>
+</plugin> ]]></programlisting>
+    </para>
+    <para>
+      To run it loadtime we only need to add the javaagent option to argLine. Like this:
+      <programlisting><![CDATA[
+    <argLine>-javaagent:${settings.localRepository}/org/jboss/jboss-aop/2.0.0.CR3/jboss-aop-2.0.0.CR3.jar -Djboss.aop.path=src/main/resources/jboss-aop_testcase.xml</argLine> ]]></programlisting>
+    - big thanks to henrik and finn for figuring out how to do this :)
+    Note again that the versions used here are just for a reference and to provide as examples. Check the JBoss AOP
+    homepage for the up-to-date versions.
+    </para>
+  </sect1>
+
+
+</chapter>

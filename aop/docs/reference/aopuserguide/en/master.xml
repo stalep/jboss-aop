@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding="iso-8859-1"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3CR3//EN"
+                      "../../../../../docbook-support/support/docbook-dtd/docbookx.dtd"
+[
+<!ENTITY what                   SYSTEM "modules/what.xml">
+<!ENTITY terms                  SYSTEM "modules/terms.xml">
+<!ENTITY building               SYSTEM "modules/building.xml">
+<!ENTITY annotations            SYSTEM "modules/annotations.xml">
+<!ENTITY introductions          SYSTEM "modules/introductions.xml">
+<!ENTITY dynamic                SYSTEM "modules/dynamic.xml">
+<!ENTITY integration            SYSTEM "modules/integration.xml">
+<!ENTITY testing                SYSTEM "modules/testing.xml">
+<!ENTITY aopide                 SYSTEM "modules/aopide.xml">
+<!ENTITY maven                  SYSTEM "modules/maven.xml">
+]>
+<book lang="en">
+    <bookinfo>
+        <title>JBoss AOP - User Guide</title>
+        <subtitle>The Case For Aspects</subtitle>
+        <releaseinfo>2.0.0</releaseinfo>
+    </bookinfo>
+    
+    <toc/>
+    
+    <preface id="target" revision="1">
+        <title>Target Audience</title>
+        <para> All JBoss AOP users. This is an introduction to AOP and JBoss AOP. If you only need to lookup certain reference/specs, the reference guide might be more helpful.</para>
+    </preface>
+
+
+   <preface id="preface" revision="1">
+      <title>Preface</title>
+
+      <para>
+            Aspect-Oriented Programming (AOP) is a new  paradigm that allows you to organize
+            and layer your software applications in ways that are impossible with traditional
+            object-oriented approaches.  Aspects allow you to transparently glue functionality together
+            so that you can have a more layered design.  AOP allows you to intercept any event in a Java
+            program and trigger functionality based on those events.  Mixins allow you to introduce
+            multiple inheritance to Java so that you can provide APIs for your aspects.  Combined with
+            JDK 5.0 annotations, it allows you to extend the Java language with new syntax.
+      </para>
+
+      <para>
+            JBoss AOP is a 100% Pure Java aspected oriented framework usuable in any programming
+            environment or as tightly integrated with  our application server.
+      </para>
+
+      <para>
+           This document walks you through how AOP can be used to build your applications.  A large number of real-world examples
+           are given in each section to illustrate various ideas.  The book is broken up in the
+         following manner:
+      </para>
+      <variablelist spacing="compact">
+         <varlistentry>
+            <term>What is an Aspect?</term>
+            <listitem>
+               <para>
+                  The section gives an overview on exactly what Aspect-Oriented Programming is.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>Terms</term>
+            <listitem>
+               <para>
+                  Defines some basic AOP terms that you will need when reading this document.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>Building Aspects</term>
+            <listitem>
+               <para>
+                  The chapter walks through some examples of building an aspect.  One example shown is how to
+                  detect JDBC connection leakages in your code.  Another example is using the Observer/Observable pattern
+                  Another is doing dependency injection.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>Aspect-Oriented Annotations</term>
+            <listitem>
+               <para>
+                  This chapter walks through how you can use JDK 5.0 annotations and AOP to actually extend the Java
+                  language with new syntax.  Numerous real-world examples are given.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>Mixins and Introductions</term>
+            <listitem>
+               <para>
+                  This chapter walks through how you can use AOP introductions and mixins to have aspects with APIs,
+                  or how to extend a POJO's functionality transparently.  Specific examples are an Asynchronous framework
+                  and making a POJO into a JMX MBean.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>Dynamic AOP</term>
+            <listitem>
+               <para>
+                  This chapter walks through how you can use the dynamic per-instance API that each aspectized class
+                  has to define aspects on a per instance basis rather than for every instance of a class.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>Integration with Pointcuts</term>
+            <listitem>
+               <para>
+                  This chapter steps away from writing aspects, but rather talks about how you can publish pointcuts
+                  that can be used by users/customers to integrate with your products.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>Testing with AOP</term>
+            <listitem>
+               <para>
+                  This chapter shows how you can use AOP to test your applications in a easier way.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+
+      <para>
+             If you have questions, use the user forum linked on the JBoss AOP website. We also
+             provide a tracking links for tracking bug reports and feature requests. If you
+             are interested in the development of JBoss AOP, post a message on the forum. If
+             you are interested in translating this documentation into your language, contact us
+             on the developer mailing list.
+      </para>
+
+      <para>
+             Commercial development support, production support and training for JBoss AOP is
+             available through JBoss Inc. (see http://www.jboss.org/).
+             JBoss AOP is a project of the JBoss Professional Open Source product suite.
+      </para>
+
+      <para>
+         In some of the example listings, what is meant to be displayed on one line does not fit
+         inside the available page width. These lines have been broken up. A '\' at the end of a
+         line means that a break has been introduced to fit in the page, with the following lines
+         indented. So:
+         <programlisting>
+   Let's pretend to have an extremely \
+      long line that \
+      does not fit
+   This one is short
+         </programlisting>
+         Is really:
+         <programlisting>
+   Let's pretend to have an extremely long line that does not fit
+   This one is short
+         </programlisting>
+      </para>
+   </preface>
+
+   &what;
+
+   &terms;
+
+   &building;
+
+   &annotations;
+
+   &introductions;
+
+   &dynamic;
+
+   &integration;
+
+   &testing;
+
+   &aopide;
+
+   &maven;
+
+</book>
