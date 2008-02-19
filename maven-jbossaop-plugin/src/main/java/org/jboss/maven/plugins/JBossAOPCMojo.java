@@ -26,10 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -69,7 +67,7 @@ public class JBossAOPCMojo extends AbstractMojo
    /** 
     * 
     * 
-    * @parameter expression="${supress}" default-value="false"
+    * @parameter expression="${supress}" default-value="true"
     */
    private boolean suppress;
    
@@ -88,13 +86,6 @@ public class JBossAOPCMojo extends AbstractMojo
    private boolean report;
 
    /** 
-    * 
-    * 
-    * @parameter expression="${failOnError}" default-value="true"
-    */
-   private boolean failOnError;
-
-   /** 
     * If it is set to true all project dependencies will also be included to the aop classpath
     * 
     * @parameter expression="${includeProjectDependency}" default-value="false"
@@ -104,7 +95,7 @@ public class JBossAOPCMojo extends AbstractMojo
    
    /** 
     * 
-    * @parameter expression="${classPath}" default-value="${project.build.outputDirectory}"
+    * @parameter expression="${classPath}" default-value=""
     */
    private String classPath;
 
@@ -119,28 +110,11 @@ public class JBossAOPCMojo extends AbstractMojo
     * @parameter expression="${aopClassPath}" default-value=""
     */
    private String aopClassPath;
-
-   /** 
-    * 
-    * @parameter expression="${compilerClassPath}" default-value=""
-    */
-   private String compilerClassPath;
-
-   /**
-    * @parameter default-value="${project.compileDependencies}"
-    * @required
-    * @readonly
-    */
-   private List<Dependency> cDependencies;
-
-   /**
-    * @parameter default-value="${project.dependency}"
-    * @required
-    * @readonly
-    */
-   private Dependency pDependency;
    
    /**
+    * Set this to specify certain classes that will be weaved. This prevents the parser to check
+    * all the classes in eg target/classes.
+    * 
     * @parameter
     */
    private String[] includes;
@@ -149,6 +123,7 @@ public class JBossAOPCMojo extends AbstractMojo
 
    /**
     * @parameter expression="${project}"
+    * @readonly
     */
    private MavenProject project;
    
@@ -168,6 +143,10 @@ public class JBossAOPCMojo extends AbstractMojo
 
    private String createClassPathList()
    {
+      //if classPath is set, use only that
+      if(getClassPath() != null && getClassPath().length() > 0)
+         return getClassPath();
+      
       StringBuffer sb = new StringBuffer();
       for(Artifact a : pluginArtifacts)
       {
@@ -178,16 +157,17 @@ public class JBossAOPCMojo extends AbstractMojo
       {
          for(Object o : project.getDependencyArtifacts())
          {
+            if(((Artifact) o).getFile() != null)
             sb.append(((Artifact) o).getFile().toString()).append(File.pathSeparator);
          }
       }
 
       if(isTest())
-         sb.append(project.getBuild().getTestOutputDirectory());
-      else
+         sb.append(project.getBuild().getTestOutputDirectory()).append(File.pathSeparator);
+      
          sb.append(project.getBuild().getOutputDirectory());
 
-      System.err.println("CLASSPATH: "+sb.toString());
+//      System.err.println("CLASSPATH: "+sb.toString());
       return sb.toString();
    }
 
@@ -300,11 +280,6 @@ public class JBossAOPCMojo extends AbstractMojo
    private String getClassPath()
    {
       return classPath;
-   }
-
-   private String getCompilerClassPath()
-   {
-      return compilerClassPath;
    }
 
    private boolean isVerbose()
