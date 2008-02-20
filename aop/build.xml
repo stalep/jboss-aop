@@ -408,6 +408,7 @@
             <include name="org/jboss/aop/MethodJoinPoint.class"/>
             <include name="org/jboss/aop/*Dispatcher*.class"/>
             <include name="org/jboss/aop/*Advised.class"/>
+         	<include name="org/jboss/aop/WeavingStrategy.class"/>
             <include name="org/jboss/aop/advice/AspectDefinition.class"/>
             <include name="org/jboss/aop/advice/Interceptor.class"/>
             <include name="org/jboss/aop/instrument/Untransformable.class"/>
@@ -421,6 +422,7 @@
             <include name="org/jboss/aop/metadata/SimpleMetaData$MetaDataValue.class"/>
             <include name="org/jboss/aop/metadata/MetaDataResolver.class"/>
             <include name="org/jboss/aop/metadata/ThreadMetaData.class"/>
+         	<include name="org/jboss/aop/pointcut/PointcutStats.class"/>
             <include name="org/jboss/aop/proxy/MarshalledInterfaceProxy.class"/>
             <include name="org/jboss/aop/proxy/MethodMapped.class"/>
             <include name="org/jboss/aop/proxy/Proxy.class"/>
