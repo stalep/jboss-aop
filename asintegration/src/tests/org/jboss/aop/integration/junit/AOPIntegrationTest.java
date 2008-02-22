@@ -60,7 +60,7 @@ public abstract class AOPIntegrationTest extends AbstractTestCaseWithSetup
    public static Test suite(Class<?> clazz, boolean importAll, Class<?>... packages)
    {
       helper = new IsolatedClassLoaderTestHelper();
-      ClassFilter aopFilter = new PatternClassFilter(new String[] { "org\\.jboss\\.aop\\..+", "org\\.jboss\\.metadata\\..+"}, new String[] { "org/jboss/aop/.+", "org/jboss/metadata/.+"});
+      ClassFilter aopFilter = new PatternClassFilter(new String[] { "org\\.jboss\\.aop\\..+", "org\\.jboss\\.metadata\\..+"}, new String[] { "org/jboss/aop/.+", "org/jboss/metadata/.+"}, null);
       Class<?> newClass = helper.initializeClassLoader(clazz, aopFilter, importAll, packages);
       return AbstractTestCaseWithSetup.suite(newClass);
    }
