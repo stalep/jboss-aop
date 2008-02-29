@@ -2652,5 +2652,11 @@ public class AspectManager
    {
       return includeInvisibleAnnotations;
    }
+   
+   public void setIncludedInvisibleAnnotations(List<String> ia)
+   {
+      includeInvisibleAnnotations.clear();
+      includeInvisibleAnnotations.addAll(ia);
+   }
 
 }
