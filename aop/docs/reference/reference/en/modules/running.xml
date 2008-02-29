@@ -342,10 +342,10 @@ $ java -cp=&lt;classpath as described above&gt; -Djboss.aop.path=&lt;path to jbo
                <term>Include ignored annotations</term>
                <listitem>
                   <para>
-                     To increase the startuptime of JBoss AOP all invisible annotations (invisible annotations are all annotations that is not
-                     annotated with @Retention(RetentionPolicy.RUNTIME)). are ignored by default.
-                     To include them use the system property <literal>jboss.aop.invisible.annotations</literal> too add packages that will be
-                     included or add "*" to include all.
+                     To improve the startup time of JBoss AOP all invisible annotations (invisible annotations are all annotations that are not
+                     annotated with <literal>@Retention(RetentionPolicy.RUNTIME)</literal>) are ignored by default.
+                     To include them use the system property <literal>jboss.aop.invisible.annotations</literal> to add packages that will be
+                     included, or add "*" to include all.
                   </para>
                     <programlisting>
                       java -Djboss.aop.include.annotations=com.foo.bar,org.my.company
