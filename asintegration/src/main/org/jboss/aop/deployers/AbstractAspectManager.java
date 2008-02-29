@@ -251,6 +251,15 @@ public abstract class AbstractAspectManager
    {
       return delegate.getInclude();
    }
+   
+   /**
+    * @return
+    * @see org.jboss.aop.deployment.AspectManagerService#getIncludedInvisibleAnnotations()
+    */
+   public String getIncludedInvisibleAnnotations()
+   {
+      return delegate.getIncludedInvisibleAnnotations();
+   }
 
    /**
     * @return
@@ -557,6 +566,15 @@ public abstract class AbstractAspectManager
    public void setInclude(String include)
    {
       delegate.setInclude(include);
+   }
+   
+   /**
+    * @param include
+    * @see org.jboss.aop.deployment.AspectManagerService#setIncludedInvisibleAnnotations(java.lang.String)
+    */
+   public void setIncludedInvisibleAnnotations(String iia)
+   {
+      delegate.setIncludedInvisibleAnnotations(iia);
    }
 
    /**

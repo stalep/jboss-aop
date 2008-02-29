@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -90,6 +91,7 @@ public class AspectManagerService
    protected String exclude;
    protected String include;
    protected String ignore;
+   protected String includedInvisibleAnnotations;
    private String baseXml = "base-aop.xml";
    //When running with JBoss 5 registration with MBeanServer happens after the service has been started
    boolean registerHappensAfterStart;
@@ -347,6 +349,22 @@ public class AspectManagerService
          }
       }
       AspectManager.instance().setIgnore(list);
+   }
+   
+   public String getIncludedInvisibleAnnotations()
+   {
+      return includedInvisibleAnnotations;
+   }
+   
+   public void setIncludedInvisibleAnnotations(String ia)
+   {
+      List<String> iiaList = new ArrayList<String>();
+      if(ia != null)
+      {
+         for(String inc : ia.split(","))
+           iiaList.add(inc.trim());
+      }
+      AspectManager.instance().setIncludedInvisibleAnnotations(iiaList);
    }
 
 

@@ -110,6 +110,10 @@ public interface AspectManagerServiceMBean extends org.jboss.system.ServiceMBean
    String getInclude();
 
    void setInclude(String include);
+   
+   String getIncludedInvisibleAnnotations();
+   
+   void setIncludedInvisibleAnnotations(String ia);
 
    boolean getPrune();
 
