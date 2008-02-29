@@ -675,9 +675,8 @@ public class PortableAnnotationElement
    {
       for(String includedAnnotation : AspectManager.instance().getIncludedInvisibleAnnotations())
       {
-         if(includedAnnotation.equals("*") || includedAnnotation.startsWith(annotation))
+         if(includedAnnotation.equals("*") || annotation.startsWith(includedAnnotation))
          {
-//            System.err.println("IGNORING ANNOTATION: "+annotation);
             return true;
          }
       }
