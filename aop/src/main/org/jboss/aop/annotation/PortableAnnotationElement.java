@@ -34,14 +34,11 @@ import javassist.bytecode.MethodInfo;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.annotation.factory.javassist.AnnotationProxy;
-import org.jboss.ant.taskdefs.server.StartServerTask;
 import org.jboss.aop.util.ReflectToJavassist;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
 /**
  * This base class is portable between JDK 1.4 and JDK 1.5
