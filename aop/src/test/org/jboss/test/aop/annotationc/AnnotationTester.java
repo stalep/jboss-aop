@@ -119,7 +119,7 @@ public class AnnotationTester extends AOPTestWithSetup
       complex c = null;
       try
       {
-         Object[] annotations = PortableAnnotationElement.getVisibleAnnotations(BytecodePOJO.class);
+         Object[] annotations = AnnotationElement.getVisibleAnnotations(BytecodePOJO.class);
          for (int i = 0 ; i < annotations.length ; i++)
          {
             if (complex.class.isAssignableFrom(annotations[i].getClass()))
@@ -207,7 +207,7 @@ public class AnnotationTester extends AOPTestWithSetup
       
       try
       {
-         Object[] annotations = PortableAnnotationElement.getVisibleAnnotations(con);
+         Object[] annotations = AnnotationElement.getVisibleAnnotations(con);
          for (int i = 0 ; i < annotations.length ; i++)
          {
             if (complex.class.isAssignableFrom(annotations[i].getClass()))
@@ -292,7 +292,7 @@ public class AnnotationTester extends AOPTestWithSetup
       
       try
       {
-         Object[] annotations = PortableAnnotationElement.getVisibleAnnotations(con);
+         Object[] annotations = AnnotationElement.getVisibleAnnotations(con);
          for (int i = 0 ; i < annotations.length ; i++)
          {
             if (complex.class.isAssignableFrom(annotations[i].getClass()))
@@ -417,7 +417,7 @@ public class AnnotationTester extends AOPTestWithSetup
       
       try
       {
-         Object[] annotations = PortableAnnotationElement.getVisibleAnnotations(con);
+         Object[] annotations = AnnotationElement.getVisibleAnnotations(con);
          for (int i = 0 ; i < annotations.length ; i++)
          {
             if (complex.class.isAssignableFrom(annotations[i].getClass()))

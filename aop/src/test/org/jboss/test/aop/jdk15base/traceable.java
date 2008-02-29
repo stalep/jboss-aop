@@ -21,10 +21,14 @@
   */
 package org.jboss.test.aop.jdk15base;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
+@Retention(RetentionPolicy.RUNTIME)
 public @interface traceable
 {
 }

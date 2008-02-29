@@ -28,6 +28,7 @@ import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -184,7 +185,9 @@ public class AspectManager
 
    //Keeps track of if we need to convert references etc for a given class. Domains for scoped classloaders will have their own version of this
    protected static InterceptionMarkers interceptionMarkers = new InterceptionMarkers();
-
+   
+   /** A set of annotation names that will be ignored even tough they have been included. */
+   protected List<String> includeInvisibleAnnotations = Collections .emptyList();
    // Static -------------------------------------------------------
 
    protected static AspectManager manager;
@@ -281,6 +284,8 @@ public class AspectManager
                manager.exclude = new ArrayList();
                manager.include = new ArrayList();
                manager.ignore = new ArrayList();
+               manager.includeInvisibleAnnotations = new ArrayList<String>();
+               
 
                AOPClassPoolRepository.getInstance().setAspectManager(manager);
 
@@ -320,6 +325,12 @@ public class AspectManager
                      list.add(tokenizer.nextToken().trim());
                   }
                   manager.setIgnore(list);
+               }
+               String invisibleAnnotations = System.getProperty("jboss.aop.invisible.annotations", null);
+               if(invisibleAnnotations != null)
+               {
+                  for(String inc : invisibleAnnotations.split(","))
+                    manager.includeInvisibleAnnotations.add(inc.trim());
                }
 
                String instrument = System.getProperty("jboss.aop.instrumentor", null);
@@ -2635,6 +2646,11 @@ public class AspectManager
             unlockWrite();
          }
       }
+   }
+   
+   public List<String> getIncludedInvisibleAnnotations()
+   {
+      return includeInvisibleAnnotations;
    }
 
 }

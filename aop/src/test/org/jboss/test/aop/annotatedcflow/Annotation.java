@@ -21,11 +21,14 @@
 */ 
 package org.jboss.test.aop.annotatedcflow;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;;
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Annotation
 {
 

@@ -34,8 +34,10 @@ import javassist.bytecode.MethodInfo;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.annotation.factory.javassist.AnnotationProxy;
+import org.jboss.ant.taskdefs.server.StartServerTask;
 import org.jboss.aop.util.ReflectToJavassist;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -63,8 +65,13 @@ public class PortableAnnotationElement
       {
          return false;
       }
-      CtField ctMethod = ReflectToJavassist.fieldToJavassist(field);
-      return AnnotationElement.isInvisibleAnnotationPresent(ctMethod, annotation);
+      if(includeInvisibleAnnotation(annotation))
+      {
+         CtField ctMethod = ReflectToJavassist.fieldToJavassist(field);
+         return AnnotationElement.isInvisibleAnnotationPresent(ctMethod, annotation);
+      }
+      else
+         return false;
    }
 
    public static boolean isInvisibleAnnotationPresent(CtField field, String annotation)
@@ -73,12 +80,17 @@ public class PortableAnnotationElement
       {
          return false;
       }
-      FieldInfo mi = field.getFieldInfo2();
+      if(includeInvisibleAnnotation(annotation))
+      {
+         FieldInfo mi = field.getFieldInfo2();
 
-      AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
-      if (invisible == null) return false;
+         AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
+         if (invisible == null) return false;
 
-      return invisible.getAnnotation(annotation) != null;
+         return invisible.getAnnotation(annotation) != null;
+      }
+      else
+         return false;
    }
 
    public static boolean isVisibleAnnotationPresent(CtField field, String annotation)
@@ -109,13 +121,17 @@ public class PortableAnnotationElement
          if (visible.getAnnotation(annotation) != null) return true;
       }
 
-      AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
-      if (invisible != null)
+      if(includeInvisibleAnnotation(annotation))
       {
-         if (invisible.getAnnotation(annotation) != null) return true;
+         AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
+         if (invisible != null)
+         {
+            if (invisible.getAnnotation(annotation) != null) return true;
+         }
+         return false;
       }
-
-      return false;
+      else
+         return false;
    }
 
    public static boolean isInvisibleAnnotationPresent(Method method, String annotation) throws Exception
@@ -124,16 +140,20 @@ public class PortableAnnotationElement
       {
          return false;
       }
-      CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
-      if (ctMethod == null) return false;
-      MethodInfo mi = ctMethod.getMethodInfo2();
+      if(includeInvisibleAnnotation(annotation))
+      {
+         CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
+         if (ctMethod == null) return false;
+         MethodInfo mi = ctMethod.getMethodInfo2();
 
 
-      AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
-      if (invisible == null) return false;
+         AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
+         if (invisible == null) return false;
 
-
-      return invisible.getAnnotation(annotation) != null;
+         return invisible.getAnnotation(annotation) != null;
+      }
+      else
+         return false;
    }
 
    public static boolean isAnyAnnotationPresent(Field field, String annotation) throws Exception
@@ -142,8 +162,15 @@ public class PortableAnnotationElement
       {
          return false;
       }
-      CtField ctField = ReflectToJavassist.fieldToJavassist(field);
-      return AnnotationElement.isAnyAnnotationPresent(ctField, annotation);
+      if(AnnotationElement.isVisibleAnnotationPresent(field, annotation))
+         return true;
+      if(includeInvisibleAnnotation(annotation))
+      {
+         CtField ctField = ReflectToJavassist.fieldToJavassist(field);
+         return AnnotationElement.isAnyAnnotationPresent(ctField, annotation);
+      }
+      else
+         return false;
 
    }
 
@@ -153,11 +180,17 @@ public class PortableAnnotationElement
       {
          return false;
       }
-      CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
-      if (ctMethod == null) return false;
-      boolean present = AnnotationElement.isAnyAnnotationPresent(ctMethod, annotation);
-      return present;
-
+      if(AnnotationElement.isVisibleAnnotationPresent(method, annotation))
+         return true;
+      if(includeInvisibleAnnotation(annotation))
+      {
+         CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
+         if (ctMethod == null) return false;
+         boolean present = AnnotationElement.isAnyAnnotationPresent(ctMethod, annotation);
+         return present;
+      }
+      else
+         return false;
    }
 
    public static boolean isAnyAnnotationPresent(CtMethod ctMethod, String annotation)
@@ -174,13 +207,18 @@ public class PortableAnnotationElement
          if (visible.getAnnotation(annotation) != null) return true;
       }
 
-      AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
-      if (invisible != null)
+      if(includeInvisibleAnnotation(annotation))
       {
-         if (invisible.getAnnotation(annotation) != null) return true;
+         AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
+         if (invisible != null)
+         {
+            if (invisible.getAnnotation(annotation) != null) return true;
+         }
+         return false;
       }
-
-      return false;
+      else
+         return false;
+      
    }
 
    public static boolean isInvisibleAnnotationPresent(Constructor con, String annotation) throws Exception
@@ -189,8 +227,13 @@ public class PortableAnnotationElement
       {
          return false;
       }
-      CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
-      return AnnotationElement.isInvisibleAnnotationPresent(ctMethod, annotation);
+      if(includeInvisibleAnnotation(annotation))
+      {
+         CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
+         return AnnotationElement.isInvisibleAnnotationPresent(ctMethod, annotation);
+      }
+      else
+         return false;
    }
 
    public static boolean isInvisibleAnnotationPresent(CtConstructor ctMethod, String annotation)
@@ -199,12 +242,17 @@ public class PortableAnnotationElement
       {
          return false;
       }
-      MethodInfo mi = ctMethod.getMethodInfo2();
+      if(includeInvisibleAnnotation(annotation))
+      {
+         MethodInfo mi = ctMethod.getMethodInfo2();
 
-      AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
-      if (invisible == null) return false;
+         AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
+         if (invisible == null) return false;
 
-      return invisible.getAnnotation(annotation) != null;
+         return invisible.getAnnotation(annotation) != null;
+      }
+      else
+         return false;
    }
 
    public static boolean isVisibleAnnotationPresent(CtConstructor ctMethod, String annotation)
@@ -228,8 +276,15 @@ public class PortableAnnotationElement
       {
          return false;
       }
-      CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
-      return AnnotationElement.isAnyAnnotationPresent(ctMethod, annotation);
+      if(AnnotationElement.isVisibleAnnotationPresent(con, annotation))
+         return true;
+      if(includeInvisibleAnnotation(annotation))
+      {
+         CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
+         return AnnotationElement.isAnyAnnotationPresent(ctMethod, annotation);
+      }
+      else
+         return false;
    }
 
    public static boolean isAnyAnnotationPresent(CtConstructor ctMethod, String annotation)
@@ -246,13 +301,17 @@ public class PortableAnnotationElement
          if (visible.getAnnotation(annotation) != null) return true;
       }
 
-      AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
-      if (invisible != null)
+      if(includeInvisibleAnnotation(annotation))
       {
-         if (invisible.getAnnotation(annotation) != null) return true;
+         AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
+         if (invisible != null)
+         {
+            if (invisible.getAnnotation(annotation) != null) return true;
+         }
+         return false;
       }
-
-      return false;
+      else
+         return false;
    }
 
    public static boolean isInvisibleAnnotationPresent(Class clazz, String annotation) throws Exception
@@ -261,13 +320,18 @@ public class PortableAnnotationElement
       {
          return false;
       }
-      if (clazz == Void.TYPE) return false;
-      ClassFile cf = AnnotationElement.getClassFile(clazz);
+      if(includeInvisibleAnnotation(annotation))
+      {
+         if (clazz == Void.TYPE) return false;
+         ClassFile cf = AnnotationElement.getClassFile(clazz);
 
-      AnnotationsAttribute invisible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.invisibleTag);
-      if (invisible == null) return false;
+         AnnotationsAttribute invisible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.invisibleTag);
+         if (invisible == null) return false;
 
-      return invisible.getAnnotation(annotation) != null;
+         return invisible.getAnnotation(annotation) != null;
+      }
+      else
+         return false;
    }
 
    public static boolean isAnyAnnotationPresent(CtClass clazz, String annotation) throws Exception
@@ -292,16 +356,22 @@ public class PortableAnnotationElement
          AnnotationsAttribute visible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
          if (visible != null)
          {
-            if (visible.getAnnotation(annotation) != null) return true;
+            if (visible.getAnnotation(annotation) != null) 
+               return true;
          }
 
-         AnnotationsAttribute invisible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.invisibleTag);
-         if (invisible != null)
+         if(includeInvisibleAnnotation(annotation))
          {
-            if (invisible.getAnnotation(annotation) != null) return true;
+            AnnotationsAttribute invisible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.invisibleTag);
+            if (invisible != null)
+            {
+               if (invisible.getAnnotation(annotation) != null) return true;
+            }
+            return false;
          }
-
-         return false;
+         else
+            return false;
+        
       }
       catch (RuntimeException e)
       {
@@ -317,20 +387,28 @@ public class PortableAnnotationElement
          return false;
       }
       if (clazz == Void.TYPE) return false;
-      ClassFile cf = AnnotationElement.getClassFile(clazz);
-      AnnotationsAttribute visible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
-      if (visible != null)
-      {
-         if (visible.getAnnotation(annotation) != null) return true;
-      }
+      if(AnnotationElement.isVisibleAnnotationPresent(clazz, annotation))
+         return true;
+      
+//      ClassFile cf = AnnotationElement.getClassFile(clazz);
+//      AnnotationsAttribute visible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
+//      if (visible != null)
+//      {
+//         if (visible.getAnnotation(annotation) != null) return true;
+//      }
 
-      AnnotationsAttribute invisible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.invisibleTag);
-      if (invisible != null)
+      if(includeInvisibleAnnotation(annotation))
       {
-         if (invisible.getAnnotation(annotation) != null) return true;
+         ClassFile cf = AnnotationElement.getClassFile(clazz);
+         AnnotationsAttribute invisible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.invisibleTag);
+         if (invisible != null)
+         {
+            if (invisible.getAnnotation(annotation) != null) return true;
+         }
+         return false;
       }
-
-      return false;
+      else
+         return false;
    }
 
    protected static ClassFile getClassFile(Class clazz) throws NotFoundException
@@ -355,24 +433,30 @@ public class PortableAnnotationElement
       {
          return false;
       }
-      try
+      
+      if(includeInvisibleAnnotation(annotation))
       {
-         CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
-         if (ctMethod == null)
+         try
          {
-            return null;
+            CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
+            if (ctMethod == null)
+            {
+               return null;
+            }
+            MethodInfo mi = ctMethod.getMethodInfo2();
+
+            AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
+            if (invisible == null) return null;
+
+            return create(invisible, annotation);
          }
-         MethodInfo mi = ctMethod.getMethodInfo2();
-
-         AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
-         if (invisible == null) return null;
-
-         return create(invisible, annotation);
+         catch (Exception e)
+         {
+            throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
+         }
       }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
-      }
+      else
+         return false;
    }
 
    public static Object getInvisibleAnnotation(Constructor con, Class annotation)
@@ -381,21 +465,26 @@ public class PortableAnnotationElement
       {
          return false;
       }
-      try
+      if(includeInvisibleAnnotation(annotation))
       {
-         CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
-         MethodInfo mi = ctMethod.getMethodInfo2();
+         try
+         {
+            CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
+            MethodInfo mi = ctMethod.getMethodInfo2();
 
 
-         AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
-         if (invisible == null) return null;
+            AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
+            if (invisible == null) return null;
 
-         return create(invisible, annotation);
+            return create(invisible, annotation);
+         }
+         catch (Exception e)
+         {
+            throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
+         }
       }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
-      }
+      else
+         return false;
    }
 
    public static Object getInvisibleAnnotation(Field field, Class annotation)
@@ -454,7 +543,10 @@ public class PortableAnnotationElement
    {
       Object rtn = AnnotationElement.getVisibleAnnotation(method, annotation);
       if (rtn != null) return rtn;
-      return getInvisibleAnnotation(method, annotation);
+      if(includeInvisibleAnnotation(annotation))
+         return getInvisibleAnnotation(method, annotation);
+      else
+         return null;
    }
 
    /**
@@ -468,14 +560,20 @@ public class PortableAnnotationElement
    {
       Object rtn = AnnotationElement.getVisibleAnnotation(con, annotation);
       if (rtn != null) return rtn;
-      return getInvisibleAnnotation(con, annotation);
+      if(includeInvisibleAnnotation(annotation))
+         return getInvisibleAnnotation(con, annotation);
+      else
+         return null;
    }
 
    public static Object getAnyAnnotation(Field field, Class annotation)
    {
       Object rtn = AnnotationElement.getVisibleAnnotation(field, annotation);
       if (rtn != null) return rtn;
-      return getInvisibleAnnotation(field, annotation);
+      if(includeInvisibleAnnotation(annotation))
+         return getInvisibleAnnotation(field, annotation);
+      else
+         return null;
    }
 
    public static Object getAnyAnnotation(Class clazz, Class annotation)
@@ -483,148 +581,106 @@ public class PortableAnnotationElement
       if (clazz == Void.TYPE) return null;
       Object rtn = AnnotationElement.getVisibleAnnotation(clazz, annotation);
       if (rtn != null) return rtn;
-      return getInvisibleAnnotation(clazz, annotation);
+      if(includeInvisibleAnnotation(annotation))
+         return getInvisibleAnnotation(clazz, annotation);
+      else
+         return null;
    }
 
    public static boolean isAnyAnnotationPresent(Field field, Class annotation) throws Exception
    {
-      if (AnnotationElement.isVisibleAnnotationPresent(field, annotation)) return true;
+      if (AnnotationElement.isVisibleAnnotationPresent(field, annotation)) 
+         return true;
       if (closingDownManager)
       {
          return false;
       }
-      CtField ctMethod = ReflectToJavassist.fieldToJavassist(field);
-      return isInvisibleAnnotationPresent(ctMethod, annotation.getName());
+      if(includeInvisibleAnnotation(annotation))
+      {
+         CtField ctMethod = ReflectToJavassist.fieldToJavassist(field);
+         return isInvisibleAnnotationPresent(ctMethod, annotation.getName());
+      }
+      else
+         return false;
    }
 
    public static boolean isAnyAnnotationPresent(Class clazz, Class annotation) throws Exception
    {
       if (clazz == Void.TYPE) return false;
-      if (AnnotationElement.isVisibleAnnotationPresent(clazz, annotation)) return true;
+      if (AnnotationElement.isVisibleAnnotationPresent(clazz, annotation)) 
+         return true;
       if (closingDownManager)
       {
          return false;
       }
-      ClassFile cf = getClassFile(clazz);
+      if(includeInvisibleAnnotation(annotation))
+      {
+         ClassFile cf = getClassFile(clazz);
 
-      AnnotationsAttribute invisible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.invisibleTag);
-      if (invisible == null) return false;
+         AnnotationsAttribute invisible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.invisibleTag);
+         if (invisible == null) return false;
 
-      return invisible.getAnnotation(annotation.getName()) != null;
+         return invisible.getAnnotation(annotation.getName()) != null;
+      }
+      else
+         return false;
    }
 
    public static boolean isAnyAnnotationPresent(Constructor con, Class annotation) throws Exception
    {
-      if (AnnotationElement.isVisibleAnnotationPresent(con, annotation)) return true;
+      if (AnnotationElement.isVisibleAnnotationPresent(con, annotation)) 
+         return true;
       if (closingDownManager)
       {
          return false;
       }
-      CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
-      return isVisibleAnnotationPresent(ctMethod, annotation.getName());
+      if(includeInvisibleAnnotation(annotation))
+      {
+         CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
+         return isVisibleAnnotationPresent(ctMethod, annotation.getName());
+      }
+      else
+         return false;
    }
 
    public static boolean isAnyAnnotationPresent(Method method, Class annotation) throws Exception
    {
-      if (AnnotationElement.isVisibleAnnotationPresent(method, annotation)) return true;
+      if (AnnotationElement.isVisibleAnnotationPresent(method, annotation)) 
+         return true;
       if (closingDownManager)
       {
          return false;
       }
-      CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
-      if (ctMethod == null) return false;
-      MethodInfo mi = ctMethod.getMethodInfo2();
-
-      AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
-      if (invisible == null) return false;
-
-      return invisible.getAnnotation(annotation.getName()) != null;
-   }
-
-   public static boolean isVisibleAnnotationPresent(Field field, String annotation) throws Exception
-   {
-      if (closingDownManager)
+      if(includeInvisibleAnnotation(annotation))
       {
-         return false;
+         CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
+         if (ctMethod == null) return false;
+         MethodInfo mi = ctMethod.getMethodInfo2();
+
+         AnnotationsAttribute invisible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.invisibleTag);
+         if (invisible == null) return false;
+
+         return invisible.getAnnotation(annotation.getName()) != null;
       }
-      CtField ctMethod = ReflectToJavassist.fieldToJavassist(field);
-      return isVisibleAnnotationPresent(ctMethod, annotation);
-   }
-
-   public static boolean isVisibleAnnotationPresent(Class clazz, String annotation) throws Exception
-   {
-      if (closingDownManager)
-      {
+      else
          return false;
-      }
-      if (clazz == Void.TYPE) return false;
-
-      ClassFile cf = getClassFile(clazz);
-
-      AnnotationsAttribute visible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
-      if (visible == null) return false;
-
-      return visible.getAnnotation(annotation) != null;
-   }
-
-   public static boolean isVisibleAnnotationPresent(Constructor con, String annotation) throws Exception
-   {
-      if (closingDownManager)
-      {
-         return false;
-      }
-      CtConstructor ctMethod = ReflectToJavassist.constructorToJavassist(con);
-      return isVisibleAnnotationPresent(ctMethod, annotation);
-   }
-
-   public static boolean isVisibleAnnotationPresent(Method method, String annotation) throws Exception
-   {
-      if (closingDownManager)
-      {
-         return false;
-      }
-      CtMethod ctMethod = ReflectToJavassist.methodToJavassist(method);
-      if (ctMethod == null) return false;
-      MethodInfo mi = ctMethod.getMethodInfo2();
-
-
-      AnnotationsAttribute visible = (AnnotationsAttribute) mi.getAttribute(AnnotationsAttribute.visibleTag);
-      if (visible == null) return false;
-
-      return visible.getAnnotation(annotation) != null;
-   }
-
-   public static Object[] getVisibleAnnotations(Class clazz) throws Exception
-   {
-      return AnnotationElement.getVisibleAnnotations(clazz);
-   }
-
-   public static Object[] getVisibleAnnotations(Method m) throws Exception
-   {
-      return AnnotationElement.getVisibleAnnotations(m);
-   }
-      
-   public static Object[] getVisibleAnnotations(Field f) throws Exception
-   {
-      return AnnotationElement.getVisibleAnnotations(f);
    }
    
-   public static Object[] getVisibleAnnotations(Constructor c) throws Exception
+   protected static boolean includeInvisibleAnnotation(Class annotation)
    {
-      return AnnotationElement.getVisibleAnnotations(c);
+      return  includeInvisibleAnnotation(annotation.getPackage().getName());
    }
-      
-   public static Class getAnnotationType(Object o)
+   
+   protected static boolean includeInvisibleAnnotation(String annotation)
    {
-      Class proxy = o.getClass();
-      if (Proxy.isProxyClass(proxy))
+      for(String includedAnnotation : AspectManager.instance().getIncludedInvisibleAnnotations())
       {
-         Class[] interfaces = proxy.getInterfaces();
-         if (interfaces.length == 1)
+         if(includedAnnotation.equals("*") || includedAnnotation.startsWith(annotation))
          {
-            return interfaces[0];
+//            System.err.println("IGNORING ANNOTATION: "+annotation);
+            return true;
          }
       }
-     return null;
+      return false;
    }
 }

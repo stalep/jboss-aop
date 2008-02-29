@@ -21,11 +21,15 @@
 */ 
 package org.jboss.test.aop.container;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Annotation {
 
 }
