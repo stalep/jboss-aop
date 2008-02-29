@@ -71,7 +71,6 @@ import org.jboss.aop.metadata.FieldMetaData;
 import org.jboss.aop.metadata.MethodMetaData;
 import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
-import org.jboss.aop.util.MetaDataUtil;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.metadata.spi.MetaData;
 import org.jboss.metadata.spi.signature.ConstructorSignature;
@@ -393,7 +392,7 @@ public abstract class Advisor
 
       if (metadata != null)
       {
-         if (MetaDataUtil.isAnnotationPresent(metadata, annotation)) return true;
+         if (metadata.isMetaDataPresent(annotation)) return true;
       }
 
       if (annotations.hasClassAnnotation(annotation)) return true;
@@ -596,7 +595,7 @@ public abstract class Advisor
             MetaData md = metadata.getComponentMetaData(sig);
             if (md != null)
             {
-               if (MetaDataUtil.isAnnotationPresent(metadata, annotation))
+               if (metadata.isMetaDataPresent(annotation))
                   return true;
             }
          }
