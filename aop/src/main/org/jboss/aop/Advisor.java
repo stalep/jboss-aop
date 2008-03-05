@@ -595,7 +595,7 @@ public abstract class Advisor
             MetaData md = metadata.getComponentMetaData(sig);
             if (md != null)
             {
-               if (metadata.isMetaDataPresent(annotation))
+               if (md.isMetaDataPresent(annotation))
                   return true;
             }
          }
