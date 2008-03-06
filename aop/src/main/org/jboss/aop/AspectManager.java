@@ -857,7 +857,7 @@ public class AspectManager
       if (ignoreClass(classname)) return true;
       if (includeClass(classname)) return false;
       if (excludeClass(classname)) return true;
-      return (classname.startsWith("org.jboss.aop") ||
+      return (classname.startsWith("org.jboss.aop.") ||
               classname.endsWith("$aop") ||
               classname.startsWith("javassist") ||
               classname.startsWith("org.jboss.util.") ||

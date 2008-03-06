@@ -174,7 +174,7 @@ public class SystemClassLoader
          if (state == INITIALIZED)
          {
             final Object[] args = {this, name, null, null, origBytes.bytes};
-            if (!name.startsWith("org.jboss.aop"))
+            if (!name.startsWith("org.jboss.aop."))
             {
                classBytes.bytes = (byte[]) transform.invoke(aspectManager, args);
                classBytes.protectionDomain = origBytes.protectionDomain;

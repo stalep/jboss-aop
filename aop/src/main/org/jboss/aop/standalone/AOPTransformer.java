@@ -37,7 +37,7 @@ public class AOPTransformer implements ClassFileTransformer
 {
    public boolean isNonAdvisableClassName(String classname)
    {
-      return (classname.startsWith("org.jboss.aop") ||
+      return (classname.startsWith("org.jboss.aop.") ||
       classname.endsWith("$aop") ||
       classname.startsWith("javassist") ||
       classname.startsWith("org.jboss.util.") ||

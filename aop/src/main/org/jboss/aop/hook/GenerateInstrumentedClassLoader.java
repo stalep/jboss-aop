@@ -48,7 +48,7 @@ public class GenerateInstrumentedClassLoader
       CtMethod wrapper = CtNewMethod.make(Modifier.PROTECTED, method.getReturnType(), "defineClass", method.getParameterTypes(), method.getExceptionTypes(), null, clazz);
 
       String code = "{"
-              + " if (!$1.startsWith(\"org.jboss.aop\") &&"
+              + " if (!$1.startsWith(\"org.jboss.aop.\") &&"
               + " !$1.endsWith(\"$aop\") &&"
               + " !$1.startsWith(\"javassist\") &&"
               + " !$1.startsWith(\"org.jboss.util.\") &&"
