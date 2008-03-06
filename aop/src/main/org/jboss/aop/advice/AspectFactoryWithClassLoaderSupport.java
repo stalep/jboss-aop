@@ -35,10 +35,10 @@ import org.jboss.logging.Logger;
 public abstract class AspectFactoryWithClassLoaderSupport implements AspectFactory, AspectFactoryWithClassLoader
 {
    private static final Logger logger = AOPLogger.getLogger(AspectFactoryWithClassLoaderSupport.class);
-   private WeakReference loader;
+   private WeakReference<ClassLoader> loader;
    
    /** If a scoped classloader with no parent delegation redefines the class, we need to make sure that that class is pushed on the stack */
-   private ThreadLocal scopedClassLoader = new ThreadLocal();
+   private ThreadLocal<ClassLoader> scopedClassLoader = new ThreadLocal<ClassLoader>();
    
    protected AspectFactoryWithClassLoaderSupport()
    {
@@ -46,7 +46,7 @@ public abstract class AspectFactoryWithClassLoaderSupport implements AspectFacto
 
    public void setClassLoader(ClassLoader cl)
    {
-      this.loader = new WeakReference(cl);
+      this.loader = new WeakReference<ClassLoader>(cl);
    }
    
    protected ClassLoader getLoader()
@@ -58,7 +58,7 @@ public abstract class AspectFactoryWithClassLoaderSupport implements AspectFacto
       }
       if (loader != null)
       {
-         return (ClassLoader)loader.get();
+         return loader.get();
       }
       return null;
    }
@@ -75,10 +75,10 @@ public abstract class AspectFactoryWithClassLoaderSupport implements AspectFacto
    
    public ClassLoader peekScopedClassLoader()
    {
-      return (ClassLoader)scopedClassLoader.get();
+      return scopedClassLoader.get();
    }
 
-   protected Class loadClass(String name) throws ClassNotFoundException
+   protected Class<?> loadClass(String name) throws ClassNotFoundException
    {
       ClassLoader cl = getLoader();
       if (cl == null)
