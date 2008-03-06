@@ -44,7 +44,7 @@ public class XmlHelper
     * @param tagName    The name of the desired child
     * @return           An interator of children or null if element is null.
     */
-   public static Iterator getChildrenByTagName(Element element,
+   public static Iterator<Element> getChildrenByTagName(Element element,
                                                String tagName)
    {
       if (element == null) return null;
@@ -52,12 +52,12 @@ public class XmlHelper
       // descendance. We want only children
 
       NodeList children = element.getChildNodes();
-      ArrayList goodChildren = new ArrayList();
+      ArrayList<Element> goodChildren = new ArrayList<Element>();
       for (int i=0; i<children.getLength(); i++) {
          Node currentChild = children.item(i);
          if (currentChild.getNodeType() == Node.ELEMENT_NODE && 
              ((Element)currentChild).getTagName().equals(tagName)) {
-            goodChildren.add(currentChild);
+            goodChildren.add((Element)currentChild);
          }
       }
       return goodChildren.iterator();
@@ -77,10 +77,10 @@ public class XmlHelper
    public static Element getUniqueChild(Element element, String tagName)
       throws Exception
    {
-      Iterator goodChildren = getChildrenByTagName(element, tagName);
+      Iterator<Element> goodChildren = getChildrenByTagName(element, tagName);
 
       if (goodChildren != null && goodChildren.hasNext()) {
-         Element child = (Element)goodChildren.next();
+         Element child = goodChildren.next();
          if (goodChildren.hasNext()) {
             throw new Exception
                ("expected only one " + tagName + " tag");
@@ -123,10 +123,10 @@ public class XmlHelper
                                           Element defaultElement)
       throws Exception
    {
-      Iterator goodChildren = getChildrenByTagName(element, tagName);
+      Iterator<Element> goodChildren = getChildrenByTagName(element, tagName);
 
       if (goodChildren != null && goodChildren.hasNext()) {
-         Element child = (Element)goodChildren.next();
+         Element child = goodChildren.next();
          if (goodChildren.hasNext()) {
             throw new Exception
                ("expected only one " + tagName + " tag");

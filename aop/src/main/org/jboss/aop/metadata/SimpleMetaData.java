@@ -131,11 +131,11 @@ public class SimpleMetaData implements MetaDataResolver, java.io.Externalizable
     * @param name tag of the queried metadata
     * @return a map containing all the metadata tagged with {@code name}
     */
-   public synchronized HashMap tag(String name)
+   public synchronized HashMap<Object, MetaDataValue> tag(String name)
    {
-      HashMap map = (HashMap) metaData.get(name);
+      HashMap<Object, MetaDataValue> map = metaData.get(name);
       if (map == null) return null;
-      return (HashMap) map.clone();
+      return (HashMap<Object, MetaDataValue>) map.clone();
    }
 
    /**
@@ -228,7 +228,7 @@ public class SimpleMetaData implements MetaDataResolver, java.io.Externalizable
     */
    public synchronized void removeMetaData(Object tag, Object attr)
    {
-      HashMap groupData = (HashMap) metaData.get(tag);
+      HashMap<Object, MetaDataValue> groupData = metaData.get(tag);
       if (groupData != null)
       {
          groupData.remove(attr);
@@ -263,7 +263,7 @@ public class SimpleMetaData implements MetaDataResolver, java.io.Externalizable
     */
    public synchronized void mergeIn(SimpleMetaData data)
    {
-      Iterator it = data.metaData.keySet().iterator();
+      Iterator<Object> it = data.metaData.keySet().iterator();
       while (it.hasNext())
       {
          Object tag = it.next();
@@ -295,17 +295,17 @@ public class SimpleMetaData implements MetaDataResolver, java.io.Externalizable
       while (it.hasNext())
       {
          Object group = it.next();
-         HashMap map = (HashMap) metaData.get(group);
+         HashMap<Object, MetaDataValue> map = metaData.get(group);
          //System.out.println("******** marshalling group " + group + " size = " + map.size());
          if (map != null && map.size() > 0)
          {
             boolean groupWritten = false;
-            Iterator attrs = map.keySet().iterator();
+            Iterator<Object> attrs = map.keySet().iterator();
             while (attrs.hasNext())
             {
                Object attr = attrs.next();
                //System.out.println("******** marshalling attr: " + group + "." + attr);
-               MetaDataValue value = (MetaDataValue) map.get(attr);
+               MetaDataValue value = map.get(attr);
                if (value.type == PayloadKey.TRANSIENT) continue;
                if (!groupWritten)
                {

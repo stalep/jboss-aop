@@ -311,8 +311,8 @@ public class AspectXmlLoader implements XmlLoader
       
       Type theType = Type.valueOf(type);
       
-      ArrayList interceptors = loadInterceptors(element);
-      InterceptorFactory[] inters = (InterceptorFactory[]) interceptors.toArray(new InterceptorFactory[interceptors.size()]);
+      ArrayList<InterceptorFactory> interceptors = loadInterceptors(element);
+      InterceptorFactory[] inters = interceptors.toArray(new InterceptorFactory[interceptors.size()]);
       for (int i = 0 ; i < inters.length ; i++)
       {
          if (!inters[i].getAspect().getScope().equals(Scope.PER_VM))
@@ -588,7 +588,7 @@ public class AspectXmlLoader implements XmlLoader
    {
       String tag = element.getAttribute("tag");
       String classname = element.getAttribute("class");
-      Class clazz = getClassLoader().loadClass(classname);
+      Class<?> clazz = getClassLoader().loadClass(classname);
       ClassMetaDataLoader loader = (ClassMetaDataLoader) clazz.newInstance();
       if (loader instanceof XmlLoadable)
       {
@@ -638,7 +638,7 @@ public class AspectXmlLoader implements XmlLoader
 
       Pointcut p = null;
 
-      Class pClass = null;
+      Class<?> pClass = null;
       try
       {
          pClass = getClassLoader().loadClass(clazz);
@@ -870,10 +870,10 @@ public class AspectXmlLoader implements XmlLoader
          ASTStart start = new TypeExpressionParser(new StringReader(ast)).Start();
          pcut = new InterfaceIntroduction(name, start, ifaces);
       }
-      Iterator it = XmlHelper.getChildrenByTagName(pointcut, "mixin");
+      Iterator<Element> it = XmlHelper.getChildrenByTagName(pointcut, "mixin");
       while (it.hasNext())
       {
-         Element mixin = (Element) it.next();
+         Element mixin = it.next();
          if (mixin != null)
          {
             String construction = XmlHelper.getOptionalChildContent(mixin, "construction");
@@ -1212,12 +1212,12 @@ public class AspectXmlLoader implements XmlLoader
       manager.removeBindings(bindings);
       for (int i = 0; i < factories.size(); i++)
       {
-         String factory = (String) factories.get(i);
+         String factory = factories.get(i);
          manager.removeInterceptorFactory(factory);
       }
       for (int i = 0; i < aspects.size(); i++)
       {
-         String aspect = (String) aspects.get(i);
+         String aspect = aspects.get(i);
          manager.removeAspectDefinition(aspect);
       }
    }

@@ -57,7 +57,7 @@ public class ConstructorConfig
 
    // Public --------------------------------------------------------
 
-   public boolean patternMatches(Constructor constructor)
+   public boolean patternMatches(Constructor<?> constructor)
    {
       // the wildcard matches everything
       if (signature.equals("*"))
@@ -96,11 +96,11 @@ public class ConstructorConfig
          return;
       }
       signature = "(";
-      Iterator paramsIterator = XmlHelper.getChildrenByTagName(paramsElement,
+      Iterator<Element> paramsIterator = XmlHelper.getChildrenByTagName(paramsElement,
                                                                "constructor-param");
       while (paramsIterator.hasNext())
       {
-         signature += XmlHelper.getElementContent((Element)paramsIterator.next()).trim();
+         signature += XmlHelper.getElementContent(paramsIterator.next()).trim();
          signature += " ";
       }
       signature += ")";

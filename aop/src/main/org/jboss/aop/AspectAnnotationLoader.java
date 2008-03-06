@@ -99,11 +99,11 @@ public class AspectAnnotationLoader
       this.cl = cl;
    }
    
-   public void deployInputStreamIterator(Iterator it) throws Exception
+   public void deployInputStreamIterator(Iterator<InputStream> it) throws Exception
    {
       while (it.hasNext())
       {
-         InputStream stream = (InputStream) it.next();
+         InputStream stream = it.next();
          DataInputStream dstream = new DataInputStream(stream);
          ClassFile cf = null;
          try
@@ -158,11 +158,11 @@ public class AspectAnnotationLoader
       }
    }
    
-   public void undeployInputStreamIterator(Iterator it) throws Exception
+   public void undeployInputStreamIterator(Iterator<InputStream> it) throws Exception
    {
       while (it.hasNext())
       {
-         InputStream stream = (InputStream) it.next();
+         InputStream stream = it.next();
          DataInputStream dstream = new DataInputStream(stream);
          ClassFile cf = null;
          try
@@ -396,11 +396,11 @@ public class AspectAnnotationLoader
       {
          if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Found top-level @Precedence in: " + cf.getName());
          
-         ArrayList entries = new ArrayList();
-         Iterator fields = cf.getFields().iterator();
+         ArrayList<PrecedenceDefEntry> entries = new ArrayList<PrecedenceDefEntry>();
+         Iterator<FieldInfo> fields = cf.getFields().iterator();
          while (fields.hasNext())
          {
-            FieldInfo finfo = (javassist.bytecode.FieldInfo) fields.next();
+            FieldInfo finfo = fields.next();
             AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
             if (mgroup == null) continue;
             javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(PrecedenceInterceptor.class.getName());
@@ -420,7 +420,7 @@ public class AspectAnnotationLoader
                }
             }
          }
-         PrecedenceDefEntry[] pentries = (PrecedenceDefEntry[])entries.toArray(new PrecedenceDefEntry[entries.size()]); 
+         PrecedenceDefEntry[] pentries = entries.toArray(new PrecedenceDefEntry[entries.size()]); 
          PrecedenceDef precedenceDef = new PrecedenceDef(cf.getName(), pentries);
          manager.addPrecedence(precedenceDef);
       }
@@ -438,10 +438,10 @@ public class AspectAnnotationLoader
    private void deployAspectMethodBindings(ClassFile cf, AspectDefinition def)
    throws Exception
    {
-      Iterator methods = cf.getMethods().iterator();
+      Iterator<MethodInfo> methods = cf.getMethods().iterator();
       while (methods.hasNext())
       {
-         javassist.bytecode.MethodInfo minfo = (javassist.bytecode.MethodInfo) methods.next();
+         MethodInfo minfo = methods.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) minfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(Bind.class.getName());
@@ -506,10 +506,10 @@ public class AspectAnnotationLoader
    private void undeployAspectMethodBindings(ClassFile cf)
    throws Exception
    {
-      Iterator methods = cf.getMethods().iterator();
+      Iterator<MethodInfo> methods = cf.getMethods().iterator();
       while (methods.hasNext())
       {
-         javassist.bytecode.MethodInfo minfo = (javassist.bytecode.MethodInfo) methods.next();
+         MethodInfo minfo = methods.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) minfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(Bind.class.getName());
@@ -569,10 +569,10 @@ public class AspectAnnotationLoader
    private void deployPointcuts(ClassFile cf)
    throws Exception
    {
-      Iterator fields = cf.getFields().iterator();
+      Iterator<FieldInfo> fields = cf.getFields().iterator();
       while (fields.hasNext())
       {
-         javassist.bytecode.FieldInfo finfo = (javassist.bytecode.FieldInfo) fields.next();
+         FieldInfo finfo = fields.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(PointcutDef.class.getName());
@@ -588,10 +588,10 @@ public class AspectAnnotationLoader
    private void undeployPointcuts(ClassFile cf)
    throws Exception
    {
-      Iterator fields = cf.getFields().iterator();
+      Iterator<FieldInfo> fields = cf.getFields().iterator();
       while (fields.hasNext())
       {
-         javassist.bytecode.FieldInfo finfo = (javassist.bytecode.FieldInfo) fields.next();
+         FieldInfo finfo = fields.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(PointcutDef.class.getName());
@@ -608,10 +608,10 @@ public class AspectAnnotationLoader
    private void deployMixins(ClassFile cf)
    throws Exception
    {
-      Iterator methods = cf.getMethods().iterator();
+      Iterator<MethodInfo> methods = cf.getMethods().iterator();
       while (methods.hasNext())
       {
-         javassist.bytecode.MethodInfo minfo = (javassist.bytecode.MethodInfo) methods.next();
+         MethodInfo minfo = methods.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) minfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(Mixin.class.getName());
@@ -727,10 +727,10 @@ public class AspectAnnotationLoader
    private void undeployMixins(ClassFile cf)
    throws Exception
    {
-      Iterator methods = cf.getMethods().iterator();
+      Iterator<MethodInfo> methods = cf.getMethods().iterator();
       while (methods.hasNext())
       {
-         javassist.bytecode.MethodInfo minfo = (javassist.bytecode.MethodInfo) methods.next();
+         MethodInfo minfo = methods.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) minfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(Mixin.class.getName());
@@ -744,10 +744,10 @@ public class AspectAnnotationLoader
    private void deployIntroductions(ClassFile cf)
    throws Exception
    {
-      Iterator fields = cf.getFields().iterator();
+      Iterator<FieldInfo> fields = cf.getFields().iterator();
       while (fields.hasNext())
       {
-         FieldInfo finfo = (javassist.bytecode.FieldInfo) fields.next();
+         FieldInfo finfo = fields.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(Introduction.class.getName());
@@ -784,10 +784,10 @@ public class AspectAnnotationLoader
    private void undeployIntroductions(ClassFile cf)
    throws Exception
    {
-      Iterator fields = cf.getFields().iterator();
+      Iterator<FieldInfo> fields = cf.getFields().iterator();
       while (fields.hasNext())
       {
-         FieldInfo finfo = (javassist.bytecode.FieldInfo) fields.next();
+         FieldInfo finfo = fields.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(Introduction.class.getName());
@@ -801,10 +801,10 @@ public class AspectAnnotationLoader
 
    private void deployTypedefs(ClassFile cf) throws Exception
    {
-      Iterator fields = cf.getFields().iterator();
+      Iterator<FieldInfo> fields = cf.getFields().iterator();
       while (fields.hasNext())
       {
-         FieldInfo finfo = (javassist.bytecode.FieldInfo) fields.next();
+         FieldInfo finfo = fields.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(TypeDef.class.getName());
@@ -821,10 +821,10 @@ public class AspectAnnotationLoader
 
    private void undeployTypedefs(ClassFile cf) throws Exception
    {
-      Iterator fields = cf.getFields().iterator();
+      Iterator<FieldInfo> fields = cf.getFields().iterator();
       while (fields.hasNext())
       {
-         FieldInfo finfo = (javassist.bytecode.FieldInfo) fields.next();
+         FieldInfo finfo = fields.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(TypeDef.class.getName());
@@ -844,10 +844,10 @@ public class AspectAnnotationLoader
 
    private void deployCFlowStackDefs(ClassFile cf) throws Exception
    {
-      Iterator fields = cf.getFields().iterator();
+      Iterator<FieldInfo> fields = cf.getFields().iterator();
       while (fields.hasNext())
       {
-         FieldInfo finfo = (javassist.bytecode.FieldInfo) fields.next();
+         FieldInfo finfo = fields.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(CFlowStackDef.class.getName());
@@ -871,10 +871,10 @@ public class AspectAnnotationLoader
 
    private void undeployCFlowStackDefs(ClassFile cf) throws Exception
    {
-      Iterator fields = cf.getFields().iterator();
+      Iterator<FieldInfo> fields = cf.getFields().iterator();
       while (fields.hasNext())
       {
-         FieldInfo finfo = (javassist.bytecode.FieldInfo) fields.next();
+         FieldInfo finfo = fields.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(CFlowStackDef.class.getName());
@@ -892,10 +892,10 @@ public class AspectAnnotationLoader
 
    private void deployPrepares(ClassFile cf) throws Exception
    {
-      Iterator fields = cf.getFields().iterator();
+      Iterator<FieldInfo> fields = cf.getFields().iterator();
       while (fields.hasNext())
       {
-         FieldInfo finfo = (javassist.bytecode.FieldInfo) fields.next();
+         FieldInfo finfo = fields.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(Prepare.class.getName());
@@ -911,10 +911,10 @@ public class AspectAnnotationLoader
 
    private void undeployPrepares(ClassFile cf) throws Exception
    {
-      Iterator fields = cf.getFields().iterator();
+      Iterator<FieldInfo> fields = cf.getFields().iterator();
       while (fields.hasNext())
       {
-         FieldInfo finfo = (javassist.bytecode.FieldInfo) fields.next();
+         FieldInfo finfo = fields.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(Prepare.class.getName());
@@ -932,10 +932,10 @@ public class AspectAnnotationLoader
    
    private void deployAnnotationIntroductions(ClassFile cf) throws Exception
    {
-      Iterator fields = cf.getFields().iterator();
+      Iterator<FieldInfo> fields = cf.getFields().iterator();
       while (fields.hasNext())
       {
-         FieldInfo finfo = (javassist.bytecode.FieldInfo) fields.next();
+         FieldInfo finfo = fields.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(AnnotationIntroductionDef.class.getName());
@@ -955,10 +955,10 @@ public class AspectAnnotationLoader
 
    private void undeployAnnotationIntroductions(ClassFile cf) throws Exception
    {
-      Iterator fields = cf.getFields().iterator();
+      Iterator<FieldInfo> fields = cf.getFields().iterator();
       while (fields.hasNext())
       {
-         FieldInfo finfo = (javassist.bytecode.FieldInfo) fields.next();
+         FieldInfo finfo = fields.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(AnnotationIntroductionDef.class.getName());
@@ -978,10 +978,10 @@ public class AspectAnnotationLoader
 
    private void deployDeclares(ClassFile cf) throws Exception
    {
-      Iterator fields = cf.getFields().iterator();
+      Iterator<FieldInfo> fields = cf.getFields().iterator();
       while (fields.hasNext())
       {
-         FieldInfo finfo = (javassist.bytecode.FieldInfo) fields.next();
+         FieldInfo finfo = fields.next();
          AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation dwinfo = mgroup.getAnnotation(DeclareWarning.class.getName());

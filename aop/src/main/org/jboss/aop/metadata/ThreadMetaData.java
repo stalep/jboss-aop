@@ -37,7 +37,7 @@ import org.jboss.aop.util.PayloadKey;
  */
 public class ThreadMetaData implements MetaDataResolver
 {
-   ThreadLocal metaData = new ThreadLocal();
+   ThreadLocal<SimpleMetaData> metaData = new ThreadLocal<SimpleMetaData>();
 
    public void addMetaData(Object tag, Object attr, Object value)
    {
@@ -46,7 +46,7 @@ public class ThreadMetaData implements MetaDataResolver
 
    public void addMetaData(Object tag, Object attr, Object value, PayloadKey type)
    {
-      SimpleMetaData data = (SimpleMetaData)metaData.get();
+      SimpleMetaData data = metaData.get();
       if (data == null)
       {
          data = new SimpleMetaData();
@@ -57,21 +57,21 @@ public class ThreadMetaData implements MetaDataResolver
 
    public Object getMetaData(Object tag, Object attr)
    {
-      SimpleMetaData data = (SimpleMetaData)metaData.get();
+      SimpleMetaData data = metaData.get();
       if (data == null) return null;
       return data.getMetaData(tag, attr);
    }
 
    public synchronized void removeMetaData(Object tag, Object attr)
    {
-      SimpleMetaData data = (SimpleMetaData)metaData.get();
+      SimpleMetaData data = metaData.get();
       if (data == null) return;
       data.removeMetaData(tag, attr);
    }
 
    public synchronized void removeGroupData(Object tag)
    {
-      SimpleMetaData data = (SimpleMetaData)metaData.get();
+      SimpleMetaData data = metaData.get();
       if (data == null) return;
       data.removeGroupData(tag);
    }
@@ -83,7 +83,7 @@ public class ThreadMetaData implements MetaDataResolver
 
    public SimpleMetaData getAllMetaData(Invocation invocation)
    {
-      return (SimpleMetaData)metaData.get();
+      return metaData.get();
    }
    public void clear()
    {

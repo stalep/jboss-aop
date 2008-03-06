@@ -106,11 +106,11 @@ public class MethodConfig
       Element paramsElement = XmlHelper.getOptionalChild(element, "method-params");
       if (paramsElement != null)
       {
-         Iterator paramsIterator = XmlHelper.getChildrenByTagName(paramsElement,
+         Iterator<Element> paramsIterator = XmlHelper.getChildrenByTagName(paramsElement,
                                                                   "method-param");
          while (paramsIterator.hasNext())
          {
-            signature += XmlHelper.getElementContent((Element)paramsIterator.next());
+            signature += XmlHelper.getElementContent(paramsIterator.next());
             signature += " ";
          }
       }
@@ -127,13 +127,13 @@ public class MethodConfig
       return buf.toString();
    }
 
-   public static String getSignature(Class[] source)
+   public static String getSignature(Class<?>[] source)
    {
       StringBuffer sig = new StringBuffer("(");
       for( int i=0; i < source.length; i++ )
       {
          String brackets = "";
-         Class cls = source[i];
+         Class<?> cls = source[i];
          while(cls.isArray())
          {
             brackets += "[]";

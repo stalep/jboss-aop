@@ -28,6 +28,7 @@ import org.jboss.util.file.ClassFileFilter;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -74,10 +75,10 @@ public class Deployment
       {
          try
          {
-            Enumeration en = SecurityActions.getContextClassLoader().getResources("META-INF/jboss-aop.xml");
+            Enumeration<URL> en = SecurityActions.getContextClassLoader().getResources("META-INF/jboss-aop.xml");
             while (en.hasMoreElements())
             {
-               URL url = (URL) en.nextElement();
+               URL url = en.nextElement();
                if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("deploying  " + url);
                AspectXmlLoader.deployXML(url);
             }
@@ -113,7 +114,7 @@ public class Deployment
          try
          {
             URL url = f.toURL();
-            Iterator it = ArchiveBrowser.getBrowser(url, new ClassFileFilter());
+            Iterator<InputStream> it = ArchiveBrowser.getBrowser(url, new ClassFileFilter());
             AspectAnnotationLoader loader = new AspectAnnotationLoader(AspectManager.instance());
             loader.deployInputStreamIterator(it);
          }

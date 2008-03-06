@@ -41,7 +41,7 @@ public abstract class ClassMetaDataBinding
    protected String expr;
    protected String name;
    protected String tag;
-   protected ArrayList advisors = new ArrayList();
+   protected ArrayList<WeakReference<Advisor>> advisors = new ArrayList<WeakReference<Advisor>>();
    protected ClassMetaDataLoader loader;
 
    public ClassMetaDataBinding(ClassMetaDataLoader loader, String name, String tag, String exp)
@@ -74,14 +74,14 @@ public abstract class ClassMetaDataBinding
       // we may be having in the future an Advisor per instance.
       synchronized (advisors)
       {
-         Iterator it = advisors.iterator();
+         Iterator<WeakReference<Advisor>> it = advisors.iterator();
          while (it.hasNext())
          {
-            WeakReference ref = (WeakReference) it.next();
-            Object obj = ref.get();
-            if (obj == null) it.remove();
+            WeakReference<Advisor> ref = it.next();
+            Advisor adv = ref.get();
+            if (adv == null) it.remove();
          }
-         advisors.add(new WeakReference(advisor));
+         advisors.add(new WeakReference<Advisor>(advisor));
       }
       advisor.addClassMetaData(this);
    }
@@ -92,8 +92,8 @@ public abstract class ClassMetaDataBinding
       {
          for (int i = 0; i < advisors.size(); i++)
          {
-            WeakReference ref = (WeakReference) advisors.get(i);
-            Advisor advisor = (Advisor) ref.get();
+            WeakReference<Advisor> ref = advisors.get(i);
+            Advisor advisor = ref.get();
             if (advisor != null)
                advisor.removeClassMetaData(this);
          }
@@ -113,7 +113,7 @@ public abstract class ClassMetaDataBinding
       return name.hashCode();
    }
 
-   public boolean matches(Advisor advisor, Class clazz)
+   public boolean matches(Advisor advisor, Class<?> clazz)
    {
       return Util.matchesClassExpr(classExpr, clazz, advisor);
    }

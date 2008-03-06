@@ -39,15 +39,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MethodMetaData implements MetaDataResolver
 {
-   volatile Map methodMetaData = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
-   HashMap inexactMatches;
+   volatile Map<String, SimpleMetaData> methodMetaData = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   HashMap<String, HashMap<Object, HashMap<Object, Boolean>>> inexactMatches;
 
    public boolean hasTag(String group)
    {
-      Iterator values = methodMetaData.values().iterator();
-      while (values.hasNext())
+      for (SimpleMetaData map : methodMetaData.values())
       {
-         SimpleMetaData map = (SimpleMetaData)values.next();
          if (map.hasTag(group)) return true;
       }
       return false;
@@ -75,7 +73,7 @@ public class MethodMetaData implements MetaDataResolver
 
    private synchronized void addMethodMetaData(String key, Object tag, Object attr, Object value, PayloadKey type, boolean exactMatch)
    {
-      SimpleMetaData methodData = (SimpleMetaData)methodMetaData.get(key);
+      SimpleMetaData methodData = methodMetaData.get(key);
       if (methodData == null)
       {
          methodData = new SimpleMetaData();
@@ -92,20 +90,20 @@ public class MethodMetaData implements MetaDataResolver
       {
          if (inexactMatches == null)
          {
-            inexactMatches = new HashMap();
+            inexactMatches = new HashMap<String, HashMap<Object, HashMap<Object, Boolean>>>();
          }
          
-         HashMap tags = (HashMap)inexactMatches.get(key);
+         HashMap<Object, HashMap<Object, Boolean>> tags = inexactMatches.get(key);
          if (tags == null)
          {
-            tags = new HashMap();
+            tags = new HashMap<Object, HashMap<Object, Boolean>>();
             inexactMatches.put(key, tags);
          }
          
-         HashMap attrs = (HashMap)tags.get(tag);
+         HashMap<Object, Boolean> attrs = tags.get(tag);
          if (attrs == null)
          {
-            attrs = new HashMap();
+            attrs = new HashMap<Object, Boolean>();
             tags.put(tag, attrs);
          }
          attrs.put(attr, Boolean.TRUE);
@@ -113,9 +111,9 @@ public class MethodMetaData implements MetaDataResolver
       else
       {
          if (inexactMatches == null)return;
-         HashMap tags = (HashMap)inexactMatches.get(key);
+         HashMap<Object, HashMap<Object, Boolean>> tags = inexactMatches.get(key);
          if (tags == null) return;
-         HashMap attrs = (HashMap)tags.get(tag);
+         HashMap<Object, Boolean> attrs = tags.get(tag);
          if (attrs == null) return;
          attrs.remove(attr);
       }
@@ -125,9 +123,9 @@ public class MethodMetaData implements MetaDataResolver
    public synchronized boolean tagWasMatchedInexactly(Method method, Object tag, Object attr)
    {
       if (inexactMatches == null) return false;
-      HashMap tags = (HashMap)inexactMatches.get(method.toString());
+      HashMap<Object, HashMap<Object, Boolean>> tags = inexactMatches.get(method.toString());
       if (tags == null) return false;
-      HashMap attrs = (HashMap)tags.get(tag);
+      HashMap<Object, Boolean> attrs = tags.get(tag);
       if (attrs == null) return false;
       return (attrs.get(attr) != null);
    }
@@ -139,7 +137,7 @@ public class MethodMetaData implements MetaDataResolver
       return meta.hasTag(tag);
    }
 
-   public Iterator getMethods()
+   public Iterator<String> getMethods()
    {
       return methodMetaData.keySet().iterator();
    }
@@ -151,7 +149,7 @@ public class MethodMetaData implements MetaDataResolver
     */
    public SimpleMetaData getMethodMetaData(String method)
    {
-      return (SimpleMetaData)methodMetaData.get(method);
+      return methodMetaData.get(method);
    }
 
    public SimpleMetaData getMethodMetaData(Method method)
@@ -161,7 +159,7 @@ public class MethodMetaData implements MetaDataResolver
 
    public Object getMethodMetaData(Method method, Object tag, Object attr)
    {
-      SimpleMetaData methodData = (SimpleMetaData)methodMetaData.get(method.toString());
+      SimpleMetaData methodData = methodMetaData.get(method.toString());
       if (methodData == null) return null;
       return methodData.getMetaData(tag, attr);
    }
@@ -180,7 +178,7 @@ public class MethodMetaData implements MetaDataResolver
    public SimpleMetaData getAllMetaData(Invocation invocation)
    {
       MethodInvocation methodInvocation = (MethodInvocation)invocation;
-      return (SimpleMetaData)methodMetaData.get(methodInvocation.getMethod().toString());
+      return methodMetaData.get(methodInvocation.getMethod().toString());
    }
 
    //--- temporary interface until metadata is bound to actual class, this is needed for loader/compiler to
@@ -215,7 +213,7 @@ public class MethodMetaData implements MetaDataResolver
    {
       if (methodMetaData == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         methodMetaData = new ConcurrentHashMap();
+         methodMetaData = new ConcurrentHashMap<String, SimpleMetaData>();
       }
    }
 }

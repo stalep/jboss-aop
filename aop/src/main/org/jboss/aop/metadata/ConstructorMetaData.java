@@ -36,41 +36,39 @@ import java.util.Iterator;
  */
 public class ConstructorMetaData implements MetaDataResolver
 {
-   HashMap constructorMetaData = new HashMap();
+   final HashMap<String, SimpleMetaData> constructorMetaData = new HashMap<String, SimpleMetaData>();
 
    public boolean hasTag(String tag)
    {
-      Iterator values = constructorMetaData.values().iterator();
-      while (values.hasNext())
+      for (SimpleMetaData map : constructorMetaData.values())
       {
-         SimpleMetaData map = (SimpleMetaData)values.next();
          if (map.hasTag(tag)) return true;
       }
       return false;
    }
-   public synchronized boolean hasTag(Constructor constructor, String tag)
+   public synchronized boolean hasTag(Constructor<?> constructor, String tag)
    {
       SimpleMetaData meta = getConstructorMetaData(constructor);
       if (meta == null) return false;
       return meta.hasTag(tag);
    }
 
-   public void tagConstructor(Constructor con, Object tag)
+   public void tagConstructor(Constructor<?> con, Object tag)
    {
       addConstructorMetaData(con, tag, EMPTY_TAG, new Object(), PayloadKey.TRANSIENT);
    }
 
-   public void addConstructorMetaData(Constructor constructor, Object tag, Object attr, Object value)
+   public void addConstructorMetaData(Constructor<?> constructor, Object tag, Object attr, Object value)
    {
       addConstructorMetaData(constructor.toString(), tag, attr, value, PayloadKey.MARSHALLED);
    }
-   public void addConstructorMetaData(Constructor constructor, Object tag, Object attr, Object value, PayloadKey type)
+   public void addConstructorMetaData(Constructor<?> constructor, Object tag, Object attr, Object value, PayloadKey type)
    {
       addConstructorMetaData(constructor.toString(), tag, attr, value, type);
    }
    public synchronized void addConstructorMetaData(String key, Object tag, Object attr, Object value, PayloadKey type)
    {
-      SimpleMetaData constructorData = (SimpleMetaData)constructorMetaData.get(key);
+      SimpleMetaData constructorData = constructorMetaData.get(key);
       if (constructorData == null)
       {
          constructorData = new SimpleMetaData();
@@ -79,31 +77,31 @@ public class ConstructorMetaData implements MetaDataResolver
       constructorData.addMetaData(tag, attr, value, type);
    }
 
-   public synchronized Iterator getConstructors()
+   public synchronized Iterator<String> getConstructors()
    {
       return constructorMetaData.keySet().iterator();
    }
 
-   public synchronized SimpleMetaData getConstructorMetaData(Constructor constructor)
+   public synchronized SimpleMetaData getConstructorMetaData(Constructor<?> constructor)
    {
-      return (SimpleMetaData)constructorMetaData.get(constructor.toString());
+      return constructorMetaData.get(constructor.toString());
    }
 
    public synchronized SimpleMetaData getConstructorMetaData(String constructor)
    {
-      return (SimpleMetaData)constructorMetaData.get(constructor);
+      return constructorMetaData.get(constructor);
    }
 
-   public synchronized Object getConstructorMetaData(Constructor constructor, Object tag, Object attr)
+   public synchronized Object getConstructorMetaData(Constructor<?> constructor, Object tag, Object attr)
    {
-      SimpleMetaData constructorData = (SimpleMetaData)constructorMetaData.get(constructor.toString());
+      SimpleMetaData constructorData = constructorMetaData.get(constructor.toString());
       if (constructorData == null) return null;
       return constructorData.getMetaData(tag, attr);
    }
 
    public synchronized Object getConstructorMetaData(String constructor, Object tag, Object attr)
    {
-      SimpleMetaData constructorData = (SimpleMetaData)constructorMetaData.get(constructor);
+      SimpleMetaData constructorData = constructorMetaData.get(constructor);
       if (constructorData == null) return null;
       return constructorData.getMetaData(tag, attr);
    }
@@ -115,14 +113,14 @@ public class ConstructorMetaData implements MetaDataResolver
 
    public Object resolve(Invocation invocation, Object tag, Object attr)
    {
-      Constructor constructor = ((ConstructorInvocation)invocation).getConstructor();
+      Constructor<?> constructor = ((ConstructorInvocation)invocation).getConstructor();
       return getConstructorMetaData(constructor, tag, attr);
    }
 
    public synchronized SimpleMetaData getAllMetaData(Invocation invocation)
    {
-      Constructor constructor = ((ConstructorInvocation)invocation).getConstructor();
-      return (SimpleMetaData)constructorMetaData.get(constructor);
+      Constructor<?> constructor = ((ConstructorInvocation)invocation).getConstructor();
+      return constructorMetaData.get(constructor);
    }
 
    // temporary interface so that loader/compiler can get annotations
@@ -139,7 +137,7 @@ public class ConstructorMetaData implements MetaDataResolver
 
    public synchronized boolean hasGroup(CtConstructor constructor, String tag)
    {
-      SimpleMetaData meta = (SimpleMetaData)constructorMetaData.get(constructor.getSignature());
+      SimpleMetaData meta = constructorMetaData.get(constructor.getSignature());
       if (meta == null) return false;
       return meta.hasTag(tag);
    }

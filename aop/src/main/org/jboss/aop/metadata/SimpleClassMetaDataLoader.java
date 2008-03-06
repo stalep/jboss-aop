@@ -95,10 +95,10 @@ public class SimpleClassMetaDataLoader implements ClassMetaDataLoader
          }
       }
 
-      Iterator it = XmlHelper.getChildrenByTagName(element, "method");
+      Iterator<Element> it = XmlHelper.getChildrenByTagName(element, "method");
       while (it.hasNext())
       {
-         Element method = (Element) it.next();
+         Element method = it.next();
          String methodName = method.getAttribute("name");
          String expr = method.getAttribute("expr");
          if (methodName != null && methodName.equals(""))
@@ -140,7 +140,7 @@ public class SimpleClassMetaDataLoader implements ClassMetaDataLoader
       it = XmlHelper.getChildrenByTagName(element, "field");
       while (it.hasNext())
       {
-         Element field = (Element) it.next();
+         Element field = it.next();
          String fieldName = field.getAttribute("name");
          NodeList children = field.getChildNodes();
          boolean hadTag = false;
@@ -164,7 +164,7 @@ public class SimpleClassMetaDataLoader implements ClassMetaDataLoader
       it = XmlHelper.getChildrenByTagName(element, "constructor");
       while (it.hasNext())
       {
-         Element field = (Element) it.next();
+         Element field = it.next();
          String expr = field.getAttribute("expr");
          NodeList children = field.getChildNodes();
          boolean hadTag = false;
@@ -188,7 +188,7 @@ public class SimpleClassMetaDataLoader implements ClassMetaDataLoader
       return data;
    }
 
-   public void bind(Advisor advisor, ClassMetaDataBinding data, Method[] methods, Field[] fields, Constructor[] constructors) throws Exception
+   public void bind(Advisor advisor, ClassMetaDataBinding data, Method[] methods, Field[] fields, Constructor<?>[] constructors) throws Exception
    {
       SimpleClassMetaDataBinding meta = (SimpleClassMetaDataBinding) data;
       SimpleMetaData defaultData = advisor.getDefaultMetaData();
@@ -225,10 +225,10 @@ public class SimpleClassMetaDataLoader implements ClassMetaDataLoader
       }
       
       boolean exactMatch = data.matches(advisor, advisor.getClazz());
-      ArrayList queuedData = data.getQueuedMethodMetaData();
+      ArrayList<SimpleClassMetaDataBinding.QueuedMethodMetaData> queuedData = data.getQueuedMethodMetaData();
       for (int i = 0; i < queuedData.size(); i++)
       {
-         SimpleClassMetaDataBinding.QueuedMethodMetaData queued = (SimpleClassMetaDataBinding.QueuedMethodMetaData) queuedData.get(i);
+         SimpleClassMetaDataBinding.QueuedMethodMetaData queued = queuedData.get(i);
          for (int j = 0; j < advisedMethods.length; j++)
          {
             if (queued.expr.matches(advisedMethods[j]))
@@ -264,10 +264,10 @@ public class SimpleClassMetaDataLoader implements ClassMetaDataLoader
 
    protected void bindFieldMetaData(SimpleClassMetaDataBinding data, FieldMetaData fieldMetaData, Field[] advisedFields)
    {
-      ArrayList queuedData = data.getQueuedFieldMetaData();
+      ArrayList<SimpleClassMetaDataBinding.QueuedMetaData> queuedData = data.getQueuedFieldMetaData();
       for (int i = 0; i < queuedData.size(); i++)
       {
-         SimpleClassMetaDataBinding.QueuedMetaData queued = (SimpleClassMetaDataBinding.QueuedMetaData) queuedData.get(i);
+         SimpleClassMetaDataBinding.QueuedMetaData queued = queuedData.get(i);
          for (int j = 0; j < advisedFields.length; j++)
          {
             String fieldName = advisedFields[j].getName();
@@ -279,12 +279,12 @@ public class SimpleClassMetaDataLoader implements ClassMetaDataLoader
       }
    }
 
-   protected void bindConstructorMetaData(SimpleClassMetaDataBinding data, ConstructorMetaData conMetaData, Constructor[] advisedCons)
+   protected void bindConstructorMetaData(SimpleClassMetaDataBinding data, ConstructorMetaData conMetaData, Constructor<?>[] advisedCons)
    {
-      ArrayList queuedData = data.getQueuedConstructorMetaData();
+      ArrayList<SimpleClassMetaDataBinding.QueuedConstructorMetaData> queuedData = data.getQueuedConstructorMetaData();
       for (int i = 0; i < queuedData.size(); i++)
       {
-         SimpleClassMetaDataBinding.QueuedConstructorMetaData queued = (SimpleClassMetaDataBinding.QueuedConstructorMetaData) queuedData.get(i);
+         SimpleClassMetaDataBinding.QueuedConstructorMetaData queued = queuedData.get(i);
          ConstructorExpression expression = queued.expr;
          for (int j = 0; j < advisedCons.length; j++)
          {
@@ -324,10 +324,10 @@ public class SimpleClassMetaDataLoader implements ClassMetaDataLoader
 
    protected void bindMethodMetaData(SimpleClassMetaDataBinding data, MethodMetaData methodMetaData, CtMethod[] advisedMethods) throws NotFoundException
    {
-      ArrayList queuedData = data.getQueuedMethodMetaData();
+      ArrayList<SimpleClassMetaDataBinding.QueuedMethodMetaData> queuedData = data.getQueuedMethodMetaData();
       for (int i = 0; i < queuedData.size(); i++)
       {
-         SimpleClassMetaDataBinding.QueuedMethodMetaData queued = (SimpleClassMetaDataBinding.QueuedMethodMetaData) queuedData.get(i);
+         SimpleClassMetaDataBinding.QueuedMethodMetaData queued = queuedData.get(i);
          for (int j = 0; j < advisedMethods.length; j++)
          {
             if (queued.expr.matches(advisedMethods[j]))
@@ -340,10 +340,10 @@ public class SimpleClassMetaDataLoader implements ClassMetaDataLoader
 
    protected void bindFieldMetaData(SimpleClassMetaDataBinding data, FieldMetaData fieldMetaData, CtField[] advisedFields)
    {
-      ArrayList queuedData = data.getQueuedFieldMetaData();
+      ArrayList<SimpleClassMetaDataBinding.QueuedMetaData> queuedData = data.getQueuedFieldMetaData();
       for (int i = 0; i < queuedData.size(); i++)
       {
-         SimpleClassMetaDataBinding.QueuedMetaData queued = (SimpleClassMetaDataBinding.QueuedMetaData) queuedData.get(i);
+         SimpleClassMetaDataBinding.QueuedMetaData queued = queuedData.get(i);
          for (int j = 0; j < advisedFields.length; j++)
          {
             String fieldName = advisedFields[j].getName();
@@ -357,10 +357,10 @@ public class SimpleClassMetaDataLoader implements ClassMetaDataLoader
 
    protected void bindConstructorMetaData(SimpleClassMetaDataBinding data, ConstructorMetaData conMetaData, CtConstructor[] advisedCons) throws NotFoundException
    {
-      ArrayList queuedData = data.getQueuedConstructorMetaData();
+      ArrayList<SimpleClassMetaDataBinding.QueuedConstructorMetaData> queuedData = data.getQueuedConstructorMetaData();
       for (int i = 0; i < queuedData.size(); i++)
       {
-         SimpleClassMetaDataBinding.QueuedConstructorMetaData queued = (SimpleClassMetaDataBinding.QueuedConstructorMetaData) queuedData.get(i);
+         SimpleClassMetaDataBinding.QueuedConstructorMetaData queued = queuedData.get(i);
          ConstructorExpression expression = queued.expr;
          for (int j = 0; j < advisedCons.length; j++)
          {

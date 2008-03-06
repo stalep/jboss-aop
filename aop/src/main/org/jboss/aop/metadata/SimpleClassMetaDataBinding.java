@@ -95,9 +95,9 @@ public class SimpleClassMetaDataBinding extends ClassMetaDataBinding
 
    protected SimpleMetaData defaultMetaData = new SimpleMetaData();
    protected SimpleMetaData classMetaData = new SimpleMetaData();
-   protected ArrayList queuedMethodMetaData = new ArrayList();
-   protected ArrayList queuedFieldMetaData = new ArrayList();
-   protected ArrayList queuedConstructorMetaData = new ArrayList();
+   protected ArrayList<QueuedMethodMetaData> queuedMethodMetaData = new ArrayList<QueuedMethodMetaData>();
+   protected ArrayList<QueuedMetaData> queuedFieldMetaData = new ArrayList<QueuedMetaData>();
+   protected ArrayList<QueuedConstructorMetaData> queuedConstructorMetaData = new ArrayList<QueuedConstructorMetaData>();
 
    public SimpleClassMetaDataBinding(ClassMetaDataLoader loader, String name, String tag, String expr)
    {
@@ -122,7 +122,7 @@ public class SimpleClassMetaDataBinding extends ClassMetaDataBinding
       queuedMethodMetaData.add(new QueuedMethodMetaData(methodExpr, tag, attr, value));
    }
 
-   public ArrayList getQueuedMethodMetaData()
+   public ArrayList<QueuedMethodMetaData> getQueuedMethodMetaData()
    {
       return queuedMethodMetaData;
    }
@@ -135,7 +135,7 @@ public class SimpleClassMetaDataBinding extends ClassMetaDataBinding
       queuedFieldMetaData.add(new QueuedMetaData(fieldExpr, tag, attr, value));
    }
 
-   public ArrayList getQueuedFieldMetaData()
+   public ArrayList<QueuedMetaData> getQueuedFieldMetaData()
    {
       return queuedFieldMetaData;
    }
@@ -148,7 +148,7 @@ public class SimpleClassMetaDataBinding extends ClassMetaDataBinding
       queuedConstructorMetaData.add(new QueuedConstructorMetaData(constructorExpr, tag, attr, value));
    }
 
-   public ArrayList getQueuedConstructorMetaData()
+   public ArrayList<QueuedConstructorMetaData> getQueuedConstructorMetaData()
    {
       return queuedConstructorMetaData;
    }

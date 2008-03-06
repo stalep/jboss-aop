@@ -65,5 +65,5 @@ public interface ClassMetaDataLoader
     * @param constructors
     * @throws Exception
     */
-   public void bind(Advisor advisor, ClassMetaDataBinding data, Method[] methods, Field[] fields, Constructor[] constructors) throws Exception;
+   public void bind(Advisor advisor, ClassMetaDataBinding data, Method[] methods, Field[] fields, Constructor<?>[] constructors) throws Exception;
 }

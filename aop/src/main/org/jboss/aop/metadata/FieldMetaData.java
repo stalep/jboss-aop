@@ -35,14 +35,12 @@ import java.util.Iterator;
  */
 public class FieldMetaData implements MetaDataResolver
 {
-   HashMap fieldMetaData = new HashMap();
+   HashMap<String, SimpleMetaData> fieldMetaData = new HashMap<String, SimpleMetaData>();
 
    public boolean hasTag(String tag)
    {
-      Iterator values = fieldMetaData.values().iterator();
-      while (values.hasNext())
+      for (SimpleMetaData map : fieldMetaData.values())
       {
-         SimpleMetaData map = (SimpleMetaData)values.next();
          if (map.hasTag(tag)) return true;
       }
       return false;
@@ -87,7 +85,7 @@ public class FieldMetaData implements MetaDataResolver
    public synchronized void addFieldMetaData(String key, Object tag, Object attr, Object value, PayloadKey type)
    {
       String fieldName = key;
-      SimpleMetaData fieldData = (SimpleMetaData)fieldMetaData.get(fieldName);
+      SimpleMetaData fieldData = fieldMetaData.get(fieldName);
       if (fieldData == null)
       {
          fieldData = new SimpleMetaData();
@@ -105,19 +103,19 @@ public class FieldMetaData implements MetaDataResolver
 
    public synchronized Object getFieldMetaData(String fieldName, Object tag, Object attr)
    {
-      SimpleMetaData fieldData = (SimpleMetaData)fieldMetaData.get(fieldName);
+      SimpleMetaData fieldData = fieldMetaData.get(fieldName);
       if (fieldData == null) return null;
       return fieldData.getMetaData(tag, attr);
    }
 
-   public synchronized Iterator getFields()
+   public synchronized Iterator<String> getFields()
    {
       return fieldMetaData.keySet().iterator();
    }
 
    public synchronized SimpleMetaData getFieldMetaData(String field)
    {
-      return (SimpleMetaData)fieldMetaData.get(field);
+      return fieldMetaData.get(field);
    }
 
    public synchronized void clear()
@@ -134,6 +132,6 @@ public class FieldMetaData implements MetaDataResolver
    public synchronized SimpleMetaData getAllMetaData(Invocation invocation)
    {
       Field field = ((FieldInvocation)invocation).getField();
-      return (SimpleMetaData)fieldMetaData.get(field);
+      return fieldMetaData.get(field);
    }
 }
