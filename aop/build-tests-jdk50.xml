@@ -356,6 +356,11 @@
          <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
       </antcall>
 
+      <antcall target="_run-javaagent-test" inheritRefs="true">
+         <param name="test" value="duplicatemethod"/>
+         <param name="caller" value="javaagent-tests"/>
+      </antcall>
+
       <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-jdk50-tests" inheritRefs="true">
          <param name="caller" value="javaagent-tests"/>
@@ -380,6 +385,10 @@
          <param name="test" value="override"/>
          <param name="caller" value="javaagent-genadvisor-tests"/>
          <param name="exclude" value="**/OverrideTestCase.class"/>
+      </antcall>
+      <antcall target="_run-javaagent-test" inheritRefs="true">
+         <param name="test" value="duplicatemethod"/>
+         <param name="caller" value="javaagent-genadvisor-tests"/>
       </antcall>
       <antcall target="_run-javaagent-test" inheritRefs="true">
          <param name="test" value="dynamicgenadvisor"/>
@@ -1348,11 +1357,16 @@
          <param name="test-target" value="_run-jrockit-test"/>
       </antcall>
 
+
       <!-- Tests only applicable for this weaving mode -->
       <antcall target="_run-jrockit-test" inheritRefs="true">
          <param name="test" value="override"/>
          <param name="caller" value="jrockit-tests"/>
          <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
+      </antcall>
+      <antcall target="_run-jrockit-test" inheritRefs="true">
+         <param name="test" value="duplicatemethod"/>
+         <param name="caller" value="jrockit-tests"/>
       </antcall>
 
    </target>
@@ -1381,6 +1395,10 @@
          <param name="test" value="override"/>
          <param name="caller" value="jrockit-genadvisor-tests"/>
          <param name="exclude" value="**/OverrideTestCase.class"/>
+      </antcall>
+      <antcall target="_run-jrockit-test" inheritRefs="true">
+         <param name="test" value="duplicatemethod"/>
+         <param name="caller" value="jrockit-genadvisor-tests"/>
       </antcall>
    </target>
 
@@ -1611,7 +1629,7 @@
       <condition property="extra.classes" value="${extraClasses}" else="">
          <isset property="extraClasses"/>
       </condition>
-      
+
       <aopc compilerclasspathref="aopc.task.classpath">
          <classpath refid="aopc.task.classpath"/>
          <classpath path="${build.tests.classes}"/>

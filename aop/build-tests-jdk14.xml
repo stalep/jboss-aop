@@ -312,7 +312,7 @@
       <antcall target="clean"/>
       <antcall target="precompiled-tests" inheritRefs="true"/>
      <antcall target="system-classloader-test" inheritRefs="true"/>
- 
+
       <antcall target="clean"/>
       <antcall target="precompiled-genadvisor-tests" inheritRefs="true"/>
 
@@ -344,6 +344,10 @@
          <param name="caller" value="bootclasspath-tests"/>
          <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
       </antcall>
+      <antcall target="_run-bootclasspath-test" inheritRefs="true">
+         <param name="test" value="duplicatemethod"/>
+         <param name="caller" value="bootclasspath-tests"/>
+      </antcall>
    </target>
 
    <!-- ==================================================================================== -->
@@ -366,6 +370,10 @@
       </antcall>
       <antcall target="_run-bootclasspath-test" inheritRefs="true">
          <param name="test" value="nameddomain"/>
+         <param name="caller" value="bootclasspath-genadvisor-tests"/>
+      </antcall>
+      <antcall target="_run-bootclasspath-test" inheritRefs="true">
+         <param name="test" value="duplicatemethod"/>
          <param name="caller" value="bootclasspath-genadvisor-tests"/>
       </antcall>
 

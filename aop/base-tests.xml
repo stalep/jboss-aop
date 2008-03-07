@@ -85,9 +85,6 @@
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="bridgemethod"/>
       </antcall>
-      <antcall target="${test-target}" inheritRefs="true">
-         <param name="test" value="duplicatemethod"/>
-      </antcall>
       <!--
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="rebuildingchain"/>
