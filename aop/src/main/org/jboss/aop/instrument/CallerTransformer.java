@@ -326,7 +326,7 @@ public abstract class CallerTransformer
          {
             if (ClassAdvisor.isWithoutAdvisement(methodName)
             || methodName.startsWith("_")
-            || classname.startsWith("org.jboss.aop")
+            || classname.startsWith("org.jboss.aop.")
             || call.getMethodName().equals("class$") // todo not sure why this is part of the method call
             || !Instrumentor.isTransformable(callingClass)
             )
@@ -434,7 +434,7 @@ public abstract class CallerTransformer
          try
          {
             String classname = call.getClassName();
-            if (classname.startsWith("org.jboss.aop") || !Instrumentor.isTransformable(callingClass))
+            if (classname.startsWith("org.jboss.aop.") || !Instrumentor.isTransformable(callingClass))
             {
                return;
             }

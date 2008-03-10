@@ -709,7 +709,7 @@ public abstract class Instrumentor
       return (clazz.isInterface() ||
             clazz.isFrozen() ||
             clazz.isArray() ||
-            clazz.getName().startsWith("org.jboss.aop") ||
+            clazz.getName().startsWith("org.jboss.aop.") ||
             isAdvised(clazz) ||
 //            isProxyObject(clazz) ||
             !isTransformable(clazz));
