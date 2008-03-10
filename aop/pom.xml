@@ -323,7 +323,7 @@
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>javassist</artifactId>
-      <version>3.6.0.GA</version>
+      <version>3.7.1.GA</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.microcontainer</groupId>
@@ -388,7 +388,7 @@
     </dependency>
   </dependencies>
   <profiles>
-    
+
   <!-- The test profiles are currently not working until some maven issues are fixed.
     -  For now the ant scripts can be used to run the tests.
     -->
