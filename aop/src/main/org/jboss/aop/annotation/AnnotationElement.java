@@ -30,6 +30,8 @@ import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
+import org.jboss.aop.util.ReflectUtils;
+
 /**
  * Bridge/portability class for resolving annotations in JDK 1.4 and JDK1.5
  * Should be usable in JDK 1.4 and also should support finding invisible annotations.
@@ -435,6 +437,10 @@ public class AnnotationElement extends PortableAnnotationElement
 
          public Annotation[] getVisibleAnnotations(Method m)
          {
+            if (m.getName().startsWith("access$") && !ReflectUtils.isNotAccessMethod(m))
+            {
+               return new Annotation[0];
+            }
             return m.getAnnotations();
          }
          
@@ -690,6 +696,10 @@ public class AnnotationElement extends PortableAnnotationElement
                return AccessController.doPrivileged(new PrivilegedExceptionAction<Annotation[]>(){
                   public Annotation[] run() throws Exception
                   {
+                     if (m.getName().startsWith("access$") && !ReflectUtils.isNotAccessMethod(m))
+                     {
+                        return new Annotation[0];
+                     }
                      return m.getAnnotations();
                   }
                });

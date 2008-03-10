@@ -36,6 +36,7 @@ import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.MethodCalledByConstructorInvocation;
 import org.jboss.aop.joinpoint.MethodCalledByMethodInvocation;
 import org.jboss.aop.util.MethodHashing;
+import org.jboss.aop.util.ReflectUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -81,8 +82,6 @@ public class ReflectionAspect
    private static Pattern fieldSetPattern =
    Pattern.compile("set(|Boolean|Byte|Char|Double|Float|Int|Long|Short)?");
 
-   private static Pattern accessMethodPattern = Pattern.compile("access[$](\\d)+");
-   
    // Constructors --------------------------------------------------
    
    public ReflectionAspect()
@@ -874,7 +873,7 @@ public class ReflectionAspect
          for (int i = 0; i < advisedMethods.length; i++)
          {
             Method m = (Method) advisedMethods[i];
-            if (clazz.equals(m.getDeclaringClass()) && isNotAccessMethod(m) && isNotJavassistWrappedMethod(m))
+            if (clazz.equals(m.getDeclaringClass()) && ReflectUtils.isNotAccessMethod(m) && isNotJavassistWrappedMethod(m))
             {
                methods.add(m);
             }
@@ -901,7 +900,7 @@ public class ReflectionAspect
          for (int i = 0; i < advisedMethods.length; i++)
          {
             Method m = (Method) advisedMethods[i];
-            if (m.equals(method) && isNotAccessMethod(m) && isNotJavassistWrappedMethod(m))
+            if (m.equals(method) && ReflectUtils.isNotAccessMethod(m) && isNotJavassistWrappedMethod(m))
             {
                return method;
             }
@@ -909,30 +908,6 @@ public class ReflectionAspect
       }
 
       throw new NoSuchMethodException();
-   }
-
-   
-   /**
-    * Java adds a few static void methods called access$0, access$1 etc. when inner classes are used
-    *
-    * @return true if this method is static, void, has package access and has a name like access$0, access$1 etc.
-    */
-   private boolean isNotAccessMethod(Method m)
-   {
-
-      //TODO: Normally access methods should return void, but having optimised field invocation
-      //it seems that javassist occasionally creates these methods with other return types
-
-      if (Modifier.isStatic(m.getModifiers()))
-      {
-         Matcher match = accessMethodPattern.matcher(m.getName());
-         if (match.matches())
-         {
-            return false;
-         }
-      }
-
-      return true;
    }
 
    private boolean isNotJavassistWrappedMethod(Method m)

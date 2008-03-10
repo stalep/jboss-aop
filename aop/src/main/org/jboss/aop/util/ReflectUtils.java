@@ -22,7 +22,10 @@
 package org.jboss.aop.util;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 
@@ -32,6 +35,7 @@ import java.util.ArrayList;
 public class ReflectUtils
 {
    public static Class[] EMPTY_CLASS_ARRAY = new Class[0];
+   private static Pattern accessMethodPattern = Pattern.compile("access[$](\\d)+");
    
    public static Method[] getMethodsWithName(Class clazz, String name)
    {
@@ -56,6 +60,28 @@ public class ReflectUtils
          }
       }
       return (Method[])foundMethods.toArray(new Method[foundMethods.size()]);
+   }
+   
+   /**
+    * Java adds a few static void methods called access$0, access$1 etc. when inner classes are used
+    *
+    * @return false if this method is static, void, has package access and has a name like access$0, access$1 etc.
+    */
+   public static boolean isNotAccessMethod(Method m)
+   {
+
+      //TODO: Normally access methods should return void, but having optimised field invocation
+      //it seems that javassist occasionally creates these methods with other return types
+      if (Modifier.isStatic(m.getModifiers()))
+      {
+         Matcher match = accessMethodPattern.matcher(m.getName());
+         if (match.matches())
+         {
+            return false;
+         }
+      }
+
+      return true;
    }
    
 }
