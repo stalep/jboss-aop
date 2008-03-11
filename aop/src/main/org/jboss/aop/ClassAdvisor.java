@@ -1808,17 +1808,12 @@ public class ClassAdvisor extends Advisor
    {
       if (methodByMethodData == null)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (methodByMethodData == null)
             {
                methodByMethodData = new MethodByMethodData();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
       return methodByMethodData;
@@ -1828,17 +1823,12 @@ public class ClassAdvisor extends Advisor
    {
       if (conByMethodData == null)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (conByMethodData == null)
             {
                conByMethodData = new ConByMethodData();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
       return conByMethodData;
@@ -2102,8 +2092,7 @@ public class ClassAdvisor extends Advisor
                backrefMethodCalledByMethodBindings == UnmodifiableEmptyCollections.EMPTY_HASHMAP ||
                methodCalledByMethodInterceptors == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP)
          {
-            lockWrite();
-            try
+            synchronized(lazyCollectionLock)
             {
                if (methodCalledByMethodBindings == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP)
                {
@@ -2117,10 +2106,6 @@ public class ClassAdvisor extends Advisor
                {
                   methodCalledByMethodInterceptors = new TLongObjectHashMap();
                }
-            }
-            finally
-            {
-               unlockWrite();
             }
          }
 
@@ -2345,8 +2330,7 @@ public class ClassAdvisor extends Advisor
                backrefConCalledByMethodBindings == UnmodifiableEmptyCollections.EMPTY_HASHMAP ||
                conCalledByMethodInterceptors == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP)
          {
-            lockWrite();
-            try
+            synchronized(lazyCollectionLock)
             {
                if (conCalledByMethodBindings == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP)
                {
@@ -2360,10 +2344,6 @@ public class ClassAdvisor extends Advisor
                {
                   conCalledByMethodInterceptors = new TLongObjectHashMap();
                }
-            }
-            finally
-            {
-               unlockWrite();
             }
          }
 

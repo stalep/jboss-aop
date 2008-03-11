@@ -1100,17 +1100,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       if (joinPointGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (joinPointGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
                joinPointGenerators = new ConcurrentHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -1119,17 +1114,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       if (fieldReadJoinPoinGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (fieldReadJoinPoinGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
                fieldReadJoinPoinGenerators = new ConcurrentHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -1138,17 +1128,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       if (constructionJoinPointGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (constructionJoinPointGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
                constructionJoinPointGenerators = new ConcurrentHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -1157,17 +1142,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       if (oldInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (oldInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
                oldInfos = new ConcurrentHashMap<Joinpoint, Interceptor[]>();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
       return oldInfos;
@@ -1177,17 +1157,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       if (oldFieldReadInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (oldFieldReadInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
                oldFieldReadInfos = new ConcurrentHashMap<Joinpoint, Interceptor[]>();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
       return oldFieldReadInfos;
@@ -1197,17 +1172,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       if (oldConstructionInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (oldConstructionInfos == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
                oldConstructionInfos = new ConcurrentHashMap<Joinpoint, Interceptor[]>();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
       return oldConstructionInfos;

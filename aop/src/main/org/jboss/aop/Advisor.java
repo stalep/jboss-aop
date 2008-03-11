@@ -37,10 +37,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -125,7 +123,7 @@ public abstract class Advisor
    }
 
    /** Read/Write lock to be used when lazy creating the collections */
-   protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+   protected Object lazyCollectionLock = new Object();
 
    protected Set<AdviceBinding> adviceBindings = new HashSet<AdviceBinding>();
    protected volatile ArrayList<InterfaceIntroduction> interfaceIntroductions = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
@@ -1319,37 +1317,16 @@ public abstract class Advisor
       }
    }
    
-   /**
-    * Lock for write
-    */
-   protected void lockWrite()
-   {
-      lock.writeLock().lock();
-   }
-
-   /**
-    * Unlock for write
-    */
-   protected void unlockWrite()
-   {
-      lock.writeLock().unlock();
-   }
-
    protected void initInterfaceIntroductionsList()
    {
       if (interfaceIntroductions == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (interfaceIntroductions == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
             {
                interfaceIntroductions = new ArrayList<InterfaceIntroduction>();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -1358,17 +1335,12 @@ public abstract class Advisor
    {
       if (classMetaDataBindings == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (classMetaDataBindings == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
             {
                classMetaDataBindings = new ArrayList();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -1377,17 +1349,12 @@ public abstract class Advisor
    {
       if (perInstanceAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_COPYONWRITE_ARRAYSET)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (perInstanceAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_COPYONWRITE_ARRAYSET)
             {
                perInstanceAspectDefinitions = new CopyOnWriteArraySet();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -1396,17 +1363,12 @@ public abstract class Advisor
    {
       if (perInstanceJoinpointAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (perInstanceJoinpointAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
                perInstanceJoinpointAspectDefinitions = new ConcurrentHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -1415,17 +1377,12 @@ public abstract class Advisor
    {
       if (advisedMethods == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (advisedMethods == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP)
             {
                advisedMethods = new TLongObjectHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }

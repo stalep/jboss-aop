@@ -48,7 +48,7 @@ public class AnnotationRepository
    private static final String CLASS_ANNOTATION = "CLASS";
    
    /** Read/Write lock to be used when lazy creating the collections */
-   protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+   protected Object lazyCollectionLock = new Object();
 
    volatile Map annotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
    volatile Map classAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
@@ -267,37 +267,16 @@ public class AnnotationRepository
       set.add(annotation);
    }
 
-   /**
-    * Lock for write
-    */
-   protected void lockWrite()
-   {
-      lock.writeLock().lock();
-   }
-
-   /**
-    * Unlock for write
-    */
-   protected void unlockWrite()
-   {
-      lock.writeLock().unlock();
-   }
-
    protected void initAnnotationsMap()
    {
       if (annotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (annotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
                annotations = new ConcurrentHashMap();;
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -306,17 +285,12 @@ public class AnnotationRepository
    {
       if (classAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (classAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
                classAnnotations = new ConcurrentHashMap();;
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -325,17 +299,12 @@ public class AnnotationRepository
    {
       if (disabledAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (disabledAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
                disabledAnnotations = new ConcurrentHashMap();;
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }

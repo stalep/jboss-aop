@@ -108,8 +108,8 @@ public class AspectManager
 {
    private static final Logger logger = AOPLogger.getLogger(AspectManager.class);
 
-   /** Read/Write lock to be used when lazy creating the collections */
-   ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+   /** Lock to be used when lazy creating the collections */
+   Object lazyCollectionLock = new Object();
 
    /** Advisors registered with this manager/domain */
    protected final WeakHashMap advisors = new WeakHashMap();
@@ -2193,37 +2193,16 @@ public class AspectManager
 //      for (int i = 0 ; i < indent ; i++) System.out.print(" ");
 //   }
 
-   /**
-    * Lock for write
-    */
-   protected void lockWrite()
-   {
-      lock.writeLock().lock();
-   }
-
-   /**
-    * Unlock for write
-    */
-   protected void unlockWrite()
-   {
-      lock.writeLock().unlock();
-   }
-
    protected void initSubDomainsByNameMap()
    {
       if (subDomainsByName == UnmodifiableEmptyCollections.EMPTY_WEAK_VALUE_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (subDomainsByName == UnmodifiableEmptyCollections.EMPTY_WEAK_VALUE_HASHMAP)
             {
                subDomainsByName = new WeakValueHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2232,17 +2211,12 @@ public class AspectManager
    {
       if (subscribedSubDomains == UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (subscribedSubDomains == UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP)
             {
                subscribedSubDomains = new WeakHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2251,17 +2225,12 @@ public class AspectManager
    {
       if (subscribedSubDomainsQueue == UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (subscribedSubDomainsQueue == UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP)
             {
                subscribedSubDomainsQueue = new WeakHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2270,17 +2239,12 @@ public class AspectManager
    {
       if (interfaceIntroductions == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (interfaceIntroductions == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
                interfaceIntroductions = new LinkedHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2289,17 +2253,12 @@ public class AspectManager
    {
       if (arrayReplacements == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (arrayReplacements == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
                arrayReplacements = new LinkedHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2308,17 +2267,12 @@ public class AspectManager
    {
       if (arrayBindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (arrayBindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
                arrayBindings = new LinkedHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2328,17 +2282,12 @@ public class AspectManager
    {
       if (annotationIntroductions == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (annotationIntroductions == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
                annotationIntroductions = new LinkedHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2347,17 +2296,12 @@ public class AspectManager
    {
       if (annotationOverrides == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (annotationOverrides == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
                annotationOverrides = new LinkedHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2366,17 +2310,12 @@ public class AspectManager
    {
       if (bindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (bindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
                bindings = new LinkedHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2385,17 +2324,12 @@ public class AspectManager
    {
       if (typedefs == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (typedefs == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
                typedefs = new LinkedHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2404,17 +2338,12 @@ public class AspectManager
    {
       if (interceptorFactories == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (interceptorFactories == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
             {
                interceptorFactories = new HashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2423,17 +2352,12 @@ public class AspectManager
    {
       if (classMetaDataLoaders == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (classMetaDataLoaders == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
             {
                classMetaDataLoaders = new HashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2442,17 +2366,12 @@ public class AspectManager
    {
       if (interceptorStacks == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (interceptorStacks == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
             {
                interceptorStacks = new HashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2462,17 +2381,12 @@ public class AspectManager
    {
       if (declares == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (declares == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
             {
                declares = new HashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2481,17 +2395,12 @@ public class AspectManager
    {
       if (cflowStacks == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (cflowStacks == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
                cflowStacks = new ConcurrentHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2500,17 +2409,12 @@ public class AspectManager
    {
       if (dynamicCFlows == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (dynamicCFlows == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
                dynamicCFlows = new ConcurrentHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2519,17 +2423,12 @@ public class AspectManager
    {
       if (aspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (aspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
                aspectDefinitions = new ConcurrentHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2538,17 +2437,12 @@ public class AspectManager
    {
       if (perVMAspects == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (perVMAspects == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
                perVMAspects = new ConcurrentHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2557,17 +2451,12 @@ public class AspectManager
    {
       if (pointcuts == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (pointcuts == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
                pointcuts = new LinkedHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2576,17 +2465,12 @@ public class AspectManager
    {
       if (pointcutInfos == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (pointcutInfos == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
                pointcutInfos = new LinkedHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2596,17 +2480,12 @@ public class AspectManager
    {
       if (classMetaData == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (classMetaData == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
                classMetaData = new LinkedHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2614,17 +2493,12 @@ public class AspectManager
    {
       if (containers == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (containers == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
             {
                containers = new HashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
@@ -2633,17 +2507,12 @@ public class AspectManager
    {
       if (precedenceDefs == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
       {
-         lockWrite();
-         try
+         synchronized(lazyCollectionLock)
          {
             if (precedenceDefs == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
                precedenceDefs = new LinkedHashMap();
             }
-         }
-         finally
-         {
-            unlockWrite();
          }
       }
    }
