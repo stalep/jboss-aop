@@ -42,6 +42,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
+//TODO http://jira.jboss.com/jira/browse/JBAOP-540 Make extend AOPTestWithSetupAgain 
 public class DuplicateMethodTestCase extends TestCase/*AOPTestWithSetup*/
 {
 
