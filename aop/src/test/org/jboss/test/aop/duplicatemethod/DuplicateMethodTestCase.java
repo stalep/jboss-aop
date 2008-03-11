@@ -30,6 +30,7 @@ import java.util.Arrays;
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.ProxyFactory;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.jboss.aop.Advised;
@@ -41,7 +42,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-public class DuplicateMethodTestCase extends AOPTestWithSetup
+public class DuplicateMethodTestCase extends TestCase/*AOPTestWithSetup*/
 {
 
    public DuplicateMethodTestCase(String name)
