@@ -97,9 +97,6 @@
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="array"/>
       </antcall>
-      <antcall target="${test-target}" inheritRefs="true">
-         <param name="test" value="annotatedgenericinterface"/>
-      </antcall>
 
       <!-- Tests with special requirements for parameters -->
       <antcall target="${test-target}" inheritRefs="true">
