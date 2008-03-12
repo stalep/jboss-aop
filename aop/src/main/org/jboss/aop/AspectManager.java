@@ -1337,7 +1337,7 @@ public class AspectManager
    /**
     * Remove an interceptor pointcut with a given name
     */
-   public synchronized void removeBinding(String name)
+   public void removeBinding(String name)
    {
       AdviceBinding binding = internalRemoveBinding(name);
       if (binding != null)
@@ -1405,26 +1405,30 @@ public class AspectManager
    /**
     * Add an interceptor pointcut with a given name
     */
-   public synchronized void addBinding(AdviceBinding binding)
+   public void addBinding(AdviceBinding binding)
    {
-      AdviceBinding removedBinding = internalRemoveBinding(binding.getName());
-      Set<Advisor> affectedAdvisors = removedBinding == null ? null : new HashSet<Advisor>(removedBinding.getAdvisors());
-      initBindingsMap();
-      synchronized (bindings)
+      Set<Advisor> affectedAdvisors = null;
+      AdviceBinding removedBinding = null;
+      synchronized(this)
       {
-         bindings.put(binding.getName(), binding);
-      }
+         removedBinding = internalRemoveBinding(binding.getName());
+         affectedAdvisors = removedBinding == null ? null : new HashSet<Advisor>(removedBinding.getAdvisors());
+         initBindingsMap();
+         synchronized (bindings)
+         {
+            bindings.put(binding.getName(), binding);
+         }
 
-      initPointcutsMap();
-      initPointcutInfosMap();
-      synchronized (pointcuts)
-      {
-         Pointcut pointcut = binding.getPointcut();
-         pointcuts.put(pointcut.getName(), pointcut);
-         pointcutInfos.put(pointcut.getName(), new PointcutInfo(pointcut, binding, this.transformationStarted));
-         updatePointcutStats(pointcut);
+         initPointcutsMap();
+         initPointcutInfosMap();
+         synchronized (pointcuts)
+         {
+            Pointcut pointcut = binding.getPointcut();
+            pointcuts.put(pointcut.getName(), pointcut);
+            pointcutInfos.put(pointcut.getName(), new PointcutInfo(pointcut, binding, this.transformationStarted));
+            updatePointcutStats(pointcut);
+         }
       }
-
       synchronized (advisors)
       {
          updateAdvisorsForAddedBinding(binding);
@@ -2022,7 +2026,7 @@ public class AspectManager
     * Removes an AdviceBinding without notifying dynamic aop strategy.
     * @param name the binding to be removed.
     */
-   private AdviceBinding internalRemoveBinding(String name)
+   private synchronized AdviceBinding internalRemoveBinding(String name)
    {
       synchronized (bindings)
       {
