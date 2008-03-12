@@ -186,7 +186,7 @@ public class AspectManager
    //Keeps track of if we need to convert references etc for a given class. Domains for scoped classloaders will have their own version of this
    protected static InterceptionMarkers interceptionMarkers = new InterceptionMarkers();
    
-   /** A set of annotation names that will be ignored even tough they have been included. */
+   /** A set of annotation names that will be included even though they are invisible. */
    protected List<String> includeInvisibleAnnotations = Collections .emptyList();
    // Static -------------------------------------------------------
 
