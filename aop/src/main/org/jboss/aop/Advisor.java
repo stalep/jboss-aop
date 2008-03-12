@@ -144,7 +144,7 @@ public abstract class Advisor
    protected volatile CopyOnWriteArraySet perInstanceAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_COPYONWRITE_ARRAYSET;
    protected volatile ConcurrentHashMap perInstanceJoinpointAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
 
-   static Class cl = java.lang.String.class;
+   static Class<?> cl = java.lang.String.class;
    protected volatile TLongObjectHashMap advisedMethods = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
    // The method signatures are sorted at transformation and load time to
    // make sure the tables line up.
@@ -155,7 +155,7 @@ public abstract class Advisor
    protected TLongObjectHashMap methodInterceptors = new TLongObjectHashMap();
    protected MethodInterceptors methodInfos = new MethodInterceptors(this);;
    protected AspectManager manager;
-   protected Class clazz = null;
+   protected Class<?> clazz = null;
    protected Constructor[] constructors;
 
    /** @deprecated Use constructorInfos instead */
@@ -293,7 +293,7 @@ public abstract class Advisor
          annotations.addClassAnnotation(introduction.getAnnotation().getIdentifier(), introduction.getOriginalAnnotationExpr());
       }
 
-      Class theClass = clazz;
+      Class<?> theClass = clazz;
 
       deployMethodAnnotationOverrides(theClass, introduction);
       Field[] fields = theClass.getDeclaredFields();
@@ -314,12 +314,12 @@ public abstract class Advisor
       }
    }
 
-   protected void initializeInterfaceIntroductions(Class theClass)
+   protected void initializeInterfaceIntroductions(Class<?> theClass)
    {
       manager.applyInterfaceIntroductions(this, theClass);
    }
 
-   protected void deployMethodAnnotationOverrides(Class theClass, AnnotationIntroduction introduction)
+   protected void deployMethodAnnotationOverrides(Class<?> theClass, AnnotationIntroduction introduction)
    {
       if (theClass.getSuperclass() != null)
       {
@@ -584,7 +584,7 @@ public abstract class Advisor
       return false;
    }
 
-   private boolean hasJoinPointAnnotation(Class declaringClass, org.jboss.metadata.spi.signature.Signature sig, String annotation)
+   private boolean hasJoinPointAnnotation(Class<?> declaringClass, org.jboss.metadata.spi.signature.Signature sig, String annotation)
    {
       if (metadata != null)
       {
@@ -673,7 +673,7 @@ public abstract class Advisor
       doesHaveAspects = adviceBindings.size() > 0;
    }
 
-   public synchronized void removeAdviceBindings(ArrayList bindings)
+   public synchronized void removeAdviceBindings(ArrayList<AdviceBinding> bindings)
    {
       adviceBindings.removeAll(bindings);
       rebuildInterceptors();
@@ -970,12 +970,12 @@ public abstract class Advisor
       throw new RuntimeException("dynamic field invocations not supported yet!");
    }
 
-   public Class getClazz()
+   public Class<?> getClazz()
    {
       return clazz;
    }
 
-   void setClazz(Class clazz)
+   void setClazz(Class<?> clazz)
    {
       this.clazz = clazz;
    }
@@ -1339,7 +1339,7 @@ public abstract class Advisor
          {
             if (classMetaDataBindings == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
             {
-               classMetaDataBindings = new ArrayList();
+               classMetaDataBindings = new ArrayList<ClassMetaDataBinding>();
             }
          }
       }

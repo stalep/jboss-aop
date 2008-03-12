@@ -36,10 +36,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -112,52 +110,56 @@ public class AspectManager
    Object lazyCollectionLock = new Object();
 
    /** Advisors registered with this manager/domain */
-   protected final WeakHashMap advisors = new WeakHashMap();
+   protected final WeakHashMap<Class<?>, WeakReference<Advisor>> advisors = new WeakHashMap<Class<?>, WeakReference<Advisor>>();
 
    /** A map of domains by class, maintaned by the top level AspectManager */
-   protected volatile WeakHashMap subDomainsPerClass = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
+   protected volatile WeakHashMap<Class<?>, WeakReference<Domain>> subDomainsPerClass = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
 
    /** A map of domains by name */
-   protected volatile WeakValueHashMap subDomainsByName = UnmodifiableEmptyCollections.EMPTY_WEAK_VALUE_HASHMAP;
+   protected volatile WeakValueHashMap<String, Domain> subDomainsByName = UnmodifiableEmptyCollections.EMPTY_WEAK_VALUE_HASHMAP;
 
    /** Each domain may have sub domains interested in changes happening in this manager/domain */
-   protected volatile WeakHashMap subscribedSubDomains = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
+   protected volatile WeakHashMap<Domain, Object> subscribedSubDomains = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
 
    /** A queue for adding new subscribed subdomains to */
-   protected volatile WeakHashMap subscribedSubDomainsQueue = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
+   protected volatile WeakHashMap<Domain, Object> subscribedSubDomainsQueue = UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP;
    protected int subscribedDomainQueueRef;
 
-   protected volatile LinkedHashMap interfaceIntroductions = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected volatile LinkedHashMap arrayReplacements = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected volatile LinkedHashMap arrayBindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected volatile LinkedHashMap annotationIntroductions =UnmodifiableEmptyCollections. EMPTY_LINKED_HASHMAP;
-   protected volatile LinkedHashMap annotationOverrides = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected volatile LinkedHashMap bindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected volatile LinkedHashMap typedefs = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected volatile HashMap interceptorFactories = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
-   protected volatile HashMap classMetaDataLoaders = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
-   protected volatile HashMap interceptorStacks = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
-   protected volatile HashMap declares = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
-   protected volatile ConcurrentHashMap cflowStacks = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
-   protected volatile ConcurrentHashMap dynamicCFlows = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
-   protected volatile ConcurrentHashMap aspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
-   protected volatile ConcurrentHashMap perVMAspects = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   protected volatile LinkedHashMap<String, InterfaceIntroduction> interfaceIntroductions = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap<String, ArrayReplacement> arrayReplacements = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap<String, ArrayBinding> arrayBindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap<String, AnnotationIntroduction> annotationIntroductions =UnmodifiableEmptyCollections. EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap<String, AnnotationIntroduction> annotationOverrides = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap<String, AdviceBinding> bindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap<String, Typedef> typedefs = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile HashMap<String, InterceptorFactory> interceptorFactories = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected volatile HashMap<String,ClassMetaDataLoader> classMetaDataLoaders = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected volatile HashMap<String, AdviceStack> interceptorStacks = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected volatile HashMap<String, DeclareDef> declares = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected volatile ConcurrentHashMap<String, CFlowStack> cflowStacks = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   protected volatile ConcurrentHashMap<String, DynamicCFlowDefinition> dynamicCFlows = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   protected volatile ConcurrentHashMap<String, AspectDefinition> aspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   protected volatile ConcurrentHashMap<String, Object> perVMAspects = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
 
    /** class name prefixes to explicitly exclude unless contained in include. Maintained by top-level AspectManager */
-   protected volatile ArrayList exclude = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+   protected volatile ArrayList<String> exclude = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
 
    /** class name prefixes to explicitly include, this overrides whatever was set in exclude. Maintained by top-level AspectManager */
-   protected volatile ArrayList include = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+   protected volatile ArrayList<String> include = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
 
    /** A set of wildcard enabled classnames that will be ignored no matter if they have been included. Maintained by top-level AspectManager */
-   protected volatile ArrayList ignore = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+   protected volatile ArrayList<String> ignore = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+
+   /** A set of annotation names that will be included even though they are invisible. */
+   protected List<String> includeInvisibleAnnotations = Collections .emptyList();
 
    /** ClassExpressions built from ignore. Maintained by top-level AspectManager */
    protected ClassExpression[] ignoreExpressions = new ClassExpression[0];
 
-   protected volatile LinkedHashMap pointcuts = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+
+   protected volatile LinkedHashMap<String, Pointcut> pointcuts = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    // contains pointcuts-binding association info
-   protected volatile LinkedHashMap pointcutInfos = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap<String, PointcutInfo> pointcutInfos = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    // these fields represent whether there are certain pointcut types.
    // for performance reasons the transformers and binders can make a lot of us of this.
    protected boolean execution = false;
@@ -169,9 +171,9 @@ public class AspectManager
    protected boolean withincode = false;
    public static boolean classicOrder = false;
 
-   protected volatile LinkedHashMap classMetaData = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected volatile HashMap containers = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
-   protected volatile LinkedHashMap precedenceDefs = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile LinkedHashMap<String, ClassMetaDataBinding> classMetaData = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   protected volatile HashMap<String, DomainDefinition> containers = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   protected volatile LinkedHashMap<String, PrecedenceDef> precedenceDefs = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    protected PrecedenceDefEntry[] sortedPrecedenceDefEntries;
    protected WeavingStrategy weavingStrategy;
 
@@ -186,8 +188,6 @@ public class AspectManager
    //Keeps track of if we need to convert references etc for a given class. Domains for scoped classloaders will have their own version of this
    protected static InterceptionMarkers interceptionMarkers = new InterceptionMarkers();
    
-   /** A set of annotation names that will be included even though they are invisible. */
-   protected List<String> includeInvisibleAnnotations = Collections .emptyList();
    // Static -------------------------------------------------------
 
    protected static AspectManager manager;
@@ -280,10 +280,10 @@ public class AspectManager
                }
                manager = new AspectManager();
                //Initialise frequently used fields needed by the top-level manager
-               manager.subDomainsPerClass = new WeakHashMap();
-               manager.exclude = new ArrayList();
-               manager.include = new ArrayList();
-               manager.ignore = new ArrayList();
+               manager.subDomainsPerClass = new WeakHashMap<Class<?>, WeakReference<Domain>>();
+               manager.exclude = new ArrayList<String>();
+               manager.include = new ArrayList<String>();
+               manager.ignore = new ArrayList<String>();
                manager.includeInvisibleAnnotations = new ArrayList<String>();
                
 
@@ -296,41 +296,26 @@ public class AspectManager
                String exclude = System.getProperty("jboss.aop.exclude", null);
                if (exclude != null)
                {
-                  ArrayList list = new ArrayList();
-                  StringTokenizer tokenizer = new StringTokenizer(exclude, ",");
-                  while (tokenizer.hasMoreTokens())
-                  {
-                     list.add(tokenizer.nextToken().trim());
-                  }
+                  ArrayList<String> list = splitString(exclude, ",");
                   manager.setExclude(list);
                }
                String include = System.getProperty("jboss.aop.include", null);
                if (include != null)
                {
-                  ArrayList list = new ArrayList();
-                  StringTokenizer tokenizer = new StringTokenizer(include, ",");
-                  while (tokenizer.hasMoreTokens())
-                  {
-                     list.add(tokenizer.nextToken().trim());
-                  }
+                  ArrayList<String> list = splitString(include, ",");
                   manager.setInclude(list);
                }
                String ignore = System.getProperty("jboss.aop.ignore", null);
                if (ignore != null)
                {
-                  ArrayList list = new ArrayList();
-                  StringTokenizer tokenizer = new StringTokenizer(ignore, ",");
-                  while (tokenizer.hasMoreTokens())
-                  {
-                     list.add(tokenizer.nextToken().trim());
-                  }
+                  ArrayList<String> list = splitString(ignore, ",");
                   manager.setIgnore(list);
                }
                String invisibleAnnotations = System.getProperty("jboss.aop.invisible.annotations", null);
                if(invisibleAnnotations != null)
                {
-                  for(String inc : invisibleAnnotations.split(","))
-                    manager.includeInvisibleAnnotations.add(inc.trim());
+                  ArrayList<String> list = splitString(invisibleAnnotations, ",");
+                  manager.setIncludedInvisibleAnnotations(list);
                }
 
                String instrument = System.getProperty("jboss.aop.instrumentor", null);
@@ -362,6 +347,20 @@ public class AspectManager
       return manager;
    }
 
+   private static ArrayList<String> splitString(String string, String delim)
+   {
+      if (string != null)
+      {
+         ArrayList<String> list = new ArrayList<String>();
+         for(String token : string.split(delim))
+         {
+            list.add(token.trim());
+         }
+         return list;
+      }
+      return null;
+   }
+   
    /**
     * Get the classLoaderScopingPolicy.
     *
@@ -388,19 +387,19 @@ public class AspectManager
       return interceptionMarkers;
    }
 
-   public LinkedHashMap getPointcuts()
+   public LinkedHashMap<String, Pointcut> getPointcuts()
    {
       return pointcuts;
    }
 
-   public LinkedHashMap getPointcutInfos()
+   public LinkedHashMap<String, PointcutInfo> getPointcutInfos()
    {
       return pointcutInfos;
    }
 
    public CFlowStack getCFlowStack(String name)
    {
-      return (CFlowStack) cflowStacks.get(name);
+      return cflowStacks.get(name);
    }
 
    public void addCFlowStack(CFlowStack stack)
@@ -416,7 +415,7 @@ public class AspectManager
 
    public DynamicCFlow getDynamicCFlow(String name)
    {
-      DynamicCFlowDefinition def = (DynamicCFlowDefinition) dynamicCFlows.get(name);
+      DynamicCFlowDefinition def = dynamicCFlows.get(name);
 
       if (def != null)
       {
@@ -475,7 +474,7 @@ public class AspectManager
     */
    public ClassMetaDataLoader findClassMetaDataLoader(String group)
    {
-      ClassMetaDataLoader loader = (ClassMetaDataLoader) classMetaDataLoaders.get(group);
+      ClassMetaDataLoader loader = classMetaDataLoaders.get(group);
       if (loader == null) loader = SimpleClassMetaDataLoader.singleton;
       return loader;
    }
@@ -501,7 +500,7 @@ public class AspectManager
       classMetaDataLoaders.remove(group);
    }
 
-   public Map getAdvisors()
+   public Map<Class<?>, WeakReference<Advisor>> getAdvisors()
    {
       return advisors;
    }
@@ -517,17 +516,17 @@ public class AspectManager
       throw new RuntimeException("OPERATION NOT SUPPORTED ANYMORE");
    }
 
-   public LinkedHashMap getBindings()
+   public LinkedHashMap<String, AdviceBinding> getBindings()
    {
       return bindings;
    }
 
-   protected Map getSubDomainsPerClass()
+   protected Map<Class<?>, WeakReference<Domain>> getSubDomainsPerClass()
    {
       return subDomainsPerClass;
    }
 
-   public Advisor findAdvisor(Class clazz)
+   public Advisor findAdvisor(Class<?> clazz)
    {
       if (getSubDomainsPerClass().size() > 0)
       {
@@ -536,10 +535,10 @@ public class AspectManager
          Domain subDomain = null;
          synchronized (getSubDomainsPerClass())
          {
-            WeakReference ref = (WeakReference)getSubDomainsPerClass().get(clazz);
+            WeakReference<Domain> ref = getSubDomainsPerClass().get(clazz);
             if (ref != null)
             {
-               subDomain = (Domain)ref.get();
+               subDomain = ref.get();
             }
          }
 
@@ -555,9 +554,9 @@ public class AspectManager
 
       synchronized (advisors)
       {
-         WeakReference ref = (WeakReference) advisors.get(clazz);
+         WeakReference<Advisor> ref = advisors.get(clazz);
          if (ref == null) return null;
-         return (Advisor) ref.get();
+         return ref.get();
       }
    }
 
@@ -594,7 +593,7 @@ public class AspectManager
 
    private AspectManager findManagerByNameInternal(String name)
    {
-      return (Domain)subDomainsByName.get(name);
+      return subDomainsByName.get(name);
    }
 
    protected void addSubDomainByName(Domain domain)
@@ -608,7 +607,7 @@ public class AspectManager
       return "/";
    }
 
-   public ClassAdvisor getAdvisorIfAdvised(Class clazz)
+   public ClassAdvisor getAdvisorIfAdvised(Class<?> clazz)
    {
       return (ClassAdvisor)getAnyAdvisorIfAdvised(clazz);
    }
@@ -616,7 +615,7 @@ public class AspectManager
    /**
     * Take into account that an advisor may be a container
     */
-   public Advisor getAnyAdvisorIfAdvised(Class clazz)
+   public Advisor getAnyAdvisorIfAdvised(Class<?> clazz)
    {
       try
       {
@@ -650,7 +649,7 @@ public class AspectManager
     * @param clazz
     * @return
     */
-   public synchronized ClassAdvisor getAdvisor(Class clazz)
+   public synchronized ClassAdvisor getAdvisor(Class<?> clazz)
    {
       ClassAdvisor advisor = null;
       // See if one already exists
@@ -664,11 +663,11 @@ public class AspectManager
       return advisor;
    }
 
-   public synchronized void initialiseClassAdvisor(Class clazz, ClassAdvisor advisor)
+   public synchronized void initialiseClassAdvisor(Class<?> clazz, ClassAdvisor advisor)
    {
       synchronized (advisors)
       {
-         advisors.put(clazz, new WeakReference(advisor));
+         advisors.put(clazz, new WeakReference<Advisor>(advisor));
       }
 
       registerClass(clazz);
@@ -741,7 +740,7 @@ public class AspectManager
       return AOPClassPoolRepository.getInstance().registerClassLoader(ucl);
    }
 
-   protected void registerClass(Class clazz)
+   protected void registerClass(Class<?> clazz)
    {
       AOPClassPoolRepository.getInstance().registerClass(clazz);
    }
@@ -751,31 +750,43 @@ public class AspectManager
       AOPClassPoolRepository.getInstance().unregisterClassLoader(cl);
    }
 
-   public ArrayList getExclude()
+   public ArrayList<String> getExclude()
    {
       return exclude;
    }
 
-   public void setExclude(ArrayList exclude)
+   public void setExclude(ArrayList<String> exclude)
    {
       this.exclude.clear();
       this.exclude.addAll(exclude);
    }
 
-   public ArrayList getInclude()
+   public ArrayList<String> getInclude()
    {
       return include;
    }
 
-   public void setInclude(ArrayList include)
+   public void setInclude(ArrayList<String> include)
    {
       this.include.clear();
       this.include.addAll(include);
    }
 
-   public ArrayList getIgnore()
+   public ArrayList<String> getIgnore()
    {
       return ignore;
+   }
+   
+   
+   public List<String> getIncludedInvisibleAnnotations()
+   {
+      return includeInvisibleAnnotations;
+   }
+   
+   public void setIncludedInvisibleAnnotations(List<String> ia)
+   {
+      includeInvisibleAnnotations.clear();
+      includeInvisibleAnnotations.addAll(ia);
    }
 
    public ClassExpression[] getIgnoreExpressions()
@@ -783,21 +794,21 @@ public class AspectManager
       return ignoreExpressions;
    }
 
-   public void setIgnore(ArrayList ignore)
+   public void setIgnore(ArrayList<String> ignore)
    {
       this.ignore.clear();
       this.ignore.addAll(ignore);
       ignoreExpressions = new ClassExpression[ignore.size()];
       for (int i = 0 ; i < ignore.size() ; i++)
       {
-        String ex = (String)ignore.get(i);
+        String ex = ignore.get(i);
         ignoreExpressions[i] = new ClassExpression(ex);
       }
    }
 
    public boolean ignoreClass(String classname)
    {
-      ArrayList ignore = getIgnore();
+      ArrayList<String> ignore = getIgnore();
       if (ignore == null) return false;
       ClassExpression[] ignoreExprs = getIgnoreExpressions();
       for (int i = 0; i < ignoreExprs.length; i++)
@@ -809,11 +820,11 @@ public class AspectManager
 
    public boolean includeClass(String classname)
    {
-      ArrayList include = getInclude();
+      ArrayList<String> include = getInclude();
       if (include == null) return false;
       for (int i = 0; i < include.size(); i++)
       {
-         String str = (String) include.get(i);
+         String str = include.get(i);
          if (classname.startsWith(str)) return true;
       }
       return false;
@@ -821,11 +832,11 @@ public class AspectManager
 
    public boolean excludeClass(String classname)
    {
-      ArrayList exclude = getExclude();
+      ArrayList<String> exclude = getExclude();
       if (exclude == null) return false;
       for (int i = 0; i < exclude.size(); i++)
       {
-         String str = (String) exclude.get(i);
+         String str = exclude.get(i);
          if (str.equals("*")) return true;
          if (classname.startsWith(str)) return true;
       }
@@ -893,7 +904,7 @@ public class AspectManager
     */
    public byte[] transform(ClassLoader loader,
                            String className,
-                           Class classBeingRedefined,
+                           @SuppressWarnings(value= {"all"}) Class classBeingRedefined,
                            ProtectionDomain protectionDomain,
                            byte[] classfileBuffer)
            throws Exception
@@ -984,7 +995,7 @@ public class AspectManager
       }
    }
 
-   public Map getInterceptorFactories()
+   public Map<String, InterceptorFactory> getInterceptorFactories()
    {
       return interceptorFactories;
    }
@@ -996,7 +1007,7 @@ public class AspectManager
    {
       synchronized (interceptorFactories)
       {
-         return (InterceptorFactory) interceptorFactories.get(name);
+         return interceptorFactories.get(name);
       }
    }
 
@@ -1033,9 +1044,8 @@ public class AspectManager
          boolean newSubscribers = true;
          while (newSubscribers)
          {
-            for (Iterator it = subscribedSubDomains.keySet().iterator() ; it.hasNext() ; )
+            for (Domain domain : subscribedSubDomains.keySet())
             {
-               Domain domain = (Domain)it.next();
                domain.forceResortPrecedenceDefs();
             }
             newSubscribers = copySubDomainsFromQueue(false);
@@ -1043,7 +1053,7 @@ public class AspectManager
       }
    }
 
-   public LinkedHashMap getPrecedenceDefs()
+   public LinkedHashMap<String, PrecedenceDef> getPrecedenceDefs()
    {
       return precedenceDefs;
    }
@@ -1093,7 +1103,7 @@ public class AspectManager
    {
       synchronized (interceptorStacks)
       {
-         return (AdviceStack) interceptorStacks.get(name);
+         return interceptorStacks.get(name);
       }
    }
 
@@ -1103,10 +1113,8 @@ public class AspectManager
       boolean attached = false;
       synchronized (classMetaData)
       {
-         Iterator it = classMetaData.values().iterator();
-         while (it.hasNext())
+         for (ClassMetaDataBinding data : classMetaData.values())
          {
-            ClassMetaDataBinding data = (ClassMetaDataBinding) it.next();
             if (data.matches(advisor, clazz))
             {
                attached = true;
@@ -1119,14 +1127,12 @@ public class AspectManager
       return attached;
    }
 
-   protected void attachMetaData(Advisor advisor, Class clazz)
+   protected void attachMetaData(Advisor advisor, Class<?> clazz)
    {
       synchronized (classMetaData)
       {
-         Iterator it = classMetaData.values().iterator();
-         while (it.hasNext())
+         for (ClassMetaDataBinding data : classMetaData.values())
          {
-            ClassMetaDataBinding data = (ClassMetaDataBinding) it.next();
             addAdvisorToClassMetaDataBinding(data, clazz, advisor, clazz);
          }
       }
@@ -1134,21 +1140,20 @@ public class AspectManager
 
    public ClassAdvisor getTempClassAdvisor(CtClass clazz) throws Exception
    {
-      String classname = clazz.getName();
       ClassAdvisor advisor = AdvisorFactory.getClassAdvisor(clazz, this);
       attachMetaData(advisor, clazz, false);
       applyInterfaceIntroductions(advisor, clazz);
       return advisor;
    }
 
-   public Advisor getTempClassAdvisorIfNotExist(Class clazz)
+   public Advisor getTempClassAdvisorIfNotExist(Class<?> clazz)
    {
       Advisor advisor = findAdvisor(clazz);
       if (advisor != null) return advisor;
       if (Advised.class.isAssignableFrom(clazz))
       {
 
-         Class superClass = clazz;
+         Class<?> superClass = clazz;
          try
          {
             while (superClass != null)
@@ -1187,7 +1192,7 @@ public class AspectManager
 
    public DomainDefinition getContainer(String name)
    {
-      return (DomainDefinition) containers.get(name);
+      return containers.get(name);
    }
 
    public void addContainer(DomainDefinition def)
@@ -1208,7 +1213,7 @@ public class AspectManager
    {
       synchronized (pointcuts)
       {
-         return (Pointcut) pointcuts.get(name);
+         return pointcuts.get(name);
       }
    }
 
@@ -1342,12 +1347,12 @@ public class AspectManager
       }
    }
 
-   public synchronized void removeBindings(ArrayList binds)
+   public synchronized void removeBindings(ArrayList<String> binds)
    {
       clearUnregisteredClassLoaders();
 
-      HashSet bindingAdvisors = new HashSet();
-      ArrayList removedBindings = new ArrayList();
+      HashSet<Advisor> bindingAdvisors = new HashSet<Advisor>();
+      ArrayList<AdviceBinding> removedBindings = new ArrayList<AdviceBinding>();
       synchronized (bindings)
       {
          int bindSize = binds.size();
@@ -1355,13 +1360,13 @@ public class AspectManager
          for (int i = 0; i < bindSize; i++)
          {
 
-            AdviceBinding binding = (AdviceBinding) bindings.get(binds.get(i));
+            AdviceBinding binding = bindings.get(binds.get(i));
             if (binding == null)
             {
                logger.debug("AspectManager.removeBindings() no binding found with name " + binds.get(i));
                continue;
             }
-            ArrayList ads = binding.getAdvisors();
+            ArrayList<Advisor> ads = binding.getAdvisors();
             bindingAdvisors.addAll(ads);
             bindings.remove(binding.getName());
             Pointcut pointcut = binding.getPointcut();
@@ -1369,17 +1374,17 @@ public class AspectManager
             removedBindings.add(binding);
          }
       }
-      Iterator it = bindingAdvisors.iterator();
+      Iterator<Advisor> it = bindingAdvisors.iterator();
       while (it.hasNext())
       {
-         Advisor advisor = (Advisor) it.next();
+         Advisor advisor = it.next();
          if (!isAdvisorRegistered(advisor))
          {
             //Check sub domains in case of generated advisors
 
-            WeakReference ref = (WeakReference)getSubDomainsPerClass().get(advisor.getClazz());
+            WeakReference<Domain> ref = getSubDomainsPerClass().get(advisor.getClazz());
             Domain domain = null;
-            if (ref != null) domain = (Domain)ref.get();
+            if (ref != null) domain = ref.get();
             if (domain != null)
             {
                if (subscribedSubDomains.containsKey(domain) || subscribedSubDomainsQueue.containsKey(domain))
@@ -1403,7 +1408,7 @@ public class AspectManager
    public synchronized void addBinding(AdviceBinding binding)
    {
       AdviceBinding removedBinding = internalRemoveBinding(binding.getName());
-      Set affectedAdvisors = removedBinding == null? new HashSet(): new HashSet(removedBinding.getAdvisors());
+      Set<Advisor> affectedAdvisors = removedBinding == null ? null : new HashSet<Advisor>(removedBinding.getAdvisors());
       initBindingsMap();
       synchronized (bindings)
       {
@@ -1424,11 +1429,13 @@ public class AspectManager
       {
          updateAdvisorsForAddedBinding(binding);
 
-         for (Iterator i = affectedAdvisors.iterator(); i.hasNext(); )
+         if (affectedAdvisors != null && affectedAdvisors.size() > 0)
          {
-            Advisor advisor = (Advisor) i.next();
-            if (isAdvisorRegistered(advisor))
-               advisor.removeAdviceBinding(removedBinding);
+            for (Advisor advisor : affectedAdvisors)
+            {
+               if (isAdvisorRegistered(advisor))
+                  advisor.removeAdviceBinding(removedBinding);
+            }
          }
       }
       this.dynamicStrategy.interceptorChainsUpdated();
@@ -1439,10 +1446,10 @@ public class AspectManager
    {
       synchronized (advisors)
       {
-         Collection keys = advisors.keySet();
+         Collection<Class<?>> keys = advisors.keySet();
          if (keys.size() > 0)
          {
-            Iterator it = keys.iterator();
+            Iterator<Class<?>> it = keys.iterator();
             while (it.hasNext())
             {
                Advisor advisor = getAdvisorFromAdvisorsKeySetIterator(it);
@@ -1469,13 +1476,12 @@ public class AspectManager
          boolean newSubscribers = true;
          while (newSubscribers)
          {
-            Collection keys =  subscribedSubDomains.keySet();
-            if (keys.size() > 0)
+            Collection<Domain> domains =  subscribedSubDomains.keySet();
+            if (domains.size() > 0)
             {
                //When interceptors are installed as beans in the microcontainer, creating the interceptor instances
-               for (Iterator it = keys.iterator() ; it.hasNext() ; )
+               for (Domain domain : domains)
                {
-                  Domain domain = (Domain)it.next();
                   domain.updateAdvisorsForAddedBinding(binding);
                }
             }
@@ -1493,7 +1499,7 @@ public class AspectManager
    {
       synchronized (classMetaData)
       {
-         ClassMetaDataBinding meta = (ClassMetaDataBinding) classMetaData.remove(name);
+         ClassMetaDataBinding meta = classMetaData.remove(name);
          if (meta == null) return;
          meta.clearAdvisors();
       }
@@ -1517,14 +1523,14 @@ public class AspectManager
    {
       synchronized (advisors)
       {
-         Iterator it = advisors.keySet().iterator();
+         Iterator<Class<?>> it = advisors.keySet().iterator();
 
          while (it.hasNext())
          {
             Advisor advisor = getAdvisorFromAdvisorsKeySetIterator(it);
             if (advisor == null) continue;
 
-            Class clazz = advisor.getClazz();
+            Class<?> clazz = advisor.getClazz();
             addAdvisorToClassMetaDataBinding(meta, clazz, advisor, clazz);
          }
       }
@@ -1537,9 +1543,8 @@ public class AspectManager
          {
             if (subscribedSubDomains.size() > 0)
             {
-               for (Iterator it = subscribedSubDomains.keySet().iterator() ; it.hasNext() ; )
+               for (Domain domain : subscribedSubDomains.keySet())
                {
-                  Domain domain = (Domain)it.next();
                   domain.updateAdvisorsForAddedClassMetaData(meta);
                }
             }
@@ -1548,7 +1553,7 @@ public class AspectManager
       }
    }
 
-   protected void addAdvisorToClassMetaDataBinding(ClassMetaDataBinding meta, Class clazz, Advisor advisor, Class advisedClass)
+   protected void addAdvisorToClassMetaDataBinding(ClassMetaDataBinding meta, Class<?> clazz, Advisor advisor, Class<?> advisedClass)
    {
       if (meta.matches(advisor, clazz))
       {
@@ -1558,7 +1563,7 @@ public class AspectManager
       {
          //If advisor class does not match class metadata directly, try the superclasses so that methods can inherit
          //old skool weaving doesn't support metadata overriding for inherited methods, so only do this extra work for generated advisors
-         Class superClass = clazz.getSuperclass();
+         Class<?> superClass = clazz.getSuperclass();
          if (superClass != null && superClass != Object.class)
          {
             addAdvisorToClassMetaDataBinding(meta, superClass, advisor, advisedClass);
@@ -1575,7 +1580,7 @@ public class AspectManager
    {
       synchronized (interfaceIntroductions)
       {
-         return (InterfaceIntroduction) interfaceIntroductions.get(name);
+         return interfaceIntroductions.get(name);
       }
    }
 
@@ -1599,7 +1604,7 @@ public class AspectManager
    {
       synchronized (interfaceIntroductions)
       {
-         InterfaceIntroduction pointcut = (InterfaceIntroduction) interfaceIntroductions.remove(name);
+         InterfaceIntroduction pointcut = interfaceIntroductions.remove(name);
          if (pointcut == null) return;
          pointcut.clearAdvisors();
       }
@@ -1608,11 +1613,11 @@ public class AspectManager
    /**
     * Retrieve an introduction pointcut of a certain name
     */
-   public InterfaceIntroduction getArrayReplacement(String name)
+   public ArrayReplacement getArrayReplacement(String name)
    {
       synchronized (arrayReplacements)
       {
-         return (InterfaceIntroduction) arrayReplacements.get(name);
+         return arrayReplacements.get(name);
       }
    }
 
@@ -1636,8 +1641,7 @@ public class AspectManager
    {
       synchronized (arrayReplacements)
       {
-         ArrayReplacement pointcut = (ArrayReplacement) arrayReplacements.remove(name);
-         if (pointcut == null) return;
+         arrayReplacements.remove(name);
       }
    }
 
@@ -1648,7 +1652,7 @@ public class AspectManager
    {
       synchronized (arrayBindings)
       {
-         return (ArrayBinding) arrayBindings.get(name);
+         return arrayBindings.get(name);
       }
    }
 
@@ -1673,7 +1677,7 @@ public class AspectManager
    {
       synchronized (arrayBindings)
       {
-         ArrayBinding pointcut = (ArrayBinding) arrayBindings.remove(name);
+         ArrayBinding pointcut = arrayBindings.remove(name);
          if (pointcut == null) return;
          ArrayAdvisor.removeBinding(pointcut);
       }
@@ -1706,11 +1710,11 @@ public class AspectManager
       }
    }
 
-   public List getAnnotationIntroductions()
+   public List<AnnotationIntroduction> getAnnotationIntroductions()
    {
       synchronized (annotationIntroductions)
       {
-         return new ArrayList(annotationIntroductions.values());
+         return new ArrayList<AnnotationIntroduction>(annotationIntroductions.values());
       }
    }
 
@@ -1739,20 +1743,18 @@ public class AspectManager
       }
    }
 
-   public Iterator getDeclares()
+   public Iterator<DeclareDef> getDeclares()
    {
       return declares.values().iterator();
    }
 
-   protected void applyInterfaceIntroductions(Advisor advisor, Class clazz)
+   protected void applyInterfaceIntroductions(Advisor advisor, Class<?> clazz)
    {
-      Map interfaceIntroductions = getInterfaceIntroductions();
+      Map<String, InterfaceIntroduction> interfaceIntroductions = getInterfaceIntroductions();
       if (interfaceIntroductions != null && interfaceIntroductions.size() > 0)
       {
-         Iterator it = interfaceIntroductions.values().iterator();
-         while (it.hasNext())
+         for (InterfaceIntroduction pointcut : interfaceIntroductions.values())
          {
-            InterfaceIntroduction pointcut = (InterfaceIntroduction) it.next();
             if (pointcut.matches(advisor, clazz))
             {
                pointcut.addAdvisor(advisor);
@@ -1763,13 +1765,11 @@ public class AspectManager
 
    protected void applyInterfaceIntroductions(ClassAdvisor advisor, CtClass clazz) throws Exception
    {
-      Map interfaceIntroductions = getInterfaceIntroductions();
+      Map<String, InterfaceIntroduction> interfaceIntroductions = getInterfaceIntroductions();
       if (interfaceIntroductions != null && interfaceIntroductions.size() > 0)
       {
-         Iterator it = interfaceIntroductions.values().iterator();
-         while (it.hasNext())
+         for (InterfaceIntroduction pointcut : interfaceIntroductions.values())
          {
-            InterfaceIntroduction pointcut = (InterfaceIntroduction) it.next();
             if (pointcut.matches(advisor, clazz))
             {
                pointcut.addAdvisor(advisor);
@@ -1797,7 +1797,7 @@ public class AspectManager
    {
       synchronized (advisors)
       {
-         Iterator it = advisors.keySet().iterator();
+         Iterator<Class<?>> it = advisors.keySet().iterator();
          while (it.hasNext())
          {
             Advisor advisor = getAdvisorFromAdvisorsKeySetIterator(it);
@@ -1812,9 +1812,8 @@ public class AspectManager
          boolean newSubscribers = true;
          while (newSubscribers)
          {
-            for (Iterator it = subscribedSubDomains.keySet().iterator() ; it.hasNext() ; )
+            for (Domain domain : subscribedSubDomains.keySet())
             {
-               Domain domain = (Domain)it.next();
                domain.updateAdvisorsForAddedAnnotationOverride(introduction);
             }
             newSubscribers = copySubDomainsFromQueue(false);
@@ -1835,11 +1834,11 @@ public class AspectManager
       }
    }
 
-   public List getAnnotationOverrides()
+   public List<AnnotationIntroduction> getAnnotationOverrides()
    {
       synchronized (annotationOverrides)
       {
-         return new ArrayList(annotationOverrides.values());
+         return new ArrayList<AnnotationIntroduction>(annotationOverrides.values());
       }
    }
 
@@ -1853,7 +1852,7 @@ public class AspectManager
       Object aspect = perVMAspects.get(def);
       if (aspect == null)
       {
-         AspectDefinition adef = (AspectDefinition)aspectDefinitions.get(def);
+         AspectDefinition adef = aspectDefinitions.get(def);
          if (adef != null && adef.getScope() == Scope.PER_VM)
          {
             synchronized (adef)
@@ -1906,7 +1905,7 @@ public class AspectManager
 
    protected AspectDefinition internalRemoveAspectDefintion(String name)
    {
-      AspectDefinition def = (AspectDefinition) aspectDefinitions.remove(name);
+      AspectDefinition def = aspectDefinitions.remove(name);
       if (def != null)
       {
          def.undeploy();
@@ -1915,14 +1914,14 @@ public class AspectManager
       return def;
    }
 
-   public Map getAspectDefinitions()
+   public Map<String, AspectDefinition> getAspectDefinitions()
    {
       return aspectDefinitions;
    }
 
    public AspectDefinition getAspectDefinition(String name)
    {
-      return (AspectDefinition) aspectDefinitions.get(name);
+      return aspectDefinitions.get(name);
    }
 
    public synchronized void addTypedef(Typedef def) throws Exception
@@ -1947,51 +1946,51 @@ public class AspectManager
    {
       synchronized (typedefs)
       {
-         return (Typedef) typedefs.get(name);
+         return typedefs.get(name);
       }
    }
 
-   public Map getInterfaceIntroductions()
+   public Map<String, InterfaceIntroduction> getInterfaceIntroductions()
    {
       return interfaceIntroductions;
    }
 
-   public Map getArrayReplacements()
+   public Map<String, ArrayReplacement> getArrayReplacements()
    {
       return arrayReplacements;
    }
 
-   public Map getTypedefs()
+   public Map<String, Typedef> getTypedefs()
    {
       return typedefs;
    }
 
-   public Map getInterceptorStacks()
+   public Map<String, AdviceStack> getInterceptorStacks()
    {
       return interceptorStacks;
    }
 
-   public Map getClassMetaDataLoaders()
+   public Map<String, ClassMetaDataLoader> getClassMetaDataLoaders()
    {
       return classMetaDataLoaders;
    }
 
-   public Map getCflowStacks()
+   public Map<String, CFlowStack> getCflowStacks()
    {
       return cflowStacks;
    }
 
-   public Map getDynamicCFlows()
+   public Map<String, DynamicCFlowDefinition> getDynamicCFlows()
    {
       return dynamicCFlows;
    }
 
-   public Map getPerVMAspects()
+   public Map<String, Object> getPerVMAspects()
    {
       return perVMAspects;
    }
 
-   public Map getClassMetaData()
+   public Map<String, ClassMetaDataBinding> getClassMetaData()
    {
       return classMetaData;
    }
@@ -2027,7 +2026,7 @@ public class AspectManager
    {
       synchronized (bindings)
       {
-         AdviceBinding binding = (AdviceBinding) bindings.remove(name);
+         AdviceBinding binding = bindings.remove(name);
          if (binding == null)
          {
             return null;
@@ -2045,11 +2044,11 @@ public class AspectManager
 //      this.bindings.putAll(bindings);
 //   }
 
-   public void addSubDomainPerClass(Class clazz, Domain domain)
+   public void addSubDomainPerClass(Class<?> clazz, Domain domain)
    {
       synchronized (getSubDomainsPerClass())
       {
-         getSubDomainsPerClass().put(clazz, new WeakReference(domain));
+         getSubDomainsPerClass().put(clazz, new WeakReference<Domain>(domain));
       }
    }
 
@@ -2075,22 +2074,22 @@ public class AspectManager
       }
    }
 
-   public Map getSubscribedSubDomains()
+   public Map<Domain, Object> getSubscribedSubDomains()
    {
       return subscribedSubDomains;
    }
 
-   private Advisor getAdvisorFromAdvisorsKeySetIterator(Iterator it)
+   private Advisor getAdvisorFromAdvisorsKeySetIterator(Iterator<Class<?>> it)
    {
-      Class clazz = (Class) it.next();
+      Class<?> clazz = it.next();
       if (classLoaderValidator != null && !classLoaderValidator.isValidClassLoader(clazz.getClassLoader()))
       {
          it.remove();
          return null;
       }
-      WeakReference ref = (WeakReference) advisors.get(clazz);
+      WeakReference<Advisor> ref = advisors.get(clazz);
       if (ref == null) return null;
-      Advisor advisor = (Advisor) ref.get();
+      Advisor advisor = ref.get();
       if (advisor == null)
       {
          it.remove();
@@ -2201,7 +2200,7 @@ public class AspectManager
          {
             if (subDomainsByName == UnmodifiableEmptyCollections.EMPTY_WEAK_VALUE_HASHMAP)
             {
-               subDomainsByName = new WeakValueHashMap();
+               subDomainsByName = new WeakValueHashMap<String, Domain>();
             }
          }
       }
@@ -2215,7 +2214,7 @@ public class AspectManager
          {
             if (subscribedSubDomains == UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP)
             {
-               subscribedSubDomains = new WeakHashMap();
+               subscribedSubDomains = new WeakHashMap<Domain, Object>();
             }
          }
       }
@@ -2229,7 +2228,7 @@ public class AspectManager
          {
             if (subscribedSubDomainsQueue == UnmodifiableEmptyCollections.EMPTY_WEAK_HASHMAP)
             {
-               subscribedSubDomainsQueue = new WeakHashMap();
+               subscribedSubDomainsQueue = new WeakHashMap<Domain, Object>();
             }
          }
       }
@@ -2243,7 +2242,7 @@ public class AspectManager
          {
             if (interfaceIntroductions == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
-               interfaceIntroductions = new LinkedHashMap();
+               interfaceIntroductions = new LinkedHashMap<String, InterfaceIntroduction>();
             }
          }
       }
@@ -2257,7 +2256,7 @@ public class AspectManager
          {
             if (arrayReplacements == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
-               arrayReplacements = new LinkedHashMap();
+               arrayReplacements = new LinkedHashMap<String, ArrayReplacement>();
             }
          }
       }
@@ -2271,7 +2270,7 @@ public class AspectManager
          {
             if (arrayBindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
-               arrayBindings = new LinkedHashMap();
+               arrayBindings = new LinkedHashMap<String, ArrayBinding>();
             }
          }
       }
@@ -2286,7 +2285,7 @@ public class AspectManager
          {
             if (annotationIntroductions == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
-               annotationIntroductions = new LinkedHashMap();
+               annotationIntroductions = new LinkedHashMap<String, AnnotationIntroduction>();
             }
          }
       }
@@ -2300,7 +2299,7 @@ public class AspectManager
          {
             if (annotationOverrides == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
-               annotationOverrides = new LinkedHashMap();
+               annotationOverrides = new LinkedHashMap<String, AnnotationIntroduction>();
             }
          }
       }
@@ -2314,7 +2313,7 @@ public class AspectManager
          {
             if (bindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
-               bindings = new LinkedHashMap();
+               bindings = new LinkedHashMap<String, AdviceBinding>();
             }
          }
       }
@@ -2328,7 +2327,7 @@ public class AspectManager
          {
             if (typedefs == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
-               typedefs = new LinkedHashMap();
+               typedefs = new LinkedHashMap<String, Typedef>();
             }
          }
       }
@@ -2342,7 +2341,7 @@ public class AspectManager
          {
             if (interceptorFactories == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
             {
-               interceptorFactories = new HashMap();
+               interceptorFactories = new HashMap<String, InterceptorFactory>();
             }
          }
       }
@@ -2356,7 +2355,7 @@ public class AspectManager
          {
             if (classMetaDataLoaders == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
             {
-               classMetaDataLoaders = new HashMap();
+               classMetaDataLoaders = new HashMap<String, ClassMetaDataLoader>();
             }
          }
       }
@@ -2370,7 +2369,7 @@ public class AspectManager
          {
             if (interceptorStacks == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
             {
-               interceptorStacks = new HashMap();
+               interceptorStacks = new HashMap<String, AdviceStack>();
             }
          }
       }
@@ -2385,7 +2384,7 @@ public class AspectManager
          {
             if (declares == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
             {
-               declares = new HashMap();
+               declares = new HashMap<String, DeclareDef>();
             }
          }
       }
@@ -2399,7 +2398,7 @@ public class AspectManager
          {
             if (cflowStacks == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               cflowStacks = new ConcurrentHashMap();
+               cflowStacks = new ConcurrentHashMap<String, CFlowStack>();
             }
          }
       }
@@ -2413,7 +2412,7 @@ public class AspectManager
          {
             if (dynamicCFlows == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               dynamicCFlows = new ConcurrentHashMap();
+               dynamicCFlows = new ConcurrentHashMap<String, DynamicCFlowDefinition>();
             }
          }
       }
@@ -2427,7 +2426,7 @@ public class AspectManager
          {
             if (aspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               aspectDefinitions = new ConcurrentHashMap();
+               aspectDefinitions = new ConcurrentHashMap<String, AspectDefinition>();
             }
          }
       }
@@ -2441,7 +2440,7 @@ public class AspectManager
          {
             if (perVMAspects == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               perVMAspects = new ConcurrentHashMap();
+               perVMAspects = new ConcurrentHashMap<String, Object>();
             }
          }
       }
@@ -2455,7 +2454,7 @@ public class AspectManager
          {
             if (pointcuts == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
-               pointcuts = new LinkedHashMap();
+               pointcuts = new LinkedHashMap<String, Pointcut>();
             }
          }
       }
@@ -2469,7 +2468,7 @@ public class AspectManager
          {
             if (pointcutInfos == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
-               pointcutInfos = new LinkedHashMap();
+               pointcutInfos = new LinkedHashMap<String, PointcutInfo>();
             }
          }
       }
@@ -2484,7 +2483,7 @@ public class AspectManager
          {
             if (classMetaData == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
-               classMetaData = new LinkedHashMap();
+               classMetaData = new LinkedHashMap<String, ClassMetaDataBinding>();
             }
          }
       }
@@ -2497,7 +2496,7 @@ public class AspectManager
          {
             if (containers == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
             {
-               containers = new HashMap();
+               containers = new HashMap<String, DomainDefinition>();
             }
          }
       }
@@ -2511,21 +2510,10 @@ public class AspectManager
          {
             if (precedenceDefs == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
-               precedenceDefs = new LinkedHashMap();
+               precedenceDefs = new LinkedHashMap<String, PrecedenceDef>();
             }
          }
       }
-   }
-   
-   public List<String> getIncludedInvisibleAnnotations()
-   {
-      return includeInvisibleAnnotations;
-   }
-   
-   public void setIncludedInvisibleAnnotations(List<String> ia)
-   {
-      includeInvisibleAnnotations.clear();
-      includeInvisibleAnnotations.addAll(ia);
    }
 
 }

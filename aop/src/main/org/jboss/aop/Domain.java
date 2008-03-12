@@ -32,8 +32,10 @@ import java.util.Map;
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AdviceStack;
 import org.jboss.aop.advice.AspectDefinition;
+import org.jboss.aop.advice.DynamicCFlowDefinition;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.PrecedenceDef;
+import org.jboss.aop.array.ArrayReplacement;
 import org.jboss.aop.introduction.AnnotationIntroduction;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.metadata.ClassMetaDataBinding;
@@ -42,6 +44,7 @@ import org.jboss.aop.microcontainer.lifecycle.LifecycleCallbackBinding;
 import org.jboss.aop.pointcut.CFlowStack;
 import org.jboss.aop.pointcut.DynamicCFlow;
 import org.jboss.aop.pointcut.Pointcut;
+import org.jboss.aop.pointcut.PointcutInfo;
 import org.jboss.aop.pointcut.PointcutStats;
 import org.jboss.aop.pointcut.Typedef;
 import org.jboss.aop.pointcut.ast.ClassExpression;
@@ -97,11 +100,11 @@ public class Domain extends AspectManager
       return parent.getManagerFQN() + name + "/";
    }
 
-   public static String getDomainName(final Class clazz, final boolean forInstance)
+   public static String getDomainName(final Class<?> clazz, final boolean forInstance)
    {
-      String name = (String)AccessController.doPrivileged(new PrivilegedAction() {
+      String name = AccessController.doPrivileged(new PrivilegedAction<String>() {
 
-         public Object run()
+         public String run()
          {
             StringBuffer sb = new StringBuffer();
             sb.append(clazz.getName());
@@ -147,20 +150,20 @@ public class Domain extends AspectManager
    }
    
    @Override
-   public LinkedHashMap getBindings()
+   public LinkedHashMap<String, AdviceBinding> getBindings()
    {
       if (inheritsBindings)
       {
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
-            LinkedHashMap map = new LinkedHashMap(parent.getBindings());
+            LinkedHashMap<String, AdviceBinding> map = new LinkedHashMap<String, AdviceBinding>(parent.getBindings());
             map.putAll(this.bindings);
             return map;
          }
          else
          {
-            LinkedHashMap map = new LinkedHashMap(this.bindings);
+            LinkedHashMap<String, AdviceBinding> map = new LinkedHashMap<String, AdviceBinding>(this.bindings);
             map.putAll(parent.getBindings());
             return map;
          }
@@ -189,27 +192,28 @@ public class Domain extends AspectManager
    }
    
    @Override
-   public synchronized void removeBindings(ArrayList binds)
+   public synchronized void removeBindings(ArrayList<String> binds)
    {
       super.removeBindings(binds);
       hasOwnBindings = bindings.size() > 0;
       hasOwnPointcuts = bindings.size() > 0;
    }
    
-   public LinkedHashMap getPointcuts()
+   @Override
+   public LinkedHashMap<String, Pointcut> getPointcuts()
    {
       if (inheritsBindings)
       {
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
-            LinkedHashMap map = new LinkedHashMap(parent.getPointcuts());
+            LinkedHashMap<String, Pointcut> map = new LinkedHashMap<String, Pointcut>(parent.getPointcuts());
             map.putAll(this.pointcuts);
             return map;
          }
          else
          {
-            LinkedHashMap map = new LinkedHashMap(this.pointcuts);
+            LinkedHashMap<String, Pointcut> map = new LinkedHashMap<String, Pointcut>(this.pointcuts);
             map.putAll(parent.getPointcuts());
             return map;
          }
@@ -237,20 +241,20 @@ public class Domain extends AspectManager
    }
 
    @Override
-   public LinkedHashMap getPointcutInfos()
+   public LinkedHashMap<String, PointcutInfo> getPointcutInfos()
    {
       if (inheritsBindings)
       {
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
-            LinkedHashMap map = new LinkedHashMap(parent.getPointcutInfos());
+            LinkedHashMap<String, PointcutInfo> map = new LinkedHashMap<String, PointcutInfo>(parent.getPointcutInfos());
             map.putAll(this.pointcutInfos);
             return map;
          }
          else
          {
-            LinkedHashMap map = new LinkedHashMap(this.pointcutInfos);
+            LinkedHashMap<String, PointcutInfo> map = new LinkedHashMap<String, PointcutInfo>(this.pointcutInfos);
             map.putAll(parent.getPointcutInfos());
             return map;
          }
@@ -259,19 +263,19 @@ public class Domain extends AspectManager
    }
 
    @Override
-   public List getAnnotationIntroductions()
+   public List<AnnotationIntroduction> getAnnotationIntroductions()
    {
 
       if (inheritsBindings)
       {
-         List result = new ArrayList();
+         List<AnnotationIntroduction> result = new ArrayList<AnnotationIntroduction>();
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
             result.addAll(parent.getAnnotationIntroductions());
             synchronized (annotationIntroductions)
             {
-               result = new ArrayList(annotationIntroductions.values());
+               result = new ArrayList<AnnotationIntroduction>(annotationIntroductions.values());
             }
             return result;
          }
@@ -279,7 +283,7 @@ public class Domain extends AspectManager
          {
             synchronized (annotationIntroductions)
             {
-               result = new ArrayList(annotationIntroductions.values());
+               result = new ArrayList<AnnotationIntroduction>(annotationIntroductions.values());
             }
             result.addAll(parent.getAnnotationIntroductions());
             return result;
@@ -289,11 +293,12 @@ public class Domain extends AspectManager
       return super.getAnnotationIntroductions();
    }
    
-   public Map getArrayReplacements()
+   @Override
+   public Map<String, ArrayReplacement> getArrayReplacements()
    {
       if (inheritsBindings)
       {
-         HashMap map = new HashMap();
+         HashMap<String, ArrayReplacement> map = new HashMap<String, ArrayReplacement>();
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
@@ -338,11 +343,11 @@ public class Domain extends AspectManager
    }
    
    @Override
-   public List getAnnotationOverrides()
+   public List<AnnotationIntroduction> getAnnotationOverrides()
    {
       if (inheritsBindings)
       {
-         ArrayList list = new ArrayList();
+         ArrayList<AnnotationIntroduction> list = new ArrayList<AnnotationIntroduction>();
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
@@ -386,11 +391,11 @@ public class Domain extends AspectManager
    }
    
    @Override
-   public Map getInterfaceIntroductions()
+   public Map<String, InterfaceIntroduction> getInterfaceIntroductions()
    {
       if (inheritsBindings)
       {
-         HashMap map = new HashMap();
+         HashMap<String, InterfaceIntroduction> map = new HashMap<String, InterfaceIntroduction>();
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
@@ -434,11 +439,11 @@ public class Domain extends AspectManager
    }
    
    @Override
-   public Map getTypedefs()
+   public Map<String, Typedef> getTypedefs()
    {
       if (inheritsBindings)
       {
-         HashMap map = new HashMap();
+         HashMap<String, Typedef> map = new HashMap<String, Typedef>();
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
@@ -482,11 +487,11 @@ public class Domain extends AspectManager
       hasOwnTypedefs = typedefs.size() > 0;
    }
 
-   public Map getInterceptorStacks()
+   public Map<String, AdviceStack> getInterceptorStacks()
    {
       if (inheritsBindings)
       {
-         HashMap map = new HashMap();
+         HashMap<String, AdviceStack> map = new HashMap<String, AdviceStack>();
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
@@ -510,11 +515,12 @@ public class Domain extends AspectManager
       return super.getInterceptorStacks();
    }
 
-   public Map getClassMetaDataLoaders()
+   @Override
+   public Map<String, ClassMetaDataLoader> getClassMetaDataLoaders()
    {
       if (inheritsBindings)
       {
-         HashMap map = new HashMap();
+         HashMap<String, ClassMetaDataLoader> map = new HashMap<String, ClassMetaDataLoader>();
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
@@ -538,11 +544,12 @@ public class Domain extends AspectManager
       return super.getClassMetaDataLoaders();
    }
 
-   public Map getCflowStacks()
+   @Override
+   public Map<String, CFlowStack> getCflowStacks()
    {
       if (inheritsBindings)
       {
-         HashMap map = new HashMap();
+         HashMap<String, CFlowStack> map = new HashMap<String, CFlowStack>();
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
@@ -566,11 +573,12 @@ public class Domain extends AspectManager
       return super.getCflowStacks();
    }
 
-   public Map getDynamicCFlows()
+   @Override
+   public Map<String, DynamicCFlowDefinition> getDynamicCFlows()
    {
       if (inheritsBindings)
       {
-         HashMap map = new HashMap();
+         HashMap<String, DynamicCFlowDefinition> map = new HashMap<String, DynamicCFlowDefinition>();
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
@@ -594,6 +602,7 @@ public class Domain extends AspectManager
       return super.getDynamicCFlows();
    }
 
+   @Override
    public Map getPerVMAspects()
    {
       if (inheritsBindings)
@@ -664,11 +673,11 @@ public class Domain extends AspectManager
    }
 
    @Override
-   public Map getClassMetaData()
+   public Map<String, ClassMetaDataBinding> getClassMetaData()
    {
       if (inheritsBindings)
       {
-         HashMap map = new HashMap();
+         HashMap<String, ClassMetaDataBinding> map = new HashMap<String, ClassMetaDataBinding>();
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
@@ -723,6 +732,7 @@ public class Domain extends AspectManager
       hasOwnClassMetaData;
    }
 
+   @Override
    public InterceptorFactory getInterceptorFactory(String name)
    {
       InterceptorFactory factory = null;
@@ -737,6 +747,7 @@ public class Domain extends AspectManager
       return parent.getInterceptorFactory(name);
    }
 
+   @Override
    public AdviceStack getAdviceStack(String name)
    {
       AdviceStack factory = null;
@@ -751,11 +762,13 @@ public class Domain extends AspectManager
       return parent.getAdviceStack(name);
    }
 
+   @Override
    public Object getPerVMAspect(AspectDefinition def)
    {
       return getPerVMAspect(def.getName());
    }
 
+   @Override
    public Object getPerVMAspect(String def)
    {
       Object factory = null;
@@ -770,6 +783,7 @@ public class Domain extends AspectManager
       return parent.getPerVMAspect(def);
    }
 
+   @Override
    public AspectDefinition getAspectDefinition(String name)
    {
       AspectDefinition factory = null;
@@ -784,6 +798,7 @@ public class Domain extends AspectManager
       return parent.getAspectDefinition(name);
    }
 
+   @Override
    public Typedef getTypedef(String name)
    {
       Typedef factory = null;
@@ -798,6 +813,7 @@ public class Domain extends AspectManager
       return parent.getTypedef(name);
    }
 
+   @Override
    public DomainDefinition getContainer(String name)
    {
       DomainDefinition container = null;
@@ -811,11 +827,10 @@ public class Domain extends AspectManager
       return parent.getContainer(name);
    }
 
-
-
    /**
     * Find a pointcut of with a given name
     */
+   @Override
    public Pointcut getPointcut(String name)
    {
       Pointcut pointcut = null;
@@ -853,6 +868,7 @@ public class Domain extends AspectManager
       }
    }
 
+   @Override
    public CFlowStack getCFlowStack(String name)
    {
       if (inheritsDeclarations)
@@ -883,6 +899,7 @@ public class Domain extends AspectManager
    }
 
 
+   @Override
    public DynamicCFlow getDynamicCFlow(String name)
    {
       if (inheritsBindings)
@@ -912,6 +929,7 @@ public class Domain extends AspectManager
       }
    }
 
+   @Override
    public ClassMetaDataLoader findClassMetaDataLoader(String group)
    {
       if (inheritsDeclarations)
@@ -939,6 +957,7 @@ public class Domain extends AspectManager
       return super.findClassMetaDataLoader(group);
    }
 
+   @Override
    public Map<String, LifecycleCallbackBinding> getLifecycleBindings()
    {
       if (inheritsBindings)
@@ -965,91 +984,115 @@ public class Domain extends AspectManager
    //////////////////////////////////////////////////////////////////////////
    //Methods that should delegate to the top AspectManager
 
+   @Override
    public InterceptionMarkers getInterceptionMarkers()
    {
       return parent.getInterceptionMarkers();
    }
 
    /** Managed by the top-level aspect manager */
+   @Override
    protected Map getSubDomainsPerClass()
    {
       return parent.getSubDomainsPerClass();
    }
 
    /** Only set on a per vm basis */
+   @Override
    public ArrayList getExclude()
    {
       return parent.getExclude();
    }
 
    /** Only set on a per vm basis */
+   @Override
    public ArrayList getInclude()
    {
       return parent.getInclude();
    }
 
    /** Only set on a per vm basis */
+   @Override
    public ArrayList getIgnore()
    {
       return parent.getIgnore();
    }
 
    /** Only set on a per vm basis */
+   @Override
    public ClassExpression[] getIgnoreExpressions()
    {
       return parent.getIgnoreExpressions();
    }
-
+   
+   /** Only set on a per vm basis */
+   @Override
+   public List<String> getIncludedInvisibleAnnotations()
+   {
+      return parent.getIncludedInvisibleAnnotations();
+   }
+   
+   @Override
    public DynamicAOPStrategy getDynamicAOPStrategy()
    {
       return parent.getDynamicAOPStrategy();
    }
 
+   @Override
    public void setDynamicAOPStrategy(DynamicAOPStrategy strategy)
    {
       parent.setDynamicAOPStrategy(strategy);
    }
 
+   @Override
    protected void updatePointcutStats(Pointcut pointcut)
    {
       parent.updatePointcutStats(pointcut);
    }
 
+   @Override
    protected void updateStats(PointcutStats stats)
    {
       parent.updateStats(stats);
    }
 
+   @Override
    public boolean isExecution()
    {
       return parent.isExecution();
    }
 
+   @Override
    public boolean isConstruction()
    {
       return parent.isConstruction();
    }
 
+   @Override
    public boolean isCall()
    {
       return parent.isCall();
    }
 
+   @Override
    public boolean isWithin()
    {
       return parent.isWithin();
    }
 
+   @Override
    public boolean isWithincode()
    {
       return parent.isWithincode();
    }
 
+   @Override
    public boolean isGet()
    {
       return parent.isGet();
    }
 
+   @Override
    public boolean isSet()
    {
       return parent.isSet();
