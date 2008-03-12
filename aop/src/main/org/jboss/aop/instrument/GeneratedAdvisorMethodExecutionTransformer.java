@@ -464,29 +464,31 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
    {
       String joinpointName = getJoinPointFieldName(trans);
       String infoName = getMethodInfoFieldName(trans.getOriginalName(), trans.getHash());
-
+      
       String code =
          "{" +
-         "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
-         "   {" +
+         "   if (" + infoName + " == null) {"+
+         "         " + getAopReturnStr(trans.getWMethod()) + "$1." + trans.getWrappedName() + "(" + getNonStaticJavasistParamString(trans.getWMethod().getParameterTypes().length) + ");" +
+         (trans.getWMethod().getReturnType().equals(CtClass.voidType)? "return;":"") +
+             "}" +
          GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
-         "      try" +
-         "      {" +
-         "          if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
-         "          {" +
-         "              super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
-         "          }" +
-         "      } finally {" +
-         GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
-         "      }" +
-         "   }" +
-         "   if (" + joinpointName + " == null)" +
-         "   { " +
-         "      " + getAopReturnStr(trans.getWMethod()) + "$1." + trans.getWrappedName() + "(" + getNonStaticJavasistParamString(trans.getWMethod().getParameterTypes().length) + ");" +
-         "   }" +
-         "   else" +
+         "   try" +
          "   {" +
-         "    " + getAopReturnStr(trans.getWMethod()) + joinpointName + "." + MethodJoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+
+         "      if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
+         "      {" +
+         "           super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
+         "      }" +
+         "      if (" + joinpointName + " == null)" +
+         "      { " +
+         "         " + getAopReturnStr(trans.getWMethod()) + "$1." + trans.getWrappedName() + "(" + getNonStaticJavasistParamString(trans.getWMethod().getParameterTypes().length) + ");" +
+         "      }" +
+         "      else" +
+         "      {" +
+         "       " + getAopReturnStr(trans.getWMethod()) + joinpointName + "." + MethodJoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+         "      }" +
+         "   } finally {" +
+         GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
          "   }" +
          "}";
 
