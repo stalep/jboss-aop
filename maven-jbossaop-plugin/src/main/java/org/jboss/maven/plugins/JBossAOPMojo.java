@@ -66,11 +66,17 @@ public class JBossAOPMojo  extends AbstractMojo
     * 
     * @parameter expression="${aopPaths}" default-value={src/main/resources/jboss-aop.xml}
     */
-   private String[] aoppaths;
+   private File[] aoppaths;
    
    /** 
     * 
-    * @parameter expression="${executable}" default-value=null
+    * @parameter expression="${aopClassPath}" default-value=
+    */
+   private String aopClassPath;
+   
+   /** 
+    * 
+    * @parameter expression="${executable}" default-value=
     * @required
     */
    private String executable;
@@ -135,8 +141,14 @@ public class JBossAOPMojo  extends AbstractMojo
          cl.addArguments(new String[] { "-javaagent:"+javaagent});
       }
       cl.addArguments(new String[] { "-cp", createClassPathList()});
-      cl.addArguments(new String[] { "-Djboss.aop.path="+ getAoppath()});
       
+      String aoppath = getAoppath();
+      if(aoppath != null && aoppath.length() > 0)
+         cl.addArguments(new String[] { "-Djboss.aop.path="+ aoppath});
+      
+      if(aopClassPath != null && aopClassPath.length() > 0)
+         cl.addArguments(new String[] { "-Djboss.aop.class.path="+ aopClassPath});
+         
       cl.addArguments(new String[] { executable});
       
       if(getLog().isDebugEnabled()) 
@@ -190,20 +202,22 @@ public class JBossAOPMojo  extends AbstractMojo
    
    private String getAoppath()
    { 
-      if(aoppaths.length > 0)
+      StringBuffer sb = new StringBuffer();
+      if(aoppaths != null)
       {
-         StringBuffer sb = new StringBuffer();
-         for(String aoppath : aoppaths)
+         for(File aoppath : aoppaths)
          {
-            if(sb.length() > 0)
-               sb.append(File.pathSeparator);
-            sb.append(new File(project.getBasedir(), aoppath).getAbsolutePath());
-//            sb.append(aoppath);
+            if(aoppath != null)
+            {
+               if(sb.length() > 0)
+                  sb.append(File.pathSeparator);
+               sb.append(aoppath.getAbsolutePath());
+            }
          }
          return sb.toString();
       }
       else
-         return new File(project.getBasedir(),"src/main/resources/jboss-aop.xml").getAbsolutePath();
+         return null;
    }
 
    private void processStream(BufferedReader input, boolean isError)

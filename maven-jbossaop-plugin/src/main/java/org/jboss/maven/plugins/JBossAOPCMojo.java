@@ -103,7 +103,7 @@ public class JBossAOPCMojo extends AbstractMojo
     * 
     * @parameter expression="${aopPaths}" default-value={src/main/resources/jboss-aop.xml}
     */
-   private String[] aoppaths;
+   private File[] aoppaths;
 
    /** 
     * 
@@ -167,7 +167,6 @@ public class JBossAOPCMojo extends AbstractMojo
       
          sb.append(project.getBuild().getOutputDirectory());
 
-//      System.err.println("CLASSPATH: "+sb.toString());
       return sb.toString();
    }
 
@@ -191,7 +190,9 @@ public class JBossAOPCMojo extends AbstractMojo
       if(getAopClassPath() != null && getAopClassPath().length() > 0)
          cl.addArguments(new String[] { "-aopclasspath", getAopClassPath()});
       
-      cl.addArguments(new String[] { "-aoppath", getAoppath()});
+      String aoppath = getAoppath();
+      if(aoppath != null && aoppath.length() > 0)
+         cl.addArguments(new String[] { "-aoppath", aoppath});
       
       if(includes != null && includes.length > 0)
       {
@@ -243,19 +244,22 @@ public class JBossAOPCMojo extends AbstractMojo
 
    private String getAoppath()
    { 
-      if(aoppaths.length > 0)
+      StringBuffer sb = new StringBuffer();
+      if(aoppaths != null)
       {
-         StringBuffer sb = new StringBuffer();
-         for(String aoppath : aoppaths)
+         for(File aoppath : aoppaths)
          {
-            if(sb.length() > 0)
-               sb.append(File.pathSeparator);
-            sb.append(aoppath);
+            if(aoppath != null)
+            {
+               if(sb.length() > 0)
+                  sb.append(File.pathSeparator);
+               sb.append(aoppath.getAbsolutePath());
+            }
          }
          return sb.toString();
       }
       else
-         return new File(project.getBasedir(),"src/main/resources/jboss-aop.xml").getAbsolutePath();
+         return null;
    }
 
    private void processStream(BufferedReader input, boolean isError)
