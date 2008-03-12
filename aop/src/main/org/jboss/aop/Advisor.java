@@ -33,7 +33,6 @@ import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -103,6 +102,7 @@ public abstract class Advisor
          hash = 29 * hash + (joinpoint != null ? joinpoint.hashCode() : 0);
       }
 
+      @Override
       public boolean equals(Object o)
       {
          if (this == o) return true;
@@ -116,6 +116,7 @@ public abstract class Advisor
          return true;
       }
 
+      @Override
       public int hashCode()
       {
          return hash;
@@ -139,10 +140,10 @@ public abstract class Advisor
    protected boolean doesHaveAspects = false;
 
    protected String name;
-   protected ConcurrentHashMap aspects = new ConcurrentHashMap();
-   protected HashMap adviceInterceptors = new HashMap();
-   protected volatile CopyOnWriteArraySet perInstanceAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_COPYONWRITE_ARRAYSET;
-   protected volatile ConcurrentHashMap perInstanceJoinpointAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   protected ConcurrentHashMap<String, Object> aspects = new ConcurrentHashMap<String, Object>();
+   protected HashMap<AspectDefinition, Map<String, Interceptor>> adviceInterceptors = new HashMap<AspectDefinition, Map<String, Interceptor>>();
+   protected volatile CopyOnWriteArraySet<AspectDefinition> perInstanceAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_COPYONWRITE_ARRAYSET;
+   protected volatile ConcurrentHashMap<AspectDefinition, Set<Joinpoint>> perInstanceJoinpointAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
 
    static Class<?> cl = java.lang.String.class;
    protected volatile TLongObjectHashMap advisedMethods = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
@@ -156,7 +157,7 @@ public abstract class Advisor
    protected MethodInterceptors methodInfos = new MethodInterceptors(this);;
    protected AspectManager manager;
    protected Class<?> clazz = null;
-   protected Constructor[] constructors;
+   protected Constructor<?>[] constructors;
 
    /** @deprecated Use constructorInfos instead */
    protected Interceptor[][] constructorInterceptors;
@@ -176,7 +177,7 @@ public abstract class Advisor
       this.manager = manager;
    }
 
-   public Constructor[] getConstructors()
+   public Constructor<?>[] getConstructors()
    {
       return constructors;
    }
@@ -228,7 +229,7 @@ public abstract class Advisor
    }
 
 
-   public List getClassMetadataBindings()
+   public List<ClassMetaDataBinding> getClassMetadataBindings()
    {
       return classMetaDataBindings;
    }
@@ -263,12 +264,12 @@ public abstract class Advisor
     */
    public void deployAnnotationOverrides()
    {
-      List annotationOverrides = getManager().getAnnotationOverrides();
+      List<AnnotationIntroduction> annotationOverrides = getManager().getAnnotationOverrides();
       if (annotationOverrides != null)
       {
          for (int i = 0; i < annotationOverrides.size(); ++i)
          {
-            AnnotationIntroduction introduction = (AnnotationIntroduction) annotationOverrides.get(i);
+            AnnotationIntroduction introduction = annotationOverrides.get(i);
             deployAnnotationOverride(introduction);
          }
       }
@@ -304,7 +305,7 @@ public abstract class Advisor
             annotations.addAnnotation(fields[i], introduction.getAnnotation().getIdentifier(), introduction.getOriginalAnnotationExpr());
          }
       }
-      Constructor[] cons = theClass.getDeclaredConstructors();
+      Constructor<?>[] cons = theClass.getDeclaredConstructors();
       for (int i = 0; i < cons.length; i++)
       {
          if (introduction.matches(this, cons[i]))
@@ -366,17 +367,17 @@ public abstract class Advisor
       return hasAnnotation(clazz, annotation);
    }
 
-   public boolean hasAnnotation(Class tgt, String annotation)
+   public boolean hasAnnotation(Class<?> tgt, String annotation)
    {
       return hasAnnotation(tgt, annotation, null);
    }
 
-   public boolean hasAnnotation(Class tgt, Class annotation)
+   public boolean hasAnnotation(Class<?> tgt, Class annotation)
    {
       return hasAnnotation(tgt, null, annotation);
    }
 
-   private boolean hasAnnotation(Class tgt, String annotation, Class annotationClass)
+   private boolean hasAnnotation(Class<?> tgt, String annotation, Class annotationClass)
    {
       if (annotation == null && annotationClass == null)
       {
@@ -470,7 +471,7 @@ public abstract class Advisor
       return value;
    }
 
-   public Object resolveAnnotation(Constructor c, Class annotation)
+   public Object resolveAnnotation(Constructor<?> c, Class annotation)
    {
       Object value = null;
       if (metadata != null)
@@ -734,7 +735,7 @@ public abstract class Advisor
       perInstanceAspectDefinitions.remove(def);
    }
 
-   public Set getPerInstanceAspectDefinitions()
+   public Set<AspectDefinition> getPerInstanceAspectDefinitions()
    {
       return perInstanceAspectDefinitions;
    }
@@ -743,10 +744,10 @@ public abstract class Advisor
 
    public void addPerInstanceJoinpointAspect(Joinpoint joinpoint, AspectDefinition def)
    {
-      Set joinpoints = (Set) perInstanceJoinpointAspectDefinitions.get(def);
+      Set<Joinpoint> joinpoints = perInstanceJoinpointAspectDefinitions.get(def);
       if (joinpoints == null)
       {
-         joinpoints = new CopyOnWriteArraySet();
+         joinpoints = new CopyOnWriteArraySet<Joinpoint>();
          initPerInstanceJoinpointAspectDefinitionsMap();
          perInstanceJoinpointAspectDefinitions.put(def, joinpoints);
          def.registerAdvisor(this);
@@ -754,13 +755,13 @@ public abstract class Advisor
       joinpoints.add(joinpoint);
    }
 
-   void addPerInstanceJoinpointAspect(Set joinpoints, AspectDefinition def)
+   void addPerInstanceJoinpointAspect(Set<Joinpoint> joinpoints, AspectDefinition def)
    {
       initPerInstanceJoinpointAspectDefinitionsMap();
-      Set setJoinpoints = (Set) perInstanceJoinpointAspectDefinitions.get(def);
+      Set<Joinpoint> setJoinpoints = perInstanceJoinpointAspectDefinitions.get(def);
       if (setJoinpoints == null)
       {
-         setJoinpoints = new CopyOnWriteArraySet();
+         setJoinpoints = new CopyOnWriteArraySet<Joinpoint>();
          perInstanceJoinpointAspectDefinitions.put(def, setJoinpoints);
          def.registerAdvisor(this);
       }
@@ -772,7 +773,7 @@ public abstract class Advisor
       perInstanceJoinpointAspectDefinitions.remove(def);
    }
 
-   public Map getPerInstanceJoinpointAspectDefinitions()
+   public Map<AspectDefinition, Set<Joinpoint>> getPerInstanceJoinpointAspectDefinitions()
    {
       return perInstanceJoinpointAspectDefinitions;
    }
@@ -806,11 +807,10 @@ public abstract class Advisor
       AdviceInterceptorKey key = new AdviceInterceptorKey(adviceName, joinpoint);
       synchronized (adviceInterceptors)
       {
-         Map map = null;
-         map = (Map) adviceInterceptors.get(def);
+         Map<String, Interceptor> map = adviceInterceptors.get(def);
          if (map != null)
          {
-            return (Interceptor) map.get(key);
+            return map.get(key);
          }
       }
       return null;
@@ -820,10 +820,10 @@ public abstract class Advisor
    {
       synchronized (adviceInterceptors)
       {
-         Map map = (Map) adviceInterceptors.get(def);
+         Map<String, Interceptor> map = adviceInterceptors.get(def);
          if (map == null)
          {
-            map = new HashMap();
+            map = new HashMap<String, Interceptor>();
             adviceInterceptors.put(def, map);
          }
          map.put(adviceName, interceptor);
@@ -950,7 +950,7 @@ public abstract class Advisor
          Interceptor[] aspects = null;
          MethodInvocation methodInvocation = (MethodInvocation) invocation;
          long hash = methodInvocation.getMethodHash();
-         MethodInfo info = (MethodInfo) methodInfos.getMethodInfo(hash);
+         MethodInfo info = methodInfos.getMethodInfo(hash);
          aspects = info.getInterceptors();
          if (aspects == null) aspects = new Interceptor[0];
          if (target != null && target instanceof Advised)
@@ -980,7 +980,10 @@ public abstract class Advisor
       this.clazz = clazz;
    }
 
-   public static String getSimpleName(Class clazz)
+   /**
+    * @deprecated Use Class.getSimpleName() instead
+    */
+   public static String getSimpleName(Class<?> clazz)
    {
       String name = clazz.getName();
       int lastIndex = name.lastIndexOf('.');
@@ -1007,8 +1010,8 @@ public abstract class Advisor
          info.setIndex(i);
          try
          {
-            final String name = ConstructorExecutionTransformer.constructorFactory(getSimpleName(clazz));
-            final Class[] types = constructors[i].getParameterTypes();
+            final String name = ConstructorExecutionTransformer.constructorFactory(clazz.getSimpleName());
+            final Class<?>[] types = constructors[i].getParameterTypes();
             Method method = AccessController.doPrivileged(new PrivilegedExceptionAction<Method>()
             {
                public Method run() throws Exception
@@ -1064,7 +1067,7 @@ public abstract class Advisor
 
          try
          {
-            Field infoField = clazz.getDeclaredField(ConstructionTransformer.getConstructionInfoFieldName(getSimpleName(clazz), i));
+            Field infoField = clazz.getDeclaredField(ConstructionTransformer.getConstructionInfoFieldName(clazz.getSimpleName(), i));
             infoField.setAccessible(true);
             infoField.set(null, new WeakReference<ConstructionInfo>(info));
          }
@@ -1139,7 +1142,7 @@ public abstract class Advisor
    {
       for (int i = 0; i < constructors.length; i++)
       {
-         Constructor constructor = constructors[i];
+         Constructor<?> constructor = constructors[i];
          if (binding.getPointcut().matchesExecution(this, constructor))
          {
             if (AspectManager.verbose) System.err.println("[debug] constructor matched binding: " + constructor);
@@ -1157,7 +1160,7 @@ public abstract class Advisor
          for (int i = 0; i < constructionInfos.length ;i++)
          {
             ConstructionInfo info = constructionInfos[i];
-            Constructor constructor = info.getConstructor();
+            Constructor<?> constructor = info.getConstructor();
             if (binding.getPointcut().matchesConstruction(this, constructor))
             {
                if (AspectManager.verbose) System.err.println("[debug] construction matched binding: " + constructor);
@@ -1190,7 +1193,7 @@ public abstract class Advisor
       {
          ArrayList<Interceptor> cflowChain = new ArrayList<Interceptor>();
          createInterceptorChain(binding.getInterceptorFactories(), cflowChain, joinpoint);
-         Interceptor[] cflowInterceptors = (Interceptor[]) cflowChain.toArray(new Interceptor[cflowChain.size()]);
+         Interceptor[] cflowInterceptors = cflowChain.toArray(new Interceptor[cflowChain.size()]);
          curr.add(new CFlowInterceptor(binding.getCFlowString(), binding.getCFlow(), cflowInterceptors));
       }
       else
@@ -1254,7 +1257,7 @@ public abstract class Advisor
          {
             try
             {
-               AccessController.doPrivileged(new PrivilegedExceptionAction()
+               AccessController.doPrivileged(new PrivilegedExceptionAction<Object>()
                {
                   public Object run()
                   {
@@ -1287,21 +1290,19 @@ public abstract class Advisor
    public void cleanup()
    {
       //AspectDefinitions have strong links back to us
-      for(Iterator it = perInstanceAspectDefinitions.iterator() ; it.hasNext() ; )
+      for(AspectDefinition def : perInstanceAspectDefinitions)
       {
-         AspectDefinition def = (AspectDefinition)it.next();
          removePerInstanceAspect(def);
          def.unregisterAdvisor(this);
       }
       
-      for(Iterator it = perInstanceJoinpointAspectDefinitions.keySet().iterator() ; it.hasNext() ; )
+      for(AspectDefinition def : perInstanceJoinpointAspectDefinitions.keySet())
       {
-         AspectDefinition def = (AspectDefinition)it.next();
          removePerInstanceJoinpointAspect(def);
          def.unregisterAdvisor(this);
       }
 
-      AspectDefinition[] defs = (AspectDefinition[])adviceInterceptors.keySet().toArray(new AspectDefinition[adviceInterceptors.size()]);
+      AspectDefinition[] defs = adviceInterceptors.keySet().toArray(new AspectDefinition[adviceInterceptors.size()]);
       for(int i = 0 ; i < defs.length ; i++)
       {
          if (defs[i].getScope() == Scope.PER_CLASS)
@@ -1353,7 +1354,7 @@ public abstract class Advisor
          {
             if (perInstanceAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_COPYONWRITE_ARRAYSET)
             {
-               perInstanceAspectDefinitions = new CopyOnWriteArraySet();
+               perInstanceAspectDefinitions = new CopyOnWriteArraySet<AspectDefinition>();
             }
          }
       }
@@ -1367,7 +1368,7 @@ public abstract class Advisor
          {
             if (perInstanceJoinpointAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               perInstanceJoinpointAspectDefinitions = new ConcurrentHashMap();
+               perInstanceJoinpointAspectDefinitions = new ConcurrentHashMap<AspectDefinition, Set<Joinpoint>>();
             }
          }
       }
