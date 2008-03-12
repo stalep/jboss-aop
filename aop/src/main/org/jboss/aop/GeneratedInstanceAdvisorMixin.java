@@ -48,7 +48,7 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
 
    protected ArrayList<Interceptor> insertedInterceptors = null;
    protected ArrayList<Interceptor> appendedInterceptors = null;
-   protected WeakReference instanceRef;
+   protected WeakReference<Object> instanceRef;
    public boolean hasInstanceAspects = false;
    private InterceptorChainObserver interceptorChainObserver;
    InstanceAdvisorDelegate delegate;
@@ -59,7 +59,7 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
 
    public GeneratedInstanceAdvisorMixin(Object instance, GeneratedClassAdvisor genadvisor)
    {
-      this.instanceRef = new WeakReference(instance);
+      this.instanceRef = new WeakReference<Object>(instance);
       delegate = new InstanceAdvisorDelegate(genadvisor, this);
       delegate.initialize();
       this.interceptorChainObserver = ((ClassAdvisor) genadvisor).getInterceptorChainObserver();
@@ -381,7 +381,7 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
    protected void finalize()
    {
       ClassLoader classLoader = delegate.getAdvisor().getClazz().getClassLoader();
-      if (this.interceptorChainObserver == null || !delegate.getAdvisor().getManager().getRegisteredCLs().containsKey(classLoader))
+      if (this.interceptorChainObserver == null || !AspectManager.getRegisteredCLs().containsKey(classLoader))
       {
          return;
       }

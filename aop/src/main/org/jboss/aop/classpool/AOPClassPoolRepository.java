@@ -28,7 +28,6 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jboss.aop.Advisor;
@@ -56,7 +55,7 @@ public class AOPClassPoolRepository implements ScopedClassPoolRepository
    private final static AOPClassPoolRepository instance = new AOPClassPoolRepository();
    
    /** The classes per classppol */
-   protected final HashMap ucl2classes = new HashMap();
+   protected final HashMap<ClassLoader, HashSet<Class<?>>> ucl2classes = new HashMap<ClassLoader, HashSet<Class<?>>>();
 
    /** The top-level AspectManager this pool belongs to */
    AspectManager manager;
@@ -140,7 +139,7 @@ public class AOPClassPoolRepository implements ScopedClassPoolRepository
     * 
     * @return the registered classloaders
     */
-   public Map getRegisteredCLs()
+   public Map<ClassLoader, ClassPool> getRegisteredCLs()
    {
       return delegate.getRegisteredCLs();
    }
@@ -163,12 +162,12 @@ public class AOPClassPoolRepository implements ScopedClassPoolRepository
       delegate.unregisterClassLoader(cl);
    }
    
-   public void registerClass(Class clazz)
+   public void registerClass(Class<?> clazz)
    {
-      HashSet classes = (HashSet) ucl2classes.get(clazz.getClassLoader());
+      HashSet<Class<?>> classes = ucl2classes.get(clazz.getClassLoader());
       if (classes == null)
       {
-         classes = new HashSet();
+         classes = new HashSet<Class<?>>();
          ucl2classes.put(clazz.getClassLoader(), classes);
       }
       classes.add(clazz);
@@ -190,26 +189,24 @@ public class AOPClassPoolRepository implements ScopedClassPoolRepository
    {
       synchronized (delegate.getRegisteredCLs())
       {
-         HashSet classes = (HashSet) ucl2classes.remove(cl);
+         HashSet<Class<?>> classes = ucl2classes.remove(cl);
          if (classes != null)
          {
-            Iterator it = classes.iterator();
-            while (it.hasNext())
+            for (Class<?> clazz : classes)
             {
-               Object clazz = it.next();
                synchronized (manager.getAdvisors())
                {
-                  WeakReference ref = (WeakReference)manager.getAdvisors().get(clazz);
+                  WeakReference<Advisor> ref = manager.getAdvisors().get(clazz);
                   if (ref != null)
                   {
-                     Advisor advisor = (Advisor)ref.get();
+                     Advisor advisor = ref.get();
                      manager.getAdvisors().remove(clazz);
                      if (advisor != null)
                      {
                         advisor.cleanup();
                      }
                   }
-                  Class advisedClass = (Class)clazz;
+                  Class<?> advisedClass = clazz;
                   try
                   {
                      //The static advisor field should be the only remaining hard reference to the advisor
@@ -242,7 +239,7 @@ public class AOPClassPoolRepository implements ScopedClassPoolRepository
          {
             try
             {
-               AccessController.doPrivileged(new PrivilegedExceptionAction()
+               AccessController.doPrivileged(new PrivilegedExceptionAction<Object>()
                {
                   public Object run()
                   {

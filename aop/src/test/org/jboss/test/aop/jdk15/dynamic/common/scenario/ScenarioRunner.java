@@ -24,6 +24,7 @@ package org.jboss.test.aop.jdk15.dynamic.common.scenario;
 
 import java.util.Map;
 
+import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
@@ -323,7 +324,7 @@ public class ScenarioRunner
     */
    private static void loadPOJOData()
    {
-      Map cls = AspectManager.instance().getRegisteredCLs();
+      Map<ClassLoader, ClassPool> cls = AspectManager.getRegisteredCLs();
       AOPClassPool classPool = (AOPClassPool) cls.get(POJO.class.getClassLoader());
       try
       {

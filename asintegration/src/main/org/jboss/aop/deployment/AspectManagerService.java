@@ -25,11 +25,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javassist.ClassPool;
 import javassist.scopedpool.ScopedClassPoolFactory;
 
 import javax.management.Notification;
@@ -46,6 +46,11 @@ import org.jboss.aop.hook.JDK14Transformer;
 import org.jboss.aop.hook.JDK14TransformerManager;
 import org.jboss.aop.instrument.InstrumentorFactory;
 import org.jboss.aop.instrument.TransformerCommon;
+import org.jboss.aop.introduction.InterfaceIntroduction;
+import org.jboss.aop.advice.AdviceBinding;
+import org.jboss.aop.advice.AdviceStack;
+import org.jboss.aop.advice.AspectDefinition;
+import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.asintegration.JBossIntegration;
 import org.jboss.aop.asintegration.jboss4.JBoss4Integration;
 import org.jboss.logging.Logger;
@@ -72,7 +77,7 @@ public class AspectManagerService
       //When AspectManager.translate() is called the first time, these classes have not been loaded yet, and this is what causes
       //JRockit to get confused
       @SuppressWarnings("unused")
-      Class clazz = TransformerCommon.class;
+      Class<?> clazz = TransformerCommon.class;
       clazz = SuperClassesFirstWeavingStrategy.class;
       clazz = ClassicWeavingStrategy.class;
       clazz = HeirarchicalLoaderRepository3.class;
@@ -451,12 +456,11 @@ public class AspectManagerService
     */
    public String interceptorFactories()
    {
-      Map factories = AspectManager.instance().getInterceptorFactories();
-      Iterator it = factories.keySet().iterator();
+      Map<String, InterceptorFactory> factories = AspectManager.instance().getInterceptorFactories();
       StringBuffer buffer = new StringBuffer("");
-      while (it.hasNext())
+      for (String name : factories.keySet())
       {
-         buffer.append(it.next() + "<br>");
+         buffer.append(name + "<br>");
       }
       return buffer.toString();
    }
@@ -466,60 +470,55 @@ public class AspectManagerService
     */
    public String aspectDefinitions()
    {
-      Map factories = AspectManager.instance().getAspectDefinitions();
-      Iterator it = factories.keySet().iterator();
+      Map<String, AspectDefinition> factories = AspectManager.instance().getAspectDefinitions();
       StringBuffer buffer = new StringBuffer("");
-      while (it.hasNext())
+      for (String name : factories.keySet())
       {
-         buffer.append(it.next() + "<br>");
+         buffer.append(name + "<br>");
       }
       return buffer.toString();
    }
 
    public String introductions()
    {
-      Map factories = AspectManager.instance().getInterfaceIntroductions();
-      Iterator it = factories.keySet().iterator();
+      Map<String, InterfaceIntroduction> factories = AspectManager.instance().getInterfaceIntroductions();
       StringBuffer buffer = new StringBuffer("");
-      while (it.hasNext())
+      for (String name : factories.keySet())
       {
-         buffer.append(it.next() + "<br>");
+         buffer.append(name + "<br>");
       }
       return buffer.toString();
    }
 
    public String stacks()
    {
-      Map factories = AspectManager.instance().getInterceptorStacks();
-      Iterator it = factories.keySet().iterator();
+      Map<String, AdviceStack> factories = AspectManager.instance().getInterceptorStacks();
       StringBuffer buffer = new StringBuffer("");
-      while (it.hasNext())
+      for (String name : factories.keySet())
       {
-         buffer.append(it.next() + "<br>");
+         buffer.append(name + "<br>");
       }
       return buffer.toString();
    }
 
    public String bindings()
    {
-      Map factories = AspectManager.instance().getBindings();
-      Iterator it = factories.keySet().iterator();
+      Map<String, AdviceBinding> factories = AspectManager.instance().getBindings();
       StringBuffer buffer = new StringBuffer("");
-      while (it.hasNext())
+      for (String name : factories.keySet())
       {
-         buffer.append(it.next() + "<br>");
+         buffer.append(name + "<br>");
       }
       return buffer.toString();
    }
 
    public String registeredClassLoaders()
    {
-      Map factories = AspectManager.instance().getRegisteredCLs();
-      Iterator it = factories.keySet().iterator();
+      Map<ClassLoader, ClassPool> loaders = AspectManager.getRegisteredCLs();
       StringBuffer buffer = new StringBuffer("");
-      while (it.hasNext())
+      for (ClassLoader loader : loaders.keySet())
       {
-         buffer.append(it.next() + "<br>");
+         buffer.append(loader + "<br>");
       }
       return buffer.toString();
    }

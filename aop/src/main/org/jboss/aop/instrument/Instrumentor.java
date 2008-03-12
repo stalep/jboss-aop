@@ -972,7 +972,6 @@ public abstract class Instrumentor
          }
          // instrument classes that access the joinpoints whose status have changed, in
          // order to make this classes access the joinpoint wrapper instead
-         Collection classPools = manager.getRegisteredCLs().values();
          Collection conversionsRegistered = new HashSet();
          synchronized(this.processedClasses)
          {

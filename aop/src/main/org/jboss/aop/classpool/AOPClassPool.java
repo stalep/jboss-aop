@@ -22,7 +22,6 @@
 package org.jboss.aop.classpool;
 
 import java.lang.ref.WeakReference;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -104,13 +103,12 @@ public class AOPClassPool extends ScopedClassPool
             Object o = generatedClasses.get(classname);
             if (o == null)
             {
-               Map registeredCLs = AspectManager.getRegisteredCLs();
+               Map<ClassLoader, ClassPool> registeredCLs = AspectManager.getRegisteredCLs();
                synchronized (registeredCLs)
                {
-                  Iterator it = registeredCLs.values().iterator();
-                  while (it.hasNext())
+                  for(ClassPool pl : AspectManager.getRegisteredCLs().values())
                   {
-                     AOPClassPool pool = (AOPClassPool) it.next();
+                     AOPClassPool pool = (AOPClassPool) pl;
                      if (pool.isUnloadedClassLoader())
                      {
                         AspectManager.instance().unregisterClassLoader(pool.getClassLoader());
@@ -158,7 +156,7 @@ public class AOPClassPool extends ScopedClassPool
    protected boolean isLocalResource(String resourceName)
    {
       String classResourceName = getResourceName(resourceName);
-      Boolean isLocal = (Boolean)localResources.get(classResourceName);
+      Boolean isLocal = localResources.get(classResourceName);
       if (isLocal != null)
       {
          return isLocal.booleanValue();

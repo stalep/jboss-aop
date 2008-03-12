@@ -682,7 +682,7 @@ public class AspectManager
 
    // Public -------------------------------------------------------
 
-   public static Map getRegisteredCLs()
+   public static Map<ClassLoader, ClassPool> getRegisteredCLs()
    {
       return AOPClassPoolRepository.getInstance().getRegisteredCLs();
    }
@@ -732,7 +732,7 @@ public class AspectManager
 
    protected ClassPool getRegisteredClassPool(ClassLoader cl)
    {
-      return (ClassPool)getRegisteredCLs().get(cl);
+      return getRegisteredCLs().get(cl);
    }
 
    public ClassPool registerClassLoader(ClassLoader ucl)

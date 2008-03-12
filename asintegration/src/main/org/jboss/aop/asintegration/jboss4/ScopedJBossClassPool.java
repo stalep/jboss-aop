@@ -22,10 +22,8 @@
 package org.jboss.aop.asintegration.jboss4;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassPool;
@@ -50,9 +48,8 @@ public class ScopedJBossClassPool extends JBossClassPool
 {
    final static LoaderRepositoryUrlUtil LOADER_REPOSITORY_UTIL = new LoaderRepositoryUrlUtil();
    
-   WeakReference repository = null;
-   UrlInfo urlInfo;
-   ThreadLocal lastPool = new ThreadLocal();
+   private UrlInfo urlInfo;
+   private ThreadLocal<ClassPool> lastPool = new ThreadLocal<ClassPool>();
 
    public ScopedJBossClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, File tmp, URL tmpURL)
    {
@@ -201,11 +198,11 @@ public class ScopedJBossClassPool extends JBossClassPool
       {
          //JBoss 5 has an extra NoAnnotationURLCLassLoader that is not on the default path, make sure that that is checked at the end
          //FIXME This needs revisiting/removing once the 
-         ArrayList noAnnotationURLClassLoaderPools = null;
+         ArrayList<AOPClassPool> noAnnotationURLClassLoaderPools = null;
          String resource = url.toString();
-         for(Iterator it = AspectManager.getRegisteredCLs().values().iterator() ; it.hasNext() ; )
+         for(ClassPool pool : AspectManager.getRegisteredCLs().values())
          {
-            AOPClassPool candidate = (AOPClassPool)it.next();
+            AOPClassPool candidate = (AOPClassPool)pool;
             if (candidate.isUnloadedClassLoader())
             {
                AspectManager.instance().unregisterClassLoader(candidate.getClassLoader());
@@ -231,7 +228,7 @@ public class ScopedJBossClassPool extends JBossClassPool
             {
                if (noAnnotationURLClassLoaderPools == null)
                {
-                  noAnnotationURLClassLoaderPools = new ArrayList(); 
+                  noAnnotationURLClassLoaderPools = new ArrayList<AOPClassPool>(); 
                }
                noAnnotationURLClassLoaderPools.add(candidate);
             }
@@ -240,10 +237,8 @@ public class ScopedJBossClassPool extends JBossClassPool
          //FIXME Remove once we have the JBoss 5 version of pool
          if (noAnnotationURLClassLoaderPools != null)
          {
-            for (Iterator it = noAnnotationURLClassLoaderPools.iterator() ; it.hasNext() ; )
+            for (AOPClassPool pool : noAnnotationURLClassLoaderPools)
             {
-               ClassPool pool = (ClassPool)it.next();
-               
                try
                {
                   pool.get(classname);
@@ -264,7 +259,7 @@ public class ScopedJBossClassPool extends JBossClassPool
     */
    private boolean isInstanceOfNoAnnotationURLClassLoader(ClassLoader loader)
    {
-      Class parent = loader.getClass();
+      Class<?> parent = loader.getClass();
       while (parent != null)
       {
          if ("NoAnnotationURLClassLoader".equals(parent.getSimpleName()))
