@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jboss.aop.advice.AdviceBinding;
@@ -102,14 +101,14 @@ public class ClassAdvisor extends Advisor
    private volatile ConByMethodData conByMethodData;
 
    // caller pointcut support for constructors calling methods
-   protected HashMap[] methodCalledByConBindings;
-   protected HashMap[] methodCalledByConInterceptors;
-   protected HashMap backrefMethodCalledByConstructorBindings = new HashMap();
+   protected HashMap<String, TLongObjectHashMap>[] methodCalledByConBindings; // TLongObjectHashMap contains Objects of type ArrayList<AdviceBinding>
+   protected HashMap<String, TLongObjectHashMap>[] methodCalledByConInterceptors; //TLongObjectHashMap contains Objects of type MethodByConInfo
+   protected HashMap<String, ArrayList<ArrayList<AdviceBinding>>> backrefMethodCalledByConstructorBindings = new HashMap<String, ArrayList<ArrayList<AdviceBinding>>>();
 
    // caller pointcut support for constructors calling methods
-   protected HashMap[] conCalledByConBindings;
-   protected HashMap[] conCalledByConInterceptors;
-   protected HashMap backrefConCalledByConstructorBindings = new HashMap();
+   protected HashMap<String, TLongObjectHashMap>[] conCalledByConBindings; // TLongObjectHashMap contains Objects of type ArrayList<AdviceBinding>
+   protected HashMap<String, TLongObjectHashMap>[] conCalledByConInterceptors; //TLongObjectHashMap contains Objects of type ConByConInfo
+   protected HashMap<String, ArrayList<ArrayList<AdviceBinding>>> backrefConCalledByConstructorBindings = new HashMap<String, ArrayList<ArrayList<AdviceBinding>>>();
 
    // Used by instrumentor to access separate interceptor chains for read and write access
    /** @deprecated Use fieldReadInfos instead*/
@@ -124,7 +123,7 @@ public class ClassAdvisor extends Advisor
    //PER_JOINPOINT aspects for static fields or PER_CLASS_JOINPOINT aspects
    //all apply to fields, and we need this since the same aspect should be used for
    //read and write
-   private HashMap fieldAspectsWithNoInstance = new HashMap();
+   private volatile HashMap<AspectDefinition, HashMap<FieldJoinpoint, Object>> fieldAspectsWithNoInstance = new HashMap<AspectDefinition, HashMap<FieldJoinpoint, Object>>();
 
    protected boolean initialized = false;
 
@@ -133,7 +132,7 @@ public class ClassAdvisor extends Advisor
       super(classname, manager);
    }
 
-   public ClassAdvisor(Class clazz, AspectManager manager)
+   public ClassAdvisor(Class<?> clazz, AspectManager manager)
    {
       this(clazz.getName(), manager);
       this.clazz = clazz;
@@ -152,15 +151,15 @@ public class ClassAdvisor extends Advisor
     */
    public Object getFieldAspect(FieldJoinpoint joinpoint, AspectDefinition def)
    {
-      HashMap map = (HashMap)fieldAspectsWithNoInstance.get(def);
+      HashMap<FieldJoinpoint, Object> map = fieldAspectsWithNoInstance.get(def);
       if (map == null)
       {
          synchronized (fieldAspectsWithNoInstance)
          {
-            map = (HashMap)fieldAspectsWithNoInstance.get(def);
+            map = fieldAspectsWithNoInstance.get(def);
             if (map == null)
             {
-               map = new HashMap();
+               map = new HashMap<FieldJoinpoint, Object>();
                fieldAspectsWithNoInstance.put(def, map);
             }
          }
@@ -198,7 +197,8 @@ public class ClassAdvisor extends Advisor
       return unadvisedMethods;
    }
 
-   public Constructor[] getConstructors()
+   @Override
+   public Constructor<?>[] getConstructors()
    {
       return constructors;
    }
@@ -208,12 +208,12 @@ public class ClassAdvisor extends Advisor
       return getMethodByMethodData().getMethodCalledByMethodInterceptors();
    }
 
-   public HashMap[] getMethodCalledByConInterceptors()
+   public HashMap<String, TLongObjectHashMap>[] getMethodCalledByConInterceptors()
    {
       return methodCalledByConInterceptors;
    }
 
-   public HashMap[] getConCalledByConInterceptors()
+   public HashMap<String, TLongObjectHashMap>[] getConCalledByConInterceptors()
    {
       return conCalledByConInterceptors;
    }
@@ -259,7 +259,7 @@ public class ClassAdvisor extends Advisor
    /**
     * Constructs a new helper.
     */
-   public synchronized void attachClass(final Class clazz)
+   public synchronized void attachClass(final Class<?> clazz)
    {
       if (initialized) return;
       try
@@ -321,7 +321,7 @@ public class ClassAdvisor extends Advisor
     * Get method from clazz .If method not found,get the method
     * from the clazz's parent.
     */
-   static private Method getMethod(Class clazz, Method method) throws NoSuchMethodException
+   static private Method getMethod(Class<?> clazz, Method method) throws NoSuchMethodException
    {
 
       if ((clazz == null) || (clazz.equals(Object.class))) throw new NoSuchMethodException(method.getName());
@@ -339,7 +339,7 @@ public class ClassAdvisor extends Advisor
    /**
     * Get a constructor's index in the class. Returns -1 if not there
     */
-   public int getConstructorIndex(Constructor constructor)
+   public int getConstructorIndex(Constructor<?> constructor)
    {
       for (int i = 0; i < constructors.length; i++)
       {
@@ -375,22 +375,20 @@ public class ClassAdvisor extends Advisor
     */
    protected void populateMixinMethods() throws Exception
    {
-      ArrayList pointcuts = getInterfaceIntroductions();
-      Iterator it = pointcuts.iterator();
-      while (it.hasNext())
+      ArrayList<InterfaceIntroduction> introductions = getInterfaceIntroductions();
+      for (InterfaceIntroduction introduction : introductions)
       {
-         InterfaceIntroduction pointcut = (InterfaceIntroduction) it.next();
-         ArrayList mixins = pointcut.getMixins();
+         ArrayList<InterfaceIntroduction.Mixin> mixins = introduction.getMixins();
          for (int i = 0; i < mixins.size(); i++)
          {
-            InterfaceIntroduction.Mixin mixin = (InterfaceIntroduction.Mixin) mixins.get(i);
+            InterfaceIntroduction.Mixin mixin = mixins.get(i);
             // FIXME ClassLoader - how do we know the class is visible from the context classloader?
             ClassLoader cl = SecurityActions.getContextClassLoader();
             cl.loadClass(mixin.getClassName());
             String[] interfaces = mixin.getInterfaces();
             for (int j = 0; j < interfaces.length; j++)
             {
-               Class intf = cl.loadClass(interfaces[j]);
+               Class<?> intf = cl.loadClass(interfaces[j]);
                if (intf.isAssignableFrom(clazz))//This is a fix for JBAOP-365. Class may have been woven, with the extra mixin information only available at init time
                {
                   Method[] methods = intf.getMethods();
@@ -409,18 +407,19 @@ public class ClassAdvisor extends Advisor
       }
    }
 
-
+   @Override
    public synchronized void removeAdviceBinding(AdviceBinding binding)
    {
       removeCallerPointcut(binding); // if binding is a caller remove references to it
       super.removeAdviceBinding(binding);
    }
 
-   public synchronized void removeAdviceBindings(ArrayList bindings)
+   @Override
+   public synchronized void removeAdviceBindings(ArrayList<AdviceBinding> bindings)
    {
       for (int i = 0; i < bindings.size(); i++)
       {
-         AdviceBinding binding = (AdviceBinding) bindings.get(i);
+         AdviceBinding binding = bindings.get(i);
          removeCallerPointcut(binding);
       }
       adviceBindings.removeAll(bindings);
@@ -592,10 +591,8 @@ public class ClassAdvisor extends Advisor
 
       synchronized (manager.getBindings())
       {
-         Iterator it = manager.getBindings().values().iterator();
-         while (it.hasNext())
+         for (AdviceBinding binding : manager.getBindings().values())
          {
-            AdviceBinding binding = (AdviceBinding) it.next();
             if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName() + " " + binding.getPointcut().getExpr());
             resolveMethodPointcut(binding);
             resolveFieldPointcut(fieldReadInfos, binding, false);
@@ -639,10 +636,8 @@ public class ClassAdvisor extends Advisor
 
          synchronized (manager.getBindings())
          {
-            Iterator it = manager.getBindings().values().iterator();
-            while (it.hasNext())
+            for (AdviceBinding binding : manager.getBindings().values())
             {
-               AdviceBinding binding = (AdviceBinding) it.next();
                if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName() + " " + binding.getPointcut().getExpr());
                resolveMethodPointcut(binding);
                resolveFieldPointcut(fieldReadInfos, binding, false);
@@ -682,15 +677,15 @@ public class ClassAdvisor extends Advisor
       finalizeChain(constructionInfos);
    }
 
-   private MethodByConInfo initializeConstructorCallerInterceptorsMap(Class callingClass, int callingIndex, String calledClass, long calledMethodHash, Method calledMethod) throws Exception
+   private MethodByConInfo initializeConstructorCallerInterceptorsMap(Class<?> callingClass, int callingIndex, String calledClass, long calledMethodHash, Method calledMethod) throws Exception
    {
-      HashMap calledClassesMap = methodCalledByConInterceptors[callingIndex];
+      HashMap<String, TLongObjectHashMap> calledClassesMap = methodCalledByConInterceptors[callingIndex];
       if (calledClassesMap == null)
       {
-         calledClassesMap = new HashMap();
+         calledClassesMap = new HashMap<String, TLongObjectHashMap>();
          methodCalledByConInterceptors[callingIndex] = calledClassesMap;
       }
-      TLongObjectHashMap calledMethodsMap = (TLongObjectHashMap) calledClassesMap.get(calledClass);
+      TLongObjectHashMap calledMethodsMap = calledClassesMap.get(calledClass);
       if (calledMethodsMap == null)
       {
          calledMethodsMap = new TLongObjectHashMap();
@@ -698,23 +693,24 @@ public class ClassAdvisor extends Advisor
       }
 
       //The standard MethodCalledByXXXXInvocation class calls by reflection and needs access
-      calledMethod.setAccessible(true);
+      SecurityActions.setAccessible(calledMethod);
+
       // FIXME ClassLoader - how do we know the class is visible from the context classloader?
-      Class calledClazz = SecurityActions.getContextClassLoader().loadClass(calledClass);
+      Class<?> calledClazz = SecurityActions.getContextClassLoader().loadClass(calledClass);
       MethodByConInfo info = new MethodByConInfo(this, calledClazz, callingClass, callingIndex, calledMethod, calledMethodHash, null);
       calledMethodsMap.put(calledMethodHash, info);
       return info;
    }
 
-   private ConByConInfo initializeConCalledByConInterceptorsMap(Class callingClass, int callingIndex, String calledClass, long calledConHash, Constructor calledCon) throws Exception
+   private ConByConInfo initializeConCalledByConInterceptorsMap(Class<?> callingClass, int callingIndex, String calledClass, long calledConHash, Constructor<?> calledCon) throws Exception
    {
-      HashMap calledClassesMap = conCalledByConInterceptors[callingIndex];
+      HashMap<String, TLongObjectHashMap> calledClassesMap = conCalledByConInterceptors[callingIndex];
       if (calledClassesMap == null)
       {
-         calledClassesMap = new HashMap();
+         calledClassesMap = new HashMap<String, TLongObjectHashMap>();
          conCalledByConInterceptors[callingIndex] = calledClassesMap;
       }
-      TLongObjectHashMap calledMethodsMap = (TLongObjectHashMap) calledClassesMap.get(calledClass);
+      TLongObjectHashMap calledMethodsMap = calledClassesMap.get(calledClass);
       if (calledMethodsMap == null)
       {
          calledMethodsMap = new TLongObjectHashMap();
@@ -726,12 +722,12 @@ public class ClassAdvisor extends Advisor
    }
 
 
-   private ConByConInfo createConByConInfo(Class callingClass, int callingIndex, String calledClass, Constructor calledCon, long calledConHash) throws Exception
+   private ConByConInfo createConByConInfo(Class<?> callingClass, int callingIndex, String calledClass, Constructor<?> calledCon, long calledConHash) throws Exception
    {
       //The standard ConstructorCalledByXXXXInvocation class calls by reflection and needs access
       calledCon.setAccessible(true);
       // FIXME ClassLoader - how do we know the class is visible from the context classloader?
-      Class calledClazz = SecurityActions.getContextClassLoader().loadClass(calledClass);
+      Class<?> calledClazz = SecurityActions.getContextClassLoader().loadClass(calledClass);
 
       try
       {
@@ -754,19 +750,17 @@ public class ClassAdvisor extends Advisor
       }
       for (int i = 0; i < methodCalledByConInterceptors.length; i++)
       {
-         HashMap calledClasses = methodCalledByConInterceptors[i];
+         HashMap<String, TLongObjectHashMap> calledClasses = methodCalledByConInterceptors[i];
          if (calledClasses == null) continue;
-         Iterator classesIterator = calledClasses.entrySet().iterator();
-         while (classesIterator.hasNext())
+         for (Map.Entry<String, TLongObjectHashMap> entry : calledClasses.entrySet())
          {
-            Map.Entry entry = (Map.Entry) classesIterator.next();
-            String cname = (String) entry.getKey();
-            TLongObjectHashMap calledMethods = (TLongObjectHashMap) entry.getValue();
+            String cname = entry.getKey();
+            TLongObjectHashMap calledMethods = entry.getValue();
             long[] calledKeys = calledMethods.keys();
             for (int j = 0; j < calledKeys.length; j++)
             {
                long calledHash = calledKeys[j];
-               ArrayList bindings = getConstructorCallerBindings(i, cname, calledHash);
+               ArrayList<AdviceBinding> bindings = getConstructorCallerBindings(i, cname, calledHash);
                bindConstructorCallerInterceptorChain(bindings, i, cname, calledHash);
             }
          }
@@ -777,69 +771,65 @@ public class ClassAdvisor extends Advisor
       }
       for (int i = 0; i < conCalledByConInterceptors.length; i++)
       {
-         HashMap calledClasses = conCalledByConInterceptors[i];
+         HashMap<String, TLongObjectHashMap> calledClasses = conCalledByConInterceptors[i];
          if (calledClasses == null) continue;
-         Iterator classesIterator = calledClasses.entrySet().iterator();
-         while (classesIterator.hasNext())
+         for (Map.Entry<String, TLongObjectHashMap> entry : calledClasses.entrySet())
          {
-            Map.Entry entry = (Map.Entry) classesIterator.next();
-            String cname = (String) entry.getKey();
-            TLongObjectHashMap calledMethods = (TLongObjectHashMap) entry.getValue();
+            String cname = entry.getKey();
+            TLongObjectHashMap calledMethods = entry.getValue();
             long[] calledKeys = calledMethods.keys();
             for (int j = 0; j < calledKeys.length; j++)
             {
                long calledHash = calledKeys[j];
-               ArrayList bindings = getConCalledByConBindings(i, cname, calledHash);
+               ArrayList<AdviceBinding> bindings = getConCalledByConBindings(i, cname, calledHash);
                bindConCalledByConInterceptorChain(bindings, i, cname, calledHash);
             }
          }
       }
    }
 
-   private ArrayList getConstructorCallerBindings(int callingIndex, String cname, long calledHash)
+   private ArrayList<AdviceBinding> getConstructorCallerBindings(int callingIndex, String cname, long calledHash)
    {
-      HashMap calledClasses = methodCalledByConBindings[callingIndex];
-      TLongObjectHashMap calledMethods = (TLongObjectHashMap) calledClasses.get(cname);
-      return (ArrayList) calledMethods.get(calledHash);
+      HashMap<String, TLongObjectHashMap> calledClasses = methodCalledByConBindings[callingIndex];
+      TLongObjectHashMap calledMethods = calledClasses.get(cname);
+      return (ArrayList<AdviceBinding>) calledMethods.get(calledHash);
    }
 
-   private ArrayList getConCalledByConBindings(int callingIndex, String cname, long calledHash)
+   private ArrayList<AdviceBinding> getConCalledByConBindings(int callingIndex, String cname, long calledHash)
    {
-      HashMap calledClasses = conCalledByConBindings[callingIndex];
-      TLongObjectHashMap calledMethods = (TLongObjectHashMap) calledClasses.get(cname);
-      return (ArrayList) calledMethods.get(calledHash);
+      HashMap<String, TLongObjectHashMap> calledClasses = conCalledByConBindings[callingIndex];
+      TLongObjectHashMap calledMethods = calledClasses.get(cname);
+      return (ArrayList<AdviceBinding>) calledMethods.get(calledHash);
    }
 
    protected void finalizeMethodCalledByMethodInterceptorChain(MethodByMethodInfo info)
    {
-      ArrayList list = info.getInterceptorChain();
+      ArrayList<Interceptor> list = info.getInterceptorChain();
       Interceptor[] interceptors = null;
       if (list.size() > 0)
       {
-         interceptors = (Interceptor[]) list.toArray(new Interceptor[list.size()]);
+         interceptors = list.toArray(new Interceptor[list.size()]);
       }
       info.setInterceptors(interceptors);
    }
 
    protected void finalizeConCalledByMethodInterceptorChain(ConByMethodInfo info)
    {
-      ArrayList list = info.getInterceptorChain();
+      ArrayList<Interceptor> list = info.getInterceptorChain();
       Interceptor[] interceptors = null;
       if (list.size() > 0)
       {
-         interceptors = (Interceptor[]) list.toArray(new Interceptor[list.size()]);
+         interceptors = list.toArray(new Interceptor[list.size()]);
       }
       info.setInterceptors(interceptors);
    }
 
-   private void bindConCalledByConInterceptorChain(ArrayList bindings, int callingIndex, String cname, long calledHash)
+   private void bindConCalledByConInterceptorChain(ArrayList<AdviceBinding> bindings, int callingIndex, String cname, long calledHash)
    {
       ConByConInfo info = getConCalledByCon(callingIndex, cname, calledHash);
       info.clear();
-      Iterator it = bindings.iterator();
-      while (it.hasNext())
+      for (AdviceBinding binding : bindings)
       {
-         AdviceBinding binding = (AdviceBinding) it.next();
          pointcutResolved(info, binding, new ConstructorCalledByConstructorJoinpoint(info.getCallingConstructor(), info.getConstructor()));
       }
       finalizeConCalledByConInterceptorChain(info);
@@ -847,23 +837,21 @@ public class ClassAdvisor extends Advisor
 
    protected void finalizeConCalledByConInterceptorChain(ConByConInfo info)
    {
-      ArrayList list = info.getInterceptorChain();
+      ArrayList<Interceptor> list = info.getInterceptorChain();
       Interceptor[] interceptors = null;
       if (list.size() > 0)
       {
-         interceptors = (Interceptor[]) list.toArray(new Interceptor[list.size()]);
+         interceptors = list.toArray(new Interceptor[list.size()]);
       }
       info.setInterceptors(interceptors);
    }
 
-   private void bindConstructorCallerInterceptorChain(ArrayList bindings, int callingIndex, String cname, long calledHash)
+   private void bindConstructorCallerInterceptorChain(ArrayList<AdviceBinding> bindings, int callingIndex, String cname, long calledHash)
    {
       MethodByConInfo info = getConstructorCallerMethodInfo(callingIndex, cname, calledHash);
       info.clear();
-      Iterator it = bindings.iterator();
-      while (it.hasNext())
+      for (AdviceBinding binding : bindings)
       {
-         AdviceBinding binding = (AdviceBinding) it.next();
          pointcutResolved(info, binding, new MethodCalledByConstructorJoinpoint(info.getCallingConstructor(), info.getMethod()));
       }
       finalizeMethodCalledByConInterceptorChain(info);
@@ -871,11 +859,11 @@ public class ClassAdvisor extends Advisor
 
    protected void finalizeMethodCalledByConInterceptorChain(MethodByConInfo info)
    {
-      ArrayList list = info.getInterceptorChain();
+      ArrayList<Interceptor> list = info.getInterceptorChain();
       Interceptor[] interceptors = null;
       if (list.size() > 0)
       {
-         interceptors = (Interceptor[]) list.toArray(new Interceptor[list.size()]);
+         interceptors = list.toArray(new Interceptor[list.size()]);
       }
       info.setInterceptors(interceptors);
    }
@@ -929,7 +917,7 @@ public class ClassAdvisor extends Advisor
          Field[] fields = advisedFields;
          // set to empty array because advisedFields may not have been initialized yet
          if (fields == null) fields = new Field[0];
-         Constructor[] cons = constructors;
+         Constructor<?>[] cons = constructors;
          // set to empty array because constructors may not have been initialized yet
          if (cons == null) cons = new Constructor[0];
          for (int i = 0; i < objs.length; i++) methods[i] = (Method) objs[i];
@@ -952,7 +940,7 @@ public class ClassAdvisor extends Advisor
 
       for (int i = 0; i < classMetaDataBindings.size(); i++)
       {
-         ClassMetaDataBinding data = (ClassMetaDataBinding) classMetaDataBindings.get(i);
+         ClassMetaDataBinding data = classMetaDataBindings.get(i);
          bindClassMetaData(data);
       }
 
@@ -990,44 +978,44 @@ public class ClassAdvisor extends Advisor
 
    private void initializeEmptyConstructorCallerChain(int callingIndex, String calledClass, long calledMethodHash) throws Exception
    {
-      HashMap callingCon = methodCalledByConBindings[callingIndex];
+      HashMap<String, TLongObjectHashMap>  callingCon = methodCalledByConBindings[callingIndex];
       if (callingCon == null)
       {
-         callingCon = new HashMap();
+         callingCon = new HashMap<String, TLongObjectHashMap>();
          methodCalledByConBindings[callingIndex] = callingCon;
       }
-      TLongObjectHashMap classMap = (TLongObjectHashMap) callingCon.get(calledClass);
+      TLongObjectHashMap classMap = callingCon.get(calledClass);
       if (classMap == null)
       {
          classMap = new TLongObjectHashMap();
          callingCon.put(calledClass, classMap);
       }
-      ArrayList bindings = (ArrayList) classMap.get(calledMethodHash);
+      ArrayList<AdviceBinding> bindings = (ArrayList<AdviceBinding>) classMap.get(calledMethodHash);
       if (bindings == null)
       {
-         bindings = new ArrayList();
+         bindings = new ArrayList<AdviceBinding>();
          classMap.put(calledMethodHash, bindings);
       }
    }
 
    private void initializeConCalledByConEmptyChain(int callingIndex, String calledClass, long calledConHash) throws Exception
    {
-      HashMap callingCon = conCalledByConBindings[callingIndex];
+      HashMap<String, TLongObjectHashMap> callingCon = conCalledByConBindings[callingIndex];
       if (callingCon == null)
       {
-         callingCon = new HashMap();
+         callingCon = new HashMap<String, TLongObjectHashMap>();
          conCalledByConBindings[callingIndex] = callingCon;
       }
-      TLongObjectHashMap classMap = (TLongObjectHashMap) callingCon.get(calledClass);
+      TLongObjectHashMap classMap = callingCon.get(calledClass);
       if (classMap == null)
       {
          classMap = new TLongObjectHashMap();
          callingCon.put(calledClass, classMap);
       }
-      ArrayList bindings = (ArrayList) classMap.get(calledConHash);
+      ArrayList<AdviceBinding> bindings = (ArrayList<AdviceBinding>) classMap.get(calledConHash);
       if (bindings == null)
       {
-         bindings = new ArrayList();
+         bindings = new ArrayList<AdviceBinding>();
          classMap.put(calledConHash, bindings);
       }
    }
@@ -1037,33 +1025,33 @@ public class ClassAdvisor extends Advisor
       if (AspectManager.verbose) System.err.println("constructor call matched binding " + binding.getPointcut().getExpr());
       adviceBindings.add(binding);
       binding.addAdvisor(this);
-      HashMap callingCon = methodCalledByConBindings[callingIndex];
+      HashMap<String, TLongObjectHashMap> callingCon = methodCalledByConBindings[callingIndex];
       if (callingCon == null)
       {
-         callingCon = new HashMap();
+         callingCon = new HashMap<String, TLongObjectHashMap>();
          methodCalledByConBindings[callingIndex] = callingCon;
       }
-      TLongObjectHashMap classMap = (TLongObjectHashMap) callingCon.get(calledClass);
+      TLongObjectHashMap classMap = callingCon.get(calledClass);
       if (classMap == null)
       {
          classMap = new TLongObjectHashMap();
          callingCon.put(calledClass, classMap);
       }
-      ArrayList bindings = (ArrayList) classMap.get(calledMethodHash);
+      ArrayList<AdviceBinding> bindings = (ArrayList<AdviceBinding>) classMap.get(calledMethodHash);
       boolean createdBindings = false;
       if (bindings == null)
       {
-         bindings = new ArrayList();
+         bindings = new ArrayList<AdviceBinding>();
          classMap.put(calledMethodHash, bindings);
          createdBindings = true;
       }
       if (!bindings.contains(binding)) bindings.add(binding);
 
       // this is so that we can undeploy a caller
-      ArrayList backrefs = (ArrayList) backrefMethodCalledByConstructorBindings.get(binding.getName());
+      ArrayList<ArrayList<AdviceBinding>> backrefs = backrefMethodCalledByConstructorBindings.get(binding.getName());
       if (backrefs == null)
       {
-         backrefs = new ArrayList();
+         backrefs = new ArrayList<ArrayList<AdviceBinding>>();
          backrefMethodCalledByConstructorBindings.put(binding.getName(), backrefs);
          backrefs.add(bindings);
       }
@@ -1075,33 +1063,33 @@ public class ClassAdvisor extends Advisor
       if (AspectManager.verbose) System.err.println("constructor call matched binding " + binding.getPointcut().getExpr());
       adviceBindings.add(binding);
       binding.addAdvisor(this);
-      HashMap callingCon = conCalledByConBindings[callingIndex];
+      HashMap<String, TLongObjectHashMap> callingCon = conCalledByConBindings[callingIndex];
       if (callingCon == null)
       {
-         callingCon = new HashMap();
+         callingCon = new HashMap<String, TLongObjectHashMap>();
          conCalledByConBindings[callingIndex] = callingCon;
       }
-      TLongObjectHashMap classMap = (TLongObjectHashMap) callingCon.get(calledClass);
+      TLongObjectHashMap classMap = callingCon.get(calledClass);
       if (classMap == null)
       {
          classMap = new TLongObjectHashMap();
          callingCon.put(calledClass, classMap);
       }
-      ArrayList bindings = (ArrayList) classMap.get(calledConHash);
+      ArrayList<AdviceBinding> bindings = (ArrayList<AdviceBinding>) classMap.get(calledConHash);
       boolean createdBindings = false;
       if (bindings == null)
       {
-         bindings = new ArrayList();
+         bindings = new ArrayList<AdviceBinding>();
          classMap.put(calledConHash, bindings);
          createdBindings = true;
       }
       if (!bindings.contains(binding)) bindings.add(binding);
 
       // this is so that we can undeploy a caller
-      ArrayList backrefs = (ArrayList) backrefConCalledByConstructorBindings.get(binding.getName());
+      ArrayList<ArrayList<AdviceBinding>> backrefs = backrefConCalledByConstructorBindings.get(binding.getName());
       if (backrefs == null)
       {
-         backrefs = new ArrayList();
+         backrefs = new ArrayList<ArrayList<AdviceBinding>>();
          backrefConCalledByConstructorBindings.put(binding.getName(), backrefs);
          backrefs.add(bindings);
       }
@@ -1156,7 +1144,7 @@ public class ClassAdvisor extends Advisor
             method.getParameterTypes()[0].equals(InstanceAdvisor.class)));
    }
 
-   private void populateFieldTable(ArrayList fields, Class superclass)
+   private void populateFieldTable(ArrayList<Field> fields, Class<?> superclass)
    throws Exception
    {
       if (superclass == null) return;
@@ -1166,7 +1154,7 @@ public class ClassAdvisor extends Advisor
 
       // if (!isAdvised(superclass)) return;
 
-      ArrayList temp = new ArrayList();
+      ArrayList<Field> temp = new ArrayList<Field>();
       Field[] declaredFields = superclass.getDeclaredFields();
       for (int i = 0; i < declaredFields.length; i++)
       {
@@ -1186,15 +1174,15 @@ public class ClassAdvisor extends Advisor
     */
    protected void createFieldTable() throws Exception
    {
-      ArrayList fields = new ArrayList();
+      ArrayList<Field> fields = new ArrayList<Field>();
 
       populateFieldTable(fields, clazz);
 
-      advisedFields = (Field[]) fields.toArray(new Field[fields.size()]);
+      advisedFields = fields.toArray(new Field[fields.size()]);
 
    }
 
-   protected void addDeclaredMethods(Class superclass) throws Exception
+   protected void addDeclaredMethods(Class<?> superclass) throws Exception
    {
       Method[] declaredMethods = superclass.getDeclaredMethods();
       for (int i = 0; i < declaredMethods.length; i++)
@@ -1224,7 +1212,7 @@ public class ClassAdvisor extends Advisor
     * Superclasses get added first so subclasses will override with
     * correct overriden method
     */
-   private void populateMethodTables(Class superclass)
+   private void populateMethodTables(Class<?> superclass)
    throws Exception
    {
       if (superclass == null) return;
@@ -1274,10 +1262,10 @@ public class ClassAdvisor extends Advisor
       return getMethodByMethodData().resolveCallerMethodInfo(callingMethodHash, calledClass, calledMethodHash);
    }
 
-   public WeakReference resolveCallerMethodInfoAsWeakReference(long callingMethodHash, String calledClass, long calledMethodHash)
+   public WeakReference<MethodByMethodInfo> resolveCallerMethodInfoAsWeakReference(long callingMethodHash, String calledClass, long calledMethodHash)
    {
       //Javassist doesn't like this in a field initialiser hence this method
-      return new WeakReference(resolveCallerMethodInfo(callingMethodHash, calledClass, calledMethodHash));
+      return new WeakReference<MethodByMethodInfo>(resolveCallerMethodInfo(callingMethodHash, calledClass, calledMethodHash));
    }
 
    public ConByMethodInfo resolveCallerConstructorInfo(long callingMethodHash, String calledClass, long calledConHash)
@@ -1285,10 +1273,10 @@ public class ClassAdvisor extends Advisor
       return getConByMethodData().resolveCallerConstructorInfo(callingMethodHash, calledClass, calledConHash);
    }
 
-   public WeakReference resolveCallerConstructorInfoAsWeakReference(long callingMethodHash, String calledClass, long calledConHash)
+   public WeakReference<ConByMethodInfo> resolveCallerConstructorInfoAsWeakReference(long callingMethodHash, String calledClass, long calledConHash)
    {
       //Javassist doesn't like this in a field initialiser hence this method
-      return new WeakReference(resolveCallerConstructorInfo(callingMethodHash, calledClass, calledConHash));
+      return new WeakReference<ConByMethodInfo>(resolveCallerConstructorInfo(callingMethodHash, calledClass, calledConHash));
    }
 
    @Deprecated
@@ -1297,7 +1285,7 @@ public class ClassAdvisor extends Advisor
       return resolveConstructorCallerMethodInfo(this.getClazz(), callingIndex, calledClass, calledMethodHash);
    }
 
-   public MethodByConInfo resolveConstructorCallerMethodInfo(Class callingClass, int callingIndex, String calledClass, long calledMethodHash)
+   public MethodByConInfo resolveConstructorCallerMethodInfo(Class<?> callingClass, int callingIndex, String calledClass, long calledMethodHash)
    {
       if (System.getSecurityManager() == null)
       {
@@ -1309,14 +1297,14 @@ public class ClassAdvisor extends Advisor
       }
    }
 
-   private MethodByConInfo doResolveConstructorCallerMethodInfo(Class callingClass, int callingIndex, String calledClass, long calledMethodHash)
+   private MethodByConInfo doResolveConstructorCallerMethodInfo(Class<?> callingClass, int callingIndex, String calledClass, long calledMethodHash)
    {
       try
       {
-         Constructor callingConstructor = constructors[callingIndex];
+         Constructor<?> callingConstructor = constructors[callingIndex];
          if (callingConstructor == null) throw new RuntimeException("Unable to figure out calling method of a caller pointcut");
          // FIXME ClassLoader - how do we know the class is visible from the context classloader?
-         Class called = SecurityActions.getContextClassLoader().loadClass(calledClass);
+         Class<?> called = SecurityActions.getContextClassLoader().loadClass(calledClass);
          Method calledMethod = MethodHashing.findMethodByHash(called, calledMethodHash);
          if (calledMethod == null) throw new RuntimeException("Unable to figure out calledmethod of a caller pointcut");
 
@@ -1324,10 +1312,8 @@ public class ClassAdvisor extends Advisor
 
          synchronized (manager.getBindings())
          {
-            Iterator it = manager.getBindings().values().iterator();
-            while (it.hasNext())
+            for (AdviceBinding binding : manager.getBindings().values())
             {
-               AdviceBinding binding = (AdviceBinding) it.next();
                if (binding.getPointcut().matchesCall(this, callingConstructor, called, calledMethod))
                {
                   addConstructorCallerPointcut(callingIndex, calledClass, calledMethodHash, binding);
@@ -1337,7 +1323,7 @@ public class ClassAdvisor extends Advisor
          }
          if (!matched) initializeEmptyConstructorCallerChain(callingIndex, calledClass, calledMethodHash);
          MethodByConInfo info = initializeConstructorCallerInterceptorsMap(callingClass, callingIndex, calledClass, calledMethodHash, calledMethod);
-         ArrayList bindings = getConstructorCallerBindings(callingIndex, calledClass, calledMethodHash);
+         ArrayList<AdviceBinding> bindings = getConstructorCallerBindings(callingIndex, calledClass, calledMethodHash);
          bindConstructorCallerInterceptorChain(bindings, callingIndex, calledClass, calledMethodHash);
          return info;
       }
@@ -1348,16 +1334,16 @@ public class ClassAdvisor extends Advisor
    }
 
    @Deprecated
-   public WeakReference resolveConstructorCallerMethodInfoAsWeakReference(int callingIndex, String calledClass, long calledMethodHash)
+   public WeakReference<MethodByConInfo> resolveConstructorCallerMethodInfoAsWeakReference(int callingIndex, String calledClass, long calledMethodHash)
    {
       //Javassist doesn't like this in a field initialiser hence this method
-      return new WeakReference(resolveConstructorCallerMethodInfo(callingIndex, calledClass, calledMethodHash));
+      return new WeakReference<MethodByConInfo>(resolveConstructorCallerMethodInfo(callingIndex, calledClass, calledMethodHash));
    }
 
-   public WeakReference resolveConstructorCallerMethodInfoAsWeakReference(Class callingClass, int callingIndex, String calledClass, long calledMethodHash)
+   public WeakReference<MethodByConInfo> resolveConstructorCallerMethodInfoAsWeakReference(Class<?> callingClass, int callingIndex, String calledClass, long calledMethodHash)
    {
       //Javassist doesn't like this in a field initialiser hence this method
-      return new WeakReference(resolveConstructorCallerMethodInfo(callingClass, callingIndex, calledClass, calledMethodHash));
+      return new WeakReference<MethodByConInfo>(resolveConstructorCallerMethodInfo(callingClass, callingIndex, calledClass, calledMethodHash));
    }
 
    public ConByConInfo resolveConstructorCallerConstructorInfo(int callingIndex, String calledClass, long calledConHash)
@@ -1365,7 +1351,7 @@ public class ClassAdvisor extends Advisor
       return resolveConstructorCallerConstructorInfo(this.getClazz(), callingIndex, calledClass, calledConHash);
    }
 
-   public ConByConInfo resolveConstructorCallerConstructorInfo(Class callingClass, int callingIndex, String calledClass, long calledConHash)
+   public ConByConInfo resolveConstructorCallerConstructorInfo(Class<?> callingClass, int callingIndex, String calledClass, long calledConHash)
    {
       if (System.getSecurityManager() == null)
       {
@@ -1377,24 +1363,22 @@ public class ClassAdvisor extends Advisor
       }
    }
 
-   private ConByConInfo doResolveConstructorCallerConstructorInfo(Class callingClass, int callingIndex, String calledClass, long calledConHash)
+   private ConByConInfo doResolveConstructorCallerConstructorInfo(Class<?> callingClass, int callingIndex, String calledClass, long calledConHash)
    {
       try
       {
-         Constructor callingConstructor = constructors[callingIndex];
+         Constructor<?> callingConstructor = constructors[callingIndex];
          if (callingConstructor == null) throw new RuntimeException("Unable to figure out calling method of a caller pointcut");
          // FIXME ClassLoader - how do we know the class is visible from the context classloader?
-         Class called = SecurityActions.getContextClassLoader().loadClass(calledClass);
-         Constructor calledCon = MethodHashing.findConstructorByHash(called, calledConHash);
+         Class<?> called = SecurityActions.getContextClassLoader().loadClass(calledClass);
+         Constructor<?> calledCon = MethodHashing.findConstructorByHash(called, calledConHash);
          if (calledCon == null) throw new RuntimeException("Unable to figure out calledcon of a caller pointcut");
 
          boolean matched = false;
          synchronized (manager.getBindings())
          {
-            Iterator it = manager.getBindings().values().iterator();
-            while (it.hasNext())
+            for (AdviceBinding binding : manager.getBindings().values())
             {
-               AdviceBinding binding = (AdviceBinding) it.next();
                if (binding.getPointcut().matchesCall(this, callingConstructor, called, calledCon))
                {
                   addConstructorCalledByConPointcut(callingIndex, calledClass, calledConHash, binding);
@@ -1404,7 +1388,7 @@ public class ClassAdvisor extends Advisor
          }
          if (!matched) initializeConCalledByConEmptyChain(callingIndex, calledClass, calledConHash);
          ConByConInfo info = initializeConCalledByConInterceptorsMap(callingClass, callingIndex, calledClass, calledConHash, calledCon);
-         ArrayList bindings = getConCalledByConBindings(callingIndex, calledClass, calledConHash);
+         ArrayList<AdviceBinding> bindings = getConCalledByConBindings(callingIndex, calledClass, calledConHash);
          bindConCalledByConInterceptorChain(bindings, callingIndex, calledClass, calledConHash);
          return info;
       }
@@ -1415,16 +1399,16 @@ public class ClassAdvisor extends Advisor
    }
 
    @Deprecated
-   public WeakReference resolveConstructorCallerConstructorInfoAsWeakReference(int callingIndex, String calledClass, long calledConHash)
+   public WeakReference<ConByConInfo> resolveConstructorCallerConstructorInfoAsWeakReference(int callingIndex, String calledClass, long calledConHash)
    {
       //Javassist doesn't like this in a field initialiser hence this method
-      return new WeakReference(resolveConstructorCallerConstructorInfo(callingIndex, calledClass, calledConHash));
+      return new WeakReference<ConByConInfo>(resolveConstructorCallerConstructorInfo(callingIndex, calledClass, calledConHash));
    }
 
-   public WeakReference resolveConstructorCallerConstructorInfoAsWeakReference(Class callingClass, int callingIndex, String calledClass, long calledConHash)
+   public WeakReference<ConByConInfo> resolveConstructorCallerConstructorInfoAsWeakReference(Class<?> callingClass, int callingIndex, String calledClass, long calledConHash)
    {
       //Javassist doesn't like this in a field initialiser hence this method
-      return new WeakReference(resolveConstructorCallerConstructorInfo(callingClass, callingIndex, calledClass, calledConHash));
+      return new WeakReference<ConByConInfo>(resolveConstructorCallerConstructorInfo(callingClass, callingIndex, calledClass, calledConHash));
    }
 
    /////////////////////////
@@ -1447,7 +1431,7 @@ public class ClassAdvisor extends Advisor
       }
    }
 
-   public Object invokeNewWithoutAdvisement(Object[] arguments, Constructor constructor) throws Throwable
+   public Object invokeNewWithoutAdvisement(Object[] arguments, Constructor<?> constructor) throws Throwable
    {
       try
       {
@@ -1489,7 +1473,7 @@ public class ClassAdvisor extends Advisor
    public Object invokeMethod(InstanceAdvisor instanceAdvisor, Object target, long methodHash, Object[] arguments)
    throws Throwable
    {
-      MethodInfo info = (MethodInfo) methodInfos.getMethodInfo(methodHash);
+      MethodInfo info = methodInfos.getMethodInfo(methodHash);
       if (info == null && logger.isDebugEnabled())
       {
          logger.debug("info is null for hash: " + methodHash + " of " + clazz.getName());
@@ -1625,16 +1609,16 @@ public class ClassAdvisor extends Advisor
 
    private MethodByConInfo getConstructorCallerMethodInfo(int callingIndex, String calledClass, long calledMethodHash)
    {
-      HashMap calledClasses = methodCalledByConInterceptors[callingIndex];
-      TLongObjectHashMap calledMethods = (TLongObjectHashMap) calledClasses.get(calledClass);
+      HashMap<String, TLongObjectHashMap> calledClasses = methodCalledByConInterceptors[callingIndex];
+      TLongObjectHashMap calledMethods = calledClasses.get(calledClass);
       MethodByConInfo info = (MethodByConInfo) calledMethods.get(calledMethodHash);
       return info;
    }
 
    private ConByConInfo getConCalledByCon(int callingIndex, String calledClass, long calledConHash)
    {
-      HashMap calledClasses = conCalledByConInterceptors[callingIndex];
-      TLongObjectHashMap calledMethods = (TLongObjectHashMap) calledClasses.get(calledClass);
+      HashMap<String, TLongObjectHashMap> calledClasses = conCalledByConInterceptors[callingIndex];
+      TLongObjectHashMap calledMethods = calledClasses.get(calledClass);
       ConByConInfo info = (ConByConInfo) calledMethods.get(calledConHash);
       return info;
    }
@@ -1735,7 +1719,7 @@ public class ClassAdvisor extends Advisor
       {
          ConstructorInvocation cInvocation = (ConstructorInvocation) invocation;
          Object[] arguments = cInvocation.getArguments();
-         Constructor constructor = cInvocation.getConstructor();
+         Constructor<?> constructor = cInvocation.getConstructor();
          return invokeNewWithoutAdvisement(arguments, constructor);
       }
       throw new IllegalStateException("Unknown Invocation type: " + invocation.getClass().getName());
@@ -1783,6 +1767,7 @@ public class ClassAdvisor extends Advisor
    }
 
    /** @deprecated We should just be using xxxxInfos */
+   @Override
    protected void populateInterceptorsFromInfos()
    {
       super.populateInterceptorsFromInfos();
@@ -1844,9 +1829,9 @@ public class ClassAdvisor extends Advisor
          {
             try
             {
-               return (ConByMethodInfo)AccessController.doPrivileged(new PrivilegedExceptionAction()
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<ConByMethodInfo>()
                {
-                  public Object run() throws Exception
+                  public ConByMethodInfo run() throws Exception
                   {
                      return data.doResolveCallerConstructorInfo(callingMethodHash, calledClass, calledConHash);
                   }
@@ -1883,9 +1868,9 @@ public class ClassAdvisor extends Advisor
          {
             try
             {
-               return (MethodByMethodInfo)AccessController.doPrivileged(new PrivilegedExceptionAction()
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<MethodByMethodInfo>()
                {
-                  public Object run() throws Exception
+                  public MethodByMethodInfo run() throws Exception
                   {
                      return data.doResolveCallerMethodInfo(callingMethodHash, calledClass, calledMethodHash);
                   }
@@ -1914,17 +1899,17 @@ public class ClassAdvisor extends Advisor
 
    interface ResolveConstructorCallerMethodInfoAction
    {
-      MethodByConInfo resolveInfo(ClassAdvisor advisor, Class callingClass, int callingIndex, String calledClass, long calledMethodHash);
+      MethodByConInfo resolveInfo(ClassAdvisor advisor, Class<?> callingClass, int callingIndex, String calledClass, long calledMethodHash);
 
       ResolveConstructorCallerMethodInfoAction PRIVILEGED = new ResolveConstructorCallerMethodInfoAction()
       {
-         public MethodByConInfo resolveInfo(final ClassAdvisor advisor, final Class callingClass, final int callingIndex, final String calledClass, final long calledMethodHash)
+         public MethodByConInfo resolveInfo(final ClassAdvisor advisor, final Class<?> callingClass, final int callingIndex, final String calledClass, final long calledMethodHash)
          {
             try
             {
-               return (MethodByConInfo)AccessController.doPrivileged(new PrivilegedExceptionAction()
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<MethodByConInfo>()
                {
-                  public Object run() throws Exception
+                  public MethodByConInfo run() throws Exception
                   {
                      return advisor.doResolveConstructorCallerMethodInfo(callingClass, callingIndex, calledClass, calledMethodHash);
                   }
@@ -1944,7 +1929,7 @@ public class ClassAdvisor extends Advisor
 
       ResolveConstructorCallerMethodInfoAction NON_PRIVILEGED = new ResolveConstructorCallerMethodInfoAction()
       {
-         public MethodByConInfo resolveInfo(ClassAdvisor advisor, Class callingClass, int callingIndex, String calledClass, long calledMethodHash)
+         public MethodByConInfo resolveInfo(ClassAdvisor advisor, Class<?> callingClass, int callingIndex, String calledClass, long calledMethodHash)
          {
             return advisor.doResolveConstructorCallerMethodInfo(callingClass, callingIndex, calledClass, calledMethodHash);
          }
@@ -1953,17 +1938,17 @@ public class ClassAdvisor extends Advisor
 
    interface ResolveConstructorCallerConstructorInfoAction
    {
-      ConByConInfo resolveInfo(ClassAdvisor advisor, Class callingClass, int callingIndex, String calledClass, long calledConHash);
+      ConByConInfo resolveInfo(ClassAdvisor advisor, Class<?> callingClass, int callingIndex, String calledClass, long calledConHash);
 
       ResolveConstructorCallerConstructorInfoAction PRIVILEGED = new ResolveConstructorCallerConstructorInfoAction()
       {
-         public ConByConInfo resolveInfo(final ClassAdvisor advisor, final Class callingClass, final int callingIndex, final String calledClass, final long calledConHash)
+         public ConByConInfo resolveInfo(final ClassAdvisor advisor, final Class<?> callingClass, final int callingIndex, final String calledClass, final long calledConHash)
          {
             try
             {
-               return (ConByConInfo)AccessController.doPrivileged(new PrivilegedExceptionAction()
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<ConByConInfo>()
                {
-                  public Object run() throws Exception
+                  public ConByConInfo run() throws Exception
                   {
                      return advisor.doResolveConstructorCallerConstructorInfo(callingClass, callingIndex, calledClass, calledConHash);
                   }
@@ -1983,7 +1968,7 @@ public class ClassAdvisor extends Advisor
 
       ResolveConstructorCallerConstructorInfoAction NON_PRIVILEGED = new ResolveConstructorCallerConstructorInfoAction()
       {
-         public ConByConInfo resolveInfo(ClassAdvisor advisor, Class callingClass, int callingIndex, String calledClass, long calledConHash)
+         public ConByConInfo resolveInfo(ClassAdvisor advisor, Class<?> callingClass, int callingIndex, String calledClass, long calledConHash)
          {
             return advisor.doResolveConstructorCallerConstructorInfo(callingClass, callingIndex, calledClass, calledConHash);
          }
@@ -2032,7 +2017,7 @@ public class ClassAdvisor extends Advisor
    private class MethodByMethodData
    {
       private volatile TLongObjectHashMap methodCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
-      private volatile HashMap backrefMethodCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+      private volatile HashMap<String, ArrayList<ArrayList<AdviceBinding>>> backrefMethodCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
       private volatile TLongObjectHashMap methodCalledByMethodInterceptors = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
 
       public TLongObjectHashMap getMethodCalledByMethodInterceptors()
@@ -2054,18 +2039,16 @@ public class ClassAdvisor extends Advisor
          for (int i = 0; i < callingKeys.length; i++)
          {
             long callingHash = callingKeys[i];
-            HashMap calledClasses = (HashMap) methodCalledByMethodInterceptors.get(callingHash);
-            Iterator classesIterator = calledClasses.entrySet().iterator();
-            while (classesIterator.hasNext())
+            HashMap<String, TLongObjectHashMap> calledClasses = (HashMap<String, TLongObjectHashMap>) methodCalledByMethodInterceptors.get(callingHash);
+            for (Map.Entry<String, TLongObjectHashMap> entry : calledClasses.entrySet())
             {
-               Map.Entry entry = (Map.Entry) classesIterator.next();
-               String cname = (String) entry.getKey();
-               TLongObjectHashMap calledMethods = (TLongObjectHashMap) entry.getValue();
+               String cname = entry.getKey();
+               TLongObjectHashMap calledMethods = entry.getValue();
                long[] calledKeys = calledMethods.keys();
                for (int j = 0; j < calledKeys.length; j++)
                {
                   long calledHash = calledKeys[j];
-                  ArrayList bindings = getCallerBindings(callingHash, cname, calledHash);
+                  ArrayList<AdviceBinding> bindings = getCallerBindings(callingHash, cname, calledHash);
                   Method calling = MethodHashing.findMethodByHash(clazz, callingHash);
                   bindCallerInterceptorChain(bindings, callingHash, cname, calledHash, calling);
                }
@@ -2076,11 +2059,11 @@ public class ClassAdvisor extends Advisor
       public void removeCallerPointcut(AdviceBinding binding)
       {
          //No need to initialise map here if it is empty
-         ArrayList backrefs = (ArrayList) backrefMethodCalledByMethodBindings.get(binding.getName());
+         ArrayList<ArrayList<AdviceBinding>> backrefs = backrefMethodCalledByMethodBindings.get(binding.getName());
          if (backrefs == null) return;
          for (int i = 0; i < backrefs.size(); i++)
          {
-            ArrayList ref = (ArrayList) backrefs.get(i);
+            ArrayList<AdviceBinding> ref = backrefs.get(i);
             ref.remove(binding);
          }
       }
@@ -2100,7 +2083,7 @@ public class ClassAdvisor extends Advisor
                }
                if (backrefMethodCalledByMethodBindings == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
                {
-                  backrefMethodCalledByMethodBindings = new HashMap();
+                  backrefMethodCalledByMethodBindings = new HashMap<String, ArrayList<ArrayList<AdviceBinding>>>();
                }
                if (methodCalledByMethodInterceptors == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP)
                {
@@ -2127,15 +2110,13 @@ public class ClassAdvisor extends Advisor
             Method callingMethod = MethodHashing.findMethodByHash(clazz, callingMethodHash);
             if (callingMethod == null) throw new RuntimeException("Unable to figure out calling method of a caller pointcut");
             // FIXME ClassLoader - how do we know the class is visible from the context classloader?
-            Class called = SecurityActions.getContextClassLoader().loadClass(calledClass);
+            Class<?> called = SecurityActions.getContextClassLoader().loadClass(calledClass);
             Method calledMethod = MethodHashing.findMethodByHash(called, calledMethodHash);
             if (calledMethod == null) throw new RuntimeException("Unable to figure out calledmethod of a caller pointcut");
 
-            Iterator it = manager.getBindings().values().iterator();
             boolean matched = false;
-            while (it.hasNext())
+            for (AdviceBinding binding : manager.getBindings().values())
             {
-               AdviceBinding binding = (AdviceBinding) it.next();
                if (binding.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledMethod))
                {
                   addMethodCalledByMethodPointcut(callingMethodHash, calledClass, calledMethodHash, binding);
@@ -2144,7 +2125,7 @@ public class ClassAdvisor extends Advisor
             }
             if (!matched) initializeEmptyCallerChain(callingMethodHash, calledClass, calledMethodHash);
             MethodByMethodInfo info = initializeCallerInterceptorsMap(callingMethodHash, calledClass, calledMethodHash, callingMethod, calledMethod);
-            ArrayList bindings = getCallerBindings(callingMethodHash, calledClass, calledMethodHash);
+            ArrayList<AdviceBinding> bindings = getCallerBindings(callingMethodHash, calledClass, calledMethodHash);
             bindCallerInterceptorChain(bindings, callingMethodHash, calledClass, calledMethodHash, callingMethod);
             return info;
          }
@@ -2160,33 +2141,33 @@ public class ClassAdvisor extends Advisor
          if (AspectManager.verbose) System.err.println("method call matched binding " + binding.getPointcut().getExpr());
          adviceBindings.add(binding);
          binding.addAdvisor(ClassAdvisor.this);
-         HashMap callingMethod = (HashMap) methodCalledByMethodBindings.get(callingMethodHash);
+         HashMap<String, TLongObjectHashMap> callingMethod = (HashMap<String, TLongObjectHashMap>)methodCalledByMethodBindings.get(callingMethodHash);
          if (callingMethod == null)
          {
-            callingMethod = new HashMap();
+            callingMethod = new HashMap<String, TLongObjectHashMap>();
             methodCalledByMethodBindings.put(callingMethodHash, callingMethod);
          }
-         TLongObjectHashMap classMap = (TLongObjectHashMap) callingMethod.get(calledClass);
+         TLongObjectHashMap classMap = callingMethod.get(calledClass);
          if (classMap == null)
          {
             classMap = new TLongObjectHashMap();
             callingMethod.put(calledClass, classMap);
          }
-         ArrayList bindings = (ArrayList) classMap.get(calledMethodHash);
+         ArrayList<AdviceBinding> bindings = (ArrayList<AdviceBinding>) classMap.get(calledMethodHash);
          boolean createdBindings = false;
          if (bindings == null)
          {
-            bindings = new ArrayList();
+            bindings = new ArrayList<AdviceBinding>();
             classMap.put(calledMethodHash, bindings);
             createdBindings = true;
          }
          if (!bindings.contains(binding)) bindings.add(binding);
 
          // this is so that we can undeploy a caller
-         ArrayList backrefs = (ArrayList) backrefMethodCalledByMethodBindings.get(binding.getName());
+         ArrayList<ArrayList<AdviceBinding>> backrefs = backrefMethodCalledByMethodBindings.get(binding.getName());
          if (backrefs == null)
          {
-            backrefs = new ArrayList();
+            backrefs = new ArrayList<ArrayList<AdviceBinding>>();
             backrefMethodCalledByMethodBindings.put(binding.getName(), backrefs);
             backrefs.add(bindings);
          }
@@ -2196,22 +2177,22 @@ public class ClassAdvisor extends Advisor
       private void initializeEmptyCallerChain(long callingMethodHash, String calledClass, long calledMethodHash) throws Exception
       {
          //Called via resolveCallerMethodInfo, maps are initialised
-         HashMap callingMethod = (HashMap) methodCalledByMethodBindings.get(callingMethodHash);
+         HashMap<String, TLongObjectHashMap> callingMethod = (HashMap<String, TLongObjectHashMap>) methodCalledByMethodBindings.get(callingMethodHash);
          if (callingMethod == null)
          {
-            callingMethod = new HashMap();
+            callingMethod = new HashMap<String, TLongObjectHashMap>();
             methodCalledByMethodBindings.put(callingMethodHash, callingMethod);
          }
-         TLongObjectHashMap classMap = (TLongObjectHashMap) callingMethod.get(calledClass);
+         TLongObjectHashMap classMap = callingMethod.get(calledClass);
          if (classMap == null)
          {
             classMap = new TLongObjectHashMap();
             callingMethod.put(calledClass, classMap);
          }
-         ArrayList bindings = (ArrayList) classMap.get(calledMethodHash);
+         ArrayList<AdviceBinding> bindings = (ArrayList<AdviceBinding>) classMap.get(calledMethodHash);
          if (bindings == null)
          {
-            bindings = new ArrayList();
+            bindings = new ArrayList<AdviceBinding>();
             classMap.put(calledMethodHash, bindings);
          }
       }
@@ -2219,13 +2200,13 @@ public class ClassAdvisor extends Advisor
       private MethodByMethodInfo initializeCallerInterceptorsMap(long callingMethodHash, String calledClass, long calledMethodHash, Method callingMethod, Method calledMethod) throws Exception
       {
          //Called via resolveCallerMethodInfo, maps are initialised
-         HashMap calledClassesMap = (HashMap) methodCalledByMethodInterceptors.get(callingMethodHash);
+         HashMap<String, TLongObjectHashMap> calledClassesMap = (HashMap<String, TLongObjectHashMap>) methodCalledByMethodInterceptors.get(callingMethodHash);
          if (calledClassesMap == null)
          {
-            calledClassesMap = new HashMap();
+            calledClassesMap = new HashMap<String, TLongObjectHashMap>();
             methodCalledByMethodInterceptors.put(callingMethodHash, calledClassesMap);
          }
-         TLongObjectHashMap calledMethodsMap = (TLongObjectHashMap) calledClassesMap.get(calledClass);
+         TLongObjectHashMap calledMethodsMap = calledClassesMap.get(calledClass);
          if (calledMethodsMap == null)
          {
             calledMethodsMap = new TLongObjectHashMap();
@@ -2235,29 +2216,27 @@ public class ClassAdvisor extends Advisor
          calledMethod.setAccessible(true);
 
          // FIXME ClassLoader - how do we know the class is visible from the context classloader?
-         Class calledClazz = SecurityActions.getContextClassLoader().loadClass(calledClass);
+         Class<?> calledClazz = SecurityActions.getContextClassLoader().loadClass(calledClass);
          MethodByMethodInfo info = new MethodByMethodInfo(ClassAdvisor.this, calledClazz, calledMethod, callingMethod, callingMethodHash, calledMethodHash, null);
          calledMethodsMap.put(calledMethodHash, info);
          return info;
       }
 
-      private ArrayList getCallerBindings(long callingHash, String cname, long calledHash)
+      private ArrayList<AdviceBinding> getCallerBindings(long callingHash, String cname, long calledHash)
       {
          //Called via resolveCallerMethodInfo, maps are initialised
-         HashMap calledClasses = (HashMap) methodCalledByMethodBindings.get(callingHash);
-         TLongObjectHashMap calledMethods = (TLongObjectHashMap) calledClasses.get(cname);
-         return (ArrayList) calledMethods.get(calledHash);
+         HashMap<String, TLongObjectHashMap> calledClasses = (HashMap<String, TLongObjectHashMap>) methodCalledByMethodBindings.get(callingHash);
+         TLongObjectHashMap calledMethods = calledClasses.get(cname);
+         return (ArrayList<AdviceBinding>) calledMethods.get(calledHash);
       }
 
-      private void bindCallerInterceptorChain(ArrayList bindings, long callingHash, String cname, long calledHash, Method calling)
+      private void bindCallerInterceptorChain(ArrayList<AdviceBinding> bindings, long callingHash, String cname, long calledHash, Method calling)
       {
          //Called via resolveCallerMethodInfo, maps are initialised
          MethodByMethodInfo info = getCallerMethodInfo(callingHash, cname, calledHash);
          info.clear();
-         Iterator it = bindings.iterator();
-         while (it.hasNext())
+         for (AdviceBinding binding : bindings)
          {
-            AdviceBinding binding = (AdviceBinding) it.next();
             pointcutResolved(info, binding, new MethodCalledByMethodJoinpoint(info.getCallingMethod(), info.getMethod()));
          }
          finalizeMethodCalledByMethodInterceptorChain(info);
@@ -2266,8 +2245,8 @@ public class ClassAdvisor extends Advisor
       private MethodByMethodInfo getCallerMethodInfo(long callingMethodHash, String calledClass, long calledMethodHash)
       {
          //Called via resolveCallerMethodInfo, maps are initialised
-         HashMap calledClasses = (HashMap) methodCalledByMethodInterceptors.get(callingMethodHash);
-         TLongObjectHashMap calledMethods = (TLongObjectHashMap) calledClasses.get(calledClass);
+         HashMap<String, TLongObjectHashMap> calledClasses = (HashMap<String, TLongObjectHashMap>) methodCalledByMethodInterceptors.get(callingMethodHash);
+         TLongObjectHashMap calledMethods = calledClasses.get(calledClass);
          MethodByMethodInfo info = (MethodByMethodInfo) calledMethods.get(calledMethodHash);
          return info;
       }
@@ -2284,7 +2263,7 @@ public class ClassAdvisor extends Advisor
    {
       // constructor caller pointcut support for methods calling constructors only
       private volatile TLongObjectHashMap conCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
-      private volatile HashMap backrefConCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+      private volatile HashMap<String, ArrayList<ArrayList<AdviceBinding>>> backrefConCalledByMethodBindings = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
       private volatile TLongObjectHashMap conCalledByMethodInterceptors = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
 
       public TLongObjectHashMap getConCalledByMethodInterceptors()
@@ -2292,11 +2271,11 @@ public class ClassAdvisor extends Advisor
          return conCalledByMethodInterceptors;
       }
 
-      public ArrayList getConCalledByMethodBindings(long callingHash, String cname, long calledHash)
+      public ArrayList<AdviceBinding> getConCalledByMethodBindings(long callingHash, String cname, long calledHash)
       {
-         HashMap calledClasses = (HashMap) conCalledByMethodBindings.get(callingHash);
-         TLongObjectHashMap calledCons = (TLongObjectHashMap) calledClasses.get(cname);
-         return (ArrayList) calledCons.get(calledHash);
+         HashMap<String, TLongObjectHashMap> calledClasses = (HashMap<String, TLongObjectHashMap>) conCalledByMethodBindings.get(callingHash);
+         TLongObjectHashMap calledCons = calledClasses.get(cname);
+         return (ArrayList<AdviceBinding>) calledCons.get(calledHash);
       }
 
       public void rebuildCallerInterceptors() throws Exception
@@ -2305,18 +2284,16 @@ public class ClassAdvisor extends Advisor
          for (int i = 0; i < callingKeys.length; i++)
          {
             long callingHash = callingKeys[i];
-            HashMap calledClasses = (HashMap) conCalledByMethodInterceptors.get(callingHash);
-            Iterator classesIterator = calledClasses.entrySet().iterator();
-            while (classesIterator.hasNext())
+            HashMap<String, TLongObjectHashMap> calledClasses = (HashMap<String, TLongObjectHashMap>) conCalledByMethodInterceptors.get(callingHash);
+            for (Map.Entry<String, TLongObjectHashMap> entry : calledClasses.entrySet())
             {
-               Map.Entry entry = (Map.Entry) classesIterator.next();
-               String cname = (String) entry.getKey();
-               TLongObjectHashMap calledMethods = (TLongObjectHashMap) entry.getValue();
+               String cname = entry.getKey();
+               TLongObjectHashMap calledMethods = entry.getValue();
                long[] calledKeys = calledMethods.keys();
                for (int j = 0; j < calledKeys.length; j++)
                {
                   long calledHash = calledKeys[j];
-                  ArrayList bindings = getConCalledByMethodBindings(callingHash, cname, calledHash);
+                  ArrayList<AdviceBinding> bindings = getConCalledByMethodBindings(callingHash, cname, calledHash);
                   bindConCalledByMethodInterceptorChain(bindings, callingHash, cname, calledHash);
                }
             }
@@ -2338,7 +2315,7 @@ public class ClassAdvisor extends Advisor
                }
                if (backrefConCalledByMethodBindings == UnmodifiableEmptyCollections.EMPTY_HASHMAP)
                {
-                  backrefConCalledByMethodBindings = new HashMap();
+                  backrefConCalledByMethodBindings = new HashMap<String, ArrayList<ArrayList<AdviceBinding>>>();
                }
                if (conCalledByMethodInterceptors == UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP)
                {
@@ -2364,17 +2341,15 @@ public class ClassAdvisor extends Advisor
             Method callingMethod = MethodHashing.findMethodByHash(clazz, callingMethodHash);
             if (callingMethod == null) throw new RuntimeException("Unable to figure out calling method of a constructor caller pointcut");
             // FIXME ClassLoader - how do we know the class is visible from the context classloader?
-            Class called = SecurityActions.getContextClassLoader().loadClass(calledClass);
-            Constructor calledCon = MethodHashing.findConstructorByHash(called, calledConHash);
+            Class<?> called = SecurityActions.getContextClassLoader().loadClass(calledClass);
+            Constructor<?> calledCon = MethodHashing.findConstructorByHash(called, calledConHash);
             if (calledCon == null) throw new RuntimeException("Unable to figure out calledcon of a constructor caller pointcut");
 
             boolean matched = false;
             synchronized (manager.getBindings())
             {
-               Iterator it = manager.getBindings().values().iterator();
-               while (it.hasNext())
+               for (AdviceBinding binding : manager.getBindings().values())
                {
-                  AdviceBinding binding = (AdviceBinding) it.next();
                   if (binding.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledCon))
                   {
                      addConstructorCalledByMethodPointcut(callingMethodHash, calledClass, calledConHash, binding);
@@ -2384,7 +2359,7 @@ public class ClassAdvisor extends Advisor
             }
             if (!matched) initializeConCalledByMethodEmptyChain(callingMethodHash, calledClass, calledConHash);
             ConByMethodInfo info = initializeConCalledByMethodInterceptorsMap(callingMethod, callingMethodHash, calledClass, calledConHash, calledCon);
-            ArrayList bindings = getConCalledByMethodBindings(callingMethodHash, calledClass, calledConHash);
+            ArrayList<AdviceBinding> bindings = getConCalledByMethodBindings(callingMethodHash, calledClass, calledConHash);
             bindConCalledByMethodInterceptorChain(bindings, callingMethodHash, calledClass, calledConHash);
             return info;
          }
@@ -2399,48 +2374,48 @@ public class ClassAdvisor extends Advisor
          if (AspectManager.verbose) System.err.println("method call matched binding " + binding.getPointcut().getExpr());
          adviceBindings.add(binding);
          binding.addAdvisor(ClassAdvisor.this);
-         HashMap callingMethod = (HashMap) conCalledByMethodBindings.get(callingMethodHash);
+         HashMap<String, TLongObjectHashMap> callingMethod = (HashMap<String, TLongObjectHashMap>) conCalledByMethodBindings.get(callingMethodHash);
          if (callingMethod == null)
          {
-            callingMethod = new HashMap();
+            callingMethod = new HashMap<String, TLongObjectHashMap>();
             conCalledByMethodBindings.put(callingMethodHash, callingMethod);
          }
-         TLongObjectHashMap classMap = (TLongObjectHashMap) callingMethod.get(calledClass);
+         TLongObjectHashMap classMap = callingMethod.get(calledClass);
          if (classMap == null)
          {
             classMap = new TLongObjectHashMap();
             callingMethod.put(calledClass, classMap);
          }
-         ArrayList bindings = (ArrayList) classMap.get(calledMethodHash);
+         ArrayList<AdviceBinding> bindings = (ArrayList<AdviceBinding>) classMap.get(calledMethodHash);
          boolean createdBindings = false;
          if (bindings == null)
          {
-            bindings = new ArrayList();
+            bindings = new ArrayList<AdviceBinding>();
             classMap.put(calledMethodHash, bindings);
             createdBindings = true;
          }
          if (!bindings.contains(binding)) bindings.add(binding);
 
          // this is so that we can undeploy a caller
-         ArrayList backrefs = (ArrayList) backrefConCalledByMethodBindings.get(binding.getName());
+         ArrayList<ArrayList<AdviceBinding>> backrefs = backrefConCalledByMethodBindings.get(binding.getName());
          if (backrefs == null)
          {
-            backrefs = new ArrayList();
+            backrefs = new ArrayList<ArrayList<AdviceBinding>>();
             backrefConCalledByMethodBindings.put(binding.getName(), backrefs);
             backrefs.add(bindings);
          }
          else if (createdBindings) backrefs.add(bindings);
       }
 
-      private ConByMethodInfo initializeConCalledByMethodInterceptorsMap(Method callingMethod, long callingMethodHash, String calledClass, long calledConHash, Constructor calledCon) throws Exception
+      private ConByMethodInfo initializeConCalledByMethodInterceptorsMap(Method callingMethod, long callingMethodHash, String calledClass, long calledConHash, Constructor<?> calledCon) throws Exception
       {
-         HashMap calledClassesMap = (HashMap) conCalledByMethodInterceptors.get(callingMethodHash);
+         HashMap<String, TLongObjectHashMap> calledClassesMap = (HashMap<String, TLongObjectHashMap>) conCalledByMethodInterceptors.get(callingMethodHash);
          if (calledClassesMap == null)
          {
-            calledClassesMap = new HashMap();
+            calledClassesMap = new HashMap<String, TLongObjectHashMap>();
             conCalledByMethodInterceptors.put(callingMethodHash, calledClassesMap);
          }
-         TLongObjectHashMap calledMethodsMap = (TLongObjectHashMap) calledClassesMap.get(calledClass);
+         TLongObjectHashMap calledMethodsMap = calledClassesMap.get(calledClass);
          if (calledMethodsMap == null)
          {
             calledMethodsMap = new TLongObjectHashMap();
@@ -2454,41 +2429,41 @@ public class ClassAdvisor extends Advisor
 
       private void initializeConCalledByMethodEmptyChain(long callingMethodHash, String calledClass, long calledConHash) throws Exception
       {
-         HashMap callingMethod = (HashMap) conCalledByMethodBindings.get(callingMethodHash);
+         HashMap<String, TLongObjectHashMap> callingMethod = (HashMap<String, TLongObjectHashMap>) conCalledByMethodBindings.get(callingMethodHash);
          if (callingMethod == null)
          {
-            callingMethod = new HashMap();
+            callingMethod = new HashMap<String, TLongObjectHashMap>();
             conCalledByMethodBindings.put(callingMethodHash, callingMethod);
          }
-         TLongObjectHashMap classMap = (TLongObjectHashMap) callingMethod.get(calledClass);
+         TLongObjectHashMap classMap = callingMethod.get(calledClass);
          if (classMap == null)
          {
             classMap = new TLongObjectHashMap();
             callingMethod.put(calledClass, classMap);
          }
-         ArrayList bindings = (ArrayList) classMap.get(calledConHash);
+         ArrayList<AdviceBinding> bindings = (ArrayList<AdviceBinding>) classMap.get(calledConHash);
          if (bindings == null)
          {
-            bindings = new ArrayList();
+            bindings = new ArrayList<AdviceBinding>();
             classMap.put(calledConHash, bindings);
          }
       }
 
       private ConByMethodInfo getConCalledByMethod(long callingMethodHash, String calledClass, long calledConHash)
       {
-         HashMap calledClasses = (HashMap) conCalledByMethodInterceptors.get(callingMethodHash);
-         TLongObjectHashMap calledMethods = (TLongObjectHashMap) calledClasses.get(calledClass);
+         HashMap<String, TLongObjectHashMap> calledClasses = (HashMap<String, TLongObjectHashMap>) conCalledByMethodInterceptors.get(callingMethodHash);
+         TLongObjectHashMap calledMethods = calledClasses.get(calledClass);
          ConByMethodInfo info = (ConByMethodInfo) calledMethods.get(calledConHash);
          return info;
       }
 
-      private ConByMethodInfo createConByMethodInfo(String calledClass, Method callingMethod, long callingMethodHash, Constructor calledCon, long calledConHash) throws Exception
+      private ConByMethodInfo createConByMethodInfo(String calledClass, Method callingMethod, long callingMethodHash, Constructor<?> calledCon, long calledConHash) throws Exception
       {
          //The standard ConstructorCalledByXXXXInvocation class calls by reflection and needs access
          calledCon.setAccessible(true);
 
          // FIXME ClassLoader - how do we know the class is visible from the context classloader?
-         Class calledClazz = SecurityActions.getContextClassLoader().loadClass(calledClass);
+         Class<?> calledClazz = SecurityActions.getContextClassLoader().loadClass(calledClass);
          try
          {
             int index = calledClass.lastIndexOf('.');
@@ -2502,14 +2477,12 @@ public class ClassAdvisor extends Advisor
          }
       }
 
-      private void bindConCalledByMethodInterceptorChain(ArrayList bindings, long callingHash, String cname, long calledHash) throws Exception
+      private void bindConCalledByMethodInterceptorChain(ArrayList<AdviceBinding> bindings, long callingHash, String cname, long calledHash) throws Exception
       {
          ConByMethodInfo info = getConCalledByMethod(callingHash, cname, calledHash);
          info.clear();
-         Iterator it = bindings.iterator();
-         while (it.hasNext())
+         for (AdviceBinding binding : bindings)
          {
-            AdviceBinding binding = (AdviceBinding) it.next();
             pointcutResolved(info, binding, new ConstructorCalledByMethodJoinpoint(info.getCallingMethod(), info.getConstructor()));
          }
          finalizeConCalledByMethodInterceptorChain(info);
