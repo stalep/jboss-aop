@@ -42,6 +42,7 @@ import org.jboss.aop.util.ReflectUtils;
  */
 public class AnnotationElement extends PortableAnnotationElement
 {
+   private final static Annotation[] EMPTY_ANNOTATIONS = new Annotation[0];
    /**
     * Get a visible annotation for a particle Method.  If this is JDK 1.5
     * then this is a wrapper for Method.getAnnotation
@@ -50,7 +51,7 @@ public class AnnotationElement extends PortableAnnotationElement
     * @param annotation
     * @return
     */
-   public static Object getVisibleAnnotation(Method method, Class annotation)
+   public static <T extends Annotation> T getVisibleAnnotation(Method method, Class<T> annotation)
    {
       if (System.getSecurityManager() == null)
       {
@@ -70,7 +71,7 @@ public class AnnotationElement extends PortableAnnotationElement
     * @param annotation
     * @return
     */
-   public static Object getVisibleAnnotation(Constructor con, Class annotation)
+   public static <T extends Annotation> T getVisibleAnnotation(Constructor<?> con, Class<T> annotation)
    {
       if (System.getSecurityManager() == null)
       {
@@ -90,7 +91,7 @@ public class AnnotationElement extends PortableAnnotationElement
     * @param annotation
     * @return
     */
-   public static Object getVisibleAnnotation(Field field, Class annotation)
+   public static <T extends Annotation> T getVisibleAnnotation(Field field, Class<T> annotation)
    {
       if (System.getSecurityManager() == null)
       {
@@ -110,7 +111,7 @@ public class AnnotationElement extends PortableAnnotationElement
     * @param annotation
     * @return
     */
-   public static Object getVisibleAnnotation(Class clazz, Class annotation)
+   public static <T extends Annotation> T getVisibleAnnotation(Class<?> clazz, Class<T> annotation)
    {
       if (System.getSecurityManager() == null)
       {
@@ -122,7 +123,7 @@ public class AnnotationElement extends PortableAnnotationElement
       }
    }
 
-   public static boolean isVisibleAnnotationPresent(Class clazz, Class annotation)
+   public static boolean isVisibleAnnotationPresent(Class<?> clazz, Class<? extends Annotation> annotation)
    {
       if (System.getSecurityManager() == null)
       {
@@ -134,7 +135,7 @@ public class AnnotationElement extends PortableAnnotationElement
       }
    }
 
-   public static boolean isVisibleAnnotationPresent(Method m, Class annotation)
+   public static boolean isVisibleAnnotationPresent(Method m, Class<? extends Annotation> annotation)
    {
       if (System.getSecurityManager() == null)
       {
@@ -146,7 +147,7 @@ public class AnnotationElement extends PortableAnnotationElement
       }
    }
 
-   public static boolean isVisibleAnnotationPresent(Field f, Class annotation)
+   public static boolean isVisibleAnnotationPresent(Field f, Class<? extends Annotation> annotation)
    {
       if (System.getSecurityManager() == null)
       {
@@ -158,7 +159,7 @@ public class AnnotationElement extends PortableAnnotationElement
       }
    }
 
-   public static boolean isVisibleAnnotationPresent(Constructor con, Class annotation)
+   public static boolean isVisibleAnnotationPresent(Constructor<?> con, Class<? extends Annotation> annotation)
    {
       if (System.getSecurityManager() == null)
       {
@@ -170,7 +171,7 @@ public class AnnotationElement extends PortableAnnotationElement
       }
    }
 
-   public static boolean isVisibleAnnotationPresent(Class clazz, String annotation)
+   public static boolean isVisibleAnnotationPresent(Class<?> clazz, String annotation)
    {
       if (System.getSecurityManager() == null)
       {
@@ -206,7 +207,7 @@ public class AnnotationElement extends PortableAnnotationElement
       }
    }
 
-   public static boolean isVisibleAnnotationPresent(Constructor con, String annotation)
+   public static boolean isVisibleAnnotationPresent(Constructor<?> con, String annotation)
    {
       if (System.getSecurityManager() == null)
       {
@@ -218,7 +219,7 @@ public class AnnotationElement extends PortableAnnotationElement
       }
    }
 
-   public static Annotation[] getVisibleAnnotations(Class clazz) throws Exception
+   public static Annotation[] getVisibleAnnotations(Class<?> clazz) throws Exception
    {
       if (System.getSecurityManager() == null)
       {
@@ -254,7 +255,7 @@ public class AnnotationElement extends PortableAnnotationElement
       }
    }
    
-   public static Annotation[] getVisibleAnnotations(Constructor c) throws Exception
+   public static Annotation[] getVisibleAnnotations(Constructor<?> c) throws Exception
    {
       if (System.getSecurityManager() == null)
       {
@@ -269,128 +270,128 @@ public class AnnotationElement extends PortableAnnotationElement
    
    private interface AnnotationElementAction
    {
-      Annotation getVisibleAnnotation(Method method, Class annotation);
+      <T extends Annotation> T getVisibleAnnotation(Method method, Class<T> annotation);
 
-      Annotation getVisibleAnnotation(Constructor con, Class annotation);
+      <T extends Annotation> T getVisibleAnnotation(Constructor<?> con, Class<T> annotation);
 
-      Annotation getVisibleAnnotation(Field field, Class annotation);
+      <T extends Annotation> T getVisibleAnnotation(Field field, Class<T> annotation);
 
-      Annotation getVisibleAnnotation(Class clazz, Class annotation);
+      <T extends Annotation> T getVisibleAnnotation(Class<?> clazz, Class<T> annotation);
       
-      Annotation getVisibleAnnotation(Method method, String annotation);
+      <T extends Annotation> T getVisibleAnnotation(Method method, String annotation);
 
-      Annotation getVisibleAnnotation(Constructor con, String annotation);
+      <T extends Annotation> T getVisibleAnnotation(Constructor<?> con, String annotation);
 
-      Annotation getVisibleAnnotation(Field field, String annotation);
+      <T extends Annotation> T getVisibleAnnotation(Field field, String annotation);
 
-      Annotation getVisibleAnnotation(Class clazz, String annotation);
+      <T extends Annotation> T getVisibleAnnotation(Class<?> clazz, String annotation);
 
-      boolean isVisibleAnnotationPresent(Class clazz, Class annotation);
+      boolean isVisibleAnnotationPresent(Class<?> clazz, Class<? extends Annotation> annotation);
 
-      boolean isVisibleAnnotationPresent(Method m, Class annotation);
+      boolean isVisibleAnnotationPresent(Method m, Class<? extends Annotation> annotation);
 
-      boolean isVisibleAnnotationPresent(Field f, Class annotation);
+      boolean isVisibleAnnotationPresent(Field f, Class<? extends Annotation> annotation);
 
-      boolean isVisibleAnnotationPresent(Constructor con, Class annotation);
+      boolean isVisibleAnnotationPresent(Constructor<?> con, Class<? extends Annotation> annotation);
       
-      boolean isVisibleAnnotationPresent(Class clazz, String annotation);
+      boolean isVisibleAnnotationPresent(Class<?> clazz, String annotation);
 
       boolean isVisibleAnnotationPresent(Method m, String annotation);
 
       boolean isVisibleAnnotationPresent(Field f, String annotation);
 
-      boolean isVisibleAnnotationPresent(Constructor con, String annotation);
+      boolean isVisibleAnnotationPresent(Constructor<?> con, String annotation);
 
-      Annotation[] getVisibleAnnotations(Class clazz) throws Exception;
+      <T extends Annotation> T[] getVisibleAnnotations(Class<?> clazz) throws Exception;
 
-      Annotation[] getVisibleAnnotations(Method m) throws Exception;
+      <T extends Annotation> T[] getVisibleAnnotations(Method m) throws Exception;
       
-      Annotation[] getVisibleAnnotations(Field f) throws Exception;
+      <T extends Annotation> T[] getVisibleAnnotations(Field f) throws Exception;
       
-      Annotation[] getVisibleAnnotations(Constructor c) throws Exception;
+      <T extends Annotation> T[] getVisibleAnnotations(Constructor<?> c) throws Exception;
       
       AnnotationElementAction NON_PRIVILEGED = new AnnotationElementAction()
       {
-         public Annotation getVisibleAnnotation(Method method, Class annotation)
+         public <T extends Annotation> T getVisibleAnnotation(Method method, Class<T> annotation)
          {
             return method.getAnnotation(annotation);
          }
 
-         public Annotation getVisibleAnnotation(Constructor con, Class annotation)
+         public <T extends Annotation> T getVisibleAnnotation(Constructor<?> con, Class<T> annotation)
          {
             return con.getAnnotation(annotation);
          }
 
-         public Annotation getVisibleAnnotation(Field field, Class annotation)
+         public <T extends Annotation> T getVisibleAnnotation(Field field, Class<T> annotation)
          {
             return field.getAnnotation(annotation);
          }
 
-         public Annotation getVisibleAnnotation(Class clazz, Class annotation)
+         public <T extends Annotation> T getVisibleAnnotation(Class<?> clazz, Class<T> annotation)
          {
             return clazz.getAnnotation(annotation);
          }
-         public Annotation getVisibleAnnotation(Method method, String annotation)
+         public <T extends Annotation> T getVisibleAnnotation(Method method, String annotation)
          {
             for(Annotation a : getVisibleAnnotations(method))
             {
                 if(a.annotationType().getName().equals(annotation))
-                  return a;
+                  return (T)a;
             }
             return null;
          }
 
-         public Annotation getVisibleAnnotation(Constructor con, String annotation)
+         public <T extends Annotation> T  getVisibleAnnotation(Constructor<?> con, String annotation)
          {
             for(Annotation a : getVisibleAnnotations(con))
             {
                 if(a.annotationType().getName().equals(annotation))
-                  return a;
+                  return (T)a;
             }
             return null;
          }
 
-         public Annotation getVisibleAnnotation(Field field, String annotation)
+         public <T extends Annotation> T  getVisibleAnnotation(Field field, String annotation)
          {
             for(Annotation a : getVisibleAnnotations(field))
             {
                 if(a.annotationType().getName().equals(annotation))
-                  return a;
+                  return (T)a;
             }
             return null;
          }
 
-         public Annotation getVisibleAnnotation(Class clazz, String annotation)
+         public <T extends Annotation> T getVisibleAnnotation(Class<?> clazz, String annotation)
          {
             for(Annotation a : getVisibleAnnotations(clazz))
             {
                 if(a.annotationType().getName().equals(annotation))
-                  return a;
+                  return (T)a;
             }
             return null;
          }
 
-         public boolean isVisibleAnnotationPresent(Class clazz, Class annotation)
+         public boolean isVisibleAnnotationPresent(Class<?> clazz, Class<? extends Annotation> annotation)
          {
             return clazz.isAnnotationPresent(annotation);
          }
 
-         public boolean isVisibleAnnotationPresent(Method m, Class annotation)
+         public boolean isVisibleAnnotationPresent(Method m, Class<? extends Annotation> annotation)
          {
             return m.isAnnotationPresent(annotation);
          }
 
-         public boolean isVisibleAnnotationPresent(Field f, Class annotation)
+         public boolean isVisibleAnnotationPresent(Field f, Class<? extends Annotation> annotation)
          {
             return f.isAnnotationPresent(annotation);
          }
 
-         public boolean isVisibleAnnotationPresent(Constructor con, Class annotation)
+         public boolean isVisibleAnnotationPresent(Constructor<?> con, Class<? extends Annotation> annotation)
          {
             return con.isAnnotationPresent(annotation);
          }
          
-         public boolean isVisibleAnnotationPresent(Class clazz, String annotation)
+         public boolean isVisibleAnnotationPresent(Class<?> clazz, String annotation)
          {
             for(Annotation a : getVisibleAnnotations(clazz))
             {
@@ -420,7 +421,7 @@ public class AnnotationElement extends PortableAnnotationElement
             return false;
          }
 
-         public boolean isVisibleAnnotationPresent(Constructor con, String annotation)
+         public boolean isVisibleAnnotationPresent(Constructor<?> con, String annotation)
          {
             for(Annotation a : getVisibleAnnotations(con))
             {
@@ -430,137 +431,137 @@ public class AnnotationElement extends PortableAnnotationElement
             return false;
          }
 
-         public Annotation[] getVisibleAnnotations(Class clazz)
+         public <T extends Annotation> T[] getVisibleAnnotations(Class<?> clazz)
          {
-            return clazz.getAnnotations();
+            return (T[])clazz.getAnnotations();
          }
 
-         public Annotation[] getVisibleAnnotations(Method m)
+         public <T extends Annotation> T[] getVisibleAnnotations(Method m)
          {
             if (m.getName().startsWith("access$") && !ReflectUtils.isNotAccessMethod(m))
             {
-               return new Annotation[0];
+               return (T[]) EMPTY_ANNOTATIONS;
             }
-            return m.getAnnotations();
+            return (T[])m.getAnnotations();
          }
          
-         public Annotation[] getVisibleAnnotations(Field f)
+         public <T extends Annotation> T[] getVisibleAnnotations(Field f)
          {
-            return f.getAnnotations();
+            return (T[])f.getAnnotations();
          }
          
-         public Annotation[] getVisibleAnnotations(Constructor c)
+         public <T extends Annotation> T[] getVisibleAnnotations(Constructor<?> c)
          {
-            return c.getAnnotations();
+            return (T[])c.getAnnotations();
          }
       };
       
 
       AnnotationElementAction PRIVILEGED = new AnnotationElementAction()
       {
-         public Annotation getVisibleAnnotation(final Method method, final Class annotation)
+         public <T extends Annotation> T getVisibleAnnotation(final Method method, final Class<T> annotation)
          {
-            return AccessController.doPrivileged(new PrivilegedAction<Annotation>(){
-               public Annotation run()
+            return AccessController.doPrivileged(new PrivilegedAction<T>(){
+               public T run()
                {
                   return method.getAnnotation(annotation);
                }
             });
          }
 
-         public Annotation getVisibleAnnotation(final Constructor con, final Class annotation)
+         public <T extends Annotation> T  getVisibleAnnotation(final Constructor<?> con, final Class<T> annotation)
          {
-            return AccessController.doPrivileged(new PrivilegedAction<Annotation>(){
-               public Annotation run()
+            return AccessController.doPrivileged(new PrivilegedAction<T>(){
+               public T run()
                {
                   return con.getAnnotation(annotation);
                }
             });
          }
 
-         public Annotation getVisibleAnnotation(final Field field, final Class annotation)
+         public <T extends Annotation> T getVisibleAnnotation(final Field field, final Class<T> annotation)
          {
-            return AccessController.doPrivileged(new PrivilegedAction<Annotation>(){
-               public Annotation run()
+            return AccessController.doPrivileged(new PrivilegedAction<T>(){
+               public T run()
                {
                   return field.getAnnotation(annotation);
                }
             });
          }
 
-         public Annotation getVisibleAnnotation(final Class clazz, final Class annotation)
+         public <T extends Annotation> T getVisibleAnnotation(final Class<?> clazz, final Class<T> annotation)
          {
-            return AccessController.doPrivileged(new PrivilegedAction<Annotation>(){
-               public Annotation run()
+            return AccessController.doPrivileged(new PrivilegedAction<T>(){
+               public T run()
                {
                   return clazz.getAnnotation(annotation);
                }
             });
          }
 
-         public Annotation getVisibleAnnotation(final Method method, final String annotation)
+         public <T extends Annotation> T getVisibleAnnotation(final Method method, final String annotation)
          {
-            return AccessController.doPrivileged(new PrivilegedAction<Annotation>(){
-               public Annotation run()
+            return AccessController.doPrivileged(new PrivilegedAction<T>(){
+               public T run()
                {
                   for(Annotation a : method.getAnnotations())
                   {
                       if(a.annotationType().getName().equals(annotation))
-                        return a;
+                        return (T)a;
                   }
                   return null;
                }
             });
          }
 
-         public Annotation getVisibleAnnotation(final Constructor con, final String annotation)
+         public <T extends Annotation> T getVisibleAnnotation(final Constructor<?> con, final String annotation)
          {
-            return AccessController.doPrivileged(new PrivilegedAction<Annotation>(){
-               public Annotation run()
+            return AccessController.doPrivileged(new PrivilegedAction<T>(){
+               public T run()
                {
                   for(Annotation a : con.getAnnotations())
                   {
                       if(a.annotationType().getName().equals(annotation))
-                        return a;
+                        return (T)a;
                   }
                   return null;
                }
             });
          }
 
-         public Annotation getVisibleAnnotation(final Field field, final String annotation)
+         public <T extends Annotation> T getVisibleAnnotation(final Field field, final String annotation)
          {
-            return AccessController.doPrivileged(new PrivilegedAction<Annotation>(){
-               public Annotation run()
+            return AccessController.doPrivileged(new PrivilegedAction<T>(){
+               public T run()
                {
                   for(Annotation a : field.getAnnotations())
                   {
                       if(a.annotationType().getName().equals(annotation))
-                        return a;
+                        return (T)a;
                   }
                   return null;
                }
             });
          }
 
-         public Annotation getVisibleAnnotation(final Class clazz, final String annotation)
+         public <T extends Annotation> T getVisibleAnnotation(final Class<?> clazz, final String annotation)
          {
-            return AccessController.doPrivileged(new PrivilegedAction<Annotation>(){
-               public Annotation run()
+            return AccessController.doPrivileged(new PrivilegedAction<T>(){
+               public T run()
                {
                   for(Annotation a : clazz.getAnnotations())
                   {
                       if(a.annotationType().getName().equals(annotation))
-                        return a;
+                        return (T)a;
                   }
                   return null;
                }
             });
          }
          
-         public boolean isVisibleAnnotationPresent(final Class clazz, final Class annotation)
+         public boolean isVisibleAnnotationPresent(final Class<?> clazz, final Class<? extends Annotation> annotation)
          {
-            Boolean present = (Boolean)AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
+            Boolean present = AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
                public Boolean run()
                {
                   return clazz.isAnnotationPresent(annotation) ? Boolean.TRUE : Boolean.FALSE;
@@ -570,9 +571,9 @@ public class AnnotationElement extends PortableAnnotationElement
             return present.booleanValue();
          }
 
-         public boolean isVisibleAnnotationPresent(final Method m, final Class annotation)
+         public boolean isVisibleAnnotationPresent(final Method m, final Class<? extends Annotation> annotation)
          {
-            Boolean present = (Boolean)AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
+            Boolean present = AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
                public Boolean run()
                {
                   return m.isAnnotationPresent(annotation) ? Boolean.TRUE : Boolean.FALSE;
@@ -582,9 +583,9 @@ public class AnnotationElement extends PortableAnnotationElement
             return present.booleanValue();
          }
 
-         public boolean isVisibleAnnotationPresent(final Field f, final Class annotation)
+         public boolean isVisibleAnnotationPresent(final Field f, final Class<? extends Annotation> annotation)
          {
-            Boolean present = (Boolean)AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
+            Boolean present = AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
                public Boolean run()
                {
                   return f.isAnnotationPresent(annotation) ? Boolean.TRUE : Boolean.FALSE;
@@ -593,9 +594,9 @@ public class AnnotationElement extends PortableAnnotationElement
             return present;
          }
 
-         public boolean isVisibleAnnotationPresent(final Constructor con, final Class annotation)
+         public boolean isVisibleAnnotationPresent(final Constructor<?> con, final Class<? extends Annotation> annotation)
          {
-            Boolean present = (Boolean)AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
+            Boolean present = AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
                public Boolean run()
                {
                   return con.isAnnotationPresent(annotation) ? Boolean.TRUE : Boolean.FALSE;
@@ -605,9 +606,9 @@ public class AnnotationElement extends PortableAnnotationElement
          }
 
 
-         public boolean isVisibleAnnotationPresent(final Class clazz, final String annotation)
+         public boolean isVisibleAnnotationPresent(final Class<?> clazz, final String annotation)
          {
-            Boolean present = (Boolean)AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
+            Boolean present = AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
                public Boolean run()
                {
                   for(Annotation a : clazz.getAnnotations())
@@ -624,7 +625,7 @@ public class AnnotationElement extends PortableAnnotationElement
 
          public boolean isVisibleAnnotationPresent(final Method m, final String annotation)
          {
-            Boolean present = (Boolean)AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
+            Boolean present = AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
                public Boolean run()
                {
                   for(Annotation a : m.getAnnotations())
@@ -641,7 +642,7 @@ public class AnnotationElement extends PortableAnnotationElement
 
          public boolean isVisibleAnnotationPresent(final Field f, final String annotation)
          {
-            Boolean present = (Boolean)AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
+            Boolean present = AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
                public Boolean run()
                {
                   for(Annotation a : f.getAnnotations())
@@ -655,9 +656,9 @@ public class AnnotationElement extends PortableAnnotationElement
             return present;
          }
 
-         public boolean isVisibleAnnotationPresent(final Constructor con, final String annotation)
+         public boolean isVisibleAnnotationPresent(final Constructor<?> con, final String annotation)
          {
-            Boolean present = (Boolean)AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
+            Boolean present = AccessController.doPrivileged(new PrivilegedAction<Boolean>(){
                public Boolean run()
                {
                   for(Annotation a : con.getAnnotations())
@@ -671,15 +672,15 @@ public class AnnotationElement extends PortableAnnotationElement
             return present;
          }
 
-         public Annotation[] getVisibleAnnotations(final Class clazz) throws Exception 
+         public <T extends Annotation> T[] getVisibleAnnotations(final Class<?> clazz) throws Exception 
          {
             try
             {
-               return AccessController.doPrivileged(new PrivilegedExceptionAction<Annotation[]>()
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<T[]>()
                {
-                  public Annotation[] run() throws Exception
+                  public T[] run() throws Exception
                   {
-                     return clazz.getAnnotations();
+                     return (T[])clazz.getAnnotations();
                   }
                });
             }
@@ -689,18 +690,18 @@ public class AnnotationElement extends PortableAnnotationElement
             }
          }
 
-         public Annotation[] getVisibleAnnotations(final Method m) throws Exception 
+         public <T extends Annotation> T[] getVisibleAnnotations(final Method m) throws Exception 
          {
             try
             {
-               return AccessController.doPrivileged(new PrivilegedExceptionAction<Annotation[]>(){
-                  public Annotation[] run() throws Exception
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<T[]>(){
+                  public T[] run() throws Exception
                   {
                      if (m.getName().startsWith("access$") && !ReflectUtils.isNotAccessMethod(m))
                      {
-                        return new Annotation[0];
+                        return (T[])EMPTY_ANNOTATIONS;
                      }
-                     return m.getAnnotations();
+                     return (T[])m.getAnnotations();
                   }
                });
             }
@@ -710,14 +711,14 @@ public class AnnotationElement extends PortableAnnotationElement
             }
          }
          
-         public Annotation[] getVisibleAnnotations(final Field f) throws Exception
+         public <T extends Annotation> T[] getVisibleAnnotations(final Field f) throws Exception
          {
             try
             {
-               return AccessController.doPrivileged(new PrivilegedExceptionAction<Annotation[]>(){
-                  public Annotation[] run() throws Exception
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<T[]>(){
+                  public T[] run() throws Exception
                   {
-                     return f.getAnnotations();
+                     return (T[])f.getAnnotations();
                   }
                });
             }
@@ -727,14 +728,14 @@ public class AnnotationElement extends PortableAnnotationElement
             }
          }
          
-         public Annotation[] getVisibleAnnotations(final Constructor c) throws Exception
+         public <T extends Annotation> T[] getVisibleAnnotations(final Constructor<?> c) throws Exception
          {
             try
             {
-               return AccessController.doPrivileged(new PrivilegedExceptionAction<Annotation[]>(){
-                  public Annotation[] run() throws Exception
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<T[]>(){
+                  public T[] run() throws Exception
                   {
-                     return c.getAnnotations();
+                     return (T[])c.getAnnotations();
                   }
                });
             }

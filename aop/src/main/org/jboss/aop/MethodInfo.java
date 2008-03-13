@@ -26,6 +26,7 @@ import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodJoinpoint;
 import org.jboss.aop.util.MethodHashing;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
@@ -122,9 +123,9 @@ public class MethodInfo extends JoinPointInfo implements MethodExecution
       return sb.toString();
    }
 
-   public Object resolveAnnotation(Class annotation)
+   public <T extends Annotation> T resolveAnnotation(Class<T> annotation)
    {
-      Object val = super.resolveAnnotation(annotation);
+      T val = super.resolveAnnotation(annotation);
       if (val != null)
       {
          return val;

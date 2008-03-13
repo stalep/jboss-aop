@@ -21,6 +21,7 @@
   */
 package org.jboss.aop;
 
+import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -184,7 +185,7 @@ public abstract class JoinPointInfo implements JoinPointBean
       return getAdvisor().getClassMetaData().getMetaData(key, attr);
    }
    
-   public Object resolveClassAnnotation(Class annotation)
+   public <T extends Annotation> T resolveClassAnnotation(Class<T> annotation)
    {
       Advisor advisor = getAdvisor();
       if (advisor != null)
@@ -194,7 +195,7 @@ public abstract class JoinPointInfo implements JoinPointBean
       return null;
    }
    
-   public Object resolveAnnotation(Class annotation)
+   public <T extends Annotation> T  resolveAnnotation(Class<T> annotation)
    {
       return null;
    }

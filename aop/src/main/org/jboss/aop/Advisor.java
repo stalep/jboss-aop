@@ -23,6 +23,7 @@ package org.jboss.aop;
 
 import gnu.trove.TLongObjectHashMap;
 
+import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -342,18 +343,18 @@ public abstract class Advisor
       return annotations;
    }
 
-   public Object resolveAnnotation(Class annotation)
+   public <T extends Annotation> T resolveAnnotation(Class<T> annotation)
    {
       if (metadata != null)
       {
-         Object value = metadata.getAnnotation(annotation);
+         T value = metadata.getAnnotation(annotation);
          if (value != null) return value;
       }
 
       if (annotations.isDisabled(annotation))
          return null;
 
-      Object value = annotations.resolveClassAnnotation(annotation);
+      T value = annotations.resolveClassAnnotation(annotation);
       if (clazz == null) return null;
       if (value == null && metadata == null)
       {
@@ -372,12 +373,12 @@ public abstract class Advisor
       return hasAnnotation(tgt, annotation, null);
    }
 
-   public boolean hasAnnotation(Class<?> tgt, Class annotation)
+   public boolean hasAnnotation(Class<?> tgt, Class<? extends Annotation> annotation)
    {
       return hasAnnotation(tgt, null, annotation);
    }
 
-   private boolean hasAnnotation(Class<?> tgt, String annotation, Class annotationClass)
+   private boolean hasAnnotation(Class<?> tgt, String annotation, Class<? extends Annotation> annotationClass)
    {
       if (annotation == null && annotationClass == null)
       {
@@ -410,12 +411,12 @@ public abstract class Advisor
       return false;
    }
 
-   public Object resolveAnnotation(Method m, Class annotation)
+   public <T extends Annotation> T resolveAnnotation(Method m, Class<T> annotation)
    {
       return resolveAnnotation(0, m, annotation);
    }
 
-   public Object resolveAnnotation(long hash, Method m, Class annotation)
+   public <T extends Annotation> T resolveAnnotation(long hash, Method m, Class<T> annotation)
    {
       if (metadata != null)
       {
@@ -423,7 +424,7 @@ public abstract class Advisor
          MetaData methodMD = metadata.getComponentMetaData(signature);
          if (methodMD != null)
          {
-            Object val = methodMD.getAnnotation(annotation);
+            T val = methodMD.getAnnotation(annotation);
             if (val != null) return val;
          }
       }
@@ -431,7 +432,7 @@ public abstract class Advisor
       if (annotations.isDisabled(m,annotation))
          return null;
 
-      Object value = annotations.resolveAnnotation(m, annotation);
+      T value = annotations.resolveAnnotation(m, annotation);
       if (value == null && metadata == null) 
       {
          value = AnnotationElement.getVisibleAnnotation(m, annotation);
@@ -439,19 +440,19 @@ public abstract class Advisor
       return value;
    }
 
-   public Object resolveAnnotation(Method m, Class[] annotationChoices)
+   public <T extends Annotation> T resolveAnnotation(Method m, Class<T>[] annotationChoices)
    {
-      for (Class ann : annotationChoices)
+      for (Class<T> ann : annotationChoices)
       {
-         Object val = resolveAnnotation(m, annotationChoices);
+         T val = resolveAnnotation(m, ann);
          if (val != null) return val;
       }
       return null;
    }
 
-   public Object resolveAnnotation(Field f, Class annotation)
+   public <T extends Annotation> T resolveAnnotation(Field f, Class<T> annotation)
    {
-      Object value = null;
+      T value = null;
       if (metadata != null)
       {
          FieldSignature signature = new FieldSignature(f);
@@ -471,9 +472,9 @@ public abstract class Advisor
       return value;
    }
 
-   public Object resolveAnnotation(Constructor<?> c, Class annotation)
+   public <T extends Annotation> T resolveAnnotation(Constructor<?> c, Class<T> annotation)
    {
-      Object value = null;
+      T value = null;
       if (metadata != null)
       {
          ConstructorSignature signature = new ConstructorSignature(c);
@@ -498,12 +499,12 @@ public abstract class Advisor
       return hasAnnotation(0, m, annotation, null);
    }
 
-   public boolean hasAnnotation(Method m, Class annotation)
+   public boolean hasAnnotation(Method m, Class<? extends Annotation> annotation)
    {
       return hasAnnotation(0, m, null, annotation);
    }
 
-   private boolean hasAnnotation(long hash, Method m, String annotation, Class annotationClass)
+   private boolean hasAnnotation(long hash, Method m, String annotation, Class<? extends Annotation> annotationClass)
    {
       if (annotation == null && annotationClass == null)
       {

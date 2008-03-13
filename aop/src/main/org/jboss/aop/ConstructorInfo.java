@@ -21,6 +21,7 @@
   */
 package org.jboss.aop;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
@@ -119,9 +120,9 @@ public class ConstructorInfo extends JoinPointInfo implements ConstructorExecuti
    }
    
 
-   public Object resolveAnnotation(Class annotation)
+   public <T extends Annotation> T resolveAnnotation(Class<T> annotation)
    {
-      Object val = super.resolveAnnotation(annotation);
+      T val = super.resolveAnnotation(annotation);
       if (val != null) return val;
 
       if (getAdvisor() != null)

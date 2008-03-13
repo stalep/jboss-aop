@@ -21,6 +21,7 @@
   */
 package org.jboss.aop;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 
 import org.jboss.aop.joinpoint.ConstructorJoinpoint;
@@ -108,9 +109,9 @@ public class ConstructionInfo extends JoinPointInfo implements Construction
       return index;
    }
 
-   public Object resolveAnnotation(Class annotation)
+   public <T extends Annotation> T resolveAnnotation(Class<T> annotation)
    {
-      Object val = super.resolveAnnotation(annotation);
+      T val = super.resolveAnnotation(annotation);
       if (val != null) return val;
 
       if (getAdvisor() != null)

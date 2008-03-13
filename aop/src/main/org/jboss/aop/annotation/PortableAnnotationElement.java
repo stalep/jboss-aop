@@ -36,6 +36,7 @@ import org.jboss.aop.AspectManager;
 import org.jboss.annotation.factory.javassist.AnnotationProxy;
 import org.jboss.aop.util.ReflectToJavassist;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -218,7 +219,7 @@ public class PortableAnnotationElement
       
    }
 
-   public static boolean isInvisibleAnnotationPresent(Constructor con, String annotation) throws Exception
+   public static boolean isInvisibleAnnotationPresent(Constructor<?> con, String annotation) throws Exception
    {
       if (closingDownManager)
       {
@@ -267,7 +268,7 @@ public class PortableAnnotationElement
       return visible.getAnnotation(annotation) != null;
    }
 
-   public static boolean isAnyAnnotationPresent(Constructor con, String annotation) throws Exception
+   public static boolean isAnyAnnotationPresent(Constructor<?> con, String annotation) throws Exception
    {
       if (closingDownManager)
       {
@@ -311,7 +312,7 @@ public class PortableAnnotationElement
          return false;
    }
 
-   public static boolean isInvisibleAnnotationPresent(Class clazz, String annotation) throws Exception
+   public static boolean isInvisibleAnnotationPresent(Class<?> clazz, String annotation) throws Exception
    {
       if (closingDownManager)
       {
@@ -373,11 +374,11 @@ public class PortableAnnotationElement
       catch (RuntimeException e)
       {
          String name = (clazz != null) ? clazz.getName() : null;
-         throw new RuntimeException("Error looking for " + annotation + " in " + clazz.getName(), e);
+         throw new RuntimeException("Error looking for " + annotation + " in " + name, e);
       }
    }
 
-   public static boolean isAnyAnnotationPresent(Class clazz, String annotation) throws Exception
+   public static boolean isAnyAnnotationPresent(Class<?> clazz, String annotation) throws Exception
    {
       if (closingDownManager)
       {
@@ -408,7 +409,7 @@ public class PortableAnnotationElement
          return false;
    }
 
-   protected static ClassFile getClassFile(Class clazz) throws NotFoundException
+   protected static ClassFile getClassFile(Class<?> clazz) throws NotFoundException
    {
       ClassPool pool = AspectManager.instance().findClassPool(clazz.getClassLoader());
       CtClass ct = pool.get(clazz.getName());
@@ -416,7 +417,7 @@ public class PortableAnnotationElement
       return cf;
    }
 
-   protected static Object create(AnnotationsAttribute group, Class annotation) throws Exception
+   protected static Object create(AnnotationsAttribute group, Class<? extends Annotation> annotation) throws Exception
    {
       if (group == null) return null;
       javassist.bytecode.annotation.Annotation info = group.getAnnotation(annotation.getName());
@@ -424,7 +425,7 @@ public class PortableAnnotationElement
       return AnnotationProxy.createProxy(info, annotation);
    }
 
-   public static Object getInvisibleAnnotation(Method method, Class annotation)
+   public static Object getInvisibleAnnotation(Method method, Class<? extends Annotation> annotation)
    {
       if (closingDownManager)
       {
@@ -456,7 +457,7 @@ public class PortableAnnotationElement
          return false;
    }
 
-   public static Object getInvisibleAnnotation(Constructor con, Class annotation)
+   public static Object getInvisibleAnnotation(Constructor<?> con, Class<? extends Annotation> annotation)
    {
       if (closingDownManager)
       {
@@ -484,7 +485,7 @@ public class PortableAnnotationElement
          return false;
    }
 
-   public static Object getInvisibleAnnotation(Field field, Class annotation)
+   public static Object getInvisibleAnnotation(Field field, Class<? extends Annotation> annotation)
    {
       if (closingDownManager)
       {
@@ -507,7 +508,7 @@ public class PortableAnnotationElement
       }
    }
 
-   public static Object getInvisibleAnnotation(Class clazz, Class annotation)
+   public static Object getInvisibleAnnotation(Class<?> clazz, Class<? extends Annotation> annotation)
    {
       if (closingDownManager)
       {
@@ -536,7 +537,7 @@ public class PortableAnnotationElement
     * @param annotation
     * @return
     */
-   public static Object getAnyAnnotation(Method method, Class annotation)
+   public static Object getAnyAnnotation(Method method, Class<? extends Annotation> annotation)
    {
       Object rtn = AnnotationElement.getVisibleAnnotation(method, annotation);
       if (rtn != null) return rtn;
@@ -553,7 +554,7 @@ public class PortableAnnotationElement
     * @param annotation
     * @return
     */
-   public static Object getAnyAnnotation(Constructor con, Class annotation)
+   public static Object getAnyAnnotation(Constructor<?> con, Class<? extends Annotation> annotation)
    {
       Object rtn = AnnotationElement.getVisibleAnnotation(con, annotation);
       if (rtn != null) return rtn;
@@ -563,7 +564,7 @@ public class PortableAnnotationElement
          return null;
    }
 
-   public static Object getAnyAnnotation(Field field, Class annotation)
+   public static Object getAnyAnnotation(Field field, Class<? extends Annotation> annotation)
    {
       Object rtn = AnnotationElement.getVisibleAnnotation(field, annotation);
       if (rtn != null) return rtn;
@@ -573,7 +574,7 @@ public class PortableAnnotationElement
          return null;
    }
 
-   public static Object getAnyAnnotation(Class clazz, Class annotation)
+   public static Object getAnyAnnotation(Class<?> clazz, Class<? extends Annotation> annotation)
    {
       if (clazz == Void.TYPE) return null;
       Object rtn = AnnotationElement.getVisibleAnnotation(clazz, annotation);
@@ -584,7 +585,7 @@ public class PortableAnnotationElement
          return null;
    }
 
-   public static boolean isAnyAnnotationPresent(Field field, Class annotation) throws Exception
+   public static boolean isAnyAnnotationPresent(Field field, Class<? extends Annotation> annotation) throws Exception
    {
       if (AnnotationElement.isVisibleAnnotationPresent(field, annotation)) 
          return true;
@@ -601,7 +602,7 @@ public class PortableAnnotationElement
          return false;
    }
 
-   public static boolean isAnyAnnotationPresent(Class clazz, Class annotation) throws Exception
+   public static boolean isAnyAnnotationPresent(Class<?> clazz, Class<? extends Annotation> annotation) throws Exception
    {
       if (clazz == Void.TYPE) return false;
       if (AnnotationElement.isVisibleAnnotationPresent(clazz, annotation)) 
@@ -623,7 +624,7 @@ public class PortableAnnotationElement
          return false;
    }
 
-   public static boolean isAnyAnnotationPresent(Constructor con, Class annotation) throws Exception
+   public static boolean isAnyAnnotationPresent(Constructor<?> con, Class<? extends Annotation> annotation) throws Exception
    {
       if (AnnotationElement.isVisibleAnnotationPresent(con, annotation)) 
          return true;
@@ -640,7 +641,7 @@ public class PortableAnnotationElement
          return false;
    }
 
-   public static boolean isAnyAnnotationPresent(Method method, Class annotation) throws Exception
+   public static boolean isAnyAnnotationPresent(Method method, Class<? extends Annotation> annotation) throws Exception
    {
       if (AnnotationElement.isVisibleAnnotationPresent(method, annotation)) 
          return true;
@@ -663,7 +664,7 @@ public class PortableAnnotationElement
          return false;
    }
    
-   protected static boolean includeInvisibleAnnotation(Class annotation)
+   protected static boolean includeInvisibleAnnotation(Class<? extends Annotation> annotation)
    {
       return  includeInvisibleAnnotation(annotation.getPackage().getName());
    }

@@ -21,6 +21,7 @@
   */
 package org.jboss.aop;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.AccessController;
@@ -155,9 +156,9 @@ public class FieldInfo extends JoinPointInfo implements FieldAccess
       return read;
    }
 
-   public Object resolveAnnotation(Class annotation)
+   public <T extends Annotation> T resolveAnnotation(Class<T> annotation)
    {
-      Object val = super.resolveAnnotation(annotation);
+      T val = super.resolveAnnotation(annotation);
       if (val != null) return val;
 
       if (getAdvisor() != null)

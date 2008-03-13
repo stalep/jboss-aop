@@ -21,16 +21,13 @@
   */
 package org.jboss.aop.annotation;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.jboss.annotation.factory.AnnotationCreator;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
@@ -45,21 +42,22 @@ import javassist.CtMember;
  */
 public class AnnotationRepository
 {
-   private static final String CLASS_ANNOTATION = "CLASS";
+//   private static final String CLASS_ANNOTATION = "CLASS";
    
    /** Read/Write lock to be used when lazy creating the collections */
    protected Object lazyCollectionLock = new Object();
 
-   volatile Map annotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
-   volatile Map classAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
-   volatile Map disabledAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   volatile Map<Object, Map<String, Object>> annotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   volatile Map<String, Object> classAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP; 
+   volatile Map<Member, List<String>> disabledAnnotations = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   volatile List<String> disabledClassAnnotations = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
    
-   public Map getAnnotations()
+   public Map<Object, Map<String, Object>> getAnnotations()
    {
 	   return annotations;
    }
    
-   public Map getClassAnnotations()
+   public Map<String, Object> getClassAnnotations()
    {
 	   return classAnnotations;
    }
@@ -70,37 +68,37 @@ public class AnnotationRepository
       classAnnotations.put(annotation, value);
    }
 
-   public void addClassAnnotation(Class annotation, Object value)
+   public <T extends Annotation> void addClassAnnotation(Class<T> annotation, T value)
    {
       initClassAnnotationsMap();
       classAnnotations.put(annotation.getName(), value);
    }
 
-   public Object resolveClassAnnotation(Class annotation)
+   public <T extends Annotation> T resolveClassAnnotation(Class<T> annotation)
    {
       Object value = classAnnotations.get(annotation.getName());
       boolean reinsert = value instanceof String;
-      value = extractAnnotation(value, annotation);
+      T ann = extractAnnotation(value, annotation);
       if (reinsert)
       {
-         classAnnotations.put(annotation.getName(), value);
+         classAnnotations.put(annotation.getName(), ann);
       }
-      return value;
+      return ann;
    }
 
-   public Object resolveAnnotation(Member m, Class annotation)
+   public <T extends Annotation> T resolveAnnotation(Member m, Class<T> annotation)
    {
       Object value = resolveAnnotation(m, annotation.getName());
       boolean reinsert = value instanceof String;
-      value = extractAnnotation(value, annotation);
+      T ann = extractAnnotation(value, annotation);
       if (reinsert)
       {
          addAnnotation(m, annotation, value);
       }
-      return value;
+      return ann;
    }
 
-   protected Object extractAnnotation(Object value, Class annotation)
+   protected <T extends Annotation> T  extractAnnotation(Object value, Class<T> annotation)
    {
       if (value == null) return null;
       if (value instanceof String)
@@ -108,19 +106,19 @@ public class AnnotationRepository
          String expr = (String) value;
          try
          {
-            return AnnotationCreator.createAnnotation(expr, annotation);
+            return (T)AnnotationCreator.createAnnotation(expr, annotation);
          }
          catch (Exception e)
          {
             throw new RuntimeException("Bad annotation expression " + expr, e);
          }
       }
-      return value;
+      return (T)value;
    }
 
    protected Object resolveAnnotation(Member m, String annotation)
    {
-      Map map = (Map) annotations.get(m);
+      Map<String, Object> map = annotations.get(m);
       if (map != null)
       {
          return map.get(annotation);
@@ -130,10 +128,10 @@ public class AnnotationRepository
    
    public void disableAnnotation(Member m, String annotation)
    {
-      List annotationList = (List)disabledAnnotations.get(m);
+      List<String> annotationList = disabledAnnotations.get(m);
       if (annotationList == null)
       {
-         annotationList = new ArrayList();
+         annotationList = new ArrayList<String>();
          initDisabledAnnotationsMap();
          disabledAnnotations.put(m,annotationList);
       }
@@ -142,74 +140,62 @@ public class AnnotationRepository
    
    public void disableAnnotation(String annotation)
    {
-      List annotationList = (List)disabledAnnotations.get(CLASS_ANNOTATION);
-      if (annotationList == null)
-      {
-         annotationList = new ArrayList();
-         initDisabledAnnotationsMap();
-         disabledAnnotations.put(CLASS_ANNOTATION,annotationList);
-      }
-      annotationList.add(annotation);
+      initDisabledClassAnnotationsList();
+      disabledClassAnnotations.add(annotation);
    }
    
    public void enableAnnotation(String annotation)
    {
-      List annotationList = (List)disabledAnnotations.get(CLASS_ANNOTATION);
-      if (annotationList != null)
-      {
-         annotationList.remove(annotation);
-      }
-      
+      disabledClassAnnotations.remove(annotation);
    }
    
-   public boolean isDisabled(Member m, Class annotation)
+   public boolean isDisabled(Member m, Class<? extends Annotation> annotation)
    {
       return isDisabled(m,annotation.getName());
    }
    
    public boolean isDisabled(Member m, String annotation)
    {
-      List overrideList = (List)disabledAnnotations.get(m);
-      if (overrideList != null)
+      List<String> overrideList = disabledAnnotations.get(m);
+      if (overrideList != null && overrideList.size() > 0)
       {
-         Iterator overrides = overrideList.iterator();
-         while (overrides.hasNext())
+         for (String override : overrideList)
          {
-            String override = (String)overrides.next();
             if (override.equals(annotation))
+            {
                return true;
+            }
          }
       }
       return false;
    }
    
-   public boolean isDisabled(Class annotation)
+   public boolean isDisabled(Class<? extends Annotation> annotation)
    {
       return isDisabled(annotation.getName());
    }
    
    public boolean isDisabled(String annotation)
    {
-      List overrideList = (List)disabledAnnotations.get(CLASS_ANNOTATION);
-      if (overrideList != null)
+      if (disabledClassAnnotations.size() > 0)
       {
-         Iterator overrides = overrideList.iterator();
-         while (overrides.hasNext())
+         for (String ann : disabledClassAnnotations)
          {
-            String override = (String)overrides.next();
-            if (override.equals(annotation))
+            if (ann.equals(annotation))
+            {
                return true;
+            }
          }
       }
       return false;
    }
 
-   public void addAnnotation(Member m, Class annotation, Object value)
+   public void addAnnotation(Member m, Class<? extends Annotation> annotation, Object value)
    {
-      Map map = (Map) annotations.get(m);
+      Map<String, Object> map = annotations.get(m);
       if (map == null)
       {
-         map = new HashMap();
+         map = new HashMap<String, Object>();
          initAnnotationsMap();
          annotations.put(m, map);
       }
@@ -218,10 +204,10 @@ public class AnnotationRepository
 
    public void addAnnotation(Member m, String annotation, Object value)
    {
-      Map map = (Map) annotations.get(m);
+      Map<String, Object> map = annotations.get(m);
       if (map == null)
       {
-         map = new HashMap();
+         map = new HashMap<String, Object>();
          initAnnotationsMap();
          annotations.put(m, map);
       }
@@ -233,12 +219,12 @@ public class AnnotationRepository
       return classAnnotations.containsKey(annotation);
    }
 
-   public boolean hasClassAnnotation(Class annotation)
+   public boolean hasClassAnnotation(Class<? extends Annotation> annotation)
    {
       return classAnnotations.containsKey(annotation.getName());
    }
 
-   public boolean hasAnnotation(Member m, Class annotation)
+   public boolean hasAnnotation(Member m, Class<? extends Annotation> annotation)
    {
       return resolveAnnotation(m, annotation.getName()) != null;
    }
@@ -250,21 +236,21 @@ public class AnnotationRepository
 
    public boolean hasAnnotation(CtMember m, String annotation)
    {
-      Set set = (Set) annotations.get(m);
-      if (set != null) return set.contains(annotation);
+      Map<String, Object> map = annotations.get(m);
+      if (map != null) return map.containsKey(annotation);
       return false;
    }
 
    public void addAnnotation(CtMember m, String annotation)
    {
-      Set set = (Set) annotations.get(m);
-      if (set == null)
+      Map<String, Object> map = annotations.get(m);
+      if (map == null)
       {
-         set = new HashSet();
+         map = new HashMap<String, Object>();
          initAnnotationsMap();
-         annotations.put(m, set);
+         annotations.put(m, map);
       }
-      set.add(annotation);
+      map.put(annotation, annotation);
    }
 
    protected void initAnnotationsMap()
@@ -275,7 +261,7 @@ public class AnnotationRepository
          {
             if (annotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               annotations = new ConcurrentHashMap();;
+               annotations = new ConcurrentHashMap<Object, Map<String, Object>>();;
             }
          }
       }
@@ -289,7 +275,7 @@ public class AnnotationRepository
          {
             if (classAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               classAnnotations = new ConcurrentHashMap();;
+               classAnnotations = new ConcurrentHashMap<String, Object>();;
             }
          }
       }
@@ -303,7 +289,21 @@ public class AnnotationRepository
          {
             if (disabledAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               disabledAnnotations = new ConcurrentHashMap();;
+               disabledAnnotations = new ConcurrentHashMap<Member, List<String>>();;
+            }
+         }
+      }
+   }
+
+   protected void initDisabledClassAnnotationsList()
+   {
+      if (disabledClassAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+      {
+         synchronized(lazyCollectionLock)
+         {
+            if (disabledClassAnnotations == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+            {
+               disabledClassAnnotations = new ArrayList<String>();;
             }
          }
       }

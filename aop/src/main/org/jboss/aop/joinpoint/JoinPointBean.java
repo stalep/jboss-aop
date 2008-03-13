@@ -21,6 +21,8 @@
  */
 package org.jboss.aop.joinpoint;
 
+import java.lang.annotation.Annotation;
+
 import org.jboss.aop.Advisor;
 
 /**
@@ -39,7 +41,7 @@ public interface JoinPointBean
    /**
     * Gets the advisor's class
     */
-   Class getClazz();
+   Class<?> getClazz();
 
    /**
     * Resolves metadata on the class
@@ -49,11 +51,11 @@ public interface JoinPointBean
    /**
     * Resolves annotations for the class
     */
-   Object resolveClassAnnotation(Class annotation);
+   <T extends Annotation> T resolveClassAnnotation(Class<T> annotation);
 
    /**
     * Resolves annotations on the particular joinpoint (field, constructor, method etc.)
     */
-   Object resolveAnnotation(Class annotation);
+   <T extends Annotation> T resolveAnnotation(Class<T> annotation);
 
 }
