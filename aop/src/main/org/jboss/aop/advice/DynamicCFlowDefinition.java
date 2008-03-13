@@ -36,7 +36,7 @@ public class DynamicCFlowDefinition
    private String name;
    private String className;
    private Element element;
-   private Class pClass;
+   private Class<?> pClass;
 
    public DynamicCFlowDefinition(Element element, String className, String name)
    {

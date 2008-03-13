@@ -55,7 +55,7 @@ public class ConstructorExpression
    }
 
 
-   public boolean matches(Constructor con)
+   public boolean matches(Constructor<?> con)
    {
       Matcher cm = classExpr.matcher(con.getDeclaringClass().getName());
       if (cm.matches() == false) return false;
@@ -63,7 +63,7 @@ public class ConstructorExpression
       return params.matches(con.getParameterTypes());
    }
 
-   public boolean matchParamsOnly(Constructor con)
+   public boolean matchParamsOnly(Constructor<?> con)
    {
       return params.matches(con.getParameterTypes());
    }

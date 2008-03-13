@@ -49,7 +49,7 @@ public class VariableHierarchy
       this.realBoundComparation = 0;
    }
    
-   VariableNode getVariableNode(TypeVariable typeVariable)
+   VariableNode getVariableNode(TypeVariable<?> typeVariable)
    {
       String key = typeVariable.getName();
       if (map.containsKey(key))

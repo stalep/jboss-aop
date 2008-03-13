@@ -43,10 +43,10 @@ class VariableNode
    private VariableNode next;
    private Collection<Type> lowerBounds;
    private Collection<Type> upperBounds;
-   private TypeVariable variable;
+   private TypeVariable<?> variable;
    private Type assignedValue;
    
-   public VariableNode(TypeVariable content, VariableHierarchy hierarchy)
+   public VariableNode(TypeVariable<?> content, VariableHierarchy hierarchy)
    {
       this.hierarchy = hierarchy;
       this.variable = content;
@@ -55,7 +55,7 @@ class VariableNode
       Type[] bounds = content.getBounds();
       if (bounds.length == 1 && bounds[0] instanceof TypeVariable)
       {
-         TypeVariable typeVariable = (TypeVariable) bounds[0];
+         TypeVariable<?> typeVariable = (TypeVariable<?>) bounds[0];
          next = hierarchy.getVariableNode(typeVariable);
          next.previous = this;
       }
@@ -90,8 +90,8 @@ class VariableNode
       }
       if (lowerBound instanceof TypeVariable)
       {
-         Type[] bounds = ((TypeVariable) lowerBound).getBounds();
-         this.lowerBounds.add(new ChoiceBound((TypeVariable) lowerBound, bounds));
+         Type[] bounds = ((TypeVariable<?>) lowerBound).getBounds();
+         this.lowerBounds.add(new ChoiceBound((TypeVariable<?>) lowerBound, bounds));
       }
       else
       {
@@ -118,8 +118,8 @@ class VariableNode
    {
       if (upperBound instanceof TypeVariable)
       {
-         Type[] bounds = ((TypeVariable) upperBound).getBounds();
-         this.upperBounds.add(new ChoiceBound((TypeVariable) upperBound, bounds));
+         Type[] bounds = ((TypeVariable<?>) upperBound).getBounds();
+         this.upperBounds.add(new ChoiceBound((TypeVariable<?>) upperBound, bounds));
       }
       else
       {
@@ -296,7 +296,7 @@ class VariableNode
          }
          if(fromArgument instanceof TypeVariable)
          {
-            if (!isAssignable(upperBounds, ((TypeVariable) fromArgument).getBounds()))
+            if (!isAssignable(upperBounds, ((TypeVariable<?>) fromArgument).getBounds()))
             {
                return false;
             }
@@ -350,7 +350,7 @@ class VariableNode
    {
       if (fromType instanceof TypeVariable)
       {
-         TypeVariable fromVariable = (TypeVariable) fromType;
+         TypeVariable<?> fromVariable = (TypeVariable<?>) fromType;
          if (type instanceof TypeVariable)
          {
             if (type == fromType)
@@ -364,7 +364,7 @@ class VariableNode
                {
                   return true;
                }
-               fromVariable = (TypeVariable) fromBounds[0];
+               fromVariable = (TypeVariable<?>) fromBounds[0];
                fromBounds = fromVariable.getBounds();
             }
             return false;
@@ -383,7 +383,7 @@ class VariableNode
       {
          ChoiceBound fromChoiceBound = (ChoiceBound) fromType;
          if (type instanceof TypeVariable &&
-               !isAssignable((TypeVariable) type, fromChoiceBound.variable))
+               !isAssignable(type, fromChoiceBound.variable))
          {
             return false;
          }
@@ -439,7 +439,7 @@ class VariableNode
          }
          if (fromType instanceof TypeVariable)
          {
-            for (Type upperBound: ((TypeVariable) fromType).getBounds())
+            for (Type upperBound: ((TypeVariable<?>) fromType).getBounds())
             {
                if (isAssignable(type, upperBound))
                {
@@ -458,7 +458,7 @@ class VariableNode
       }
       if (type instanceof TypeVariable)
       {
-         for (Type bound: ((TypeVariable) type).getBounds())
+         for (Type bound: ((TypeVariable<?>) type).getBounds())
          {
             if (!isAssignable(bound, fromType))
             {
@@ -488,7 +488,7 @@ class VariableNode
       }
       ChoiceBound choiceBound = (ChoiceBound) type;
       if (fromType instanceof TypeVariable &&
-            !isAssignable(choiceBound.variable, (TypeVariable) fromType))
+            !isAssignable(choiceBound.variable, fromType))
       {
          return false;
       }

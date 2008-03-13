@@ -24,7 +24,6 @@ package org.jboss.aop.advice;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -240,7 +239,7 @@ public class AdviceBinding
     *              interceptor instances.
     * @see GenericInterceptorFactory
     */
-   public void addInterceptor(Class clazz)
+   public void addInterceptor(Class<?> clazz)
    {
       addInterceptorFactory(new GenericInterceptorFactory(clazz));
    }
@@ -376,9 +375,8 @@ public class AdviceBinding
    {
       synchronized (advisors)
       {
-         for (Iterator it = advisors.keySet().iterator(); it.hasNext();)
+         for (Advisor advisor : advisors.keySet())
          {
-            Advisor advisor = (Advisor) it.next();
             if (advisor.getManager().isAdvisorRegistered(advisor))
             {
                advisor.removeAdviceBinding(this);

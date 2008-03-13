@@ -104,9 +104,9 @@ public class AspectDefinition
    {
       if (advisors.size() > 0)
       {
-         for (Iterator it = advisors.keySet().iterator() ; it.hasNext() ; )
+         for (Iterator<Advisor> it = advisors.keySet().iterator() ; it.hasNext() ; )
          {
-            Advisor advisor = (Advisor)it.next();
+            Advisor advisor = it.next();
             if (advisor != null)
             {
                it.remove();

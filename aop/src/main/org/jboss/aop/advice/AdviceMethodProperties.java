@@ -54,11 +54,11 @@ public class AdviceMethodProperties
    private JoinPointBean joinPoint;
    
    //find properties
-   private Class aspectClass;
+   private Class<?> aspectClass;
    private String adviceName;
-   private Class thrownType;
-   private Class joinPointBeanType;
-   private Class invocationType;
+   private Class<?> thrownType;
+   private Class<?> joinPointBeanType;
+   private Class<?> invocationType;
    private Type target;
    private Type caller;
    private Type joinpointReturnType;
@@ -77,13 +77,13 @@ public class AdviceMethodProperties
    // TODO remove
    public AdviceMethodProperties(
          JoinPointBean joinPoint,
-         Class aspectClass,
+         Class<?> aspectClass,
          String adviceName,
-         Class joinPointBeanType,
-         Class invocationType,
+         Class<?> joinPointBeanType,
+         Class<?> invocationType,
          Type joinpointReturnType,
          Type[] joinpointParameters,
-         Class[] joinpointParameterClassTypes,
+         Class<?>[] joinpointParameterClassTypes,
          Type[] joinpointExceptions,
          Type target,
          boolean targetAvailable)
@@ -95,14 +95,14 @@ public class AdviceMethodProperties
    
    public AdviceMethodProperties(
          JoinPointBean joinPoint,
-         Class aspectClass,
+         Class<?> aspectClass,
          String adviceName,
-         Class thrownType,
-         Class joinPointBeanType,
-         Class invocationType,
+         Class<?> thrownType,
+         Class<?> joinPointBeanType,
+         Class<?> invocationType,
          Type joinpointReturnType,
          Type[] joinpointParameters,
-         Class[] joinpointParameterClassTypes,
+         Class<?>[] joinpointParameterClassTypes,
          Type[] joinpointExceptions,
          Type target,
          boolean targetAvailable)
@@ -123,10 +123,10 @@ public class AdviceMethodProperties
    // TODO remove
    public AdviceMethodProperties(
          JoinPointBean joinPoint,
-         Class aspectClass,
+         Class<?> aspectClass,
          String adviceName,
-         Class joinPointBeanType,
-         Class invocationType,
+         Class<?> joinPointBeanType,
+         Class<?> invocationType,
          Type joinpointReturnType,
          Type[] joinpointParameters,
          Class<?>[] joinpointParameterClassTypes,
@@ -144,11 +144,11 @@ public class AdviceMethodProperties
    
    public AdviceMethodProperties(
          JoinPointBean joinPoint,
-         Class aspectClass,
+         Class<?> aspectClass,
          String adviceName,
-         Class thrownType,
-         Class joinPointBeanType,
-         Class invocationType,
+         Class<?> thrownType,
+         Class<?> joinPointBeanType,
+         Class<?> invocationType,
          Type joinpointReturnType,
          Type[] joinpointParameters,
          Class<?>[] joinpointParameterClassTypes,
@@ -183,23 +183,23 @@ public class AdviceMethodProperties
    }
 
 
-   public Class getAspectClass()
+   public Class<?> getAspectClass()
    {
       return aspectClass;
    }
 
-   public Class getThrownType()
+   public Class<?> getThrownType()
    {
       return this.thrownType;
    }
 
-   public Class getJoinPointBeanType()
+   public Class<?> getJoinPointBeanType()
    {
       return joinPointBeanType;
    }
 
 
-   public Class getInvocationType()
+   public Class<?> getInvocationType()
    {
       return invocationType;
    }

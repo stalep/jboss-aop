@@ -44,17 +44,17 @@ import java.lang.reflect.Method;
  */
 public abstract class AbstractAdvice implements Interceptor, Untransformable
 {
-   private static final Class[] INVOCATION_SIGNATURE = {Invocation.class};
-   private static final Class[] METHOD_SIGNATURE = {MethodInvocation.class};
-   private static final Class[] CONSTRUCTOR_SIGNATURE = {ConstructorInvocation.class};
-   private static final Class[] CONSTRUCTION_SIGNATURE = {ConstructionInvocation.class};
-   private static final Class[] FIELD_SIGNATURE = {FieldInvocation.class};
-   private static final Class[] FIELD_READ_SIGNATURE = {FieldReadInvocation.class};
-   private static final Class[] FIELD_WRITE_SIGNATURE = {FieldWriteInvocation.class};
-   private static final Class[] METHOD_CALLED_BY_METHOD_SIGNATURE = {MethodCalledByMethodInvocation.class};
-   private static final Class[] METHOD_CALLED_BY_CONSTRUCTOR_SIGNATURE = {MethodCalledByConstructorInvocation.class};
-   private static final Class[] CON_CALLED_BY_METHOD_SIGNATURE = {ConstructorCalledByMethodInvocation.class};
-   private static final Class[] CON_CALLED_BY_CONSTRUCTOR_SIGNATURE = {ConstructorCalledByConstructorInvocation.class};
+   private static final Class<?>[] INVOCATION_SIGNATURE = {Invocation.class};
+   private static final Class<?>[] METHOD_SIGNATURE = {MethodInvocation.class};
+   private static final Class<?>[] CONSTRUCTOR_SIGNATURE = {ConstructorInvocation.class};
+   private static final Class<?>[] CONSTRUCTION_SIGNATURE = {ConstructionInvocation.class};
+   private static final Class<?>[] FIELD_SIGNATURE = {FieldInvocation.class};
+   private static final Class<?>[] FIELD_READ_SIGNATURE = {FieldReadInvocation.class};
+   private static final Class<?>[] FIELD_WRITE_SIGNATURE = {FieldWriteInvocation.class};
+   private static final Class<?>[] METHOD_CALLED_BY_METHOD_SIGNATURE = {MethodCalledByMethodInvocation.class};
+   private static final Class<?>[] METHOD_CALLED_BY_CONSTRUCTOR_SIGNATURE = {MethodCalledByConstructorInvocation.class};
+   private static final Class<?>[] CON_CALLED_BY_METHOD_SIGNATURE = {ConstructorCalledByMethodInvocation.class};
+   private static final Class<?>[] CON_CALLED_BY_CONSTRUCTOR_SIGNATURE = {ConstructorCalledByConstructorInvocation.class};
    protected Method invocationAdvice;
    protected Method methodAdvice;
    protected Method constructorAdvice;
@@ -66,10 +66,10 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
    protected Method methodCalledByConstructorAdvice;
    protected Method conCalledByMethodAdvice;
    protected Method conCalledByConstructorAdvice;
-   protected Class aspectClass;
+   protected Class<?> aspectClass;
    protected String adviceName;
 
-   protected void init(String advice, Class aspectClass)
+   protected void init(String advice, Class<?> aspectClass)
    {
       if (aspectClass == null)
       {
@@ -98,7 +98,7 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       }
    }
 
-   protected static Method findByInvocation(String adviceName, Class clazz)
+   protected static Method findByInvocation(String adviceName, Class<?> clazz)
    {
       try
       {
@@ -111,7 +111,7 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       return null;
    }
 
-   protected static Method findByMethodInvocation(String adviceName, Class clazz)
+   protected static Method findByMethodInvocation(String adviceName, Class<?> clazz)
    {
       try
       {
@@ -124,7 +124,7 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       return null;
    }
 
-   protected static Method findByFieldInvocation(String adviceName, Class clazz)
+   protected static Method findByFieldInvocation(String adviceName, Class<?> clazz)
    {
       try
       {
@@ -137,7 +137,7 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       return null;
    }
 
-   protected static Method findByFieldReadInvocation(String adviceName, Class clazz)
+   protected static Method findByFieldReadInvocation(String adviceName, Class<?> clazz)
    {
       try
       {
@@ -150,7 +150,7 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       return null;
    }
 
-   protected static Method findByFieldWriteInvocation(String adviceName, Class clazz)
+   protected static Method findByFieldWriteInvocation(String adviceName, Class<?> clazz)
    {
       try
       {
@@ -163,7 +163,7 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       return null;
    }
 
-   protected static Method findByConstructorInvocation(String adviceName, Class clazz)
+   protected static Method findByConstructorInvocation(String adviceName, Class<?> clazz)
    {
       try
       {
@@ -176,7 +176,7 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       return null;
    }
 
-   protected static Method findByConstructionInvocation(String adviceName, Class clazz)
+   protected static Method findByConstructionInvocation(String adviceName, Class<?> clazz)
    {
       try
       {
@@ -189,7 +189,7 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       return null;
    }
 
-   protected static Method findByMethodCalledByMethodInvocation(String adviceName, Class clazz)
+   protected static Method findByMethodCalledByMethodInvocation(String adviceName, Class<?> clazz)
    {
       try
       {
@@ -202,7 +202,7 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       return null;
    }
 
-   protected static Method findByMethodCalledByConstructorInvocation(String adviceName, Class clazz)
+   protected static Method findByMethodCalledByConstructorInvocation(String adviceName, Class<?> clazz)
    {
       try
       {
@@ -215,7 +215,7 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       return null;
    }
 
-   protected static Method findByConstructorCalledByMethodInvocation(String adviceName, Class clazz)
+   protected static Method findByConstructorCalledByMethodInvocation(String adviceName, Class<?> clazz)
    {
       try
       {
@@ -228,7 +228,7 @@ public abstract class AbstractAdvice implements Interceptor, Untransformable
       return null;
    }
 
-   protected static Method findByConstructorCalledByConstructorInvocation(String adviceName, Class clazz)
+   protected static Method findByConstructorCalledByConstructorInvocation(String adviceName, Class<?> clazz)
    {
       try
       {

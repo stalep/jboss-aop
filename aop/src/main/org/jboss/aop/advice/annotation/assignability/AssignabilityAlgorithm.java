@@ -49,14 +49,14 @@ public enum AssignabilityAlgorithm
       protected boolean assignValue(Type type, Type fromType,
             VariableHierarchy variableHierarchy)
       {
-         VariableNode node = variableHierarchy.getVariableNode((TypeVariable) type);
+         VariableNode node = variableHierarchy.getVariableNode((TypeVariable<?>) type);
          return node.assignValue(fromType);
       }
       
       protected boolean addBound(Type type, Type fromType,
             VariableHierarchy variableHierarchy)
       {
-         VariableNode node = variableHierarchy.getVariableNode((TypeVariable) type);
+         VariableNode node = variableHierarchy.getVariableNode((TypeVariable<?>) type);
          return node.addLowerBound(fromType);
       }
    },
@@ -75,14 +75,14 @@ public enum AssignabilityAlgorithm
       protected boolean assignValue(Type type, Type fromType,
             VariableHierarchy variableHierarchy)
       {
-         VariableNode fromNode = variableHierarchy.getVariableNode((TypeVariable) fromType);
+         VariableNode fromNode = variableHierarchy.getVariableNode((TypeVariable<?>) fromType);
          return fromNode.addMaximumUpperBound(type);
       }
       
       protected boolean addBound(Type type, Type fromType,
             VariableHierarchy variableHierarchy)
       {
-         VariableNode fromNode = variableHierarchy.getVariableNode((TypeVariable) fromType);
+         VariableNode fromNode = variableHierarchy.getVariableNode((TypeVariable<?>) fromType);
          return fromNode.addUpperBound(type);
       }
    };
@@ -216,11 +216,11 @@ public enum AssignabilityAlgorithm
     */
    public static Type[] getConcreteBounds(Type type)
    {
-      TypeVariable current = (TypeVariable) type;
+      TypeVariable<?> current = (TypeVariable<?>) type;
       Type[] bounds = current.getBounds();
       while (bounds.length == 1 && bounds[0] instanceof TypeVariable)
       {
-         current = (TypeVariable) bounds[0];
+         current = (TypeVariable<?>) bounds[0];
          bounds = current.getBounds();
       }
       return bounds;
@@ -231,7 +231,7 @@ public enum AssignabilityAlgorithm
    {
       if (fromType instanceof TypeVariable)
       {
-         Type[] concreteBounds = getConcreteBounds((TypeVariable) fromType);
+         Type[] concreteBounds = getConcreteBounds(fromType);
          try
          {
             variableHierarchy.startRealBoundComparation();

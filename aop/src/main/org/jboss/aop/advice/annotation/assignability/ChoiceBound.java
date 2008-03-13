@@ -33,12 +33,12 @@ import java.util.LinkedList;
  */
 class ChoiceBound implements Type
 {
-   public ChoiceBound(TypeVariable variable, Type[] bounds)
+   public ChoiceBound(TypeVariable<?> variable, Type[] bounds)
    {
       this.variable = variable;
       this.bounds = new LinkedList<Type>();
       Collections.addAll(this.bounds, bounds);
    }
-   TypeVariable variable;
+   TypeVariable<?> variable;
    Collection<Type> bounds;
 }

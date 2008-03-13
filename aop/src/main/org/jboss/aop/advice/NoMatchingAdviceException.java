@@ -67,7 +67,7 @@ public class NoMatchingAdviceException extends RuntimeException
     * @param adviceType       the type of the queried advice
     * @param message          message explaining why no matching advice was found
     */
-   public NoMatchingAdviceException(Class aspectClass, String adviceName)
+   public NoMatchingAdviceException(Class<?> aspectClass, String adviceName)
    {
       super("No matching advice called '" + adviceName + "' could be found in " +
             aspectClass.getName() + ": method was not found");

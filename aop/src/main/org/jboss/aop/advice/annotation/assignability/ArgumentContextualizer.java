@@ -36,7 +36,7 @@ import java.util.ListIterator;
 class ArgumentContextualizer
 {
    public static final Type[] getContextualizedArguments(ParameterizedType paramType,
-         Class rawType, Class desiredType)
+         Class<?> rawType, Class<?> desiredType)
    {
       ArgumentContextualizer contextualizedArguments = getContextualizedArgumentsInternal(
             desiredType, rawType);
@@ -151,7 +151,7 @@ class ArgumentContextualizer
     * @return <code>true</code> if the contextualization process was successfully
     *         performed; </code>false</code> otherwise.
     */
-   private boolean contextualizeVariables(Class subClass, Type superType)
+   private boolean contextualizeVariables(Class<?> subClass, Type superType)
    {
       if (!initialized || variableReplacements.isEmpty())
       {
@@ -227,9 +227,9 @@ class ArgumentContextualizer
       {
          return null;
       }
-      String paramName = ((TypeVariable) argument).getName();
+      String paramName = ((TypeVariable<?>) argument).getName();
       int index = 0;
-      TypeVariable[] typeVariables = declaringClass.getTypeParameters();
+      TypeVariable<?>[] typeVariables = declaringClass.getTypeParameters();
       for (index = 0; index < typeVariables.length; index ++)
       {
          if (typeVariables[index].getName().equals(paramName)){

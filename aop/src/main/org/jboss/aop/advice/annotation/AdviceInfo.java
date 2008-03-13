@@ -47,7 +47,7 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
     */
    public final short getReturnAssignabilityDegree(AdviceMethodProperties properties)
    {
-      Class returnType = this.method.getReturnType();
+      Class<?> returnType = this.method.getReturnType();
       if (returnType == void.class)
       {
          return DegreeAlgorithm.NOT_ASSIGNABLE_DEGREE;
@@ -78,7 +78,7 @@ abstract class AdviceInfo implements Comparable<AdviceInfo>
     */
    public int compareTo(AdviceInfo o)
    {
-      return ((AdviceInfo)o).rank - rank;
+      return o.rank - rank;
    }
    
    public String toString()

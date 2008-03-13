@@ -52,12 +52,12 @@ public class ParameterExpression
    public Pattern[] parameterPatterns;
    public boolean isAll = false;
 
-   protected static String simpleType(Class type)
+   protected static String simpleType(Class<?> type)
    {
-      Class ret = type;
+      Class<?> ret = type;
       if (ret.isArray())
       {
-         Class arr = ret;
+         Class<?> arr = ret;
          String array = "";
          while (arr.isArray())
          {
@@ -85,7 +85,7 @@ public class ParameterExpression
             throw new RuntimeException("Illegal parameter list expression: " + expression);
          }
          StringTokenizer tokenizer = new StringTokenizer(expression, ",");
-         ArrayList paramList = new ArrayList();
+         ArrayList<Pattern> paramList = new ArrayList<Pattern>();
          while (tokenizer.hasMoreTokens())
          {
             String token = tokenizer.nextToken().trim();
@@ -95,11 +95,11 @@ public class ParameterExpression
             token = token.replaceAll("\\]", "\\\\]");
             paramList.add(Pattern.compile(token));
          }
-         parameterPatterns = (Pattern[])paramList.toArray(new Pattern[paramList.size()]);
+         parameterPatterns = paramList.toArray(new Pattern[paramList.size()]);
       }
    }
 
-   public boolean matches(Class[] params)
+   public boolean matches(Class<?>[] params)
    {
       if (isAll)
       {

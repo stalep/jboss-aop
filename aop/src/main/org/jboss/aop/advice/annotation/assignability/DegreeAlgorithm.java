@@ -81,7 +81,7 @@ public class DegreeAlgorithm
          return null;
       }
       Type componentType = ((GenericArrayType) type).getGenericComponentType();
-      Class componentClass = getClassType(componentType);
+      Class<?> componentClass = getClassType(componentType);
       try
       {
          return componentClass.getClassLoader().loadClass(
@@ -136,9 +136,9 @@ public class DegreeAlgorithm
          // if is object, the degree is the size of this interface hierarchy + 1
          if (toType.getName() == "java.lang.Object")
          {
-            ArrayList<Class[]> list1 = new ArrayList<Class[]>();
-            ArrayList<Class[]> list2 = new ArrayList<Class[]>();
-            Class[] fromTypeInterfaces = fromType.getInterfaces();
+            ArrayList<Class<?>[]> list1 = new ArrayList<Class<?>[]>();
+            ArrayList<Class<?>[]> list2 = new ArrayList<Class<?>[]>();
+            Class<?>[] fromTypeInterfaces = fromType.getInterfaces();
             if (fromTypeInterfaces.length == 0)
             {
                return 1;
@@ -147,11 +147,11 @@ public class DegreeAlgorithm
             short degree = 2;
             while (true)
             {
-               for (Class[] interfaces : list1)
+               for (Class<?>[] interfaces : list1)
                {
                   for (int i = 0; i < interfaces.length; i++)
                   {
-                     Class[] superInterfaces = interfaces[i].getInterfaces();
+                     Class<?>[] superInterfaces = interfaces[i].getInterfaces();
                      if (superInterfaces.length == 0)
                      {
                         return degree;
@@ -161,7 +161,7 @@ public class DegreeAlgorithm
                }
                degree ++;
                list1.clear();
-               ArrayList<Class[]> temp = list1;
+               ArrayList<Class<?>[]> temp = list1;
                list1 = list2;
                list2 = temp;
             }
@@ -195,7 +195,7 @@ public class DegreeAlgorithm
          return DegreeAlgorithm.NOT_ASSIGNABLE_DEGREE;
       }
       
-      Class[] interfaces = fromClassType.getInterfaces();
+      Class<?>[] interfaces = fromClassType.getInterfaces();
       for (int i = 0 ; i < interfaces.length ; i++)
       {
          if(interfaces[i] == toInterfaceType)
@@ -235,7 +235,7 @@ public class DegreeAlgorithm
    private short getInterfaceInheritanceAD(Class<?> fromInterfaceType,
          Class<?> toInterfaceType, short currentDegree)
    {
-      Class[] interfaces = fromInterfaceType.getInterfaces();
+      Class<?>[] interfaces = fromInterfaceType.getInterfaces();
       currentDegree ++;
       for (int i = 0; i < interfaces.length; i++)
       {

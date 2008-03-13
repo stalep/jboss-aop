@@ -1,5 +1,7 @@
 package org.jboss.aop.advice.annotation;
 
+import java.lang.annotation.Annotation;
+
 import org.jboss.aop.advice.AdviceMethodProperties;
 import org.jboss.aop.joinpoint.FieldReadInvocation;
 import org.jboss.aop.joinpoint.Invocation;
@@ -123,8 +125,8 @@ enum ParameterAnnotationRule
       } 
    };
    
-   private Class annotation;
-   private Class assignableFrom;
+   private Class<? extends Annotation> annotation;
+   private Class<?> assignableFrom;
    private int rankGrade;
    private boolean mandatory;
    private boolean singleEnforced;
@@ -146,7 +148,7 @@ enum ParameterAnnotationRule
     *                        annotation</code> in the advice method parameters is
     *                        forbidden
     */
-   private ParameterAnnotationRule(Class annotation, Class assignableFrom, int property,
+   private ParameterAnnotationRule(Class<? extends Annotation> annotation, Class<?> assignableFrom, int property,
          int rankGrade, boolean mandatory, boolean singleEnforced)
    {
       this.annotation = annotation;
@@ -161,7 +163,7 @@ enum ParameterAnnotationRule
     * Returns the annotation associated with this rule.
     * @return the annotation associated with this rule.
     */
-   public final Class getAnnotation()
+   public final Class<? extends Annotation> getAnnotation()
    {
       return annotation;
    }

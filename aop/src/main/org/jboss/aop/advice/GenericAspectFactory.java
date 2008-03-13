@@ -48,9 +48,9 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
 {
    private static final Logger logger = AOPLogger.getLogger(GenericAspectFactory.class);
    
-   final static Class[] ADVISOR_INJECTOR_SIGNATURE = new Class[]{Advisor.class};
-   final static Class[] INSTANCE_ADVISOR_INJECTOR_SIGNATURE = new Class[]{InstanceAdvisor.class};
-   final static Class[] JOINPOINT_INJECTOR_SIGNATURE = new Class[]{Joinpoint.class};
+   final static Class<?>[] ADVISOR_INJECTOR_SIGNATURE = new Class[]{Advisor.class};
+   final static Class<?>[] INSTANCE_ADVISOR_INJECTOR_SIGNATURE = new Class[]{InstanceAdvisor.class};
+   final static Class<?>[] JOINPOINT_INJECTOR_SIGNATURE = new Class[]{Joinpoint.class};
 
    private String classname;
    private Element element;
@@ -100,7 +100,7 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
    /**
     * @deprecated Not public API
     */
-   public Class getClazz()
+   public Class<?> getClazz()
    {
       try
       {
@@ -112,7 +112,7 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
       }
    }
    
-   private Class getClazz(Advisor advisor)
+   private Class<?> getClazz(Advisor advisor)
    {
       try
       {
@@ -120,7 +120,7 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
          if (advisor != null)
          {
             //Get the correct classloader based on the class of the advisor
-            Class clazz = advisor.getClazz();
+            Class<?> clazz = advisor.getClazz();
             cl = (clazz != null) ? clazz.getClassLoader() : advisor.getClass().getClassLoader(); 
          }
          if (cl != null)
@@ -273,7 +273,7 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
          if (attributeName.equalsIgnoreCase(descriptors[i].getName()))
          {
             foundProperty = true;
-            Class typeClass = descriptors[i].getPropertyType();
+            Class<?> typeClass = descriptors[i].getPropertyType();
 
             Object value;
             PropertyEditor editor = PropertyEditorManager.findEditor(typeClass);

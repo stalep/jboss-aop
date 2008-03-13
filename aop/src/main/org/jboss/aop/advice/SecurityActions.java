@@ -48,7 +48,7 @@ public class SecurityActions
          {
             try
             {
-               AccessController.doPrivileged(new PrivilegedExceptionAction()
+               AccessController.doPrivileged(new PrivilegedExceptionAction<Object>()
                {
                   public Object run() throws Exception
                   {
@@ -89,11 +89,14 @@ public class SecurityActions
       class name to editor name algorithm. For example, the type String[] has
       a name '[Ljava.lang.String;' which does not map to a XXXEditor name.
       */
-      Class strArrayType = String[].class;
+      Class<String[]> strArrayType = String[].class;
       PropertyEditorManager.registerEditor(strArrayType, StringArrayEditor.class);
-      Class clsArrayType = Class[].class;
+      
+      @SuppressWarnings("unchecked")
+      Class<Class[]> clsArrayType = Class[].class;
       PropertyEditorManager.registerEditor(clsArrayType, ClassArrayEditor.class);
-      Class intArrayType = int[].class;
+      
+      Class<int[]> intArrayType = int[].class;
       PropertyEditorManager.registerEditor(intArrayType, IntArrayEditor.class);
    }
 

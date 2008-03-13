@@ -115,7 +115,7 @@ public class AdviceMethodFactory
                      + method.getReturnType() + " instead of java.lang.Object");
                }
                // throws Throwable
-               for (Class exceptionType: method.getExceptionTypes())
+               for (Class<?> exceptionType: method.getExceptionTypes())
                {
                   if (exceptionType == Throwable.class)
                   {

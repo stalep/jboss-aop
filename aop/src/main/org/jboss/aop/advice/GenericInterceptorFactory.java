@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 
 public class GenericInterceptorFactory implements InterceptorFactory
 {
-   private WeakReference<Class> classRef = null;
+   private WeakReference<Class<?>> classRef = null;
    private String classname;
    private Element element;
    private boolean deployed = true;
@@ -45,9 +45,9 @@ public class GenericInterceptorFactory implements InterceptorFactory
       this.element = element;
    }
 
-   public GenericInterceptorFactory(Class clazz)
+   public GenericInterceptorFactory(Class<?> clazz)
    {
-      this.classRef = new WeakReference<Class>(clazz);
+      this.classRef = new WeakReference<Class<?>>(clazz);
       this.classname = clazz.getName();
    }
 
@@ -78,7 +78,7 @@ public class GenericInterceptorFactory implements InterceptorFactory
    {
       try
       {
-         Class clazz = null;
+         Class<?> clazz = null;
          synchronized (this)
          {
             if (classRef != null)
@@ -89,7 +89,7 @@ public class GenericInterceptorFactory implements InterceptorFactory
             {
                // FIXME ClassLoader - why should the class be visible from the context classloader?
                clazz = SecurityActions.getContextClassLoader().loadClass(classname);
-               classRef = new WeakReference<Class>(clazz);
+               classRef = new WeakReference<Class<?>>(clazz);
             }
          }
          Interceptor interceptor = (Interceptor)clazz.newInstance();
