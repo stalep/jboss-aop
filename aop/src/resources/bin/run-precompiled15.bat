@@ -45,7 +45,7 @@ goto setupArgs
 REM Setup AOP classpath
 SET AOPC_CLASSPATH=..\lib-50\javassist.jar
 SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-aop-jdk50-client.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-container-metadata-spi.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-container.jar
 SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-logging-log4j.jar
 SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-logging-spi.jar
 SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-standalone-aspect-library-jdk50.jar

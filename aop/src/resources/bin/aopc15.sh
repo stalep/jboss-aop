@@ -75,7 +75,7 @@ fi
 
 AOPC_CLASSPATH=../lib-50/javassist.jar
 AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-aop-jdk50-client.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-container-metadata-spi.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-container.jar
 AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-logging-log4j.jar
 AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-logging-spi.jar
 AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-standalone-aspect-library-jdk50.jar
