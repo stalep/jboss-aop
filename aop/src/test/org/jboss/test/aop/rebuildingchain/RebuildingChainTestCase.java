@@ -23,11 +23,8 @@ package org.jboss.test.aop.rebuildingchain;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import junit.textui.TestRunner;
 
-import org.jboss.aop.AspectManager;
 import org.jboss.test.aop.AOPTestWithSetup;
-import org.jboss.test.aop.override.OverrideTestCase;
 
 /**
  * A TestRebuildingChain.
@@ -60,10 +57,30 @@ public class RebuildingChainTestCase extends AOPTestWithSetup
       RebuildThread rt = new RebuildThread();
       rt.linkNewAdvice();
       
+      Thread.currentThread().sleep(10000);
+      
+      rt.start();
+      //rt.join();
+      st.start();
+      
+      rt.join();
+      st.join();
+      
+      assertFalse("Failed to match pointcut when rebuilding the chain....", failed);
+   }
+   
+   public void testRebuildingChainWithJoin() throws Exception
+   {
+      System.out.println("testing rebuildingchain!");
+//      AspectManager.instance().verbose = true;
+      SyncThread st = new SyncThread();
+      RebuildThread rt = new RebuildThread();
+      rt.linkNewAdvice();
+      
       rt.start();
       st.start();
       
-      try
+      /*try
       {
          long start = System.currentTimeMillis();
          Thread.sleep(20);
@@ -73,9 +90,12 @@ public class RebuildingChainTestCase extends AOPTestWithSetup
       {
          System.err.println("BAH "+ie.getMessage());
       }
+      */
+      //st.setDone(true);
+      //rt.setDone(true);
       
-      st.setDone(true);
-      rt.setDone(true);
+      st.join();
+      rt.join();
       
       assertFalse("Failed to match pointcut when rebuilding the chain....", failed);
    }
@@ -85,7 +105,7 @@ public class RebuildingChainTestCase extends AOPTestWithSetup
       failed = true;
    }
    
-   public static void main(String[] args)throws Exception
+   /*public static void main(String[] args)throws Exception
    {
       try
       {
@@ -96,5 +116,5 @@ public class RebuildingChainTestCase extends AOPTestWithSetup
       {
          System.err.println(e);
       }
-   }
+   }*/
 }

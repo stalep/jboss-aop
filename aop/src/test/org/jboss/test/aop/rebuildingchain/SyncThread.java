@@ -29,25 +29,23 @@ package org.jboss.test.aop.rebuildingchain;
  */
 public class SyncThread extends Thread
 {
+   private static Object lock = new Object();
    private static volatile boolean status = false;
-   private volatile boolean done = false;
-
+   
    @Override
    public void run()
    {
-
-         for(int i=0; i < 30; i++)
-         {
+      for(int i=0; i < 30; i++)
+      {
+         
          checkStatus();
-         
-         if(isDone())
-            return;
-         
       }
    }
    
    private void checkStatus()
    {
+      long time = System.currentTimeMillis();
+      System.out.println("CHECKING STATUS: " + time);
       System.out.println("ST checking status...");
       if(getStatus() == false)
       {
@@ -58,21 +56,17 @@ public class SyncThread extends Thread
 
    public static boolean getStatus()
    {
-      return status;
+      synchronized(lock)
+      {
+        return status;
+      }
    }
    
    public static void setStatus(boolean b)
    {
-      status = b;
-   }
-   
-   public void setDone(boolean b)
-   {
-      done = b;
-   }
-   
-   private boolean isDone()
-   {
-      return done;
+      synchronized(lock)
+      {
+         status = b;
+      }
    }
 }

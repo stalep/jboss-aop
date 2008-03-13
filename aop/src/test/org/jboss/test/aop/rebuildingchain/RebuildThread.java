@@ -33,8 +33,8 @@ import org.jboss.aop.pointcut.ast.ParseException;
  */
 public class RebuildThread extends Thread
 {
-   private static volatile boolean done = false;
-
+   
+   
    @Override
    public void run()
    {
@@ -42,23 +42,10 @@ public class RebuildThread extends Thread
       {
          linkNewAdvice("Test" + i);
          unlinkAdvice("Test" + i);
-
-         if(isDone())
-            return;
       }
 
    }
-   
-   public  void setDone(boolean b)
-   {
-      done = b;
-   }
-   
-   public boolean isDone()
-   {
-      return done;
-   }
-   
+
    public void linkNewAdvice()
    {
       linkNewAdvice("Base");
@@ -66,7 +53,7 @@ public class RebuildThread extends Thread
     
    private void linkNewAdvice(String name)
    {
-     System.out.println("adding new advice" + name);
+      //System.out.println("adding new advice" + name);
       AdviceBinding binding1 = null;
       try
       {
@@ -83,7 +70,7 @@ public class RebuildThread extends Thread
    
    private void unlinkAdvice(String name)
    {
-      System.out.println("unlinking " + name); 
+      //System.out.println("unlinking " + name); 
       AspectManager.instance().removeBinding(name);
    }
   
