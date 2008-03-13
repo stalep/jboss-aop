@@ -30,7 +30,7 @@ import java.lang.reflect.Constructor;
  */
 public class ConstructorPersistentReference extends ArgumentPersistentReference
 {
-   public ConstructorPersistentReference (Constructor constructor, int referenceType)
+   public ConstructorPersistentReference (Constructor<?> constructor, int referenceType)
    {
       super(constructor !=null ? constructor.getDeclaringClass() : null, constructor, referenceType);
       if (constructor != null)
@@ -46,13 +46,13 @@ public class ConstructorPersistentReference extends ArgumentPersistentReference
       Object returnValue = null;
       if ((returnValue = internalGet())!=null) return returnValue;
       
-      Constructor constructor = getMappedClass().getDeclaredConstructor(getArguments());
+      Constructor<?> constructor = getMappedClass().getDeclaredConstructor(getArguments());
       buildReference(constructor);
       return constructor;
    }
 
-   public Constructor getConstructor()
+   public Constructor<?> getConstructor()
    {
-      return (Constructor) get();
+      return (Constructor<?>) get();
    }
 }

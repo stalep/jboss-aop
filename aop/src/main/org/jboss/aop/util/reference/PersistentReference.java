@@ -40,8 +40,8 @@ public abstract class PersistentReference
 	public static final int REFERENCE_WEAK=1;
 	public static final int REFERENCE_SOFT=2;
 
-   private WeakReference classReference;
-  	private Reference referencedObject;
+   private WeakReference<Class<?>> classReference;
+  	private Reference<Object> referencedObject;
 	private int referenceType=0;
 
    	/**
@@ -50,12 +50,12 @@ public abstract class PersistentReference
    	 * @param referencedObject  The reflection object being used
    	 * @param referenceType if REFERENCE_WEAK will use a WeakReference, and if REFERENCE_SOFT will use a SoftReference for referencedObject
    	 */
-   	public PersistentReference(Class clazz, Object referencedObject, int referenceType)
+   	public PersistentReference(Class<?> clazz, Object referencedObject, int referenceType)
 	{
    		this.referenceType=referenceType;
 		if (clazz!=null)
 		{
-			classReference = new WeakReference(clazz);
+			classReference = new WeakReference<Class<?>>(clazz);
 		}
 		buildReference(referencedObject);
 	}
@@ -104,24 +104,24 @@ public abstract class PersistentReference
 		{
 			if (referenceType==REFERENCE_WEAK)
 			{
-				referencedObject = new WeakReference(obj);
+				referencedObject = new WeakReference<Object>(obj);
 			}
 			else
 			{
-				referencedObject = new SoftReference(obj);
+				referencedObject = new SoftReference<Object>(obj);
 			}
 		}
 	}
 	
-	public Class getMappedClass()
+	public Class<?> getMappedClass()
 	{
 		if (classReference==null) return null;
-		Class returnClass = (Class)classReference.get();
+		Class<?> returnClass = classReference.get();
 		if (returnClass==null)
 		{
 			throw new RuntimeException("Class was already unloaded");
 		}
-		return (Class)returnClass;
+		return returnClass;
 	}
 	
 }

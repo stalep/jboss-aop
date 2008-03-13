@@ -33,22 +33,22 @@ import java.lang.ref.WeakReference;
  */
 public abstract class ArgumentPersistentReference extends PersistentReference 
 {
-	public ArgumentPersistentReference(Class clazz, Object referencedObject, int referenceType) {
+	public ArgumentPersistentReference(Class<?> clazz, Object referencedObject, int referenceType) {
 		super(clazz, referencedObject, referenceType);
 	}
 
-	WeakReference[] arguments;
+	WeakReference<Class<?>>[] arguments;
 	
-	public void setArguments(Class[] parguments)
+	public void setArguments(Class<?>[] parguments)
 	{
 		this.arguments = new WeakReference[parguments.length];
 		for (int i=0;i<arguments.length;i++)
 		{
-			this.arguments[i] = new WeakReference(parguments[i]);
+			this.arguments[i] = new WeakReference<Class<?>>(parguments[i]);
 		}
 	}
 	
-	public Class[] getArguments()
+	public Class<?>[] getArguments()
 	{
 		if (arguments==null)
 		{
@@ -56,10 +56,10 @@ public abstract class ArgumentPersistentReference extends PersistentReference
 		}
 		else
 		{
-			Class argumentsReturn[] = new Class[arguments.length];
+			Class<?> argumentsReturn[] = new Class[arguments.length];
 			for (int i=0;i<arguments.length;i++)
 			{
-				argumentsReturn[i] = (Class)arguments[i].get();
+				argumentsReturn[i] = arguments[i].get();
 			}
 			return argumentsReturn;
 		}
