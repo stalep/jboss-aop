@@ -21,6 +21,7 @@
   */
 package org.jboss.aop;
 
+import java.lang.ref.WeakReference;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -603,11 +604,11 @@ public class Domain extends AspectManager
    }
 
    @Override
-   public Map getPerVMAspects()
+   public Map<String, Object> getPerVMAspects()
    {
       if (inheritsBindings)
       {
-         HashMap map = new HashMap();
+         HashMap<String, Object> map = new HashMap<String, Object>();
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
@@ -632,20 +633,20 @@ public class Domain extends AspectManager
    }
 
    @Override
-   public LinkedHashMap getPrecedenceDefs()
+   public LinkedHashMap<String, PrecedenceDef> getPrecedenceDefs()
    {
       if (inheritsDeclarations)
       {
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
-            LinkedHashMap map = new LinkedHashMap(parent.getPrecedenceDefs());
+            LinkedHashMap<String, PrecedenceDef> map = new LinkedHashMap<String, PrecedenceDef>(parent.getPrecedenceDefs());
             map.putAll(this.precedenceDefs);
             return map;
          }
          else
          {
-            LinkedHashMap map = new LinkedHashMap(this.precedenceDefs);
+            LinkedHashMap<String, PrecedenceDef> map = new LinkedHashMap<String, PrecedenceDef>(this.precedenceDefs);
             map.putAll(parent.getPrecedenceDefs());
             return map;
          }
@@ -846,7 +847,7 @@ public class Domain extends AspectManager
    }
 
    @Override
-   public void attachMetaData(Advisor advisor, Class clazz)
+   public void attachMetaData(Advisor advisor, Class<?> clazz)
    {
       if (inheritsBindings)
       {
@@ -965,13 +966,13 @@ public class Domain extends AspectManager
          if (!parentFirst)
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
-            LinkedHashMap map = new LinkedHashMap(parent.getLifecycleBindings());
+            LinkedHashMap<String, LifecycleCallbackBinding> map = new LinkedHashMap<String, LifecycleCallbackBinding>(parent.getLifecycleBindings());
             map.putAll(super.getLifecycleBindings());
             return map;
          }
          else
          {
-            LinkedHashMap map = new LinkedHashMap(super.getLifecycleBindings());
+            LinkedHashMap<String, LifecycleCallbackBinding> map = new LinkedHashMap<String, LifecycleCallbackBinding>(super.getLifecycleBindings());
             map.putAll(parent.getLifecycleBindings());
             return map;
          }
@@ -992,28 +993,28 @@ public class Domain extends AspectManager
 
    /** Managed by the top-level aspect manager */
    @Override
-   protected Map getSubDomainsPerClass()
+   protected Map<Class<?>, WeakReference<Domain>> getSubDomainsPerClass()
    {
       return parent.getSubDomainsPerClass();
    }
 
    /** Only set on a per vm basis */
    @Override
-   public ArrayList getExclude()
+   public ArrayList<String> getExclude()
    {
       return parent.getExclude();
    }
 
    /** Only set on a per vm basis */
    @Override
-   public ArrayList getInclude()
+   public ArrayList<String> getInclude()
    {
       return parent.getInclude();
    }
 
    /** Only set on a per vm basis */
    @Override
-   public ArrayList getIgnore()
+   public ArrayList<String> getIgnore()
    {
       return parent.getIgnore();
    }

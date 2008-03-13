@@ -24,6 +24,8 @@ package org.jboss.aop.instrument;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.jboss.aop.MethodInfo;
+
 import javassist.CtClass;
 
 /**
@@ -65,25 +67,25 @@ public class JoinpointStatusUpdate
        * The field read joinpoints.
        * A collection of <code>java.lang.Integer</code>.
        */
-      public Collection fieldReads;
+      public Collection<Integer> fieldReads;
 
       /**
        * The field write joinponts.
        * A collection of <code>java.lang.Integer</code>.
        */
-      public Collection fieldWrites;
+      public Collection<Integer> fieldWrites;
       
       /**
        * The constructor execution joinpoints.
        * A collection of <code>java.lang.Integer</code>.
        */
-      public Collection constructorExecutions;
+      public Collection<Integer> constructorExecutions;
       
       /**
        * The method execution joinpoints.
-       * A collection of <code>org.jboss.aop.MethodJoinPoint</code>.
+       * A collection of <code>org.jboss.aop.MethodInfo</code>.
        */
-      public Collection methodExecutions;
+      public Collection<MethodInfo> methodExecutions;
       
       /**
        * Constructor.
@@ -95,10 +97,10 @@ public class JoinpointStatusUpdate
        * instance may contain.
        */
       public ClassJoinpoints(int fields, int constructors, int methods) {
-         this.fieldReads = new ArrayList(fields);
-         this.fieldWrites = new ArrayList(fields);
-         this.constructorExecutions = new ArrayList(constructors);
-         this.methodExecutions = new ArrayList(methods);
+         this.fieldReads = new ArrayList<Integer>(fields);
+         this.fieldWrites = new ArrayList<Integer>(fields);
+         this.constructorExecutions = new ArrayList<Integer>(constructors);
+         this.methodExecutions = new ArrayList<MethodInfo>(methods);
       }     
       
       /**

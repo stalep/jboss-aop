@@ -33,7 +33,6 @@ import org.jboss.aop.metadata.SimpleMetaData;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 
 /**
  * Adapts the old instance advisor api to the new generated advisor stuff. 
@@ -92,22 +91,22 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
 
    public Interceptor[] getInterceptors()
    {
-      ArrayList newlist = new ArrayList();
-      if (insertedInterceptors != null) 
+      ArrayList<Interceptor> newlist = new ArrayList<Interceptor>();
+      if (insertedInterceptors != null && insertedInterceptors.size() > 0) 
       {
-         for (Iterator it = insertedInterceptors.iterator() ; it.hasNext() ; )
+         for (Interceptor icptr : insertedInterceptors)
          {
-            newlist.add(((GeneratedAdvisorInterceptor)it.next()).create(null, null));
+            newlist.add(((GeneratedAdvisorInterceptor)icptr).create(null, null));
          }
       }
-      if (appendedInterceptors != null) 
+      if (appendedInterceptors != null && appendedInterceptors.size() > 0) 
       {
-         for (Iterator it = appendedInterceptors.iterator() ; it.hasNext() ; )
+         for (Interceptor icptr : appendedInterceptors)
          {
-            newlist.add(((GeneratedAdvisorInterceptor)it.next()).create(null, null));
+            newlist.add(((GeneratedAdvisorInterceptor)icptr).create(null, null));
          }
       }
-      return (Interceptor[]) newlist.toArray(new Interceptor[newlist.size()]);
+      return newlist.toArray(new Interceptor[newlist.size()]);
    }
 
    /**
@@ -116,34 +115,34 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
    public Interceptor[] getInterceptors(Interceptor[] advisorChain)
    {
       if (insertedInterceptors == null && appendedInterceptors == null) return advisorChain;
-      ArrayList newlist = new ArrayList();
-      if (insertedInterceptors != null) 
+      ArrayList<Interceptor> newlist = new ArrayList<Interceptor>();
+      if (insertedInterceptors != null && insertedInterceptors.size() > 0) 
       {
-         for (Iterator it = insertedInterceptors.iterator() ; it.hasNext() ; )
+         for (Interceptor icptr : insertedInterceptors)
          {
-            newlist.add(((GeneratedAdvisorInterceptor)it.next()).create(null, null));
+            newlist.add(((GeneratedAdvisorInterceptor)icptr).create(null, null));
          }
       }
       if (advisorChain != null)
       {
          newlist.addAll(Arrays.asList(advisorChain));
       }
-      if (appendedInterceptors != null) 
+      if (appendedInterceptors != null && appendedInterceptors.size() > 0) 
       {
-         for (Iterator it = appendedInterceptors.iterator() ; it.hasNext() ; )
+         for (Interceptor icptr : appendedInterceptors)
          {
-            newlist.add(((GeneratedAdvisorInterceptor)it.next()).create(null, null));
+            newlist.add(((GeneratedAdvisorInterceptor)icptr).create(null, null));
          }
       }
-      return (Interceptor[]) newlist.toArray(new Interceptor[newlist.size()]);
+      return newlist.toArray(new Interceptor[newlist.size()]);
    }
 
    public GeneratedAdvisorInterceptor[] getWrappers()
    {
-      ArrayList newlist = new ArrayList();
+      ArrayList<Interceptor> newlist = new ArrayList<Interceptor>();
       if (insertedInterceptors != null) newlist.addAll(insertedInterceptors);
       if (appendedInterceptors != null) newlist.addAll(appendedInterceptors);
-      return (GeneratedAdvisorInterceptor[]) newlist.toArray(new GeneratedAdvisorInterceptor[newlist.size()]);
+      return newlist.toArray(new GeneratedAdvisorInterceptor[newlist.size()]);
    }
 
    /**
@@ -154,20 +153,20 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
    public Interceptor[] getWrappers(Interceptor[] advisorChain)
    {
       if (insertedInterceptors == null && appendedInterceptors == null) return advisorChain;
-      ArrayList newlist = new ArrayList();
+      ArrayList<Interceptor> newlist = new ArrayList<Interceptor>();
       if (insertedInterceptors != null) newlist.addAll(insertedInterceptors);
       if (advisorChain != null)
       {
          newlist.addAll(Arrays.asList(advisorChain));
       }
       if (appendedInterceptors != null) newlist.addAll(appendedInterceptors);
-      return (GeneratedAdvisorInterceptor[]) newlist.toArray(new GeneratedAdvisorInterceptor[newlist.size()]);
+      return newlist.toArray(new GeneratedAdvisorInterceptor[newlist.size()]);
    }
 
    public void insertInterceptor(int index, Interceptor interceptor)
    {
-      ArrayList newList = new ArrayList();
-      if (insertedInterceptors != null)
+      ArrayList<Interceptor> newList = new ArrayList<Interceptor>();
+      if (insertedInterceptors != null && insertedInterceptors.size() > 0)
       {
          newList.addAll(insertedInterceptors);
       }
@@ -182,8 +181,8 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
 
    public void insertInterceptor(Interceptor interceptor)
    {
-      ArrayList newList = new ArrayList();
-      if (insertedInterceptors != null)
+      ArrayList<Interceptor> newList = new ArrayList<Interceptor>();
+      if (insertedInterceptors != null && insertedInterceptors.size() > 0)
       {
          newList.addAll(insertedInterceptors);
       }
@@ -199,7 +198,7 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
    public void appendInterceptor(Interceptor interceptor)
    {
       ArrayList<Interceptor> newList = new ArrayList<Interceptor>();
-      if (appendedInterceptors != null)
+      if (appendedInterceptors != null && appendedInterceptors.size() > 0)
       {
          newList.addAll(appendedInterceptors);
       }
@@ -214,8 +213,8 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
 
    public void appendInterceptor(int index, Interceptor interceptor)
    {
-      ArrayList newList = new ArrayList();
-      if (appendedInterceptors != null)
+      ArrayList<Interceptor> newList = new ArrayList<Interceptor>();
+      if (appendedInterceptors != null && appendedInterceptors.size() > 0)
       {
          newList.addAll(appendedInterceptors);
       }
@@ -249,12 +248,13 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
       int interceptorsRemoved = 0;
       if (insertedInterceptors != null)
       {
-         for (int i = 0; i < insertedInterceptors.size(); i++)
+         int size = insertedInterceptors.size();
+         for (int i = 0; i < size ; i++)
          {
             GeneratedAdvisorInterceptor interceptor = (GeneratedAdvisorInterceptor) insertedInterceptors.get(i);
             if (interceptor.getName().equals(name))
             {
-               ArrayList newList = new ArrayList();
+               ArrayList<Interceptor> newList = new ArrayList<Interceptor>();
                newList.addAll(insertedInterceptors);
                newList.remove(i);
                insertedInterceptors = newList;
@@ -264,12 +264,13 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
       }
       if (appendedInterceptors != null)
       {
-         for (int i = 0; i < appendedInterceptors.size(); i++)
+         int size = appendedInterceptors.size();
+         for (int i = 0; i < size ; i++)
          {
             GeneratedAdvisorInterceptor interceptor = (GeneratedAdvisorInterceptor) appendedInterceptors.get(i);
             if (interceptor.getName().equals(name))
             {
-               ArrayList newList = new ArrayList();
+               ArrayList<Interceptor> newList = new ArrayList<Interceptor>();
                newList.addAll(appendedInterceptors);
                newList.remove(i);
                appendedInterceptors = newList;
@@ -300,10 +301,8 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
          classAdvisor = ((ClassAdvisor) advised._getAdvisor());
       }
       int interceptorsAdded = 0;
-      Iterator it = stack.getInterceptorFactories().iterator();
-      while (it.hasNext())
+      for (InterceptorFactory factory : stack.getInterceptorFactories())
       {
-         InterceptorFactory factory = (InterceptorFactory) it.next();
          if (!factory.isDeployed()) continue;
          Interceptor interceptor = factory.create(classAdvisor, null);
          insertInterceptor(interceptor);
@@ -328,10 +327,8 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
          classAdvisor = ((ClassAdvisor) advised._getAdvisor());
       }
       int interceptorsAdded = 0;
-      Iterator it = stack.getInterceptorFactories().iterator();
-      while (it.hasNext())
+      for (InterceptorFactory factory : stack.getInterceptorFactories())
       {
-         InterceptorFactory factory = (InterceptorFactory) it.next();
          if (!factory.isDeployed()) continue;
          Interceptor interceptor = factory.create(classAdvisor, null);
          appendInterceptor(interceptor);
@@ -356,10 +353,8 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
          classAdvisor = ((ClassAdvisor) advised._getAdvisor());
       }
       int interceptorsRemoved = 0;
-      Iterator it = stack.getInterceptorFactories().iterator();
-      while (it.hasNext())
+      for (InterceptorFactory factory : stack.getInterceptorFactories())
       {
-         InterceptorFactory factory = (InterceptorFactory) it.next();
          if (!factory.isDeployed()) continue;
          Interceptor interceptor = factory.create(classAdvisor, null);
          interceptorsRemoved += internalRemoveInterceptor(interceptor.getName());

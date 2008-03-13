@@ -36,7 +36,7 @@ import org.jboss.aop.util.MethodHashing;
  */
 public class ConstructionInfo extends JoinPointInfo implements Construction
 {
-   private Constructor constructor;
+   private Constructor<?> constructor;
    private int index;
 
    public ConstructionInfo()
@@ -44,7 +44,7 @@ public class ConstructionInfo extends JoinPointInfo implements Construction
       
    }
    
-   public ConstructionInfo(Class clazz, int index, long constructorHash, Advisor advisor)
+   public ConstructionInfo(Class<?> clazz, int index, long constructorHash, Advisor advisor)
    {
       super(advisor, clazz);
       try
@@ -88,12 +88,12 @@ public class ConstructionInfo extends JoinPointInfo implements Construction
       return sb.toString();
    }
 
-   public void setConstructor(Constructor constructor)
+   public void setConstructor(Constructor<?> constructor)
    {
       this.constructor = constructor;
    }
 
-   public Constructor getConstructor()
+   public Constructor<?> getConstructor()
    {
       return constructor;
    }

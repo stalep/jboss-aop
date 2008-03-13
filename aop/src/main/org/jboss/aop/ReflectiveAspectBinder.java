@@ -34,13 +34,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.jboss.aop.advice.AdviceBinding;
+import org.jboss.aop.advice.AspectDefinition;
+import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.introduction.AnnotationIntroduction;
 import org.jboss.aop.microcontainer.lifecycle.LifecycleCallbackBinding;
 import org.jboss.aop.microcontainer.lifecycle.LifecycleCallbackDefinition;
@@ -48,8 +49,6 @@ import org.jboss.aop.pointcut.AnnotationMatcher;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
 import org.jboss.aop.proxy.container.InstanceProxyContainer;
 import org.jboss.aop.util.Advisable;
-import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 import org.jboss.util.MethodHashing;
 
 /**
@@ -59,12 +58,12 @@ import org.jboss.util.MethodHashing;
  */
 public class ReflectiveAspectBinder
 {
-   protected Class clazz;
-   protected HashSet aspects = new HashSet();
-   protected HashMap methodAdvices = new HashMap();
-   protected HashMap constructorAdvices = new HashMap();
-   protected HashMap fieldReadAdvices = new HashMap();
-   protected HashMap fieldWriteAdvices = new HashMap();
+   protected Class<?> clazz;
+   protected HashSet<AspectDefinition> aspects = new HashSet<AspectDefinition>();
+   protected HashMap<Method, ArrayList<InterceptorFactory>> methodAdvices = new HashMap<Method, ArrayList<InterceptorFactory>>();
+   protected HashMap<Constructor<?>, ArrayList<InterceptorFactory>> constructorAdvices = new HashMap<Constructor<?>, ArrayList<InterceptorFactory>>();
+   protected HashMap<Field, ArrayList<InterceptorFactory>> fieldReadAdvices = new HashMap<Field, ArrayList<InterceptorFactory>>();
+   protected HashMap<Field, ArrayList<InterceptorFactory>> fieldWriteAdvices = new HashMap<Field, ArrayList<InterceptorFactory>>();
    protected Advisor advisor;
    protected boolean isInstanceContainer;
    TLongObjectHashMap methodMap = new TLongObjectHashMap();
@@ -74,23 +73,23 @@ public class ReflectiveAspectBinder
    boolean initialisedAspects;
    boolean intitialisedLifecycleCallbacks;
    
-   public ReflectiveAspectBinder(Class clazz, Advisor advisor)
+   public ReflectiveAspectBinder(Class<?> clazz, Advisor advisor)
    {
       this.clazz = clazz;
       this.advisor = advisor;
       isInstanceContainer = InstanceProxyContainer.class == advisor.getClass();
    }
 
-   public Class getClazz()
+   public Class<?> getClazz()
    {
       return clazz;
    }
 
-   public HashSet getAspects()
+   public HashSet<AspectDefinition> getAspects()
    {
       if (!initialisedAspects)
       {
-         Map bindings = advisor.getManager().getBindings();
+         Map<String, AdviceBinding> bindings = advisor.getManager().getBindings();
          bindMethodAdvices(clazz, bindings);
          bindConstructorAdvices(bindings);
          bindFieldAdvices(bindings);
@@ -107,27 +106,27 @@ public class ReflectiveAspectBinder
       return lifecycleCallbacks;
    }
    
-   public HashMap getMethodAdvices()
+   public HashMap<Method, ArrayList<InterceptorFactory>> getMethodAdvices()
    {
       return methodAdvices;
    }
 
-   public HashMap getConstructorAdvices()
+   public HashMap<Constructor<?>, ArrayList<InterceptorFactory>> getConstructorAdvices()
    {
       return constructorAdvices;
    }
 
-   public HashMap getFieldReadAdvices()
+   public HashMap<Field, ArrayList<InterceptorFactory>> getFieldReadAdvices()
    {
       return fieldReadAdvices;
    }
 
-   public HashMap getFieldWriteAdvices()
+   public HashMap<Field, ArrayList<InterceptorFactory>> getFieldWriteAdvices()
    {
       return fieldWriteAdvices;
    }
 
-   public void createMethodMap(final Class superClass)
+   public void createMethodMap(final Class<?> superClass)
    {
       try
       {
@@ -137,9 +136,9 @@ public class ReflectiveAspectBinder
          }
          createMethodMap(superClass.getSuperclass());
          
-         Method[] methods = (Method[]) AccessController.doPrivileged(new PrivilegedExceptionAction() 
+         Method[] methods = AccessController.doPrivileged(new PrivilegedExceptionAction<Method[]>() 
          {
-            public Object run() throws Exception
+            public Method[] run() throws Exception
             {
                return superClass.getDeclaredMethods();
             }
@@ -165,7 +164,7 @@ public class ReflectiveAspectBinder
       }
    }
    
-   protected void bindMethodAdvices(Class superClass, Map bindings)
+   protected void bindMethodAdvices(Class<?> superClass, Map<String, AdviceBinding> bindings)
    {
       createMethodMap(superClass); 
       if (methodMap != null)
@@ -178,11 +177,11 @@ public class ReflectiveAspectBinder
       }
    }
 
-   protected void bindConstructorAdvices(Map bindings)
+   protected void bindConstructorAdvices(Map<String, AdviceBinding> bindings)
    {
-      Constructor[] cons = (Constructor[]) AccessController.doPrivileged(new PrivilegedAction() 
+      Constructor<?>[] cons = AccessController.doPrivileged(new PrivilegedAction<Constructor<?>[]>() 
       {
-         public Object run()
+         public Constructor<?>[] run()
          {
             return clazz.getDeclaredConstructors();
          }
@@ -193,11 +192,11 @@ public class ReflectiveAspectBinder
       }
    }
 
-   protected void bindFieldAdvices(Map bindings)
+   protected void bindFieldAdvices(Map<String, AdviceBinding> bindings)
    {
-      Field[] fields = (Field[]) AccessController.doPrivileged(new PrivilegedAction() 
+      Field[] fields = AccessController.doPrivileged(new PrivilegedAction<Field[]>() 
       {
-         public Object run()
+         public Field[] run()
          {
             return clazz.getDeclaredFields();
          }
@@ -215,21 +214,18 @@ public class ReflectiveAspectBinder
       return ((Boolean) ai.getTarget().jjtAccept(matcher, null)).booleanValue();
    }
 
-   protected void bindMethodAdvice(Method mi, Map bindings)
+   protected void bindMethodAdvice(Method mi, Map<String, AdviceBinding> bindings)
    {
-      Iterator it = bindings.values().iterator();
-      ArrayList advices = (ArrayList)methodAdvices.get(mi);
-      while (it.hasNext())
+      ArrayList<InterceptorFactory> advices = methodAdvices.get(mi);
+      for (AdviceBinding binding : bindings.values())
       {
-
-         AdviceBinding binding = (AdviceBinding)it.next();
          PointcutMethodMatch pmatch= binding.getPointcut().matchesExecution(advisor, mi);
          
          if (pmatch != null && pmatch.isMatch())
          {
             if (advices == null)
             {
-               advices = new ArrayList();
+               advices = new ArrayList<InterceptorFactory>();
                methodAdvices.put(mi, advices);
             }
             advices.addAll(Arrays.asList(binding.getInterceptorFactories()));
@@ -241,19 +237,16 @@ public class ReflectiveAspectBinder
       }
    }
 
-   protected void bindConstructorAdvice(Constructor mi, Map bindings)
+   protected void bindConstructorAdvice(Constructor<?> mi, Map<String, AdviceBinding> bindings)
    {
-      Iterator it = bindings.values().iterator();
-      ArrayList advices = (ArrayList)constructorAdvices.get(mi);
-      while (it.hasNext())
+      ArrayList<InterceptorFactory> advices = constructorAdvices.get(mi);
+      for (AdviceBinding binding : bindings.values())
       {
-
-         AdviceBinding binding = (AdviceBinding)it.next();
          if (binding.getPointcut().matchesExecution(advisor, mi))
          {
             if (advices == null)
             {
-               advices = new ArrayList();
+               advices = new ArrayList<InterceptorFactory>();
                constructorAdvices.put(mi, advices);
             }
             advices.addAll(Arrays.asList(binding.getInterceptorFactories()));
@@ -265,20 +258,16 @@ public class ReflectiveAspectBinder
       }
    }
 
-   protected void bindFieldGetAdvice(Field mi, Map bindings)
+   protected void bindFieldGetAdvice(Field mi, Map<String, AdviceBinding> bindings)
    {
-      Map repositoryBindings = advisor.getManager().getBindings();
-      Iterator it = repositoryBindings.values().iterator();
-      ArrayList advices = (ArrayList)fieldReadAdvices.get(mi);
-      while (it.hasNext())
+      ArrayList<InterceptorFactory> advices = fieldReadAdvices.get(mi);
+      for (AdviceBinding binding : bindings.values())
       {
-
-         AdviceBinding binding = (AdviceBinding)it.next();
          if (binding.getPointcut().matchesGet(advisor, mi))
          {
             if (advices == null)
             {
-               advices = new ArrayList();
+               advices = new ArrayList<InterceptorFactory>();
                fieldReadAdvices.put(mi, advices);
             }
             advices.addAll(Arrays.asList(binding.getInterceptorFactories()));
@@ -290,20 +279,16 @@ public class ReflectiveAspectBinder
       }
    }
 
-   protected void bindFieldSetAdvice(Field mi, Map bindings)
+   protected void bindFieldSetAdvice(Field mi, Map<String, AdviceBinding> bindings)
    {
-      Map repositoryBindings = advisor.getManager().getBindings();
-      Iterator it = repositoryBindings.values().iterator();
-      ArrayList advices = (ArrayList)fieldWriteAdvices.get(mi);
-      while (it.hasNext())
+      ArrayList<InterceptorFactory> advices = fieldWriteAdvices.get(mi);
+      for (AdviceBinding binding : bindings.values())
       {
-
-         AdviceBinding binding = (AdviceBinding)it.next();
          if (binding.getPointcut().matchesSet(advisor, mi))
          {
             if (advices == null)
             {
-               advices = new ArrayList();
+               advices = new ArrayList<InterceptorFactory>();
                fieldWriteAdvices.put(mi, advices);
             }
             advices.addAll(Arrays.asList(binding.getInterceptorFactories()));

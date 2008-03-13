@@ -52,7 +52,7 @@ public interface DynamicAOPStrategy
     * @return the interceptor chain observer for <code>clazz</code>. May
     * return null if the strategy doesn't require an observer at all.
     */
-   InterceptorChainObserver getInterceptorChainObserver(Class clazz);
+   InterceptorChainObserver getInterceptorChainObserver(Class<?> clazz);
    
    /**
     * Notifies the strategy that one or more interceptor chains in the

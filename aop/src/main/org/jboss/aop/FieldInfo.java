@@ -56,7 +56,7 @@ public class FieldInfo extends JoinPointInfo implements FieldAccess
       this.read = read;
    }
    
-   public FieldInfo(Class clazz, int index, String fieldName, long wrapperHash, Advisor advisor, boolean read)
+   public FieldInfo(Class<?> clazz, int index, String fieldName, long wrapperHash, Advisor advisor, boolean read)
    {
       super(advisor, clazz);
 
@@ -169,10 +169,10 @@ public class FieldInfo extends JoinPointInfo implements FieldAccess
       return null;
    }
 
-   private Field doGet(Class clazz, String name)throws NoSuchFieldException
+   private Field doGet(Class<?> clazz, String name)throws NoSuchFieldException
    {
       Field field = null;
-      Class superClass = clazz;
+      Class<?> superClass = clazz;
       while (superClass != null)
       {
          try
@@ -196,19 +196,19 @@ public class FieldInfo extends JoinPointInfo implements FieldAccess
    
    interface GetDeclaredFieldAction
    {
-      Field get(FieldInfo target, Class clazz, String name) throws NoSuchFieldException;
+      Field get(FieldInfo target, Class<?> clazz, String name) throws NoSuchFieldException;
       
       GetDeclaredFieldAction PRIVILEGED = new GetDeclaredFieldAction()
       {
-         public Field get(final FieldInfo target, final Class clazz, final String name) throws NoSuchFieldException
+         public Field get(final FieldInfo target, final Class<?> clazz, final String name) throws NoSuchFieldException
          {
             try
             {
-               return (Field)AccessController.doPrivileged(new PrivilegedExceptionAction()
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<Field>()
                {
-                  public Object run() throws Exception
+                  public Field run() throws Exception
                   {
-                     return target.doGet(clazz, name);//clazz.getDeclaredField(name);
+                     return target.doGet(clazz, name);
                   }
                });
             }
@@ -226,7 +226,7 @@ public class FieldInfo extends JoinPointInfo implements FieldAccess
 
       GetDeclaredFieldAction NON_PRIVILEGED = new GetDeclaredFieldAction()
       {
-         public Field get(FieldInfo target, Class clazz, String name) throws NoSuchFieldException
+         public Field get(FieldInfo target, Class<?> clazz, String name) throws NoSuchFieldException
          {
             return target.doGet(clazz, name);//clazz.getDeclaredField(name);
          }

@@ -31,7 +31,6 @@ import org.jboss.aop.metadata.SimpleMetaData;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 
 /**
  * Holds an object instance's metadata and attached interceptors
@@ -43,10 +42,10 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
 {
    static final long serialVersionUID = -3057976129116723527L;
 
-   protected ArrayList insertedInterceptors = null;
-   protected ArrayList appendedInterceptors = null;
-   protected WeakReference instanceRef;
-   protected transient WeakReference classAdvisorRef;
+   protected ArrayList<Interceptor> insertedInterceptors = null;
+   protected ArrayList<Interceptor> appendedInterceptors = null;
+   protected WeakReference<Object> instanceRef;
+   protected transient WeakReference<Advisor> classAdvisorRef;
    public boolean hasInstanceAspects = false;
    /**
     * aspects is a weak hash map of AspectDefinitions so that perinstance advices can be undeployed/redeployed
@@ -61,7 +60,7 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
 
    public ClassInstanceAdvisor(Object obj)
    {
-      this.instanceRef = new WeakReference(obj);
+      this.instanceRef = new WeakReference<Object>(obj);
       if (obj instanceof Advised)
       {
          Advised advised = (Advised) obj;
@@ -77,7 +76,7 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
    
    private void setAdvisorAndInitialise(Advisor advizor)
    {
-      this.classAdvisorRef = new WeakReference(advizor);
+      this.classAdvisorRef = new WeakReference<Advisor>(advizor);
       
       if (advizor instanceof ClassAdvisor)
       {
@@ -113,10 +112,10 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
 
    public Interceptor[] getInterceptors()
    {
-      ArrayList newlist = new ArrayList();
+      ArrayList<Interceptor> newlist = new ArrayList<Interceptor>();
       if (insertedInterceptors != null) newlist.addAll(insertedInterceptors);
       if (appendedInterceptors != null) newlist.addAll(appendedInterceptors);
-      return (Interceptor[]) newlist.toArray(new Interceptor[newlist.size()]);
+      return newlist.toArray(new Interceptor[newlist.size()]);
    }
 
    /**
@@ -125,19 +124,19 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
    public Interceptor[] getInterceptors(Interceptor[] advisorChain)
    {
       if (insertedInterceptors == null && appendedInterceptors == null) return advisorChain;
-      ArrayList newlist = new ArrayList();
+      ArrayList<Interceptor> newlist = new ArrayList<Interceptor>();
       if (insertedInterceptors != null) newlist.addAll(insertedInterceptors);
       if (advisorChain != null)
       {
          newlist.addAll(Arrays.asList(advisorChain));
       }
       if (appendedInterceptors != null) newlist.addAll(appendedInterceptors);
-      return (Interceptor[]) newlist.toArray(new Interceptor[newlist.size()]);
+      return newlist.toArray(new Interceptor[newlist.size()]);
    }
 
    public void insertInterceptor(int index, Interceptor interceptor)
    {
-      ArrayList newList = new ArrayList();
+      ArrayList<Interceptor> newList = new ArrayList<Interceptor>();
       if (insertedInterceptors != null)
       {
          newList.addAll(insertedInterceptors);
@@ -153,7 +152,7 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
 
    public void insertInterceptor(Interceptor interceptor)
    {
-      ArrayList newList = new ArrayList();
+      ArrayList<Interceptor> newList = new ArrayList<Interceptor>();
       if (insertedInterceptors != null)
       {
          newList.addAll(insertedInterceptors);
@@ -169,7 +168,7 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
 
    public void appendInterceptor(Interceptor interceptor)
    {
-      ArrayList newList = new ArrayList();
+      ArrayList<Interceptor> newList = new ArrayList<Interceptor>();
       if (appendedInterceptors != null)
       {
          newList.addAll(appendedInterceptors);
@@ -185,7 +184,7 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
 
    public void appendInterceptor(int index, Interceptor interceptor)
    {
-      ArrayList newList = new ArrayList();
+      ArrayList<Interceptor> newList = new ArrayList<Interceptor>();
       if (appendedInterceptors != null)
       {
          newList.addAll(appendedInterceptors);
@@ -222,10 +221,10 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
       {
          for (int i = 0; i < insertedInterceptors.size(); i++)
          {
-            Interceptor interceptor = (Interceptor) insertedInterceptors.get(i);
+            Interceptor interceptor = insertedInterceptors.get(i);
             if (interceptor.getName().equals(name))
             {
-               ArrayList newList = new ArrayList();
+               ArrayList<Interceptor> newList = new ArrayList<Interceptor>();
                newList.addAll(insertedInterceptors);
                newList.remove(i);
                insertedInterceptors = newList;
@@ -237,10 +236,10 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
       {
          for (int i = 0; i < appendedInterceptors.size(); i++)
          {
-            Interceptor interceptor = (Interceptor) appendedInterceptors.get(i);
+            Interceptor interceptor = appendedInterceptors.get(i);
             if (interceptor.getName().equals(name))
             {
-               ArrayList newList = new ArrayList();
+               ArrayList<Interceptor> newList = new ArrayList<Interceptor>();
                newList.addAll(appendedInterceptors);
                newList.remove(i);
                appendedInterceptors = newList;
@@ -270,10 +269,8 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
          classAdvisor = ((ClassAdvisor) advised._getAdvisor());
       }
       int interceptorsAdded = 0;
-      Iterator it = stack.getInterceptorFactories().iterator();
-      while (it.hasNext())
+      for (InterceptorFactory factory : stack.getInterceptorFactories())
       {
-         InterceptorFactory factory = (InterceptorFactory) it.next();
          if (!factory.isDeployed()) continue;
          Interceptor interceptor = factory.create(classAdvisor, null);
          insertInterceptor(interceptor);
@@ -297,10 +294,8 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
          classAdvisor = ((ClassAdvisor) advised._getAdvisor());
       }
       int interceptorsAdded = 0;
-      Iterator it = stack.getInterceptorFactories().iterator();
-      while (it.hasNext())
+      for (InterceptorFactory factory : stack.getInterceptorFactories())
       {
-         InterceptorFactory factory = (InterceptorFactory) it.next();
          if (!factory.isDeployed()) continue;
          Interceptor interceptor = factory.create(classAdvisor, null);
          appendInterceptor(interceptor);
@@ -324,10 +319,8 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
          classAdvisor = ((ClassAdvisor) advised._getAdvisor());
       }
       int interceptorsRemoved = 0;
-      Iterator it = stack.getInterceptorFactories().iterator();
-      while (it.hasNext())
+      for (InterceptorFactory factory : stack.getInterceptorFactories())
       {
-         InterceptorFactory factory = (InterceptorFactory) it.next();
          if (!factory.isDeployed()) continue;
          Interceptor interceptor = factory.create(classAdvisor, null);
          interceptorsRemoved += internalRemoveInterceptor(interceptor.getName());
@@ -362,7 +355,7 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
    {
       if (classAdvisorRef != null)
       {
-         return (Advisor)classAdvisorRef.get();
+         return classAdvisorRef.get();
       }
       return null;
    }

@@ -35,12 +35,12 @@ import java.lang.reflect.Method;
  **/
 public abstract class CallerMethodInfo extends JoinPointInfo implements MethodCall
 {
-   private final Class callingClass;
-   private final Class calledClass;
+   private final Class<?> callingClass;
+   private final Class<?> calledClass;
    private final Method method;
    private final long calledMethodHash;
 
-   public CallerMethodInfo(Advisor advisor, Class calledClass, Method m, long calledMethodHash, Interceptor[] in, Class clazz)
+   public CallerMethodInfo(Advisor advisor, Class<?> calledClass, Method m, long calledMethodHash, Interceptor[] in, Class<?> clazz)
    {
       super(advisor, clazz);
       this.calledClass = calledClass;
@@ -62,12 +62,12 @@ public abstract class CallerMethodInfo extends JoinPointInfo implements MethodCa
       this.calledMethodHash = other.calledMethodHash;
    }
 
-   public Class getCallingClass()
+   public Class<?> getCallingClass()
    {
       return callingClass;
    }
 
-   public Class getCalledClass()
+   public Class<?> getCalledClass()
    {
       return calledClass;
    }

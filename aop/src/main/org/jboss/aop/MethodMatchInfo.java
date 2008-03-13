@@ -40,8 +40,8 @@ class MethodMatchInfo
    
    Advisor advisor;
    MethodInfo info;
-   ArrayList bindings;
-   ArrayList pointcutMethodMatches;
+   ArrayList<AdviceBinding> bindings;
+   ArrayList<PointcutMethodMatch> pointcutMethodMatches;
    
    MethodMatchInfo(Advisor advisor, MethodInfo info)
    {
@@ -53,11 +53,11 @@ class MethodMatchInfo
    {
       if (bindings == null)
       {
-         bindings = new ArrayList();
+         bindings = new ArrayList<AdviceBinding>();
       }
       if (pointcutMethodMatches == null)
       {
-         pointcutMethodMatches = new ArrayList();
+         pointcutMethodMatches = new ArrayList<PointcutMethodMatch>();
       }
       bindings.add(binding);
       pointcutMethodMatches.add(pointcutMethodMatch);
@@ -73,11 +73,11 @@ class MethodMatchInfo
       this.info = info;
    }
    
-   public ArrayList populateBindings()
+   public ArrayList<AdviceBinding> populateBindings()
    {
       if (bindings != null)
       {
-         ArrayList applicableBindings = new ArrayList();
+         ArrayList<AdviceBinding> applicableBindings = new ArrayList<AdviceBinding>();
          if (advisor.chainOverridingForInheritedMethods())
          {
             overridePopulateBindings(applicableBindings);
@@ -95,25 +95,25 @@ class MethodMatchInfo
       return null;
    }
    
-   private void simplePopulateBindings(ArrayList applicableBindings)
+   private void simplePopulateBindings(ArrayList<AdviceBinding> applicableBindings)
    {
       int size = bindings.size();
       for (int i = 0 ; i < size ; i++)
       {
-         AdviceBinding binding = (AdviceBinding)bindings.get(i);
+         AdviceBinding binding = bindings.get(i);
          applyBinding(applicableBindings, binding);
       }
    }
    
-   private void overridePopulateBindings(ArrayList applicableBindings)
+   private void overridePopulateBindings(ArrayList<AdviceBinding> applicableBindings)
    {
       if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("populate bindings for " + info.getMethod() + " all bindings");
       int size = bindings.size();
       int minMatchLevel = 1000000;
       for (int i = 0 ; i < size ; i++)
       {
-         AdviceBinding binding = (AdviceBinding)bindings.get(i);
-         PointcutMethodMatch match = (PointcutMethodMatch)pointcutMethodMatches.get(i);
+         AdviceBinding binding = bindings.get(i);
+         PointcutMethodMatch match = pointcutMethodMatches.get(i);
          if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug(match.getMatchLevel() + " " + match.getMatchedClass().getName() + " " + binding.getPointcut().getExpr() + " : " + binding.getInterceptorFactories().length);
          
          if (minMatchLevel > match.getMatchLevel() && !match.isInstanceOf())
@@ -125,8 +125,8 @@ class MethodMatchInfo
       if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("populate bindings for " + info.getMethod() + " actual bindings");
       for (int i = 0 ; i < size ; i++)
       {
-         AdviceBinding binding = (AdviceBinding)bindings.get(i);
-         PointcutMethodMatch match = (PointcutMethodMatch)pointcutMethodMatches.get(i);
+         AdviceBinding binding = bindings.get(i);
+         PointcutMethodMatch match = pointcutMethodMatches.get(i);
          
          if (match.isInstanceOf() || match.getMatchLevel() == minMatchLevel)
          {
@@ -136,7 +136,7 @@ class MethodMatchInfo
       }
    }
    
-   private void applyBinding(ArrayList applicableBindings, AdviceBinding binding)
+   private void applyBinding(ArrayList<AdviceBinding> applicableBindings, AdviceBinding binding)
    {
       applicableBindings.add(binding);
       binding.addAdvisor(advisor);

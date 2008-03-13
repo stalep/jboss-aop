@@ -38,14 +38,14 @@ import org.jboss.aop.util.MethodHashing;
 public class ConstructorInfo extends JoinPointInfo implements ConstructorExecution
 {
    private Method wrapper;
-   private Constructor constructor;
+   private Constructor<?> constructor;
    private int index;
    
    public ConstructorInfo()
    {
    }
    
-   public ConstructorInfo(Class clazz, int index, long wrapperHash, long constructorHash, Advisor advisor)
+   public ConstructorInfo(Class<?> clazz, int index, long wrapperHash, long constructorHash, Advisor advisor)
    {
       super(advisor, clazz);
       try
@@ -98,12 +98,12 @@ public class ConstructorInfo extends JoinPointInfo implements ConstructorExecuti
       return wrapper;
    }
 
-   public void setConstructor(Constructor constructor)
+   public void setConstructor(Constructor<?> constructor)
    {
       this.constructor = constructor;
    }
 
-   public Constructor getConstructor()
+   public Constructor<?> getConstructor()
    {
       return constructor;
    }

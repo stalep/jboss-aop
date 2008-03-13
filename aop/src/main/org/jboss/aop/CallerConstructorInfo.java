@@ -36,13 +36,13 @@ import java.lang.reflect.Method;
  **/
 public abstract class CallerConstructorInfo extends JoinPointInfo implements ConstructorCall
 {
-   private final Constructor constructor;
-   private final Class callingClass;
+   private final Constructor<?> constructor;
+   private final Class<?> callingClass;
    private final Method wrappingMethod;
    private final long calledConHash;
-   private final Class calledClass;
+   private final Class<?> calledClass;
    
-   public CallerConstructorInfo(Advisor advisor, Class calledClass, Constructor called, long calledConHash, Method wrappingMethod, Interceptor[] in, Class clazz)
+   public CallerConstructorInfo(Advisor advisor, Class<?> calledClass, Constructor<?> called, long calledConHash, Method wrappingMethod, Interceptor[] in, Class<?> clazz)
    {
       super(advisor, clazz);
       this.calledClass = calledClass;
@@ -66,12 +66,12 @@ public abstract class CallerConstructorInfo extends JoinPointInfo implements Con
       this.calledClass = other.calledClass;
    }
 
-   public Constructor getConstructor()
+   public Constructor<?> getConstructor()
    {
       return constructor;
    }
 
-   public Class getCallingClass()
+   public Class<?> getCallingClass()
    {
       return callingClass;
    }
@@ -86,7 +86,7 @@ public abstract class CallerConstructorInfo extends JoinPointInfo implements Con
       return calledConHash;
    }
 
-   public Class getCalledClass()
+   public Class<?> getCalledClass()
    {
       return calledClass;
    }

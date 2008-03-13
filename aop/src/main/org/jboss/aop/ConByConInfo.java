@@ -37,9 +37,9 @@ import org.jboss.aop.joinpoint.Joinpoint;
 public class ConByConInfo extends CallerConstructorInfo implements ConstructorCallByConstructor
 {
    private final int callingIndex;
-   private final Constructor calling;
+   private final Constructor<?> calling;
    
-   public ConByConInfo(Advisor advisor, Class calledClass, Class callingClass, int callingIndex, Constructor called, long calledConHash, Method wrappingMethod, Interceptor[] in)
+   public ConByConInfo(Advisor advisor, Class<?> calledClass, Class<?> callingClass, int callingIndex, Constructor<?> called, long calledConHash, Method wrappingMethod, Interceptor[] in)
    {
       super(advisor, calledClass, called, calledConHash, wrappingMethod, in, callingClass);
       this.callingIndex = callingIndex;
@@ -88,12 +88,12 @@ public class ConByConInfo extends CallerConstructorInfo implements ConstructorCa
 
    //Use getCallingConstructor instead
    @Deprecated()
-   public Constructor getCalling()
+   public Constructor<?> getCalling()
    {
       return calling;
    }
    
-   public Constructor getCallingConstructor()
+   public Constructor<?> getCallingConstructor()
    {
       return calling;
    }

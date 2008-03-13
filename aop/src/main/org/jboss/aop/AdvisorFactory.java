@@ -48,10 +48,10 @@ public class AdvisorFactory
    protected static final int OTHER_ADVISOR = 1000; //The jrockit aop advisor is in another jar which we should not depend on
    protected static int advisor = 0;
    
-   protected static Constructor otherAdvisorConstructor;
+   protected static Constructor<?> otherAdvisorConstructor;
    
-   private static final Class[] NO_ARGS = new Class[0];
-   private static final Class[] CONSTRUCTOR_SIG = new Class[] {String.class, AspectManager.class};
+   private static final Class<?>[] NO_ARGS = new Class<?>[0];
+   private static final Class<?>[] CONSTRUCTOR_SIG = new Class<?>[] {String.class, AspectManager.class};
    
    
    public static void initialise(String property)
@@ -72,7 +72,7 @@ public class AdvisorFactory
             try
             {
                // FIXME ClassLoader - why should this class be visible from the context classloader?
-               Class otherAdvisorClass = SecurityActions.getContextClassLoader().loadClass(property);
+               Class<?> otherAdvisorClass = SecurityActions.getContextClassLoader().loadClass(property);
                otherAdvisorConstructor = otherAdvisorClass.getConstructor(CONSTRUCTOR_SIG);
             }
             catch (ClassNotFoundException e)
@@ -95,7 +95,7 @@ public class AdvisorFactory
       }
    }
 
-   public static ClassAdvisor getClassAdvisor(Class clazz, AspectManager am)
+   public static ClassAdvisor getClassAdvisor(Class<?> clazz, AspectManager am)
    {
       return getClassAdvisor(clazz.getName(), am, clazz);
    }
@@ -105,7 +105,7 @@ public class AdvisorFactory
       return getClassAdvisor(clazz.getName(), am, null);
    }
    
-   private static ClassAdvisor getClassAdvisor(String className, AspectManager am, Class loadedClass)
+   private static ClassAdvisor getClassAdvisor(String className, AspectManager am, Class<?> loadedClass)
    {
       if(advisor == CLASS)
       {

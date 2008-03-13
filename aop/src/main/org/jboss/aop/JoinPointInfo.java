@@ -42,18 +42,18 @@ public abstract class JoinPointInfo implements JoinPointBean
    
    protected volatile Joinpoint joinpoint;
    
-   protected WeakReference<Class> clazz;
+   protected WeakReference<Class<?>> clazz;
    
    private String adviceString;
 
    protected JoinPointInfo()
    {
-      this.clazz = new WeakReference<Class>(null);
+      this.clazz = new WeakReference<Class<?>>(null);
    }
    
-   protected JoinPointInfo(Advisor advisor, Class clazz)
+   protected JoinPointInfo(Advisor advisor, Class<?> clazz)
    {
-      this.clazz = new WeakReference<Class>(clazz); 
+      this.clazz = new WeakReference<Class<?>>(clazz); 
       setAdvisor(advisor);
    }
    
@@ -84,10 +84,10 @@ public abstract class JoinPointInfo implements JoinPointBean
       {
          return null;
       }
-      return (Advisor)advisor.get();
+      return advisor.get();
    }
 
-   public Class getClazz()
+   public Class<?> getClazz()
    {
       return clazz.get(); 
    }
@@ -97,7 +97,7 @@ public abstract class JoinPointInfo implements JoinPointBean
       this.advisor = new WeakReference<Advisor>(advisor);
       if (getClazz() == null && advisor != null)
       {
-         this.clazz = new WeakReference<Class>(advisor.getClazz());
+         this.clazz = new WeakReference<Class<?>>(advisor.getClazz());
       }
    }
 
@@ -205,7 +205,7 @@ public abstract class JoinPointInfo implements JoinPointBean
       other.interceptorChainLock.readLock().lock();
       try
       {
-         interceptorChain = (ArrayList) other.interceptorChain.clone();
+         interceptorChain = (ArrayList<Interceptor>) other.interceptorChain.clone();
          if (other.interceptors == null)
          {
             interceptors = null;

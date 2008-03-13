@@ -29,7 +29,6 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.WeakHashMap;
 
 import javassist.ClassPool;
@@ -57,7 +56,7 @@ import org.jboss.aop.instrument.JoinpointStatusUpdate;
 public class HotSwapStrategy implements DynamicAOPStrategy
 {
    private HotSwapper hotSwapper;
-   private Collection joinpointUpdates;
+   private Collection<JoinpointStatusUpdate> joinpointUpdates;
    private Instrumentor instrumentor;
 
    /**
@@ -67,7 +66,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
    public HotSwapStrategy(HotSwapper hotSwapper)
    {
       this.hotSwapper = hotSwapper;
-      this.joinpointUpdates = new ArrayList();
+      this.joinpointUpdates = new ArrayList<JoinpointStatusUpdate>();
       this.instrumentor = InstrumentorFactory.getInstrumentor(AspectManager.instance(), getJoinpointClassifier());
    }
    
@@ -84,7 +83,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
       {
          if (!joinpointUpdates.isEmpty())
          {
-            instrumentor.interceptorChainsUpdated(new ArrayList(joinpointUpdates), hotSwapper);
+            instrumentor.interceptorChainsUpdated(new ArrayList<JoinpointStatusUpdate>(joinpointUpdates), hotSwapper);
             joinpointUpdates.clear();   
          }
       }
@@ -125,7 +124,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
     * Returns an interceptor chain observer for <code>clazz</code>.
     * @see org.jboss.aop.DynamicAOPStrategy#getInterceptorChainObserver
     */
-   public InterceptorChainObserver getInterceptorChainObserver(Class clazz)
+   public InterceptorChainObserver getInterceptorChainObserver(Class<?> clazz)
    {
       ClassPool classPool = AspectManager.instance().findClassPool(clazz.getClassLoader());
       CtClass ctClass = null;
@@ -163,9 +162,9 @@ public class HotSwapStrategy implements DynamicAOPStrategy
     */
    private class  DynamicTransformationTracker implements DynamicTransformationObserver
    {
-      private CtClass clazz;
-      private Collection fieldReads;
-      private Collection fieldWrites;
+      //private CtClass clazz;
+      private Collection<CtField> fieldReads;
+      private Collection<CtField> fieldWrites;
       private boolean constructor;
 
       /**
@@ -174,9 +173,9 @@ public class HotSwapStrategy implements DynamicAOPStrategy
        */
       public DynamicTransformationTracker(CtClass clazz)
       {
-         this.clazz = clazz;
-         this.fieldReads = new ArrayList();
-         this.fieldWrites = new ArrayList();
+         //this.clazz = clazz;
+         this.fieldReads = new ArrayList<CtField>();
+         this.fieldWrites = new ArrayList<CtField>();
          this.constructor = false;
       }
       
@@ -238,7 +237,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
       private JoinpointStatusUpdate.ClassJoinpoints newlyUnadvised;
       
       private int instanceInterceptors;
-      private WeakHashMap instanceAdvisors;
+      private WeakHashMap<InstanceAdvisor, Integer> instanceAdvisors;
       
       private CtClass clazz;
       private int fields;
@@ -257,17 +256,17 @@ public class HotSwapStrategy implements DynamicAOPStrategy
       public JoinpointStatusUpdater(CtClass clazz)
       {
          this.clazz = clazz;
-         this.instanceAdvisors = new WeakHashMap();
+         this.instanceAdvisors = new WeakHashMap<InstanceAdvisor, Integer>();
       }
       
       /**
        * This method must be called before any other notification method is invoked.
        * @see org.jboss.aop.InterceptorChainObserver#initialInterceptorChains(Interceptor[][], Interceptor[][], Interceptor[][], TLongObjectHashMap)
        */
-      public synchronized void initialInterceptorChains(final Class reflectionClass, Interceptor[][] fieldReadInterceptors, Interceptor[][] fieldWriteInterceptors,
+      public synchronized void initialInterceptorChains(final Class<?> reflectionClass, Interceptor[][] fieldReadInterceptors, Interceptor[][] fieldWriteInterceptors,
             Interceptor[][] constructorInterceptors, MethodInterceptors methodInterceptors)
       {
-         Constructor[] declaredConstructors = null;
+         Constructor<?>[] declaredConstructors = null;
          if (System.getSecurityManager() == null)
          {
             declaredConstructors = reflectionClass.getDeclaredConstructors();
@@ -277,9 +276,9 @@ public class HotSwapStrategy implements DynamicAOPStrategy
             try
             {
                declaredConstructors = 
-                  AccessController.doPrivileged(new PrivilegedExceptionAction<Constructor[]>()
+                  AccessController.doPrivileged(new PrivilegedExceptionAction<Constructor<?>[]>()
                {
-                  public Constructor[] run() throws Exception
+                  public Constructor<?>[] run() throws Exception
                   {
                      return reflectionClass.getDeclaredConstructors();
                   }
@@ -297,7 +296,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
          int javassistIndex = 0;
          for (int reflectionIndex = 0; reflectionIndex < declaredConstructors.length; reflectionIndex++)
          {
-            Class[] params = declaredConstructors[reflectionIndex].getParameterTypes();
+            Class<?>[] params = declaredConstructors[reflectionIndex].getParameterTypes();
             if (params.length > 0 && params[params.length-1].getName().equals("javassist.runtime.Inner"))
             {
                constructorIndexMap[reflectionIndex] = -1;
@@ -333,7 +332,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
             for (int i = 0; i < methodKeys.length; i++)
             {
                long key = methodKeys[i];
-               MethodInfo oldMethodInfo = (MethodInfo) methodInterceptors.getMethodInfo(key);
+               MethodInfo oldMethodInfo = methodInterceptors.getMethodInfo(key);
                MethodInfo newMethodInfo = newMethodInterceptors.getMethodInfo(key);
                if (oldMethodInfo.getInterceptorChain().isEmpty() && !newMethodInfo.getInterceptorChain().isEmpty())
                {
@@ -410,9 +409,8 @@ public class HotSwapStrategy implements DynamicAOPStrategy
          if (this.instanceInterceptors == 0)
             return;
          this.instanceInterceptors = 0;
-         for (Iterator iterator = instanceAdvisors.values().iterator(); iterator.hasNext(); )
+         for (Integer interceptors : instanceAdvisors.values())
          {
-            Integer interceptors = (Integer) iterator.next();
             instanceInterceptors += interceptors.intValue();
          }
          if (this.instanceInterceptors > 0)
@@ -446,7 +444,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
        * @param newlyAdvised collection to which the newly unadvised joinpoints will be added.
        */
       private void fillNewStateCollections(Interceptor[][] interceptors, Interceptor[][] newInterceptors,
-            Collection newlyAdvised, Collection newlyUnadvised, int[] indexMap)
+            Collection<Integer> newlyAdvised, Collection<Integer> newlyUnadvised, int[] indexMap)
       {
          if (instanceInterceptors > 0)
             return;
@@ -498,7 +496,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
       {
          if (this.instanceAdvisors.containsKey(instanceAdvisor))
          {
-            Integer interceptors = (Integer) instanceAdvisors.get(instanceAdvisor);
+            Integer interceptors = instanceAdvisors.get(instanceAdvisor);
             instanceAdvisors.put(instanceAdvisor, new Integer(interceptors.intValue() + interceptorsAdded));
          }
          else
@@ -521,7 +519,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
             for (int i = 0; i < methodKeys.length; i++)
             {
                long key = methodKeys[i];
-               MethodInfo methodInfo = (MethodInfo) this.methodInterceptors.getMethodInfo(key);
+               MethodInfo methodInfo = this.methodInterceptors.getMethodInfo(key);
                if (methodInfo.getInterceptorChain().isEmpty())
                {
                   joinpoints.methodExecutions.add(methodInfo);  
@@ -539,7 +537,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
        * @param interceptors the interceptors chains applied to the joinponts.
        * @param joinpointsFound the collection to which the found joinpoints will be added.
        */
-      private void findUnadvisedJoinpoints(Interceptor[][] interceptors, Collection joinpointsFound)
+      private void findUnadvisedJoinpoints(Interceptor[][] interceptors, Collection<Integer> joinpointsFound)
       {
          for (int i = 0; i < interceptors.length; i++)
          {

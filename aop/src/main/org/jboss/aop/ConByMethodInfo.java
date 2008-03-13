@@ -28,7 +28,6 @@ import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.ConstructorCalledByMethodJoinpoint;
 import org.jboss.aop.joinpoint.ConstructorCallByMethod;
 import org.jboss.aop.joinpoint.Joinpoint;
-import org.jboss.aop.util.MethodHashing;
 
 /**
  * 
@@ -46,9 +45,8 @@ public class ConByMethodInfo extends CallerConstructorInfo implements Constructo
     * @param c
     * @param in
     */
-   public ConByMethodInfo(Advisor advisor, Class calledClass, Method callingMethod, long callingMethodHash, Constructor c, long calledConHash, Method wrappingMethod, Interceptor[] in)
+   public ConByMethodInfo(Advisor advisor, Class<?> calledClass, Method callingMethod, long callingMethodHash, Constructor<?> c, long calledConHash, Method wrappingMethod, Interceptor[] in)
    {
-      // FIXME ConByMethodJoinPont constructor
       super(advisor, calledClass, c, calledConHash, wrappingMethod, in, callingMethod.getDeclaringClass());
       this.callingMethodHash = callingMethodHash;
       this.callingMethod = callingMethod;

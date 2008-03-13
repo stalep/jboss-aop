@@ -22,7 +22,6 @@
 package org.jboss.aop;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.jboss.aop.advice.Interceptor;
@@ -39,9 +38,9 @@ public class MethodByConInfo extends CallerMethodInfo implements MethodCallByCon
 {
 
    private final int callingIndex;
-   private final Constructor calling;
+   private final Constructor<?> calling;
    
-   public MethodByConInfo(Advisor advisor, Class calledClass, Class callingClass, int callingIndex, Method m, long calledMethodHash, Interceptor[] in)
+   public MethodByConInfo(Advisor advisor, Class<?> calledClass, Class<?> callingClass, int callingIndex, Method m, long calledMethodHash, Interceptor[] in)
    {
       // FIXME MethodByConInfo constructor
       super(advisor, calledClass, m, calledMethodHash, in, callingClass);
@@ -90,12 +89,12 @@ public class MethodByConInfo extends CallerMethodInfo implements MethodCallByCon
    }
 
    @Deprecated
-   public Constructor getCalling()
+   public Constructor<?> getCalling()
    {
       return calling;
    }
 
-   public Constructor getCallingConstructor()
+   public Constructor<?> getCallingConstructor()
    {
       return calling;
    }

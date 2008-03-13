@@ -41,7 +41,7 @@ public class MethodInfo extends JoinPointInfo implements MethodExecution
    {
    }
    
-   public MethodInfo(Class clazz, long hash, long unadvisedHash, Advisor advisor)
+   public MethodInfo(Class<?> clazz, long hash, long unadvisedHash, Advisor advisor)
    {
       super(advisor, clazz);
 
