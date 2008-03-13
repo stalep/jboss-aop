@@ -51,7 +51,7 @@ public class AdviceStack
       ArrayList<Interceptor> interceptors = new ArrayList<Interceptor>();
       for (int i = 0; i < interceptorFactories.size(); i++)
       {
-         InterceptorFactory factory = (InterceptorFactory) interceptorFactories.get(i);
+         InterceptorFactory factory = interceptorFactories.get(i);
          if (factory.isDeployed()) interceptors.add(factory.create(advisor, jp));
       }
       return interceptors.toArray(new Interceptor[interceptors.size()]);
