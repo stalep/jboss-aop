@@ -52,7 +52,7 @@ public class ResolveAnnotationAspect
          return;
       }
          
-      classAnnotation = (TestAnnotation)joinPoint.resolveClassAnnotation(TestAnnotation.class);
-      joinpointAnnotation = (TestAnnotation)joinPoint.resolveAnnotation(TestAnnotation.class);
+      classAnnotation = joinPoint.resolveClassAnnotation(TestAnnotation.class);
+      joinpointAnnotation = joinPoint.resolveAnnotation(TestAnnotation.class);
    }
 }

@@ -94,7 +94,7 @@ public class AOPTester extends AOPTestWithSetup
       AnnotatedPOJO pojo = new AnnotatedPOJO();
       if (!SimpleInterceptor.intercepted) throw new RuntimeException("failed to intercept tagged constructor");
 
-      complex c = (complex)AnnotationElement.getVisibleAnnotation(AnnotatedPOJO.class, complex.class);
+      complex c = AnnotationElement.getVisibleAnnotation(AnnotatedPOJO.class, complex.class);
       printComplex(c);
 
       SimpleInterceptor.intercepted = false;
