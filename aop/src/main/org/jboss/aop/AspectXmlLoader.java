@@ -1068,7 +1068,11 @@ public class AspectXmlLoader implements XmlLoader
       }
 
       DomainDefinition def = manager.getContainer(name);
-      if (def == null) throw new RuntimeException("Unable to undeploy container: " + name);
+      if (def == null)
+      {
+         logger.warn("No domain found with name: " + name);
+         return;
+      }
       AspectManager push = manager;
       ArrayList<String> oldFactories = factories;
       ArrayList<String> oldAspects = aspects;
