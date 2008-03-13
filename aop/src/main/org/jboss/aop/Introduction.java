@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD}) @Retention(RetentionPolicy.RUNTIME)
 public @interface Introduction
 {
-   Class target() default java.lang.Class.class;
+   Class<?> target() default java.lang.Class.class;
    String typeExpression() default "";
-   Class[] interfaces();
+   Class<?>[] interfaces();
 }

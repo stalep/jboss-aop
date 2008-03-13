@@ -23,7 +23,6 @@ package org.jboss.aop;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -44,24 +43,24 @@ public class InstanceAdvisorDelegate implements Serializable
 {
    private static final long serialVersionUID = -5421366346785427537L;
    
-   protected transient WeakReference classAdvisor;
+   protected transient WeakReference<Advisor> classAdvisor;
    InstanceAdvisor instanceAdvisor;
-   protected transient WeakHashMap aspects;
-   protected transient WeakHashMap joinpointAspects;
+   protected transient WeakHashMap<AspectDefinition, Object> aspects;
+   protected transient WeakHashMap<AspectDefinition, ConcurrentHashMap<Joinpoint, Object>> joinpointAspects;
    protected SimpleMetaData metadata;
 
 
    public InstanceAdvisorDelegate(Advisor classAdvisor, InstanceAdvisor instanceAdvisor)
    {
       this.instanceAdvisor = instanceAdvisor;
-      this.classAdvisor = new WeakReference(classAdvisor);
+      this.classAdvisor = new WeakReference<Advisor>(classAdvisor);
    }
 
    public Advisor getAdvisor()
    {
       if (classAdvisor != null)
       {
-         return (Advisor)classAdvisor.get();
+         return classAdvisor.get();
       }
       return null;
    }
@@ -85,30 +84,27 @@ public class InstanceAdvisorDelegate implements Serializable
       if (instanceAdvisor instanceof Advisor)
       {
          Advisor ia = (Advisor)instanceAdvisor;
-         Set instanceDefs = ia.getPerInstanceAspectDefinitions();
+         Set<AspectDefinition> instanceDefs = ia.getPerInstanceAspectDefinitions();
          if (instanceDefs.size() > 0)
          {
-            aspects = new WeakHashMap();
-            for (Iterator it = instanceDefs.iterator() ; it.hasNext() ; )
+            aspects = new WeakHashMap<AspectDefinition, Object>();
+            for (AspectDefinition def : instanceDefs)
             {
-               AspectDefinition def = (AspectDefinition) it.next();
                ia.addPerInstanceAspect(def);
                Object aspect = def.getFactory().createPerInstance(getClassAdvisor(), instanceAdvisor);
                aspects.put(def, aspect);
             }
          }
       }
-      Set defs = getClassAdvisor().getPerInstanceAspectDefinitions();
+      Set<AspectDefinition> defs = getClassAdvisor().getPerInstanceAspectDefinitions();
       if (defs.size() > 0)
       {
          if (aspects == null)
          {
-            aspects = new WeakHashMap();
+            aspects = new WeakHashMap<AspectDefinition, Object>();
          }
-         Iterator it = defs.iterator();
-         while (it.hasNext())
+         for (AspectDefinition def : defs)
          {
-            AspectDefinition def = (AspectDefinition) it.next();
             Object aspect = def.getFactory().createPerInstance(getClassAdvisor(), instanceAdvisor);
             aspects.put(def, aspect);
          }
@@ -122,57 +118,51 @@ public class InstanceAdvisorDelegate implements Serializable
       if (instanceAdvisor instanceof Advisor)
       {
          Advisor ia = (Advisor)instanceAdvisor;
-         Map instanceJpAspects = ia.getPerInstanceJoinpointAspectDefinitions();
+         Map<AspectDefinition, Set<Joinpoint>> instanceJpAspects = ia.getPerInstanceJoinpointAspectDefinitions();
          
          if (instanceJpAspects.size() > 0)
          {
-            joinpointAspects = new WeakHashMap();
-            for (Iterator it = instanceJpAspects.keySet().iterator() ; it.hasNext() ; )
+            joinpointAspects = new WeakHashMap<AspectDefinition, ConcurrentHashMap<Joinpoint, Object>>();
+            for (AspectDefinition def : instanceJpAspects.keySet())
             {
-               AspectDefinition def = (AspectDefinition) it.next();
                initJoinpointAspect(def, instanceJpAspects);
-               Set joinpoints = (Set)instanceJpAspects.get(def);
+               Set<Joinpoint> joinpoints = instanceJpAspects.get(def);
                ia.addPerInstanceJoinpointAspect(joinpoints, def);
             }
          }
       }
       
-      Map jpAspects = getClassAdvisor().getPerInstanceJoinpointAspectDefinitions();
+      Map<AspectDefinition, Set<Joinpoint>> jpAspects = getClassAdvisor().getPerInstanceJoinpointAspectDefinitions();
       if (jpAspects.size() > 0)
       {
-         joinpointAspects = new WeakHashMap();
-         Iterator it = jpAspects.keySet().iterator();
-         while (it.hasNext())
+         joinpointAspects = new WeakHashMap<AspectDefinition, ConcurrentHashMap<Joinpoint, Object>>();
+         for (AspectDefinition def : jpAspects.keySet())
          {
-            AspectDefinition def = (AspectDefinition) it.next();
             initJoinpointAspect(def, jpAspects);
          }
       }
    }
    
-   private void initJoinpointAspect(AspectDefinition def, Map jpAspects)
+   private void initJoinpointAspect(AspectDefinition def, Map<AspectDefinition, Set<Joinpoint>> jpAspects)
    {
-      ConcurrentHashMap joins = new ConcurrentHashMap();
+      ConcurrentHashMap<Joinpoint, Object> joins = new ConcurrentHashMap<Joinpoint, Object>();
       joinpointAspects.put(def, joins);
-      Set joinpoints = (Set) jpAspects.get(def);
-      Iterator jps = joinpoints.iterator();
-      while (jps.hasNext())
+      Set<Joinpoint> joinpoints = jpAspects.get(def);
+      for (Joinpoint joinpoint : joinpoints)
       {
-         Object joinpoint = jps.next();
-         joins.put(joinpoint, def.getFactory().createPerJoinpoint(getClassAdvisor(), instanceAdvisor, (Joinpoint) joinpoint));
+         joins.put(joinpoint, def.getFactory().createPerJoinpoint(getClassAdvisor(), instanceAdvisor, joinpoint));
       }
    }
    
    public Object getPerInstanceAspect(String def)
    {
-      Iterator it = aspects.keySet().iterator();
-      while (it.hasNext())
+      for (AspectDefinition d : aspects.keySet())
       {
-         AspectDefinition d = (AspectDefinition) it.next();
          if (d.getName().equals(def)) return aspects.get(d);
       }
       return null;
    }
+
    public Object getPerInstanceAspect(AspectDefinition def)
    {
       // aspects is a weak hash map of AspectDefinitions so that perinstance advices can be undeployed/redeployed
@@ -196,7 +186,7 @@ public class InstanceAdvisorDelegate implements Serializable
                ClassAdvisor cadvisor = (ClassAdvisor) getClassAdvisor();
                cadvisor.getPerInstanceAspectDefinitions().add(def);
                aspect = def.getFactory().createPerInstance(null, null);
-               WeakHashMap copy = new WeakHashMap(aspects);
+               WeakHashMap<AspectDefinition, Object> copy = new WeakHashMap<AspectDefinition, Object>(aspects);
                copy.put(def, aspect);
                aspects = copy;
             }
@@ -225,11 +215,11 @@ public class InstanceAdvisorDelegate implements Serializable
                ClassAdvisor cadvisor = (ClassAdvisor) getClassAdvisor();
                cadvisor.addPerInstanceJoinpointAspect(joinpoint, def);
                aspect = def.getFactory().createPerJoinpoint(getClassAdvisor(), instanceAdvisor, joinpoint);
-               WeakHashMap copy = new WeakHashMap(joinpointAspects);
-               Map map = (Map) copy.get(def);
+               WeakHashMap<AspectDefinition, ConcurrentHashMap<Joinpoint, Object>> copy = new WeakHashMap<AspectDefinition, ConcurrentHashMap<Joinpoint, Object>>(joinpointAspects);
+               Map<Joinpoint, Object> map = copy.get(def);
                if (map == null)
                {
-                  map = new ConcurrentHashMap();
+                  map = new ConcurrentHashMap<Joinpoint, Object>();
                }
                map.put(joinpoint, aspect);
                joinpointAspects = copy;
@@ -242,7 +232,7 @@ public class InstanceAdvisorDelegate implements Serializable
    private Object getJoinpointAspect(AspectDefinition def, Joinpoint joinpoint)
    {
       if (joinpointAspects == null) return null;
-      Map map = (Map) joinpointAspects.get(def);
+      Map<Joinpoint, Object> map = joinpointAspects.get(def);
       Object aspect = map.get(joinpoint);
       return aspect;
    }

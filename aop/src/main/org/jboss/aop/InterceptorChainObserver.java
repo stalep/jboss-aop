@@ -21,8 +21,6 @@
   */
 package org.jboss.aop;
 
-import gnu.trove.TLongObjectHashMap;
-
 import org.jboss.aop.advice.Interceptor;
 
 /**

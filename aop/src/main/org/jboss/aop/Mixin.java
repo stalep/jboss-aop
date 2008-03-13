@@ -34,8 +34,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD}) @Retention(RetentionPolicy.RUNTIME)
 public @interface Mixin
 {
-   Class target() default java.lang.Class.class;
+   Class<?> target() default java.lang.Class.class;
    String typeExpression() default "";
-   Class[] interfaces();
+   Class<?>[] interfaces();
    boolean isTransient() default true;
 }

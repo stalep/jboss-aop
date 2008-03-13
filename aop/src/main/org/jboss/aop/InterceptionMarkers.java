@@ -30,13 +30,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class InterceptionMarkers
 {
-   protected final ConcurrentHashMap convertableReference = new ConcurrentHashMap();
-   protected final ConcurrentHashMap hasFieldInterception = new ConcurrentHashMap();
-   protected final ConcurrentHashMap hasConstructorInterception = new ConcurrentHashMap();
+   protected final ConcurrentHashMap<String, String> convertableReference = new ConcurrentHashMap<String, String>();
+   protected final ConcurrentHashMap<String, String> hasFieldInterception = new ConcurrentHashMap<String, String>();
+   protected final ConcurrentHashMap<String, String> hasConstructorInterception = new ConcurrentHashMap<String, String>();
 
-   protected final ConcurrentHashMap skipConvertableReference = new ConcurrentHashMap();
-   protected final ConcurrentHashMap skipFieldInterception = new ConcurrentHashMap();
-   protected final ConcurrentHashMap skipConstructorInterception = new ConcurrentHashMap();
+   protected final ConcurrentHashMap<String, String> skipConvertableReference = new ConcurrentHashMap<String, String>();
+   protected final ConcurrentHashMap<String, String> skipFieldInterception = new ConcurrentHashMap<String, String>();
+   protected final ConcurrentHashMap<String, String> skipConstructorInterception = new ConcurrentHashMap<String, String>();
 
    public void addConstructionInterceptionMarker(String classname)
    {

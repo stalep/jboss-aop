@@ -47,7 +47,7 @@ class SecurityActions
          {
             try
             {
-               AccessController.doPrivileged(new PrivilegedExceptionAction()
+               AccessController.doPrivileged(new PrivilegedExceptionAction<Object>()
                {
                   public Object run() throws Exception
                   {
@@ -94,7 +94,7 @@ class SecurityActions
          {
             try
             {
-               AccessController.doPrivileged(new PrivilegedExceptionAction()
+               AccessController.doPrivileged(new PrivilegedExceptionAction<Object>()
                {
                   public Object run() throws Exception
                   {
@@ -151,29 +151,29 @@ class SecurityActions
    
    interface GetDeclaredConstructorsAction 
    {
-      Constructor[] getDeclaredConstructors(Class clazz);
+      Constructor<?>[] getDeclaredConstructors(Class<?> clazz);
       
       GetDeclaredConstructorsAction NON_PRIVILEGED = new GetDeclaredConstructorsAction() {
 
-         public Constructor[] getDeclaredConstructors(Class clazz)
+         public Constructor<?>[] getDeclaredConstructors(Class<?> clazz)
          {
             return clazz.getDeclaredConstructors();
          }};
 
          GetDeclaredConstructorsAction PRIVILEGED = new GetDeclaredConstructorsAction() {
 
-            public Constructor[] getDeclaredConstructors(final Class clazz)
+            public Constructor<?>[] getDeclaredConstructors(final Class<?> clazz)
             {
-               return AccessController.doPrivileged(new PrivilegedAction<Constructor[]>() {
+               return AccessController.doPrivileged(new PrivilegedAction<Constructor<?>[]>() {
 
-                  public Constructor[] run()
+                  public Constructor<?>[] run()
                   {
                      return clazz.getDeclaredConstructors();
                   }});
             }};
    }
    
-   static Constructor[] getDeclaredConstructors(Class clazz)
+   static Constructor<?>[] getDeclaredConstructors(Class<?> clazz)
    {
       if (System.getSecurityManager() == null)
       {
@@ -188,18 +188,18 @@ class SecurityActions
    
    interface GetClassLoaderAction 
    {
-      ClassLoader getClassLoader(Class clazz);
+      ClassLoader getClassLoader(Class<?> clazz);
       
       GetClassLoaderAction NON_PRIVILEGED = new GetClassLoaderAction() {
 
-         public ClassLoader getClassLoader(Class clazz)
+         public ClassLoader getClassLoader(Class<?> clazz)
          {
             return clazz.getClassLoader();
          }};
 
      GetClassLoaderAction PRIVILEGED = new GetClassLoaderAction() {
 
-         public ClassLoader getClassLoader(final Class clazz)
+         public ClassLoader getClassLoader(final Class<?> clazz)
          {
             return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
 
@@ -210,7 +210,7 @@ class SecurityActions
          }};
    }
    
-   static ClassLoader getClassLoader(Class clazz)
+   static ClassLoader getClassLoader(Class<?> clazz)
    {
       if (System.getSecurityManager() == null)
       {
