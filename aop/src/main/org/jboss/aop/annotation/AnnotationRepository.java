@@ -68,6 +68,12 @@ public class AnnotationRepository
       classAnnotations.put(annotation, value);
    }
 
+   public void addClassAnnotation(Class<?> annotation, Object value)
+   {
+      initClassAnnotationsMap();
+      classAnnotations.put(annotation.getName(), value);
+   }
+
    public <T extends Annotation> void addClassAnnotation(Class<T> annotation, T value)
    {
       initClassAnnotationsMap();
