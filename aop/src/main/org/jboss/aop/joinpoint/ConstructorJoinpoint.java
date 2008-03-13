@@ -31,10 +31,10 @@ import java.lang.reflect.Constructor;
  */
 public class ConstructorJoinpoint implements Joinpoint
 {
-   private final Constructor constructor;
+   private final Constructor<?> constructor;
    int hashCode;
 
-   public ConstructorJoinpoint(Constructor con)
+   public ConstructorJoinpoint(Constructor<?> con)
    {
       this.constructor = con;
    }
@@ -57,7 +57,7 @@ public class ConstructorJoinpoint implements Joinpoint
       return hashCode;
    }
 
-   public Constructor getConstructor()
+   public Constructor<?> getConstructor()
    {
       return constructor;
    }

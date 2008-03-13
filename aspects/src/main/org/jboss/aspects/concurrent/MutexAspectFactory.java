@@ -52,7 +52,7 @@ public class MutexAspectFactory implements AspectFactory
    public Object createPerJoinpoint(Advisor advisor, Joinpoint jp)
    {
       MethodJoinpoint mj = (MethodJoinpoint)jp;
-      MutexLocked props = (MutexLocked)advisor.resolveAnnotation(mj.getMethod(), MutexLocked.class);
+      MutexLocked props = (MutexLocked)advisor.resolveTypedAnnotation(mj.getMethod(), MutexLocked.class);
       if (props.timeout() < 0)
       {
          return new MutexAspect.BlockingMutex();

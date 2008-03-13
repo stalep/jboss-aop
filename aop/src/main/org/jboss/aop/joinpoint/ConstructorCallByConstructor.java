@@ -34,6 +34,6 @@ public interface ConstructorCallByConstructor extends ConstructorCall
    /**
     * Gets the calling constructor
     */
-   Constructor getCallingConstructor();
+   Constructor<?> getCallingConstructor();
 
 }

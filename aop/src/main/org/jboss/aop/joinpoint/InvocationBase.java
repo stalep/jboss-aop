@@ -28,6 +28,7 @@ import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.metadata.MetaDataResolver;
 import org.jboss.aop.metadata.SimpleMetaData;
 
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,26 +49,26 @@ abstract public class InvocationBase implements java.io.Serializable, Invocation
    protected transient int currentInterceptor = 0;
    protected transient org.jboss.aop.advice.Interceptor[] interceptors = null;
    protected transient Advisor advisor = null;
-   protected transient Map responseContextInfo = null;
+   protected transient Map<Object, Object> responseContextInfo = null;
 
    protected transient Object targetObject = null;
 
    // todo need to refactor this as ClassProxyTemplate still needs this for remoting
    protected transient MetaDataResolver instanceResolver;
    
-   public Map getResponseContextInfo()
+   public Map<Object, Object> getResponseContextInfo()
    {
       return responseContextInfo;
    }
 
-   public void setResponseContextInfo(Map responseContextInfo)
+   public void setResponseContextInfo(Map<Object, Object> responseContextInfo)
    {
       this.responseContextInfo = responseContextInfo;
    }
 
    public void addResponseAttachment(Object key, Object val)
    {
-      if (responseContextInfo == null) responseContextInfo = new HashMap(1);
+      if (responseContextInfo == null) responseContextInfo = new HashMap<Object, Object>(1);
       responseContextInfo.put(key, val);
    }
 
@@ -200,24 +201,39 @@ abstract public class InvocationBase implements java.io.Serializable, Invocation
    }
 
 
-   public Object resolveClassAnnotation(Class annotation)
+   public Object resolveClassAnnotation(Class<? extends Annotation> annotation)
    {
-      if (advisor != null) return advisor.resolveAnnotation(annotation);
-      return null;
+      return resolveTypedClassAnnotation(annotation);
+   }
+   
+   public <T extends Annotation> T resolveTypedClassAnnotation(Class<T> annotation)
+   {
+      if (advisor != null) return advisor.resolveTypedAnnotation(annotation);
+      return null;      
    }
 
-   public Object resolveAnnotation(Class annotation)
+   public Object resolveAnnotation(Class<? extends Annotation> annotation)
    {
       // todo need to add hooks for invocation and thread metadata.
       return null;
    }
    
-   public Object resolveAnnotation(Class[] annotations)
+   public <T extends Annotation> T resolveTypedAnnotation(Class<T> annotation)
+   {
+      return null;
+   }
+   
+   public Object resolveAnnotation(Class<? extends Annotation>[] annotations)
    {
       // todo need to add hooks for invocation and thread metadata.
       return null;
    }
 
+   public <T extends Annotation> T resolveTypedAnnotation(Class<T>[] annotations)
+   {
+      return null;
+   }
+   
    /**
     * This method resolves metadata based on the context of the invocation.
     * It iterates through its list of MetaDataResolvers to find out the

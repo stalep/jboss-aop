@@ -177,29 +177,29 @@ public class InstanceOfAnnotatedTester extends AOPTestWithSetup
      Class introducedPOJO = IntroducedPOJO.class;
      ClassAdvisor advisor = AspectManager.instance().getAdvisor(introducedPOJO);
 
-     Introduced introduced = advisor.resolveAnnotation(Introduced.class);
+     Introduced introduced = advisor.resolveTypedAnnotation(Introduced.class);
      assertNotNull("Class did not have the @Introduced annotation", introduced);
      
      Constructor con = introducedPOJO.getConstructors()[0];
-     introduced = advisor.resolveAnnotation(con, Introduced.class);
+     introduced = advisor.resolveTypedAnnotation(con, Introduced.class);
      assertNotNull("Constructor did not have the @Introduced annotation", introduced);
-     Introduced2 introduced2 = advisor.resolveAnnotation(con, Introduced2.class);
+     Introduced2 introduced2 = advisor.resolveTypedAnnotation(con, Introduced2.class);
      assertNotNull("Constructor did not have the @Introduced2 annotation", introduced2);
-     Introduced3 introduced3 = advisor.resolveAnnotation(con, Introduced3.class);
+     Introduced3 introduced3 = advisor.resolveTypedAnnotation(con, Introduced3.class);
      assertNull("Constructor has the @Introduced3 annotation", introduced3);
      
      Field field = introducedPOJO.getField("field");
-     introduced = advisor.resolveAnnotation(field, Introduced.class);
+     introduced = advisor.resolveTypedAnnotation(field, Introduced.class);
      assertNotNull("Field did not have the @Introduced annotation", introduced);
-     introduced2 = advisor.resolveAnnotation(field, Introduced2.class);
+     introduced2 = advisor.resolveTypedAnnotation(field, Introduced2.class);
      assertNotNull("Field did not have the @Introduced2 annotation", introduced2);
      
      Method method = introducedPOJO.getMethod("someMethod", new Class[]{Type.class, Type.class});
-     introduced = advisor.resolveAnnotation(method, Introduced.class);
+     introduced = advisor.resolveTypedAnnotation(method, Introduced.class);
      assertNotNull("Method did not have the @Introduced annotation", introduced);
-     introduced2 = advisor.resolveAnnotation(method, Introduced2.class);
+     introduced2 = advisor.resolveTypedAnnotation(method, Introduced2.class);
      assertNotNull("Method did not have the @Introduced2 annotation", introduced2);
-     introduced3 = advisor.resolveAnnotation(method, Introduced3.class);
+     introduced3 = advisor.resolveTypedAnnotation(method, Introduced3.class);
      assertNull("Method has the @Introduced3 annotation", introduced3);
  }
  

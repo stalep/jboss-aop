@@ -43,7 +43,7 @@ public class MethodCalledByConstructorInvocation extends CallerInvocation
    private static final long serialVersionUID = -1903092605231217830L;
    
    //info fields
-   protected Constructor calling;
+   protected Constructor<?> calling;
    protected Method method;
    
    public MethodCalledByConstructorInvocation(MethodByConInfo info, Object callingObject, Object target, Object[] args, Interceptor[] interceptors)
@@ -56,7 +56,7 @@ public class MethodCalledByConstructorInvocation extends CallerInvocation
       this(info.getAdvisor(), info.getCallingConstructor(), info.getMethod(), callingObject, target, null, interceptors);
    }
    
-   public MethodCalledByConstructorInvocation(Advisor advisor, Constructor calling, Method method, Object callingObject, Object target, Object[] args, Interceptor[] interceptors)
+   public MethodCalledByConstructorInvocation(Advisor advisor, Constructor<?> calling, Method method, Object callingObject, Object target, Object[] args, Interceptor[] interceptors)
    {
       super(advisor, callingObject, interceptors);
       this.calling = calling;
@@ -162,7 +162,7 @@ public class MethodCalledByConstructorInvocation extends CallerInvocation
     *
     * @return The constructor that is calling the method
     */
-   public Constructor getCalling()
+   public Constructor<?> getCalling()
    {
       return calling;
    }

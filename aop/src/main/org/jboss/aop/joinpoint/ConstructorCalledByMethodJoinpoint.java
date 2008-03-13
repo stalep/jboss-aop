@@ -33,10 +33,10 @@ import java.lang.reflect.Method;
 public class ConstructorCalledByMethodJoinpoint implements Joinpoint
 {
    private final Method calling;
-   private final Constructor called;
+   private final Constructor<?> called;
    int hashCode;
 
-   public ConstructorCalledByMethodJoinpoint(Method calling, Constructor called)
+   public ConstructorCalledByMethodJoinpoint(Method calling, Constructor<?> called)
    {
       this.calling = calling;
       this.called = called;
@@ -67,7 +67,7 @@ public class ConstructorCalledByMethodJoinpoint implements Joinpoint
       return calling;
    }
 
-   public Constructor getCalled()
+   public Constructor<?> getCalled()
    {
       return called;
    }

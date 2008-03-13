@@ -24,6 +24,7 @@ package org.jboss.aop.joinpoint;
 import org.jboss.aop.ConstructorInfo;
 import org.jboss.aop.advice.Interceptor;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -40,7 +41,7 @@ public class ConstructorInvocation extends InvocationBase
    private static final long serialVersionUID = -7880020293056198584L;
 
    protected Object[] arguments = null; // MARSHALLED
-   protected transient Constructor constructor = null;
+   protected transient Constructor<?> constructor = null;
 
    public ConstructorInvocation(Interceptor[] interceptors)
    {
@@ -86,7 +87,7 @@ public class ConstructorInvocation extends InvocationBase
    {
       try
       {
-         Constructor con = getConstructor();
+         Constructor<?> con = getConstructor();
          Object[] args = getArguments();
          setTargetObject(con.newInstance(args));
          return getTargetObject();
@@ -115,14 +116,19 @@ public class ConstructorInvocation extends InvocationBase
     * This method resolves an annotation based on the context of the invocation.
     *
     */
-   public Object resolveAnnotation(Class annotation)
+   public Object resolveAnnotation(Class<? extends Annotation> annotation)
    {
-      Object val = super.resolveAnnotation(annotation);
+      return resolveTypedAnnotation(annotation);
+   }
+
+   public <T extends Annotation> T resolveTypedAnnotation(Class<T> annotation)
+   {
+      T val = super.resolveTypedAnnotation(annotation);
       if (val != null) return val;
 
       if (getAdvisor() != null)
       {
-         val = getAdvisor().resolveAnnotation(constructor, annotation);
+         val = getAdvisor().resolveTypedAnnotation(constructor, annotation);
          if (val != null) return val;
       }
 
@@ -227,12 +233,12 @@ public class ConstructorInvocation extends InvocationBase
       this.arguments = arguments;
    }
 
-   public Constructor getConstructor()
+   public Constructor<?> getConstructor()
    {
       return constructor;
    }
 
-   public void setConstructor(Constructor constructor)
+   public void setConstructor(Constructor<?> constructor)
    {
       this.constructor = constructor;
    }

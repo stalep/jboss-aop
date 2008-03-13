@@ -89,7 +89,7 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
    {
       try
       {
-         Class proxyClass = null;
+         Class<?> proxyClass = null;
 
          boolean isAdvised = Advised.class.isAssignableFrom(params.getProxiedClass());
 
@@ -125,19 +125,19 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
       }
    }
 
-   private Class generateProxy(AOPProxyFactoryParameters params) throws Exception
+   private Class<?> generateProxy(AOPProxyFactoryParameters params) throws Exception
    {
-      Class proxyClass = ContainerProxyFactory.getProxyClass(params.isObjectAsSuperClass(), params.getContainerCache().getKey(), params.getContainerCache().getAdvisor());
+      Class<?> proxyClass = ContainerProxyFactory.getProxyClass(params.isObjectAsSuperClass(), params.getContainerCache().getKey(), params.getContainerCache().getAdvisor());
 
       return proxyClass;
    }
 
-   private Object instantiateAndConfigureProxy(Class proxyClass, AOPProxyFactoryParameters params) throws Exception
+   private Object instantiateAndConfigureProxy(Class<?> proxyClass, AOPProxyFactoryParameters params) throws Exception
    {
       AspectManaged proxy;
       if (params.getCtor() != null)
       {
-         Constructor ctor = proxyClass.getConstructor(params.getCtor().getSignature());
+         Constructor<?> ctor = proxyClass.getConstructor(params.getCtor().getSignature());
          proxy = (AspectManaged)ctor.newInstance(params.getCtor().getArguments());
       }
       else

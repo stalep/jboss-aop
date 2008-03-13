@@ -163,7 +163,7 @@ public class FieldInfo extends JoinPointInfo implements FieldAccess
 
       if (getAdvisor() != null)
       {
-         val = getAdvisor().resolveAnnotation(advisedField, annotation);
+         val = getAdvisor().resolveTypedAnnotation(advisedField, annotation);
          if (val != null) return val;
       }
 

@@ -75,7 +75,7 @@ public class ConstructorCalledByMethodInvocationWrapper extends ConstructorCalle
       return wrapped.getInstanceResolver();
    }
 
-   public Class getCallingClass()
+   public Class<?> getCallingClass()
    {
       return wrapped.getCallingClass();
    }
@@ -85,7 +85,7 @@ public class ConstructorCalledByMethodInvocationWrapper extends ConstructorCalle
       return wrapped.getCallingMethod();
    }
 
-   public Constructor getCalledConstructor()
+   public Constructor<?> getCalledConstructor()
    {
       return wrapped.getCalledConstructor();
    }
@@ -122,12 +122,12 @@ public class ConstructorCalledByMethodInvocationWrapper extends ConstructorCalle
       wrapped.setTargetObject(targetObject);
    }
 
-   public Map getResponseContextInfo()
+   public Map<Object, Object> getResponseContextInfo()
    {
       return wrapped.getResponseContextInfo();
    }
 
-   public void setResponseContextInfo(Map responseContextInfo)
+   public void setResponseContextInfo(Map<Object, Object> responseContextInfo)
    {
       wrapped.setResponseContextInfo(responseContextInfo);
    }

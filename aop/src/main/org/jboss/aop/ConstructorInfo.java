@@ -127,7 +127,7 @@ public class ConstructorInfo extends JoinPointInfo implements ConstructorExecuti
 
       if (getAdvisor() != null)
       {
-         val = getAdvisor().resolveAnnotation(constructor, annotation);
+         val = getAdvisor().resolveTypedAnnotation(constructor, annotation);
          if (val != null) return val;
       }
 

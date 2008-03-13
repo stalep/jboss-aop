@@ -99,22 +99,22 @@ public class ConstructorInvocationWrapper extends ConstructorInvocation
       return invocation;
    }
 
-   public Constructor getConstructor()
+   public Constructor<?> getConstructor()
    {
       return wrapped.getConstructor();
    }
 
-   public void setConstructor(Constructor constructor)
+   public void setConstructor(Constructor<?> constructor)
    {
       wrapped.setConstructor(constructor);
    }
 
-   public Map getResponseContextInfo()
+   public Map<Object, Object> getResponseContextInfo()
    {
       return wrapped.getResponseContextInfo();
    }
 
-   public void setResponseContextInfo(Map responseContextInfo)
+   public void setResponseContextInfo(Map<Object, Object> responseContextInfo)
    {
       wrapped.setResponseContextInfo(responseContextInfo);
    }

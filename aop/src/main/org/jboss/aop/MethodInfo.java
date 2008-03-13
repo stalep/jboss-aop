@@ -134,7 +134,7 @@ public class MethodInfo extends JoinPointInfo implements MethodExecution
       Advisor advisor = getAdvisor();
       if (advisor != null)
       {
-         return getAdvisor().resolveAnnotation(hash, advisedMethod, annotation);
+         return getAdvisor().resolveTypedAnnotation(hash, advisedMethod, annotation);
       }
       return null;
    }

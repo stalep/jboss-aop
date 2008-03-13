@@ -23,7 +23,6 @@ package org.jboss.aop.joinpoint;
  
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -43,18 +42,18 @@ public class InvocationResponse
 
    private static final long serialVersionUID = 2974596986988236395L;
 
-   public Map getContextInfo()
+   public Map<Object, Object> getContextInfo()
    {
       return contextInfo;
    }
 
-   public void setContextInfo(Map contextInfo)
+   public void setContextInfo(Map<Object, Object> contextInfo)
    {
       this.contextInfo = contextInfo;
    }
 
    // The Map of methods used by this Invocation
-   protected Map contextInfo = null;
+   protected Map<Object, Object> contextInfo = null;
    protected Object response = null;
 
    // Constructors --------------------------------------------------
@@ -84,7 +83,7 @@ public class InvocationResponse
 
    public void addAttachment(Object key, Object val)
    {
-      if (contextInfo == null) contextInfo = new HashMap(1);
+      if (contextInfo == null) contextInfo = new HashMap<Object, Object>(1);
       contextInfo.put(key, val);
    }
 
@@ -106,10 +105,8 @@ public class InvocationResponse
       else
       {
          out.writeInt(contextInfo.size());
-         Iterator keys = contextInfo.keySet().iterator();
-         while (keys.hasNext())
+         for (Object currentKey : contextInfo.keySet())
          {
-            Object currentKey = keys.next();
             out.writeObject(currentKey);
             out.writeObject(contextInfo.get(currentKey));
          }
@@ -129,7 +126,7 @@ public class InvocationResponse
       }
       else
       {
-         contextInfo = new HashMap(size);
+         contextInfo = new HashMap<Object, Object>(size);
          for (int i = 0; i < size; i++)
          {
             Object key = in.readObject();

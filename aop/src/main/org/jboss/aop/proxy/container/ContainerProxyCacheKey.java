@@ -38,12 +38,12 @@ import org.jboss.util.id.GUID;
 public class ContainerProxyCacheKey implements Serializable
 {
    private static final long serialVersionUID = 8758283842273747310L;
-   private static final WeakReference<Class>[] EMTPY_WR_ARRAY = new WeakReference[0];
+   private static final WeakReference<Class<?>>[] EMTPY_WR_ARRAY = new WeakReference[0];
    private static final AOPProxyFactoryMixin[] EMPTY_MIXIN_ARRAY = new AOPProxyFactoryMixin[0];
    
    private String managerFqn;
-   private WeakReference<Class> clazzRef;
-   private WeakReference<Class>[] addedInterfaces = EMTPY_WR_ARRAY;
+   private WeakReference<Class<?>> clazzRef;
+   private WeakReference<Class<?>>[] addedInterfaces = EMTPY_WR_ARRAY;
    
    private MetaData metaData;
    /** In case we are serializing with an unserializable MetaData in the same JVM, give a chance to make sure that the metaData is the same */
@@ -53,25 +53,25 @@ public class ContainerProxyCacheKey implements Serializable
    private int hashcode = 0;
    private GUID guid = MarshalledContainerProxy.GUID;
    
-   public ContainerProxyCacheKey(String managerFqn, Class clazz)
+   public ContainerProxyCacheKey(String managerFqn, Class<?> clazz)
    {
-      this.clazzRef = new WeakReference<Class>(clazz);
+      this.clazzRef = new WeakReference<Class<?>>(clazz);
       this.managerFqn = managerFqn;
    }
    
-   public ContainerProxyCacheKey(Class clazz)
+   public ContainerProxyCacheKey(Class<?> clazz)
    {
       this("/", clazz);
    }
    
-   public ContainerProxyCacheKey(String managerFqn, Class clazz, Class[] addedInterfaces, MetaData metaData)
+   public ContainerProxyCacheKey(String managerFqn, Class<?> clazz, Class<?>[] addedInterfaces, MetaData metaData)
    {
       this(managerFqn, clazz); 
       this.addedInterfaces = ContainerCacheUtil.getSortedWeakReferenceForInterfaces(addedInterfaces);
       this.metaData = metaData; 
    }
 
-   public ContainerProxyCacheKey(String managerFqn, Class clazz, Class[] addedInterfaces, AOPProxyFactoryMixin[] addedMixins, MetaData metaData)
+   public ContainerProxyCacheKey(String managerFqn, Class<?> clazz, Class<?>[] addedInterfaces, AOPProxyFactoryMixin[] addedMixins, MetaData metaData)
    {
       this(managerFqn, clazz, addedInterfaces, metaData);
       
@@ -82,7 +82,7 @@ public class ContainerProxyCacheKey implements Serializable
       }
    }
 
-   public Class getClazz()
+   public Class<?> getClazz()
    {
       return clazzRef.get();
    }
@@ -144,7 +144,7 @@ public class ContainerProxyCacheKey implements Serializable
       if (hashcode == 0)
       {
          
-         Class clazz = (Class)clazzRef.get();
+         Class<?> clazz = clazzRef.get();
          StringBuffer sb = new StringBuffer();
          sb.append(managerFqn);
          if (clazz != null)
@@ -157,7 +157,7 @@ public class ContainerProxyCacheKey implements Serializable
             for (int i = 0 ; i < addedInterfaces.length ; i++)
             {
                sb.append(";");
-               sb.append(((Class)addedInterfaces[i].get()).getName());
+               sb.append((addedInterfaces[i].get()).getName());
             }
          }
          
@@ -175,7 +175,7 @@ public class ContainerProxyCacheKey implements Serializable
    public String toString()
    {
       StringBuffer buf = new StringBuffer("ContainerProxyCache");
-      buf.append(((Class)clazzRef.get()).getName());
+      buf.append((clazzRef.get()).getName());
       buf.append(";interfaces=");
       if (addedInterfaces == null)
       {
@@ -279,7 +279,7 @@ public class ContainerProxyCacheKey implements Serializable
        out.writeUTF(managerFqn);
        out.writeObject(guid);
        out.writeObject(clazzRef.get());
-       Class[] ifs = null;
+       Class<?>[] ifs = null;
        if (addedInterfaces != null)
        {
           ifs = new Class[addedInterfaces.length];
@@ -307,14 +307,14 @@ public class ContainerProxyCacheKey implements Serializable
     {
        managerFqn = in.readUTF();
        guid = (GUID)in.readObject();
-       clazzRef = new WeakReference<Class>((Class)in.readObject());
-       Class[] ifs = (Class[])in.readObject();
+       clazzRef = new WeakReference<Class<?>>((Class<?>)in.readObject());
+       Class<?>[] ifs = (Class[])in.readObject();
        if (ifs != null)
        {
           addedInterfaces = new WeakReference[ifs.length];
           for (int i = 0 ; i < ifs.length ; i++)
           {
-             addedInterfaces[i] = new WeakReference<Class>(ifs[i]);
+             addedInterfaces[i] = new WeakReference<Class<?>>(ifs[i]);
           }
        }
        metaData = (MetaData)in.readObject();
@@ -323,14 +323,14 @@ public class ContainerProxyCacheKey implements Serializable
        hashcode = in.readInt();
     }
    
-   static class MixinAlphabetical implements Comparator
+   static class MixinAlphabetical implements Comparator<AOPProxyFactoryMixin>
    {
       static MixinAlphabetical singleton = new MixinAlphabetical();
       
-      public int compare(Object o1, Object o2)
+      public int compare(AOPProxyFactoryMixin o1, AOPProxyFactoryMixin o2)
       {
-         String name1 = ((AOPProxyFactoryMixin)o1).getMixin().getName();
-         String name2 = ((AOPProxyFactoryMixin)o2).getMixin().getName();
+         String name1 = o1.getMixin().getName();
+         String name2 = o2.getMixin().getName();
          return (name1).compareTo(name2);
       }
    }

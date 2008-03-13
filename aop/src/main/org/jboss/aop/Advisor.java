@@ -343,7 +343,12 @@ public abstract class Advisor
       return annotations;
    }
 
-   public <T extends Annotation> T resolveAnnotation(Class<T> annotation)
+   public Object resolveAnnotation(Class<? extends Annotation> annotation)
+   {
+      return resolveTypedAnnotation(annotation);
+   }
+   
+   public <T extends Annotation> T resolveTypedAnnotation(Class<T> annotation)
    {
       if (metadata != null)
       {
@@ -411,12 +416,22 @@ public abstract class Advisor
       return false;
    }
 
-   public <T extends Annotation> T resolveAnnotation(Method m, Class<T> annotation)
+   public Object resolveAnnotation(Method m, Class<? extends Annotation> annotation)
    {
-      return resolveAnnotation(0, m, annotation);
+      return resolveTypedAnnotation(0, m, annotation);
+   }
+   
+   public <T extends Annotation> T resolveTypedAnnotation(Method m, Class<T> annotation)
+   {
+      return resolveTypedAnnotation(0, m, annotation);
    }
 
-   public <T extends Annotation> T resolveAnnotation(long hash, Method m, Class<T> annotation)
+   public Object resolveAnnotation(long hash, Method m, Class<? extends Annotation> annotation)
+   {
+      return resolveTypedAnnotation(hash, m, annotation);
+   }
+   
+   public <T extends Annotation> T resolveTypedAnnotation(long hash, Method m, Class<T> annotation)
    {
       if (metadata != null)
       {
@@ -440,17 +455,33 @@ public abstract class Advisor
       return value;
    }
 
-   public <T extends Annotation> T resolveAnnotation(Method m, Class<T>[] annotationChoices)
+   public Object resolveAnnotation(Method m, Class<?>[] annotationChoices)
    {
-      for (Class<T> ann : annotationChoices)
+      for (Class<?> ann : annotationChoices)
       {
-         T val = resolveAnnotation(m, ann);
+         Object val = resolveTypedAnnotation(m, (Class<? extends Annotation>)ann);
          if (val != null) return val;
       }
       return null;
    }
 
-   public <T extends Annotation> T resolveAnnotation(Field f, Class<T> annotation)
+   public <T extends Annotation> T resolveTypedAnnotation(Method m, Class<T>[] annotationChoices)
+   {
+      for (Class<T> ann : annotationChoices)
+      {
+         T val = resolveTypedAnnotation(m, ann);
+         if (val != null) return val;
+      }
+      return null;
+   }
+
+
+   public Object resolveAnnotation(Field f, Class<? extends Annotation> annotation)
+   {
+      return resolveTypedAnnotation(f, annotation);
+   }
+   
+   public <T extends Annotation> T resolveTypedAnnotation(Field f, Class<T> annotation)
    {
       T value = null;
       if (metadata != null)
@@ -472,7 +503,12 @@ public abstract class Advisor
       return value;
    }
 
-   public <T extends Annotation> T resolveAnnotation(Constructor<?> c, Class<T> annotation)
+   public Object resolveAnnotation(Constructor<?> c, Class<? extends Annotation> annotation)
+   {
+      return resolveTypedAnnotation(c, annotation);
+   }
+   
+   public <T extends Annotation> T resolveTypedAnnotation(Constructor<?> c, Class<T> annotation)
    {
       T value = null;
       if (metadata != null)

@@ -34,12 +34,12 @@ public interface MethodCall extends JoinPointBean
    /**
     * Gets the class containing the method/constructor making the call
     */
-   Class getCallingClass();
+   Class<?> getCallingClass();
 
    /**
     * Gets the class containing the method being called 
     */
-   Class getCalledClass();
+   Class<?> getCalledClass();
 
    /**
     * Gets the method being called

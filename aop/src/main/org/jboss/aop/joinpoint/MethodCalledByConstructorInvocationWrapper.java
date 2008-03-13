@@ -92,7 +92,7 @@ public class MethodCalledByConstructorInvocationWrapper extends MethodCalledByCo
       wrapped.setArguments(arguments);
    }
 
-   public Constructor getCalling()
+   public Constructor<?> getCalling()
    {
       return wrapped.getCalling();
    }
@@ -102,7 +102,7 @@ public class MethodCalledByConstructorInvocationWrapper extends MethodCalledByCo
       return wrapped.getCalledMethod();
    }
 
-   public Map getResponseContextInfo()
+   public Map<Object, Object> getResponseContextInfo()
    {
       return wrapped.getResponseContextInfo();
    }
@@ -112,7 +112,7 @@ public class MethodCalledByConstructorInvocationWrapper extends MethodCalledByCo
       wrapped.addResponseAttachment(key, val);
    }
 
-   public void setResponseContextInfo(Map responseContextInfo)
+   public void setResponseContextInfo(Map<Object, Object> responseContextInfo)
    {
       wrapped.setResponseContextInfo(responseContextInfo);
    }

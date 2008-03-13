@@ -116,7 +116,7 @@ public class ConstructionInfo extends JoinPointInfo implements Construction
 
       if (getAdvisor() != null)
       {
-         val = getAdvisor().resolveAnnotation(constructor, annotation);
+         val = getAdvisor().resolveTypedAnnotation(constructor, annotation);
          if (val != null) return val;
       }
 

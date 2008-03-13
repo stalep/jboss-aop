@@ -41,7 +41,7 @@ public class ContainerCache
 {
    private static volatile int counter;
    public static final Object mapLock = new Object();
-   private static WeakHashMap<Class, HashMap<String, ClassProxyContainer>> containerCache = new WeakHashMap<Class, HashMap<String, ClassProxyContainer>>();
+   private static WeakHashMap<Class<?>, HashMap<String, ClassProxyContainer>> containerCache = new WeakHashMap<Class<?>, HashMap<String, ClassProxyContainer>>();
 
    private AspectManager manager;
    private ContainerProxyCacheKey key;
@@ -49,14 +49,14 @@ public class ContainerCache
    private Advisor classAdvisor;
    private InstanceProxyContainer instanceContainer;
    boolean isClassProxyContainer;
-   Class[] interfaces;
+   Class<?>[] interfaces;
    AOPProxyFactoryMixin[] mixins;
 
    MetaData metaData;
    boolean metaDataHasInstanceLevelData;
    SimpleMetaData simpleMetaData;
 
-   private ContainerCache(AspectManager manager, Class proxiedClass, Class[] interfaces, AOPProxyFactoryMixin[] mixins, MetaData metaData, boolean metaDataHasInstanceLevelData, SimpleMetaData simpleMetaData)
+   private ContainerCache(AspectManager manager, Class<?> proxiedClass, Class<?>[] interfaces, AOPProxyFactoryMixin[] mixins, MetaData metaData, boolean metaDataHasInstanceLevelData, SimpleMetaData simpleMetaData)
    {
       this.manager = manager;
       this.interfaces = interfaces;
@@ -67,7 +67,7 @@ public class ContainerCache
       key = new ContainerProxyCacheKey(manager.getManagerFQN(), proxiedClass, interfaces, mixins, metaData);
    }
 
-   public static ContainerCache initialise(AspectManager manager, Class proxiedClass, MetaData metaData, boolean metaDataHasInstanceLevelData)
+   public static ContainerCache initialise(AspectManager manager, Class<?> proxiedClass, MetaData metaData, boolean metaDataHasInstanceLevelData)
    {
       return initialise(manager, proxiedClass, null, null, metaData, metaDataHasInstanceLevelData, null);
    }
@@ -84,7 +84,7 @@ public class ContainerCache
             params.getSimpleMetaData());
    }
 
-   private static ContainerCache initialise(AspectManager manager, Class proxiedClass, Class[] interfaces, AOPProxyFactoryMixin[] mixins, MetaData metaData, boolean metaDataHasInstanceLevelData, SimpleMetaData simpleMetaData)
+   private static ContainerCache initialise(AspectManager manager, Class<?> proxiedClass, Class<?>[] interfaces, AOPProxyFactoryMixin[] mixins, MetaData metaData, boolean metaDataHasInstanceLevelData, SimpleMetaData simpleMetaData)
    {
       ContainerCache factory = new ContainerCache(manager, proxiedClass, interfaces, mixins, metaData, metaDataHasInstanceLevelData, simpleMetaData);
       synchronized (mapLock)
@@ -221,7 +221,7 @@ public class ContainerCache
          return null;
       }
 
-      Class proxiedClass = classAdvisor.getClazz();
+      Class<?> proxiedClass = classAdvisor.getClazz();
       if (proxiedClass == null)
       {
          proxiedClass = Object.class;
@@ -241,8 +241,8 @@ public class ContainerCache
    {
       for (int i = 0 ; i < mixins.length && mixins != null; i++)
       {
-         Class[] mixinInterfaces = mixins[i].getInterfaces();
-         Class mixinClass = mixins[i].getMixin();
+         Class<?>[] mixinInterfaces = mixins[i].getInterfaces();
+         Class<?> mixinClass = mixins[i].getMixin();
 
          if (mixinInterfaces == null)
          {
@@ -259,7 +259,7 @@ public class ContainerCache
       }
    }
 
-   private String[] getClassNames(Class[] classes)
+   private String[] getClassNames(Class<?>[] classes)
    {
       if (classes == null)
       {

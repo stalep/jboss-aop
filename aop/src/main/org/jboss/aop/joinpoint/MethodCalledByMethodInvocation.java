@@ -42,7 +42,7 @@ public class MethodCalledByMethodInvocation extends CallerInvocation
    private static final long serialVersionUID = -156920151151728318L;
    
    //info fields
-   Class callingClass;
+   Class<?> callingClass;
    Method callingMethod;
    Method method;
    
@@ -56,7 +56,7 @@ public class MethodCalledByMethodInvocation extends CallerInvocation
       this(info.getAdvisor(), info.getCallingClass(), info.getCallingMethod(), info.getMethod(), callingObject, targetObject, null, interceptors);
    }
 
-   public MethodCalledByMethodInvocation(Advisor advisor, Class callingClass, 
+   public MethodCalledByMethodInvocation(Advisor advisor, Class<?> callingClass, 
          Method callingMethod, Method method, Object callingObject, Object targetObject, Object[] args, Interceptor[] interceptors)
    {
       super(advisor, callingObject, interceptors);
@@ -163,7 +163,7 @@ public class MethodCalledByMethodInvocation extends CallerInvocation
    /**
     * @return The class that is making the call on the method
     */
-   public Class getCallingClass()
+   public Class<?> getCallingClass()
    {
       return callingClass;
    }

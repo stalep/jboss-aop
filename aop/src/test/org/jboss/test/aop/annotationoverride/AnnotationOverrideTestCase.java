@@ -51,7 +51,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-@SuppressWarnings({"unused", "unchecked", "cast"})
+@SuppressWarnings({"unused", "unchecked"})
 public class AnnotationOverrideTestCase extends AOPTestWithSetup
 {
    public AnnotationOverrideTestCase(String arg0)
@@ -83,14 +83,22 @@ public class AnnotationOverrideTestCase extends AOPTestWithSetup
       container.setClass(Proxied.class);
       container.initializeClassContainer();
       
-      Some some = (Some)container.resolveAnnotation(Some.class);
+      Some some = container.resolveTypedAnnotation(Some.class);
       assertNotNull(some);
-      Other other = (Other)container.resolveAnnotation(Other.class);
+      some = (Some)container.resolveAnnotation(Some.class);
+      assertNotNull(some);
+      Other other = container.resolveTypedAnnotation(Other.class);
+      assertNull(other);
+      other = (Other)container.resolveAnnotation(Other.class);
       assertNull(other);
       
       Method m = Proxied.class.getDeclaredMethod("method");
+      some = container.resolveTypedAnnotation(m, Some.class);
+      assertNull(some);
       some = (Some)container.resolveAnnotation(m, Some.class);
       assertNull(some);
+      other = container.resolveTypedAnnotation(m, Other.class);
+      assertNotNull(other);
       other = (Other)container.resolveAnnotation(m, Other.class);
       assertNotNull(other);
       assertEquals("method", other.value());
@@ -114,83 +122,131 @@ public class AnnotationOverrideTestCase extends AOPTestWithSetup
          setupMetaData(advisor, c, m, f, classAnnotations, ctorAnnotations, methodAnnotations, fieldAnnotations);
       }
       
-      Some some = (Some)advisor.resolveAnnotation(Some.class);
+      Some some = advisor.resolveTypedAnnotation(Some.class);
       assertNotNull(some);
-      Other other = (Other)advisor.resolveAnnotation(Other.class);
+      some = (Some)advisor.resolveAnnotation(Some.class);
+      assertNotNull(some);
+      Other other = advisor.resolveTypedAnnotation(Other.class);
+      assertNull(other);
+      other = (Other)advisor.resolveAnnotation(Other.class);
       assertNull(other);
       
-      SomeAnnotation someAnn = (SomeAnnotation)advisor.resolveAnnotation(SomeAnnotation.class);
+      SomeAnnotation someAnn = advisor.resolveTypedAnnotation(SomeAnnotation.class);
       assertNotNull(someAnn);
-      OtherAnnotation otherAnn = (OtherAnnotation)advisor.resolveAnnotation(OtherAnnotation.class);
+      someAnn = (SomeAnnotation)advisor.resolveAnnotation(SomeAnnotation.class);
+      assertNotNull(someAnn);
+      OtherAnnotation otherAnn = advisor.resolveTypedAnnotation(OtherAnnotation.class);
+      assertNull(otherAnn);
+      otherAnn = (OtherAnnotation)advisor.resolveAnnotation(OtherAnnotation.class);
       assertNull(otherAnn);
       
       if (useMetaData)
       {
-         SomeMD someMD = (SomeMD)advisor.resolveAnnotation(SomeMD.class);
+         SomeMD someMD = advisor.resolveTypedAnnotation(SomeMD.class);
          assertNotNull(someMD);
-         OtherMD otherMD = (OtherMD)advisor.resolveAnnotation(OtherMD.class);
+         someMD = (SomeMD)advisor.resolveAnnotation(SomeMD.class);
+         assertNotNull(someMD);
+         OtherMD otherMD = advisor.resolveTypedAnnotation(OtherMD.class);
+         assertNull(otherMD);
+         otherMD = (OtherMD)advisor.resolveAnnotation(OtherMD.class);
          assertNull(otherMD);
       }
       
+      some = advisor.resolveTypedAnnotation(m, Some.class);
+      assertNull(some);
       some = (Some)advisor.resolveAnnotation(m, Some.class);
       assertNull(some);
+      other = advisor.resolveTypedAnnotation(m, Other.class);
+      assertNotNull(other);
       other = (Other)advisor.resolveAnnotation(m, Other.class);
       assertNotNull(other);
       assertEquals("method", other.value());
       
+      someAnn = advisor.resolveTypedAnnotation(m, SomeAnnotation.class);
+      assertNull(some);
       someAnn = (SomeAnnotation)advisor.resolveAnnotation(m, SomeAnnotation.class);
       assertNull(some);
+      otherAnn = advisor.resolveTypedAnnotation(m, OtherAnnotation.class);
+      assertNotNull(otherAnn);
       otherAnn = (OtherAnnotation)advisor.resolveAnnotation(m, OtherAnnotation.class);
       assertNotNull(otherAnn);
       assertEquals("method", otherAnn.value());
       
       if (useMetaData)
       {
-         SomeMD someMD = (SomeMD)advisor.resolveAnnotation(m, SomeMD.class);
+         SomeMD someMD = advisor.resolveTypedAnnotation(m, SomeMD.class);
          assertNull(someMD);
-         OtherMD otherMD = (OtherMD)advisor.resolveAnnotation(m, OtherMD.class);
+         someMD = (SomeMD)advisor.resolveAnnotation(m, SomeMD.class);
+         assertNull(someMD);
+         OtherMD otherMD = advisor.resolveTypedAnnotation(m, OtherMD.class);
+         assertNotNull(otherMD);
+         otherMD = (OtherMD)advisor.resolveAnnotation(m, OtherMD.class);
          assertNotNull(otherMD);
          assertEquals("method", otherMD.value());
       }
       
+      some = advisor.resolveTypedAnnotation(f, Some.class);
+      assertNull(some);
       some = (Some)advisor.resolveAnnotation(f, Some.class);
       assertNull(some);
+      other = advisor.resolveTypedAnnotation(f, Other.class);
+      assertNotNull(other);
       other = (Other)advisor.resolveAnnotation(f, Other.class);
       assertNotNull(other);
       assertEquals("field", other.value());
       
+      someAnn = advisor.resolveTypedAnnotation(f, SomeAnnotation.class);
+      assertNull(some);
       someAnn = (SomeAnnotation)advisor.resolveAnnotation(f, SomeAnnotation.class);
       assertNull(some);
+      otherAnn = advisor.resolveTypedAnnotation(f, OtherAnnotation.class);
+      assertNotNull(other);
       otherAnn = (OtherAnnotation)advisor.resolveAnnotation(f, OtherAnnotation.class);
       assertNotNull(other);
       assertEquals("field", other.value());
       
       if (useMetaData)
       {
-         SomeMD someMD = (SomeMD)advisor.resolveAnnotation(f, SomeMD.class);
+         SomeMD someMD = advisor.resolveTypedAnnotation(f, SomeMD.class);
          assertNull(someMD);
-         OtherMD otherMD = (OtherMD)advisor.resolveAnnotation(f, OtherMD.class);
+         someMD = (SomeMD)advisor.resolveAnnotation(f, SomeMD.class);
+         assertNull(someMD);
+         OtherMD otherMD = advisor.resolveTypedAnnotation(f, OtherMD.class);
+         assertNotNull(otherMD);
+         otherMD = (OtherMD)advisor.resolveAnnotation(f, OtherMD.class);
          assertNotNull(otherMD);
          assertEquals("field", otherMD.value());
       }
       
+      some = advisor.resolveTypedAnnotation(c, Some.class);
+      assertNull(some);
       some = (Some)advisor.resolveAnnotation(c, Some.class);
       assertNull(some);
+      other = advisor.resolveTypedAnnotation(c, Other.class);
+      assertNotNull(other);
       other = (Other)advisor.resolveAnnotation(c, Other.class);
       assertNotNull(other);
       assertEquals("ctor", other.value());
 
+      someAnn = advisor.resolveTypedAnnotation(c, SomeAnnotation.class);
+      assertNull(some);
       someAnn = (SomeAnnotation)advisor.resolveAnnotation(c, SomeAnnotation.class);
       assertNull(some);
+      otherAnn = advisor.resolveTypedAnnotation(c, OtherAnnotation.class);
+      assertNotNull(other);
       otherAnn = (OtherAnnotation)advisor.resolveAnnotation(c, OtherAnnotation.class);
       assertNotNull(other);
       assertEquals("ctor", other.value());
       
       if (useMetaData)
       {
-         SomeMD someMD = (SomeMD)advisor.resolveAnnotation(c, SomeMD.class);
+         SomeMD someMD = advisor.resolveTypedAnnotation(c, SomeMD.class);
          assertNull(someMD);
-         OtherMD otherMD = (OtherMD)advisor.resolveAnnotation(c, OtherMD.class);
+         someMD = (SomeMD)advisor.resolveAnnotation(c, SomeMD.class);
+         assertNull(someMD);
+         OtherMD otherMD = advisor.resolveTypedAnnotation(c, OtherMD.class);
+         assertNotNull(otherMD);
+         otherMD = (OtherMD)advisor.resolveAnnotation(c, OtherMD.class);
          assertNotNull(otherMD);
          assertEquals("ctor", otherMD.value());
       }

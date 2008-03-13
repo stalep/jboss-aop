@@ -31,11 +31,11 @@ import org.jboss.metadata.spi.MetaData;
  */
 public class AOPProxyFactoryParameters
 {
-   private Class proxiedClass;
+   private Class<?> proxiedClass;
    private Object target;
    private MetaData metaData;
    private boolean metaDataHasInstanceLevelData;
-   private Class[] interfaces;
+   private Class<?>[] interfaces;
    private AOPProxyFactoryMixin[] mixins; 
    private boolean objectAsSuperClass;
    private SimpleMetaData simpleMetaData;
@@ -47,16 +47,16 @@ public class AOPProxyFactoryParameters
    }
 
    public AOPProxyFactoryParameters(
-         Class proxiedClass, 
+         Class<?> proxiedClass, 
          Object target, 
-         Class[] interfaces,
+         Class<?>[] interfaces,
          AOPProxyFactoryMixin[] mixins,
          MetaData metaData, 
          boolean metaDataHasInstanceLevelData,
          boolean objectAsSuperClass,
          SimpleMetaData simpleMetaData,
          ContainerCache containerCache,
-         Class[] ctorSignature,
+         Class<?>[] ctorSignature,
          Object[] ctorArguments)
    {
       this.proxiedClass = proxiedClass;
@@ -71,12 +71,12 @@ public class AOPProxyFactoryParameters
       setCtor(ctorSignature, ctorArguments);      
    }
 
-   public Class[] getInterfaces()
+   public Class<?>[] getInterfaces()
    {
       return interfaces;
    }
 
-   public void setInterfaces(Class[] interfaces)
+   public void setInterfaces(Class<?>[] interfaces)
    {
       this.interfaces = interfaces;
    }
@@ -101,12 +101,12 @@ public class AOPProxyFactoryParameters
       this.objectAsSuperClass = objectAsSuperClass;
    }
 
-   public Class getProxiedClass()
+   public Class<?> getProxiedClass()
    {
       return proxiedClass;
    }
 
-   public void setProxiedClass(Class proxiedClass)
+   public void setProxiedClass(Class<?> proxiedClass)
    {
       this.proxiedClass = proxiedClass;
    }
@@ -166,7 +166,7 @@ public class AOPProxyFactoryParameters
       this.metaDataHasInstanceLevelData = metaDataHasInstanceLevelData;
    }
 
-   public void setCtor(Class[] ctorSignature, Object[] ctorArguments)
+   public void setCtor(Class<?>[] ctorSignature, Object[] ctorArguments)
    {
       boolean haveSig = (ctorSignature != null && ctorSignature.length > 0);
       boolean haveArgs = (ctorArguments != null && ctorArguments.length > 0);
@@ -187,10 +187,10 @@ public class AOPProxyFactoryParameters
    
    public static class Ctor
    {
-      Class[] signature;
+      Class<?>[] signature;
       Object[] arguments;
       
-      public Ctor(Class[] signature, Object[] arguments)
+      public Ctor(Class<?>[] signature, Object[] arguments)
       {
          this.signature = signature;
          this.arguments = arguments;
@@ -201,7 +201,7 @@ public class AOPProxyFactoryParameters
          return arguments;
       }
 
-      public Class[] getSignature()
+      public Class<?>[] getSignature()
       {
          return signature;
       }

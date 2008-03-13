@@ -43,8 +43,8 @@ public class ConstructorCalledByConstructorInvocation extends CallerInvocation
    private static final long serialVersionUID = -1569257745454443521L;
 
    //info fields
-   protected Constructor calling;
-   protected Constructor constructor;
+   protected Constructor<?> calling;
+   protected Constructor<?> constructor;
    protected Method wrappingMethod;
    
    public ConstructorCalledByConstructorInvocation(ConByConInfo info, Object callingObject, Object[] args, Interceptor[] interceptors)
@@ -57,7 +57,7 @@ public class ConstructorCalledByConstructorInvocation extends CallerInvocation
       this(info.getAdvisor(), info.getCallingConstructor(), info.getConstructor(), info.getWrappingMethod(), callingObject, null, interceptors);
    }
    
-   public ConstructorCalledByConstructorInvocation(Advisor advisor, Constructor calling, Constructor constructor, Method wrappingMethod, Object callingObject, Object[] args, Interceptor[] interceptors)
+   public ConstructorCalledByConstructorInvocation(Advisor advisor, Constructor<?> calling, Constructor<?> constructor, Method wrappingMethod, Object callingObject, Object[] args, Interceptor[] interceptors)
    {
       super(advisor, callingObject, interceptors);
       this.calling = calling;
@@ -75,7 +75,7 @@ public class ConstructorCalledByConstructorInvocation extends CallerInvocation
     *
     * @return the constructor that is calling the called constructor
     */
-   public Constructor getCallingConstructor()
+   public Constructor<?> getCallingConstructor()
    {
       return calling;
    }
@@ -83,7 +83,7 @@ public class ConstructorCalledByConstructorInvocation extends CallerInvocation
     *
     * @return the constructor call being executed by the calling method
     */
-   public Constructor getCalledConstructor() { return constructor; }
+   public Constructor<?> getCalledConstructor() { return constructor; }
 
    /**
     * Is the called constructor aspectized?  If so then there is a wrapping

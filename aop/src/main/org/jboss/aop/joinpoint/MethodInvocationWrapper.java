@@ -122,12 +122,12 @@ public class MethodInvocationWrapper extends MethodInvocation
       return wrapped.getAdvisor();
    }
 
-   public Map getResponseContextInfo()
+   public Map<Object, Object> getResponseContextInfo()
    {
       return wrapped.getResponseContextInfo();
    }
 
-   public void setResponseContextInfo(Map responseContextInfo)
+   public void setResponseContextInfo(Map<Object, Object> responseContextInfo)
    {
       wrapped.setResponseContextInfo(responseContextInfo);
    }

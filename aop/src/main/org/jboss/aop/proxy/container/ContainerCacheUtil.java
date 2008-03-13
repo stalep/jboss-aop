@@ -37,28 +37,28 @@ public class ContainerCacheUtil
     * Takes a Class[] containing interface classes, and returns an array of weak references to thos class
     * objects, sorted alphabetically by name.
     */
-   public static WeakReference<Class>[] getSortedWeakReferenceForInterfaces(Class[] ifaces)
+   public static WeakReference<Class<?>>[] getSortedWeakReferenceForInterfaces(Class<?>[] ifaces)
    {
       if (ifaces == null)
       {
          return null;
       }
       
-      WeakReference<Class>[] interfaces = new WeakReference[ifaces.length];
+      WeakReference<Class<?>>[] interfaces = new WeakReference[ifaces.length];
       
       for (int i = 0 ; i < ifaces.length ; i++)
       {
-         interfaces[i] = new WeakReference<Class>(ifaces[i]);
+         interfaces[i] = new WeakReference<Class<?>>(ifaces[i]);
       }
       
       Arrays.sort(interfaces, Alphabetical.singleton);
       return interfaces;
    }
 
-   public static boolean compareClassRefs(WeakReference<Class> my, WeakReference<Class> other)
+   public static boolean compareClassRefs(WeakReference<Class<?>> my, WeakReference<Class<?>> other)
    {
-      Class myClass = my.get();
-      Class otherClass = other.get(); 
+      Class<?> myClass = my.get();
+      Class<?> otherClass = other.get(); 
       
       if (myClass == null || otherClass == null)
       {
@@ -72,7 +72,7 @@ public class ContainerCacheUtil
       return true;
    }
    
-   public static boolean compareInterfaceRefs(WeakReference<Class>[] my, WeakReference<Class>[] other)
+   public static boolean compareInterfaceRefs(WeakReference<Class<?>>[] my, WeakReference<Class<?>>[] other)
    {
       if ((my == null && other != null) ||
             (my == null && other != null))
@@ -89,8 +89,8 @@ public class ContainerCacheUtil
          
          for (int i = 0 ; i < my.length ; i++)
          {
-            Class myIf = my[i].get();
-            Class otherIf = other[i].get();
+            Class<?> myIf = my[i].get();
+            Class<?> otherIf = other[i].get();
             
             if (!myIf.equals(otherIf))
             {
@@ -102,14 +102,14 @@ public class ContainerCacheUtil
       return true;
    }
 
-   static class Alphabetical implements Comparator
+   static class Alphabetical implements Comparator<WeakReference<Class<?>>>
    {
       static Alphabetical singleton = new Alphabetical();
       
-      public int compare(Object o1, Object o2)
+      public int compare(WeakReference<Class<?>> o1, WeakReference<Class<?>> o2)
       {
-         String name1 = ((WeakReference<Class>)o1).get().getName();
-         String name2 = ((WeakReference<Class>)o2).get().getName();
+         String name1 = o1.get().getName();
+         String name2 = o2.get().getName();
          return (name1).compareTo(name2);
       }
    }

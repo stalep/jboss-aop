@@ -190,7 +190,7 @@ public abstract class JoinPointInfo implements JoinPointBean
       Advisor advisor = getAdvisor();
       if (advisor != null)
       {
-         return advisor.resolveAnnotation(annotation);
+         return advisor.resolveTypedAnnotation(annotation);
       }
       return null;
    }

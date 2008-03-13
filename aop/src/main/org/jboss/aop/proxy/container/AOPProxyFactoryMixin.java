@@ -27,18 +27,20 @@ import java.lang.ref.WeakReference;
 
 public class AOPProxyFactoryMixin implements Serializable
 {
+   private static final long serialVersionUID = 1L;
+   
    private String construction;
-   private WeakReference<Class> mixinClassRef;
-   private WeakReference<Class>[] interfaceClassRefs;
+   private WeakReference<Class<?>> mixinClassRef;
+   private WeakReference<Class<?>>[] interfaceClassRefs;
    private int hashcode;
 
-   public AOPProxyFactoryMixin(Class mixin, Class[] interfaces)
+   public AOPProxyFactoryMixin(Class<?> mixin, Class<?>[] interfaces)
    {
-      mixinClassRef = new WeakReference(mixin);
+      mixinClassRef = new WeakReference<Class<?>>(mixin);
       interfaceClassRefs = ContainerCacheUtil.getSortedWeakReferenceForInterfaces(interfaces);
    }
 
-   public AOPProxyFactoryMixin(Class mixin, Class[] interfaces, String parameters)
+   public AOPProxyFactoryMixin(Class<?> mixin, Class<?>[] interfaces, String parameters)
    {
       this(mixin, interfaces);
       StringBuffer construction = new StringBuffer(" new ");
@@ -64,11 +66,11 @@ public class AOPProxyFactoryMixin implements Serializable
    }
 
 
-   public Class[] getInterfaces()
+   public Class<?>[] getInterfaces()
    {
       if (interfaceClassRefs != null)
       {
-         Class[] interfaces = new Class[interfaceClassRefs.length];
+         Class<?>[] interfaces = new Class[interfaceClassRefs.length];
          for (int i = 0 ; i < interfaces.length ; i++)
          {
             interfaces[i] = interfaceClassRefs[i].get();
@@ -78,9 +80,9 @@ public class AOPProxyFactoryMixin implements Serializable
       return null;
    }
 
-   public Class getMixin()
+   public Class<?> getMixin()
    {
-      return (Class)mixinClassRef.get();
+      return mixinClassRef.get();
    }
 
    public boolean equals(Object obj)
@@ -117,7 +119,7 @@ public class AOPProxyFactoryMixin implements Serializable
       if (hashcode == 0)
       {
          
-         Class clazz = (Class)mixinClassRef.get();
+         Class<?> clazz = mixinClassRef.get();
          StringBuffer sb = new StringBuffer();
          
          if (clazz != null)
@@ -130,7 +132,7 @@ public class AOPProxyFactoryMixin implements Serializable
             for (int i = 0 ; i < interfaceClassRefs.length ; i++)
             {
                sb.append(";");
-               sb.append(((Class)interfaceClassRefs[i].get()).getName());
+               sb.append((interfaceClassRefs[i].get()).getName());
             }
          }
          hashcode = sb.toString().hashCode();
@@ -179,12 +181,12 @@ public class AOPProxyFactoryMixin implements Serializable
    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
    {
       construction = (String)in.readObject();
-      mixinClassRef = new WeakReference<Class>((Class)in.readObject());
-      Class[] ifs = (Class[])in.readObject();
+      mixinClassRef = new WeakReference<Class<?>>((Class<?>)in.readObject());
+      Class<?>[] ifs = (Class[])in.readObject();
       interfaceClassRefs = new WeakReference[ifs.length];
       for (int i = 0 ; i < ifs.length ; i++)
       {
-         interfaceClassRefs[i] = new WeakReference<Class>(ifs[i]);
+         interfaceClassRefs[i] = new WeakReference<Class<?>>(ifs[i]);
       }
       hashcode = in.readInt();
    }

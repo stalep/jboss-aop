@@ -31,11 +31,11 @@ import java.lang.reflect.Constructor;
  */
 public class ConstructorCalledByConstructorJoinpoint implements Joinpoint
 {
-   private final Constructor calling;
-   private final Constructor called;
+   private final Constructor<?> calling;
+   private final Constructor<?> called;
    int hashCode;
 
-   public ConstructorCalledByConstructorJoinpoint(Constructor calling, Constructor called)
+   public ConstructorCalledByConstructorJoinpoint(Constructor<?> calling, Constructor<?> called)
    {
       this.calling = calling;
       this.called = called;
@@ -61,12 +61,12 @@ public class ConstructorCalledByConstructorJoinpoint implements Joinpoint
       return hashCode;
    }
 
-   public Constructor getCalling()
+   public Constructor<?> getCalling()
    {
       return calling;
    }
 
-   public Constructor getCalled()
+   public Constructor<?> getCalled()
    {
       return called;
    }

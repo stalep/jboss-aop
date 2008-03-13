@@ -21,6 +21,7 @@
   */
 package org.jboss.aop.joinpoint;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 
 import org.jboss.aop.ConstructionInfo;
@@ -40,9 +41,9 @@ public class ConstructionInvocation extends InvocationBase
    private static final long serialVersionUID = -6040602776303875808L;
 
    protected Object[] arguments = null; // MARSHALLED
-   protected transient Constructor constructor = null;
+   protected transient Constructor<?> constructor = null;
 
-   public ConstructionInvocation(Interceptor[] interceptors, Constructor con, Object[] args)
+   public ConstructionInvocation(Interceptor[] interceptors, Constructor<?> con, Object[] args)
    {
       super(interceptors);
       this.constructor = con;
@@ -50,7 +51,7 @@ public class ConstructionInvocation extends InvocationBase
    }
 
 
-   public ConstructionInvocation(Interceptor[] interceptors, Constructor con)
+   public ConstructionInvocation(Interceptor[] interceptors, Constructor<?> con)
    {
       super(interceptors);
       this.constructor = con;
@@ -102,20 +103,24 @@ public class ConstructionInvocation extends InvocationBase
     * This method resolves an annotation based on the context of the invocation.
     *
     */
-   public Object resolveAnnotation(Class annotation)
+   public Object resolveAnnotation(Class<? extends Annotation> annotation)
    {
-      Object val = super.resolveAnnotation(annotation);
+      return resolveTypedAnnotation(annotation);
+   }
+
+   public <T extends Annotation> T resolveTypedAnnotation(Class<T> annotation)
+   {
+      T val = super.resolveTypedAnnotation(annotation);
       if (val != null) return val;
 
       if (getAdvisor() != null)
       {
-         val = getAdvisor().resolveAnnotation(constructor, annotation);
+         val = getAdvisor().resolveTypedAnnotation(constructor, annotation);
          if (val != null) return val;
       }
 
       return null;
    }
-
    /**
     * This method resolves metadata based on the context of the invocation.
     * It iterates through its list of MetaDataResolvers to find out the
@@ -221,12 +226,12 @@ public class ConstructionInvocation extends InvocationBase
       this.arguments = arguments;
    }
 
-   public Constructor getConstructor()
+   public Constructor<?> getConstructor()
    {
       return constructor;
    }
 
-   public void setConstructor(Constructor constructor)
+   public void setConstructor(Constructor<?> constructor)
    {
       this.constructor = constructor;
    }

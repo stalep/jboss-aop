@@ -24,6 +24,7 @@ package org.jboss.aop.joinpoint;
 import org.jboss.aop.FieldInfo;
 import org.jboss.aop.advice.Interceptor;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 /**
@@ -63,19 +64,25 @@ public abstract class FieldInvocation extends InvocationBase
     * This method resolves an annotation based on the context of the invocation.
     *
     */
-   public Object resolveAnnotation(Class annotation)
+   public Object resolveAnnotation(Class<? extends Annotation> annotation)
    {
-      Object val = super.resolveAnnotation(annotation);
+      return resolveTypedAnnotation(annotation);
+   }
+
+   public <T extends Annotation> T resolveTypedAnnotation(Class<T> annotation)
+   {
+      T val = super.resolveTypedAnnotation(annotation);
       if (val != null) return val;
 
       if (getAdvisor() != null)
       {
-         val = getAdvisor().resolveAnnotation(field, annotation);
+         val = getAdvisor().resolveTypedAnnotation(field, annotation);
          if (val != null) return val;
       }
 
       return null;
    }
+   
    /**
     * This method resolves metadata based on the context of the invocation.
     * It iterates through its list of MetaDataResolvers to find out the

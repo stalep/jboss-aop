@@ -25,7 +25,6 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.lang.reflect.Method;
 
 import org.jboss.aop.Advisor;
@@ -57,15 +56,15 @@ public class ClassProxyContainer extends ClassContainer
 
    protected void createConstructorTables()
    {
-      Class useClass = clazz;
+      Class<?> useClass = clazz;
       if (clazz.getName().startsWith(ContainerProxyFactory.PROXY_NAME_PREFIX) && clazz != null && clazz.getSuperclass() != null)
       {
          useClass = clazz.getSuperclass();
       }
       if (useClass != null)
       {
-         final Class theUseClass = useClass;
-         AccessController.doPrivileged(new PrivilegedAction()
+         final Class<?> theUseClass = useClass;
+         AccessController.doPrivileged(new PrivilegedAction<Object>()
          {
             public Object run()
             {
@@ -89,7 +88,7 @@ public class ClassProxyContainer extends ClassContainer
       {
          Method[] declaredMethods = clazz.getMethods();
 
-         Class superclass = clazz.getSuperclass();
+         Class<?> superclass = clazz.getSuperclass();
          for (int i = 0; i < declaredMethods.length; i++)
          {
             Method method = declaredMethods[i];
@@ -111,16 +110,15 @@ public class ClassProxyContainer extends ClassContainer
 
          for (int i = 0; i < interfaceIntroductions.size(); ++i)
          {
-            InterfaceIntroduction ii = (InterfaceIntroduction) interfaceIntroductions.get(i);
+            InterfaceIntroduction ii = interfaceIntroductions.get(i);
             String[] intf = ii.getInterfaces();
             addMethodsFromInterfaces(intf);
 
-            ArrayList mixins = ii.getMixins();
+            ArrayList<InterfaceIntroduction.Mixin> mixins = ii.getMixins();
             if (mixins.size() > 0)
             {
-               for (Iterator it = mixins.iterator() ; it.hasNext() ;)
+               for (InterfaceIntroduction.Mixin mixin : mixins)
                {
-                  InterfaceIntroduction.Mixin mixin = (InterfaceIntroduction.Mixin)it.next();
                   String[] mintf = mixin.getInterfaces();
                   addMethodsFromInterfaces(mintf);
                }
@@ -139,7 +137,7 @@ public class ClassProxyContainer extends ClassContainer
       for (int j = 0; intf != null && j < intf.length; ++j)
       {
          // FIXME ClassLoader - why should the class be visible from the context classloader?
-         Class iface = cl.loadClass(intf[j]);
+         Class<?> iface = cl.loadClass(intf[j]);
          Method[] ifaceMethods = iface.getMethods();
          for (int k = 0; k < ifaceMethods.length; k++)
          {
@@ -165,7 +163,7 @@ public class ClassProxyContainer extends ClassContainer
       return ia;
    }
 
-   public void initialise(Class proxiedClass)
+   public void initialise(Class<?> proxiedClass)
    {
       setClass(proxiedClass);
       ((ProxyAdvisorDomain)manager).attachAdvisor();

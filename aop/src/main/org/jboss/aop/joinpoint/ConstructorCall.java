@@ -34,16 +34,16 @@ public interface ConstructorCall extends JoinPointBean
    /**
     * Gets the constructor being called
     */
-   Constructor getConstructor();
+   Constructor<?> getConstructor();
 
    /**
     * Gets the class making the call
     */
-   Class getCallingClass();
+   Class<?> getCallingClass();
 
    /**
     * Gets the class being called
     */
-   Class getCalledClass();
+   Class<?> getCalledClass();
 
 }

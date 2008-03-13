@@ -98,7 +98,7 @@ public class MethodCalledByMethodInvocationWrapper extends MethodCalledByMethodI
       wrapped.setArguments(arguments);
    }
 
-   public Class getCallingClass()
+   public Class<?> getCallingClass()
    {
       return wrapped.getCallingClass();
    }
@@ -108,12 +108,12 @@ public class MethodCalledByMethodInvocationWrapper extends MethodCalledByMethodI
       return wrapped.getCallingMethod();
    }
 
-   public Map getResponseContextInfo()
+   public Map<Object, Object> getResponseContextInfo()
    {
       return wrapped.getResponseContextInfo();
    }
 
-   public void setResponseContextInfo(Map responseContextInfo)
+   public void setResponseContextInfo(Map<Object, Object> responseContextInfo)
    {
       wrapped.setResponseContextInfo(responseContextInfo);
    }

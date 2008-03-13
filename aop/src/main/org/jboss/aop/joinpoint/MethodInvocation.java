@@ -24,6 +24,7 @@ package org.jboss.aop.joinpoint;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.MarshalledObject;
@@ -144,15 +145,15 @@ public class MethodInvocation extends InvocationBase implements java.io.External
          if (target == null)
 
             throw new IllegalArgumentException("Null target for method " + method);
-         Class methodClass = method.getClass();
-         Class targetClass = target.getClass();
+         Class<?> methodClass = method.getClass();
+         Class<?> targetClass = target.getClass();
          if (methodClass.isAssignableFrom(targetClass) == false)
             throw new IllegalArgumentException("Wrong target. " + targetClass + " for " + method);
-         ArrayList expected = new ArrayList();
-         Class[] parameterTypes = method.getParameterTypes();
+         ArrayList<String> expected = new ArrayList<String>();
+         Class<?>[] parameterTypes = method.getParameterTypes();
          for (int i = 0; i < parameterTypes.length; ++i)
             expected.add(parameterTypes[i].getName());
-         ArrayList actual = new ArrayList();
+         ArrayList<String> actual = new ArrayList<String>();
          if (arguments != null)
          {
             for (int i = 0; i < arguments.length; ++i)
@@ -175,14 +176,19 @@ public class MethodInvocation extends InvocationBase implements java.io.External
    /**
     * This method resolves an annotation based on the context of the invocation.
     */
-   public Object resolveAnnotation(Class annotation)
+   public Object resolveAnnotation(Class<? extends Annotation> annotation)
    {
-      Object val = super.resolveAnnotation(annotation);
+      return resolveTypedAnnotation(annotation);
+   }
+
+   public <T extends Annotation> T resolveTypedAnnotation(Class<T> annotation)
+   {
+      T val = super.resolveTypedAnnotation(annotation);
       if (val != null) return val;
 
       if (getAdvisor() != null)
       {
-         val = getAdvisor().resolveAnnotation(getMethodHash(), getMethod(), annotation);
+         val = getAdvisor().resolveTypedAnnotation(getMethodHash(), getMethod(), annotation);
          if (val != null) return val;
       }
 
@@ -192,7 +198,7 @@ public class MethodInvocation extends InvocationBase implements java.io.External
    /**
     * This method resolves an annotation based on the context of the invocation.
     */
-   public Object resolveAnnotation(Class[] annotations)
+   public Object resolveAnnotation(Class<? extends Annotation>[] annotations)
    {
       Object val = super.resolveAnnotation(annotations);
       if (val != null) return val;
@@ -202,10 +208,24 @@ public class MethodInvocation extends InvocationBase implements java.io.External
          val = getAdvisor().resolveAnnotation(getMethod(), annotations);
          if (val != null) return val;
       }
-
+      
       return null;
    }
 
+   public <T extends Annotation> T resolveTypedAnnotation(Class<T>[] annotations)
+   {
+      T val = super.resolveTypedAnnotation(annotations);
+      if (val != null) return val;
+
+      if (getAdvisor() != null)
+      {
+         val = getAdvisor().resolveTypedAnnotation(getMethod(), annotations);
+         if (val != null) return val;
+      }
+
+      return null;
+   }
+   
    /**
     * This method resolves metadata based on the context of the invocation.
     * It iterates through its list of MetaDataResolvers to find out the

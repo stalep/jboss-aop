@@ -21,6 +21,7 @@
 */ 
 package org.jboss.aop.array;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
 
@@ -103,28 +104,47 @@ public abstract class ArrayElementInvocation extends InvocationBase
    }
 
    @Override
-   public Map getResponseContextInfo()
+   public Map<Object, Object> getResponseContextInfo()
    {
       throw new NotImplementedException();
    }
 
    @Override
-   public Object resolveAnnotation(Class annotation)
+   public Object resolveAnnotation(Class<? extends Annotation> annotation)
    {
       throw new NotImplementedException();
    }
 
    @Override
-   public Object resolveAnnotation(Class[] annotations)
+   public Object resolveAnnotation(Class<? extends Annotation>[] annotations)
    {
       throw new NotImplementedException();
    }
 
    @Override
-   public Object resolveClassAnnotation(Class annotation)
+   public Object resolveClassAnnotation(Class<? extends Annotation> annotation)
    {
       throw new NotImplementedException();
    }
+
+   @Override
+   public <T extends Annotation> T resolveTypedAnnotation(Class<T> annotation)
+   {
+      throw new NotImplementedException();
+   }
+
+   @Override
+   public <T extends Annotation> T resolveTypedAnnotation(Class<T>[] annotations)
+   {
+      throw new NotImplementedException();
+   }
+
+   @Override
+   public <T extends Annotation> T resolveTypedClassAnnotation(Class<T> annotation)
+   {
+      throw new NotImplementedException();
+   }
+
 
    @Override
    public Object resolveClassMetaData(Object key, Object attr)
@@ -145,7 +165,7 @@ public abstract class ArrayElementInvocation extends InvocationBase
    }
 
    @Override
-   public void setResponseContextInfo(Map responseContextInfo)
+   public void setResponseContextInfo(Map<Object, Object> responseContextInfo)
    {
       throw new NotImplementedException();
    }

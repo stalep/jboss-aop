@@ -36,5 +36,5 @@ public interface Construction extends JoinPointBean
    /**
     * Gets the constructor being called
     */
-   Constructor getConstructor();
+   Constructor<?> getConstructor();
 }

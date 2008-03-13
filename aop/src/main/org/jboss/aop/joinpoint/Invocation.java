@@ -25,6 +25,7 @@ import org.jboss.aop.Advisor;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.metadata.SimpleMetaData;
 
+import java.lang.annotation.Annotation;
 import java.util.Map;
 
 /**
@@ -35,9 +36,9 @@ import java.util.Map;
  */
 public interface Invocation
 {
-   Map getResponseContextInfo();
+   Map<Object, Object> getResponseContextInfo();
 
-   void setResponseContextInfo(Map responseContextInfo);
+   void setResponseContextInfo(Map<Object, Object> responseContextInfo);
 
    void addResponseAttachment(Object key, Object val);
 
@@ -62,6 +63,7 @@ public interface Invocation
     */
    Object resolveClassMetaData(Object key, Object attr);
 
+   
    /**
     * Abstraction for resolving an annotation so that
     * it can be overriden from the Class
@@ -69,7 +71,16 @@ public interface Invocation
     * @param annotation
     * @return
     */
-   Object resolveClassAnnotation(Class annotation);
+   Object resolveClassAnnotation(Class<? extends Annotation> annotation);
+
+   /**
+    * Abstraction for resolving an annotation so that
+    * it can be overriden from the Class
+    *
+    * @param annotation
+    * @return
+    */
+   <T extends Annotation> T resolveTypedClassAnnotation(Class<T> annotation);
 
    /**
     * Abstraction for resolving an annotation so that
@@ -78,8 +89,17 @@ public interface Invocation
     * @param annotation
     * @return
     */
-   Object resolveAnnotation(Class annotation);
+   Object resolveAnnotation(Class<? extends Annotation> annotation);
    
+   /**
+    * Abstraction for resolving an annotation so that
+    * it can be overriden from the Method, Constructor, Field, etc.
+    *
+    * @param annotation
+    * @return
+    */
+   <T extends Annotation> T resolveTypedAnnotation(Class<T> annotation);
+
    /**
     * Abstraction for resolving an annotation so that
     * it can be overriden from the Method, Constructor, Field, etc.
@@ -87,7 +107,16 @@ public interface Invocation
     * @param annotations
     * @return
     */
-   Object resolveAnnotation(Class[] annotations);
+   Object resolveAnnotation(Class<? extends Annotation>[] annotations);
+
+   /**
+    * Abstraction for resolving an annotation so that
+    * it can be overriden from the Method, Constructor, Field, etc.
+    *
+    * @param annotations
+    * @return
+    */
+   <T extends Annotation> T resolveTypedAnnotation(Class<T>[] annotations);
 
     /**
     * Invoke on the next interceptor in the chain.  If this is already
