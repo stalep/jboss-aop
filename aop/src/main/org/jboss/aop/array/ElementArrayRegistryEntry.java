@@ -21,8 +21,6 @@
 */ 
 package org.jboss.aop.array;
 
-import java.util.HashSet;
-
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>

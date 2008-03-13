@@ -41,7 +41,7 @@ import org.jboss.aop.pointcut.ast.Node;
  */
 public class DeclareTypeMatcher extends TypeMatcher
 {
-   public DeclareTypeMatcher(Advisor advisor, Class clazz)
+   public DeclareTypeMatcher(Advisor advisor, Class<?> clazz)
    {
       super(advisor, clazz);
    }

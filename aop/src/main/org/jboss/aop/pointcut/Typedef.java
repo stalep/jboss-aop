@@ -32,5 +32,5 @@ public interface Typedef {
    public abstract String getName();
    public abstract String getExpr();
 	public boolean matches(Advisor advisor, CtClass clazz);
-   public boolean matches(Advisor advisor, Class clazz);
+   public boolean matches(Advisor advisor, Class<?> clazz);
 }

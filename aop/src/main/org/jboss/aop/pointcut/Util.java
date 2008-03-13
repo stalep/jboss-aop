@@ -97,12 +97,12 @@ public class Util
 
    }
 
-   public static boolean matchesClassExpr(ClassExpression classExpr, Class clazz)
+   public static boolean matchesClassExpr(ClassExpression classExpr, Class<?> clazz)
    {
       return matchesClassExpr(classExpr, clazz, null);
    }
    
-   public static boolean matchesClassExpr(ClassExpression classExpr, Class clazz, Advisor advisor)
+   public static boolean matchesClassExpr(ClassExpression classExpr, Class<?> clazz, Advisor advisor)
    {
       try
       {
@@ -154,7 +154,7 @@ public class Util
       return exists;
    }
    
-   private static boolean methodExistsInSuperClassOrInterface(long hash, ClassExpression expr, Class clazz, boolean exactSuper) throws Exception
+   private static boolean methodExistsInSuperClassOrInterface(long hash, ClassExpression expr, Class<?> clazz, boolean exactSuper) throws Exception
    {
       if (clazz == null) return false;
       
@@ -171,7 +171,7 @@ public class Util
           if (classHasMethod(clazz, hash, exactSuper)) return true;
        }
 
-       Class[] interfaces = clazz.getInterfaces();
+       Class<?>[] interfaces = clazz.getInterfaces();
        for (int i = 0; i < interfaces.length; i++)
        {
           if (methodExistsInSuperClassOrInterface(hash, expr, interfaces[i], exactSuper)) return true;
@@ -190,15 +190,14 @@ public class Util
    {
       if (advisor != null)
       {
-         ArrayList intros = advisor.getInterfaceIntroductions();
+         ArrayList<InterfaceIntroduction> intros = advisor.getInterfaceIntroductions();
          if (intros.size() > 0)
          {
             ClassLoader tcl = Thread.currentThread().getContextClassLoader();
             ClassPool pool = advisor.getManager().findClassPool(tcl);
-            HashSet doneClasses = new HashSet();
-            for (Iterator it = intros.iterator() ; it.hasNext() ; )
+            HashSet<String> doneClasses = new HashSet<String>();
+            for (InterfaceIntroduction intro : intros)
             {
-               InterfaceIntroduction intro = (InterfaceIntroduction)it.next();
                String[] ifs = intro.getInterfaces();
                for (int i = 0 ; ifs != null && i < ifs.length ; i++)
                {
@@ -209,12 +208,11 @@ public class Util
                   }
                }
                
-               ArrayList mixins = intro.getMixins();
+               ArrayList<InterfaceIntroduction.Mixin> mixins = intro.getMixins();
                if (mixins != null && mixins.size() > 0)
                {
-                  for (Iterator mit = mixins.iterator() ; mit.hasNext() ; )
+                  for (InterfaceIntroduction.Mixin mixin : mixins)
                   {
-                     InterfaceIntroduction.Mixin mixin = (InterfaceIntroduction.Mixin)mit.next();
                      String[] mifs = mixin.getInterfaces();
                      for (int i = 0 ; mifs != null && i < mifs.length ; i++)
                      {
@@ -232,7 +230,7 @@ public class Util
       return false;
    }
    
-   private static boolean classHasMethod(Class clazz, long hash, boolean exactSuper)throws Exception
+   private static boolean classHasMethod(Class<?> clazz, long hash, boolean exactSuper)throws Exception
    {
       Method m = MethodHashing.findMethodByHash(clazz, hash);
       if (m != null)
@@ -264,7 +262,6 @@ public class Util
    private static boolean methodExistsInSuperClassOrInterface(ClassPool pool, long hash, ClassExpression expr, String className, boolean exactSuper) throws Exception
    {
       CtClass clazz = pool.get(className);
-      HashMap map = JavassistMethodHashing.getMethodMap(clazz);
       return methodExistsInSuperClassOrInterface(hash, expr, clazz, exactSuper);
    }
    
@@ -297,8 +294,8 @@ public class Util
    
    private static boolean classHasMethod(CtClass clazz, long hash, boolean exactSuper)throws Exception
    {
-      HashMap methods = JavassistMethodHashing.getMethodMap(clazz);
-      CtMethod m = (CtMethod)methods.get(new Long(hash));
+      HashMap<Long, CtMethod> methods = JavassistMethodHashing.getMethodMap(clazz);
+      CtMethod m = methods.get(new Long(hash));
       if (m != null)
       {
          if (exactSuper)
@@ -366,33 +363,31 @@ public class Util
          {
             // FIXME ClassLoader - why should the class be visible from the context classloader?
             ClassLoader cl = SecurityActions.getContextClassLoader();
-            ArrayList intros = advisor.getInterfaceIntroductions();
+            ArrayList<InterfaceIntroduction> intros = advisor.getInterfaceIntroductions();
             if (intros.size() > 0)
             {
-               for (Iterator itIntro = intros.iterator() ; itIntro.hasNext() ; )
+               for (InterfaceIntroduction intro : intros)
                {
-                  InterfaceIntroduction intro = (InterfaceIntroduction)itIntro.next();
                   String[] introductions = intro.getInterfaces();
                   if (introductions != null)
                   {
                      for (int i = 0 ; i < introductions.length ; i++)
                      {
-                        Class iface = cl.loadClass(introductions[i]);
+                        Class<?> iface = cl.loadClass(introductions[i]);
                         if (subtypeOf(iface, instanceOf, advisor)) return true;
                      }
                   }
-                  ArrayList mixins = intro.getMixins();
+                  ArrayList<InterfaceIntroduction.Mixin> mixins = intro.getMixins();
                   if (mixins.size() > 0)
                   {
-                     for (Iterator itMixin = mixins.iterator() ; itMixin.hasNext() ; )
+                     for (InterfaceIntroduction.Mixin mixin : mixins)
                      {
-                        InterfaceIntroduction.Mixin mixin = (InterfaceIntroduction.Mixin)itMixin.next();
                         String[] mixinInterfaces = mixin.getInterfaces();
                         if (mixinInterfaces != null)
                         {
                            for (int i = 0 ; i < mixinInterfaces.length ; i++)
                            {
-                              Class iface = cl.loadClass(mixinInterfaces[i]);
+                              Class<?> iface = cl.loadClass(mixinInterfaces[i]);
                               if (subtypeOf(iface, instanceOf, advisor)) return true;                              
                            }
                         }
@@ -410,7 +405,7 @@ public class Util
       return false;
    }
    
-   public static boolean subtypeOf(Class clazz, ClassExpression instanceOf, Advisor advisor)
+   public static boolean subtypeOf(Class<?> clazz, ClassExpression instanceOf, Advisor advisor)
    {
       return MatcherStrategy.getMatcher(advisor).subtypeOf(clazz, instanceOf, advisor);
    }
@@ -491,12 +486,12 @@ public class Util
       return false;
    }
 
-   public static boolean has(Class target, ASTMethod method, Advisor advisor)
+   public static boolean has(Class<?> target, ASTMethod method, Advisor advisor)
    {
       return has(target, method, advisor, true);
    }
    
-   public static boolean has(Class target, ASTMethod method, Advisor advisor, boolean checkSuper)
+   public static boolean has(Class<?> target, ASTMethod method, Advisor advisor, boolean checkSuper)
    {
       Method[] methods = advisor.getAllMethods();
       if (methods == null)
@@ -509,18 +504,18 @@ public class Util
       
       if (checkSuper)
       {
-         Class superClass = target.getSuperclass();
+         Class<?> superClass = target.getSuperclass();
          if (superClass != null) return has(superClass, method, advisor, checkSuper);
       }
       return false;
    }
 
-   public static boolean has(Class target, ASTField field, Advisor advisor)
+   public static boolean has(Class<?> target, ASTField field, Advisor advisor)
    {
       return has(target, field, advisor, true);
    }
    
-   public static boolean has(Class target, ASTField field, Advisor advisor, boolean checkSuper)
+   public static boolean has(Class<?> target, ASTField field, Advisor advisor, boolean checkSuper)
    {
       Field[] fields = target.getDeclaredFields();
       for (int i = 0; i < fields.length; i++)
@@ -531,15 +526,15 @@ public class Util
       
       if (checkSuper)
       {
-         Class superClass = target.getSuperclass();
+         Class<?> superClass = target.getSuperclass();
          if (superClass != null) return has(superClass, field, advisor, checkSuper);
       }
       return false;
    }
 
-   public static boolean has(Class target, ASTConstructor con, Advisor advisor)
+   public static boolean has(Class<?> target, ASTConstructor con, Advisor advisor)
    {
-      Constructor[] cons = target.getDeclaredConstructors();
+      Constructor<?>[] cons = target.getDeclaredConstructors();
       for (int i = 0; i < cons.length; i++)
       {
          ConstructorMatcher matcher = new ConstructorMatcher(advisor, cons[i], null);
@@ -558,7 +553,7 @@ public class Util
       return typedef.matches(advisor, clazz);
    }
 
-   public static boolean matchesTypedef(Class clazz, ClassExpression classExpr, Advisor advisor)
+   public static boolean matchesTypedef(Class<?> clazz, ClassExpression classExpr, Advisor advisor)
    {
       String original = classExpr.getOriginal();
       String typedefName = original.substring("$typedef{".length(), original.lastIndexOf("}"));
@@ -605,23 +600,25 @@ public class Util
     * @param nodeExceptions  ArrayList of ASTException entries for a given ASTMethod or ASTConstructor
     * @param foundExceptions Array of Exceptions found for a method/constructor
     */
-   public static boolean matchExceptions(ArrayList nodeExceptions, CtClass[] foundExceptions)
+   public static boolean matchExceptions(ArrayList<ASTException> nodeExceptions, CtClass[] foundExceptions)
    {
       if (nodeExceptions.size() > foundExceptions.length) return false;
-      for (Iterator it = nodeExceptions.iterator(); it.hasNext();)
+      if (nodeExceptions.size() > 0)
       {
-         boolean found = false;
-         ASTException ex = (ASTException) it.next();
-         for (int i = 0; i < foundExceptions.length; i++)
+         for (ASTException ex : nodeExceptions)
          {
-            if (ex.getType().matches(foundExceptions[i].getName()))
+            boolean found = false;
+            for (int i = 0; i < foundExceptions.length; i++)
             {
-               found = true;
-               break;
+               if (ex.getType().matches(foundExceptions[i].getName()))
+               {
+                  found = true;
+                  break;
+               }
             }
+   
+            if (!found) return false;
          }
-
-         if (!found) return false;
       }
 
       return true;
@@ -631,7 +628,7 @@ public class Util
     * @param nodeExceptions  ArrayList of ASTException entries for a given ASTMethod or ASTConstructor
     * @param foundExceptions Array of Exceptions found for a method/constructor
     */
-   public static boolean matchExceptions(ArrayList<ASTException> nodeExceptions, Class[] foundExceptions)
+   public static boolean matchExceptions(ArrayList<ASTException> nodeExceptions, Class<?>[] foundExceptions)
    {
       if (nodeExceptions.size() > foundExceptions.length) return false;
       for (Iterator<ASTException> it = nodeExceptions.iterator(); it.hasNext();)
@@ -669,7 +666,6 @@ public class Util
 
    public static boolean matchesParameters(Advisor advisor, ASTConstructor node, CtConstructor ctConstructor)
    {
-      int i = 0;
       if (node.isAnyParameters()) return true;
       try
       {
@@ -689,22 +685,20 @@ public class Util
       return matchesParameters(advisor, node.hasAnyZeroOrMoreParameters(), node.getParameters(), method.getParameterTypes());
    }
 
-   public static boolean matchesParameters(Advisor advisor, ASTConstructor node, Constructor con) 
+   public static boolean matchesParameters(Advisor advisor, ASTConstructor node, Constructor<?> con) 
    {
       if (node.isAnyParameters()) return true;
-      
-      Class[] params = con.getParameterTypes();
-      
+
       return matchesParameters(advisor, node.hasAnyZeroOrMoreParameters(), node.getParameters(), con.getParameterTypes());
    }
 
-   private static boolean matchesParameters(Advisor advisor, boolean hasAnyZeroOrMoreParameters, ArrayList parameters, Class[] params)
+   private static boolean matchesParameters(Advisor advisor, boolean hasAnyZeroOrMoreParameters, ArrayList<ASTParameter> parameters, Class<?>[] params)
    {
       RefParameterMatcher matcher = new RefParameterMatcher(advisor, parameters, params);
       return matcher.matches();
    }
 
-   private static boolean matchesParameters(Advisor advisor, boolean hasAnyZeroOrMoreParameters, ArrayList parameters, CtClass[] params)
+   private static boolean matchesParameters(Advisor advisor, boolean hasAnyZeroOrMoreParameters, ArrayList<ASTParameter> parameters, CtClass[] params)
    {
       CtParameterMatcher matcher = new CtParameterMatcher(advisor, parameters, params);
       return matcher.matches();
@@ -713,12 +707,12 @@ public class Util
    private static abstract class ParameterMatcher
    {
       Advisor advisor;
-      ArrayList astParameters;
+      ArrayList<ASTParameter> astParameters;
       final long paramsLength;
       private int asti;
       private int actuali;
       
-      ParameterMatcher(Advisor advisor, ArrayList parameters, Object[] params)
+      ParameterMatcher(Advisor advisor, ArrayList<ASTParameter> parameters, Object[] params)
       {
          this.advisor = advisor;
          this.astParameters = parameters;
@@ -760,7 +754,7 @@ public class Util
       
       private boolean isAnyZeroOrMoreParameters(int index)
       {
-         return ((ASTParameter)astParameters.get(index)).isAnyZeroOrMoreParameters();
+         return astParameters.get(index).isAnyZeroOrMoreParameters();
       }
       
       abstract boolean doMatch(int astIndex, int actualIndex);
@@ -817,8 +811,8 @@ public class Util
    
    private static class RefParameterMatcher extends ParameterMatcher
    {
-      Class[] params;
-      public RefParameterMatcher(Advisor advisor, ArrayList parameters, Class[] params)
+      Class<?>[] params;
+      public RefParameterMatcher(Advisor advisor, ArrayList<ASTParameter> parameters, Class<?>[] params)
       {
          super(advisor, parameters, params);
          this.params = params;
@@ -826,7 +820,7 @@ public class Util
       
       boolean doMatch(int astIndex, int actualIndex)
       {
-         ASTParameter ast = (ASTParameter) astParameters.get(astIndex);
+         ASTParameter ast = astParameters.get(astIndex);
          ClassExpression exp = ast.getType();
 
          if (exp.isSimple())
@@ -846,7 +840,7 @@ public class Util
    private static class CtParameterMatcher extends ParameterMatcher
    {
       CtClass[] params;
-      public CtParameterMatcher(Advisor advisor, ArrayList parameters, CtClass[] params)
+      public CtParameterMatcher(Advisor advisor, ArrayList<ASTParameter> parameters, CtClass[] params)
       {
          super(advisor, parameters, params);
          this.params = params;
@@ -854,7 +848,7 @@ public class Util
       
       boolean doMatch(int astIndex, int actualIndex)
       {
-         ASTParameter ast = (ASTParameter) astParameters.get(astIndex);
+         ASTParameter ast = astParameters.get(astIndex);
          ClassExpression exp = ast.getType();
          if (!matchesClassExpr(exp, params[actualIndex], advisor)) return false;
          return true;

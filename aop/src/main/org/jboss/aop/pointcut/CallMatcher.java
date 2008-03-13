@@ -47,10 +47,10 @@ public class CallMatcher extends MatcherHelper
 {
    Advisor advisor;
    AccessibleObject within;
-   Class calledClass;
+   Class<?> calledClass;
    Method calledMethod;
 
-   public CallMatcher(Advisor advisor, AccessibleObject within, Class calledClass, Method calledMethod, ASTStart start)
+   public CallMatcher(Advisor advisor, AccessibleObject within, Class<?> calledClass, Method calledMethod, ASTStart start)
    {
       super(start, advisor.getManager());
       this.advisor = advisor;

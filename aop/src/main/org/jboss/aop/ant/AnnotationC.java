@@ -299,7 +299,7 @@ public class AnnotationC extends MatchingTask
       // compile lists
       String[] list = compileSourcepath.list();
       
-      ArrayList compilingFiles = new ArrayList();
+      ArrayList<String> compilingFiles = new ArrayList<String>();
       for (int i = 0; i < list.length; i++)
       {
          File srcDir = getProject().resolveFile(list[i]);
@@ -326,7 +326,7 @@ public class AnnotationC extends MatchingTask
       StringBuffer niceSourceList = new StringBuffer("File");
       for (int i = 0; i < compilingFiles.size(); i++)
       {
-         String file = (String) compilingFiles.get(i);
+         String file = compilingFiles.get(i);
          cmd.createArgument().setValue(file);
          niceSourceList.append("    " + file + lSep);
       }

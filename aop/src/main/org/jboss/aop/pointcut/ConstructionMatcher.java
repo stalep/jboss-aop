@@ -47,7 +47,7 @@ public class ConstructionMatcher extends ConstructorMatcher
       super(advisor, con, start);
    }
 
-   public ConstructionMatcher(Advisor advisor, Constructor con, ASTStart start)
+   public ConstructionMatcher(Advisor advisor, Constructor<?> con, ASTStart start)
    {
       super(advisor, con, start);
    }

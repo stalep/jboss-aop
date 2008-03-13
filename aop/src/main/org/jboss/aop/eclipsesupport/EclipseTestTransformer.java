@@ -118,7 +118,7 @@ public class EclipseTestTransformer implements ClassFileTransformer
       {
           if(args[i].toLowerCase().equals("-classnames") || args[i].toLowerCase().equals("-classname"))
           {
-              Vector list = new Vector();
+              Vector<String> list = new Vector<String>();
               for(int j = i + 1; j < args.length; j++)
               {
                   if(args[j].startsWith("-"))
@@ -128,7 +128,7 @@ public class EclipseTestTransformer implements ClassFileTransformer
                   list.add(args[j]);
               }
 
-              fTestClassNames = (String[])list.toArray(new String[list.size()]);
+              fTestClassNames = list.toArray(new String[list.size()]);
           } 
       }
       

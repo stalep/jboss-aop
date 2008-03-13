@@ -131,12 +131,12 @@ public class AnnotationMatcher implements TypeExpressionParserVisitor
       return null;
    }
 
-   public Class getJavaDeclaringClass()
+   public Class<?> getJavaDeclaringClass()
    {
-      if (element instanceof Class) return (Class) element;
+      if (element instanceof Class) return (Class<?>) element;
       if (element instanceof Method) return ((Method) element).getDeclaringClass();
       if (element instanceof Field) return ((Field) element).getDeclaringClass();
-      if (element instanceof Constructor) return ((Constructor) element).getDeclaringClass();
+      if (element instanceof Constructor) return ((Constructor<?>) element).getDeclaringClass();
       return null;
    }
 
@@ -157,7 +157,7 @@ public class AnnotationMatcher implements TypeExpressionParserVisitor
       }
       else
       {
-         Class clazz = getJavaDeclaringClass();
+         Class<?> clazz = getJavaDeclaringClass();
          if (n instanceof ASTMethod)
          {
             return new Boolean(Util.has(clazz, (ASTMethod) n, advisor));
@@ -180,7 +180,7 @@ public class AnnotationMatcher implements TypeExpressionParserVisitor
       }
       else
       {
-         Class clazz = getJavaDeclaringClass();
+         Class<?> clazz = getJavaDeclaringClass();
          ASTField f = (ASTField) node.jjtGetChild(0);
          return new Boolean(Util.has(clazz, f, advisor));
       }
@@ -196,7 +196,7 @@ public class AnnotationMatcher implements TypeExpressionParserVisitor
       }
       else
       {
-         Class clazz = (Class) element;
+         Class<?> clazz = (Class<?>) element;
          return new Boolean(Util.matchesClassExpr(node.getClazz(), clazz, advisor));
       }
 
@@ -238,7 +238,7 @@ public class AnnotationMatcher implements TypeExpressionParserVisitor
       else
       {
          ConstructorMatcher conMatcher = null;
-         conMatcher = new ConstructorMatcher(advisor, (Constructor) element, null);
+         conMatcher = new ConstructorMatcher(advisor, (Constructor<?>) element, null);
          return conMatcher.matches(node);
       }
 

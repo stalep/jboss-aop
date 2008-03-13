@@ -267,10 +267,10 @@ public class ArrayRegistry
    
    private ArrayType isArray(Object arrayCandidate)
    {
-      Class candidateClass = arrayCandidate.getClass();
+      Class<?> candidateClass = arrayCandidate.getClass();
       if (candidateClass.isArray())
       {
-         Class componentType = candidateClass.getComponentType();
+         Class<?> componentType = candidateClass.getComponentType();
          if (componentType.isArray())
          {
             return ArrayType.MULTIDIM_ARRAY;

@@ -27,7 +27,6 @@ import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.MethodCallByMethod;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodCalledByMethodJoinpoint;
-import org.jboss.aop.util.MethodHashing;
 
 /**
  * 
@@ -39,7 +38,7 @@ public class MethodByMethodInfo extends CallerMethodInfo implements MethodCallBy
    private final long callingMethodHash;
    private final Method callingMethod;
    
-   public MethodByMethodInfo(Advisor advisor, Class calledClass, Method m, Method callingMethod, long callingMethodHash, long calledMethodHash, Interceptor[] in)
+   public MethodByMethodInfo(Advisor advisor, Class<?> calledClass, Method m, Method callingMethod, long callingMethodHash, long calledMethodHash, Interceptor[] in)
    {
       super(advisor, calledClass, m, calledMethodHash, in, callingMethod.getDeclaringClass());
       this.callingMethodHash = callingMethodHash;

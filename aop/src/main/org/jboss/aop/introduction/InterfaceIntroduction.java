@@ -264,7 +264,7 @@ public class InterfaceIntroduction
       }
    }
 
-   public boolean matches(Advisor advisor, Class clazz)
+   public boolean matches(Advisor advisor, Class<?> clazz)
    {
       if (classExpr != null)
          return Util.matchesClassExpr(classExpr, clazz, advisor);

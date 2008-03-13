@@ -75,10 +75,10 @@ public class FindAnnotations
       }
 
       System.out.println("**** method annotations ****");
-      List methods = cf.getMethods();
+      List<MethodInfo> methods = cf.getMethods();
       for (int i = 0; i < methods.size(); i++)
       {
-         MethodInfo mi = (MethodInfo) methods.get(i);
+         MethodInfo mi = methods.get(i);
          System.out.println("method: " + mi.getName());
          System.out.println("CONST POOL: ");
          mi.getConstPool().print();
@@ -103,10 +103,10 @@ public class FindAnnotations
       }
 
       System.out.println("**** field annotations ****");
-      List fields = cf.getFields();
+      List<FieldInfo> fields = cf.getFields();
       for (int i = 0; i < fields.size(); i++)
       {
-         FieldInfo mi = (FieldInfo) fields.get(i);
+         FieldInfo mi = fields.get(i);
          System.out.println("field: " + mi.getName());
          System.out.println("CONST POOL: ");
          mi.getConstPool().print();
@@ -134,14 +134,14 @@ public class FindAnnotations
    public static void printAnnotation(Annotation info)
    {
       System.out.print("@" + info.getTypeName());
-      Set members = info.getMemberNames();
+      Set<String> members = info.getMemberNames();
       if (members != null)
       {
          System.out.print("(");
-         Iterator mit = members.iterator();
+         Iterator<String> mit = members.iterator();
          while (mit.hasNext())
          {
-            String name = (String) mit.next();
+            String name = mit.next();
             System.out.print(name + "=" + info.getMemberValue(name).toString());
             if (mit.hasNext()) System.out.print(", ");
          }

@@ -31,18 +31,18 @@ import java.lang.ref.WeakReference;
 public abstract class ArrayRegistryEntry
 {
    /** WeakReference to the object or array containing the reference */
-   WeakReference owner;
+   WeakReference<Object> owner;
    
    /** WeakReference to the referenced array */
-   WeakReference array;
+   WeakReference<Object> array;
    
    /** True if the object referencing the array is a "normal" object, false if it ia an array */
    boolean ownerIsRoot;
    
    ArrayRegistryEntry(Object owner, boolean ownerIsRoot, Object array)
    {
-      this.owner = new WeakReference(owner);
-      this.array = new WeakReference(array);
+      this.owner = new WeakReference<Object>(owner);
+      this.array = new WeakReference<Object>(array);
       this.ownerIsRoot = ownerIsRoot;
       if (ownerIsRoot && owner.getClass().isArray()) {
          throw new RuntimeException("Owner is root and an array was passed in");

@@ -126,7 +126,7 @@ public class PointcutExpression implements Pointcut
       return null;
    }
 
-   public boolean matchesExecution(Advisor advisor, Constructor c)
+   public boolean matchesExecution(Advisor advisor, Constructor<?> c)
    {
       if (stats == null || stats.isExecution())
       {
@@ -136,7 +136,7 @@ public class PointcutExpression implements Pointcut
       return false;
    }
 
-   public boolean matchesConstruction(Advisor advisor, Constructor c)
+   public boolean matchesConstruction(Advisor advisor, Constructor<?> c)
    {
       if (stats == null || stats.isConstruction())
       {
@@ -224,7 +224,7 @@ public class PointcutExpression implements Pointcut
       return false;
    }
 
-   public boolean matchesCall(Advisor advisor, AccessibleObject within, Class calledClass, Method calledMethod)
+   public boolean matchesCall(Advisor advisor, AccessibleObject within, Class<?> calledClass, Method calledMethod)
    {
       if (stats == null || stats.isWithin() || stats.isWithincode() || stats.isCall())
       {
@@ -235,7 +235,7 @@ public class PointcutExpression implements Pointcut
    }
 
 
-   public boolean matchesCall(Advisor advisor, AccessibleObject within, Class calledClass, Constructor calledCon)
+   public boolean matchesCall(Advisor advisor, AccessibleObject within, Class<?> calledClass, Constructor<?> calledCon)
    {
       if (stats == null || stats.isWithin() || stats.isWithincode() || stats.isCall())
       {

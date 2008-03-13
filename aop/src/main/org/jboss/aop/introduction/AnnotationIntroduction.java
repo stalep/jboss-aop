@@ -132,7 +132,7 @@ public class AnnotationIntroduction
       return ((Boolean) target.jjtAccept(matcher, null)).booleanValue();
    }
 
-   public boolean matches(Advisor advisor, Class clazz)
+   public boolean matches(Advisor advisor, Class<?> clazz)
    {
       AnnotationMatcher matcher = new AnnotationMatcher(advisor, clazz);
       return ((Boolean) target.jjtAccept(matcher, null)).booleanValue();
@@ -144,7 +144,7 @@ public class AnnotationIntroduction
       return ((Boolean) target.jjtAccept(matcher, null)).booleanValue();
    }
 
-   public boolean matches(Advisor advisor, Constructor con)
+   public boolean matches(Advisor advisor, Constructor<?> con)
    {
       AnnotationMatcher matcher = new AnnotationMatcher(advisor, con);
       return ((Boolean) target.jjtAccept(matcher, null)).booleanValue();

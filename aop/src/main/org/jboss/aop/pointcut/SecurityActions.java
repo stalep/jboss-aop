@@ -21,7 +21,6 @@
 */ 
 package org.jboss.aop.pointcut;
 
-import java.lang.reflect.AccessibleObject;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
@@ -34,7 +33,7 @@ import java.security.PrivilegedExceptionAction;
  */
 class SecurityActions
 {
-   static Class loadClass(String name)
+   static Class<?> loadClass(String name)
    {
       if (System.getSecurityManager() == null)
       {
@@ -48,17 +47,17 @@ class SecurityActions
 
    interface LoadClassAction
    {
-      Class loadClass(String name);
+      Class<?> loadClass(String name);
       
       LoadClassAction PRIVILEGED = new LoadClassAction()
       {
-         public Class loadClass(final String name)
+         public Class<?> loadClass(final String name)
          {
             try
             {
-               return AccessController.doPrivileged(new PrivilegedExceptionAction<Class>()
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<Class<?>>()
                {
-                  public Class run() throws Exception
+                  public Class<?> run() throws Exception
                   {
                      return Thread.currentThread().getContextClassLoader().loadClass(name);
                   }
@@ -73,7 +72,7 @@ class SecurityActions
 
       LoadClassAction NON_PRIVILEGED = new LoadClassAction()
       {
-         public Class loadClass(String name)
+         public Class<?> loadClass(String name)
          {
             try
             {

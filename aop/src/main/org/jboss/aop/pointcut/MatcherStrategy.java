@@ -21,6 +21,7 @@
 */ 
 package org.jboss.aop.pointcut;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 import org.jboss.aop.Advisor;
@@ -54,7 +55,7 @@ public abstract class MatcherStrategy
       return ADVISOR_MATCHER_STRATEGY;
    }
 
-   public boolean subtypeOf(Class clazz, ClassExpression instanceOf, Advisor advisor)
+   public boolean subtypeOf(Class<?> clazz, ClassExpression instanceOf, Advisor advisor)
    {
       
       if (clazz == null) return false;
@@ -64,10 +65,13 @@ public abstract class MatcherStrategy
          try
          {
             // FIXME ClassLoader - why should the class be visible from the context classloader? 
-            Class annotation = SecurityActions.getContextClassLoader().loadClass(sub);
-            if (AnnotationElement.getAnyAnnotation(clazz, annotation) != null)
+            Class<?> annotation = SecurityActions.getContextClassLoader().loadClass(sub);
+            if (Annotation.class.isAssignableFrom(annotation))
             {
-               return true;
+               if (AnnotationElement.getAnyAnnotation(clazz, (Class<? extends Annotation>)annotation) != null)
+               {
+                  return true;
+               }
             }
          }
          catch (ClassNotFoundException e)
@@ -84,7 +88,7 @@ public abstract class MatcherStrategy
          return true;
       }
 
-      Class[] interfaces = clazz.getInterfaces();
+      Class<?>[] interfaces = clazz.getInterfaces();
       for (int i = 0; i < interfaces.length; i++)
       {
          if (subtypeOf(interfaces[i], instanceOf, advisor)) return true;
@@ -99,7 +103,7 @@ public abstract class MatcherStrategy
       return subtypeOf(clazz.getSuperclass(), instanceOf, advisor);
    }
 
-   protected abstract boolean checkIntroductions(Class clazz, ClassExpression instanceOf, Advisor advisor);
+   protected abstract boolean checkIntroductions(Class<?> clazz, ClassExpression instanceOf, Advisor advisor);
    
-   public abstract Class getDeclaringClass(Advisor advisor, Method m);
+   public abstract Class<?> getDeclaringClass(Advisor advisor, Method m);
 }

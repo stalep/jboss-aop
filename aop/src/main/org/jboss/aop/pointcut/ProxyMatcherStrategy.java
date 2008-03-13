@@ -23,7 +23,6 @@ package org.jboss.aop.pointcut;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.jboss.aop.Advisor;
 import org.jboss.aop.introduction.InterfaceIntroduction;
@@ -45,7 +44,7 @@ public class ProxyMatcherStrategy extends MatcherStrategy
    {
    }
    
-   protected boolean checkIntroductions(Class clazz, ClassExpression instanceOf, Advisor advisor)
+   protected boolean checkIntroductions(Class<?> clazz, ClassExpression instanceOf, Advisor advisor)
    {
       try
       {
@@ -53,33 +52,31 @@ public class ProxyMatcherStrategy extends MatcherStrategy
          {
             // FIXME ClassLoader - why should the class be visible from the context classloader?
             ClassLoader cl = SecurityActions.getContextClassLoader();
-            ArrayList intros = advisor.getInterfaceIntroductions();
+            ArrayList<InterfaceIntroduction> intros = advisor.getInterfaceIntroductions();
             if (intros.size() > 0)
             {
-               for (Iterator itIntro = intros.iterator() ; itIntro.hasNext() ; )
+               for (InterfaceIntroduction intro :intros)
                {
-                  InterfaceIntroduction intro = (InterfaceIntroduction)itIntro.next();
                   String[] introductions = intro.getInterfaces();
                   if (introductions != null)
                   {
                      for (int i = 0 ; i < introductions.length ; i++)
                      {
-                        Class iface = cl.loadClass(introductions[i]);
+                        Class<?> iface = cl.loadClass(introductions[i]);
                         if (subtypeOf(iface, instanceOf, advisor)) return true;
                      }
                   }
-                  ArrayList mixins = intro.getMixins();
+                  ArrayList<InterfaceIntroduction.Mixin> mixins = intro.getMixins();
                   if (mixins.size() > 0)
                   {
-                     for (Iterator itMixin = mixins.iterator() ; itMixin.hasNext() ; )
+                     for (InterfaceIntroduction.Mixin mixin : mixins)
                      {
-                        InterfaceIntroduction.Mixin mixin = (InterfaceIntroduction.Mixin)itMixin.next();
                         String[] mixinInterfaces = mixin.getInterfaces();
                         if (mixinInterfaces != null)
                         {
                            for (int i = 0 ; i < mixinInterfaces.length ; i++)
                            {
-                              Class iface = cl.loadClass(mixinInterfaces[i]);
+                              Class<?> iface = cl.loadClass(mixinInterfaces[i]);
                               if (subtypeOf(iface, instanceOf, advisor)) return true;                              
                            }
                         }
@@ -101,10 +98,10 @@ public class ProxyMatcherStrategy extends MatcherStrategy
     * Interface Introduced methods on the proxy will have the wrong declaring class for the matcher,
     * use the advisor class if it is an interface
     */
-   public Class getDeclaringClass(Advisor advisor, Method m)
+   public Class<?> getDeclaringClass(Advisor advisor, Method m)
    {
-      final Class methodClass = m.getDeclaringClass();
-      final Class advisorClass = advisor.getClazz();
+      final Class<?> methodClass = m.getDeclaringClass();
+      final Class<?> advisorClass = advisor.getClazz();
       
       if (advisorClass != null && methodClass.isInterface())
       {

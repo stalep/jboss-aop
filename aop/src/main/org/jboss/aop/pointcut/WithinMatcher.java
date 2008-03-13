@@ -67,10 +67,10 @@ public class WithinMatcher extends MatcherHelper
       throw new RuntimeException("NOT REACHABLE");
    }
 
-   public Class getDeclaringClass()
+   public Class<?> getDeclaringClass()
    {
       if (accessible instanceof Constructor)
-         return ((Constructor) accessible).getDeclaringClass();
+         return ((Constructor<?>) accessible).getDeclaringClass();
       else if (accessible instanceof Method) return ((Method) accessible).getDeclaringClass();
       return null;
    }
@@ -123,7 +123,7 @@ public class WithinMatcher extends MatcherHelper
          }
       }
       if (accessible instanceof Method) return Boolean.FALSE;
-      ConstructorMatcher matcher = new ConstructorMatcher(advisor, (Constructor) accessible, null);
+      ConstructorMatcher matcher = new ConstructorMatcher(advisor, (Constructor<?>) accessible, null);
       return matcher.matches(node);
 
    }

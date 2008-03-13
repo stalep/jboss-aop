@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import org.jboss.aop.Advisor;
 import org.jboss.aop.pointcut.ast.ASTAll;
 import org.jboss.aop.pointcut.ast.ASTAttribute;
+import org.jboss.aop.pointcut.ast.ASTException;
 import org.jboss.aop.pointcut.ast.ASTMethod;
 import org.jboss.aop.pointcut.ast.ASTStart;
 import org.jboss.aop.pointcut.ast.ClassExpression;
@@ -48,7 +49,7 @@ public class MethodMatcher extends MatcherHelper
    protected int methodModifiers;
    protected String classname;
    protected String methodName;
-   protected Class matchedClass;
+   protected Class<?> matchedClass;
    protected int matchLevel;//0 if matches the exact class, 1 if the direct superclass etc.
    protected boolean isInstanceof;
 
@@ -74,7 +75,7 @@ public class MethodMatcher extends MatcherHelper
       this.methodName = refMethod.getName();
    }
 
-   public Class getMatchedClass()
+   public Class<?> getMatchedClass()
    {
       return matchedClass;
    }
@@ -122,14 +123,14 @@ public class MethodMatcher extends MatcherHelper
       }
       else
       {
-         Class declaringClass = MatcherStrategy.getMatcher(advisor).getDeclaringClass(advisor, refMethod);
+         Class<?> declaringClass = MatcherStrategy.getMatcher(advisor).getDeclaringClass(advisor, refMethod);
          if (!advisor.chainOverridingForInheritedMethods())
          {
             matches = classMatchesAll(expr);
          }
          else
          {
-            Class advisedClass = advisor.getClazz();
+            Class<?> advisedClass = advisor.getClazz();
             matchedClass = advisedClass;
             while (matchedClass != null)
             {
@@ -240,7 +241,7 @@ public class MethodMatcher extends MatcherHelper
       }
       else
       {
-         Class declaringClass = MatcherStrategy.getMatcher(advisor).getDeclaringClass(advisor, refMethod);
+         Class<?> declaringClass = MatcherStrategy.getMatcher(advisor).getDeclaringClass(advisor, refMethod);
          if (!advisor.chainOverridingForInheritedMethods())
          {
             if (Util.matchesClassExpr(node.getClazz(), declaringClass, advisor))
@@ -252,7 +253,7 @@ public class MethodMatcher extends MatcherHelper
          }
          else
          {
-            Class advisedClass = advisor.getClazz();
+            Class<?> advisedClass = advisor.getClazz();
             if (advisor.getClazz() == null)
             {
                throw new RuntimeException("Advisor is null");
@@ -353,7 +354,7 @@ public class MethodMatcher extends MatcherHelper
    protected boolean matchesExceptions(ASTMethod node)
    {
       //Match exceptions
-      ArrayList nodeExceptions = node.getExceptions();
+      ArrayList<ASTException> nodeExceptions = node.getExceptions();
       if (nodeExceptions.size() > 0)
       {
          if (ctMethod != null)

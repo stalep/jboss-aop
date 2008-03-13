@@ -39,12 +39,12 @@ public class AdvisorMatcherStrategy extends MatcherStrategy
    {
    }
 
-   protected boolean checkIntroductions(Class clazz, ClassExpression instanceOf, Advisor advisor)
+   protected boolean checkIntroductions(Class<?> clazz, ClassExpression instanceOf, Advisor advisor)
    {
       return false;
    }
   
-   public Class getDeclaringClass(Advisor advisor, Method m)
+   public Class<?> getDeclaringClass(Advisor advisor, Method m)
    {
       return m.getDeclaringClass();
    }

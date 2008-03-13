@@ -141,7 +141,7 @@ public class JavassistMethodHashing
       }
    }
    
-   private static void addDeclaredMethods(HashMap advised, CtClass superclass) throws Exception
+   private static void addDeclaredMethods(HashMap<Long, CtMethod> advised, CtClass superclass) throws Exception
    {
       CtMethod[] declaredMethods = superclass.getDeclaredMethods();
       for (int i = 0; i < declaredMethods.length; i++)
@@ -160,7 +160,7 @@ public class JavassistMethodHashing
          }
       }
    }
-   private static void populateMethodTables(HashMap advised, CtClass superclass)
+   private static void populateMethodTables(HashMap<Long, CtMethod> advised, CtClass superclass)
       throws Exception
    {
       if (superclass == null) return;
@@ -181,16 +181,16 @@ public class JavassistMethodHashing
       }
    }
 
-   public static HashMap getMethodMap(CtClass clazz) throws Exception
+   public static HashMap<Long, CtMethod> getMethodMap(CtClass clazz) throws Exception
    {
-      HashMap map = new HashMap();
+      HashMap<Long, CtMethod> map = new HashMap<Long, CtMethod>();
       populateMethodTables(map, clazz);
       return map;
    }
 
-   public static HashMap getDeclaredMethodMap(CtClass clazz) throws Exception
+   public static HashMap<Long, CtMethod> getDeclaredMethodMap(CtClass clazz) throws Exception
    {
-      HashMap map = new HashMap();
+      HashMap<Long, CtMethod> map = new HashMap<Long, CtMethod>();
       addDeclaredMethods(map, clazz);
       return map;
    }

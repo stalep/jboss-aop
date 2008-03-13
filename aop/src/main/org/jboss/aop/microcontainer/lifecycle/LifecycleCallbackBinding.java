@@ -118,7 +118,7 @@ public class LifecycleCallbackBinding
       return name.hashCode();
    }
 
-   public boolean matches(Advisor advisor, Class clazz)
+   public boolean matches(Advisor advisor, Class<?> clazz)
    {
       if (classes != null)
       {

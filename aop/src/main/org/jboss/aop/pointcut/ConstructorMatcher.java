@@ -27,6 +27,7 @@ import org.jboss.aop.Advisor;
 import org.jboss.aop.pointcut.ast.ASTAll;
 import org.jboss.aop.pointcut.ast.ASTAttribute;
 import org.jboss.aop.pointcut.ast.ASTConstructor;
+import org.jboss.aop.pointcut.ast.ASTException;
 import org.jboss.aop.pointcut.ast.ASTStart;
 
 import javassist.CtConstructor;
@@ -42,7 +43,7 @@ public class ConstructorMatcher extends MatcherHelper
 {
    protected Advisor advisor;
    protected CtConstructor ctCon;
-   protected Constructor refCon;
+   protected Constructor<?> refCon;
    protected int conModifiers;
    protected String classname;
 
@@ -56,7 +57,7 @@ public class ConstructorMatcher extends MatcherHelper
       this.ctCon = con;
    }
 
-   public ConstructorMatcher(Advisor advisor, Constructor con, ASTStart start)
+   public ConstructorMatcher(Advisor advisor, Constructor<?> con, ASTStart start)
    {
       super(start, advisor.getManager());
       this.advisor = advisor;
@@ -130,7 +131,7 @@ public class ConstructorMatcher extends MatcherHelper
       }
       
       //Match exceptions
-      ArrayList nodeExceptions = node.getExceptions();
+      ArrayList<ASTException> nodeExceptions = node.getExceptions();
       if (nodeExceptions.size() > 0)
       {
          if (ctCon != null)

@@ -48,7 +48,7 @@ public class ExecutionConstructorMatcher extends ConstructorMatcher
       super(advisor, con, start);
    }
 
-   public ExecutionConstructorMatcher(Advisor advisor, Constructor con, ASTStart start)
+   public ExecutionConstructorMatcher(Advisor advisor, Constructor<?> con, ASTStart start)
    {
       super(advisor, con, start);
    }

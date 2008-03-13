@@ -62,7 +62,7 @@ public class TypedefExpression implements Typedef
       return ((Boolean) ast.jjtAccept(matcher, null)).booleanValue();
    }
 
-   public boolean matches(Advisor advisor, Class clazz)
+   public boolean matches(Advisor advisor, Class<?> clazz)
    {
       TypeMatcher matcher = new TypeMatcher(advisor, clazz);
       return ((Boolean) ast.jjtAccept(matcher, null)).booleanValue();

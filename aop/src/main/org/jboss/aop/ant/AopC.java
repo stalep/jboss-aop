@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -65,7 +64,7 @@ public class AopC extends MatchingTask
    private boolean report = false;
    private boolean optimized = true;
    private String maxmemory = null;
-   ArrayList sysproperties = new ArrayList();
+   ArrayList<Environment.Variable> sysproperties = new ArrayList<Environment.Variable>();
 
    File sourceFiles;
    /**
@@ -372,9 +371,8 @@ public class AopC extends MatchingTask
          optimize.setValue(String.valueOf(optimized));
          java.addSysproperty(optimize);
 
-         for (Iterator it = sysproperties.iterator() ; it.hasNext() ; )
+         for (Environment.Variable var : sysproperties)
          {
-            Environment.Variable var = (Environment.Variable)it.next();
             java.addSysproperty(var);
          }
          
@@ -411,7 +409,7 @@ public class AopC extends MatchingTask
       // scan source directories and dest directory to build up
       // compile lists
       String[] list = compileSourcepath.list();
-      ArrayList compilingFiles = new ArrayList();
+      ArrayList<String> compilingFiles = new ArrayList<String>();
       for (int i = 0; i < list.length; i++)
       {
          File srcDir = getProject().resolveFile(list[i]);
@@ -438,7 +436,7 @@ public class AopC extends MatchingTask
       for (int i = 0; i < compilingFiles.size(); i++)
       {
          //Add 1 to allow for the spaces between args
-         length += ((String) compilingFiles.get(i)).length() + 1;
+         length += compilingFiles.get(i).length() + 1;
 
          if (length > maxSrc)
          {
@@ -451,16 +449,15 @@ public class AopC extends MatchingTask
          StringBuffer niceSourceList = new StringBuffer("Files\n");
          for (int i = 0; i < compilingFiles.size(); i++)
          {
-            String file = (String) compilingFiles.get(i);
+            String file = compilingFiles.get(i);
             cmd.createArgument().setValue(file);
             niceSourceList.append("    " + file + lSep);
          }
       }
       else
       {
-         for (Iterator it = sysproperties.iterator() ; it.hasNext() ; )
+         for (Environment.Variable var : sysproperties)
          {
-            Environment.Variable var = (Environment.Variable)it.next();
             if (var.getKey().equals("java.io.tmpdir"))
             {
                System.setProperty("java.io.tmpdir", var.getValue());
@@ -481,7 +478,7 @@ public class AopC extends MatchingTask
 
             for (int i = 0; i < compilingFiles.size(); i++)
             {
-               writer.write((String) compilingFiles.get(i));
+               writer.write(compilingFiles.get(i));
                writer.newLine();
             }
             writer.flush();

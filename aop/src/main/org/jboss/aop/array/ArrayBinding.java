@@ -26,8 +26,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.aop.advice.InterceptorFactory;
-import org.jboss.aop.pointcut.Pointcut;
-import org.jboss.aop.pointcut.ast.ParseException;
 
 /**
  * 
@@ -50,10 +48,10 @@ public class ArrayBinding
 
    public void addInterceptorFactory(InterceptorFactory factory)
    {
-      List list = Arrays.asList(interceptorFactories);
-      list = new ArrayList(list);
+      List<InterceptorFactory> list = Arrays.asList(interceptorFactories);
+      list = new ArrayList<InterceptorFactory>(list);
       list.add(factory);
-      interceptorFactories = (InterceptorFactory[]) list.toArray(new InterceptorFactory[list.size()]);
+      interceptorFactories = list.toArray(new InterceptorFactory[list.size()]);
    }
 
 

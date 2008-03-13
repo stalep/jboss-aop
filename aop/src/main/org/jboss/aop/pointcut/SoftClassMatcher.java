@@ -63,7 +63,7 @@ public class SoftClassMatcher extends MatcherHelper
    protected Advisor advisor;
    protected String classname;
    protected boolean match = false;
-   protected Class clazz;
+   protected Class<?> clazz;
 
    public SoftClassMatcher(Advisor advisor, String classname, ASTStart start)
    {

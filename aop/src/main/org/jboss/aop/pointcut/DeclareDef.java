@@ -120,7 +120,7 @@ public class DeclareDef
       return ((Boolean) ast.jjtAccept(matcher, null)).booleanValue();
    }
 
-   public boolean matches(Advisor advisor, Class clazz)
+   public boolean matches(Advisor advisor, Class<?> clazz)
    {
       if (pointcut)return false;
       DeclareTypeMatcher matcher = new DeclareTypeMatcher(advisor, clazz);

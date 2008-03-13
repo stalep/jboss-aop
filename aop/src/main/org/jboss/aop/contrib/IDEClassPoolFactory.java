@@ -46,11 +46,11 @@ import org.jboss.aop.classpool.AOPClassPool;
 public class IDEClassPoolFactory implements ScopedClassPoolFactory
 {
 
-   private ArrayList classPaths;
+   private ArrayList<URL> classPaths;
 
    public IDEClassPoolFactory()
    {
-      classPaths = new ArrayList();
+      classPaths = new ArrayList<URL>();
    }
 
    public ScopedClassPool create(ClassLoader loader, ClassPool pool, ScopedClassPoolRepository repository)
@@ -102,7 +102,7 @@ public class IDEClassPoolFactory implements ScopedClassPoolFactory
          {
             public Object run()
             {
-               URL urlPaths[] = (URL[]) classPaths.toArray(new URL[classPaths.size()]);
+               URL urlPaths[] = classPaths.toArray(new URL[classPaths.size()]);
                loader = new Loader(urlPaths, Thread.currentThread().getContextClassLoader());
                setClassLoader(loader);
 
@@ -115,7 +115,7 @@ public class IDEClassPoolFactory implements ScopedClassPoolFactory
          insertClassPath(classPath);
       }
 
-      public Class toClass(CtClass cc)
+      public Class<?> toClass(CtClass cc)
               throws CannotCompileException
       {
          try
@@ -143,10 +143,10 @@ public class IDEClassPoolFactory implements ScopedClassPoolFactory
          super(urls, src);
       }
 
-      public Class loadClass(String name, byte[] classfile)
+      public Class<?> loadClass(String name, byte[] classfile)
               throws ClassFormatError
       {
-         Class c = defineClass(name, classfile, 0, classfile.length);
+         Class<?> c = defineClass(name, classfile, 0, classfile.length);
 
          resolveClass(c);
          return c;

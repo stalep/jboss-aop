@@ -54,9 +54,9 @@ public class TypeMatcher implements TypeExpressionParserVisitor
 {
    protected Advisor advisor;
    protected CtClass ctClass;
-   protected Class clazz;
+   protected Class<?> clazz;
 
-   public TypeMatcher(Advisor advisor, Class clazz)
+   public TypeMatcher(Advisor advisor, Class<?> clazz)
    {
       this.advisor = advisor;
       this.clazz = clazz;

@@ -30,10 +30,10 @@ public class PointcutMethodMatch
 {
    private boolean matches;
    private int matchLevel;
-   private Class matchedClass;
+   private Class<?> matchedClass;
    private boolean isInstanceOf;
 
-   public PointcutMethodMatch(boolean matches, Class matchedClass, int matchLevel, boolean isInstanceOf)
+   public PointcutMethodMatch(boolean matches, Class<?> matchedClass, int matchLevel, boolean isInstanceOf)
    {
       this.matches = matches;
       this.matchLevel = matchLevel;
@@ -41,7 +41,7 @@ public class PointcutMethodMatch
       this.isInstanceOf = isInstanceOf;
    }
 
-   public Class getMatchedClass()
+   public Class<?> getMatchedClass()
    {
       return matchedClass;
    }

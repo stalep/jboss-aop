@@ -86,8 +86,8 @@ public class AnnotationInfoCreator implements AnnotationParserVisitor
    {
       if (base.getMemberNames().size() > 1) throw new RuntimeException("single value expected from annotation: " + base.getTypeName());
 
-      Set set = base.getMemberNames();
-      MemberValue mv = base.getMemberValue((String) set.iterator().next());
+      Set<String> set = base.getMemberNames();
+      MemberValue mv = base.getMemberValue(set.iterator().next());
       node.getValue().jjtAccept(this, mv);
       return data;
    }

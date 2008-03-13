@@ -110,7 +110,7 @@ public class ByteCodeAnnotationCompiler
    private CtMethod getJavassistMethod(JavaMethod method, CtClass clazz) throws Exception
    {
       CtMethod methods[] = clazz.getDeclaredMethods();
-      ArrayList possible = new ArrayList();
+      ArrayList<CtMethod> possible = new ArrayList<CtMethod>();
       for (int i = 0; i < methods.length; i++)
       {
          if (methods[i].getName().equals(method.getName()))
@@ -122,11 +122,11 @@ public class ByteCodeAnnotationCompiler
          }
       }
       if (possible.size() == 0) throw new RuntimeException("cannot resolve method" + method.toString());
-      if (possible.size() == 1) return (CtMethod) possible.get(0);
+      if (possible.size() == 1) return possible.get(0);
 
       for (int i = 0; i < possible.size(); i++)
       {
-         CtMethod ctMethod = (CtMethod) possible.get(i);
+         CtMethod ctMethod = possible.get(i);
          CtClass[] params = ctMethod.getParameterTypes();
          boolean bad = false;
          for (int k = 0; k < params.length; k++)
@@ -145,7 +145,7 @@ public class ByteCodeAnnotationCompiler
    private CtConstructor getJavassistConstructor(JavaMethod method, CtClass clazz, boolean isInnerClass) throws Exception
    {
       CtConstructor cons[] = clazz.getDeclaredConstructors();
-      ArrayList possible = new ArrayList();
+      ArrayList<CtConstructor> possible = new ArrayList<CtConstructor>();
       for (int i = 0; i < cons.length; i++)
       {
          //non-static inner classes get wrapping class as an "invisible" constructor param 
@@ -166,11 +166,11 @@ public class ByteCodeAnnotationCompiler
       }
       
       if (possible.size() == 0) throw new RuntimeException("cannot resolve constructor" + method.toString());
-      if (possible.size() == 1) return (CtConstructor) possible.get(0);
+      if (possible.size() == 1) return possible.get(0);
 
       for (int i = 0; i < possible.size(); i++)
       {
-         CtConstructor ctCon = (CtConstructor) possible.get(i);
+         CtConstructor ctCon = possible.get(i);
          CtClass[] params = ctCon.getParameterTypes();
          boolean bad = false;
          for (int k = 0; k < params.length; k++)

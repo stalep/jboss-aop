@@ -54,12 +54,12 @@ public interface Pointcut
    boolean matchesCall(Advisor callingAdvisor, NewExpr methodCall) throws NotFoundException;
 
    PointcutMethodMatch matchesExecution(Advisor advisor, Method m);
-   boolean matchesExecution(Advisor advisor, Constructor c);
-   boolean matchesConstruction(Advisor advisor, Constructor c);
+   boolean matchesExecution(Advisor advisor, Constructor<?> c);
+   boolean matchesConstruction(Advisor advisor, Constructor<?> c);
    boolean matchesGet(Advisor advisor, Field f);
    boolean matchesSet(Advisor advisor, Field f);
-   boolean matchesCall(Advisor advisor, AccessibleObject within, Class calledClass, Method calledMethod);
-   boolean matchesCall(Advisor advisor, AccessibleObject within, Class calledClass, Constructor calledCon);
+   boolean matchesCall(Advisor advisor, AccessibleObject within, Class<?> calledClass, Method calledMethod);
+   boolean matchesCall(Advisor advisor, AccessibleObject within, Class<?> calledClass, Constructor<?> calledCon);
 
    String getExpr();
 

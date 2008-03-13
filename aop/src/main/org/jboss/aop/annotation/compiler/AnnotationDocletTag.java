@@ -107,6 +107,7 @@ public class AnnotationDocletTag implements DocletTag
       return null;
    }
 
+   @SuppressWarnings("unchecked")
    public Map getNamedParameterMap()
    {
       return null;

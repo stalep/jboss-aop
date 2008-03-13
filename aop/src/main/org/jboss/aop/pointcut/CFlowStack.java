@@ -33,7 +33,7 @@ import java.util.ArrayList;
 public class CFlowStack
 {
    private String name;
-   private ArrayList cflows = new ArrayList();
+   private ArrayList<CFlow> cflows = new ArrayList<CFlow>();
 
    public CFlowStack(String name)
    {
@@ -45,7 +45,7 @@ public class CFlowStack
       return name;
    }
 
-   public void addCFlow(org.jboss.aop.pointcut.CFlow cflow)
+   public void addCFlow(CFlow cflow)
    {
       cflows.add(cflow);
    }
@@ -55,7 +55,7 @@ public class CFlowStack
       int stackIndex = stack.length - 1;
       for (int i = 0; i < cflows.size(); i++)
       {
-         org.jboss.aop.pointcut.CFlow cflow = (org.jboss.aop.pointcut.CFlow)cflows.get(i);
+         CFlow cflow = cflows.get(i);
          stackIndex = cflow.matches(stack, stackIndex);
          if (stackIndex == org.jboss.aop.pointcut.CFlow.NOT_FOUND)
          {
