@@ -57,7 +57,7 @@ public class PerVmAdvice
    {
       ClassLoader cl = aspect.getClass().getClassLoader();
       String name = "org.jboss.aop.advice." + aspect.getClass().getName() + "_z_" + adviceName + "_" + System.identityHashCode(cl);
-      Class iclass = null;
+      Class<?> iclass = null;
 
       if (cl == null)
       {
@@ -93,7 +93,7 @@ public class PerVmAdvice
          if (iclass == null)
          {
             Method[] methods = aspect.getClass().getMethods();
-            ArrayList matches = new ArrayList();
+            ArrayList<Method> matches = new ArrayList<Method>();
             for (int i = 0; i < methods.length; i++)
             {
                if (methods[i].getName().equals(adviceName)) matches.add(methods[i]);
@@ -103,7 +103,7 @@ public class PerVmAdvice
 
             for(int i=0; i < matches.size(); i++)
             {
-               Method method = (Method) matches.get(i);
+               Method method = matches.get(i);
                if(method.getParameterTypes().length != 1)
                {
                   throw new InvalidAdviceException(
@@ -113,14 +113,14 @@ public class PerVmAdvice
                }
                
                // we only support params that implements org.jboss.aop.joinpoint.Invocation
-               Class paramClass = method.getParameterTypes()[0];
+               Class<?> paramClass = method.getParameterTypes()[0];
                boolean foundInterface = false;
                if(paramClass.isInterface() && paramClass.getName().equals("org.jboss.aop.joinpoint.Invocation"))
                   foundInterface = true;
                else
                {
-                  Class superParamClass = findSuperClass(paramClass);
-                  for(Class iClass : superParamClass.getInterfaces())
+                  Class<?> superParamClass = findSuperClass(paramClass);
+                  for(Class<?> iClass : superParamClass.getInterfaces())
                   {
                      if(iClass.getName().equals("org.jboss.aop.joinpoint.Invocation"))
                         foundInterface = true;
@@ -170,7 +170,7 @@ public class PerVmAdvice
                boolean noArg = false;
                for (int i = 0; i < matches.size(); i++)
                {
-                  Method advice = (Method) matches.get(i);
+                  Method advice = matches.get(i);
                   if (advice.getParameterTypes().length > 0)
                   {
                      String param = advice.getParameterTypes()[0].getName();
@@ -188,7 +188,7 @@ public class PerVmAdvice
             }
             else
             {
-               Method advice = (Method) matches.get(0);
+               Method advice = matches.get(0);
                String param = advice.getParameterTypes()[0].getName();
                invokeBody.append("return aspectField." + adviceName + "((" + param + ")$1); ");
             }
@@ -211,7 +211,7 @@ public class PerVmAdvice
       return rtn;
    }
    
-   private static Class findSuperClass(Class clazz)
+   private static Class<?> findSuperClass(Class<?> clazz)
    {
       if(clazz.getSuperclass() == null || clazz.getSuperclass().getName().equals("java.lang.Object"))
          return clazz;
