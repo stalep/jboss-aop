@@ -60,7 +60,7 @@ class LoadInterceptedClassesStrategy implements DynamicAOPStrategy
     * in this strategy, no observer is required.
     * @see org.jboss.aop.DynamicAOPStrategy#getInterceptorChainObserver(Class)
     */
-   public InterceptorChainObserver getInterceptorChainObserver(Class clazz)
+   public InterceptorChainObserver getInterceptorChainObserver(Class<?> clazz)
    {
       return null;
    }

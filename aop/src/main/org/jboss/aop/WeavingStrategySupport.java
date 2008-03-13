@@ -29,9 +29,9 @@ package org.jboss.aop;
 public abstract class WeavingStrategySupport implements WeavingStrategy
 {
    
-   private static ThreadLocal REENTRY = new ThreadLocal()
+   private static ThreadLocal<Boolean> REENTRY = new ThreadLocal<Boolean>()
    {
-      protected Object initialValue()
+      protected Boolean initialValue()
       {
          return Boolean.FALSE;
       }
@@ -44,7 +44,7 @@ public abstract class WeavingStrategySupport implements WeavingStrategy
     */
    protected static boolean isReEntry()
    {
-      return ((Boolean) REENTRY.get()).booleanValue();
+      return REENTRY.get().booleanValue();
    }
 
    /**

@@ -28,7 +28,6 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import org.jboss.aop.advice.AdviceBinding;
@@ -64,7 +63,7 @@ public class ClassContainer extends Advisor
       rebuildInterceptors();
    }
 
-   public void setClass(Class clazz)
+   public void setClass(Class<?> clazz)
    {
       this.clazz = clazz;
    }
@@ -81,7 +80,7 @@ public class ClassContainer extends Advisor
 
    protected Field[] advisedFields;
 
-   private void populateFieldTable(ArrayList<Field> fields, final Class superclass)
+   private void populateFieldTable(ArrayList<Field> fields, final Class<?> superclass)
    {
       if (superclass == null) return;
       if (superclass.equals(Object.class)) return;
@@ -189,7 +188,7 @@ public class ClassContainer extends Advisor
 
       for (int i = 0; i < classMetaDataBindings.size(); i++)
       {
-         ClassMetaDataBinding data = (ClassMetaDataBinding) classMetaDataBindings.get(i);
+         ClassMetaDataBinding data = classMetaDataBindings.get(i);
          bindClassMetaData(data);
       }
    }
@@ -249,15 +248,13 @@ public class ClassContainer extends Advisor
       initializeMethodChain();
       initializeConstructorChain();
 
-      LinkedHashMap bindings = manager.getBindings();
+      LinkedHashMap<String, AdviceBinding> bindings = manager.getBindings();
       synchronized (bindings)
       {
          if (bindings.size() > 0)
          {
-            Iterator it = bindings.values().iterator();
-            while (it.hasNext())
+            for (AdviceBinding binding : bindings.values())
             {
-               AdviceBinding binding = (AdviceBinding) it.next();
                if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName());
                resolveMethodPointcut(binding);
                resolveConstructorPointcut(binding);
@@ -276,15 +273,13 @@ public class ClassContainer extends Advisor
       resetChain(this.methodInfos);
       resetChain(this.constructorInfos);
 
-      LinkedHashMap bindings = manager.getBindings();
+      LinkedHashMap<String, AdviceBinding> bindings = manager.getBindings();
       synchronized (bindings)
       {
          if (bindings.size() > 0)
          {
-            Iterator it = bindings.values().iterator();
-            while (it.hasNext())
+            for (AdviceBinding binding : bindings.values())
             {
-               AdviceBinding binding = (AdviceBinding) it.next();
                if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName());
                resolveMethodPointcut(binding);
                resolveConstructorPointcut(binding);

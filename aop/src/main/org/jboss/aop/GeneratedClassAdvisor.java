@@ -79,12 +79,14 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    ArrayList<MethodInfo> overriddenMethods = new ArrayList<MethodInfo>(); 
 
    //TODO These are only needed for the class advisor really
-   //All joinpoint generators apart from field reads and constructions go in here
-   private volatile ConcurrentHashMap joinPointGenerators = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   //All joinpoint generators apart from field reads, constructions and MethodCalledByXXX go in here
+   private volatile ConcurrentHashMap<Joinpoint, JoinPointGenerator> joinPointGenerators = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
    //Needs its own map to avoid crashing with the field write generators
-   private volatile ConcurrentHashMap fieldReadJoinPoinGenerators = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   private volatile ConcurrentHashMap<Joinpoint, FieldJoinPointGenerator> fieldReadJoinPoinGenerators = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
    //Needs its own map to avoid crashing with the constructor generators
-   private volatile ConcurrentHashMap constructionJoinPointGenerators = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   private volatile ConcurrentHashMap<Joinpoint, ConstructorJoinPointGenerator> constructionJoinPointGenerators = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
+   //An extra level of indirection is needed for MethodCalledByCon and MethodCalledByMethod as compared to the main joinPointGenerators map
+   private volatile ConcurrentHashMap<Joinpoint, ConcurrentHashMap<Class<?>, JoinPointGenerator>> methodCalledByXXXJoinPointGenerators = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
    
    ConcurrentHashMap<Joinpoint, Interceptor[]> oldInfos = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
    ConcurrentHashMap<Joinpoint, Interceptor[]> oldFieldReadInfos = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
@@ -120,19 +122,20 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       methodInfos = null;
       advisorStrategy = null;
       
-      Map subscribedSubDomains = getManager().getSubscribedSubDomains();
+      Map<Domain, Object> subscribedSubDomains = getManager().getSubscribedSubDomains();
       synchronized (subscribedSubDomains)
       {
-         for (Iterator it = subscribedSubDomains.keySet().iterator() ; it.hasNext() ; )
+         for (Iterator<Domain> it = subscribedSubDomains.keySet().iterator() ; it.hasNext() ; )
          {
-            GeneratedAdvisorDomain manager = (GeneratedAdvisorDomain)it.next();
-            Map advisors = manager.getAdvisors();
+            //TODO Not really sure what was attempted here
+            //GeneratedAdvisorDomain manager = (GeneratedAdvisorDomain)it.next();
+            //Map advisors = manager.getAdvisors();
             it.remove();
          }
       }
    }
 
-   protected void initialise(Class clazz, AspectManager manager)
+   protected void initialise(Class<?> clazz, AspectManager manager)
    {
       advisorStrategy.initialise(clazz, manager);
    }
@@ -260,9 +263,8 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       if (overriddenMethods != null && overriddenMethods.size() > 0)
       {
-         for (Iterator it = overriddenMethods.iterator() ; it.hasNext() ; )
+         for(MethodInfo info : overriddenMethods)
          {
-            MethodInfo info = (MethodInfo)it.next();
             Method method = info.getMethod();
             PointcutMethodMatch match = binding.getPointcut().matchesExecution(this, method);
             
@@ -545,10 +547,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          synchronized(this.adviceBindings)
          {
             this.adviceBindings.addAll(classAdvisor.adviceBindings);
-            for (Iterator it = this.adviceBindings.iterator() ; it.hasNext() ; )
+            if (adviceBindings.size() > 0)
             {
-               AdviceBinding binding = (AdviceBinding)it.next();
-               binding.addAdvisor(this);
+               for (AdviceBinding binding : this.adviceBindings)
+               {
+                  binding.addAdvisor(this);
+               }
             }
          }
       }
@@ -619,10 +623,8 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       //Handle the overridden methods
       if (overriddenMethods != null && overriddenMethods.size() > 0)
       {
-         for (Iterator it = overriddenMethods.iterator() ; it.hasNext() ; )
+         for (MethodInfo info : overriddenMethods)
          {
-            MethodInfo info = (MethodInfo)it.next();
-
             MethodJoinPointGenerator generator = getJoinPointGenerator(info);
             finalizeChainAndRebindJoinPoint(oldInfos, info, generator, OldInfoMaps.INFOS);
          }
@@ -664,7 +666,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       //We are an instance advisor with no own data influencing the chains, copy these from the parent advisor
       for (int i = 0; i < newFieldInfos.length; i++)
       {
-         FieldInfo myInfo = (FieldInfo) newFieldInfos[i];
+         FieldInfo myInfo = newFieldInfos[i];
          myInfo.cloneChains(classFieldInfos[i]);
 
          if (updateOldInfo(oldFieldInfos, myInfo, oldInfoMapInstance))
@@ -680,7 +682,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
       for (int i = 0; i < newFieldInfos.length; i++)
       {
-         FieldInfo info = (FieldInfo)newFieldInfos[i];
+         FieldInfo info = newFieldInfos[i];
          FieldJoinPointGenerator generator = getJoinPointGenerator(info);
          finalizeChainAndRebindJoinPoint(oldFieldInfos, info, generator, oldInfoMapInstance);
       }
@@ -710,17 +712,6 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    @Override
    protected void finalizeMethodCalledByConInterceptorChain(MethodByConInfo info)
    {
-      //An extra level of indirection since we distinguish between callers of method depending on
-      //where the called method is defined (sub/super interfaces)
-      ConcurrentHashMap map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
-      if (map == null)
-      {
-         map = new ConcurrentHashMap();
-         initJoinPointGeneratorsMap();
-         joinPointGenerators.put(info.getJoinpoint(), map);
-         map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
-      }
-
       MethodByConJoinPointGenerator generator = getJoinPointGenerator(info);
       finalizeChainAndRebindJoinPoint(oldInfos, info, generator, OldInfoMaps.INFOS);
    }
@@ -815,7 +806,6 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       ArrayList<Interceptor> curr = info.getInterceptorChain();
       if (binding.getCFlow() != null)
       {
-         //TODO Handle CFlow
          InterceptorFactory[] factories = binding.getInterceptorFactories();
          for (int i = 0 ; i < factories.length ; i++)
          {
@@ -838,7 +828,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       GeneratedAdvisorInterceptor[] factories = null;
       if (list.size() > 0)
       {
-         factories = applyPrecedence((GeneratedAdvisorInterceptor[]) list.toArray(new GeneratedAdvisorInterceptor[list.size()]));
+         factories = applyPrecedence(list.toArray(new GeneratedAdvisorInterceptor[list.size()]));
       }
       info.setInterceptors(factories);
 
@@ -851,7 +841,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    @Override
    public String toString()
    {
-      Class clazz = this.getClass();
+      Class<?> clazz = this.getClass();
       StringBuffer sb = new StringBuffer("CLASS: " + clazz.getName());
 
       Field[] fields = clazz.getFields();
@@ -881,7 +871,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
     * Generated ClassAdvisors and InstanceAdvisors will be different instances,
     * so keep track of what per_class_joinpoint aspects have been added where
     */
-   ConcurrentHashMap<AspectDefinition,Map<Joinpoint, Object>> perClassJoinpointAspectDefinitions =
+   ConcurrentHashMap<AspectDefinition, Map<Joinpoint, Object>> perClassJoinpointAspectDefinitions =
          new ConcurrentHashMap<AspectDefinition, Map<Joinpoint, Object>>();
 
 
@@ -968,13 +958,13 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    }
 
    @Override
-   public Set getPerInstanceAspectDefinitions()
+   public Set<AspectDefinition> getPerInstanceAspectDefinitions()
    {
       return advisorStrategy.getPerInstanceAspectDefinitions();
    }
 
    @Override
-   public Map getPerInstanceJoinpointAspectDefinitions()
+   public Map<AspectDefinition, Set<Joinpoint>> getPerInstanceJoinpointAspectDefinitions()
    {
       return advisorStrategy.getPerInstanceJoinpointAspectDefinitions();
    }
@@ -1104,7 +1094,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             if (joinPointGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               joinPointGenerators = new ConcurrentHashMap();
+               joinPointGenerators = new ConcurrentHashMap<Joinpoint, JoinPointGenerator>();
             }
          }
       }
@@ -1118,7 +1108,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             if (fieldReadJoinPoinGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               fieldReadJoinPoinGenerators = new ConcurrentHashMap();
+               fieldReadJoinPoinGenerators = new ConcurrentHashMap<Joinpoint, FieldJoinPointGenerator>();
             }
          }
       }
@@ -1132,7 +1122,21 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             if (constructionJoinPointGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
             {
-               constructionJoinPointGenerators = new ConcurrentHashMap();
+               constructionJoinPointGenerators = new ConcurrentHashMap<Joinpoint, ConstructorJoinPointGenerator>();
+            }
+         }
+      }
+   }
+   
+   protected void initMethodCalledByConJoinPointGeneratorsMap()
+   {
+      if (methodCalledByXXXJoinPointGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+      {
+         synchronized(lazyCollectionLock)
+         {
+            if (methodCalledByXXXJoinPointGenerators == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
+            {
+               methodCalledByXXXJoinPointGenerators = new ConcurrentHashMap<Joinpoint, ConcurrentHashMap<Class<?>, JoinPointGenerator>>();
             }
          }
       }
@@ -1188,7 +1192,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
     */
    private interface AdvisorStrategy
    {
-      void initialise(Class clazz, AspectManager manager);
+      void initialise(Class<?> clazz, AspectManager manager);
       void checkVersion();
       void createInterceptorChains() throws Exception;
       MethodJoinPointGenerator getJoinPointGenerator(MethodInfo info);
@@ -1205,8 +1209,8 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       void createMethodTables() throws Exception;
       void createFieldTable() throws Exception;
       void createConstructorTables() throws Exception;
-      Set getPerInstanceAspectDefinitions();
-      Map getPerInstanceJoinpointAspectDefinitions();
+      Set<AspectDefinition> getPerInstanceAspectDefinitions();
+      Map<AspectDefinition, Set<Joinpoint>> getPerInstanceJoinpointAspectDefinitions();
       void rebuildInterceptors();
       void resolveConstructorPointcut(AdviceBinding binding);
       void resolveConstructionPointcut(AdviceBinding binding);
@@ -1220,7 +1224,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       GeneratedClassAdvisor parent;
 
-      public void initialise(Class clazz, AspectManager manager)
+      public void initialise(Class<?> clazz, AspectManager manager)
       {
          methodInfos = new MethodInterceptors(GeneratedClassAdvisor.this);
          initialiseMethods();
@@ -1291,12 +1295,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       {
          if (info.isRead())
          {
-            FieldJoinPointGenerator generator = (FieldJoinPointGenerator)fieldReadJoinPoinGenerators.get(info.getJoinpoint());
+            FieldJoinPointGenerator generator = fieldReadJoinPoinGenerators.get(info.getJoinpoint());
             if (generator == null)
             {
                generator = new FieldJoinPointGenerator(GeneratedClassAdvisor.this, info);
                initFieldReadJoinPointGeneratorsMap();
-               FieldJoinPointGenerator existing = (FieldJoinPointGenerator)fieldReadJoinPoinGenerators.putIfAbsent(info.getJoinpoint(), generator);
+               FieldJoinPointGenerator existing = fieldReadJoinPoinGenerators.putIfAbsent(info.getJoinpoint(), generator);
                if (existing != null)
                {
                   generator = existing;
@@ -1324,12 +1328,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       public ConstructorJoinPointGenerator getJoinPointGenerator(ConstructorInfo info)
       {
          //We are the class advisor
-         ConstructorJoinPointGenerator generator = (ConstructorJoinPointGenerator)constructionJoinPointGenerators.get(info.getJoinpoint());
+         ConstructorJoinPointGenerator generator = constructionJoinPointGenerators.get(info.getJoinpoint());
          if (generator == null)
          {
             generator = new ConstructorJoinPointGenerator(GeneratedClassAdvisor.this, info);
             initConstructionJoinPointGeneratorsMap();
-            ConstructorJoinPointGenerator existing = (ConstructorJoinPointGenerator)constructionJoinPointGenerators.putIfAbsent(info.getJoinpoint(), generator);
+            ConstructorJoinPointGenerator existing = constructionJoinPointGenerators.putIfAbsent(info.getJoinpoint(), generator);
             if (existing != null)
             {
                generator = existing;
@@ -1358,12 +1362,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       {
          //An extra level of indirection since we distinguish between callers of method depending on
          //where the called method is defined (sub/super interfaces)
-         ConcurrentHashMap map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
+         ConcurrentHashMap<Class<?>, JoinPointGenerator> map = methodCalledByXXXJoinPointGenerators.get(info.getJoinpoint());
          if (map == null)
          {
-            map = new ConcurrentHashMap();
-            initJoinPointGeneratorsMap();
-            ConcurrentHashMap existing = (ConcurrentHashMap)joinPointGenerators.putIfAbsent(info.getJoinpoint(), map);
+            map = new ConcurrentHashMap<Class<?>, JoinPointGenerator>();
+            initMethodCalledByConJoinPointGeneratorsMap();
+            ConcurrentHashMap<Class<?>, JoinPointGenerator> existing = methodCalledByXXXJoinPointGenerators.putIfAbsent(info.getJoinpoint(), map);
             if (existing != null)
             {
                map = existing;
@@ -1420,12 +1424,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       {
          //An extra level of indirection since we distinguish between callers of method depending on
          //where the called method is defined (sub/super interfaces)
-         ConcurrentHashMap map = (ConcurrentHashMap)joinPointGenerators.get(info.getJoinpoint());
+         ConcurrentHashMap<Class<?>, JoinPointGenerator> map = methodCalledByXXXJoinPointGenerators.get(info.getJoinpoint());
          if (map == null)
          {
-            map = new ConcurrentHashMap();
-            initJoinPointGeneratorsMap();
-            ConcurrentHashMap exisiting = (ConcurrentHashMap)joinPointGenerators.putIfAbsent(info.getJoinpoint(), map);
+            map = new ConcurrentHashMap<Class<?>, JoinPointGenerator>();
+            initMethodCalledByConJoinPointGeneratorsMap();
+            ConcurrentHashMap<Class<?>, JoinPointGenerator> exisiting = methodCalledByXXXJoinPointGenerators.putIfAbsent(info.getJoinpoint(), map);
             if (exisiting != null)
             {
                map = exisiting;
@@ -1452,7 +1456,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
       public Object getPerClassJoinpointAspect(AspectDefinition def, Joinpoint joinpoint)
       {
-         Map joinpoints = (Map) perClassJoinpointAspectDefinitions.get(def);
+         Map<Joinpoint, Object> joinpoints = perClassJoinpointAspectDefinitions.get(def);
          if (joinpoints != null)
          {
             return joinpoints.get(joinpoint);
@@ -1480,12 +1484,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          GeneratedClassAdvisor.super.createConstructorTables();
       }
       
-      public Set getPerInstanceAspectDefinitions()
+      public Set<AspectDefinition> getPerInstanceAspectDefinitions()
       {
          return GeneratedClassAdvisor.super.getPerInstanceAspectDefinitions();
       }
 
-      public Map getPerInstanceJoinpointAspectDefinitions()
+      public Map<AspectDefinition, Set<Joinpoint>> getPerInstanceJoinpointAspectDefinitions()
       {
          return GeneratedClassAdvisor.super.getPerInstanceJoinpointAspectDefinitions();
       }
@@ -1512,7 +1516,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          {
             ConstructorInfo info = newConstructorInfos[i];
             ConstructorJoinPointGenerator generator = getJoinPointGenerator(info);
-            Class clazz = info.getClazz();
+            Class<?> clazz = info.getClazz();
             if (clazz != null)
             finalizeChainAndRebindJoinPoint(oldInfos, info, generator, OldInfoMaps.INFOS);
          }
@@ -1552,7 +1556,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          GeneratedClassAdvisor.this.version = parent.version;         
       }
       
-      public void initialise(Class clazz, AspectManager manager)
+      public void initialise(Class<?> clazz, AspectManager manager)
       {
          initialiseInfosForInstance();
          
@@ -1684,12 +1688,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          conCalledByConInterceptors = new HashMap[constructors.length];
       }
 
-      public Set getPerInstanceAspectDefinitions()
+      public Set<AspectDefinition> getPerInstanceAspectDefinitions()
       {
          return parent.getPerInstanceAspectDefinitions();
       }
 
-      public Map getPerInstanceJoinpointAspectDefinitions()
+      public Map<AspectDefinition, Set<Joinpoint>> getPerInstanceJoinpointAspectDefinitions()
       {
          return parent.getPerInstanceJoinpointAspectDefinitions();
       }
