@@ -35,6 +35,7 @@ REM get all the command line args
 if %1a==a goto doneStart
 	set ARGS_AND_FILES=%ARGS_AND_FILES% %1
 shift
+set MAINCLASS_AND_ARGS=%ARGS_AND_FILES%
 goto setupArgs
 
 :doneStart
