@@ -336,7 +336,11 @@ public class AspectManager
                   classicOrder = (new Boolean(classic)).booleanValue();
                }
 
-               maintainAdvisorMethodInterceptors = (new Boolean(System.getProperty("jboss.aop.advisor.methodInterceptors", "false"))).booleanValue();
+               String methodInterceptors = System.getProperty("jboss.aop.advisor.methodInterceptors", null);
+               if (methodInterceptors != null)
+               {
+                  maintainAdvisorMethodInterceptors = (new Boolean(methodInterceptors)).booleanValue();
+               }
 
 
                Deployment.deploy();
