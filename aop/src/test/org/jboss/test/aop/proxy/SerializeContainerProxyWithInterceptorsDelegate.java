@@ -24,7 +24,6 @@ package org.jboss.test.aop.proxy;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintStream;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.Scope;

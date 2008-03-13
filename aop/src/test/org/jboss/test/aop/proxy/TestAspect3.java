@@ -32,6 +32,7 @@ import org.jboss.aop.joinpoint.Invocation;
  */
 public class TestAspect3 implements Serializable
 {
+   private static final long serialVersionUID = 1L;
    public static boolean invoked;
    public Object advice(Invocation inv) throws Throwable
    {

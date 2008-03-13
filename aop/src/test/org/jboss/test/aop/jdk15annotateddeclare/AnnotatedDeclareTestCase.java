@@ -35,6 +35,7 @@ import junit.textui.TestRunner;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings({"unused", "unchecked"})
 public class AnnotatedDeclareTestCase extends AOPTestWithSetup
 {
    SystemOutDecorator out = null;

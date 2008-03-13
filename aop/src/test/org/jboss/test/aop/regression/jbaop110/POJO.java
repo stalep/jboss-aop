@@ -29,6 +29,7 @@ import org.jboss.test.aop.regression.jbaop110.Type.StaticType;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings("unused")
 public class POJO
 {
    NormalType nt;

@@ -34,6 +34,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings({"unused", "cast", "unchecked"})
 public class ConfigTester extends AOPTestWithSetup
 {
    public static Test suite()

@@ -28,6 +28,7 @@ import java.util.ArrayList;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings("unchecked")
 public class Interceptions
 {
    static ArrayList interceptions = new ArrayList();

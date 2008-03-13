@@ -28,6 +28,6 @@ package org.jboss.test.aop.stress.weavetest;
  */
 public interface Factory
 {
-   public Class loadClass();
+   public Class<?> loadClass();
    public MethodCaller create();
 }

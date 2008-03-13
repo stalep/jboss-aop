@@ -28,6 +28,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings("unused")
 public class OwnConstructorTestCase extends AOPTestWithSetup
 {
    

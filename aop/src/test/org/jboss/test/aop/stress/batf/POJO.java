@@ -21,8 +21,6 @@
 */ 
 package org.jboss.test.aop.stress.batf;
 
-import org.jboss.aop.joinpoint.Invocation;
-
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>

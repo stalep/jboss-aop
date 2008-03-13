@@ -22,6 +22,7 @@
 package org.jboss.test.aop.regression.jbaop398nosuchfield;
 
 
+@SuppressWarnings("unused")
 public class POJO
 {
    private static String org = "Fail";

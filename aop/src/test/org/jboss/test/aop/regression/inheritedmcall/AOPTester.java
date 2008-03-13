@@ -33,6 +33,7 @@ import junit.framework.TestSuite;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
+@SuppressWarnings("unused")
 public class AOPTester extends AOPTestWithSetup
 {
    public static Test suite()

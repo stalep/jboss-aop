@@ -29,6 +29,8 @@ package org.jboss.test.aop.typedAdvices;
 public class TestException extends Exception
 {
 
+   private static final long serialVersionUID = 1L;
+
    public TestException()
    {
       // FIXME TestException constructor

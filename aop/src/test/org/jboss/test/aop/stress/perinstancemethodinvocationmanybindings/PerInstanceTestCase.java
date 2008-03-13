@@ -29,6 +29,7 @@ import org.jboss.test.aop.stress.ScenarioTest;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
+@SuppressWarnings("unused")
 public class PerInstanceTestCase extends ScenarioTest
 {
    public static void main(String[] args)

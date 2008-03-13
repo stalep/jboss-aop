@@ -82,10 +82,10 @@ public class ProxyTestCase extends AOPTestWithSetup
 
    public void testProxy() throws Exception
    {
-      Class[] mixIntfs = {MixinInterface.class};
+      Class<?>[] mixIntfs = {MixinInterface.class};
       ProxyMixin mixin = new ProxyMixin(new Mixin(), mixIntfs);
       ProxyMixin[] mixins = {mixin};
-      Class[] intfs = {SomeInterface.class};
+      Class<?>[] intfs = {SomeInterface.class};
       ClassInstanceAdvisor advisor = new ClassInstanceAdvisor();
       advisor.insertInterceptor(new EchoInterceptor());
 
@@ -116,7 +116,7 @@ public class ProxyTestCase extends AOPTestWithSetup
 
    public void testClassProxy() throws Exception
    {
-      Class[] mixIntfs = {MixinInterface.class};
+      Class<?>[] mixIntfs = {MixinInterface.class};
       ProxyMixin mixin = new ProxyMixin(new Mixin(), mixIntfs);
       ProxyMixin[] mixins = {mixin};
       ClassInstanceAdvisor advisor = new ClassInstanceAdvisor();
@@ -205,7 +205,7 @@ public class ProxyTestCase extends AOPTestWithSetup
       domain.addBinding(binding);
       }
 
-      Class proxyClass = ContainerProxyFactory.getProxyClass(POJO.class, domain);
+      Class<?> proxyClass = ContainerProxyFactory.getProxyClass(POJO.class, domain);
       ClassProxyContainer container = new ClassProxyContainer("test", domain);
       domain.setAdvisor(container);
       container.setClass(proxyClass);
@@ -241,7 +241,7 @@ public class ProxyTestCase extends AOPTestWithSetup
       domain.addBinding(binding);
       }
 
-      Class proxyClass = ContainerProxyFactory.getProxyClass(POJOWithFinalMethods.class, domain);
+      Class<?> proxyClass = ContainerProxyFactory.getProxyClass(POJOWithFinalMethods.class, domain);
       ClassProxyContainer container = new ClassProxyContainer("test", domain);
       domain.setAdvisor(container);
       container.setClass(proxyClass);
@@ -363,6 +363,7 @@ public class ProxyTestCase extends AOPTestWithSetup
       }
    }
    
+   @SuppressWarnings("unchecked")
    public void testAnnotationsExistInProxy() throws Exception
    {
       //THis test fails if we run with jboss retro
@@ -391,9 +392,9 @@ public class ProxyTestCase extends AOPTestWithSetup
       checkExpectedAnnotations(proxyClass);
    }
    
-    private void checkExpectedAnnotations(Class clazz) throws Exception
+    private void checkExpectedAnnotations(Class<?> clazz) throws Exception
    {
-      Annotation ann = (Annotation)clazz.getAnnotation(Annotation.class);
+      Annotation ann = clazz.getAnnotation(Annotation.class);
       assertNotNull(ann);
 
       Method getter = clazz.getMethod("getX");

@@ -35,6 +35,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="mailto:stalep@conduct.no">Stale W. Pedersen</a>
  * @version $Revision
  */
+@SuppressWarnings({"unused", "cast", "unchecked", "serial"})
 public class BridgeMethodWeavingTestCase extends AOPTestWithSetup
 {
    public static void main(String[] args)

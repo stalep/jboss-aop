@@ -34,6 +34,7 @@ import org.jboss.test.aop.stress.ScenarioTest;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings({"unchecked", "unused"})
 public class SimpleReflectToJavassistTestCase extends ScenarioTest
 {
    

@@ -27,7 +27,6 @@ import junit.framework.TestSuite;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.test.aop.AOPTestWithSetup;
-import org.jboss.test.aop.rebuildingchain.RebuildingChainTestCase;
 
 /**
  * A RebuildCallerChainTestCase.

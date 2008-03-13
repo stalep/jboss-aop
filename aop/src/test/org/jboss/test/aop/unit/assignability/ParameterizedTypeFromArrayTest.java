@@ -30,6 +30,7 @@ import java.util.List;
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
+@SuppressWarnings("unchecked")
 public class ParameterizedTypeFromArrayTest extends ParameterizedTypeTest
 {
    // Scenario 1

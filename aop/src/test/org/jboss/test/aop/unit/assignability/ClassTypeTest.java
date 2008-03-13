@@ -33,6 +33,7 @@ import java.util.Set;
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
+@SuppressWarnings("unchecked")
 public class ClassTypeTest extends VariableTargetAlgorithmTest
 {
    public void test1()

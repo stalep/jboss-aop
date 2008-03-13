@@ -38,6 +38,7 @@ import org.jboss.aop.joinpoint.MethodInvocation;
  *
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
+@SuppressWarnings(value="cast")
 public class OverloadedAroundAspect
 {
    static String around1 = null;

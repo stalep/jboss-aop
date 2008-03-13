@@ -28,6 +28,7 @@ import java.net.URL;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
+@SuppressWarnings("unchecked")
 public class ScenarioPropertyReaderFactory
 {
    Class testCaseClass;

@@ -32,6 +32,7 @@ import org.jboss.test.aop.stress.SkipWarmup;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
+@SuppressWarnings("unused")
 public class WeaveManyClassesTestCase extends ScenarioTest
 {
 
@@ -40,7 +41,7 @@ public class WeaveManyClassesTestCase extends ScenarioTest
       super(arg0);
    }
 
-   public static AbstractTestDelegate getDelegate(Class clazz) throws Exception
+   public static AbstractTestDelegate getDelegate(Class<?> clazz) throws Exception
    {
       //The delegate is called once and generates the classes
       GenerateClassesTestDelegate delegate = new GenerateClassesTestDelegate(clazz);
@@ -71,7 +72,7 @@ public class WeaveManyClassesTestCase extends ScenarioTest
       
       public void execute(int thread, int loop) throws Exception
       {
-         Class clazz = factories[loop].loadClass();
+         Class<?> clazz = factories[loop].loadClass();
          if (clazz == null)
          {
             throw new RuntimeException("Class was null");

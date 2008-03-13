@@ -41,6 +41,7 @@ import org.jboss.aop.AspectManager;
  * @author Flavia Rainone
  *
  */
+@SuppressWarnings({"unused", "unchecked"})
 public class ScenarioLoader
 {
    private URL[] urls;

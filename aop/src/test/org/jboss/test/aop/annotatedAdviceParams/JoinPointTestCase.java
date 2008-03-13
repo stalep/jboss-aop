@@ -43,6 +43,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
+@SuppressWarnings(value={"unchecked", "unused"})
 public class JoinPointTestCase extends AOPTestWithSetup
 {
    private JoinPointPOJO pojo;

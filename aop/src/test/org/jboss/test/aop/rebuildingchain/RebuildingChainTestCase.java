@@ -57,7 +57,7 @@ public class RebuildingChainTestCase extends AOPTestWithSetup
       RebuildThread rt = new RebuildThread();
       rt.linkNewAdvice();
       
-      Thread.currentThread().sleep(10000);
+      Thread.sleep(10000);
       
       rt.start();
       //rt.join();

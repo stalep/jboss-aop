@@ -39,6 +39,7 @@ import org.jboss.aop.joinpoint.CurrentInvocation;
  * @see org.jboss.test.aop.annotatedAdviceParams.ArgAspect
  * @see org.jboss.test.aop.annotatedAdviceParams.ArgAspetInterfaces
  */
+@SuppressWarnings({"unused", "unchecked", "cast"})
 public class ReturnAspectGenerics
 {
    static boolean around3 = false;

@@ -36,7 +36,7 @@ public class GenerateClassesTestDelegate extends ScenarioTestDelegate
    private Factory[] wovenFactories;
    private Factory[] vanillaFactories;
    
-   public GenerateClassesTestDelegate(Class clazz)
+   public GenerateClassesTestDelegate(Class<?> clazz)
    {
       super(clazz);
    }

@@ -38,6 +38,7 @@ import junit.framework.TestSuite;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings("unchecked")
 public class InstanceOfAnnotatedTester extends AOPTestWithSetup
 {
    public static Test suite()
@@ -170,6 +171,7 @@ public class InstanceOfAnnotatedTester extends AOPTestWithSetup
      
   }
 
+  
   public void testTypeExpressions() throws Exception
   {
      Class introducedPOJO = IntroducedPOJO.class;

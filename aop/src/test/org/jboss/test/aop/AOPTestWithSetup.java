@@ -48,10 +48,10 @@ public class AOPTestWithSetup extends AbstractTestCaseWithSetup
     * @return the delegate
     * @throws Exception for any error
     */
-   public static AbstractTestDelegate getDelegate(Class clazz) throws Exception
+   public static AbstractTestDelegate getDelegate(Class<?> clazz) throws Exception
    {
       AOPTestDelegate delegate = new AOPTestDelegate(clazz);
-      boolean disableSecurity = Boolean.valueOf((String)System.getProperty(DISABLE_SECURITY_KEY, "false"));
+      boolean disableSecurity = Boolean.valueOf(System.getProperty(DISABLE_SECURITY_KEY, "false"));
       if (!disableSecurity)
       {
          delegate.enableSecurity = true;

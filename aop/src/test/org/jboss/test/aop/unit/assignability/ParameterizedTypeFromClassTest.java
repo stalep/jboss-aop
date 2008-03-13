@@ -23,7 +23,6 @@ package org.jboss.test.aop.unit.assignability;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,6 +31,7 @@ import java.util.List;
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
+@SuppressWarnings("unchecked")
 public class ParameterizedTypeFromClassTest extends ParameterizedTypeTest
 {
    // Scenario 1
@@ -2347,11 +2347,11 @@ public class ParameterizedTypeFromClassTest extends ParameterizedTypeTest
    }
 }
 
-class Class1 extends ArrayList<String>{}
-class Class2<D> extends ArrayList<D>{}
-class Class3<D> extends ArrayList<String>{}
-class Class4 extends ArrayList{}
-class Class5<A,B> extends HashMap<B,A>{}
-class Class6<D extends String> extends ArrayList<D>{}
-class Class7<A,B> extends ArrayList<String>{}
-class Class8<A,B> extends HashMap<String,Integer>{}
+@SuppressWarnings("serial")class Class1 extends ArrayList<String>{}
+@SuppressWarnings("serial")class Class2<D> extends ArrayList<D>{}
+@SuppressWarnings("serial")class Class3<D> extends ArrayList<String>{}
+@SuppressWarnings({"serial", "unchecked"})class Class4 extends ArrayList{}
+@SuppressWarnings("serial")class Class5<A,B> extends HashMap<B,A>{}
+@SuppressWarnings("serial")class Class6<D extends String> extends ArrayList<D>{}
+@SuppressWarnings("serial")class Class7<A,B> extends ArrayList<String>{}
+@SuppressWarnings("serial")class Class8<A,B> extends HashMap<String,Integer>{}

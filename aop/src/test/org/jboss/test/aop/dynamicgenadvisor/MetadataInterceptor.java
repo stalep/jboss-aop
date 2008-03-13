@@ -33,6 +33,7 @@ import org.jboss.aop.joinpoint.MethodInvocation;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings({"unused", "cast", "unchecked", "serial"})
 public class MetadataInterceptor implements Interceptor
 {
    //For instances

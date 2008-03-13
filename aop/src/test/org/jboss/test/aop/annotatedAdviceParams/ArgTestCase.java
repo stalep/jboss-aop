@@ -44,6 +44,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @see org.jboss.test.aop.annotatedAdviceParams.Arg2TestCase
  * @see org.jboss.test.aop.arguments.ArgumentsTestCase
  */
+@SuppressWarnings("cast")
 public class ArgTestCase extends AOPTestWithSetup
 {
    private ArgsPOJO pojo;

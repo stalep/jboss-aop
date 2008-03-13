@@ -30,6 +30,7 @@ import org.jboss.aop.joinpoint.FieldWriteInvocation;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings("unchecked")
 public class TestAspect
 {
    public static HashSet fields = new HashSet();

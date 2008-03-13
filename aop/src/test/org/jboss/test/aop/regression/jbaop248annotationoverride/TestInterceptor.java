@@ -29,6 +29,7 @@ import org.jboss.aop.joinpoint.Invocation;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings("unchecked")
 public class TestInterceptor implements Interceptor
 {
    public static Class annotation;

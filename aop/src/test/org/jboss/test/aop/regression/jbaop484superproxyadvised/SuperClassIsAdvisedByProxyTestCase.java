@@ -165,7 +165,7 @@ public class SuperClassIsAdvisedByProxyTestCase extends TestCase
       
    }
    
-   private String addBinding(String pointcut, Class interceptor) throws ParseException
+   private String addBinding(String pointcut, Class<?> interceptor) throws ParseException
    {
       AdviceBinding binding = new AdviceBinding(pointcut, null);
       String name = binding.getName();
@@ -187,7 +187,7 @@ public class SuperClassIsAdvisedByProxyTestCase extends TestCase
       return proxyFactory.createAdvisedProxy(params);
    }
 
-   protected Object createProxy(Object target, Class[] interfaces) throws Exception
+   protected Object createProxy(Object target, Class<?>[] interfaces) throws Exception
    {
       AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
       params.setProxiedClass(target.getClass());

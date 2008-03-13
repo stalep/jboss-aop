@@ -22,7 +22,6 @@
 package org.jboss.test.aop.beforeafterthrowingscoped;
 
 import org.jboss.aop.advice.annotation.Thrown;
-import org.jboss.aop.joinpoint.Invocation;
 
 /**
  * 

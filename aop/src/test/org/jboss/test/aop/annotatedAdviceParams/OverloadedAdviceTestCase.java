@@ -32,6 +32,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
+@SuppressWarnings({"unused", "unchecked", "cast"})
 public class OverloadedAdviceTestCase extends AOPTestWithSetup
 {
    private OverloadedAdvicePOJO pojo;

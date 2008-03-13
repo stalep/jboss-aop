@@ -62,7 +62,7 @@ public class AnnotationOverrideTestCase extends AOPTestWithSetup
       checkAnnotations(Introduced.class);
    }
 
-   private void checkAnnotations(Class annotation) throws Exception
+   private void checkAnnotations(Class<?> annotation) throws Exception
    {
       TestInterceptor.annotation = annotation;
       
@@ -93,7 +93,7 @@ public class AnnotationOverrideTestCase extends AOPTestWithSetup
       
    }
    
-   private void checkValue(Object annotation, Class expectedClass, int expectedValue) throws Exception
+   private void checkValue(Object annotation, Class<?> expectedClass, int expectedValue) throws Exception
    {
       assertNotNull(annotation);
       assertTrue(expectedClass.isAssignableFrom(annotation.getClass()));

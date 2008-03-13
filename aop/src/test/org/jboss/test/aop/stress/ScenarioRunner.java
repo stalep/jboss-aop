@@ -32,6 +32,7 @@ import junit.framework.TestCase;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings("unchecked")
 public class ScenarioRunner
 {
    private Class testCaseClass;

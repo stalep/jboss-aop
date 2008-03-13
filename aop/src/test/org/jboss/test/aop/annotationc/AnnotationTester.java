@@ -26,7 +26,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.jboss.aop.annotation.AnnotationElement;
-import org.jboss.aop.annotation.PortableAnnotationElement;
 import org.jboss.annotation.factory.AnnotationCreator;
 import org.jboss.aop.util.ConstructorComparator;
 import org.jboss.test.aop.AOPTestWithSetup;
@@ -42,6 +41,7 @@ import java.util.Arrays;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
+@SuppressWarnings({"unused", "cast", "unchecked"})
 public class AnnotationTester extends AOPTestWithSetup
 {
    public static Test suite()

@@ -39,7 +39,7 @@ public class AOPTestDelegate extends AbstractTestDelegate
 {
    Properties systemProps;
    
-   public AOPTestDelegate(Class clazz)
+   public AOPTestDelegate(Class<?> clazz)
    {
       // FIXME AOPTestDelegate constructor
       super(clazz);

@@ -34,6 +34,7 @@ import org.jboss.aop.joinpoint.FieldWriteInvocation;
 import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.MethodInvocation;
 
+@SuppressWarnings({"unused", "cast", "unchecked", "serial"})
 public class YourInterceptor implements Interceptor
 {
 

@@ -32,6 +32,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
+@SuppressWarnings({"unused", "cast"})
 public class ArgsTestCase extends AOPTestWithSetup
 {
    private ArgsPOJO pojo;

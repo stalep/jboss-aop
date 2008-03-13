@@ -50,7 +50,7 @@ public abstract class ReSerializeContainerProxyWithScopedAspectsTest extends Abs
          TestAspect3.invoked = false;
          TestAspect4.invoked = false;
          TestAspect5.invoked = false;
-         si.helloWorld();
+         rsi.helloWorld();
          assertTrue(TestAspect.invoked);
          assertTrue(TestAspect2.invoked);
          assertTrue(TestAspect3.invoked);

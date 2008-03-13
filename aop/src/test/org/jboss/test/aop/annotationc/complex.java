@@ -33,6 +33,7 @@ import java.lang.annotation.Target;
  * @version $Revision$
  */
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR})@Retention(RetentionPolicy.RUNTIME)
+@SuppressWarnings({"unused", "cast", "unchecked"})
 public @interface complex
 {
    char ch();

@@ -51,6 +51,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
+@SuppressWarnings({"unused", "unchecked", "cast"})
 public class AnnotationOverrideTestCase extends AOPTestWithSetup
 {
    public AnnotationOverrideTestCase(String arg0)

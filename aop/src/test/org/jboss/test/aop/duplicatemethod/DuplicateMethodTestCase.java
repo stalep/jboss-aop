@@ -22,10 +22,6 @@
 package org.jboss.test.aop.duplicatemethod;
 
 import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.Arrays;
 
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.ProxyFactory;
@@ -34,7 +30,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.jboss.aop.Advised;
-import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
  * A DuplicateMethodTestCase.
@@ -43,6 +38,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @version $Revision: 1.1 $
  */
 //TODO http://jira.jboss.com/jira/browse/JBAOP-540 Make extend AOPTestWithSetupAgain 
+@SuppressWarnings({"unused", "unchecked", "cast"})
 public class DuplicateMethodTestCase extends TestCase/*AOPTestWithSetup*/
 {
 

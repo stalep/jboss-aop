@@ -33,6 +33,7 @@ import junit.textui.TestRunner;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings("unused")
 public class UnderscoreInFieldNameTestCase extends AOPTestWithSetup
 {
    public static void main(String[] args)

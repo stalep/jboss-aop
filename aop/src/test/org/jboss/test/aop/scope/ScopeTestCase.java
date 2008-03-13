@@ -34,6 +34,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings({"unused", "unchecked"})
 public class ScopeTestCase extends AOPTestWithSetup
 {
 

@@ -26,6 +26,7 @@ package org.jboss.test.aop.bridgemethod;
  * @author <a href="mailto:stalep@conduct.no">Stale W. Pedersen</a>
  * @version $Revision
  */
+@SuppressWarnings({"unused", "cast", "unchecked", "serial"})
 public class SubPOJO extends SuperPOJO<java.util.ArrayList>
 {
    private java.util.ArrayList bar;

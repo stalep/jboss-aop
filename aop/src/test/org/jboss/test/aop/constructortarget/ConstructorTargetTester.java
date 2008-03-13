@@ -33,6 +33,7 @@ import junit.textui.TestRunner;
  * @author stale w. pedersen(stalep@conduct.no)
  * @version 
  */
+@SuppressWarnings({"unused", "cast", "unchecked", "serial"})
 public class ConstructorTargetTester extends AOPTestWithSetup
 {
    public static void main(String[] args)

@@ -31,6 +31,7 @@ import junit.textui.TestRunner;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
+@SuppressWarnings("unused")
 public class InvokeTargetTestCase extends AOPTestWithSetup
 {
 

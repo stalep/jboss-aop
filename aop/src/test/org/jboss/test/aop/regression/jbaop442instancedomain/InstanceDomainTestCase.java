@@ -36,6 +36,7 @@ import junit.textui.TestRunner;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
+@SuppressWarnings("unused")
 public class InstanceDomainTestCase extends TestCase
 {
    public static void main(String[] args)

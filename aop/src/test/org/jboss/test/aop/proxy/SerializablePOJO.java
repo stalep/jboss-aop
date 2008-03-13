@@ -30,6 +30,8 @@ import java.io.Serializable;
  */
 public class SerializablePOJO implements Serializable 
 {
+   private static final long serialVersionUID = 1L;
+
    public String helloWorld()
    {
       return "error";

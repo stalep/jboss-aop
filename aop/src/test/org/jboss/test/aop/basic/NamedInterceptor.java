@@ -31,6 +31,7 @@ import org.jboss.aop.joinpoint.Invocation;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings({"unused", "cast", "unchecked"})
 public class NamedInterceptor implements Interceptor
 {
    public static HashSet invoked = new HashSet();

@@ -31,6 +31,7 @@ import java.lang.reflect.Field;
  * @author <a href="mailto:kabirkhan@bigfoot.com">Kabir Khan</a>
  */
 
+@SuppressWarnings("unchecked")
 public class ReflectionAspectTester extends ReflectionAspect
 {
 

@@ -29,6 +29,7 @@ import org.jboss.aop.joinpoint.JoinPointBean;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
+@SuppressWarnings("static-access")
 public class ResolveAnnotationAspect
 {
    public static JoinPointBean joinPoint;

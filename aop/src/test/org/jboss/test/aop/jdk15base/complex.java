@@ -31,6 +31,7 @@ import java.lang.annotation.RetentionPolicy;
  * @version $Revision$
  */
 
+@SuppressWarnings({"unused", "unchecked"})
 @Retention(RetentionPolicy.RUNTIME)
         public @interface complex
 {

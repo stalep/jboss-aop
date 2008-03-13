@@ -26,6 +26,7 @@ package org.jboss.test.aop.regression.jbaop264underscorefieldname;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings("unused")
 public class POJO
 {
    private long _foo;

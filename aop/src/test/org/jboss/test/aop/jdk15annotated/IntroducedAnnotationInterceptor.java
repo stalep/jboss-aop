@@ -39,6 +39,7 @@ import org.jboss.aop.joinpoint.MethodInvocation;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings({"unused", "unchecked"})
 @InterceptorDef (scope=org.jboss.aop.advice.Scope.PER_VM)
 @Bind (pointcut="all(org.jboss.test.aop.jdk15annotated.IntroducedAnnotationPOJO)")
       public class IntroducedAnnotationInterceptor implements Interceptor

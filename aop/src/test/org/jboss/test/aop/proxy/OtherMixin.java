@@ -30,6 +30,7 @@ import java.io.Serializable;
  */
 public class OtherMixin implements OtherMixinInterface, OtherMixinInterface2, Serializable
 {
+   private static final long serialVersionUID = 1L;
    int i;
    public OtherMixin(int i)
    {

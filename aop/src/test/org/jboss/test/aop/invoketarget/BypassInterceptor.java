@@ -29,6 +29,7 @@ import org.jboss.aop.joinpoint.Invocation;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings("static-access")
 public class BypassInterceptor implements Interceptor
 {
    public static int invocations;

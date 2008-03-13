@@ -55,7 +55,7 @@ public abstract class ReSerializeContainerProxyWithNonInitialisedAdvicesTest ext
          TestAspect3.invoked = false;
          TestAspect4.invoked = false;
          TestAspect5.invoked = false;
-         si.helloWorld();
+         rsi.helloWorld();
          assertTrue(TestInterceptor.invoked);
          assertTrue(TestInterceptor2.invoked);
          assertTrue(TestInterceptor3.invoked);

@@ -42,6 +42,7 @@ import org.jboss.profiler.jvmti.JVMTIInterface;
  * 
  * @author <a href="clebert.suconic@jboss.com">Clebert Suconic</a>
  */
+@SuppressWarnings({"unused", "unchecked"})
 public class MemoryLeakTester extends TestCase
 {
    
@@ -113,7 +114,7 @@ public class MemoryLeakTester extends TestCase
 
    private void undeploy(Class xmlLoader) throws Exception
    {
-      String strurl = (String)System.getProperty("jboss.aop.path");
+      String strurl = System.getProperty("jboss.aop.path");
       assertNotNull("Property jboss.aop.path should be defined",strurl);
       strurl = strurl.replace('\\','/');
       URL url = new URL("file:/" + strurl);

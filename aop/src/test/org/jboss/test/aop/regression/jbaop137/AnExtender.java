@@ -37,6 +37,6 @@ public class AnExtender extends Base
 
    public void setExtender(int other)
    {
-      this.extender = extender;
+      this.extender = other;
    }
 }

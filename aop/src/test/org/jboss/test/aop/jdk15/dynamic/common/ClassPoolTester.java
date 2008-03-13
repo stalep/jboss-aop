@@ -32,6 +32,7 @@ import javassist.CtClass;
  * was configured to have all of its joinpoints prepared.
  * @author Flavia Rainone
  */
+@SuppressWarnings("unused")
 public class ClassPoolTester extends AOPTestWithSetup
 {
    public ClassPoolTester(String name)

@@ -49,6 +49,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="clebert.suconic@jboss.com">Clebert Suconic</a>
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  */
+@SuppressWarnings({"unused", "unchecked"})
 public class MemoryLeakTestCase extends TestCase
 {
    String jbossAopPath;

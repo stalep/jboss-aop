@@ -48,6 +48,7 @@ import org.jboss.test.aop.jdk15.dynamic.common.POJOWrappingInfo;
  * @author Flavia Rainone
  *
  */
+@SuppressWarnings("unused")
 public class ScenarioRunner
 {
    // Bindings used in the tests

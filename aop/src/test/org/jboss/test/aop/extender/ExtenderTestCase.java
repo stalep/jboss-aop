@@ -28,6 +28,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="stalep@conduct.no">Stale W. Pedersen</a>
  * @version $Revision: 
  */
+@SuppressWarnings({"unused"})
 public class ExtenderTestCase extends AOPTestWithSetup
 {
 

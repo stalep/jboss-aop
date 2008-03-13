@@ -21,8 +21,6 @@
   */
 package org.jboss.test.aop.proxy;
 
-import java.rmi.MarshalledObject;
-
 /**
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision: 64431 $

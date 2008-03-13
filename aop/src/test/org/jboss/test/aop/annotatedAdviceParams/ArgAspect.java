@@ -38,6 +38,7 @@ import org.jboss.aop.joinpoint.MethodInvocation;
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  * @see org.jboss.test.aop.annotatedAdviceParams.ArgAspect
  */
+@SuppressWarnings({"unused", "unchecked", "cast"})
 public class ArgAspect
 {
    static boolean before1 = false;

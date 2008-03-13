@@ -48,6 +48,7 @@ import org.jboss.aop.joinpoint.MethodExecution;
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
+@SuppressWarnings("cast")
 public class JoinPointAspect
 {
    static String beforeAdvice = null;

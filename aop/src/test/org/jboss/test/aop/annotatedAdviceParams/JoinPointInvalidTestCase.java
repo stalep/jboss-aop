@@ -36,6 +36,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
+@SuppressWarnings("unused")
 public class JoinPointInvalidTestCase extends AOPTestWithSetup
 {
    private JoinPointInvalidPOJO pojo;

@@ -34,6 +34,7 @@ import org.jboss.aop.advice.annotation.assignability.VariableHierarchy;
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
+@SuppressWarnings("unchecked")
 public class FromVariableAlgorithmTest extends TestCase
 {
    AssignabilityAlgorithm algorithm;

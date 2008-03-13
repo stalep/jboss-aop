@@ -34,6 +34,7 @@ import org.jboss.aop.joinpoint.MethodInvocation;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision: 64564 $
  */
+@SuppressWarnings({"unused", "unchecked", "cast"})
 public class ArgAspect2 implements ArgPOJOInterface
 {
    public static boolean echoCalled = false;

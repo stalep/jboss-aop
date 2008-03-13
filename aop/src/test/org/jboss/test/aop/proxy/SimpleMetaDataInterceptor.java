@@ -33,6 +33,7 @@ import org.jboss.aop.joinpoint.Invocation;
  */
 public class SimpleMetaDataInterceptor implements Interceptor, Serializable
 {
+   private static final long serialVersionUID = 1L;
    public static String data;
    
    public String getName()

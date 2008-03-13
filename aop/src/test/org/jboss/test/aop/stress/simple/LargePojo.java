@@ -36,6 +36,7 @@ import javassist.NotFoundException;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings("unused")
 public class LargePojo
 {
    //Add loads of fields and methods to try to make this slow to load up so we get synchronization issues 

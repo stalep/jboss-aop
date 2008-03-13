@@ -31,6 +31,7 @@ import junit.framework.TestSuite;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
+@SuppressWarnings("unused")
 public class InstanceofIntroducedTestCase extends AOPTestWithSetup
 {
    public static Test suite()

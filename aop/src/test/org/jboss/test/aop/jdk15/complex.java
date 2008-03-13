@@ -30,7 +30,7 @@ import java.lang.annotation.RetentionPolicy;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-
+@SuppressWarnings("unchecked")
 @Retention(RetentionPolicy.RUNTIME)
         public @interface complex
 {

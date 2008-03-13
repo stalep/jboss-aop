@@ -28,6 +28,7 @@ import org.jboss.test.AbstractTestDelegate;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
+@SuppressWarnings("unchecked")
 public class ScenarioTestDelegate extends AbstractTestDelegate
 {
    ScenarioRunner runner; 

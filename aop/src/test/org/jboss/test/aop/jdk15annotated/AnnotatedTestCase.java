@@ -37,6 +37,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
+@SuppressWarnings({"unused", "unchecked"})
 public class AnnotatedTestCase extends AOPTestWithSetup
 {
 

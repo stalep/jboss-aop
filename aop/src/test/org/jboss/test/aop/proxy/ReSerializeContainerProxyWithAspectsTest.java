@@ -47,14 +47,14 @@ public abstract class ReSerializeContainerProxyWithAspectsTest extends AbstractS
          
          TestAspect.invoked = false;
          TestAspect2.invoked = false;
-         si.helloWorld();
+         rsi.helloWorld();
          assertTrue(TestAspect.invoked);
          assertFalse(TestAspect2.invoked);
          
-         OtherMixinInterface omi = (OtherMixinInterface)si;
+         OtherMixinInterface omi = (OtherMixinInterface)rsi;
          omi.other();
          
-         OtherMixinInterface2 omi2 = (OtherMixinInterface2)si;
+         OtherMixinInterface2 omi2 = (OtherMixinInterface2)rsi;
          int i = omi2.other2();
          assertEquals(20, i);
          

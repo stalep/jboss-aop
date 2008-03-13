@@ -30,6 +30,7 @@ import java.util.List;
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  *
  */
+@SuppressWarnings("unchecked")
 public class ParameterizedTypeTest extends VariableTargetAlgorithmTest
 {
    protected <A> void called1(ArrayList<A> arg) {}
@@ -51,16 +52,17 @@ public class ParameterizedTypeTest extends VariableTargetAlgorithmTest
    protected void called17(HashMap<Integer,String> a) {}
 }
 
-class MyClass1 extends MyClass2{}
-class MyClass2<A extends Runnable> extends MyClass3<A>{}
-class MyClass3<A> extends ArrayList<A>{}
 
-class NewClass2<A> extends NewClass1{}
-class NewClass3<A> extends MyClass2{}
-class NewClass1<A> extends NewClass{}
-class NewClass extends MyClass2<Runnable>{}
+@SuppressWarnings({"serial","unchecked"})class MyClass1 extends MyClass2{}
+@SuppressWarnings("serial")class MyClass2<A extends Runnable> extends MyClass3<A>{}
+@SuppressWarnings("serial")class MyClass3<A> extends ArrayList<A>{}
 
-class MyClass_<A extends Serializable, B> extends MyClass2_<A>{}
-class MyClass2_<A extends Serializable> extends HashMap<String, A>{}
+@SuppressWarnings({"serial","unchecked"})class NewClass2<A> extends NewClass1{}
+@SuppressWarnings({"serial","unchecked"})class NewClass3<A> extends MyClass2{}
+@SuppressWarnings("serial")class NewClass1<A> extends NewClass{}
+@SuppressWarnings("serial")class NewClass extends MyClass2<Runnable>{}
 
-class MyClass3_<A extends Serializable, B> extends MyClass2_{}
+@SuppressWarnings("serial")class MyClass_<A extends Serializable, B> extends MyClass2_<A>{}
+@SuppressWarnings("serial")class MyClass2_<A extends Serializable> extends HashMap<String, A>{}
+
+@SuppressWarnings({"serial","unchecked"})class MyClass3_<A extends Serializable, B> extends MyClass2_{}

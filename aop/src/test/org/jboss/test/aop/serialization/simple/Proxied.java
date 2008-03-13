@@ -30,6 +30,8 @@ import java.io.Serializable;
  */
 public class Proxied implements Serializable
 {
+   private static final long serialVersionUID = 1L;
+
    public void someMethod() 
    {
       
