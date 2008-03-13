@@ -22,6 +22,7 @@
 
 package org.jboss.aop.pointcut.ast;
 
+@SuppressWarnings("unchecked")
 class JJTTypeExpressionParserState {
   private java.util.Stack nodes;
   private java.util.Stack marks;

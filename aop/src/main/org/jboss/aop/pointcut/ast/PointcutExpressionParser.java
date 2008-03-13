@@ -3,6 +3,7 @@ package org.jboss.aop.pointcut.ast;
 
 import java.lang.reflect.Modifier;
 
+@SuppressWarnings({"unused", "unchecked"})
 public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpressionParserTreeConstants, PointcutExpressionParserConstants {/*@bgen(jjtree)*/
   protected JJTPointcutExpressionParserState jjtree = new JJTPointcutExpressionParserState();public static void main(String args[]) {
     System.out.println("Reading from standard input...");
@@ -3152,7 +3153,8 @@ public class PointcutExpressionParser/*@bgen(jjtree)*/implements PointcutExpress
     throw generateParseException();
   }
 
-  static private final class LookaheadSuccess extends java.lang.Error { }
+  @SuppressWarnings("serial")
+static private final class LookaheadSuccess extends java.lang.Error { }
   final private LookaheadSuccess jj_ls = new LookaheadSuccess();
   final private boolean jj_scan_token(int kind) {
     if (jj_scanpos == jj_lastpos) {

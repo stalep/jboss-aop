@@ -66,7 +66,7 @@ public class AspectFactoryDelegator extends AspectFactoryWithClassLoaderSupport
       {
          try
          {
-            Class clazz = super.loadClass(factoryClass);
+            Class<?> clazz = super.loadClass(factoryClass);
             factory = (AspectFactory) clazz.newInstance();
             if (XmlLoadable.class.isAssignableFrom(factory.getClass()))
             {

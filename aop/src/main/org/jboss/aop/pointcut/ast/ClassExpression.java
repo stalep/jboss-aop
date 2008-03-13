@@ -147,12 +147,12 @@ public class ClassExpression
       return original;
    }
 
-   public static String simpleType(Class type)
+   public static String simpleType(Class<?> type)
    {
-      Class ret = type;
+      Class<?> ret = type;
       if (ret.isArray())
       {
-         Class arr = ret;
+         Class<?> arr = ret;
          String array = "";
          while (arr.isArray())
          {

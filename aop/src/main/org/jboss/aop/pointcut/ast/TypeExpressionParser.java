@@ -3,6 +3,7 @@ package org.jboss.aop.pointcut.ast;
 
 import java.lang.reflect.Modifier;
 
+@SuppressWarnings({"unchecked", "unused"})
 public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParserTreeConstants, TypeExpressionParserConstants {/*@bgen(jjtree)*/
   protected JJTTypeExpressionParserState jjtree = new JJTTypeExpressionParserState();
 
@@ -2083,6 +2084,7 @@ public class TypeExpressionParser/*@bgen(jjtree)*/implements TypeExpressionParse
     throw generateParseException();
   }
 
+  @SuppressWarnings("serial")
   static private final class LookaheadSuccess extends java.lang.Error { }
   final private LookaheadSuccess jj_ls = new LookaheadSuccess();
   final private boolean jj_scan_token(int kind) {

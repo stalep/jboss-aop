@@ -24,6 +24,7 @@ package org.jboss.aop.pointcut.ast;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("unchecked")
 public class ASTConstructor extends SimpleNode
 {
    public ASTConstructor(int id)

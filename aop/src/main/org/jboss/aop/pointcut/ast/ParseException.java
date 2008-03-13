@@ -10,6 +10,7 @@ package org.jboss.aop.pointcut.ast;
  * You can modify this class to customize your error reporting
  * mechanisms so long as you retain the public fields.
  */
+@SuppressWarnings("serial")
 public class ParseException extends Exception {
 
   /**
