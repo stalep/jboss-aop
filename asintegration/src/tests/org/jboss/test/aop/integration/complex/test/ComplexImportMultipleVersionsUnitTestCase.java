@@ -88,12 +88,12 @@ public class ComplexImportMultipleVersionsUnitTestCase extends WovenAOPIntegrati
                   System.out.println("--------------> A1\t\t" + a1);
                   System.out.println("--------------> Support2\t" + support2);
                   System.out.println("--------------> A2\t\t" + a2);
-                  Class clazz = Thread.currentThread().getContextClassLoader().loadClass("org.jboss.test.aop.integration.complex.support.TestInterceptor");
+                  Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass("org.jboss.test.aop.integration.complex.support.TestInterceptor");
                   System.out.println("====== " + clazz + " " + clazz.getClassLoader());
                   
-                  Class clazz1 = a1.loadClass("org.jboss.test.aop.integration.complex.support.TestInterceptor"); 
+                  Class<?> clazz1 = a1.loadClass("org.jboss.test.aop.integration.complex.support.TestInterceptor"); 
                   System.out.println("====== " + clazz1 + " " + clazz1.getClassLoader());
-                  Class clazz2 = a2.loadClass("org.jboss.test.aop.integration.complex.support.TestInterceptor"); 
+                  Class<?> clazz2 = a2.loadClass("org.jboss.test.aop.integration.complex.support.TestInterceptor"); 
                   System.out.println("====== " + clazz2 + " " + clazz2.getClassLoader());
                   
                   try
@@ -102,6 +102,7 @@ public class ComplexImportMultipleVersionsUnitTestCase extends WovenAOPIntegrati
                      try
                      {
                         Class<?> classA1 = a1.loadClass(CLASS_A);
+                        @SuppressWarnings("unused")
                         Object instanceA1 = classA1.newInstance();
 
                         Class<?> classA2 = a2.loadClass(CLASS_A);

@@ -53,7 +53,7 @@ public class AOPIntegrationTestDelegate extends AbstractTestDelegate
     * @param weaveClasses Whether or not we should weave loaded classes
     * @param system the classloader system
     */
-   public AOPIntegrationTestDelegate(Class clazz, boolean weaveClasses, ClassLoaderSystem system) 
+   public AOPIntegrationTestDelegate(Class<?> clazz, boolean weaveClasses, ClassLoaderSystem system) 
    {
       super(clazz);
       this.system = system;

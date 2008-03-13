@@ -120,10 +120,8 @@ public class LoaderRepositoryUrlUtil implements NotificationListener
       int scopedLength = 0;
       for (int i = 0 ; i < scopedRepositoryUrls.length ; i++)
       {
-         URL scopedUrl = scopedRepositoryUrls[i];
          for (int j = 0 ; j < globalUrls.length ; j ++)
          {
-            URL globalUrl = globalUrls[j];
             if (scopedRepositoryUrls[i].equals(globalUrls[j]))
             {
                scopedLength = i;

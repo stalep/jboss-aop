@@ -75,7 +75,7 @@ public class ScopedRepositoryClassLoaderDomain extends ScopedClassLoaderDomain
             //The class has been loaded by a parent classloader, find out if we also have a copy
             try
             {
-               Class clazz = myRepository.loadClass(aspect.getClass().getName());
+               Class<?> clazz = myRepository.loadClass(aspect.getClass().getName());
                if (clazz == aspect.getClass())
                {
                   notMyPerVMAspects.put(def, Boolean.TRUE);

@@ -51,7 +51,13 @@ public class JBossAspectLibrary
     */
    public void start() throws Exception
    {
+      log.debug("Starting JBoss AspectLibrary");
       aspectManager.deployBaseAspects();
+   }
+   
+   public void stop()
+   {
+      log.debug("Stopping JBoss AspectLibrary");
    }
 
 }

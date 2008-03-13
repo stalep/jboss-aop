@@ -25,8 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import org.jboss.aop.AspectManager;
-import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.aop.classpool.AbstractJBossClassPoolFactory;
 import org.jboss.mx.loading.RepositoryClassLoader;
@@ -66,7 +64,6 @@ public class JBossClassPoolFactory extends AbstractJBossClassPoolFactory impleme
          {
             throw new RuntimeException(e);
          }
-         AOPClassLoaderScopingPolicy policy = AspectManager.getClassLoaderScopingPolicy();
          if (ScopedRepositoryClassLoaderHelper.isScopedClassLoader(cl))
          {
             //It is scoped

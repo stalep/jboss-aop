@@ -72,7 +72,7 @@ public class JBossClassPool extends AOPClassPool
       return false;
    }
 
-   public Class toClass(CtClass cc, ClassLoader loader, ProtectionDomain domain)
+   public Class<?> toClass(CtClass cc, ClassLoader loader, ProtectionDomain domain)
    throws CannotCompileException
    {
       lockInCache(cc);
@@ -80,7 +80,7 @@ public class JBossClassPool extends AOPClassPool
       {
          return super.toClass(cc, loader, domain);
       }
-      Class dynClass = null;
+      Class<?> dynClass = null;
       try
       {
          File classFile = null;

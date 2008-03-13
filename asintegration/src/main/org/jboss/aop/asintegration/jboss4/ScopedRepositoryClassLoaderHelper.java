@@ -42,8 +42,8 @@ public class ScopedRepositoryClassLoaderHelper
          if (repository instanceof HeirarchicalLoaderRepository3)
          {
             scoped = true;
-            HeirarchicalLoaderRepository3 hlr = (HeirarchicalLoaderRepository3)repository;
-            boolean parentFirst = hlr.getUseParentFirst();
+            //HeirarchicalLoaderRepository3 hlr = (HeirarchicalLoaderRepository3)repository;
+            //boolean parentFirst = hlr.getUseParentFirst();
          }
       }
       return scoped;

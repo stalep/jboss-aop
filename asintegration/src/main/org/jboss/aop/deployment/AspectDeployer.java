@@ -169,6 +169,7 @@ implements SubDeployer, AspectDeployerMBean
          AspectManager manager = (scl != null) ? AspectManager.instance(scl) : AspectManager.instance();
          if (!di.isXML)
          {
+            @SuppressWarnings("unchecked")
             Iterator it = ArchiveBrowser.getBrowser(di.localUrl, new ClassFileFilter());
             AspectAnnotationLoader loader = new AspectAnnotationLoader(manager);
             loader.setClassLoader(scl);
@@ -231,6 +232,7 @@ implements SubDeployer, AspectDeployerMBean
          Thread.currentThread().setContextClassLoader(di.ucl);
          if (!di.isXML)
          {
+            @SuppressWarnings("unchecked")
             Iterator it = ArchiveBrowser.getBrowser(di.localUrl, new ClassFileFilter());
             AspectAnnotationLoader loader = new AspectAnnotationLoader(AspectManager.instance());
             loader.undeployInputStreamIterator(it);
@@ -362,6 +364,7 @@ implements SubDeployer, AspectDeployerMBean
 
                   try
                   {
+                     @SuppressWarnings("unused")
                      MBeanInfo info = server.getMBeanInfo(on);
                   }
                   catch (InstanceNotFoundException e)

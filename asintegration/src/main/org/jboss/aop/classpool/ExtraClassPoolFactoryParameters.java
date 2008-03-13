@@ -24,6 +24,7 @@ package org.jboss.aop.classpool;
 import java.util.Map;
 
 /**
+ * This class is used by the AS5 integration. Do not delete!!!! 
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
@@ -31,21 +32,21 @@ import java.util.Map;
 public class ExtraClassPoolFactoryParameters
 {
    /** A map of properties that can be used to configure the classpool factories further */
-   private static ThreadLocal<Map> properties = new ThreadLocal<Map>();
+   private static ThreadLocal<Map<Object, Object>> properties = new ThreadLocal<Map<Object, Object>>();
    
-   public static void pushThreadProperties(Map props)
+   public static void pushThreadProperties(Map<Object, Object> props)
    {
       properties.set(props);
    }
    
-   public static Map peekThreadProperties()
+   public static Map<Object, Object> peekThreadProperties()
    {
       return properties.get();
    }
    
-   public static Map popThreadProperties()
+   public static Map<Object, Object> popThreadProperties()
    {
-      Map props = properties.get();
+      Map<Object, Object> props = properties.get();
       properties.remove();
       return props;
    }
