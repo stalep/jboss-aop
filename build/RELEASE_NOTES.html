@@ -4,6 +4,43 @@
 </head>
 <body>
 
+
+<h2>Release Notes - JBoss AOP - Version 2.0.0.CR8</h2>
+    
+<h3>Bug</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-492'>JBAOP-492</a>] - Duplicate _getAdvisor</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-495'>JBAOP-495</a>] - run-precompiled refers wrong jar</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-496'>JBAOP-496</a>] - run-precompiled.bat never runs the class</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-499'>JBAOP-499</a>] - Deadlock on multi-threaded dynamic AOP scenarios</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-517'>JBAOP-517</a>] - Enable Advisor.methodInterceptors field</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-528'>JBAOP-528</a>] - Fix bug when double-weaving existing javaassist proxies</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-534'>JBAOP-534</a>] - JBoss AOP ignore classes packaged in org.jboss.aop, it should be org.jboss.aop.</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-536'>JBAOP-536</a>] - Generated invokeNext method should be synchronized</li>
+</ul>
+        
+<h3>Feature Request</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-516'>JBAOP-516</a>] - Support exclude=* in order to just include some package in current project</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-520'>JBAOP-520</a>] - maven-jbossaop-plugin to run java with aop options</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-526'>JBAOP-526</a>] - Use MetaData.isMetaDataPresent() instead of MetaData.isAnnotationPresent()</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-529'>JBAOP-529</a>] - Document maven plugin and add pom.xml for most of the examples in the dist</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-532'>JBAOP-532</a>] - Increase performance of annotation parsing by making checking of RuntimeInvisible annotations optional</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-541'>JBAOP-541</a>] - Use simple synchronization rather than rw locks when initialising lazy collections</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-543'>JBAOP-543</a>] - Replace exception when undeploying non-existant domain with a log warning</li>
+</ul>
+                    
+<h3>Task</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-530'>JBAOP-530</a>] - Missing classes in AOP-client JAR</li>
+</ul>
+    
+<h3>Thirdparty Change</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-533'>JBAOP-533</a>] - Upgrade javassist to 3.7.1.GA</li>
+</ul>
+
+
 <h2>Release Notes - JBoss AOP - Version 2.0.0.CR7</h2>
 
 <h3>Feature Request</h3>
