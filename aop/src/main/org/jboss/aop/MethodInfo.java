@@ -35,13 +35,15 @@ import java.lang.reflect.Method;
 public class MethodInfo extends JoinPointInfo implements MethodExecution
 {
    private Method advisedMethod;
-   private Method unadvisedMethod;
+   /** @deprecated Use the accessors. Only public for backwards compatiblity with EJB3*/
+   public Method unadvisedMethod;
    private long hash;
    
    public MethodInfo()
    {
    }
    
+   @SuppressWarnings("deprecation")
    public MethodInfo(Class<?> clazz, long hash, long unadvisedHash, Advisor advisor)
    {
       super(advisor, clazz);
@@ -62,6 +64,7 @@ public class MethodInfo extends JoinPointInfo implements MethodExecution
    /*
     * For copying
     */
+   @SuppressWarnings("deprecation")
    private MethodInfo(MethodInfo other)
    {
       super(other);
@@ -105,11 +108,13 @@ public class MethodInfo extends JoinPointInfo implements MethodExecution
       this.hash = hash;
    }
 
+   @SuppressWarnings("deprecation")
    public Method getUnadvisedMethod() 
    {
       return unadvisedMethod;
    }
 
+   @SuppressWarnings("deprecation")
    public void setUnadvisedMethod(Method unadvisedMethod) {
       this.unadvisedMethod = unadvisedMethod;
    }

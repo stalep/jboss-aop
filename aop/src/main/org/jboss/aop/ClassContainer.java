@@ -188,8 +188,16 @@ public class ClassContainer extends Advisor
 
       for (int i = 0; i < classMetaDataBindings.size(); i++)
       {
-         ClassMetaDataBinding data = classMetaDataBindings.get(i);
-         bindClassMetaData(data);
+         try
+         {
+            ClassMetaDataBinding data = classMetaDataBindings.get(i);
+            bindClassMetaData(data);
+         }
+         catch (ClassCastException e)
+         {
+            //This is for EJB3. It is putting the SerializedConcurrentAccess into the list 
+            logger.warn("Invalid object found in classMetaDataBindings map. The type was " + e.getMessage());
+         }
       }
    }
 

@@ -35,7 +35,8 @@ public abstract class JoinPointInfo implements JoinPointBean
 {
    private ReentrantReadWriteLock interceptorChainLock = new ReentrantReadWriteLock();
    
-   private Interceptor[] interceptors;
+   /** @deprecated Use the accessors. Only public for backwards compatiblity with EJB3*/
+   public Interceptor[] interceptors;
 
    private ArrayList<Interceptor> interceptorChain = new ArrayList<Interceptor>();
    
@@ -61,6 +62,7 @@ public abstract class JoinPointInfo implements JoinPointBean
    /*
     * For copying
     */
+   @SuppressWarnings("deprecation")
    protected JoinPointInfo(JoinPointInfo other)
    {
       this.advisor = other.advisor;
@@ -73,6 +75,7 @@ public abstract class JoinPointInfo implements JoinPointBean
       if (other.interceptorChain != null)this.interceptorChain.addAll(interceptorChain);
    }
 
+   @SuppressWarnings("deprecation")
    protected void clear()
    {
       interceptorChain.clear();
@@ -158,6 +161,7 @@ public abstract class JoinPointInfo implements JoinPointBean
       }
    }
 
+   @SuppressWarnings("deprecation")
    public Interceptor[] getInterceptors() {
       this.interceptorChainLock.readLock().lock();
       try
@@ -170,6 +174,7 @@ public abstract class JoinPointInfo implements JoinPointBean
       }
    }
 
+   @SuppressWarnings("deprecation")
    public void setInterceptors(Interceptor[] interceptors) {
       this.interceptorChainLock.writeLock().lock();
       adviceString = null;
@@ -200,6 +205,7 @@ public abstract class JoinPointInfo implements JoinPointBean
       return null;
    }
    
+   @SuppressWarnings("deprecation")
    public void cloneChains(JoinPointInfo other)
    {
       this.interceptorChainLock.writeLock().lock();
@@ -223,6 +229,7 @@ public abstract class JoinPointInfo implements JoinPointBean
       }
    }
    
+   @SuppressWarnings("deprecation")
    public String getAdviceString()
    {
       if (adviceString == null)
