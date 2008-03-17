@@ -74,15 +74,6 @@ public class AnnotationRepository
       classAnnotations.put(annotation.getName(), value);
    }
 
-   public <T extends Annotation> void addClassAnnotation(Class<T> annotation, T value)
-   {
-      initClassAnnotationsMap();
-      classAnnotations.put(annotation.getName(), value);
-   }
-
-   /**
-    * Overridden by EJB3
-    */
    public Object resolveClassAnnotation(Class<? extends Annotation> annotation)
    {
       return resolveTypedClassAnnotation(annotation);
@@ -171,7 +162,13 @@ public class AnnotationRepository
       disabledClassAnnotations.remove(annotation);
    }
    
-   public boolean isDisabled(Member m, Class<? extends Annotation> annotation)
+   @SuppressWarnings("unchecked")
+   public boolean isDisabled(Member m, Class annotation)
+   {
+      return isDisabled(m,annotation.getName());
+   }
+      
+   public boolean isTypedDisabled(Member m, Class<? extends Annotation> annotation)
    {
       return isDisabled(m,annotation.getName());
    }
@@ -192,7 +189,16 @@ public class AnnotationRepository
       return false;
    }
    
-   public boolean isDisabled(Class<? extends Annotation> annotation)
+   /**
+    * Required by EJB3
+    */
+   @SuppressWarnings("unchecked")
+   public boolean isDisabled(Class annotation)
+   {
+      return isTypedDisabled(annotation);
+   }
+   
+   public boolean isTypedDisabled(Class<? extends Annotation> annotation)
    {
       return isDisabled(annotation.getName());
    }

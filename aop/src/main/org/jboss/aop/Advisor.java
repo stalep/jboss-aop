@@ -356,6 +356,7 @@ public abstract class Advisor
          if (value != null) return value;
       }
 
+      //Need to use the untyped version since that is used by EJB3
       if (annotations.isDisabled(annotation))
          return null;
 
