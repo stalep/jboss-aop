@@ -1,1 +1,0 @@
-This test is not currently meant to run. It is there to ensure that we don't break EJB3's dependencies

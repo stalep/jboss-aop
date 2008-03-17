@@ -21,25 +21,54 @@
 */ 
 package org.jboss.test.aop.ejb3dependencies;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import org.jboss.aop.advice.Interceptor;
+import org.jboss.aop.AspectManager;
+import org.jboss.aop.ClassContainer;
 
 /**
- * This test is not currently meant to run. It is there to ensure that we don't break EJB3's dependencies
- * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JoinPointInfo
+public class TestAdvisor<T> extends ClassContainer
 {
-   org.jboss.aop.MethodInfo info;
+   public TestAdvisor(String name, AspectManager manager)
+   {
+      super(name, manager);
+      super.annotations = new TestAnnotationRepository();
+   }
+
+   org.jboss.aop.Advisor advisor = null;
+   Method m;
+   Constructor<?> c;
+   Field f;
+   
    @SuppressWarnings("unused")
    public void test()
    {
-      Interceptor[] interceptor = info.interceptors;
-      Method method = info.unadvisedMethod;
+      Class<?> clazz = advisor.getClazz();
    }
    
+   public org.jboss.aop.Advisor getAdvisor()
+   {
+      return advisor;
+   }
    
+   @SuppressWarnings("unchecked")
+   protected Class<? extends T> getBeanClass()
+   {
+      return getAdvisor().getClazz();
+   }
+
+   @SuppressWarnings("unused")
+   public void testResolveAnnotation(Class<? extends Annotation> annotation)
+   {
+      Object o = advisor.resolveAnnotation(annotation);
+      o = advisor.resolveAnnotation(c, annotation);
+      o = advisor.resolveAnnotation(m, annotation);
+      advisor.resolveAnnotation(f, annotation);
+   }
 }

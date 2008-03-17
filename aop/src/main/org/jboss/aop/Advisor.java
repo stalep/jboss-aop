@@ -359,9 +359,9 @@ public abstract class Advisor
       if (annotations.isDisabled(annotation))
          return null;
 
-      T value = annotations.resolveTypedClassAnnotation(annotation);
-      if (clazz == null) return null;
-      if (value == null && metadata == null)
+      //MUST call this instead of AR.resolveTypedClassAnnotation since EJB3 overrides AR.resolveClassAnnotation
+      T value = (T)annotations.resolveClassAnnotation(annotation);
+      if (value == null && clazz != null && metadata == null)
       {
          value = AnnotationElement.getVisibleAnnotation(clazz, annotation);
       }
@@ -447,7 +447,8 @@ public abstract class Advisor
       if (annotations.isDisabled(m,annotation))
          return null;
 
-      T value = annotations.resolveTypedAnnotation(m, annotation);
+      //MUST call this instead of AR.resolveTypedClassAnnotation since EJB3 overrides AR.resolveClassAnnotation
+      T value = (T)annotations.resolveAnnotation(m, annotation);
       if (value == null && metadata == null) 
       {
          value = AnnotationElement.getVisibleAnnotation(m, annotation);
@@ -495,7 +496,8 @@ public abstract class Advisor
          }
       }
       
-      value = annotations.resolveTypedAnnotation(f, annotation);
+      //MUST call this instead of AR.resolveTypedClassAnnotation since EJB3 overrides AR.resolveClassAnnotation
+      value = (T)annotations.resolveAnnotation(f, annotation);
       if (value == null && metadata == null)
       {
          value = AnnotationElement.getVisibleAnnotation(f, annotation);
@@ -522,7 +524,8 @@ public abstract class Advisor
          }
       }
       
-      value = annotations.resolveTypedAnnotation(c, annotation);
+      //MUST call this instead of AR.resolveTypedClassAnnotation since EJB3 overrides AR.resolveClassAnnotation
+      value = (T)annotations.resolveAnnotation(c, annotation);
       if (value == null && metadata == null)
       {
          value = AnnotationElement.getVisibleAnnotation(c, annotation);

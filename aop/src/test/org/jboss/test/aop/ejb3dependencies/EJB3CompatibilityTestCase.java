@@ -21,26 +21,30 @@
 */ 
 package org.jboss.test.aop.ejb3dependencies;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+
+import org.jboss.aop.AspectManager;
+
+import junit.framework.TestCase;
 
 /**
- * This test is not currently meant to run. It is there to ensure that we don't break EJB3's dependencies
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class AnnotationRepository extends org.jboss.aop.annotation.AnnotationRepository
+public class EJB3CompatibilityTestCase extends TestCase
 {
-
-   public <A extends Annotation> A resolveAnnotation(Class<?> cls, Class<A> annotationType)
+   public void testAnnotationRepository() throws Exception
    {
-      return null;
+      @SuppressWarnings("unchecked")
+      TestAdvisor advisor = new TestAdvisor("XXX", AspectManager.instance());
+      Ann ann = (Ann)advisor.resolveAnnotation(Ann.class);
+      assertNotNull(ann);
+      assertEquals("Clazz", ann.value());
+      
+      Method m = this.getClass().getMethods()[0];
+      ann = (Ann)advisor.resolveAnnotation(m, Ann.class);
+      assertNotNull(ann);
+      assertEquals("Member", ann.value());
    }
-   
-   public <A extends Annotation> A resolveAnnotation(Class<?> cls, Member member, Class<A> annotationType)
-   {
-      return null;
-   }
-
 }

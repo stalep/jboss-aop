@@ -22,46 +22,26 @@
 package org.jboss.test.aop.ejb3dependencies;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.lang.reflect.Member;
+
+import org.jboss.aop.annotation.AnnotationRepository;
 
 /**
- * This test is not currently meant to run. It is there to ensure that we don't break EJB3's dependencies
- * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class Advisor<T>
+public class TestAnnotationRepository extends AnnotationRepository
 {
-   org.jboss.aop.Advisor advisor = null;
-   Method m;
-   Constructor<?> c;
-   Field f;
-   
-   @SuppressWarnings("unused")
-   public void test()
+
+   @Override
+   public Object resolveClassAnnotation(Class<? extends Annotation> annotation)
    {
-      Class<?> clazz = advisor.getClazz();
-   }
-   
-   public org.jboss.aop.Advisor getAdvisor()
-   {
-      return advisor;
-   }
-   
-   @SuppressWarnings("unchecked")
-   protected Class<? extends T> getBeanClass()
-   {
-      return getAdvisor().getClazz();
+      return new AnnImpl("Clazz");
    }
 
-   @SuppressWarnings("unused")
-   public void testResolveAnnotation(Class<? extends Annotation> annotation)
+   @SuppressWarnings("unchecked")
+   public Object resolveAnnotation(Member m, Class annotation)
    {
-      Object o = advisor.resolveAnnotation(annotation);
-      o = advisor.resolveAnnotation(c, annotation);
-      o = advisor.resolveAnnotation(m, annotation);
-      advisor.resolveAnnotation(f, annotation);
+      return new AnnImpl("Member");
    }
 }

@@ -100,6 +100,9 @@ public class AnnotationRepository
       return ann;
    }
 
+   /**
+    * Overridden by EJB3
+    */
    public Object resolveAnnotation(Member m, Class<? extends Annotation> annotation)
    {
       return resolveTypedAnnotation(m, annotation);
