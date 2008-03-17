@@ -21,7 +21,6 @@
 */ 
 package org.jboss.test.aop.ejb3dependencies;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 
 import org.jboss.aop.annotation.AnnotationRepository;
@@ -33,8 +32,7 @@ import org.jboss.aop.annotation.AnnotationRepository;
 public class TestAnnotationRepository extends AnnotationRepository
 {
 
-   @Override
-   public Object resolveClassAnnotation(Class<? extends Annotation> annotation)
+   public Object resolveClassAnnotation(Class annotation)
    {
       return new AnnImpl("Clazz");
    }
