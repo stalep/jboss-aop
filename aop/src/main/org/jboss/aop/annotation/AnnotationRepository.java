@@ -80,7 +80,15 @@ public class AnnotationRepository
       classAnnotations.put(annotation.getName(), value);
    }
 
-   public <T extends Annotation> T resolveClassAnnotation(Class<T> annotation)
+   /**
+    * Overridden by EJB3
+    */
+   public Object resolveClassAnnotation(Class<? extends Annotation> annotation)
+   {
+      return resolveTypedClassAnnotation(annotation);
+   }
+   
+   public <T extends Annotation> T resolveTypedClassAnnotation(Class<T> annotation)
    {
       Object value = classAnnotations.get(annotation.getName());
       boolean reinsert = value instanceof String;
@@ -92,7 +100,12 @@ public class AnnotationRepository
       return ann;
    }
 
-   public <T extends Annotation> T resolveAnnotation(Member m, Class<T> annotation)
+   public Object resolveAnnotation(Member m, Class<? extends Annotation> annotation)
+   {
+      return resolveTypedAnnotation(m, annotation);
+   }
+   
+   public <T extends Annotation> T resolveTypedAnnotation(Member m, Class<T> annotation)
    {
       Object value = resolveAnnotation(m, annotation.getName());
       boolean reinsert = value instanceof String;

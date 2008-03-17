@@ -359,7 +359,7 @@ public abstract class Advisor
       if (annotations.isDisabled(annotation))
          return null;
 
-      T value = annotations.resolveClassAnnotation(annotation);
+      T value = annotations.resolveTypedClassAnnotation(annotation);
       if (clazz == null) return null;
       if (value == null && metadata == null)
       {
@@ -447,7 +447,7 @@ public abstract class Advisor
       if (annotations.isDisabled(m,annotation))
          return null;
 
-      T value = annotations.resolveAnnotation(m, annotation);
+      T value = annotations.resolveTypedAnnotation(m, annotation);
       if (value == null && metadata == null) 
       {
          value = AnnotationElement.getVisibleAnnotation(m, annotation);
@@ -495,7 +495,7 @@ public abstract class Advisor
          }
       }
       
-      value = annotations.resolveAnnotation(f, annotation);
+      value = annotations.resolveTypedAnnotation(f, annotation);
       if (value == null && metadata == null)
       {
          value = AnnotationElement.getVisibleAnnotation(f, annotation);
@@ -522,7 +522,7 @@ public abstract class Advisor
          }
       }
       
-      value = annotations.resolveAnnotation(c, annotation);
+      value = annotations.resolveTypedAnnotation(c, annotation);
       if (value == null && metadata == null)
       {
          value = AnnotationElement.getVisibleAnnotation(c, annotation);
@@ -1007,7 +1007,11 @@ public abstract class Advisor
       throw new RuntimeException("dynamic field invocations not supported yet!");
    }
 
-   public Class<?> getClazz()
+   /**
+    * EJB3 counts on this being unchecked
+    */
+   @SuppressWarnings("unchecked")
+   public Class getClazz()
    {
       return clazz;
    }
