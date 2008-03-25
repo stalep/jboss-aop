@@ -37,7 +37,7 @@ import org.jboss.test.AbstractTestDelegate;
 public class AOPTestDelegate extends AbstractTestDelegate
 {
    /** The deployed urls */
-   private static final CopyOnWriteArrayList urls = new CopyOnWriteArrayList();
+   private static final CopyOnWriteArrayList<URL> urls = new CopyOnWriteArrayList<URL>();
    
    /**
     * Create a new AOPTestDelegate.
@@ -45,7 +45,7 @@ public class AOPTestDelegate extends AbstractTestDelegate
     * @param clazz the test class
     * @throws Exception for any error
     */
-   public AOPTestDelegate(Class clazz) throws Exception
+   public AOPTestDelegate(Class<?> clazz) throws Exception
    {
       super(clazz);
    }
@@ -100,9 +100,9 @@ public class AOPTestDelegate extends AbstractTestDelegate
    
    protected void undeploy()
    {
-      for (Iterator i = urls.iterator(); i.hasNext();)
+      for (Iterator<URL> i = urls.iterator(); i.hasNext();)
       {
-         URL url = (URL) i.next();
+         URL url = i.next();
          undeploy(url);
       }
    }

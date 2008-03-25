@@ -35,7 +35,7 @@ import org.jboss.aspects.asynchronous.ProcessingTime;
  * @author <a href="mailto:chussenet@yahoo.com">{Claude Hussenet Independent Consultant}</a>.
  * @version <tt>$Revision$</tt>
  */
-
+@SuppressWarnings("unchecked")
 public class TimedCallableImpl implements Callable, ProcessingTime
 {
 

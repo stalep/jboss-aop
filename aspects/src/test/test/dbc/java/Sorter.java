@@ -31,6 +31,7 @@ import java.util.Comparator;
  * @version $Revision$
  * @@org.jboss.aspects.dbc.Dbc
 */
+@SuppressWarnings("unchecked")
 public class Sorter
 {
    /**

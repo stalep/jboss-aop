@@ -30,6 +30,7 @@ import java.util.ArrayList;
  * @@org.jboss.aspects.dbc.Dbc
  * @@org.jboss.aspects.dbc.Invariant ({"$tgt.computers != null", "$tgt.developers != null", "forall test.dbc.office.Computer c in $tgt.computers | c != null", "forall d in $tgt.developers | d != null"})
  */
+@SuppressWarnings("unchecked")
 public class OfficeManager
 {
    ArrayList computers = new ArrayList();

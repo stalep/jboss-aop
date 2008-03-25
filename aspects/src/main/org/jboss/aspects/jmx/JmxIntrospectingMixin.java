@@ -97,9 +97,9 @@ public class JmxIntrospectingMixin implements DynamicMBean
    }
 
    private final Object target;
-   private final HashMap ops = new HashMap();
-   private final HashMap gets = new HashMap();
-   private final HashMap sets = new HashMap();
+   private final HashMap<OpsKey, Method> ops = new HashMap<OpsKey, Method>();
+   private final HashMap<String, Method> gets = new HashMap<String, Method>();
+   private final HashMap<String, Method> sets = new HashMap<String, Method>();
    private MBeanInfo mbeanInfo;
 
 
@@ -110,7 +110,7 @@ public class JmxIntrospectingMixin implements DynamicMBean
 
    public Object getAttribute(String attribute) throws AttributeNotFoundException, MBeanException, ReflectionException
    {
-      Method get = (Method) gets.get(attribute);
+      Method get = gets.get(attribute);
       if (get == null) throw new AttributeNotFoundException(attribute);
       try
       {
@@ -129,7 +129,7 @@ public class JmxIntrospectingMixin implements DynamicMBean
 
    public void setAttribute(Attribute attribute) throws AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException
    {
-      Method set = (Method) sets.get(attribute.getName());
+      Method set = sets.get(attribute.getName());
       if (set == null) throw new AttributeNotFoundException(attribute.getName());
       try
       {
@@ -204,7 +204,7 @@ public class JmxIntrospectingMixin implements DynamicMBean
    public Object invoke(String actionName, Object params[], String signature[]) throws MBeanException, ReflectionException
    {
       OpsKey key = new OpsKey(actionName, signature);
-      Method m = (Method) ops.get(key);
+      Method m = ops.get(key);
       if (m == null) throw new NoSuchMethodError(actionName);
       try
       {
@@ -278,12 +278,12 @@ public class JmxIntrospectingMixin implements DynamicMBean
             }
          }
 
-         HashMap attributes = new HashMap();
-         Iterator it = gets.keySet().iterator();
+         HashMap<String, MBeanAttributeInfo> attributes = new HashMap<String, MBeanAttributeInfo>();
+         Iterator<String> it = gets.keySet().iterator();
          while (it.hasNext())
          {
-            String attribute = (String) it.next();
-            Method m = (Method) gets.get(attribute);
+            String attribute = it.next();
+            Method m = gets.get(attribute);
             //System.out.println("*** creating get: " + attribute);
             boolean isWritable = sets.containsKey(attribute);
             boolean isIs = m.getName().startsWith("is");
@@ -293,23 +293,23 @@ public class JmxIntrospectingMixin implements DynamicMBean
          it = sets.keySet().iterator();
          while (it.hasNext())
          {
-            String attribute = (String) it.next();
+            String attribute = it.next();
             if (gets.containsKey(attribute)) continue;
             //System.out.println("*** creating set: " + attribute);
-            Method m = (Method) sets.get(attribute);
+            Method m = sets.get(attribute);
             MBeanAttributeInfo info = new MBeanAttributeInfo(attribute, m.getReturnType().getName(), target.getClass().getName() + "." + attribute, false, true, false);
             attributes.put(attribute, info);
          }
 
          MBeanOperationInfo[] operations = new MBeanOperationInfo[ops.size()];
-         it = ops.values().iterator();
+         Iterator<Method> itops = ops.values().iterator();
          int i = 0;
          while (it.hasNext())
          {
-            Method m = (Method) it.next();
+            Method m = itops.next();
             operations[i++] = new MBeanOperationInfo(m.toString(), m);
          }
-         MBeanAttributeInfo[] attrs = (MBeanAttributeInfo[]) attributes.values().toArray(new MBeanAttributeInfo[attributes.size()]);
+         MBeanAttributeInfo[] attrs = attributes.values().toArray(new MBeanAttributeInfo[attributes.size()]);
 
          mbeanInfo = new MBeanInfo(target.getClass().getName(), target.getClass().getName(),
                  attrs, null, operations, null);

@@ -55,7 +55,7 @@ public class DesignByContractAspect
    InvariantCondition[] invariants;
    
    Method method;
-   Constructor constructor;
+   Constructor<?> constructor;
    boolean isPublic;
    boolean isStatic;
    boolean isSynchronized;
@@ -64,7 +64,7 @@ public class DesignByContractAspect
    
    //Keep track of if this checks have already been made for this joinpoint 
    //as the result of previous checks on the stack 
-   ThreadLocal done = new ThreadLocal();
+   ThreadLocal<Boolean> done = new ThreadLocal<Boolean>();
    
    public DesignByContractAspect()
    {
@@ -168,7 +168,7 @@ public class DesignByContractAspect
    {
       logStart();
       Object ret = null;
-      boolean wasDone = ((Boolean)done.get()).booleanValue();
+      boolean wasDone = done.get().booleanValue();
 
       try
       {
@@ -248,7 +248,7 @@ public class DesignByContractAspect
       }
    }
    
-   private void initialise(Constructor c)
+   private void initialise(Constructor<?> c)
    {
       constructor = c;
       int modifiers = c.getModifiers();

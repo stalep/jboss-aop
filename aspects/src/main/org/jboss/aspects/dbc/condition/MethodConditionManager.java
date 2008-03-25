@@ -38,28 +38,29 @@ import org.jboss.aspects.dbc.PreCond;
  */
 public class MethodConditionManager extends ConditionManager
 {
+   
    public static synchronized ExecutableCondition[] getPreConditions(Method method)
    {
-      ExecutableCondition[] pre = (ExecutableCondition[])preConditions.get(method); 
+      ExecutableCondition[] pre = preConditions.get(method); 
       if (pre != null)
       {
          return pre;
       }
       
       initialise(method);
-      return (ExecutableCondition[])preConditions.get(method); 
+      return preConditions.get(method); 
    }
    
    public static synchronized ExecutableCondition[] getPostConditions(Method method)
    {
-      ExecutableCondition[] post = (ExecutableCondition[])postConditions.get(method); 
+      ExecutableCondition[] post = postConditions.get(method); 
       if (post != null)
       {
          return post;
       }
       
       initialise(method);
-      return (ExecutableCondition[])postConditions.get(method); 
+      return postConditions.get(method); 
    }
    
    public static synchronized InvariantCondition[] getInvariants(Method method)
@@ -70,8 +71,8 @@ public class MethodConditionManager extends ConditionManager
    private static void initialise(Method method)
    {
       if (DesignByContractAspect.verbose) System.out.println("[dbc] ===== Intitalising method: " + method);
-      ArrayList preConds = new ArrayList();
-      ArrayList postConds = new ArrayList();
+      ArrayList<ExecutableCondition> preConds = new ArrayList<ExecutableCondition>();
+      ArrayList<ExecutableCondition> postConds = new ArrayList<ExecutableCondition>();
       
       
       //Need @PreCond and @PostCond for this method, and all the super 
@@ -79,8 +80,8 @@ public class MethodConditionManager extends ConditionManager
       //Likewise we need the @Invariant for this class and the super classes
       boolean first = true;
       
-      Class clazz = method.getDeclaringClass();
-      Class curClazz = clazz;
+      Class<?> clazz = method.getDeclaringClass();
+      Class<?> curClazz = clazz;
       Method superMethod = method;
       
       while (curClazz != null)
@@ -104,16 +105,16 @@ public class MethodConditionManager extends ConditionManager
          curClazz = curClazz.getSuperclass();
       }
       
-      ExecutableCondition[] pre = (ExecutableCondition[])preConds.toArray(new ExecutableCondition[preConds.size()]);
+      ExecutableCondition[] pre = preConds.toArray(new ExecutableCondition[preConds.size()]);
       preConditions.put(method, pre);
       
-      ExecutableCondition[] post = (ExecutableCondition[])postConds.toArray(new ExecutableCondition[postConds.size()]);
+      ExecutableCondition[] post = postConds.toArray(new ExecutableCondition[postConds.size()]);
       postConditions.put(method, post);
    }
    
-   private static void addMethodConditionsForInterfaces(ArrayList preConds, ArrayList postConds, Class clazz, Method method)
+   private static void addMethodConditionsForInterfaces(ArrayList<ExecutableCondition> preConds, ArrayList<ExecutableCondition> postConds, Class<?> clazz, Method method)
    {
-      Class[] interfaces = clazz.getInterfaces();
+      Class<?>[] interfaces = clazz.getInterfaces();
       for (int i = 0 ; i < interfaces.length ; i++)
       {
          //System.out.println("Checking interface: " + interfaces[i]);
@@ -127,7 +128,7 @@ public class MethodConditionManager extends ConditionManager
       }
       
    }
-   private static void addMethodConditions(Method realMethod, Method currentMethod, ArrayList preConds, ArrayList postConds)
+   private static void addMethodConditions(Method realMethod, Method currentMethod, ArrayList<ExecutableCondition> preConds, ArrayList<ExecutableCondition> postConds)
    {
       PreCond pre = (PreCond)AnnotationElement.getAnyAnnotation(currentMethod, PreCond.class);
       if (pre != null)
@@ -145,7 +146,7 @@ public class MethodConditionManager extends ConditionManager
    }
    
 
-   private static ArrayList addMethodConditions(Method realMethod, ArrayList conditions, String[] exprs)
+   private static ArrayList<ExecutableCondition> addMethodConditions(Method realMethod, ArrayList<ExecutableCondition> conditions, String[] exprs)
    {
       if (exprs == null)
       {
@@ -162,7 +163,7 @@ public class MethodConditionManager extends ConditionManager
       return conditions;
    }
    
-   private static Method findMethodInClass(Class clazz, Method method)
+   private static Method findMethodInClass(Class<?> clazz, Method method)
    {
       String name = method.getName();
       Method[] methods = clazz.getDeclaredMethods();
@@ -170,8 +171,8 @@ public class MethodConditionManager extends ConditionManager
       {
          if (methods[i].getName().equals(name))
          {
-            Class[] soughtParams = method.getParameterTypes();
-            Class[] foundParams = methods[i].getParameterTypes();
+            Class<?>[] soughtParams = method.getParameterTypes();
+            Class<?>[] foundParams = methods[i].getParameterTypes();
             
             if (soughtParams.length == foundParams.length)
             {

@@ -39,7 +39,7 @@ public class ThreadLocalAppender
 
    public static final String LOG = "InvocationLog";
 
-   private static ThreadLocal loggingTL = new ThreadLocal(); 
+   private static ThreadLocal<ArrayList<LoggingEvent>> loggingTL = new ThreadLocal<ArrayList<LoggingEvent>>(); 
 
    // Attributes ----------------------------------------------------
 
@@ -50,9 +50,9 @@ public class ThreadLocalAppender
     * 
     * @param list the new list
     */
-   public static ArrayList getList()
+   public static ArrayList<LoggingEvent> getList()
    {
-      return (ArrayList) loggingTL.get();
+      return loggingTL.get();
    }
 
    /**
@@ -60,7 +60,7 @@ public class ThreadLocalAppender
     * 
     * @param list the new list
     */
-   public static void setList(ArrayList list)
+   public static void setList(ArrayList<LoggingEvent> list)
    {
       loggingTL.set(list);
    }
@@ -73,7 +73,7 @@ public class ThreadLocalAppender
 
    protected void append(LoggingEvent event)
    {
-      ArrayList logging = getList();
+      ArrayList<LoggingEvent> logging = getList();
       if (logging == null)
          return;
 

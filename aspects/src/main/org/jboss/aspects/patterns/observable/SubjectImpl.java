@@ -23,7 +23,6 @@ package org.jboss.aspects.patterns.observable;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -35,7 +34,7 @@ import java.util.Set;
 public class SubjectImpl implements Subject
 {
    /** The observers */
-   private Set observers = Collections.synchronizedSet(new HashSet());
+   private Set<Observer> observers = Collections.synchronizedSet(new HashSet<Observer>());
    
    /** The subject */
    private Object subject;
@@ -63,9 +62,8 @@ public class SubjectImpl implements Subject
       
       synchronized (observers)
       {
-         for (Iterator i = observers.iterator(); i.hasNext();)
+         for (Observer observer : observers)
          {
-            Observer observer = (Observer) i.next();
             observer.fireChange(obj);
          }
       }

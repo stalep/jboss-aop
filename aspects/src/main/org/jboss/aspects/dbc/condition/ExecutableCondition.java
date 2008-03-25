@@ -36,7 +36,7 @@ import bsh.Interpreter;
  */
 public abstract class ExecutableCondition extends Condition
 {
-   public ExecutableCondition(String condExpr, Class clazz, boolean isStatic)
+   public ExecutableCondition(String condExpr, Class<?> clazz, boolean isStatic)
    {
       super(condExpr, clazz, isStatic);
    }
@@ -48,10 +48,10 @@ public abstract class ExecutableCondition extends Condition
          if (DesignByContractAspect.verbose) System.out.println("[dbc] Evaluate condition : '" + originalExpr + "' for: " + executableObject());
    
          Interpreter interpreter = new Interpreter();
-         for (Iterator it = parameterLookup.keySet().iterator() ; it.hasNext() ; )
+         for (Iterator<String> it = parameterLookup.keySet().iterator() ; it.hasNext() ; )
          {
-            String beanshellname = (String)it.next();
-            String originalname = (String)parameterLookup.get(beanshellname);
+            String beanshellname = it.next();
+            String originalname = parameterLookup.get(beanshellname);
             Object value = getValueForToken(inv, args, ret, originalname);
             interpreter.set(beanshellname, value);
             if (DesignByContractAspect.verbose) System.out.println("[dbc] Setting $" + originalname + " to " + value + 
@@ -103,6 +103,6 @@ public abstract class ExecutableCondition extends Condition
    protected abstract boolean isPredefinedToken(String token);
    protected abstract Object getValueForPredefinedToken(Invocation invocation, Object rtn, String token);
    protected abstract Object executableObject();
-   protected abstract Class[] parameterTypes();
+   protected abstract Class<?>[] parameterTypes();
    
 }

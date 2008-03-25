@@ -39,7 +39,7 @@ public abstract class AOPTest extends AbstractTestCaseWithSetup
     * @return the delegate
     * @throws Exception for any error
     */
-   public static AbstractTestDelegate getDelegate(Class clazz) throws Exception
+   public static AbstractTestDelegate getDelegate(Class<?> clazz) throws Exception
    {
       return new AOPTestDelegate(clazz);
    }

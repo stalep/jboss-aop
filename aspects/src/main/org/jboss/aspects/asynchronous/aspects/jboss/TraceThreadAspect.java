@@ -75,7 +75,7 @@ public class TraceThreadAspect
 
       .append("(");
 
-      Class[] parameterTypes =
+      Class<?>[] parameterTypes =
 
       methodInvocation.getActualMethod().getParameterTypes();
 

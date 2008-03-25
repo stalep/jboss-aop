@@ -36,7 +36,7 @@ import bsh.Interpreter;
  */
 public class InvariantCondition extends Condition
 {
-   public InvariantCondition(Class clazz, String condExpr, boolean isStatic)
+   public InvariantCondition(Class<?> clazz, String condExpr, boolean isStatic)
    {
       super(condExpr, clazz, isStatic);
    }
@@ -56,10 +56,10 @@ public class InvariantCondition extends Condition
          Interpreter interpreter = new Interpreter();
          Object target = (constructor) ? ret : getTarget(inv, staticCall);
          
-         for (Iterator it = parameterLookup.keySet().iterator() ; it.hasNext() ; )
+         for (Iterator<String> it = parameterLookup.keySet().iterator() ; it.hasNext() ; )
          {
-            String bsname = (String)it.next();
-            String originalname = (String)parameterLookup.get(bsname); 
+            String bsname = it.next();
+            String originalname = parameterLookup.get(bsname); 
             if (originalname.equals(Condition.TARGET))
             {
                interpreter.set(bsname, target);

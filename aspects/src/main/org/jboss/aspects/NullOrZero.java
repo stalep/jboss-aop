@@ -39,7 +39,7 @@ public class NullOrZero
    private static final Boolean BOOLEAN_ZERO = Boolean.FALSE;
 
 
-   public static Object nullOrZero(Class type)
+   public static Object nullOrZero(Class<?> type)
    {
       if (!type.isPrimitive()) return null;
       if (type.equals(void.class)) return null;
@@ -50,6 +50,7 @@ public class NullOrZero
       if (type.equals(double.class)) return DOUBLE_ZERO;
       if (type.equals(char.class)) return CHAR_ZERO;
       if (type.equals(byte.class)) return BYTE_ZERO;
+      if (type.equals(boolean.class)) return BOOLEAN_ZERO;
 
       return null;
    }

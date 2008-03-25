@@ -32,9 +32,9 @@ import org.jboss.aop.joinpoint.Invocation;
  */
 public class ConstructorCondition extends ExecutableCondition
 {
-   Constructor constructor;
+   Constructor<?> constructor;
    
-   public ConstructorCondition(Constructor constructor, String condExpr)
+   public ConstructorCondition(Constructor<?> constructor, String condExpr)
    {
       super(condExpr, constructor.getClass(), false);
       this.constructor = constructor;
@@ -59,7 +59,7 @@ public class ConstructorCondition extends ExecutableCondition
       return constructor;
    }
 
-   protected Class[] parameterTypes()
+   protected Class<?>[] parameterTypes()
    {
       return constructor.getParameterTypes();
    }

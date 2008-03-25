@@ -23,6 +23,8 @@ package org.jboss.aspects.logging;
 
 import java.util.ArrayList;
 
+import org.apache.log4j.spi.LoggingEvent;
+
 /**
  * An interceptor that tests whether logging should be done to
  * the invocation response.
@@ -55,7 +57,7 @@ public class InvocationLogInterceptor
    {
       Object started = invocation.getMetaData(ThreadLocalAppender.LOG, ThreadLocalAppender.LOG);
 
-      ArrayList log = null;
+      ArrayList<LoggingEvent> log = null;
       if (started != null)
       {
          // Some earlier invocation started the logging
@@ -64,7 +66,7 @@ public class InvocationLogInterceptor
          else
          {
             // We are the first, start the logging
-            log = new ArrayList();
+            log = new ArrayList<LoggingEvent>();
             ThreadLocalAppender.setList(log);
          }
       }

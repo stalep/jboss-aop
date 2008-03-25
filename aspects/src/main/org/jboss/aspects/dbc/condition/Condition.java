@@ -49,15 +49,15 @@ public abstract class Condition
 
    //Map of valid java identifiers to the original $tgt, $ret, $0, $1, $2 etc. 
    //used for the condition strings in the annotations 
-   protected HashMap parameterLookup = new HashMap();
+   protected HashMap<String, String> parameterLookup = new HashMap<String, String>();
    protected String originalExpr;
    protected String condExpr;
-   protected Class clazz;
+   protected Class<?> clazz;
    
    //If this condition is for a static method or is a static invariant condition
    protected boolean isStatic;
    
-   public Condition(String condExpr, Class clazz, boolean isStatic)
+   public Condition(String condExpr, Class<?> clazz, boolean isStatic)
    {
       this.isStatic = isStatic;
       

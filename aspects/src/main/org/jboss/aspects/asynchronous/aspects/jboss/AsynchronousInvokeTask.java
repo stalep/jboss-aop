@@ -74,17 +74,17 @@ implements AsynchronousUserTask, AsynchronousConstants
 
    private boolean invoke(Object targetedObject,
 
-                          Class[] paramemeterTypes,
+                          Class<?>[] paramemeterTypes,
 
                           Object[] parameterObjects,
 
-                          Class stringName)
+                          Class<?> stringName)
    {
 
       try
       {
 
-         Class aClass = null;
+         Class<?> aClass = null;
 
          if (targetedObject == null)
 

@@ -74,6 +74,7 @@ public class InvocationLogClientInterceptor
       return response;
    }
 
+   @SuppressWarnings("unchecked")
    public void dumpLog(org.jboss.aop.joinpoint.Invocation invocation)
    {
       Logger root = Logger.getRootLogger();

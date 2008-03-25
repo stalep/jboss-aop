@@ -34,7 +34,7 @@ public class AsynchronousFacadeFieldsThreadLocalImpl
 implements AsynchronousFacadeFields
 {
 
-   private ThreadLocal threadLocal = new ThreadLocal();
+   private ThreadLocal<AsynchronousFacadeFields> threadLocal = new ThreadLocal<AsynchronousFacadeFields>();
 
    public AsynchronousFacadeFieldsThreadLocalImpl()
    {
@@ -57,7 +57,7 @@ implements AsynchronousFacadeFields
 
          init();
 
-      return (AsynchronousFacadeFields) threadLocal.get();
+      return threadLocal.get();
 
    }
 

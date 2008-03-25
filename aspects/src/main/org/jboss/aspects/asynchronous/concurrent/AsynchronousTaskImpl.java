@@ -51,8 +51,10 @@ implements AsynchronousConstants, AsynchronousTask
    private AsynchronousUserTask _oneInstance = null;
 
    //private FutureResult _futureResult = null;
+   @SuppressWarnings("unchecked") 
    private FutureTask _futureResult = null;
 
+   @SuppressWarnings("unchecked") 
    private Callable _callable = null;
 
    private String _id = null;
@@ -75,7 +77,7 @@ implements AsynchronousConstants, AsynchronousTask
       try
       {
 
-         Class aClass = Class.forName(taskImpl);
+         Class<?> aClass = Class.forName(taskImpl);
 
          _oneInstance = (AsynchronousUserTask) aClass.newInstance();
 
@@ -218,6 +220,7 @@ implements AsynchronousConstants, AsynchronousTask
 
    }
 
+   @SuppressWarnings("unchecked")
    public Runnable add() throws Exception
    {
 

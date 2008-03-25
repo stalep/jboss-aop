@@ -30,7 +30,7 @@ package org.jboss.aspects.asynchronous.aspects;
 public class Utils
 {
 
-   static public Object returnInitObject(Class returnType)
+   static public Object returnInitObject(Class<?> returnType)
    {
 
       if (!returnType.isPrimitive())

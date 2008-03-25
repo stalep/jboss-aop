@@ -37,49 +37,49 @@ import org.jboss.aspects.dbc.PreCond;
  */
 public class ConstructorConditionManager extends ConditionManager
 {
-   public static synchronized ExecutableCondition[] getPreConditions(Constructor constructor)
+   public static synchronized ExecutableCondition[] getPreConditions(Constructor<?> constructor)
    {
-      ExecutableCondition[] pre = (ExecutableCondition[])preConditions.get(constructor); 
+      ExecutableCondition[] pre = preConditions.get(constructor); 
       if (pre != null)
       {
          return pre;
       }
       
       initialise(constructor);
-      return (ExecutableCondition[])preConditions.get(constructor); 
+      return preConditions.get(constructor); 
    }
    
-   public static synchronized ExecutableCondition[] getPostConditions(Constructor constructor)
+   public static synchronized ExecutableCondition[] getPostConditions(Constructor<?> constructor)
    {
-      ExecutableCondition[] post = (ExecutableCondition[])postConditions.get(constructor); 
+      ExecutableCondition[] post = postConditions.get(constructor); 
       if (post != null)
       {
          return post;
       }
       
       initialise(constructor);
-      return (ExecutableCondition[])postConditions.get(constructor); 
+      return postConditions.get(constructor); 
    }
    
-   public static synchronized InvariantCondition[] getInvariants(Constructor constructor)
+   public static synchronized InvariantCondition[] getInvariants(Constructor<?> constructor)
    {
       return getInvariants(constructor.getDeclaringClass()); 
    }
    
-   private static void initialise(Constructor constructor)
+   private static void initialise(Constructor<?> constructor)
    {
       if (DesignByContractAspect.verbose) System.out.println("[dbc] ===== Intitalising constructor: " + constructor);
-      ArrayList preConds = new ArrayList();
-      ArrayList postConds = new ArrayList();
+      ArrayList<ExecutableCondition> preConds = new ArrayList<ExecutableCondition>();
+      ArrayList<ExecutableCondition> postConds = new ArrayList<ExecutableCondition>();
       
       
       //Need @PreCond and @PostCond for this constructor, and all the super 
       //declarations of the constructor.
       boolean first = true;
       
-      Class clazz = constructor.getDeclaringClass();
-      Class curClazz = clazz;
-      Constructor superConstructor = constructor;
+      Class<?> clazz = constructor.getDeclaringClass();
+      Class<?> curClazz = clazz;
+      Constructor<?> superConstructor = constructor;
       
       while (curClazz != null)
       {
@@ -100,14 +100,14 @@ public class ConstructorConditionManager extends ConditionManager
          curClazz = curClazz.getSuperclass();
       }
       
-      ExecutableCondition[] pre = (ExecutableCondition[])preConds.toArray(new ExecutableCondition[preConds.size()]);
+      ExecutableCondition[] pre = preConds.toArray(new ExecutableCondition[preConds.size()]);
       preConditions.put(constructor, pre);
       
-      ExecutableCondition[] post = (ExecutableCondition[])postConds.toArray(new ExecutableCondition[postConds.size()]);
+      ExecutableCondition[] post = postConds.toArray(new ExecutableCondition[postConds.size()]);
       postConditions.put(constructor, post);
    }
    
-   private static void addConstructorConditions(Constructor realConstructor, Constructor currentConstructor, ArrayList preConds, ArrayList postConds)
+   private static void addConstructorConditions(Constructor<?> realConstructor, Constructor<?> currentConstructor, ArrayList<ExecutableCondition> preConds, ArrayList<ExecutableCondition> postConds)
    {
       PreCond pre = (PreCond)AnnotationElement.getAnyAnnotation(currentConstructor, PreCond.class);
       if (pre != null)
@@ -125,7 +125,7 @@ public class ConstructorConditionManager extends ConditionManager
    }
    
 
-   private static ArrayList addConstructorConditions(Constructor realConstructor, ArrayList conditions, String[] exprs)
+   private static ArrayList<ExecutableCondition> addConstructorConditions(Constructor<?> realConstructor, ArrayList<ExecutableCondition> conditions, String[] exprs)
    {
       if (exprs == null)
       {
@@ -140,16 +140,16 @@ public class ConstructorConditionManager extends ConditionManager
       return conditions;
    }
    
-   private static Constructor findConstructorInClass(Class clazz, Constructor constructor)
+   private static Constructor<?> findConstructorInClass(Class<?> clazz, Constructor<?> constructor)
    {
       String name = constructor.getName();
-      Constructor[] constructors = clazz.getDeclaredConstructors();
+      Constructor<?>[] constructors = clazz.getDeclaredConstructors();
       for (int i = 0 ; i < constructors.length ; i++)
       {
          if (constructors[i].getName().equals(name))
          {
-            Class[] soughtParams = constructor.getParameterTypes();
-            Class[] foundParams = constructors[i].getParameterTypes();
+            Class<?>[] soughtParams = constructor.getParameterTypes();
+            Class<?>[] foundParams = constructors[i].getParameterTypes();
             
             if (soughtParams.length == foundParams.length)
             {

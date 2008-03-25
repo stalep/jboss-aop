@@ -76,7 +76,7 @@ public class AsynchronousAspect
       new InvokeTaskInputParameters((MethodInvocation) invocation.copy()),
       asynchronousInvokeTask,
       asynchronousResult.getTimeout())));
-      Class returnType = invocation.getActualMethod().getReturnType();
+      Class<?> returnType = invocation.getActualMethod().getReturnType();
       return Utils.returnInitObject(returnType);
    }
 }

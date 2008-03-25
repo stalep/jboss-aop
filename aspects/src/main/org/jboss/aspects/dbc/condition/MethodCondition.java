@@ -59,7 +59,7 @@ public class MethodCondition extends ExecutableCondition
       return method;
    }
 
-   protected Class[] parameterTypes()
+   protected Class<?>[] parameterTypes()
    {
       return method.getParameterTypes();
    }

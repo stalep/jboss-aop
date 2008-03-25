@@ -37,9 +37,10 @@ import org.jboss.aspects.asynchronous.common.ThreadManagerResponseImpl;
  * @version <tt>$Revision$</tt>
  */
 
+@SuppressWarnings("unchecked")
 final class AdapterTask
 
-implements Callable, AsynchronousConstants, ProcessingTime
+implements  Callable, AsynchronousConstants, ProcessingTime
 {
 
    private AsynchronousParameters _inputParametersImpl = null;

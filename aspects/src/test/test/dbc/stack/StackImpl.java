@@ -28,6 +28,7 @@ import java.util.LinkedList;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan </a>
  * @version $Revision$
  */
+@SuppressWarnings("unchecked")
 public class StackImpl implements Stack
 {
    private final LinkedList elements = new LinkedList();

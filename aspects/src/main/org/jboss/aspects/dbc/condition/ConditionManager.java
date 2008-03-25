@@ -21,6 +21,7 @@
   */
 package org.jboss.aspects.dbc.condition;
 
+import java.lang.reflect.AccessibleObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -36,26 +37,28 @@ import org.jboss.aspects.dbc.StaticInvariant;
  */
 public class ConditionManager
 {
-   public static HashMap preConditions = new HashMap();
-   public static HashMap postConditions = new HashMap();
-   public static HashMap invariants = new HashMap();
+   protected static HashMap<AccessibleObject, ExecutableCondition[]> preConditions = new HashMap<AccessibleObject, ExecutableCondition[]>();
    
-   public static synchronized InvariantCondition[] getInvariants(Class clazz)
+   protected static HashMap<AccessibleObject, ExecutableCondition[]> postConditions = new HashMap<AccessibleObject, ExecutableCondition[]>();
+   
+   protected static HashMap<Class<?>, InvariantCondition[]> invariants = new HashMap<Class<?>, InvariantCondition[]>();
+   
+   public static synchronized InvariantCondition[] getInvariants(Class<?> clazz)
    {
-      InvariantCondition[] inv = (InvariantCondition[])invariants.get(clazz); 
+      InvariantCondition[] inv = invariants.get(clazz); 
       if (inv != null)
       {
          return inv;
       }
       
       initialise(clazz);
-      return (InvariantCondition[])invariants.get(clazz); 
+      return invariants.get(clazz); 
    }
    
    
-   protected static void initialise(Class clazz)
+   protected static void initialise(Class<?> clazz)
    {
-      ArrayList invConds = new ArrayList();
+      ArrayList<InvariantCondition> invConds = new ArrayList<InvariantCondition>();
       
       if (invariants.get(clazz) != null)
       {
@@ -65,13 +68,13 @@ public class ConditionManager
       if (DesignByContractAspect.verbose)System.out.println("[dbc] ===== Initialising invariants for class: " + clazz);
 
       //We need the @Invariant for this class and the super classes
-      Class curClazz = clazz;
+      Class<?> curClazz = clazz;
 
       while (curClazz != null)
       {
          addInvariantConditions(invConds, curClazz);
 			
-			Class[] interfaces = curClazz.getInterfaces();
+			Class<?>[] interfaces = curClazz.getInterfaces();
 			for (int i = 0; i < interfaces.length ; i++)
 			{
 			   addInvariantConditions(invConds, interfaces[i]);
@@ -80,11 +83,11 @@ public class ConditionManager
          curClazz = curClazz.getSuperclass();
       }
       
-      InvariantCondition[] inv = (InvariantCondition[])invConds.toArray(new InvariantCondition[invConds.size()]);
+      InvariantCondition[] inv = invConds.toArray(new InvariantCondition[invConds.size()]);
       invariants.put(clazz, inv);
    }
 
-   private static void addInvariantConditions(ArrayList conditions, Class clazz)
+   private static void addInvariantConditions(ArrayList<InvariantCondition> conditions, Class<?> clazz)
    {
       Invariant inv = (Invariant)AnnotationElement.getAnyAnnotation(clazz, Invariant.class);
       if (inv != null)
