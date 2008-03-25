@@ -29,7 +29,10 @@
     <defaultGoal>install</defaultGoal>
     <resources>
        <resource>
-          <directory>resources</directory>
+          <directory>.</directory>
+          <includes>
+            <include>input.txt</include>
+          </includes>
        </resource>
     </resources>
 
