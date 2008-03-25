@@ -21,8 +21,6 @@
   */
 package org.jboss.aop.instrument;
 
-import java.util.ArrayList;
-
 import org.jboss.aop.util.JavassistMethodHashing;
 
 import javassist.CannotCompileException;
@@ -198,6 +196,7 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       CtClass genadvisor = getGenadvisor();
       if (doGet)
       {
+         @SuppressWarnings("unused")
          CtMethod rmethod = super.buildReadWrapperPlaceHolder(
                genadvisor,
                field,
@@ -207,6 +206,7 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       }
       if (doSet)
       {
+         @SuppressWarnings("unused")
          CtMethod wmethod = super.buildWriteWrapperPlaceHolder(
                genadvisor,
                field,
@@ -246,11 +246,11 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       return ((GeneratedAdvisorInstrumentor)instrumentor).getGenadvisor();
    }
 
-   private CtClass getGenInstanceAdvisor()
-   {
-      return ((GeneratedAdvisorInstrumentor)instrumentor).getGenInstanceadvisor();
-   }
-
+//   private CtClass getGenInstanceAdvisor()
+//   {
+//      return ((GeneratedAdvisorInstrumentor)instrumentor).getGenInstanceadvisor();
+//   }
+//
    private String getAdvisorReadWrapperBody(CtClass clazz, CtField field, int index)
    throws NotFoundException, CannotCompileException
    {
@@ -407,7 +407,6 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       //Just delegate to method in advisor
       boolean isStatic = Modifier.isStatic(field.getModifiers());
 
-      String code;
       String advisor = isStatic ?
             "((" + GeneratedAdvisorInstrumentor.getAdvisorFQN(clazz) + ")" + Instrumentor.HELPER_FIELD_NAME + ")" :
             "((" + GeneratedAdvisorInstrumentor.getAdvisorFQN(clazz) + ")((" + clazz.getName() + ")$1)." + GeneratedAdvisorInstrumentor.GET_CURRENT_ADVISOR + ")";
@@ -461,27 +460,27 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       }
    }
 
-   private ArrayList pendingFieldWriteInfos = new ArrayList();
-   private ArrayList pendingFieldReadInfos = new ArrayList();
-
-   private class PendingFieldInfo
-   {
-      CtField field;
-      int index;
-      public PendingFieldInfo(CtField field, int index)
-      {
-         this.field = field;
-         this.index = index;
-      }
-      public CtField getField()
-      {
-         return field;
-      }
-      public int getIndex()
-      {
-         return index;
-      }
-   }
+//   private ArrayList<PendingFieldInfo> pendingFieldWriteInfos = new ArrayList<PendingFieldInfo>();
+//   private ArrayList<PendingFieldInfo> pendingFieldReadInfos = new ArrayList<PendingFieldInfo>();
+//
+//   private class PendingFieldInfo
+//   {
+//      CtField field;
+//      int index;
+//      public PendingFieldInfo(CtField field, int index)
+//      {
+//         this.field = field;
+//         this.index = index;
+//      }
+//      public CtField getField()
+//      {
+//         return field;
+//      }
+//      public int getIndex()
+//      {
+//         return index;
+//      }
+//   }
 
    protected class GeneratedAdvisorFieldAccessExprEditor extends FieldAccessExprEditor
    {
