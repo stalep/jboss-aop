@@ -36,14 +36,14 @@ import javassist.CtMethod;
 public class Codifier
 {
 
-   private Collection pendingCodes;
+   private Collection<PendingCode> pendingCodes;
    
    /**
     * Constructor.
     */
    public Codifier()
    {
-      this.pendingCodes = new ArrayList();
+      this.pendingCodes = new ArrayList<PendingCode>();
    }
    
    /**
