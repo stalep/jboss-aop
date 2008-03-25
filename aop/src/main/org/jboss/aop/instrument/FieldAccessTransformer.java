@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javassist.CannotCompileException;
-import javassist.ClassPool;
 import javassist.CodeConverter;
 import javassist.CtClass;
 import javassist.CtField;
@@ -79,16 +78,16 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
 
    protected void buildFieldWrappers(CtClass clazz, ClassAdvisor advisor, boolean shouldReplaceArrayAccess) throws NotFoundException, CannotCompileException
    {
-      List fields = Instrumentor.getAdvisableFields(clazz);
+      List<CtField> fields = Instrumentor.getAdvisableFields(clazz);
 
       int fieldIndex = fieldOffset(clazz.getSuperclass());
       boolean skipFieldInterception = true;
       if (fields.size() > 0)
       {
-         Iterator it = fields.iterator();
+         Iterator<CtField> it = fields.iterator();
          for (int index = 0; it.hasNext(); index++, fieldIndex++)
          {
-            CtField field = (CtField) it.next();
+            CtField field = it.next();
             JoinpointClassification classificationGet = instrumentor.joinpointClassifier.classifyFieldGet(field, advisor); 
             JoinpointClassification classificationSet = instrumentor.joinpointClassifier.classifyFieldSet(field, advisor); 
             if (!isPrepared(classificationGet) && !isPrepared(classificationSet))
@@ -143,12 +142,12 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
          throw new RuntimeException(e);
       }
       
-      List fields = Instrumentor.getAdvisableFields(superClass);
+      List<CtField> fields = Instrumentor.getAdvisableFields(superClass);
       if (fields.size() > 0)
       {
-         for (Iterator it = fields.iterator(); it.hasNext(); )
+         for (Iterator<CtField> it = fields.iterator(); it.hasNext(); )
          {
-            CtField field = (CtField) it.next();
+            CtField field = it.next();
             if (javassist.Modifier.isPrivate(field.getModifiers()))
             {
                continue;
@@ -202,14 +201,12 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
     * @return
     * @throws NotFoundException
     */
-   public boolean replaceFieldAccess(List fields, CtClass clazz, ClassAdvisor fieldsAdvisor) throws NotFoundException
+   public boolean replaceFieldAccess(List<CtField> fields, CtClass clazz, ClassAdvisor fieldsAdvisor) throws NotFoundException
    {
       CodeConverter converter = instrumentor.getCodeConverter();
       boolean converted = false;
-      Iterator it = fields.iterator();
-      while (it.hasNext())
+      for (CtField field : fields)
       {
-         CtField field = (CtField) it.next();
          if (!Modifier.isPrivate(field.getModifiers()) && Advisable.isAdvisable(field))
          {
             JoinpointClassification fieldGetClassification = classifier.classifyFieldGet(field, fieldsAdvisor);
@@ -238,14 +235,13 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
     * @param fieldsSet a collection of <code>java.lang.Integer</code> indentifying
     * the field writes to be wrapped.
     */
-   public void wrap(CtClass clazz, Collection fieldsGet, Collection fieldsSet) throws CannotCompileException, NotFoundException
+   public void wrap(CtClass clazz, Collection<Integer> fieldsGet, Collection<Integer> fieldsSet) throws CannotCompileException, NotFoundException
    {
-      List advisableFields = Instrumentor.getAdvisableFields(clazz);
+      List<CtField> advisableFields = Instrumentor.getAdvisableFields(clazz);
       CtField[] fields = new CtField[advisableFields.size()];
-      fields = (CtField[] ) advisableFields.toArray(fields);
-      for (Iterator iterator = fieldsGet.iterator(); iterator.hasNext(); )
+      fields = advisableFields.toArray(fields);
+      for (int fieldIndex : fieldsGet)
       {
-         int fieldIndex = ((Integer) iterator.next()).intValue();
          CtField field = fields[fieldIndex];
          if (wrapper.isNotPrepared(field, GET_INDEX))
          {
@@ -269,9 +265,8 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
             method.setBody(code);
          }
       }
-      for (Iterator iterator = fieldsSet.iterator(); iterator.hasNext(); )
+      for (int fieldIndex : fieldsSet)
       {
-         int fieldIndex = ((Integer) iterator.next()).intValue();
          CtField field = fields[fieldIndex];
          if (wrapper.isNotPrepared(field, SET_INDEX))
          {
@@ -316,16 +311,14 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
     * @param fieldsSet a collection of <code>java.lang.Integer</code> indentifying
     * the field writes to be unwrapped.
     */
-   public void unwrap(CtClass clazz, Collection fieldsGet, Collection fieldsSet) throws CannotCompileException, NotFoundException
+   public void unwrap(CtClass clazz, Collection<Integer> fieldsGet, Collection<Integer> fieldsSet) throws CannotCompileException, NotFoundException
    {
-      ClassPool classPool = instrumentor.getClassPool();
-      List advisableFields = instrumentor.getAdvisableFields(clazz);
+      List<CtField> advisableFields = Instrumentor.getAdvisableFields(clazz);
       CtField[] fields = new CtField[advisableFields.size()];
-      fields = (CtField[] ) advisableFields.toArray(fields);
+      fields = advisableFields.toArray(fields);
       // unwrapping field gets
-      for (Iterator iterator = fieldsGet.iterator(); iterator.hasNext(); )
+      for (int fieldIndex : fieldsGet)
       {
-         int fieldIndex = ((Integer) iterator.next()).intValue();
          CtField field = fields[fieldIndex];
          if (wrapper.isNotPrepared(field, GET_INDEX))
          {
@@ -339,9 +332,8 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
          method.setBody("return " + target + "." + field.getName() + ";");
       }
       
-      for (Iterator iterator = fieldsSet.iterator(); iterator.hasNext(); )
+      for (int fieldIndex : fieldsSet)
       {
-         int fieldIndex = ((Integer) iterator.next()).intValue();
          CtField field = fields[fieldIndex];
          if (wrapper.isNotPrepared(field, SET_INDEX))
          {
@@ -511,7 +503,6 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
    {
       AOPClassPool classPool = (AOPClassPool) instrumentor.getClassPool();
 
-      String name = field.getName();
       CtClass ftype = field.getType();
       CtClass[] readParam = new CtClass[]{classPool.get("java.lang.Object")};
       
@@ -578,7 +569,6 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
    {
       AOPClassPool classPool = (AOPClassPool) instrumentor.getClassPool();
 
-      String name = field.getName();
       CtClass ftype = field.getType();
 
       // create field trapWrite memthod

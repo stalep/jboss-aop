@@ -21,9 +21,6 @@
 */ 
 package org.jboss.aop.proxy.container;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import gnu.trove.TLongObjectHashMap;
 
 import org.jboss.aop.Advisor;
@@ -31,10 +28,8 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.Domain;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.MethodInfo;
-import org.jboss.aop.advice.AbstractAdvice;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.Interceptor;
-import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.metadata.ClassMetaDataBinding;
 import org.jboss.aop.metadata.SimpleMetaData;
@@ -55,7 +50,7 @@ public class MarshalledProxyAdvisor extends Advisor implements InstanceAdvisor
       super(name, manager);
    }
 
-   public void setClazz(Class clazz)
+   public void setClazz(Class<?> clazz)
    {
       super.clazz = clazz;
    }

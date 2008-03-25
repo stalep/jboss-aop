@@ -36,7 +36,7 @@ public class MarshalledClassProxy implements Serializable
 {
    static final long serialVersionUID = 4049171769644464715L;
 
-   private Class clazz;
+   private Class<?> clazz;
    private ProxyMixin[] mixins;
    private InstanceAdvisor advisor;
 
@@ -44,7 +44,7 @@ public class MarshalledClassProxy implements Serializable
    {
    }
 
-   public MarshalledClassProxy(Class clazz, ProxyMixin[] mixins, InstanceAdvisor advisor)
+   public MarshalledClassProxy(Class<?> clazz, ProxyMixin[] mixins, InstanceAdvisor advisor)
    {
       this.clazz = clazz;
       this.advisor = advisor;

@@ -107,6 +107,7 @@ public class GeneratedAdvisorConstructionTransformer extends ConstructionTransfo
       final String constructionWrapperName = constructor.getDeclaringClass().getSimpleName() + "_con_" + ClassAdvisor.NOT_TRANSFORMABLE_SUFFIX;
 
       String body = createInterceptingWrapperBody(constructor, index);
+      @SuppressWarnings("unused")
       CtMethod wrapper = createWrapperMethod(constructor, constructionWrapperName, body);
       insertWrapperCallInCtor(constructor, constructionWrapperName);
       

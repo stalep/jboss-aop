@@ -65,7 +65,6 @@ import org.jboss.aop.util.JavassistUtils;
 import org.jboss.aop.util.ReflectToJavassist;
 import org.jboss.aop.util.logging.AOPLogger;
 import org.jboss.logging.Logger;
-import org.jboss.util.loading.Translatable;
 
 /**
  * Creates the Joinpoint invocation replacement classes used with Generated advisors
@@ -120,13 +119,12 @@ public abstract class JoinPointGenerator
    
    private JoinPointParameters parameters;
    private static int increment;
-   private Class advisorClass;
+   private Class<?> advisorClass;
    private String baseJoinPointClassName;
    protected String joinpointClassName;
    protected String joinpointFieldName;
    private String joinpointFqn;
    private Field joinpointField;
-   private boolean initialised;
    
    private ThreadLocal<Set<Integer>> inconsistentTypeArgs;
    
@@ -156,7 +154,7 @@ public abstract class JoinPointGenerator
       // this.advisor = advisor;
       this.advisorClass = advisor.getClass();
       this.nullArgsArray = nullArgsArray;
-      Class[] interfaces = advisorClass.getInterfaces();
+      Class<?>[] interfaces = advisorClass.getInterfaces();
       
       for (int i = 0 ; i < interfaces.length ; i++)
       {
@@ -272,8 +270,8 @@ public abstract class JoinPointGenerator
 
          //Attempt to get the cached information so we don't have to recreate the class every time we rebind the joinpoint
          String infoAdviceString = info.getAdviceString();
-         GeneratedClassInfo generatedClass = (GeneratedClassInfo) generatedJoinPointClassCache.get(infoAdviceString);
-         Class clazz = null;
+         GeneratedClassInfo generatedClass = generatedJoinPointClassCache.get(infoAdviceString);
+         Class<?> clazz = null;
          if (generatedClass != null)
          {
             clazz = classloader.loadClass(generatedClass.getGenerated().getName());
@@ -299,7 +297,6 @@ public abstract class JoinPointGenerator
             SecurityActions.setAccessible(field);
             field.set(obj, Boolean.TRUE);
          }
-         initialised = true;
          return obj;
       }
       catch (NoMatchingAdviceException e)
@@ -322,14 +319,14 @@ public abstract class JoinPointGenerator
       }
    }
 
-   private Class toClass(ClassPool pool, CtClass ctclass, ProtectionDomain pd) throws NotFoundException, CannotCompileException, ClassNotFoundException
+   private Class<?> toClass(ClassPool pool, CtClass ctclass, ProtectionDomain pd) throws NotFoundException, CannotCompileException, ClassNotFoundException
    {
       return TransformerCommon.toClass(ctclass, pd);
    }
    
-   private Object instantiateClass(Class clazz, AdviceSetup[] aroundSetups, JoinPointInfo info) throws Exception
+   private Object instantiateClass(Class<?> clazz, AdviceSetup[] aroundSetups, JoinPointInfo info) throws Exception
    {
-      Constructor ctor = clazz.getConstructor(new Class[] {info.getClass()});
+      Constructor<?> ctor = clazz.getConstructor(new Class[] {info.getClass()});
       Object obj;
       try
       {
@@ -358,7 +355,7 @@ public abstract class JoinPointGenerator
       return obj;
    }
     
-   private StringBuffer debugClass(StringBuffer sb, Class clazz)
+   private StringBuffer debugClass(StringBuffer sb, Class<?> clazz)
    {
       sb.append("\n\t\t" + Modifier.toString(clazz.getModifiers()) + " " + clazz.getName() + " " + clazz.getClassLoader()); 
       Field[] fields = clazz.getDeclaredFields();
@@ -367,7 +364,7 @@ public abstract class JoinPointGenerator
          sb.append("\n\t\t\t" + Modifier.toString(fields[i].getModifiers()) + " " + fields[i].getType().getName() + " " + fields[i].getName() + " " + fields[i].getType().getClassLoader());
       }
      
-     Class superClass = clazz.getSuperclass();
+     Class<?> superClass = clazz.getSuperclass();
      if (superClass != null && superClass != Object.class)
      {
         sb.append("\n\t\t\textends\n");
@@ -444,7 +441,7 @@ public abstract class JoinPointGenerator
       return baseJoinPointClassName + getIncrement() + "$aop";
    }
 
-   private void createInitialisePerInstanceAspectsMethod(CtClass clazz, AdviceSetups setups, Class advisedClass) throws CannotCompileException, NotFoundException
+   private void createInitialisePerInstanceAspectsMethod(CtClass clazz, AdviceSetups setups, Class<?> advisedClass) throws CannotCompileException, NotFoundException
    {
       if (setups.hasLightweightAdvicesRequiringInstanceAdvisor())
       {
@@ -477,7 +474,7 @@ public abstract class JoinPointGenerator
    }
    
    protected abstract boolean isVoid();
-   protected abstract Class getReturnClassType(); 
+   protected abstract Class<?> getReturnClassType(); 
    protected abstract AdviceMethodProperties getAdviceMethodProperties(JoinPointBean info, AdviceSetup setup);
    
    protected boolean isCaller()
@@ -510,7 +507,7 @@ public abstract class JoinPointGenerator
       {
          return;
       }
-      Class advisorClass = null;
+      Class<?> advisorClass = null;
       if (info.getAdvisor().getClazz().equals(info.getClazz()))
       {
          // short cut, avoid cost of else block
@@ -722,7 +719,7 @@ public abstract class JoinPointGenerator
       if (!isVoid())
       {
          String ret = null;
-         Class retType = getReturnClassType();
+         Class<?> retType = getReturnClassType();
          if (retType.isPrimitive())
          {
             if (retType.equals(Boolean.TYPE)) ret = "false";
@@ -940,19 +937,19 @@ public abstract class JoinPointGenerator
       code.append(");");
    }
    
-   private void addHandleExceptionCode(StringBuffer code, CtClass[] declaredExceptions)
-   {
-      for (int i = 0 ; i < declaredExceptions.length ; i++)
-      {
-         code.append("if (t instanceof " + declaredExceptions[i].getName() + ")");
-         code.append("   throw (" + declaredExceptions[i].getName() + ")t;");
-      }
-      
-      code.append("if (t instanceof java.lang.RuntimeException)");
-      code.append(   "throw t;");
-      
-      code.append("throw new java.lang.RuntimeException(t);");
-   }
+//   private void addHandleExceptionCode(StringBuffer code, CtClass[] declaredExceptions)
+//   {
+//      for (int i = 0 ; i < declaredExceptions.length ; i++)
+//      {
+//         code.append("if (t instanceof " + declaredExceptions[i].getName() + ")");
+//         code.append("   throw (" + declaredExceptions[i].getName() + ")t;");
+//      }
+//      
+//      code.append("if (t instanceof java.lang.RuntimeException)");
+//      code.append(   "throw t;");
+//      
+//      code.append("throw new java.lang.RuntimeException(t);");
+//   }
 
    private void createInvokeNextMethod(CtClass jp, boolean isVoid, AdviceSetups setups, JoinPointInfo info) throws NotFoundException, CannotCompileException
    {
@@ -1162,7 +1159,7 @@ public abstract class JoinPointGenerator
       StringBuffer init = new StringBuffer();
       for (int i = 0 ; i < aspects.size() ; i++)
       {
-         AdviceSetup setup = (AdviceSetup)aspects.get(i);
+         AdviceSetup setup = aspects.get(i);
          params[i + superParams.length] = setup.getAspectCtClass();
          init.append("this." + setup.getAspectFieldName() + " = $" + (i + superParams.length + 1) + ";");
       }
@@ -1357,10 +1354,10 @@ public abstract class JoinPointGenerator
    protected class AdviceSetup
    {
       int index;
-      Class aspectClass;
+      Class<?> aspectClass;
       CtClass aspectCtClass;
       String adviceName;
-      Class thrownType;
+      Class<?> thrownType;
       Scope scope;
       String registeredName;
       String cflowString;
@@ -1398,7 +1395,7 @@ public abstract class JoinPointGenerator
       }
       
       
-      Class getAspectClass()
+      Class<?> getAspectClass()
       {
          return aspectClass;
       }
@@ -1719,7 +1716,7 @@ public abstract class JoinPointGenerator
          boolean argsFound = false;
          if (args.length > 0)
          {
-            final Class[] adviceParams = properties.getAdviceMethod().getParameterTypes();
+            final Class<?>[] adviceParams = properties.getAdviceMethod().getParameterTypes();
             if (properties.isAdviceOverloaded())
             {
                appendCast(call, adviceParams[0]);
@@ -1743,7 +1740,7 @@ public abstract class JoinPointGenerator
       }
       
       protected boolean appendParameter(StringBuffer beforeCall, StringBuffer call,
-            final int arg, final Class adviceParam, AdviceMethodProperties properties,
+            final int arg, final Class<?> adviceParam, AdviceMethodProperties properties,
             JoinPointGenerator generator)
       {
          switch(arg)
@@ -1809,7 +1806,7 @@ public abstract class JoinPointGenerator
          return false;
       }
       
-      protected void appendCast(StringBuffer call, Class adviceParam)
+      protected void appendCast(StringBuffer call, Class<?> adviceParam)
       {
          call.append("(");
          call.append(ClassExpression.simpleType(adviceParam));
@@ -1900,7 +1897,6 @@ public abstract class JoinPointGenerator
       {
          // method that avoids more than one repeated call to ENFORCE_ARGS_CONSISTENCY
          this.consistencyEnforced = false;
-         int[] args = properties.getArgs();
          
          call.append("   ");
          call.append(returnStr);
@@ -1911,7 +1907,7 @@ public abstract class JoinPointGenerator
       }
       
       protected boolean appendParameter(StringBuffer beforeCall, StringBuffer call,
-            final int arg, final Class adviceParam,
+            final int arg, final Class<?> adviceParam,
             AdviceMethodProperties properties, JoinPointGenerator generator)
       {
          switch(arg)

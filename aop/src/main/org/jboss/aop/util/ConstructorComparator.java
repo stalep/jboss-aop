@@ -32,16 +32,16 @@ import java.util.Comparator;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public class ConstructorComparator implements Comparator<Constructor>
+public class ConstructorComparator implements Comparator<Constructor<?>>
 {
    private ConstructorComparator() {}
 
-   public static final java.util.Comparator<Constructor> INSTANCE = new ConstructorComparator();
+   public static final java.util.Comparator<Constructor<?>> INSTANCE = new ConstructorComparator();
         
-   public int compare(Constructor m1, Constructor m2) {
+   public int compare(Constructor<?> m1, Constructor<?> m2) {
       try {
-         Class[] args1 = m1.getParameterTypes();
-         Class[] args2 = m2.getParameterTypes();
+         Class<?>[] args1 = m1.getParameterTypes();
+         Class<?>[] args2 = m2.getParameterTypes();
          if (args1.length < args2.length) return -1;
          if (args1.length > args2.length) return 1;
          for (int i = 0; i < args1.length; i++) {

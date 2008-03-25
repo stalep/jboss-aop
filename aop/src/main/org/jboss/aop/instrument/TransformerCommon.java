@@ -119,7 +119,7 @@ public class TransformerCommon {
       }
    }
 
-   public static Class toClass(CtClass newClass, ProtectionDomain pd) throws CannotCompileException
+   public static Class<?> toClass(CtClass newClass, ProtectionDomain pd) throws CannotCompileException
    {
       registerGeneratedClass(newClass);
 
@@ -133,7 +133,7 @@ public class TransformerCommon {
       }
    }
 
-   public static Class toClass(CtClass newClass, ClassLoader loader, ProtectionDomain pd)
+   public static Class<?> toClass(CtClass newClass, ClassLoader loader, ProtectionDomain pd)
       throws CannotCompileException
    {
       registerGeneratedClass(newClass);
@@ -247,19 +247,19 @@ public class TransformerCommon {
 
    private interface ToClassAction
    {
-      Class toClass(CtClass clazz, ClassLoader loader, ProtectionDomain pd)
+      Class<?> toClass(CtClass clazz, ClassLoader loader, ProtectionDomain pd)
          throws CannotCompileException;
 
       ToClassAction PRIVILEGED = new ToClassAction()
       {
-         public Class toClass(final CtClass clazz, final ClassLoader loader, final ProtectionDomain pd)
+         public Class<?> toClass(final CtClass clazz, final ClassLoader loader, final ProtectionDomain pd)
             throws CannotCompileException
          {
             try
             {
-               return (Class)AccessController.doPrivileged(new PrivilegedExceptionAction()
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<Class<?>>()
                {
-                  public Object run() throws Exception
+                  public Class<?> run() throws Exception
                   {
                      if (AspectManager.debugClasses)
                      {
@@ -283,7 +283,7 @@ public class TransformerCommon {
 
       ToClassAction NON_PRIVILEGED = new ToClassAction()
       {
-         public Class toClass(CtClass clazz, ClassLoader loader, ProtectionDomain pd)
+         public Class<?> toClass(CtClass clazz, ClassLoader loader, ProtectionDomain pd)
             throws CannotCompileException
          {
             if (AspectManager.debugClasses)

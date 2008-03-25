@@ -32,6 +32,7 @@ import org.jboss.aop.ClassInstanceAdvisor;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.instrument.TransformerCommon;
 import org.jboss.aop.util.JavassistMethodHashing;
+import org.jboss.aop.util.reference.MethodPersistentReference;
 import org.jboss.util.collection.WeakValueHashMap;
 import org.jboss.util.id.GUID;
 
@@ -49,11 +50,11 @@ import java.util.Map;
 public class ProxyFactory
 {
    private static long counter = 0;
-   private static WeakValueHashMap proxyCache = new WeakValueHashMap();
+   private static WeakValueHashMap<GUID, Class<?>> proxyCache = new WeakValueHashMap<GUID, Class<?>>();
 
-   public static Proxy createInterfaceProxy(ClassLoader loader, Class[] interfaces, ProxyMixin[] mixins, InstanceAdvisor advisor) throws Exception
+   public static Proxy createInterfaceProxy(ClassLoader loader, Class<?>[] interfaces, ProxyMixin[] mixins, InstanceAdvisor advisor) throws Exception
    {
-      Class clazz = createProxyClass(loader, mixins, interfaces);
+      Class<?> clazz = createProxyClass(loader, mixins, interfaces);
 
       Proxy instance = (Proxy) clazz.newInstance();
       instance.instanceAdvisor = advisor;
@@ -69,22 +70,22 @@ public class ProxyFactory
       return instance;
    }
 
-   public static Class getProxyClass(GUID guid)
+   public static Class<?> getProxyClass(GUID guid)
    {
       synchronized (proxyCache)
       {
-         return (Class) proxyCache.get(guid);
+         return proxyCache.get(guid);
       }
    }
 
-   public static Proxy createInterfaceProxy(GUID guid, ClassLoader loader, Class[] interfaces) throws Exception
+   public static Proxy createInterfaceProxy(GUID guid, ClassLoader loader, Class<?>[] interfaces) throws Exception
    {
       return createInterfaceProxy(guid, loader, interfaces, null, new ClassInstanceAdvisor());
    }
 
-   public static Proxy createInterfaceProxy(GUID guid, ClassLoader loader, Class[] interfaces, ProxyMixin[] mixins, InstanceAdvisor advisor) throws Exception
+   public static Proxy createInterfaceProxy(GUID guid, ClassLoader loader, Class<?>[] interfaces, ProxyMixin[] mixins, InstanceAdvisor advisor) throws Exception
    {
-      Class clazz = getProxyClass(guid);
+      Class<?> clazz = getProxyClass(guid);
       boolean wasFound = true;
       if (clazz == null)
       {
@@ -109,28 +110,27 @@ public class ProxyFactory
       return instance;
    }
 
-   private static Class createProxyClass(ClassLoader loader, ProxyMixin[] mixins, Class[] interfaces)
+   private static Class<?> createProxyClass(ClassLoader loader, ProxyMixin[] mixins, Class<?>[] interfaces)
    throws Exception
    {
       CtClass proxy = createProxyCtClass(loader, mixins, interfaces);
       // Choose the first non-null ProtectionDomain
-      int length = interfaces != null ? interfaces.length: 0;
       ProtectionDomain pd = null;
       for(int n = 0; n < interfaces.length && pd == null; n ++)
       {
         pd = interfaces[n].getProtectionDomain(); 
       }
-      Class clazz = TransformerCommon.toClass(proxy, loader, pd);
-      Map methodmap = ClassProxyFactory.getMethodMap(clazz);
+      Class<?> clazz = TransformerCommon.toClass(proxy, loader, pd);
+      Map<Long, MethodPersistentReference> methodmap = ClassProxyFactory.getMethodMap(clazz);
       Field field = clazz.getDeclaredField("methodMap");
       SecurityActions.setAccessible(field);
       field.set(null, methodmap);
       return clazz;
    }
 
-   public static GUID generateProxyClass(ClassLoader loader, ProxyMixin[] mixins, Class[] interfaces) throws Exception
+   public static GUID generateProxyClass(ClassLoader loader, ProxyMixin[] mixins, Class<?>[] interfaces) throws Exception
    {
-      Class clazz = createProxyClass(loader, mixins, interfaces);
+      Class<?> clazz = createProxyClass(loader, mixins, interfaces);
       GUID guid = new GUID();
 
       synchronized (proxyCache)
@@ -141,7 +141,7 @@ public class ProxyFactory
       return guid;
    }
 
-   private static CtClass createProxyCtClass(ClassLoader loader, ProxyMixin[] mixins, Class[] interfaces)
+   private static CtClass createProxyCtClass(ClassLoader loader, ProxyMixin[] mixins, Class<?>[] interfaces)
    throws Exception
    {
       ClassPool pool = AspectManager.instance().findClassPool(loader);
@@ -160,14 +160,14 @@ public class ProxyFactory
       getMethodMap.setModifiers(Modifier.PUBLIC);
       proxy.addMethod(getMethodMap);
 
-      HashSet addedInterfaces = new HashSet();
-      HashSet addedMethods = new HashSet();
+      HashSet<String> addedInterfaces = new HashSet<String>();
+      HashSet<Long> addedMethods = new HashSet<Long>();
       if (mixins != null)
       {
          for (int i = 0; i < mixins.length; i++)
          {
-            HashSet mixinMethods = new HashSet();
-            Class[] mixinf = mixins[i].getInterfaces();
+            HashSet<Long> mixinMethods = new HashSet<Long>();
+            Class<?>[] mixinf = mixins[i].getInterfaces();
             ClassPool mixPool = AspectManager.instance().findClassPool(mixins[i].getMixin().getClass().getClassLoader());
             CtClass mixClass = mixPool.get(mixins[i].getMixin().getClass().getName());
             for (int j = 0; j < mixinf.length; j++)

@@ -35,14 +35,14 @@ import org.jboss.aop.GeneratedAdvisorDomain;
  */
 public class ProxyAdvisorDomain extends GeneratedAdvisorDomain
 {
-   protected WeakReference advisor;
+   protected WeakReference<Advisor> advisor;
 
-   public ProxyAdvisorDomain(AspectManager manager, String name, Class clazz)
+   public ProxyAdvisorDomain(AspectManager manager, String name, Class<?> clazz)
    {
       this(manager, name, clazz, false);
    }
    
-   public ProxyAdvisorDomain(AspectManager manager, String name, Class clazz, boolean instanceDomain)
+   public ProxyAdvisorDomain(AspectManager manager, String name, Class<?> clazz, boolean instanceDomain)
    {
       // FIXME ProxyAdvisorDomain constructor
       super(manager, name, clazz, instanceDomain);
@@ -53,18 +53,18 @@ public class ProxyAdvisorDomain extends GeneratedAdvisorDomain
 
    public Advisor getAdvisor()
    {
-      return (Advisor)advisor.get();
+      return advisor.get();
    }
 
    public void setAdvisor(Advisor advisor)
    {
-      this.advisor = new WeakReference(advisor);
+      this.advisor = new WeakReference<Advisor>(advisor);
    }
 
    public void attachAdvisor()
    {
-      Advisor adv = (Advisor)advisor.get();
-      advisors.put(adv.getClazz(), new WeakReference(adv));
+      Advisor adv = advisor.get();
+      advisors.put(adv.getClazz(), new WeakReference<Advisor>(adv));
    }
    
    public void removeAdvisor(Advisor advisor)

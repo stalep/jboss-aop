@@ -28,7 +28,6 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -59,7 +58,7 @@ public class ClassProxyFactory
    private static Object maplock = new Object();
    private static WeakValueHashMap<String, Class<?>> classnameMap = new WeakValueHashMap<String, Class<?>>();
    private static WeakHashMap<Class<?>, WeakReference<Class<?>>> proxyCache = new WeakHashMap<Class<?>, WeakReference<Class<?>>>();
-   private static WeakHashMap methodMapCache = new WeakHashMap();
+   private static WeakHashMap<Class<?>, Map<Long, MethodPersistentReference>> methodMapCache = new WeakHashMap<Class<?>, Map<Long, MethodPersistentReference>>();
 
    public static ClassProxy newInstance(Class<?> clazz) throws Exception
    {
@@ -90,16 +89,16 @@ public class ClassProxyFactory
             proxyClass = generateProxy(clazz, mixins);
             classnameMap.put(clazz.getName(), proxyClass);
             proxyCache.put(clazz, new WeakReference<Class<?>>(proxyClass));
-            HashMap map = methodMap(clazz);
+            HashMap<Long, MethodPersistentReference> map = methodMap(clazz);
             methodMapCache.put(proxyClass, map);
          }
       }
       return proxyClass;
    }
 
-   public static ClassProxy newInstance(Class clazz, ProxyMixin[] mixins, InstanceAdvisor advisor) throws Exception
+   public static ClassProxy newInstance(Class<?> clazz, ProxyMixin[] mixins, InstanceAdvisor advisor) throws Exception
    {
-      Class proxyClass = getProxyClass(clazz, mixins);
+      Class<?> proxyClass = getProxyClass(clazz, mixins);
       ClassProxy proxy = (ClassProxy) proxyClass.newInstance();
       proxy.setMixins(mixins);
       proxy._setInstanceAdvisor(advisor);
@@ -107,19 +106,19 @@ public class ClassProxyFactory
 
    }
 
-   public static HashMap getMethodMap(String classname)
+   public static HashMap<Long, MethodPersistentReference> getMethodMap(String classname)
    {
       synchronized (maplock)
       {
-         Class clazz = (Class) classnameMap.get(classname);
+         Class<?> clazz = classnameMap.get(classname);
          if (clazz == null) return null;
-         return (HashMap) methodMapCache.get(clazz);
+         return (HashMap<Long, MethodPersistentReference>) methodMapCache.get(clazz);
       }
    }
 
-   public static HashMap getMethodMap(Class clazz)
+   public static HashMap<Long, MethodPersistentReference> getMethodMap(Class<?> clazz)
    {
-      HashMap map = getMethodMap(clazz.getName());
+      HashMap<Long, MethodPersistentReference> map = getMethodMap(clazz.getName());
       if (map != null) return map;
       try
       {
@@ -133,7 +132,7 @@ public class ClassProxyFactory
 
    private static int counter = 0;
 
-   private static CtClass createProxyCtClass(ProxyMixin[] mixins, Class clazz)
+   private static CtClass createProxyCtClass(ProxyMixin[] mixins, Class<?> clazz)
    throws Exception
    {
       ClassPool pool = AspectManager.instance().findClassPool(clazz.getClassLoader());
@@ -234,14 +233,14 @@ public class ClassProxyFactory
       getMethodMap.setModifiers(Modifier.PUBLIC);
       proxy.addMethod(getMethodMap);
 
-      HashSet addedInterfaces = new HashSet();
-      HashSet addedMethods = new HashSet();
+      HashSet<String> addedInterfaces = new HashSet<String>();
+      HashSet<Long> addedMethods = new HashSet<Long>();
       if (mixins != null)
       {
          for (int i = 0; i < mixins.length; i++)
          {
-            HashSet mixinMethods = new HashSet();
-            Class[] mixinf = mixins[i].getInterfaces();
+            HashSet<Long> mixinMethods = new HashSet<Long>();
+            Class<?>[] mixinf = mixins[i].getInterfaces();
             ClassPool mixPool = AspectManager.instance().findClassPool(mixins[i].getMixin().getClass().getClassLoader());
             CtClass mixClass = mixPool.get(mixins[i].getMixin().getClass().getName());
             for (int j = 0; j < mixinf.length; j++)
@@ -274,16 +273,14 @@ public class ClassProxyFactory
          }
       }
 
-      HashMap allMethods = JavassistMethodHashing.getMethodMap(superclass);
+      HashMap<Long, CtMethod> allMethods = JavassistMethodHashing.getMethodMap(superclass);
 
-      Iterator it = allMethods.entrySet().iterator();
-      while (it.hasNext())
+      for (Map.Entry<Long, CtMethod> entry : allMethods.entrySet())
       {
-         Map.Entry entry = (Map.Entry) it.next();
-         CtMethod m = (CtMethod) entry.getValue();
+         CtMethod m = entry.getValue();
          if (!Modifier.isPublic(m.getModifiers()) || Modifier.isStatic(m.getModifiers())) continue;
 
-         Long hash = (Long) entry.getKey();
+         Long hash = entry.getKey();
          if (addedMethods.contains(hash)) continue;
          addedMethods.add(hash);
          String aopReturnStr = (m.getReturnType().equals(CtClass.voidType)) ? "" : "return ($r)";
@@ -306,19 +303,19 @@ public class ClassProxyFactory
       return proxy;
    }
 
-   private static Class generateProxy(Class clazz, ProxyMixin[] mixins) throws Exception
+   private static Class<?> generateProxy(Class<?> clazz, ProxyMixin[] mixins) throws Exception
    {
       CtClass proxy = createProxyCtClass(mixins, clazz);
       ProtectionDomain pd = clazz.getProtectionDomain();
-      Class proxyClass = TransformerCommon.toClass(proxy, pd);
-      Map methodmap = ClassProxyFactory.getMethodMap(proxyClass); 
+      Class<?> proxyClass = TransformerCommon.toClass(proxy, pd);
+      Map<Long, MethodPersistentReference> methodmap = ClassProxyFactory.getMethodMap(proxyClass); 
       Field field = proxyClass.getDeclaredField("methodMap");
       SecurityActions.setAccessible(field);
       field.set(null, methodmap);
       return proxyClass;
    }
 
-   private static void populateMethodTables(HashMap<Long, MethodPersistentReference> advised, List ignoredHash, Class superclass)
+   private static void populateMethodTables(HashMap<Long, MethodPersistentReference> advised, List<Long> ignoredHash, Class<?> superclass)
    throws Exception
    {
       if (superclass == null) return;
@@ -354,7 +351,7 @@ public class ClassProxyFactory
    throws Exception
    {
       HashMap<Long, MethodPersistentReference> methods = new HashMap<Long, MethodPersistentReference>();
-      List ignoredHash = new ArrayList();
+      List<Long> ignoredHash = new ArrayList<Long>();
       populateMethodTables(methods, ignoredHash, clazz);
       return methods;
    }

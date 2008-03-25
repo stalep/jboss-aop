@@ -38,13 +38,10 @@ import org.jboss.aop.ConByConInfo;
 import org.jboss.aop.ConByMethodInfo;
 import org.jboss.aop.FieldInfo;
 import org.jboss.aop.GeneratedClassAdvisor;
-import org.jboss.aop.JoinPointInfo;
 import org.jboss.aop.MethodByConInfo;
 import org.jboss.aop.MethodByMethodInfo;
 import org.jboss.aop.MethodInfo;
-import org.jboss.aop.WeavingStrategySupport;
 import org.jboss.aop.classpool.AOPClassPool;
-import org.jboss.aop.instrument.MethodExecutionTransformer.MethodTransformation;
 
 /**
  * Comment
@@ -509,7 +506,6 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             continue;
          }
 
-         String ret = (instanceAdvisorMethods[i].getReturnType().equals(CtClass.voidType)) ? "" : "return ";
          StringBuffer delegatingBody = new StringBuffer();
          delegatingBody.append("{");
          boolean changeInterceptorChainsOperation = false;
@@ -685,7 +681,6 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
    {
       CtClass superClass = clazz;
       CtClass superAdvisor = genadvisor;
-      boolean isSuper = false;
 
       StringBuffer advicesUpdatedCode = new StringBuffer();
       StringBuffer initialiseInfosForInstanceCode = new StringBuffer();
@@ -740,7 +735,6 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             break;
          }
 
-         isSuper = true;
          superClass = superClass.getSuperclass();
          superAdvisor = superAdvisor.getSuperclass();
       }

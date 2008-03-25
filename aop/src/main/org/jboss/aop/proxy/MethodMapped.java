@@ -23,6 +23,8 @@ package org.jboss.aop.proxy;
 
 import java.util.Map;
 
+import org.jboss.aop.util.reference.MethodPersistentReference;
+
 /**
  * Comment
  *
@@ -31,5 +33,5 @@ import java.util.Map;
  */
 public interface MethodMapped
 {
-   public Map getMethodMap();
+   public Map<Long, MethodPersistentReference> getMethodMap();
 }

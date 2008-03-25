@@ -44,9 +44,9 @@ public class DeclareChecker
 {
    public static void checkDeclares(AspectManager manager, CtClass clazz, ClassAdvisor advisor)
    {
-      for (Iterator it = manager.getDeclares() ; it.hasNext() ; )
+      for (Iterator<DeclareDef> it = manager.getDeclares() ; it.hasNext() ; )
       {
-         DeclareDef declare = (DeclareDef)it.next();
+         DeclareDef declare = it.next();
          if (declare.matches(advisor, clazz))
          {
             StringBuffer sb = new StringBuffer(" condition\n\t'" + declare.getExpr() + "'\nwas broken for class " + 
@@ -79,9 +79,9 @@ public class DeclareChecker
    
    private static void checkDeclares(AspectManager manager, NewExpr newcall, MethodCall mcall, ClassAdvisor advisor) throws NotFoundException
    {
-      for (Iterator it = manager.getDeclares() ; it.hasNext() ; )
+      for (Iterator<DeclareDef> it = manager.getDeclares() ; it.hasNext() ; )
       {
-         DeclareDef declare = (DeclareDef)it.next();
+         DeclareDef declare = it.next();
          
          StringBuffer sb = new StringBuffer(" condition\n\t'" + declare.getExpr() + "'\nwas broken for "); 
          

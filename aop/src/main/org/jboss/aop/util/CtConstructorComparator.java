@@ -32,13 +32,13 @@ import javassist.bytecode.Descriptor;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public class CtConstructorComparator implements java.util.Comparator {
+public class CtConstructorComparator implements java.util.Comparator<CtConstructor> {
 
     private CtConstructorComparator() {}
 
-    public static final java.util.Comparator INSTANCE = new CtConstructorComparator();
+    public static final java.util.Comparator<CtConstructor> INSTANCE = new CtConstructorComparator();
         
-    private int compare(CtConstructor m1, CtConstructor m2) {
+    public int compare(CtConstructor m1, CtConstructor m2) {
         try {
             CtClass[] args1 = m1.getParameterTypes();
             CtClass[] args2 = m2.getParameterTypes();
@@ -60,9 +60,4 @@ public class CtConstructorComparator implements java.util.Comparator {
         // unreachable.
         throw new Error();
     }
-
-    public int compare(Object o1, Object o2) {
-        return compare((CtConstructor) o1, (CtConstructor) o2);
-    }
-
 }

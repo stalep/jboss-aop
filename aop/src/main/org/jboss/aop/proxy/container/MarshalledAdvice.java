@@ -33,6 +33,8 @@ import org.jboss.aop.joinpoint.Invocation;
 
 class MarshalledAdvice extends AbstractAdvice implements Serializable
 {
+   private static final long serialVersionUID = 1L;
+   
    private Object aspect;
    private String name;
    private volatile boolean initialised = false;
@@ -89,6 +91,6 @@ class MarshalledAdvice extends AbstractAdvice implements Serializable
       name = in.readUTF();
       super.adviceName = in.readUTF();
       aspect = in.readObject();
-      super.aspectClass = (Class)in.readObject();
+      super.aspectClass = (Class<?>)in.readObject();
    }
 }

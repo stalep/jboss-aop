@@ -50,7 +50,7 @@ public class JavassistUtils
    
    private static CtMethod[] getMethodsWithName(CtMethod[] methods, String name)
    {
-      ArrayList foundMethods = new ArrayList();
+      ArrayList<CtMethod> foundMethods = new ArrayList<CtMethod>();
       for (int i = 0 ; i < methods.length ; i++)
       {
          if (methods[i].getName().equals(name))
@@ -58,7 +58,7 @@ public class JavassistUtils
             foundMethods.add(methods[i]);
          }
       }
-      return (CtMethod[])foundMethods.toArray(new CtMethod[foundMethods.size()]);
+      return foundMethods.toArray(new CtMethod[foundMethods.size()]);
    }
    
    public static boolean isSubclassOrImplements(CtClass clazz, CtClass lookingFor) throws NotFoundException

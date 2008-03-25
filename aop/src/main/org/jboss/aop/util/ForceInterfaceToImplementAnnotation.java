@@ -75,7 +75,7 @@ public class ForceInterfaceToImplementAnnotation
       try
       {
          rdr = new BufferedReader(new FileReader(file));
-         ArrayList<String> classes = new ArrayList();
+         ArrayList<String> classes = new ArrayList<String>();
          String clazz = rdr.readLine();
          while (clazz != null)
          {

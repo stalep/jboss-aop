@@ -53,8 +53,8 @@ public class ConstructionJoinPointGenerator extends JoinPointGenerator
    public static final String JOINPOINT_CLASS_PREFIX = JoinPointGenerator.JOINPOINT_CLASS_PREFIX + "construction_";
    public static final String JOINPOINT_FIELD_PREFIX = JoinPointGenerator.JOINPOINT_FIELD_PREFIX + "construction_";
    
-   private static final Class JOINPOINT_TYPE = Construction.class;
-   private static final Class INVOCATION_TYPE = ConstructionInvocation.class;
+   private static final Class<Construction> JOINPOINT_TYPE = Construction.class;
+   private static final Class<ConstructionInvocation> INVOCATION_TYPE = ConstructionInvocation.class;
    private static final CtClass INVOCATION_CT_TYPE;
    static
    {
@@ -90,7 +90,7 @@ public class ConstructionJoinPointGenerator extends JoinPointGenerator
 
    private String classSimpleName(ConstructionInfo info)
    {
-      Constructor ctor = ((ConstructionInfo)info).getConstructor();
+      Constructor<?> ctor = info.getConstructor();
       return Advisor.getSimpleName(ctor.getDeclaringClass());
    }
 
@@ -104,14 +104,14 @@ public class ConstructionJoinPointGenerator extends JoinPointGenerator
       return true;
    }
 
-   protected Class getReturnClassType()
+   protected Class<?> getReturnClassType()
    {
       return null;
    }
 
    protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
    {
-      Constructor ctor = ((Construction)joinPoint).getConstructor();
+      Constructor<?> ctor = ((Construction)joinPoint).getConstructor();
       return new AdviceMethodProperties(
             joinPoint,
             setup.getAspectClass(),

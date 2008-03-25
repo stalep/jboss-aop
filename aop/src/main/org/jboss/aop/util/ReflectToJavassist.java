@@ -43,7 +43,7 @@ import java.lang.reflect.Method;
  **/
 public class ReflectToJavassist
 {
-   public static CtClass classToJavassist(Class clazz) throws NotFoundException
+   public static CtClass classToJavassist(Class<?> clazz) throws NotFoundException
    {
       ClassPool pool = AspectManager.instance().findClassPool(clazz.getClassLoader());
       CtClass ct = pool.get(clazz.getName());
@@ -54,10 +54,10 @@ public class ReflectToJavassist
    {
       return classToJavassist(field.getDeclaringClass()).getField(field.getName());
    }
-   public static CtConstructor constructorToJavassist(Constructor con) throws NotFoundException
+   public static CtConstructor constructorToJavassist(Constructor<?> con) throws NotFoundException
    {
-      Class clazz = con.getDeclaringClass();
-      Class[] params = con.getParameterTypes();
+      Class<?> clazz = con.getDeclaringClass();
+      Class<?>[] params = con.getParameterTypes();
       String[] strParams = new String[params.length];
       for (int i = 0; i < params.length; i++)
       {
@@ -86,12 +86,12 @@ public class ReflectToJavassist
       return null;
    }
 
-   protected static String simpleType(Class type)
+   protected static String simpleType(Class<?> type)
    {
-      Class ret = type;
+      Class<?> ret = type;
       if (ret.isArray())
       {
-         Class arr = ret;
+         Class<?> arr = ret;
          String array = "";
          while (arr.isArray())
          {
@@ -105,8 +105,8 @@ public class ReflectToJavassist
    
    public static CtMethod methodToJavassist(Method method) throws NotFoundException
    {
-      Class clazz = method.getDeclaringClass();
-      Class[] params = method.getParameterTypes();
+      Class<?> clazz = method.getDeclaringClass();
+      Class<?>[] params = method.getParameterTypes();
       String[] strParams = new String[params.length];
       for (int i = 0; i < params.length; i++)
       {
@@ -157,7 +157,7 @@ public class ReflectToJavassist
     *                  </code> (if <code>type</code> is primitive, the value will
     *                  be unwrapped).
     */
-   public static String castInvocationValueToTypeString(Class type, String valueName)
+   public static String castInvocationValueToTypeString(Class<?> type, String valueName)
    {
       // TODO replace this method by T Class.cast(valueName) once javassist enables support to generics
       String cast = null;

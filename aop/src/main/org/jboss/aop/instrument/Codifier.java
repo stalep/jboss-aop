@@ -23,7 +23,6 @@ package org.jboss.aop.instrument;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import javassist.CannotCompileException;
 import javassist.CtMethod;
@@ -66,9 +65,8 @@ public class Codifier
     */
    public synchronized void codifyPending() throws CannotCompileException
    {
-      for (Iterator iterator = pendingCodes.iterator(); iterator.hasNext();)
+      for (PendingCode pendingCode : pendingCodes)
       {
-         PendingCode pendingCode = (PendingCode) iterator.next();
          pendingCode.method.setBody(pendingCode.body);
       }
       pendingCodes.clear();

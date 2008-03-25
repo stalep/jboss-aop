@@ -24,7 +24,6 @@ package org.jboss.aop.instrument;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import javassist.CannotCompileException;
 import javassist.CtClass;
@@ -157,14 +156,13 @@ public abstract class MethodExecutionTransformer
     * @param constructorIndexes a collection of <code>org.jboss.aop.MethodInfo</code> indentifying
     *                           the methods to be wrapped.
     */
-   public void wrap(CtClass clazz, Collection methodInfos) throws Exception
+   public void wrap(CtClass clazz, Collection<org.jboss.aop.MethodInfo> methodInfos) throws Exception
    {
-      for (Iterator iterator = methodInfos.iterator(); iterator.hasNext();)
+      for (org.jboss.aop.MethodInfo methodInfo : methodInfos)
       {
-         org.jboss.aop.MethodInfo methodInfo = (org.jboss.aop.MethodInfo) iterator.next();
          Method method = methodInfo.getMethod();
          AOPClassPool classPool = (AOPClassPool) clazz.getClassPool();
-         Class[] parameterTypes = method.getParameterTypes();
+         Class<?>[] parameterTypes = method.getParameterTypes();
          CtClass[] javassistParameterTypes = new CtClass[parameterTypes.length];
          for (int i = 0; i < parameterTypes.length; i++)
          {
@@ -204,14 +202,13 @@ public abstract class MethodExecutionTransformer
     * @param constructorIndexes a collection of <code>org.jboss.aop.MethodInfo</code> indentifying
     *                           the methods to be unwrapped.
     */
-   public void unwrap(CtClass clazz, Collection methodInfos) throws Exception
+   public void unwrap(CtClass clazz, Collection<org.jboss.aop.MethodInfo> methodInfos) throws Exception
    {
-      for (Iterator iterator = methodInfos.iterator(); iterator.hasNext();)
+      for (org.jboss.aop.MethodInfo methodInfo : methodInfos)
       {
-         org.jboss.aop.MethodInfo methodInfo = (org.jboss.aop.MethodInfo) iterator.next();
          Method method = methodInfo.getMethod();
          AOPClassPool classPool = (AOPClassPool) clazz.getClassPool();
-         Class[] parameterTypes = method.getParameterTypes();
+         Class<?>[] parameterTypes = method.getParameterTypes();
          CtClass[] javassistParameterTypes = new CtClass[parameterTypes.length];
          for (int i = 0; i < parameterTypes.length; i++)
          {
@@ -249,7 +246,9 @@ public abstract class MethodExecutionTransformer
       AnnotationsAttribute attribute = (AnnotationsAttribute) src.getAttribute(annotationTag);
       if (attribute != null)
       {
-         dest.addAttribute(attribute.copy(dest.getConstPool(), new HashMap()));
+         @SuppressWarnings("unchecked")
+         HashMap map = new HashMap();
+         dest.addAttribute(attribute.copy(dest.getConstPool(), map));
          src.addAttribute(new AnnotationsAttribute(src.getConstPool(), annotationTag));
       }
    }
@@ -259,7 +258,9 @@ public abstract class MethodExecutionTransformer
       ParameterAnnotationsAttribute params = (ParameterAnnotationsAttribute)src.getAttribute(paramsTag);
       if (params != null)
       {
-         dest.addAttribute(params.copy(dest.getConstPool(), new HashMap()));
+         @SuppressWarnings("unchecked")
+         HashMap map = new HashMap();
+         dest.addAttribute(params.copy(dest.getConstPool(), map));
          ParameterAnnotationsAttribute srcParams = new ParameterAnnotationsAttribute(src.getConstPool(), paramsTag);
          Annotation[][] emptyParamAnnotations = new Annotation[numParams][];
          for (int i = 0 ; i < numParams ; i++)
@@ -276,7 +277,9 @@ public abstract class MethodExecutionTransformer
       SignatureAttribute attribute = (SignatureAttribute) src.getAttribute(SignatureAttribute.tag);
       if (attribute != null)
       {
-         dest.addAttribute(attribute.copy(dest.getConstPool(), new HashMap()));
+         @SuppressWarnings("unchecked")
+         HashMap map = new HashMap();
+         dest.addAttribute(attribute.copy(dest.getConstPool(), map));
       }
    }
    

@@ -45,14 +45,14 @@ import org.jboss.util.collection.WeakValueHashMap;
  */
 public class UnmodifiableEmptyCollections
 {
-   public static final LinkedHashMap EMPTY_LINKED_HASHMAP = new LockedLinkedHashMap();
-   public static final HashMap EMPTY_HASHMAP = new LockedHashMap();
-   public static final WeakHashMap EMPTY_WEAK_HASHMAP = new LockedWeakHashMap();
-   public static final WeakValueHashMap EMPTY_WEAK_VALUE_HASHMAP = new LockedWeakValueHashMap();
-   public static final ArrayList EMPTY_ARRAYLIST = new LockedArrayList();
-   public static final CopyOnWriteArraySet EMPTY_COPYONWRITE_ARRAYSET = new LockedCopyOnWriteArraySet();
-   public static final TLongObjectHashMap EMPTY_TLONG_OBJECT_HASHMAP = new LockedTLongObjectHashMap();
-   public static final ConcurrentHashMap EMPTY_CONCURRENT_HASHMAP = new LockedConcurrentHashMap();
+   @SuppressWarnings("unchecked") public static final LinkedHashMap EMPTY_LINKED_HASHMAP = new LockedLinkedHashMap();
+   @SuppressWarnings("unchecked") public static final HashMap EMPTY_HASHMAP = new LockedHashMap();
+   @SuppressWarnings("unchecked") public static final WeakHashMap EMPTY_WEAK_HASHMAP = new LockedWeakHashMap();
+   @SuppressWarnings("unchecked") public static final WeakValueHashMap EMPTY_WEAK_VALUE_HASHMAP = new LockedWeakValueHashMap();
+   @SuppressWarnings("unchecked") public static final ArrayList EMPTY_ARRAYLIST = new LockedArrayList();
+   @SuppressWarnings("unchecked") public static final CopyOnWriteArraySet EMPTY_COPYONWRITE_ARRAYSET = new LockedCopyOnWriteArraySet();
+   @SuppressWarnings("unchecked") public static final TLongObjectHashMap EMPTY_TLONG_OBJECT_HASHMAP = new LockedTLongObjectHashMap();
+   @SuppressWarnings("unchecked") public static final ConcurrentHashMap EMPTY_CONCURRENT_HASHMAP = new LockedConcurrentHashMap();
 
    private static class LockedHashMap<K,V> extends HashMap<K,V>
    {
@@ -101,18 +101,19 @@ public class UnmodifiableEmptyCollections
       }
    }
    
-   private static class LockedWeakValueHashMap extends WeakValueHashMap
+   
+   private static class LockedWeakValueHashMap<K, V> extends WeakValueHashMap<K, V>
    {
       private static final long serialVersionUID = 1L;
       @Override
-      public Object put(Object arg0, Object arg1)
+      public V put(K key, V value) 
       {
-         return super.put(arg0, arg1);
+         throw new UnsupportedOperationException();
       }
       @Override
-      public synchronized void putAll(Map arg0)
+      public void putAll(Map<? extends K, ? extends V> t) 
       {
-         super.putAll(arg0);
+         throw new UnsupportedOperationException();
       }
    }
    

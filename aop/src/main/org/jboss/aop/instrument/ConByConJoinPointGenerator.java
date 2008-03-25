@@ -53,8 +53,8 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
    public static final String JOINPOINT_CLASS_PREFIX = JoinPointGenerator.JOINPOINT_CLASS_PREFIX + "CByC_";
    public static final String JOINPOINT_FIELD_PREFIX = JoinPointGenerator.JOINPOINT_FIELD_PREFIX + "CByC_";
 
-   private static final Class JOINPOINT_TYPE = ConstructorCallByConstructor.class;
-   private static final Class INVOCATION_TYPE = ConstructorCalledByConstructorInvocation.class;
+   private static final Class<ConstructorCallByConstructor> JOINPOINT_TYPE = ConstructorCallByConstructor.class;
+   private static final Class<ConstructorCalledByConstructorInvocation> INVOCATION_TYPE = ConstructorCalledByConstructorInvocation.class;
    private static final CtClass INVOCATION_CT_TYPE;
    static
    {
@@ -114,7 +114,7 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
       return false;
    }
 
-   protected Class getReturnClassType()
+   protected Class<?> getReturnClassType()
    {
       return returnType.get();
    }
@@ -122,7 +122,7 @@ public class ConByConJoinPointGenerator extends JoinPointGenerator
    protected AdviceMethodProperties getAdviceMethodProperties(JoinPointBean joinPoint, AdviceSetup setup)
    {
       ConstructorCallByConstructor call = (ConstructorCallByConstructor) joinPoint;
-      Constructor ctor = call.getConstructor();
+      Constructor<?> ctor = call.getConstructor();
       AdviceMethodProperties properties = new AdviceMethodProperties(
             joinPoint,
             setup.getAspectClass(),

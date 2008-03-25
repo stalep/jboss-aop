@@ -50,8 +50,8 @@ import org.jboss.aop.util.ReflectToJavassist;
  */
 public class MethodJoinPointGenerator extends JoinPointGenerator
 {
-   private static final Class INVOCATION_TYPE = MethodInvocation.class;
-   private static final Class JOINPOINT_TYPE = MethodExecution.class;
+   private static final Class<MethodInvocation> INVOCATION_TYPE = MethodInvocation.class;
+   private static final Class<MethodExecution> JOINPOINT_TYPE = MethodExecution.class;
    private static final CtClass INVOCATION_CT_TYPE;
 
    static
@@ -120,7 +120,7 @@ public class MethodJoinPointGenerator extends JoinPointGenerator
       return getReturnClassType() == null;
    }
 
-   protected Class getReturnClassType()
+   protected Class<?> getReturnClassType()
    {
       if (returnType == null)
       {

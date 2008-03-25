@@ -22,6 +22,7 @@
 package org.jboss.aop.proxy;
 
 import org.jboss.aop.InstanceAdvised;
+import org.jboss.aop.util.reference.MethodPersistentReference;
 import org.jboss.util.id.GUID;
 
 import java.io.ObjectStreamException;
@@ -37,7 +38,7 @@ public abstract class Proxy implements InstanceAdvised, java.io.Serializable, Me
 
    public org.jboss.aop.InstanceAdvisor instanceAdvisor;
    public org.jboss.aop.proxy.ProxyMixin[] mixins;
-   public Class[] interfaces;
+   public Class<?>[] interfaces;
    public GUID guid;
 
    public org.jboss.aop.InstanceAdvisor _getInstanceAdvisor()
@@ -47,7 +48,7 @@ public abstract class Proxy implements InstanceAdvised, java.io.Serializable, Me
 
    public void _setInstanceAdvisor(org.jboss.aop.InstanceAdvisor newAdvisor)
    {
-      instanceAdvisor = (org.jboss.aop.ClassInstanceAdvisor) newAdvisor;
+      instanceAdvisor = newAdvisor;
    }
 
    public org.jboss.aop.joinpoint.InvocationResponse _dynamicInvoke(org.jboss.aop.joinpoint.Invocation invocation)
@@ -63,6 +64,6 @@ public abstract class Proxy implements InstanceAdvised, java.io.Serializable, Me
       return new MarshalledInterfaceProxy(guid, interfaces, mixins, instanceAdvisor);
    }
 
-   public abstract Map getMethodMap();
+   public abstract Map<Long, MethodPersistentReference> getMethodMap();
 
 }

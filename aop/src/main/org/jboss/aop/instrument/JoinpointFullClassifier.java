@@ -22,7 +22,6 @@
 package org.jboss.aop.instrument;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import javassist.CtMember;
 import javassist.NotFoundException;
@@ -58,11 +57,9 @@ public class JoinpointFullClassifier extends JoinpointClassifier
    protected JoinpointClassification classifyJoinpoint(CtMember member, Advisor advisor, Matcher joinpointMatcher) throws NotFoundException
    {
       JoinpointClassification classification = JoinpointClassification.NOT_INSTRUMENTED;
-      Collection pointcuts = advisor.getManager().getPointcutInfos().values();
-      boolean dynamicAop = true;
-      for (Iterator it = pointcuts.iterator(); it.hasNext(); )
+      Collection<PointcutInfo> pointcuts = advisor.getManager().getPointcutInfos().values();
+      for (PointcutInfo pointcutInfo : pointcuts)
       {
-         PointcutInfo pointcutInfo = (PointcutInfo) it.next();
          // won't check matching of preparation pointcuts unnecessarily
          if (classification == JoinpointClassification.PREPARED && pointcutInfo.getBinding() == null)
          {

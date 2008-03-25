@@ -54,7 +54,7 @@ public class MarshalledValueOutputStream
    /**
     * @throws java.io.IOException   Any exception thrown by the underlying OutputStream.
     */
-   protected void annotateClass(Class cl) throws IOException
+   protected void annotateClass(Class<?> cl) throws IOException
    {
       super.annotateClass(cl);
    }
@@ -62,7 +62,7 @@ public class MarshalledValueOutputStream
    /**
     * @throws java.io.IOException   Any exception thrown by the underlying OutputStream.
     */
-   protected void annotateProxyClass(Class cl) throws IOException
+   protected void annotateProxyClass(Class<?> cl) throws IOException
    {
       super.annotateProxyClass(cl);
    }

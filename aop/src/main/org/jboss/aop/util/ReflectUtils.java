@@ -34,16 +34,16 @@ import java.util.regex.Pattern;
  */
 public class ReflectUtils
 {
-   public static Class[] EMPTY_CLASS_ARRAY = new Class[0];
+   public static Class<?>[] EMPTY_CLASS_ARRAY = new Class[0];
    private static Pattern accessMethodPattern = Pattern.compile("access[$](\\d)+");
    
-   public static Method[] getMethodsWithName(Class clazz, String name)
+   public static Method[] getMethodsWithName(Class<?> clazz, String name)
    {
       Method[] methods = clazz.getMethods();
       return getMethodsWithName(methods, name);
    }
    
-   public static Method[] getDeclaredMethodsWithName(Class clazz, String name)
+   public static Method[] getDeclaredMethodsWithName(Class<?> clazz, String name)
    {
       Method[] methods = clazz.getDeclaredMethods();
       return getMethodsWithName(methods, name);
@@ -51,7 +51,7 @@ public class ReflectUtils
    
    private static Method[] getMethodsWithName(Method[] methods, String name)
    {
-      ArrayList foundMethods = new ArrayList();
+      ArrayList<Method> foundMethods = new ArrayList<Method>();
       for (int i = 0 ; i < methods.length ; i++)
       {
          if (methods[i].getName().equals(name))
@@ -59,7 +59,7 @@ public class ReflectUtils
             foundMethods.add(methods[i]);
          }
       }
-      return (Method[])foundMethods.toArray(new Method[foundMethods.size()]);
+      return foundMethods.toArray(new Method[foundMethods.size()]);
    }
    
    /**

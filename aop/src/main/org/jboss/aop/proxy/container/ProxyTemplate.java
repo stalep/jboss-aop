@@ -21,14 +21,12 @@
   */
 package org.jboss.aop.proxy.container;
 
-import java.io.IOException;
 import java.io.ObjectStreamException;
 
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.metadata.SimpleMetaData;
-import org.jboss.util.id.GUID;
 
 /**
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
@@ -159,7 +157,6 @@ public class ProxyTemplate implements Delegate, AspectManaged
       this.metadata = proxy.getMetadata();
       this.key = proxy.getKey();
 
-      Class clazz = proxy.getClazz();
       this.classAdvisor = ContainerCache.getCachedContainer(this.key);
       this.currentAdvisor = classAdvisor;
       

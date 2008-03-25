@@ -22,7 +22,6 @@
 package org.jboss.aop.instrument;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import javassist.CtMember;
 import javassist.NotFoundException;
@@ -59,13 +58,11 @@ public class JoinpointSimpleClassifier extends JoinpointClassifier
     */
    protected JoinpointClassification classifyJoinpoint(CtMember member, Advisor advisor, Matcher joinpointMatcher) throws NotFoundException
    {
-      Collection pointcuts = advisor.getManager().getPointcuts().values();
+      Collection<Pointcut> pointcuts = advisor.getManager().getPointcuts().values();
       synchronized (pointcuts)
       {
-         for (Iterator it = pointcuts.iterator(); it.hasNext(); )
+         for (Pointcut pointcut : pointcuts)
          {
-            Pointcut pointcut = (Pointcut) it.next();
-   
             if (joinpointMatcher.matches(pointcut, advisor, member))
             {
                if (AspectManager.verbose && logger.isDebugEnabled())

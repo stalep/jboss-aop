@@ -62,7 +62,7 @@ public final class JoinpointClassification
 
    /** The classification description */
    private String description;
-   private boolean dynamicAop;
+   //private boolean dynamicAop;
    private JoinpointClassification counterPart;
    
    /**
@@ -71,7 +71,7 @@ public final class JoinpointClassification
     */
    private JoinpointClassification(String description) {
       this.description = description;
-      this.dynamicAop = false;
+      //this.dynamicAop = false;
    }
 
    /**
@@ -81,7 +81,7 @@ public final class JoinpointClassification
    private JoinpointClassification(JoinpointClassification counterpart, String description) {
       this(description);
       this.counterPart = counterpart;
-      this.dynamicAop = true;
+      //this.dynamicAop = true;
    }
    
    /**

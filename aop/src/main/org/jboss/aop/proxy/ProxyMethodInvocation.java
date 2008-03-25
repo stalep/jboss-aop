@@ -59,7 +59,7 @@ public class ProxyMethodInvocation extends MethodInvocation
 
    public Method getMethod()
    {
-      MethodPersistentReference ref = (MethodPersistentReference)proxy.getMethodMap().get(new Long(methodHash));
+      MethodPersistentReference ref = proxy.getMethodMap().get(new Long(methodHash));
       return (Method)ref.get();
    }
 

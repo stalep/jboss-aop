@@ -122,7 +122,7 @@ public class OptimizedCallerTransformer extends CallerTransformer
 
       protected void replaceMethodCallInCon(ConstructorDetail cd)throws CannotCompileException, NotFoundException
       {
-         String invocationClassName = (String) callerInfos.get(cd.callerInfoField);
+         String invocationClassName = callerInfos.get(cd.callerInfoField);
          String typedTargetObject = javassist.Modifier.isStatic(cd.calledMethod.getModifiers()) ? "" : "invocation.typedTargetObject=$0;";
    
          String replaced =
@@ -149,7 +149,7 @@ public class OptimizedCallerTransformer extends CallerTransformer
             callingObject = ", this";
          }
 
-         String invocationClassName = (String) callerInfos.get(md.callerInfoField);
+         String invocationClassName = callerInfos.get(md.callerInfoField);
          String typedTargetObject = javassist.Modifier.isStatic(md.calledMethod.getModifiers()) ? "" : "invocation.typedTargetObject=$0;";
 
          String replaced =
@@ -183,7 +183,7 @@ public class OptimizedCallerTransformer extends CallerTransformer
             callingObject = "this";
          }
 
-         String invocationClassName = (String) callerInfos.get(cd.callerInfoField);
+         String invocationClassName = callerInfos.get(cd.callerInfoField);
          String replaced =
          conByMethodInfoFromWeakReference("info", cd.callerInfoField) +
          "if (info.getInterceptors() != (org.jboss.aop.advice.Interceptor[])null) { " +
@@ -208,7 +208,7 @@ public class OptimizedCallerTransformer extends CallerTransformer
             super.replaceConCallInCon(cd);
             return;
          }
-         String invocationClassName = (String) callerInfos.get(cd.callerInfoField);
+         String invocationClassName = callerInfos.get(cd.callerInfoField);
 
          String replaced =
          conByConInfoFromWeakReference("info", cd.callerInfoField) +

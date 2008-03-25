@@ -39,7 +39,7 @@ public interface HotSwapper
     * @param classCode the new byte codes of <code>clazz</code>.
     * @see hotSwap
     */
-   void registerChange(Class clazz, byte[] classCode);
+   void registerChange(Class<?> clazz, byte[] classCode);
    
    /**
     * Performs the hot swap of classes previously registered through

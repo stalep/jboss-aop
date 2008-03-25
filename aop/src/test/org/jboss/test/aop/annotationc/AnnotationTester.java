@@ -475,7 +475,7 @@ public class AnnotationTester extends AOPTestWithSetup
       
       //Non static inner classes get an extra ctor param containing the outer class, do sorting here to get right order between
       //default and other ctor
-      Constructor[] ctors = BytecodePOJO.InnerClass.class.getDeclaredConstructors();
+      Constructor<?>[] ctors = BytecodePOJO.InnerClass.class.getDeclaredConstructors();
       Arrays.sort(ctors, ConstructorComparator.INSTANCE);
 
       System.out.println(ctors[0]);

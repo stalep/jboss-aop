@@ -110,13 +110,13 @@ public abstract class ConstructionTransformer
       if (!advisor.getManager().isConstruction()) return false;
 
       boolean oneMatch = false;
-      List constructors = instrumentor.getConstructors(clazz);
+      List<CtConstructor> constructors = instrumentor.getConstructors(clazz);
       
-      Iterator it = constructors.iterator();
+      Iterator<CtConstructor> it = constructors.iterator();
       for (int index = 0; it.hasNext(); index++)
       {
          // generate wrapper
-         CtConstructor constructor = (CtConstructor) it.next();
+         CtConstructor constructor = it.next();
          if (constructor.isClassInitializer() || !isAdvisableConstructor(constructor,  advisor))
          {
             if (oneMatch)
@@ -134,7 +134,7 @@ public abstract class ConstructionTransformer
             
             for (int j = 0 ; j < index ; j++)
             {
-               generateNotMatchedConstructionInfoField((CtConstructor)constructors.get(j), j);
+               generateNotMatchedConstructionInfoField(constructors.get(j), j);
             }
          }
 
@@ -150,13 +150,11 @@ public abstract class ConstructionTransformer
    public static boolean isAdvisableConstructor(CtConstructor con, ClassAdvisor advisor) throws NotFoundException
    {
       
-      Map pointcuts = advisor.getManager().getPointcuts();
+      Map<String, Pointcut> pointcuts = advisor.getManager().getPointcuts();
       synchronized (pointcuts)
       {
-         Iterator it = pointcuts.values().iterator();
-         while (it.hasNext())
+         for (Pointcut pointcut : pointcuts.values())
          {
-            Pointcut pointcut = (Pointcut) it.next();
             if (pointcut.matchesConstruction(advisor, con))
             {
                return true;

@@ -31,14 +31,14 @@ import java.util.ArrayList;
  */
 public class ThreadLocalStack
 {
-   private ThreadLocal local = new ThreadLocal();
+   private ThreadLocal<ArrayList<Object>> local = new ThreadLocal<ArrayList<Object>>();
 
    public void push(Object obj)
    {
-      ArrayList stack = (ArrayList) local.get();
+      ArrayList<Object> stack = local.get();
       if (stack == null)
       {
-         stack = new ArrayList();
+         stack = new ArrayList<Object>();
          local.set(stack);
       }
       stack.add(obj);
@@ -46,14 +46,14 @@ public class ThreadLocalStack
 
    public Object get()
    {
-      ArrayList stack = (ArrayList) local.get();
+      ArrayList<Object> stack = local.get();
       if (stack == null) return null;
       return stack.get(stack.size() - 1);
    }
 
    public void pop()
    {
-      ArrayList stack = (ArrayList) local.get();
+      ArrayList<Object> stack = local.get();
       stack.remove(stack.size() - 1);
    }
 }

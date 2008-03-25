@@ -97,7 +97,6 @@ public class GeneratedAdvisorConstructorExecutionTransformer extends
 
    protected void initialiseWrapper(int mod, CtConstructor constructor, int index) throws NotFoundException, CannotCompileException
    {
-      GeneratedAdvisorInstrumentor instrumentor = (GeneratedAdvisorInstrumentor)getInstrumentor();
       CtClass genadvisor = getGenAdvisor();
       CtClass clazz = constructor.getDeclaringClass();
 
@@ -123,7 +122,7 @@ public class GeneratedAdvisorConstructorExecutionTransformer extends
             null,
             clazz);
       wmethod.setModifiers(mod);
-      wmethod.setBody("{return (("  +  instrumentor.getAdvisorFQN(clazz) +
+      wmethod.setBody("{return (("  +  GeneratedAdvisorInstrumentor.getAdvisorFQN(clazz) +
             ")" + Instrumentor.HELPER_FIELD_NAME + ")." + getInnerWrapperMethodName(constructor) + "($$);}");
       clazz.addMethod(wmethod);
 
@@ -188,13 +187,13 @@ public class GeneratedAdvisorConstructorExecutionTransformer extends
 
    private String getInnerWrapperMethodName(CtConstructor constructor)
    {
-      return constructorFactory(((GeneratedAdvisorInstrumentor)getInstrumentor()).getAdvisorName(constructor.getDeclaringClass()));
+      return constructorFactory(GeneratedAdvisorInstrumentor.getAdvisorName(constructor.getDeclaringClass()));
    }
 
    private String outerDelegatingBody(CtConstructor constructor)
    {
       return "{return ((" +
-      ((GeneratedAdvisorInstrumentor)getInstrumentor()).getAdvisorFQN(constructor.getDeclaringClass()) +
+      GeneratedAdvisorInstrumentor.getAdvisorFQN(constructor.getDeclaringClass()) +
       ")" + Instrumentor.HELPER_FIELD_NAME + ")." + getInnerWrapperMethodName(constructor) + "($$);}";
    }
 

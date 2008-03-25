@@ -40,9 +40,9 @@ public class InstrumentorFactory
    
    protected static InstrumentorEnum instrumentor; 
    
-   protected static Constructor otherInstrumentorConstructor;
+   protected static Constructor<?> otherInstrumentorConstructor;
    
-   private static final Class[] CONSTRUCTOR_SIG = new Class[] {AOPClassPool.class, AspectManager.class, JoinpointClassifier.class, DynamicTransformationObserver.class};
+   private static final Class<?>[] CONSTRUCTOR_SIG = new Class[] {AOPClassPool.class, AspectManager.class, JoinpointClassifier.class, DynamicTransformationObserver.class};
    
    public static void initialise(String property)
    {
@@ -67,7 +67,7 @@ public class InstrumentorFactory
             try
             {
                // FIXME ClassLoader - why should the class be visible from the context classloader?
-               Class otherInstrumentorClass = SecurityActions.getContextClassLoader().loadClass(property);
+               Class<?> otherInstrumentorClass = SecurityActions.getContextClassLoader().loadClass(property);
                otherInstrumentorConstructor = otherInstrumentorClass.getConstructor(CONSTRUCTOR_SIG);
                instrumentor = InstrumentorEnum.OTHER_INSTRUMENTOR;
             }

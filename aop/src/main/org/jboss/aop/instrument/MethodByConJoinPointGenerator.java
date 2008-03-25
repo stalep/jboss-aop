@@ -47,8 +47,8 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
 {
    public static final String JOINPOINT_CLASS_PREFIX = JoinPointGenerator.JOINPOINT_CLASS_PREFIX + "MByC_";
    public static final String JOINPOINT_FIELD_PREFIX = JoinPointGenerator.JOINPOINT_FIELD_PREFIX + "MByC_";
-   private static final Class INVOCATION_TYPE = MethodCalledByConstructorInvocation.class;
-   private static final Class JOINPOINT_TYPE = MethodCallByConstructor.class;
+   private static final Class<MethodCalledByConstructorInvocation> INVOCATION_TYPE = MethodCalledByConstructorInvocation.class;
+   private static final Class<MethodCallByConstructor> JOINPOINT_TYPE = MethodCallByConstructor.class;
    
    private static final CtClass INVOCATION_CT_TYPE;
    static
@@ -121,7 +121,7 @@ public class MethodByConJoinPointGenerator extends JoinPointGenerator
       return getReturnClassType() == null;
    }
 
-   protected Class getReturnClassType()
+   protected Class<?> getReturnClassType()
    {
       if (returnType == null)
       {

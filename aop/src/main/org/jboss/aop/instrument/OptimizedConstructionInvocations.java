@@ -27,7 +27,6 @@ import javassist.CtConstructor;
 import javassist.CtMethod;
 import javassist.CtNewConstructor;
 import javassist.CtNewMethod;
-import javassist.Modifier;
 
 import org.jboss.aop.classpool.AOPClassPool;
 

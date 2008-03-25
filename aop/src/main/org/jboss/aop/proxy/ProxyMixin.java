@@ -34,13 +34,13 @@ public class ProxyMixin implements Serializable
    static final long serialVersionUID = -6150046185716362835L;
 
    private Object mixin;
-   private Class[] interfaces;
+   private Class<?>[] interfaces;
 
    protected ProxyMixin()
    {
    }
 
-   public ProxyMixin(Object mixin, Class[] interfaces)
+   public ProxyMixin(Object mixin, Class<?>[] interfaces)
    {
       this.interfaces = interfaces;
       this.mixin = mixin;
@@ -51,7 +51,7 @@ public class ProxyMixin implements Serializable
       return mixin;
    }
 
-   public Class[] getInterfaces()
+   public Class<?>[] getInterfaces()
    {
       return interfaces;
    }

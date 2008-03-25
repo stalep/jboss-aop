@@ -69,7 +69,7 @@ public class MarshalledContainerProxy implements Serializable
    private ContainerProxyCacheKey key;
    private Object mixins[];
    private Object delegate;
-   private Class clazz;
+   private Class<?> clazz;
    private SimpleMetaData metadata;
    
    //Interfaces resulting from a mixin or interface introduction
@@ -87,7 +87,7 @@ public class MarshalledContainerProxy implements Serializable
    public MarshalledContainerProxy(AspectManaged proxyInstance, ContainerProxyCacheKey key, Object[] mixins, Object delegate, Advisor currentAdvisor, SimpleMetaData metadata)
    {
       this.proxyInstance = proxyInstance;
-      Class proxyClass = proxyInstance.getClass();
+      Class<?> proxyClass = proxyInstance.getClass();
       this.proxyClassName = proxyClass.getName();
       this.key = key;
       this.mixins = mixins;
@@ -99,7 +99,7 @@ public class MarshalledContainerProxy implements Serializable
 
       marshalledInterceptors = new MarshalledInterceptors(currentAdvisor, mixins);
       
-      Class[] proxyInterfaces = proxyClass.getInterfaces();
+      Class<?>[] proxyInterfaces = proxyClass.getInterfaces();
       ArrayList<String> ifs = new ArrayList<String>();
       for (int i = 0 ; i < proxyInterfaces.length ; i++)
       {
@@ -151,7 +151,7 @@ public class MarshalledContainerProxy implements Serializable
    private Object localReadResolve() throws Exception
    {
       ClassLoader tcl = SecurityActions.getContextClassLoader();
-      Class proxyClass = tcl.loadClass(proxyClassName);
+      Class<?> proxyClass = tcl.loadClass(proxyClassName);
       Object proxy = proxyClass.newInstance();
       Delegate delegate = (Delegate)proxy;
       delegate.localUnmarshal(this);
@@ -169,7 +169,7 @@ public class MarshalledContainerProxy implements Serializable
       advisor.setClazz(clazz);
 
       boolean objectAsSuper = key.getClazz().equals(Object.class);
-      Class proxyClass = ContainerProxyFactory.getProxyClass(objectAsSuper, key, advisor, this);
+      Class<?> proxyClass = ContainerProxyFactory.getProxyClass(objectAsSuper, key, advisor, this);
    
       Delegate proxy = (Delegate)proxyClass.newInstance();
       proxy.remoteUnmarshal(this, advisor);
@@ -196,7 +196,7 @@ public class MarshalledContainerProxy implements Serializable
       return delegate;
    }
 
-   public Class getClazz()
+   public Class<?> getClazz()
    {
       return clazz;
    }
@@ -252,7 +252,6 @@ public class MarshalledContainerProxy implements Serializable
             MethodInfo[] methodInfos = getMethodInfos();
             MarshalledMethodInfo[] marshalledInfos = new MarshalledMethodInfo[methodInfos.length];
 
-            boolean requiresInstanceAdvisor = false;
             for (int i = 0 ; i < methodInfos.length ; i++)
             {
                MarshalledMethodInfo info = new MarshalledMethodInfo(MarshalledContainerProxy.this, methodInfos[i]);
@@ -309,7 +308,7 @@ public class MarshalledContainerProxy implements Serializable
             expr.append(m.getName());
             expr.append("(");
             boolean first = true;
-            for (Class c : m.getParameterTypes())
+            for (Class<?> c : m.getParameterTypes())
             {
                if (first)
                {
@@ -350,11 +349,12 @@ public class MarshalledContainerProxy implements Serializable
       
    private static class MarshalledMethodInfo implements Serializable
    {
+      private static final long serialVersionUID = 1L;
       transient MarshalledContainerProxy proxy;
       long advisedHash;
       long unadvisedHash;
       Interceptor[] interceptors;
-      Class clazz;
+      Class<?> clazz;
       transient boolean requiresInstanceAdvisor;
       
       public MarshalledMethodInfo(MarshalledContainerProxy proxy, MethodInfo info) throws IOException

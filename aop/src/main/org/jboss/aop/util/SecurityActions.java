@@ -36,17 +36,17 @@ class SecurityActions
 {
    interface GetDeclaredMethodsAction
    {
-      Method[] getDeclaredMethods(Class clazz);
+      Method[] getDeclaredMethods(Class<?> clazz);
       
       GetDeclaredMethodsAction PRIVILEGED = new GetDeclaredMethodsAction()
       {
-         public Method[] getDeclaredMethods(final Class clazz)
+         public Method[] getDeclaredMethods(final Class<?> clazz)
          {
             try
             {
-               return (Method[])AccessController.doPrivileged(new PrivilegedExceptionAction()
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<Method[]>()
                {
-                  public Object run() throws Exception
+                  public Method[] run() throws Exception
                   {
                      return clazz.getDeclaredMethods();
                   }
@@ -61,7 +61,7 @@ class SecurityActions
 
       GetDeclaredMethodsAction NON_PRIVILEGED = new GetDeclaredMethodsAction()
       {
-         public Method[] getDeclaredMethods(Class clazz)
+         public Method[] getDeclaredMethods(Class<?> clazz)
          {
             return clazz.getDeclaredMethods();
          }
@@ -70,17 +70,17 @@ class SecurityActions
    
    interface GetDeclaredConstructorsAction
    {
-      Constructor[] getDeclaredConstructors(Class clazz);
+      Constructor<?>[] getDeclaredConstructors(Class<?> clazz);
       
       GetDeclaredConstructorsAction PRIVILEGED = new GetDeclaredConstructorsAction()
       {
-         public Constructor[] getDeclaredConstructors(final Class clazz)
+         public Constructor<?>[] getDeclaredConstructors(final Class<?> clazz)
          {
             try
             {
-               return (Constructor[])AccessController.doPrivileged(new PrivilegedExceptionAction()
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<Constructor<?>[]>()
                {
-                  public Object run() throws Exception
+                  public Constructor<?>[] run() throws Exception
                   {
                      return clazz.getDeclaredConstructors();
                   }
@@ -95,14 +95,14 @@ class SecurityActions
 
       GetDeclaredConstructorsAction NON_PRIVILEGED = new GetDeclaredConstructorsAction()
       {
-         public Constructor[] getDeclaredConstructors(Class clazz)
+         public Constructor<?>[] getDeclaredConstructors(Class<?> clazz)
          {
             return clazz.getDeclaredConstructors();
          }
       };
    }
    
-   static Method[] getDeclaredMethods(Class clazz)
+   static Method[] getDeclaredMethods(Class<?> clazz)
    {
       if (System.getSecurityManager() == null)
       {
@@ -114,7 +114,7 @@ class SecurityActions
       }
    }
    
-   static Constructor[] getDeclaredConstructors(Class clazz)
+   static Constructor<?>[] getDeclaredConstructors(Class<?> clazz)
    {
       if (System.getSecurityManager() == null)
       {

@@ -109,7 +109,7 @@ public abstract class Instrumentor
    protected CodeConverter converter;
    protected AspectManager manager;
    protected JoinpointClassifier joinpointClassifier;
-   protected static Collection processedClasses = new ArrayList();
+   protected static Collection<CtClass> processedClasses = new ArrayList<CtClass>();
 
    // Transformers, more than meets the eye!
    MethodExecutionTransformer methodExecutionTransformer;
@@ -325,14 +325,14 @@ public abstract class Instrumentor
          CtClass intf = classPool.get(interfaces[i]);
          if (clazz.subtypeOf(intf)) continue;
          clazz.addInterface(intf);
-         HashMap intfMap = JavassistMethodHashing.getMethodMap(intf);
-         Iterator entries = intfMap.entrySet().iterator();
+         HashMap<Long, CtMethod> intfMap = JavassistMethodHashing.getMethodMap(intf);
+         Iterator<Map.Entry<Long, CtMethod>> entries = intfMap.entrySet().iterator();
          while (entries.hasNext())
          {
-            Map.Entry entry = (Map.Entry) entries.next();
-            Long hash = (Long) entry.getKey();
-            CtMethod method = (CtMethod) entry.getValue();
-            CtMethod baseMethod = (CtMethod)baseMethods.get(hash);
+            Map.Entry<Long, CtMethod> entry = entries.next();
+            Long hash = entry.getKey();
+            CtMethod method = entry.getValue();
+            CtMethod baseMethod = baseMethods.get(hash);
             if (baseMethod != null && !addedMethods.contains(hash))
             {
                String msg = "Mixin " + mixinClass.getName() +
@@ -377,14 +377,14 @@ public abstract class Instrumentor
       }
 
       CtMethod mixinInvokeMethod = createInvokeMethod(clazz);
-      HashMap intfMap = JavassistMethodHashing.getMethodMap(iface);
-      Iterator entries = intfMap.entrySet().iterator();
+      HashMap<Long, CtMethod> intfMap = JavassistMethodHashing.getMethodMap(iface);
+      Iterator<Map.Entry<Long, CtMethod>> entries = intfMap.entrySet().iterator();
       while (entries.hasNext())
       {
-         Map.Entry entry = (Map.Entry) entries.next();
-         Long hash = (Long) entry.getKey();
+         Map.Entry<Long, CtMethod> entry = entries.next();
+         Long hash = entry.getKey();
          if (baseMethods.containsKey(hash)) continue;
-         CtMethod method = (CtMethod) entry.getValue();
+         CtMethod method = entry.getValue();
          addMixinMethod(advisor, method, clazz, mixinInvokeMethod, hash.longValue());
          baseMethods.put(hash, method);
       }
@@ -396,7 +396,7 @@ public abstract class Instrumentor
       ArrayList<InterfaceIntroduction> pointcuts = advisor.getInterfaceIntroductions();
 
       if (pointcuts.size() == 0) return;
-      HashMap baseMethods = JavassistMethodHashing.getDeclaredMethodMap(clazz);
+      HashMap<Long, CtMethod> baseMethods = JavassistMethodHashing.getDeclaredMethodMap(clazz);
       Iterator<InterfaceIntroduction> it = pointcuts.iterator();
       if (it.hasNext()) setupBasics(clazz);
       while (it.hasNext())
@@ -429,10 +429,8 @@ public abstract class Instrumentor
            throws Exception
    {
       boolean changed = false;
-      Iterator it = advisor.getManager().getAnnotationIntroductions().iterator();
-      while (it.hasNext())
+      for (AnnotationIntroduction introduction : advisor.getManager().getAnnotationIntroductions())
       {
-         AnnotationIntroduction introduction = (AnnotationIntroduction) it.next();
          if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("**** " + introduction.getOriginalAnnotationExpr() + " invisible: " + introduction.isInvisible() + " expr: " + introduction.getOriginalExpression());
          if (introduction.matches(advisor, clazz))
          {
@@ -566,10 +564,8 @@ public abstract class Instrumentor
            throws Exception
    {
       boolean changed = false;
-      Iterator it = advisor.getManager().getAnnotationOverrides().iterator();
-      while (it.hasNext())
+      for (AnnotationIntroduction introduction : advisor.getManager().getAnnotationOverrides())
       {
-         AnnotationIntroduction introduction = (AnnotationIntroduction) it.next();
          if (introduction.matches(advisor, clazz))
          {
             advisor.getAnnotations().addClassAnnotation(introduction.getAnnotation().getIdentifier(), introduction.getOriginalAnnotationExpr());
@@ -662,7 +658,7 @@ public abstract class Instrumentor
 
             if (!manager.getInterceptionMarkers().shouldSkipFieldAccess(ref) && !ref.equals(clazz.getName()))
             {
-               List fields = getAdvisableFields(ctRef);
+               List<CtField> fields = getAdvisableFields(ctRef);
                if (fieldAccessTransformer.replaceFieldAccess(fields, ctRef, advisor))
                {
                   manager.getInterceptionMarkers().addFieldInterceptionMarker(ref);
@@ -734,6 +730,7 @@ public abstract class Instrumentor
          boolean constructorAccessConverted = false;
          converted = applyCallerPointcuts(clazz, advisor) || converted;
          methodExecutionTransformer.instrument(clazz, advisor);
+         @SuppressWarnings("unused")
          boolean constructionTransformation = constructionTransformer.insertConstructionInterception(clazz, advisor);
          constructorAccessConverted = constructorExecutionTransformer.transform(clazz, advisor);
          String classname = clazz.getName();
@@ -781,7 +778,7 @@ public abstract class Instrumentor
          // notifies dynamic transformation observer
          dynamicTransformationObserver.transformationFinished(clazz, converter);
 
-         synchronized(this.processedClasses)
+         synchronized(processedClasses)
          {
             processedClasses.add(clazz);
          }
@@ -824,9 +821,9 @@ public abstract class Instrumentor
    }
 
 
-   public List getConstructors(CtClass clazz)
+   public List<CtConstructor> getConstructors(CtClass clazz)
    {
-      List list = new ArrayList();
+      List<CtConstructor> list = new ArrayList<CtConstructor>();
 
       CtConstructor[] constructors = clazz.getDeclaredConstructors();
 
@@ -842,9 +839,9 @@ public abstract class Instrumentor
    /**
     * Gets sorted collection of advisable methods.
     */
-   public static List getAdvisableFields(CtClass clazz) throws NotFoundException
+   public static List<CtField> getAdvisableFields(CtClass clazz) throws NotFoundException
    {
-      List list = new ArrayList();
+      List<CtField> list = new ArrayList<CtField>();
       CtField[] fields = clazz.getDeclaredFields();
       for (int i = 0; i < fields.length; i++)
       {
@@ -943,16 +940,15 @@ public abstract class Instrumentor
     * @param joinpointUpdates a collection of <code>org.jboss.aop.instrument.JoinpointStatusUpdate</code>.
     * @param hotSwapper object capable of hot swapping classes.
     */
-   public synchronized void interceptorChainsUpdated(Collection joinpointUpdates, HotSwapper hotSwapper) {
+   public synchronized void interceptorChainsUpdated(Collection<JoinpointStatusUpdate> joinpointUpdates, HotSwapper hotSwapper) {
       //creates a converter
       this.converter = new CodeConverter();
       // list of instrumented classes
-      Collection classes = new HashSet();
+      Collection<CtClass> classes = new HashSet<CtClass>();
       try {
          // transform classes whose joinpont status have changed
-         for (Iterator iterator = joinpointUpdates.iterator(); iterator.hasNext(); )
+         for (JoinpointStatusUpdate update : joinpointUpdates)
          {
-            JoinpointStatusUpdate update = (JoinpointStatusUpdate) iterator.next();
             CtClass clazz = update.clazz;
             JoinpointStatusUpdate.ClassJoinpoints wrapTargets = update.newlyAdvisedJoinpoints;
             JoinpointStatusUpdate.ClassJoinpoints unwrapTargets = update.newlyUnadvisedJoinpoints;
@@ -972,12 +968,10 @@ public abstract class Instrumentor
          }
          // instrument classes that access the joinpoints whose status have changed, in
          // order to make this classes access the joinpoint wrapper instead
-         Collection conversionsRegistered = new HashSet();
-         synchronized(this.processedClasses)
+         synchronized(processedClasses)
          {
-            for (Iterator iterator2 = processedClasses.iterator(); iterator2.hasNext(); ) {
-
-               CtClass clazz = (CtClass) iterator2.next();
+            for (CtClass clazz : processedClasses) 
+            {
                if (manager.isNonAdvisableClassName(clazz.getName()) || ! isTransformable(clazz))
                {
                   continue;
@@ -1004,9 +998,8 @@ public abstract class Instrumentor
          constructorExecutionTransformer.codeConverted();
 
          // registers the classes bytecodes to be hot swapped
-         for (Iterator iterator = classes.iterator(); iterator.hasNext(); )
+         for (CtClass clazz : classes)
          {
-            CtClass clazz = (CtClass) iterator.next();
             AOPClassPool classPool = (AOPClassPool) clazz.getClassPool();
             clazz.defrost();
             hotSwapper.registerChange(classPool.getClassLoader().loadClass(clazz.getName()),
@@ -1039,10 +1032,9 @@ public abstract class Instrumentor
    private boolean replaceArrayAccess(CtClass clazz, Advisor advisor) throws Exception
    {
       boolean shouldReplaceArrayAccess = false;
-      Map arrayReplacements = manager.getArrayReplacements();
-      for (Iterator it = arrayReplacements.values().iterator() ; it.hasNext() ; )
+      Map<String, ArrayReplacement> arrayReplacements = manager.getArrayReplacements();
+      for (ArrayReplacement arrayReplacement : arrayReplacements.values())
       {
-         ArrayReplacement arrayReplacement = (ArrayReplacement)it.next();
          if (arrayReplacement.matches(advisor, clazz))
          {
             shouldReplaceArrayAccess = true;
@@ -1075,19 +1067,17 @@ public abstract class Instrumentor
     * dynamicaly wrapped.
     */
    public void convertProcessedClasses(HotSwapper hotSwapper, CtClass clazz,
-         Collection fieldReads, Collection fieldWrites, boolean constructor)
+         Collection<CtField> fieldReads, Collection<CtField> fieldWrites, boolean constructor)
    {
       AOPClassPool classPool = (AOPClassPool) clazz.getClassPool();
       CodeConverter codeConverter = new CodeConverter();
-      for (Iterator iterator = fieldReads.iterator(); iterator.hasNext(); )
+      for (CtField field : fieldReads)
       {
-         CtField field = (CtField) iterator.next();
-         codeConverter.replaceFieldRead(field, clazz, fieldAccessTransformer.fieldRead(field.getName()));
+         codeConverter.replaceFieldRead(field, clazz, FieldAccessTransformer.fieldRead(field.getName()));
       }
-      for (Iterator iterator = fieldWrites.iterator(); iterator.hasNext(); )
+      for (CtField field : fieldWrites)
       {
-         CtField field = (CtField) iterator.next();
-         codeConverter.replaceFieldWrite(field, clazz, fieldAccessTransformer.fieldWrite(field.getName()));
+         codeConverter.replaceFieldWrite(field, clazz, FieldAccessTransformer.fieldWrite(field.getName()));
       }
       if (constructor)
       {
@@ -1096,9 +1086,8 @@ public abstract class Instrumentor
 
       synchronized(processedClasses)
       {
-      for (Iterator iterator = processedClasses.iterator(); iterator.hasNext();)
+      for (CtClass processedClass : processedClasses)
       {
-         CtClass processedClass = (CtClass) iterator.next();
          if (processedClass == clazz)
             continue;
          if (processedClass.getRefClasses() == null ||
@@ -1154,23 +1143,23 @@ public abstract class Instrumentor
    {
       int size;
       int current;
-      ArrayList classes;
-      HashSet handledClasses;
+      ArrayList<String> classes;
+      HashSet<String> handledClasses;
       String currentEntry;
 
-      public ReferenceClassIterator(Collection refClasses)
+      public ReferenceClassIterator(Collection<String> refClasses)
       {
          size = refClasses.size();
-         classes = new ArrayList(refClasses.size());
+         classes = new ArrayList<String>(refClasses.size());
          classes.addAll(refClasses);
-         handledClasses = new HashSet(refClasses.size());
+         handledClasses = new HashSet<String>(refClasses.size());
       }
 
       boolean hasNext()
       {
          while (current < size)
          {
-            String s = (String) classes.get(current++);
+            String s = classes.get(current++);
             if (!handledClasses.contains(s))
             {
                handledClasses.add(s);

@@ -45,7 +45,7 @@ public class ClassProxyTemplate implements ClassProxy, java.io.Externalizable
 
    public void _setInstanceAdvisor(org.jboss.aop.InstanceAdvisor newAdvisor)
    {
-      instanceAdvisor = (org.jboss.aop.ClassInstanceAdvisor) newAdvisor;
+      instanceAdvisor = newAdvisor;
    }
 
    public org.jboss.aop.joinpoint.InvocationResponse _dynamicInvoke(org.jboss.aop.joinpoint.Invocation invocation)

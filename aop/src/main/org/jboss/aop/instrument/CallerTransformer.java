@@ -22,7 +22,6 @@
 package org.jboss.aop.instrument;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -280,10 +279,10 @@ public abstract class CallerTransformer
    {
       CtClass callingClass;
       ClassAdvisor advisor;
-      List constructors;
+      List<CtConstructor> constructors;
       public boolean appliedCallerBinding = false;
 
-      HashMap callerInfos = new HashMap();
+      HashMap<String, String> callerInfos = new HashMap<String, String>();
       int invocationCounter = 0;
 
       public CallerExprEditor(ClassAdvisor advisor, CtClass callingClass)
@@ -341,13 +340,11 @@ public abstract class CallerTransformer
             DeclareChecker.checkDeclares(manager, call, advisor);
             
             // todo shouldn't iterate every time.  must be a better way
-            Map pointcuts = manager.getPointcuts();
+            Map<String, Pointcut> pointcuts = manager.getPointcuts();
             synchronized (pointcuts)
             {
-               Iterator it = pointcuts.values().iterator();
-               while (it.hasNext())
+               for (Pointcut p : pointcuts.values())
                {
-                  Pointcut p = (Pointcut) it.next();
                   if (p.matchesCall(advisor, call))
                   {
                      hasPointcut = true;
@@ -444,13 +441,11 @@ public abstract class CallerTransformer
             boolean hasPointcut = false;
 
             // todo shouldn't iterate every time.  must be a better way
-            Map pointcuts = manager.getPointcuts();
+            Map<String, Pointcut> pointcuts = manager.getPointcuts();
             synchronized (pointcuts)
             {
-               Iterator it = pointcuts.values().iterator();
-               while (it.hasNext())
+               for (Pointcut p : pointcuts.values())
                {
-                  Pointcut p = (Pointcut) it.next();
                   if (p.matchesCall(advisor, call))
                   {
                      hasPointcut = true;

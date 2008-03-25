@@ -30,18 +30,13 @@ import javassist.CtField;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public class CtFieldComparator implements java.util.Comparator {
+public class CtFieldComparator implements java.util.Comparator<CtField> {
 
     private CtFieldComparator() {}
 
-    public static final java.util.Comparator INSTANCE = new CtFieldComparator();
+    public static final java.util.Comparator<CtField> INSTANCE = new CtFieldComparator();
         
-    private int compare(CtField m1, CtField m2) {
+    public int compare(CtField m1, CtField m2) {
        return m1.getName().compareTo(m2.getName());
     }
-
-    public int compare(Object o1, Object o2) {
-        return compare((CtField) o1, (CtField) o2);
-    }
-
 }

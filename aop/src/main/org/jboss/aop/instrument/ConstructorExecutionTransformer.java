@@ -31,7 +31,6 @@ import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
-import javassist.CtMember;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.Modifier;
@@ -145,7 +144,7 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
     */
    public boolean transform(CtClass clazz, ClassAdvisor classAdvisor) throws Exception
    {
-      List constructors = instrumentor.getConstructors(clazz);
+      List<CtConstructor> constructors = instrumentor.getConstructors(clazz);
       boolean wrappersGenerated = false;
       boolean oneOrMoreWrapped = false;
       int i = 0;
@@ -154,13 +153,13 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
       CtConstructor firstConstructor = null;
       if (!constructors.isEmpty())
       {
-         firstConstructor = (CtConstructor) constructors.get(0);
+         firstConstructor = constructors.get(0);
       }
       if (constructors.size() > 0)
       {
-         for (Iterator iterator = constructors.iterator(); iterator.hasNext(); i++)
+         for (Iterator<CtConstructor> iterator = constructors.iterator(); iterator.hasNext(); i++)
          {
-            CtConstructor constructor = (CtConstructor) iterator.next();
+            CtConstructor constructor = iterator.next();
             
             JoinpointClassification classification = classifier.classifyConstructorExecution(constructor, classAdvisor);
             
@@ -183,7 +182,7 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
                {
                   for (int j = 0; j < i; j++)
                   {
-                     this.setEmptyWrapperCodeLater((CtConstructor) constructors.get(j));
+                     this.setEmptyWrapperCodeLater(constructors.get(j));
                   }
                   oneOrMoreWrapped = true;
                }
@@ -224,16 +223,16 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
     * @param constructors provide this list if you want to assure wrapper methods associated
     * with UNWRAPPED constructors keep unchanged (avoid infinite recursion in this wrappers).
     */
-   private void wrapAllConstructors(final CtClass clazz, CtConstructor firstConstructor, List constructors) throws NotFoundException, CannotCompileException
+   private void wrapAllConstructors(final CtClass clazz, CtConstructor firstConstructor, List<CtConstructor> constructors) throws NotFoundException, CannotCompileException
    {
       wrapper.wrap(firstConstructor, ALL_CONSTRUCTORS_STATUS);
       if (constructors == null)
       {
          return;
       }
-      for (Iterator i = constructors.iterator(); i.hasNext();)
+      for (Iterator<CtConstructor> i = constructors.iterator(); i.hasNext();)
       {
-         CtConstructor constructor = (CtConstructor) i.next();
+         CtConstructor constructor = i.next();
          if (!wrapper.isWrapped(constructor, CONSTRUCTOR_STATUS))
          {
             setEmptyWrapperCodeLater(constructor);
@@ -248,20 +247,19 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
     * @param constructorIndexes a collection of <code>java.lang.Integer</code> indentifying
     * the constructors to be wrapped.
     */
-   public void wrap(CtClass clazz, Collection constructorIndexes) throws Exception
+   public void wrap(CtClass clazz, Collection<Integer> constructorIndexes) throws Exception
    {
-      List constructors = instrumentor.getConstructors(clazz);
+      List<CtConstructor> constructors = instrumentor.getConstructors(clazz);
       // if none constructor has been prepared, do nothing
-      CtConstructor firstConstructor = (CtConstructor) constructors.get(0);
+      CtConstructor firstConstructor = constructors.get(0);
       if (wrapper.isNotPrepared(firstConstructor , ALL_CONSTRUCTORS_STATUS))
       {
          return;
       }
       // generate wrapper code
-      for (Iterator iterator = constructorIndexes.iterator(); iterator.hasNext(); )
+      for (Integer constructorIndex : constructorIndexes)
       {
-         int constructorIndex = ((Integer) iterator.next()).intValue();
-         CtConstructor constructor = (CtConstructor) constructors.get(constructorIndex);
+         CtConstructor constructor = constructors.get(constructorIndex);
          wrap(clazz, constructor, constructorIndex);
       }
       // if none constructors have been wrapped until now, replace constructors calls
@@ -300,18 +298,17 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
     * @param constructorIndexes a collection of <code>java.lang.Integer</code> indentifying
     * the constructors to be unwrapped.
     */
-   public void unwrap(CtClass clazz, Collection constructorIndexes) throws NotFoundException
+   public void unwrap(CtClass clazz, Collection<Integer> constructorIndexes) throws NotFoundException
    {
-      List constructors = instrumentor.getConstructors(clazz);
+      List<CtConstructor> constructors = instrumentor.getConstructors(clazz);
       // the joinpoint is not prepared for wrapping
-      if (wrapper.isNotPrepared((CtMember) constructors.get(0), ALL_CONSTRUCTORS_STATUS))
+      if (wrapper.isNotPrepared(constructors.get(0), ALL_CONSTRUCTORS_STATUS))
       {
          return;
       }
-      for (Iterator iterator = constructorIndexes.iterator(); iterator.hasNext(); )
+      for (Integer constructorIndex : constructorIndexes)
       {
-         int constructorIndex = ((Integer) iterator.next()).intValue();
-         CtConstructor constructor = (CtConstructor) constructors.get(constructorIndex);
+         CtConstructor constructor = constructors.get(constructorIndex);
          if (wrapper.isNotPrepared(constructor, CONSTRUCTOR_STATUS))
          {
             continue;
@@ -347,13 +344,13 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
    throws Exception
    {
       instrumentor.setupBasics(clazz);
-      List constructors = instrumentor.getConstructors(clazz);
+      List<CtConstructor> constructors = instrumentor.getConstructors(clazz);
 
-      Iterator it = constructors.iterator();
+      Iterator<CtConstructor> it = constructors.iterator();
       for (int index = 0; it.hasNext(); index++)
       {
          // generate wrapper
-         CtConstructor constructor = (CtConstructor) it.next();
+         CtConstructor constructor = it.next();
          int mod = Modifier.STATIC;
          if ((constructor.getModifiers() & Modifier.PUBLIC) != 0)
          {
@@ -469,13 +466,11 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
    // currently used by CallerTransformer
    public static boolean isAdvisableConstructor(CtConstructor con, ClassAdvisor advisor) throws NotFoundException
    {
-      Map pointcuts = advisor.getManager().getPointcuts();
+      Map<String, Pointcut> pointcuts = advisor.getManager().getPointcuts();
       synchronized (pointcuts)
       {
-         Iterator it = pointcuts.values().iterator();
-         while (it.hasNext())
+         for (Pointcut pointcut : pointcuts.values())
          {
-            Pointcut pointcut = (Pointcut) it.next();
             if (pointcut.matchesExecution(advisor, con))
             {
                return true;
@@ -505,7 +500,9 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
       if (attribute != null)
       {
          MethodInfo wrapperInfo = wmethod.getMethodInfo2();
-         wrapperInfo.addAttribute(attribute.copy(wrapperInfo.getConstPool(), new HashMap()));
+         @SuppressWarnings("unchecked")
+         HashMap map = new HashMap();
+         wrapperInfo.addAttribute(attribute.copy(wrapperInfo.getConstPool(), map));
       }
       
       // prepare ForWrapping

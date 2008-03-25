@@ -27,8 +27,6 @@ import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
-import org.jboss.aop.hook.SecurityActions.GetContextClassLoaderAction;
-
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
@@ -46,7 +44,7 @@ class SecurityActions
          {
             try
             {
-               AccessController.doPrivileged(new PrivilegedExceptionAction()
+               AccessController.doPrivileged(new PrivilegedExceptionAction<Object>()
                {
                   public Object run() throws Exception
                   {

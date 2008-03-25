@@ -44,7 +44,7 @@ class SecurityActions
          {
             try
             {
-               AccessController.doPrivileged(new PrivilegedExceptionAction()
+               AccessController.doPrivileged(new PrivilegedExceptionAction<Object>()
                {
                   public Object run() throws Exception
                   {

@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -60,7 +59,6 @@ import org.jboss.aop.MethodInfo;
 import org.jboss.aop.instrument.TransformerCommon;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.util.JavassistMethodHashing;
-import org.jboss.aop.util.MethodHashing;
 
 
 /**
@@ -69,13 +67,14 @@ import org.jboss.aop.util.MethodHashing;
  */
 public class ContainerProxyFactory
 {
+   @SuppressWarnings("unchecked") private static final HashMap EMPTY_HASHMAP = new HashMap();
    private static final String ADVISED = Advised.class.getName();
    private static final String INSTANCE_ADVISED = InstanceAdvised.class.getName();
    private static final CtClass[] EMPTY_CTCLASS_ARRAY = new CtClass[0];
    public static final String PROXY_NAME_PREFIX = "AOPContainerProxy$";
    
    private static Object maplock = new Object();
-   private static WeakHashMap<Class, Map<ContainerProxyCacheKey, Class>> proxyCache = new WeakHashMap<Class, Map<ContainerProxyCacheKey, Class>>();
+   private static WeakHashMap<Class<?>, Map<ContainerProxyCacheKey, Class<?>>> proxyCache = new WeakHashMap<Class<?>, Map<ContainerProxyCacheKey, Class<?>>>();
    private static volatile int counter = 0;
    
    private static CtMethod setDelegateMethod;
@@ -88,7 +87,7 @@ public class ContainerProxyFactory
    private Advisor advisor;
 
    /** The class we are generating this proxy for */
-   private Class clazz;
+   private Class<?> clazz;
 
    /** The generated proxy */
    private CtClass proxy;
@@ -106,33 +105,33 @@ public class ContainerProxyFactory
    /** Methods hardcoded in createBasics */
    private HashSet<Long> hardcodedMethods = new HashSet<Long>();
    
-   public static Class getProxyClass(Class clazz, AspectManager manager) throws Exception
+   public static Class<?> getProxyClass(Class<?> clazz, AspectManager manager) throws Exception
    {
       ContainerProxyCacheKey key = new ContainerProxyCacheKey(clazz);
       ClassContainer container = getTempClassContainer(clazz, manager);
       return getProxyClass(false, key, container);
    }
    
-   public static Class getProxyClass(boolean objectAsSuper, ContainerProxyCacheKey key, Advisor advisor)
+   public static Class<?> getProxyClass(boolean objectAsSuper, ContainerProxyCacheKey key, Advisor advisor)
            throws Exception
    {
       return getProxyClass(objectAsSuper, key, advisor, null);
    }
    
-   public static Class getProxyClass(boolean objectAsSuper, ContainerProxyCacheKey key, Advisor advisor, MarshalledContainerProxy outOfVmProxy)
+   public static Class<?> getProxyClass(boolean objectAsSuper, ContainerProxyCacheKey key, Advisor advisor, MarshalledContainerProxy outOfVmProxy)
    throws Exception
    {   
-      Class clazz = key.getClazz();
+      Class<?> clazz = key.getClazz();
       // Don't make a proxy of a proxy !
       if (Delegate.class.isAssignableFrom(clazz)) clazz = clazz.getSuperclass();
 
-      Class proxyClass = null;
+      Class<?> proxyClass = null;
       synchronized (maplock)
       {
-         Map<ContainerProxyCacheKey, Class> map = proxyCache.get(clazz);
+         Map<ContainerProxyCacheKey, Class<?>> map = proxyCache.get(clazz);
          if (map == null)
          {
-            map = new HashMap<ContainerProxyCacheKey, Class>();
+            map = new HashMap<ContainerProxyCacheKey, Class<?>>();
             proxyCache.put(clazz, map);
          }
          else
@@ -149,24 +148,22 @@ public class ContainerProxyFactory
       return proxyClass;
    }
 
-   private static Class generateProxy(boolean objectAsSuper, Class clazz, Advisor advisor, MarshalledContainerProxy outOfVmProxy) throws Exception
+   private static Class<?> generateProxy(boolean objectAsSuper, Class<?> clazz, Advisor advisor, MarshalledContainerProxy outOfVmProxy) throws Exception
    {
-      ArrayList introductions = advisor.getInterfaceIntroductions();
+      ArrayList<InterfaceIntroduction> introductions = advisor.getInterfaceIntroductions();
       CtClass proxy = createProxyCtClass(objectAsSuper, introductions, clazz, advisor, outOfVmProxy);
       ProtectionDomain pd = clazz.getProtectionDomain();
-      Class proxyClass = TransformerCommon.toClass(proxy, pd);
+      Class<?> proxyClass = TransformerCommon.toClass(proxy, pd);
       return proxyClass;
    }
 
-   private static ClassProxyContainer getTempClassContainer(Class clazz, AspectManager manager)
+   private static ClassProxyContainer getTempClassContainer(Class<?> clazz, AspectManager manager)
    {
       ClassProxyContainer container = new ClassProxyContainer("temp", manager);
       container.setClass(clazz);
 
-      Iterator it = container.getManager().getInterfaceIntroductions().values().iterator();
-      while (it.hasNext())
+      for (InterfaceIntroduction intro : container.getManager().getInterfaceIntroductions().values())
       {
-         InterfaceIntroduction intro = (InterfaceIntroduction) it.next();
          if (intro.matches(container, container.getClazz()))
          {
             container.addInterfaceIntroduction(intro);
@@ -175,14 +172,15 @@ public class ContainerProxyFactory
 
       return container;
    }
-   
-   private static CtClass createProxyCtClass(boolean objectAsSuper, ArrayList mixins, Class clazz, Advisor advisor)
+
+   @SuppressWarnings("unused")
+   private static CtClass createProxyCtClass(boolean objectAsSuper, ArrayList<InterfaceIntroduction> mixins, Class<?> clazz, Advisor advisor)
    throws Exception
    {
       return createProxyCtClass(objectAsSuper, mixins, clazz, advisor, null);
    }
    
-   private static CtClass createProxyCtClass(boolean objectAsSuper, ArrayList mixins, Class clazz, Advisor advisor, MarshalledContainerProxy outOfVmProxy)
+   private static CtClass createProxyCtClass(boolean objectAsSuper, ArrayList<InterfaceIntroduction> mixins, Class<?> clazz, Advisor advisor, MarshalledContainerProxy outOfVmProxy)
            throws Exception
    {
       ContainerProxyFactory factory = new ContainerProxyFactory(objectAsSuper, mixins, clazz, advisor, outOfVmProxy);
@@ -190,7 +188,7 @@ public class ContainerProxyFactory
    }
 
    
-   private ContainerProxyFactory(boolean objectAsSuper, ArrayList mixins, Class clazz, Advisor advisor, MarshalledContainerProxy outOfVmProxy)
+   private ContainerProxyFactory(boolean objectAsSuper, ArrayList<InterfaceIntroduction> mixins, Class<?> clazz, Advisor advisor, MarshalledContainerProxy outOfVmProxy)
    {
       this.objectAsSuper = objectAsSuper;
       this.clazz = clazz;
@@ -225,7 +223,7 @@ public class ContainerProxyFactory
 
    private CtClass createBasics() throws Exception
    {
-      Class proxySuper  = (objectAsSuper) ? Object.class : this.clazz; 
+      Class<?> proxySuper  = (objectAsSuper) ? Object.class : this.clazz; 
       String classname = getClassName();
 
       CtClass template = pool.get("org.jboss.aop.proxy.container.ProxyTemplate");
@@ -235,7 +233,7 @@ public class ContainerProxyFactory
       proxy.addInterface(pool.get("org.jboss.aop.instrument.Untransformable"));
       
       //Add all the interfaces of the class
-      Class[] interfaces = proxySuper.getInterfaces();
+      Class<?>[] interfaces = proxySuper.getInterfaces();
       for (int i = 0 ; i < interfaces.length ; i++)
       {
          CtClass interfaze = pool.get(interfaces[i].getName());
@@ -538,7 +536,7 @@ public class ContainerProxyFactory
          proxyStrategy.getMixins(intfs, mixinIntfs, mixes);
          
          //Now that we have added the mixins, add all the proxies methods to the added methods set
-         HashMap allMethods = JavassistMethodHashing.getDeclaredMethodMap(proxy);
+         HashMap<Long, CtMethod> allMethods = JavassistMethodHashing.getDeclaredMethodMap(proxy);
          addedMethods.addAll(allMethods.keySet());
 
          createMixins(addedMethods, mixes, addedInterfaces, implementedInterfaces);
@@ -564,7 +562,7 @@ public class ContainerProxyFactory
 
             CtClass intfClass = pool.get(intf);
             CtMethod[] methods = intfClass.getMethods();
-            HashSet mixinMethods = new HashSet();
+            HashSet<Long> mixinMethods = new HashSet<Long>();
             for (int m = 0; m < methods.length; m++)
             {
                if (methods[m].getDeclaringClass().getName().equals("java.lang.Object")) continue;
@@ -609,16 +607,14 @@ public class ContainerProxyFactory
 
    private void createProxyMethods(HashSet<Long> addedMethods) throws Exception
    {
-      HashMap allMethods = JavassistMethodHashing.getMethodMap(proxy.getSuperclass());
+      HashMap<Long, CtMethod> allMethods = JavassistMethodHashing.getMethodMap(proxy.getSuperclass());
 
-      Iterator it = allMethods.entrySet().iterator();
-      while (it.hasNext())
+      for (Map.Entry<Long, CtMethod> entry : allMethods.entrySet())
       {
-         Map.Entry entry = (Map.Entry) it.next();
-         CtMethod m = (CtMethod) entry.getValue();
+         CtMethod m = entry.getValue();
          if (!Modifier.isPublic(m.getModifiers()) || Modifier.isStatic(m.getModifiers()) || Modifier.isFinal(m.getModifiers())) continue;
 
-         Long hash = (Long) entry.getKey();
+         Long hash = entry.getKey();
          if (addedMethods.contains(hash)) continue;
          if (hardcodedMethods.contains(hash)) continue;
          
@@ -675,10 +671,8 @@ public class ContainerProxyFactory
    
    private void createIntroductions(HashSet<Long> addedMethods, HashMap<String, Integer> intfs, HashSet<String> addedInterfaces, Set<String> implementedInterfaces) throws Exception
    {
-      Iterator it = intfs.keySet().iterator();
-      while (it.hasNext())
+      for (String intf : intfs.keySet())
       {
-         String intf = (String) it.next();
          if (addedInterfaces.contains(intf)) throw new Exception("2 mixins are implementing the same interfaces");
          if (implementedInterfaces.contains(intf))  
          {
@@ -687,7 +681,7 @@ public class ContainerProxyFactory
 
          CtClass intfClass = pool.get(intf);
          CtMethod[] methods = intfClass.getMethods();
-         HashSet mixinMethods = new HashSet();
+         HashSet<Long> mixinMethods = new HashSet<Long>();
          for (int m = 0; m < methods.length; m++)
          {
             if (methods[m].getDeclaringClass().getName().equals("java.lang.Object")) continue;
@@ -756,7 +750,7 @@ public class ContainerProxyFactory
       return packageName + PROXY_NAME_PREFIX + counter++;
    }
 
-   private void overrideSpecialMethods(Class clazz, CtClass proxy) throws Exception
+   private void overrideSpecialMethods(Class<?> clazz, CtClass proxy) throws Exception
    {
       addInstanceAdvisedMethods(clazz, proxy);
    }
@@ -765,7 +759,7 @@ public class ContainerProxyFactory
     * If the class is Advised, the _getInstanceAdvisor() and _setInstanceAdvisor() methods will
     * not have been overridden. Make sure that these methods work with the instance proxy container.
     */
-   private void addInstanceAdvisedMethods(Class clazz, CtClass proxy) throws Exception
+   private void addInstanceAdvisedMethods(Class<?> clazz, CtClass proxy) throws Exception
    {
       CtClass advisedInterface = null;
       CtClass interfaces[] = proxy.getInterfaces();
@@ -826,7 +820,7 @@ public class ContainerProxyFactory
       AnnotationsAttribute attribute = (AnnotationsAttribute) src.getAttribute(annotationTag);
       if (attribute != null)
       {
-         dest.addAttribute(attribute.copy(dest.getConstPool(), new HashMap()));
+         dest.addAttribute(attribute.copy(dest.getConstPool(), EMPTY_HASHMAP));
       }
    }
    
@@ -835,7 +829,7 @@ public class ContainerProxyFactory
       ParameterAnnotationsAttribute params = (ParameterAnnotationsAttribute)src.getAttribute(paramsTag);
       if (params != null)
       {
-         dest.addAttribute(params.copy(dest.getConstPool(), new HashMap()));
+         dest.addAttribute(params.copy(dest.getConstPool(), EMPTY_HASHMAP));
          ParameterAnnotationsAttribute srcParams = new ParameterAnnotationsAttribute(src.getConstPool(), paramsTag);
          Annotation[][] emptyParamAnnotations = new Annotation[numParams][];
          for (int i = 0 ; i < numParams ; i++)
@@ -860,7 +854,7 @@ public class ContainerProxyFactory
       AnnotationsAttribute attribute = (AnnotationsAttribute) src.getAttribute(annotationTag);
       if (attribute != null)
       {
-         dest.addAttribute(attribute.copy(dest.getConstPool(), new HashMap()));
+         dest.addAttribute(attribute.copy(dest.getConstPool(), EMPTY_HASHMAP));
       }
    }
    
@@ -873,7 +867,7 @@ public class ContainerProxyFactory
       SignatureAttribute sig = (SignatureAttribute)srcInfo.getAttribute(SignatureAttribute.tag);
       if (sig != null)
       {
-         destInfo.addAttribute(sig.copy(destInfo.getConstPool(), new HashMap()));
+         destInfo.addAttribute(sig.copy(destInfo.getConstPool(), EMPTY_HASHMAP));
       }
    }
    
@@ -885,7 +879,7 @@ public class ContainerProxyFactory
       SignatureAttribute sig = (SignatureAttribute)srcFile.getAttribute(SignatureAttribute.tag);
       if (sig != null)
       {
-         destFile.addAttribute(sig.copy(destFile.getConstPool(), new HashMap()));
+         destFile.addAttribute(sig.copy(destFile.getConstPool(), EMPTY_HASHMAP));
       }
    }
    
@@ -927,7 +921,7 @@ public class ContainerProxyFactory
       {
          if (mixins != null)
          {
-            HashMap mixinIntfs = new HashMap();
+            HashMap<String, Integer> mixinIntfs = new HashMap<String, Integer>();
             for (int i = 0; i < mixins.size(); i++)
             {
                InterfaceIntroduction introduction = mixins.get(i);
@@ -966,10 +960,8 @@ public class ContainerProxyFactory
             ArrayList<MixinInfo> mixes, 
             int idx)
       {
-         Iterator it = intro.getMixins().iterator();
-         while (it.hasNext())
+         for (InterfaceIntroduction.Mixin mixin : intro.getMixins())
          {
-            InterfaceIntroduction.Mixin mixin = (InterfaceIntroduction.Mixin) it.next();
             mixes.add(new MixinInfo(mixin));
             for (int i = 0; i < mixin.getInterfaces().length; i++)
             {
@@ -1031,10 +1023,10 @@ public class ContainerProxyFactory
          int i = 0;
          for ( ; i < mixins.length ; i++)
          {
-            Class clazz = mixins[i].getClass();
-            Class[] ifs = clazz.getInterfaces(); 
+            Class<?> clazz = mixins[i].getClass();
+            Class<?>[] ifs = clazz.getInterfaces(); 
             ArrayList<String> interfaces = new ArrayList<String>(ifs.length);
-            for (Class iface : ifs)
+            for (Class<?> iface : ifs)
             {
                String name = iface.getName();
                if (name.equals(Serializable.class.getName()) || 

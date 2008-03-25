@@ -57,9 +57,9 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
    public static final String READ_JOINPOINT_FIELD_PREFIX = JOINPOINT_FIELD_PREFIX + "r_";
    public static final String WRITE_JOINPOINT_CLASS_PREFIX = JOINPOINT_CLASS_PREFIX + "w_";
    public static final String READ_JOINPOINT_CLASS_PREFIX = JOINPOINT_CLASS_PREFIX + "r_";
-   private static final Class JOINPOINT_TYPE = FieldAccess.class;
-   private static final Class READ_INVOCATION_TYPE = FieldReadInvocation.class;
-   private static final Class WRITE_INVOCATION_TYPE = FieldWriteInvocation.class;
+   private static final Class<FieldAccess> JOINPOINT_TYPE = FieldAccess.class;
+   private static final Class<FieldReadInvocation> READ_INVOCATION_TYPE = FieldReadInvocation.class;
+   private static final Class<FieldWriteInvocation> WRITE_INVOCATION_TYPE = FieldWriteInvocation.class;
    private static final CtClass READ_INVOCATION_CT_TYPE;
    private static final CtClass WRITE_INVOCATION_CT_TYPE;
    private static final String TYPED_VALUE_FIELD = "typedValue";
@@ -283,18 +283,18 @@ public class FieldJoinPointGenerator extends JoinPointGenerator
       protected abstract String createGetArgumentsBody();
       protected abstract String createSetArgumentsBody();
       
-      private static String debugFields(CtClass clazz) throws NotFoundException
-      {
-         StringBuffer sb = new StringBuffer();
-         sb.append(clazz.getName());
-         CtField[] fields = clazz.getFields();
-         for (int i = 0 ; i < fields.length ; i++)
-         {
-            sb.append("\n\t\t\t\t" + Modifier.toString(fields[i].getModifiers()) + " " + fields[i].getName() + " " + fields[i].getType());
-         }
-         
-         return sb.toString();
-      }
+//      private static String debugFields(CtClass clazz) throws NotFoundException
+//      {
+//         StringBuffer sb = new StringBuffer();
+//         sb.append(clazz.getName());
+//         CtField[] fields = clazz.getFields();
+//         for (int i = 0 ; i < fields.length ; i++)
+//         {
+//            sb.append("\n\t\t\t\t" + Modifier.toString(fields[i].getModifiers()) + " " + fields[i].getName() + " " + fields[i].getType());
+//         }
+//         
+//         return sb.toString();
+//      }
 
       protected CtClass setupClass()throws NotFoundException, CannotCompileException
       {
