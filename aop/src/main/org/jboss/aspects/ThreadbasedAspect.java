@@ -33,7 +33,7 @@ import org.jboss.aop.joinpoint.FieldWriteInvocation;
  */
 public class ThreadbasedAspect
 {
-   private ThreadLocal threadbased = new ThreadLocal();
+   private ThreadLocal<Object> threadbased = new ThreadLocal<Object>();
 
    public Object access(FieldReadInvocation invocation) throws Throwable
    {

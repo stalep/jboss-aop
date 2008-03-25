@@ -31,7 +31,7 @@ import org.jboss.aop.annotation.AnnotationRepository;
  */
 public class TestAnnotationRepository extends AnnotationRepository
 {
-
+   @SuppressWarnings("unchecked")
    public Object resolveClassAnnotation(Class annotation)
    {
       return new AnnImpl("Clazz");

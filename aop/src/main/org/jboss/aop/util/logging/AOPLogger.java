@@ -53,12 +53,12 @@ public class AOPLogger extends Logger
       return Logger.getLogger(name + "." + suffix);
    }
 
-   public static Logger getLogger(Class clazz)
+   public static Logger getLogger(Class<?> clazz)
    {
       return Logger.getLogger(clazz);
    }
 
-   public static Logger getLogger(Class clazz, String suffix)
+   public static Logger getLogger(Class<?> clazz, String suffix)
    {
       return Logger.getLogger(clazz.getName() + "." + suffix);
    }

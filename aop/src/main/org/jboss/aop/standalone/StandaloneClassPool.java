@@ -48,14 +48,12 @@ public class StandaloneClassPool extends AOPClassPool
       super(src, repository);
    }
 
-   //KAB: removed NotFoundException, IOException from throws clause, as 
-   //they are not defined by javassist.ClassPool
-   public Class toClass(CtClass ctClass) throws CannotCompileException/*, NotFoundException, IOException*/
+   public Class<?> toClass(CtClass ctClass) throws CannotCompileException
    {
       try
       {
          byte[] b = ctClass.toBytecode();
-         Class cl = Class.forName("java.lang.ClassLoader");
+         Class<?> cl = Class.forName("java.lang.ClassLoader");
          java.lang.reflect.Method method
                  = cl.getDeclaredMethod("defineClass",
                          new Class[]{String.class, byte[].class,
@@ -63,7 +61,7 @@ public class StandaloneClassPool extends AOPClassPool
          method.setAccessible(true);
          Object[] args = new Object[]{ctClass.getName(), b, new Integer(0),
                                       new Integer(b.length)};
-         Class clazz = (Class) method.invoke(getClassLoader(), args);
+         Class<?> clazz = (Class<?>) method.invoke(getClassLoader(), args);
          method.setAccessible(false);
          return clazz;
       }

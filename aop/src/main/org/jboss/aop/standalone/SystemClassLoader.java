@@ -142,11 +142,11 @@ public class SystemClassLoader
     * @return the class
     * @throws ClassNotFoundException when there is no class
     */
-   public synchronized Class loadClass(String name, boolean resolve)
+   public synchronized Class<?> loadClass(String name, boolean resolve)
       throws ClassNotFoundException
    {
       // Have we already loaded the class?
-      Class clazz = findLoadedClass(name);
+      Class<?> clazz = findLoadedClass(name);
       if (clazz != null)
       {
          if (resolve) resolveClass(clazz);
@@ -207,9 +207,9 @@ public class SystemClassLoader
       throws ClassNotFoundException, IOException
    {
       final String classFileName = name.replace('.', '/') + ".class";
-      final URL url = (URL) AccessController.doPrivileged(new PrivilegedAction() 
+      final URL url = AccessController.doPrivileged(new PrivilegedAction<URL>() 
       {
-         public Object run()
+         public URL run()
          {
             return getParent().getResource(classFileName);
          }
@@ -220,9 +220,9 @@ public class SystemClassLoader
       {
          try
          {
-            in = (InputStream) AccessController.doPrivileged(new PrivilegedExceptionAction()
+            in = AccessController.doPrivileged(new PrivilegedExceptionAction<InputStream>()
             {
-               public Object run() throws Exception
+               public InputStream run() throws Exception
                {
                   return url.openStream();
                }
@@ -259,9 +259,9 @@ public class SystemClassLoader
          */
          try
          {
-            in = (InputStream) AccessController.doPrivileged(new PrivilegedExceptionAction()
+            in = AccessController.doPrivileged(new PrivilegedExceptionAction<InputStream>()
             {
-               public Object run() throws Exception
+               public InputStream run() throws Exception
                {
                   String tmpdir = System.getProperty("java.io.tmpdir");
                   File aopdynclasses = new File(tmpdir, "aopdynclasses");
@@ -321,11 +321,11 @@ public class SystemClassLoader
     * @param resolve whether to resolve the class
     * @returns the class
     */
-   protected Class defineClassFromBytes(String name, ClassBytes bytes, boolean resolve)
+   protected Class<?> defineClassFromBytes(String name, ClassBytes bytes, boolean resolve)
    {
       definePackage(name);
       byte[] b = bytes.bytes;
-      Class clazz = defineClass(name, b, 0, b.length, bytes.protectionDomain);
+      Class<?> clazz = defineClass(name, b, 0, b.length, bytes.protectionDomain);
       if (resolve) resolveClass(clazz);
       return clazz;
    }
@@ -358,7 +358,7 @@ public class SystemClassLoader
     * @return the class
     * @throws ClassNotFoundException when there is no class
     */
-   protected Class loadClassLocally(String name)
+   protected Class<?> loadClassLocally(String name)
       throws ClassNotFoundException
    {
       try
@@ -379,7 +379,7 @@ public class SystemClassLoader
     * @return the class
     * @throws ClassNotFoundException when there is no class
     */
-   protected Class loadClassByDelegation(String name)
+   protected Class<?> loadClassByDelegation(String name)
       throws ClassNotFoundException
    {
       // FIXME: Only works for Sun for now
@@ -401,8 +401,8 @@ public class SystemClassLoader
       try
       {
          // AspectManager
-         Class clazz = loadClassLocally("org.jboss.aop.AspectManager");
-         Class[] transformSig = {ClassLoader.class, String.class,
+         Class<?> clazz = loadClassLocally("org.jboss.aop.AspectManager");
+         Class<?>[] transformSig = {ClassLoader.class, String.class,
                                  Class.class, ProtectionDomain.class, byte[].class};
          transform = clazz.getMethod("transform", transformSig);
          instance = clazz.getMethod("instance", new Class[0]);
@@ -527,10 +527,10 @@ public class SystemClassLoader
       // Install the aop configurations
       try
       {
-         Enumeration enumeration = getParent().getResources("META-INF/jboss-aop.xml");
+         Enumeration<URL> enumeration = getParent().getResources("META-INF/jboss-aop.xml");
          while (enumeration.hasMoreElements())
          {
-            URL url = (URL) enumeration.nextElement();
+            URL url = enumeration.nextElement();
             deployXML.invoke(null, new Object[]{url});
          }
       }

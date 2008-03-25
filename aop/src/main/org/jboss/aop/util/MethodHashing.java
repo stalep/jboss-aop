@@ -46,20 +46,20 @@ public class MethodHashing
    // Constants -----------------------------------------------------
    
    // Static --------------------------------------------------------
-   static Map methodHashesByName = new WeakHashMap();
+   static Map<Class<?>, Map<String, Long>> methodHashesByName = new WeakHashMap<Class<?>, Map<String, Long>>();
 
-   static Map methodHashesByClass = new WeakHashMap();
-   static Map constructorHashesByClass = new WeakHashMap();
+   static Map<Class<?>, Map<Long, MethodPersistentReference>> methodHashesByClass = new WeakHashMap<Class<?>, Map<Long, MethodPersistentReference>>();
+   static Map<Class<?>, Map<Long, ConstructorPersistentReference>> constructorHashesByClass = new WeakHashMap<Class<?>, Map<Long, ConstructorPersistentReference>> ();
 
-   public static Method findMethodByHash(Class clazz, long hash) throws Exception
+   public static Method findMethodByHash(Class<?> clazz, long hash) throws Exception
    {
       return findMethodByHash(clazz, new Long(hash));
    }
 
-   public static Method findMethodByHash(Class clazz, Long hash) throws Exception
+   public static Method findMethodByHash(Class<?> clazz, Long hash) throws Exception
    {
-      Map hashes = getMethodHashes(clazz);
-      MethodPersistentReference ref = (MethodPersistentReference)hashes.get(hash);
+      Map<Long, MethodPersistentReference> hashes = getMethodHashes(clazz);
+      MethodPersistentReference ref = hashes.get(hash);
       if (ref != null)
       {
          return ref.getMethod();
@@ -67,7 +67,7 @@ public class MethodHashing
 
       if (clazz.isInterface())
       {
-         final Class[] interfaces = clazz.getInterfaces() ;
+         final Class<?>[] interfaces = clazz.getInterfaces() ;
          final int numInterfaces = interfaces.length ;
          for(int count = 0 ; count < numInterfaces ; count++)
          {
@@ -85,15 +85,15 @@ public class MethodHashing
       return null;
    }
    
-   public static Constructor findConstructorByHash(Class clazz, long hash) throws Exception
+   public static Constructor<?> findConstructorByHash(Class<?> clazz, long hash) throws Exception
    {
       return findConstructorByHash(clazz, new Long(hash));
    }
    
-   public static Constructor findConstructorByHash(Class clazz, Long hash) throws Exception
+   public static Constructor<?> findConstructorByHash(Class<?> clazz, Long hash) throws Exception
    {
-      Map hashes = getConstructorHashes(clazz);
-      ConstructorPersistentReference ref = (ConstructorPersistentReference)hashes.get(hash);
+      Map<Long, ConstructorPersistentReference> hashes = getConstructorHashes(clazz);
+      ConstructorPersistentReference ref = hashes.get(hash);
       if (ref != null)
       {
          return ref.getConstructor();
@@ -118,7 +118,7 @@ public class MethodHashing
    public static long methodHash(Method method)
       throws Exception
    {
-      Class[] parameterTypes = method.getParameterTypes();
+      Class<?>[] parameterTypes = method.getParameterTypes();
       StringBuffer methodDesc = new StringBuffer(method.getName()+"(");
       for(int j = 0; j < parameterTypes.length; j++)
       {
@@ -144,10 +144,10 @@ public class MethodHashing
       
    }
 
-   public static long constructorHash(Constructor method)
+   public static long constructorHash(Constructor<?> method)
       throws Exception
    {
-      Class[] parameterTypes = method.getParameterTypes();
+      Class<?>[] parameterTypes = method.getParameterTypes();
       StringBuffer methodDesc = new StringBuffer(method.getName()+"(");
       for(int j = 0; j < parameterTypes.length; j++)
       {
@@ -158,7 +158,7 @@ public class MethodHashing
       return createHash(methodDesc.toString());
    }
 
-   static String getTypeString(Class cl)
+   static String getTypeString(Class<?> cl)
    {
       if (cl == Byte.TYPE)
       {
@@ -205,20 +205,20 @@ public class MethodHashing
    */
    public static long calculateHash(Method method)
    {
-      Map methodHashes = (Map)methodHashesByName.get(method.getDeclaringClass());
+      Map<String, Long> methodHashes = methodHashesByName.get(method.getDeclaringClass());
       
       if (methodHashes == null)
       {
          methodHashes = getInterfaceHashes(method.getDeclaringClass());
          
          // Copy and add
-         WeakHashMap newHashMap = new WeakHashMap();
+         WeakHashMap<Class<?>, Map<String, Long>> newHashMap = new WeakHashMap<Class<?>, Map<String, Long>>();
          newHashMap.putAll(methodHashesByName);
          newHashMap.put(method.getDeclaringClass(), methodHashes);
          methodHashesByName = newHashMap;
       }
       
-      return ((Long)methodHashes.get(method.toString())).longValue();
+      return methodHashes.get(method.toString()).longValue();
    }
 
    
@@ -229,11 +229,11 @@ public class MethodHashing
     * @return
     * @deprecated I can't see why this would have any value to anybody apart from this class. It will be made private     
     */
-    public static Map getInterfaceHashes(Class intf)
+    public static Map<String, Long> getInterfaceHashes(Class<?> intf)
     {
        // Create method hashes
        Method[] methods = SecurityActions.getDeclaredMethods(intf);
-       HashMap map = new HashMap();
+       HashMap<String, Long> map = new HashMap<String, Long>();
        for (int i = 0; i < methods.length; i++)
        {
           Method method = methods[i];
@@ -250,9 +250,9 @@ public class MethodHashing
        return map;
    }
     
-   private static Map getMethodHashes(Class clazz)
+   private static Map<Long, MethodPersistentReference> getMethodHashes(Class<?> clazz)
    {
-      Map methodHashes = (Map)methodHashesByClass.get(clazz);
+      Map<Long, MethodPersistentReference> methodHashes = methodHashesByClass.get(clazz);
       if (methodHashes == null)
       {
          methodHashes = getMethodHashMap(clazz);
@@ -261,11 +261,11 @@ public class MethodHashing
       return methodHashes;
    }
    
-   private static Map getMethodHashMap(Class clazz)
+   private static Map<Long, MethodPersistentReference> getMethodHashMap(Class<?> clazz)
    {
       // Create method hashes
       Method[] methods = SecurityActions.getDeclaredMethods(clazz);
-      HashMap map = new HashMap();
+      HashMap<Long, MethodPersistentReference> map = new HashMap<Long, MethodPersistentReference>();
       for (int i = 0; i < methods.length; i++)
       {
          try
@@ -282,9 +282,9 @@ public class MethodHashing
       return map;
    }
    
-   private static Map getConstructorHashes(Class clazz)
+   private static Map<Long, ConstructorPersistentReference> getConstructorHashes(Class<?> clazz)
    {
-      Map constructorHashes = (Map)constructorHashesByClass.get(clazz);
+      Map<Long, ConstructorPersistentReference> constructorHashes = constructorHashesByClass.get(clazz);
       if (constructorHashes == null)
       {
          constructorHashes = getConstructorHashMap(clazz);
@@ -293,11 +293,11 @@ public class MethodHashing
       return constructorHashes;
    }
 
-   private static Map getConstructorHashMap(Class clazz)
+   private static Map<Long, ConstructorPersistentReference> getConstructorHashMap(Class<?> clazz)
    {
       // Create method hashes
-      Constructor[] constructors = SecurityActions.getDeclaredConstructors(clazz);
-      HashMap map = new HashMap();
+      Constructor<?>[] constructors = SecurityActions.getDeclaredConstructors(clazz);
+      HashMap<Long, ConstructorPersistentReference> map = new HashMap<Long, ConstructorPersistentReference>();
       for (int i = 0; i < constructors.length; i++)
       {
          try

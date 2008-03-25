@@ -46,7 +46,7 @@ public class Dispatcher
    public static final String OID = "OID";
    public static final Dispatcher singleton = new Dispatcher();
 
-   Map targetMap = new ConcurrentHashMap();
+   Map<Object, Object> targetMap = new ConcurrentHashMap<Object, Object>();
 
 
    public boolean isRegistered(Object oid)
@@ -112,8 +112,8 @@ public class Dispatcher
             MethodInvocation methodInvocation = (MethodInvocation) invocation;
             // For non-advised methods, we can only do public method invocations
             long methodHash = methodInvocation.getMethodHash();
-            HashMap methodMap = ClassProxyFactory.getMethodMap(target.getClass());
-            MethodPersistentReference ref = (MethodPersistentReference)methodMap.get(new Long(methodHash));
+            HashMap<Long, MethodPersistentReference> methodMap = ClassProxyFactory.getMethodMap(target.getClass());
+            MethodPersistentReference ref = methodMap.get(new Long(methodHash));
             Method method = (Method)ref.get();
             Object[] args = methodInvocation.getArguments();
             try

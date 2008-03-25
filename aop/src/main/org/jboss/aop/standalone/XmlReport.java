@@ -22,6 +22,8 @@
 package org.jboss.aop.standalone;
 
 import gnu.trove.TLongObjectHashMap;
+
+import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.CallerConstructorInfo;
 import org.jboss.aop.CallerMethodInfo;
@@ -95,12 +97,12 @@ public class XmlReport
       }
    }
 
-   protected static String simpleType(Class type)
+   protected static String simpleType(Class<?> type)
    {
-      Class ret = type;
+      Class<?> ret = type;
       if (ret.isArray())
       {
-         Class arr = ret;
+         Class<?> arr = ret;
          String array = "";
          while (arr.isArray())
          {
@@ -114,23 +116,23 @@ public class XmlReport
 
    public static void outputPackage(int indent, PrintWriter pw, Package root)
    {
-      Iterator it = root.packages.entrySet().iterator();
-      while (it.hasNext())
+      Iterator<Map.Entry<String, Package>> it1 = root.packages.entrySet().iterator();
+      while (it1.hasNext())
       {
-         Map.Entry entry = (Map.Entry) it.next();
-         String pkgName = (String) entry.getKey();
+         Map.Entry<String, Package> entry = it1.next();
+         String pkgName = entry.getKey();
          indenter(pw, indent);
          pw.println("<package name=\"" + pkgName + "\">");
-         Package p = (Package) entry.getValue();
+         Package p = entry.getValue();
          outputPackage(indent + 1, pw, p);
          indenter(pw, indent);
          pw.println("</package>");
       }
-      it = root.advisors.entrySet().iterator();
-      while (it.hasNext())
+      Iterator<Map.Entry<String, Advisor>> it2 = root.advisors.entrySet().iterator();
+      while (it2.hasNext())
       {
-         Map.Entry entry = (Map.Entry) it.next();
-         String classname = (String) entry.getKey();
+         Map.Entry<String, Advisor> entry = it2.next();
+         String classname = entry.getKey();
          indenter(pw, indent);
          pw.println("<class name=\"" + classname + "\">");
          ClassAdvisor advisor = (ClassAdvisor) entry.getValue();
@@ -142,7 +144,7 @@ public class XmlReport
 
    public static void outputAdvisor(int indent, PrintWriter pw, ClassAdvisor advisor, String baseName)
    {
-      ArrayList introductions = advisor.getInterfaceIntroductions();
+      ArrayList<InterfaceIntroduction> introductions = advisor.getInterfaceIntroductions();
       if (introductions != null && introductions.size() > 0)
       {
          indenter(pw, indent);
@@ -150,12 +152,12 @@ public class XmlReport
          indent++;
          for (int i = 0; i < introductions.size(); i++)
          {
-            InterfaceIntroduction pointcut = (InterfaceIntroduction) introductions.get(i);
+            InterfaceIntroduction pointcut = introductions.get(i);
             indenter(pw, indent);
             pw.println("<introduction classExpr=\"" + pointcut.getClassExpr() + "\">");
             indent++;
             String[] intfs = pointcut.getInterfaces();
-            ArrayList mixins = pointcut.getMixins();
+            ArrayList<InterfaceIntroduction.Mixin> mixins = pointcut.getMixins();
 
             if (intfs != null && intfs.length > 0)
             {
@@ -171,7 +173,7 @@ public class XmlReport
                //Show mixins
                for (int j = 0; j < mixins.size(); j++)
                {
-                  InterfaceIntroduction.Mixin mixin = (InterfaceIntroduction.Mixin) mixins.get(j);
+                  InterfaceIntroduction.Mixin mixin = mixins.get(j);
                   String[] mixifs = mixin.getInterfaces();
 
                   for (int k = 0; k < mixifs.length; k++)
@@ -198,10 +200,10 @@ public class XmlReport
       indent++;
       for (int i = 0; i < advisor.getConstructors().length; i++)
       {
-         Constructor con = advisor.getConstructors()[i];
+         Constructor<?> con = advisor.getConstructors()[i];
          Interceptor[] chain = advisor.getConstructorInfos()[i].getInterceptors();
-         HashMap methodCallers = advisor.getMethodCalledByConInterceptors()[i];
-         HashMap conCallers = advisor.getConCalledByConInterceptors()[i];
+         HashMap<String, TLongObjectHashMap> methodCallers = advisor.getMethodCalledByConInterceptors()[i];
+         HashMap<String, TLongObjectHashMap> conCallers = advisor.getConCalledByConInterceptors()[i];
 
          if ((chain != null && chain.length > 0) || methodCallers != null || conCallers != null)
          {
@@ -275,7 +277,9 @@ public class XmlReport
       {
          long key = keys[i];
          MethodInfo method = (MethodInfo) advisor.getMethodInterceptors().get(key);
+         @SuppressWarnings("unchecked")
          HashMap methodCallers = (HashMap) advisor.getMethodCalledByMethodInterceptors().get(key);
+         @SuppressWarnings("unchecked")
          HashMap conCallers = (HashMap) advisor.getConCalledByMethodInterceptors().get(key);
          if (method == null && methodCallers == null) continue;
          if (method != null && methodCallers == null && (method.getInterceptors() == null || method.getInterceptors().length < 1)) continue;
@@ -309,15 +313,15 @@ public class XmlReport
    }
 
 
-   public static void outputMethodCallers(int indent, PrintWriter pw, HashMap called)
+   public static void outputMethodCallers(int indent, PrintWriter pw, HashMap<String, TLongObjectHashMap> called)
    {
       indenter(pw, indent);
       pw.println("<method-callers>");
       indent++;
-      Iterator it = called.values().iterator();
+      Iterator<TLongObjectHashMap> it = called.values().iterator();
       while (it.hasNext())
       {
-         TLongObjectHashMap map = (TLongObjectHashMap) it.next();
+         TLongObjectHashMap map = it.next();
          Object[] values = map.getValues();
          for (int i = 0; i < values.length; i++)
          {
@@ -342,15 +346,15 @@ public class XmlReport
       pw.println("</method-callers>");
    }
 
-   public static void outputConCallers(int indent, PrintWriter pw, HashMap called)
+   public static void outputConCallers(int indent, PrintWriter pw, HashMap<String, TLongObjectHashMap> called)
    {
       indenter(pw, indent);
       pw.println("<constructor-callers>");
       indent++;
-      Iterator it = called.values().iterator();
+      Iterator<TLongObjectHashMap> it = called.values().iterator();
       while (it.hasNext())
       {
-         TLongObjectHashMap map = (TLongObjectHashMap) it.next();
+         TLongObjectHashMap map = it.next();
          Object[] values = map.getValues();
          for (int i = 0; i < values.length; i++)
          {
@@ -406,10 +410,8 @@ public class XmlReport
    public static void outputUnboundBindings(int indent, PrintWriter pw)
    {
       boolean first = true;
-      Iterator it = AspectManager.instance().getBindings().values().iterator();
-      while (it.hasNext())
+      for (AdviceBinding binding : AspectManager.instance().getBindings().values())
       {
-         AdviceBinding binding = (AdviceBinding) it.next();
          if (!binding.hasAdvisors())
          {
             if (first)
@@ -501,9 +503,9 @@ public class XmlReport
 
       StringBuffer xml = new StringBuffer();
       indent++;
-      for (Iterator it = fieldMetaData.getFields(); it.hasNext();)
+      for (Iterator<String> it = fieldMetaData.getFields(); it.hasNext();)
       {
-         String field = (String) it.next();
+         String field = it.next();
          org.jboss.aop.metadata.SimpleMetaData fieldData = fieldMetaData.getFieldMetaData(field);
          indent++;
          indent++;
@@ -537,9 +539,9 @@ public class XmlReport
 
       StringBuffer xml = new StringBuffer();
       indent++;
-      for (Iterator it = constructorMetaData.getConstructors(); it.hasNext();)
+      for (Iterator<String> it = constructorMetaData.getConstructors(); it.hasNext();)
       {
-         String constructor = (String) it.next();
+         String constructor = it.next();
          org.jboss.aop.metadata.SimpleMetaData constructorData = constructorMetaData.getConstructorMetaData(constructor);
          indent++;
          indent++;
@@ -573,9 +575,9 @@ public class XmlReport
 
       StringBuffer xml = new StringBuffer();
       indent++;
-      for (Iterator it = methodMetaData.getMethods(); it.hasNext();)
+      for (Iterator<String> it = methodMetaData.getMethods(); it.hasNext();)
       {
-         String method = (String) it.next();
+         String method = it.next();
          org.jboss.aop.metadata.SimpleMetaData methodData = methodMetaData.getMethodMetaData(method);
          indent++;
          indent++;
@@ -606,16 +608,16 @@ public class XmlReport
    public static StringBuffer getMetadataXml(int indent, ClassAdvisor advisor, SimpleMetaData metadata)
    {
       StringWriter sw = new StringWriter();
-      HashSet tags = metadata.tags();
+      HashSet<Object> tags = metadata.tags();
       if (tags.size() == 0)
       {
          return null;
       }
 
-      for (Iterator tagsIt = tags.iterator(); tagsIt.hasNext();)
+      for (Iterator<Object> tagsIt = tags.iterator(); tagsIt.hasNext();)
       {
          String tag = (String) tagsIt.next();
-         HashMap groupAttrs = metadata.tag(tag);
+         HashMap<Object, SimpleMetaData.MetaDataValue> groupAttrs = metadata.tag(tag);
 
          indent++;
          indenter(sw, indent);
@@ -628,14 +630,14 @@ public class XmlReport
          }
 
          boolean hasValues = false;
-         for (Iterator attrsIt = groupAttrs.entrySet().iterator(); attrsIt.hasNext();)
+         for (Iterator<Map.Entry<Object, SimpleMetaData.MetaDataValue>> attrsIt = groupAttrs.entrySet().iterator(); attrsIt.hasNext();)
          {
-            Map.Entry entry = (Map.Entry) attrsIt.next();
+            Map.Entry<Object, SimpleMetaData.MetaDataValue> entry = attrsIt.next();
             String attr = (String) entry.getKey();
             if (!attr.equals(MetaDataResolver.EMPTY_TAG))
             {
                hasValues = true;
-               SimpleMetaData.MetaDataValue value = (SimpleMetaData.MetaDataValue) entry.getValue();
+               SimpleMetaData.MetaDataValue value = entry.getValue();
 
                indenter(sw, indent);
                sw.write("<attribute name=\"" + attr + "\">" + "\r\n");

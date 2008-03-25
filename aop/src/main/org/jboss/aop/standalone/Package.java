@@ -24,6 +24,7 @@ package org.jboss.aop.standalone;
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -38,8 +39,8 @@ import java.util.StringTokenizer;
 public class Package implements java.io.Serializable
 {
    static final long serialVersionUID = 6188655039267365373L;
-   public HashMap advisors = new HashMap();
-   public HashMap packages = new HashMap();
+   public HashMap<String, Advisor> advisors = new HashMap<String, Advisor>();
+   public HashMap<String, Package> packages = new HashMap<String, Package>();
    public String name;
 
    public Package(String name)
@@ -47,7 +48,7 @@ public class Package implements java.io.Serializable
       this.name = name;
    }
 
-   static void parse(Class clazz, Package root)
+   static void parse(Class<?> clazz, Package root)
    {
       Advisor advisor = AspectManager.instance().findAdvisor(clazz);
       StringTokenizer tokenizer = new StringTokenizer(clazz.getName(), ".");
@@ -56,7 +57,7 @@ public class Package implements java.io.Serializable
          String pkgName = tokenizer.nextToken();
          if (tokenizer.hasMoreTokens())
          {
-            Package subpkg = (Package) root.packages.get(pkgName);
+            Package subpkg = root.packages.get(pkgName);
             if (subpkg == null)
             {
                subpkg = new Package(pkgName);
@@ -73,12 +74,12 @@ public class Package implements java.io.Serializable
 
    public static Package aopClassMap()
    {
-      Map advisors = AspectManager.instance().getAdvisors();
-      Iterator it = advisors.keySet().iterator();
+      Map<Class<?>, WeakReference<Advisor>> advisors = AspectManager.instance().getAdvisors();
+      Iterator<Class<?>> it = advisors.keySet().iterator();
       Package root = new Package("classes");
       while (it.hasNext())
       {
-         Class clazz = (Class) it.next();
+         Class<?> clazz = it.next();
          parse(clazz, root);
       }
       return root;

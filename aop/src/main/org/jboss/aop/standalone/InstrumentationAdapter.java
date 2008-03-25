@@ -56,7 +56,7 @@ class InstrumentationAdapter implements HotSwapper
     * @param clazz the clazz to be redefined.
     * @param classCode the new byte code implementation of <code>clazz</code>.
     */
-   public synchronized void registerChange(Class clazz, byte[] classCode)
+   public synchronized void registerChange(Class<?> clazz, byte[] classCode)
    {
       ClassDefinition classDef = new ClassDefinition(clazz, classCode);
       this.classDefinitions.add(classDef);
@@ -70,7 +70,7 @@ class InstrumentationAdapter implements HotSwapper
    public synchronized void hotSwap()
    {
       ClassDefinition[] definitions = new ClassDefinition[this.classDefinitions.size()];
-      definitions = (ClassDefinition[]) this.classDefinitions.toArray(definitions);
+      definitions = this.classDefinitions.toArray(definitions);
       try
       {
          instrumentation.redefineClasses(definitions);

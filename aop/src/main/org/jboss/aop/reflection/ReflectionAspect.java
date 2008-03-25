@@ -48,7 +48,6 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -261,7 +260,7 @@ public class ReflectionAspect
    {
 
       Object targetObject = invocation.getTargetObject();
-      return interceptGetDeclaredMethods((Class) targetObject);
+      return interceptGetDeclaredMethods((Class<?>) targetObject);
    }
 
    /**
@@ -278,7 +277,7 @@ public class ReflectionAspect
    {
 
       Object targetObject = invocation.getTargetObject();
-      return interceptGetDeclaredMethods((Class) targetObject);
+      return interceptGetDeclaredMethods((Class<?>) targetObject);
    }
 
    /**
@@ -296,7 +295,7 @@ public class ReflectionAspect
 
       Object targetObject = invocation.getTargetObject();
       Object[] args = invocation.getArguments();
-      return interceptGetDeclaredMethod((Class) targetObject, args);
+      return interceptGetDeclaredMethod((Class<?>) targetObject, args);
    }
 
    /**
@@ -314,7 +313,7 @@ public class ReflectionAspect
 
       Object targetObject = invocation.getTargetObject();
       Object[] args = invocation.getArguments();
-      return interceptGetDeclaredMethod((Class) targetObject, args);
+      return interceptGetDeclaredMethod((Class<?>) targetObject, args);
    }
 
    /**
@@ -331,7 +330,7 @@ public class ReflectionAspect
    {
 
       Object targetObject = invocation.getTargetObject();
-      return interceptGetMethods((Class) targetObject);
+      return interceptGetMethods((Class<?>) targetObject);
    }
 
    /**
@@ -348,7 +347,7 @@ public class ReflectionAspect
    {
 
       Object targetObject = invocation.getTargetObject();
-      return interceptGetMethods((Class) targetObject);
+      return interceptGetMethods((Class<?>) targetObject);
    }
 
    /**
@@ -366,7 +365,7 @@ public class ReflectionAspect
 
       Object targetObject = invocation.getTargetObject();
       Object[] args = invocation.getArguments();
-      return interceptGetMethod((Class) targetObject, args);
+      return interceptGetMethod((Class<?>) targetObject, args);
    }
 
    /**
@@ -384,7 +383,7 @@ public class ReflectionAspect
 
       Object targetObject = invocation.getTargetObject();
       Object[] args = invocation.getArguments();
-      return interceptGetMethod((Class) targetObject, args);
+      return interceptGetMethod((Class<?>) targetObject, args);
    }
 
    /**
@@ -401,7 +400,7 @@ public class ReflectionAspect
    {
 
       Object targetObject = invocation.getTargetObject();
-      return interceptGetInterfaces((Class) targetObject);
+      return interceptGetInterfaces((Class<?>) targetObject);
    }
 
    /**
@@ -418,7 +417,7 @@ public class ReflectionAspect
    {
 
       Object targetObject = invocation.getTargetObject();
-      return interceptGetInterfaces((Class) targetObject);
+      return interceptGetInterfaces((Class<?>) targetObject);
    }
 
    /**
@@ -434,7 +433,7 @@ public class ReflectionAspect
    {
 
       Object targetObject = invocation.getTargetObject();
-      return interceptGetDeclaredClasses((Class) targetObject);
+      return interceptGetDeclaredClasses((Class<?>) targetObject);
    }
 
    /**
@@ -450,7 +449,7 @@ public class ReflectionAspect
    {
 
       Object targetObject = invocation.getTargetObject();
-      return interceptGetDeclaredClasses((Class) targetObject);
+      return interceptGetDeclaredClasses((Class<?>) targetObject);
    }
 
    /**
@@ -467,7 +466,7 @@ public class ReflectionAspect
    {
 
       Object targetObject = invocation.getTargetObject();
-      return interceptGetClasses((Class) targetObject);
+      return interceptGetClasses((Class<?>) targetObject);
    }
 
    /**
@@ -483,7 +482,7 @@ public class ReflectionAspect
    public final Object interceptGetClasses(MethodCalledByMethodInvocation invocation) throws Throwable
    {
       Object targetObject = invocation.getTargetObject();
-      return interceptGetClasses((Class) targetObject);
+      return interceptGetClasses((Class<?>) targetObject);
    }
 
    /**
@@ -499,7 +498,7 @@ public class ReflectionAspect
    {
 
       Object targetObject = invocation.getTargetObject();
-      return interceptGetDeclaredFields((Class) targetObject);
+      return interceptGetDeclaredFields((Class<?>) targetObject);
    }
 
    /**
@@ -515,7 +514,7 @@ public class ReflectionAspect
    {
 
       Object targetObject = invocation.getTargetObject();
-      return interceptGetDeclaredFields((Class) targetObject);
+      return interceptGetDeclaredFields((Class<?>) targetObject);
    }
 
    /**
@@ -532,7 +531,7 @@ public class ReflectionAspect
 
       Object targetObject = invocation.getTargetObject();
       Object[] args = invocation.getArguments();
-      return interceptGetDeclaredField((Class) targetObject, args);
+      return interceptGetDeclaredField((Class<?>) targetObject, args);
    }
 
    /**
@@ -548,7 +547,7 @@ public class ReflectionAspect
    {
       Object targetObject = invocation.getTargetObject();
       Object[] args = invocation.getArguments();
-      return interceptGetDeclaredField((Class) targetObject, args);
+      return interceptGetDeclaredField((Class<?>) targetObject, args);
    }
 
    /**
@@ -701,7 +700,7 @@ public class ReflectionAspect
     * @return The new instance
     * @throws Throwable
     */
-   protected Object interceptConstructor(Invocation invocation, Constructor constructor, Object[] args) throws Throwable
+   protected Object interceptConstructor(Invocation invocation, Constructor<?> constructor, Object[] args) throws Throwable
    {
       return invokeOriginalChainIfExists(invocation, constructor, args);
    }
@@ -765,13 +764,13 @@ public class ReflectionAspect
                                        Object targetObject,
                                        Object[] args) throws Throwable
    {
-      Class reflectionClass = targetObject.getClass();
+      Class<?> reflectionClass = targetObject.getClass();
 
       if (reflectionClass.equals(Class.class))
       {
 
          //For our purposes Class.newInstance() can be made into a call to the empty constructor
-         Constructor constructor = ((Class) targetObject).getConstructor(new Class[0]);
+         Constructor<?> constructor = ((Class<?>) targetObject).getConstructor(new Class[0]);
          return interceptConstructor(invocation, constructor, args);
       }
       else if (reflectionClass.equals(Constructor.class))
@@ -794,7 +793,7 @@ public class ReflectionAspect
                constructorArgs = (Object[]) args[0];
             }
 
-            Constructor constructor = (Constructor) targetObject;
+            Constructor<?> constructor = (Constructor<?>) targetObject;
             return interceptConstructor(invocation, constructor, constructorArgs);
          }
       }
@@ -816,10 +815,10 @@ public class ReflectionAspect
       return invocation.invokeNext();
    }
 
-   private Class[] interceptGetInterfaces(Class clazz)
+   private Class<?>[] interceptGetInterfaces(Class<?> clazz)
    {
-      Class[] interfaces = clazz.getInterfaces();
-      ArrayList cleanedInterfaces = new ArrayList(interfaces.length);
+      Class<?>[] interfaces = clazz.getInterfaces();
+      ArrayList<Class<?>> cleanedInterfaces = new ArrayList<Class<?>>(interfaces.length);
 
       for (int i = 0; i < interfaces.length; i++)
       {
@@ -829,7 +828,7 @@ public class ReflectionAspect
          }
       }
 
-      return (Class[]) cleanedInterfaces.toArray(new Class[cleanedInterfaces.size()]);
+      return cleanedInterfaces.toArray(new Class[cleanedInterfaces.size()]);
    }
 
    private Object interceptFieldSet(Invocation invocation, Method reflectionMethod, Object targetObject, Object[] args) throws Throwable
@@ -856,7 +855,7 @@ public class ReflectionAspect
       return invocation.invokeNext();
    }
 
-   private Method[] interceptGetDeclaredMethods(Class clazz)
+   private Method[] interceptGetDeclaredMethods(Class<?> clazz)
    {
       ClassAdvisor advisor = AspectManager.instance().getAdvisorIfAdvised(clazz);
 
@@ -868,7 +867,7 @@ public class ReflectionAspect
       {
          Object[] advisedMethods = advisor.getAdvisedMethods().getValues();
 
-         ArrayList methods = new ArrayList(advisedMethods.length);
+         ArrayList<Method> methods = new ArrayList<Method>(advisedMethods.length);
 
          for (int i = 0; i < advisedMethods.length; i++)
          {
@@ -879,11 +878,11 @@ public class ReflectionAspect
             }
          }
 
-         return (Method[]) methods.toArray(new Method[methods.size()]);
+         return methods.toArray(new Method[methods.size()]);
       }
    }
 
-   private Method interceptGetDeclaredMethod(Class clazz, Object[] args) throws NoSuchMethodException
+   private Method interceptGetDeclaredMethod(Class<?> clazz, Object[] args) throws NoSuchMethodException
    {
 
       ClassAdvisor advisor = AspectManager.instance().getAdvisorIfAdvised(clazz);
@@ -923,10 +922,10 @@ public class ReflectionAspect
       return true;
    }
 
-   private Method[] interceptGetMethods(Class clazz)
+   private Method[] interceptGetMethods(Class<?> clazz)
    {
 
-      ArrayList methods = new ArrayList();
+      ArrayList<Method> methods = new ArrayList<Method>();
 
       //These are the methods that have already been added. Since we are
       //using Class.getDeclaredMethods(), we don't want to add super
@@ -964,13 +963,13 @@ public class ReflectionAspect
          clazz = clazz.getSuperclass();
       }
 
-      return (Method[]) methods.toArray(new Method[methods.size()]);
+      return methods.toArray(new Method[methods.size()]);
    }
 
-   private Method interceptGetMethod(Class clazz, Object[] args) throws NoSuchMethodException
+   private Method interceptGetMethod(Class<?> clazz, Object[] args) throws NoSuchMethodException
    {
       Method method = clazz.getMethod((String) args[0], (Class[]) args[1]);
-      Class declaringClass = method.getDeclaringClass();
+      Class<?> declaringClass = method.getDeclaringClass();
 
       while (clazz != null)
       {
@@ -1005,7 +1004,7 @@ public class ReflectionAspect
    }
 
 
-   private Field[] interceptGetDeclaredFields(Class clazz)
+   private Field[] interceptGetDeclaredFields(Class<?> clazz)
    {
       ClassAdvisor advisor = AspectManager.instance().getAdvisorIfAdvised(clazz);
 
@@ -1017,7 +1016,7 @@ public class ReflectionAspect
       {
          Field[] advisedFields = advisor.getAdvisedFields();
 
-         ArrayList fields = new ArrayList(advisedFields.length);
+         ArrayList<Field> fields = new ArrayList<Field>(advisedFields.length);
 
          for (int i = 0; i < advisedFields.length; i++)
          {
@@ -1028,7 +1027,7 @@ public class ReflectionAspect
             }
          }
 
-         return (Field[]) fields.toArray(new Field[fields.size()]);
+         return fields.toArray(new Field[fields.size()]);
       }
 
    }
@@ -1037,28 +1036,28 @@ public class ReflectionAspect
     * JRockit does, so make it got through the same cleaning procedure 
     * here
     */
-   private Class[] interceptGetClasses(Class clazz) throws Throwable
+   private Class<?>[] interceptGetClasses(Class<?> clazz) throws Throwable
    {
-      Class[] classes = clazz.getClasses();
+      Class<?>[] classes = clazz.getClasses();
       return cleanClasses(classes);
    }
    
-   private Class[] interceptGetDeclaredClasses(Class clazz) throws Throwable
+   private Class<?>[] interceptGetDeclaredClasses(Class<?> clazz) throws Throwable
    {
-      Class[] classes = getDeclaredClasses(clazz);
+      Class<?>[] classes = getDeclaredClasses(clazz);
       return cleanClasses(classes);
    }
    
-   private Class[] cleanClasses(Class[] classes)
+   private Class<?>[] cleanClasses(Class<?>[] classes)
    {
-      ArrayList clazzes = new ArrayList();
+      ArrayList<Class<?>> clazzes = new ArrayList<Class<?>>();
 
       for (int i = 0; i < classes.length; i++)
       {
-         Class innerClass = classes[i];
+         Class<?> innerClass = classes[i];
 
          //Check if implements Untransformable
-         Class[] interfaces = classes[i].getInterfaces();
+         Class<?>[] interfaces = classes[i].getInterfaces();
          boolean implUntransformable = false;
 
          for (int j = 0; j < interfaces.length; j++)
@@ -1074,7 +1073,7 @@ public class ReflectionAspect
          {
             //Check if class implements Invocation at any stage
             boolean isInvocationImpl = false;
-            Class superclass = innerClass.getSuperclass();
+            Class<?> superclass = innerClass.getSuperclass();
             while (superclass != null)
             {
 
@@ -1098,10 +1097,10 @@ public class ReflectionAspect
          }
       }
 
-      return (Class[]) clazzes.toArray(new Class[clazzes.size()]);
+      return clazzes.toArray(new Class<?>[clazzes.size()]);
    }
 
-   private Field interceptGetDeclaredField(Class clazz, Object[] args) throws NoSuchFieldException
+   private Field interceptGetDeclaredField(Class<?> clazz, Object[] args) throws NoSuchFieldException
    {
 
       ClassAdvisor advisor = AspectManager.instance().getAdvisorIfAdvised(clazz);
@@ -1135,14 +1134,14 @@ public class ReflectionAspect
     * For now we don't bother attempting to use optimized invocations since we
     * are using reflection anyway
     */
-   private Object invokeOriginalChainIfExists(Invocation invocation, Constructor constructor, Object[] args) throws Throwable
+   private Object invokeOriginalChainIfExists(Invocation invocation, Constructor<?> constructor, Object[] args) throws Throwable
    {
       //Try to attach to the caller chain
       if (invocation instanceof MethodCalledByConstructorInvocation)
       {
          MethodCalledByConstructorInvocation inv = (MethodCalledByConstructorInvocation) invocation;
-         Constructor callingCon = inv.getCalling();
-         Class callingClass = callingCon.getDeclaringClass();
+         Constructor<?> callingCon = inv.getCalling();
+         Class<?> callingClass = callingCon.getDeclaringClass();
          if (isAdvised(callingClass))
          {
             ClassAdvisor advisor = AspectManager.instance().getAdvisor(callingClass);
@@ -1151,10 +1150,10 @@ public class ReflectionAspect
                int index = advisor.getConstructorIndex(callingCon);
                if (index >= 0)
                {
-                  HashMap calledClassesMap = advisor.getConCalledByConInterceptors()[index];
+                  HashMap<String, TLongObjectHashMap> calledClassesMap = advisor.getConCalledByConInterceptors()[index];
                   if (calledClassesMap != null)
                   {
-                     TLongObjectHashMap calledCons = (TLongObjectHashMap) calledClassesMap.get(constructor.getDeclaringClass().getName());
+                     TLongObjectHashMap calledCons = calledClassesMap.get(constructor.getDeclaringClass().getName());
                      if (calledCons != null)
                      {
                         long calledHash = MethodHashing.constructorHash(constructor);
@@ -1182,6 +1181,7 @@ public class ReflectionAspect
                long callingMethodHash = MethodHashing.calculateHash(callingMethod);
                long calledHash = MethodHashing.constructorHash(constructor);
 
+               @SuppressWarnings("unchecked")
                HashMap calledClassesMap = (HashMap) advisor.getConCalledByMethodInterceptors().get(callingMethodHash);
                if (calledClassesMap != null)
                {
@@ -1203,7 +1203,7 @@ public class ReflectionAspect
       }
       
       //Try to attach to chain on target object 
-      Class calledClass = constructor.getDeclaringClass();
+      Class<?> calledClass = constructor.getDeclaringClass();
       if (isAdvised(calledClass))
       {
          ClassAdvisor advisor = AspectManager.instance().getAdvisor(constructor.getDeclaringClass());
@@ -1235,7 +1235,7 @@ public class ReflectionAspect
       //Try to attach to chain on target object 
       ClassAdvisor advisor = AspectManager.instance().getAdvisor(field.getDeclaringClass());
 
-      Class calledClass = field.getDeclaringClass();
+      Class<?> calledClass = field.getDeclaringClass();
       if (isAdvised(calledClass))
       {
          if (advisor != null && advisor.hasAspects())
@@ -1264,7 +1264,7 @@ public class ReflectionAspect
       //Try to attach to chain on target object 
       ClassAdvisor advisor = AspectManager.instance().getAdvisor(field.getDeclaringClass());
 
-      Class calledClass = field.getDeclaringClass();
+      Class<?> calledClass = field.getDeclaringClass();
       if (isAdvised(calledClass))
       {
          if (advisor != null && advisor.hasAspects())
@@ -1292,8 +1292,8 @@ public class ReflectionAspect
       if (invocation instanceof MethodCalledByConstructorInvocation)
       {
          MethodCalledByConstructorInvocation inv = (MethodCalledByConstructorInvocation) invocation;
-         Constructor callingCon = inv.getCalling();
-         Class callingClass = callingCon.getDeclaringClass();
+         Constructor<?> callingCon = inv.getCalling();
+         Class<?> callingClass = callingCon.getDeclaringClass();
          if (isAdvised(callingClass))
          {
             ClassAdvisor advisor = AspectManager.instance().getAdvisor(callingClass);
@@ -1302,10 +1302,10 @@ public class ReflectionAspect
                int index = advisor.getConstructorIndex(callingCon);
                if (index >= 0)
                {
-                  HashMap calledClassesMap = advisor.getMethodCalledByConInterceptors()[index];
+                  HashMap<String, TLongObjectHashMap> calledClassesMap = advisor.getMethodCalledByConInterceptors()[index];
                   if (calledClassesMap != null)
                   {
-                     TLongObjectHashMap calledMethods = (TLongObjectHashMap) calledClassesMap.get(method.getDeclaringClass().getName());
+                     TLongObjectHashMap calledMethods = calledClassesMap.get(method.getDeclaringClass().getName());
                      if (calledMethods != null)
                      {
                         long calledHash = MethodHashing.calculateHash(method);
@@ -1335,6 +1335,7 @@ public class ReflectionAspect
                long callingMethodHash = MethodHashing.calculateHash(callingMethod);
                long calledHash = MethodHashing.calculateHash(method);
 
+               @SuppressWarnings("unchecked")
                HashMap calledClassesMap = (HashMap) advisor.getMethodCalledByMethodInterceptors().get(callingMethodHash);
                if (calledClassesMap != null)
                {
@@ -1360,9 +1361,9 @@ public class ReflectionAspect
       return invocation.invokeNext();
    }
 
-   private boolean isAdvised(Class clazz)
+   private boolean isAdvised(Class<?> clazz)
    {
-      Class[] interfaces = clazz.getInterfaces();
+      Class<?>[] interfaces = clazz.getInterfaces();
 
       for (int i = 0; i < interfaces.length; i++)
       {
@@ -1373,7 +1374,7 @@ public class ReflectionAspect
       }
       
       //Is this recursive check needed
-      Class superClass = clazz.getSuperclass();
+      Class<?> superClass = clazz.getSuperclass();
       if (superClass != null)
       {
          return isAdvised(superClass);
@@ -1387,16 +1388,16 @@ public class ReflectionAspect
     */
    class GetMethodsAlreadyFound
    {
-      HashMap methodMap = new HashMap();
+      HashMap<String, ArrayList<Method>> methodMap = new HashMap<String, ArrayList<Method>>();
 
       public void addMethod(Method m)
       {
          String methodName = m.getName();
-         ArrayList methods = (ArrayList) methodMap.get(methodName);
+         ArrayList<Method> methods = methodMap.get(methodName);
 
          if (methods == null)
          {
-            methods = new ArrayList();
+            methods = new ArrayList<Method>();
             methodMap.put(methodName, methods);
          }
 
@@ -1405,19 +1406,18 @@ public class ReflectionAspect
 
       public boolean existsMethod(Method method)
       {
-         ArrayList methods = (ArrayList) methodMap.get(method.getName());
+         ArrayList<Method> methods = methodMap.get(method.getName());
 
          if (methods == null)
          {
             return false;
          }
 
-         Class[] methodParamTypes = method.getParameterTypes();
+         Class<?>[] methodParamTypes = method.getParameterTypes();
 
-         for (Iterator it = methods.iterator(); it.hasNext();)
+         for (Method found : methods)
          {
-            Method found = (Method) it.next();
-            Class[] foundParamTypes = found.getParameterTypes();
+            Class<?>[] foundParamTypes = found.getParameterTypes();
 
             if (methodParamTypes.length == foundParamTypes.length)
             {
@@ -1444,35 +1444,35 @@ public class ReflectionAspect
    
    private interface SecurityAction
    {
-      Method[] getDeclaredMethods(Class clazz);
-      Field[] getDeclaredFields(Class clazz);
-      Class[] getDeclaredClasses(Class clazz);
-      Field getDeclaredField(Class clazz, String name) throws NoSuchFieldException;
-      Method getDeclaredMethod(Class clazz, String name, Class[] paramTypes) throws NoSuchMethodException;
+      Method[] getDeclaredMethods(Class<?> clazz);
+      Field[] getDeclaredFields(Class<?> clazz);
+      Class<?>[] getDeclaredClasses(Class<?> clazz);
+      Field getDeclaredField(Class<?> clazz, String name) throws NoSuchFieldException;
+      Method getDeclaredMethod(Class<?> clazz, String name, Class<?>[] paramTypes) throws NoSuchMethodException;
 
       SecurityAction NON_PRIVILEGED = new SecurityAction()
       {
-         public Field[] getDeclaredFields(Class clazz)
+         public Field[] getDeclaredFields(Class<?> clazz)
          {
             return clazz.getDeclaredFields();
          }
 
-         public Method[] getDeclaredMethods(Class clazz)
+         public Method[] getDeclaredMethods(Class<?> clazz)
          {
             return clazz.getDeclaredMethods();
          }
 
-         public Class[] getDeclaredClasses(Class clazz)
+         public Class<?>[] getDeclaredClasses(Class<?> clazz)
          {
             return clazz.getDeclaredClasses();
          }
 
-         public Field getDeclaredField(Class clazz, String name) throws NoSuchFieldException
+         public Field getDeclaredField(Class<?> clazz, String name) throws NoSuchFieldException
          {
             return clazz.getDeclaredField(name);
          }
 
-         public Method getDeclaredMethod(Class clazz, String name, Class[] paramTypes) throws NoSuchMethodException
+         public Method getDeclaredMethod(Class<?> clazz, String name, Class<?>[] paramTypes) throws NoSuchMethodException
          {
             return clazz.getDeclaredMethod(name, paramTypes);
          }
@@ -1481,42 +1481,42 @@ public class ReflectionAspect
 
       SecurityAction PRIVILEGED = new SecurityAction()
       {
-         public Field[] getDeclaredFields(final Class clazz)
+         public Field[] getDeclaredFields(final Class<?> clazz)
          {
-            return (Field[])AccessController.doPrivileged(new PrivilegedAction(){
-               public Object run()
+            return AccessController.doPrivileged(new PrivilegedAction<Field[]>(){
+               public Field[] run()
                {
                   return clazz.getDeclaredFields();
                }
             });
          }
 
-         public Method[] getDeclaredMethods(final Class clazz)
+         public Method[] getDeclaredMethods(final Class<?> clazz)
          {
-            return (Method[])AccessController.doPrivileged(new PrivilegedAction(){
-               public Object run()
+            return AccessController.doPrivileged(new PrivilegedAction<Method[]>(){
+               public Method[] run()
                {
                   return clazz.getDeclaredMethods();
                }
             });
          }
 
-         public Class[] getDeclaredClasses(final Class clazz)
+         public Class<?>[] getDeclaredClasses(final Class<?> clazz)
          {
-            return (Class[])AccessController.doPrivileged(new PrivilegedAction(){
-               public Object run()
+            return AccessController.doPrivileged(new PrivilegedAction<Class<?>[]>(){
+               public Class<?>[] run()
                {
                   return clazz.getDeclaredClasses();
                }
             });
          }
 
-         public Field getDeclaredField(final Class clazz, final String name) throws NoSuchFieldException 
+         public Field getDeclaredField(final Class<?> clazz, final String name) throws NoSuchFieldException 
          {
             try
             {
-               return (Field)AccessController.doPrivileged(new PrivilegedExceptionAction(){
-                  public Object run() throws Exception
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<Field>(){
+                  public Field run() throws Exception
                   {
                      return clazz.getDeclaredField(name);
                   }
@@ -1533,12 +1533,12 @@ public class ReflectionAspect
             }
          }
 
-         public Method getDeclaredMethod(final Class clazz, final String name, final Class[] paramTypes) throws NoSuchMethodException 
+         public Method getDeclaredMethod(final Class<?> clazz, final String name, final Class<?>[] paramTypes) throws NoSuchMethodException 
          {
             try
             {
-               return (Method)AccessController.doPrivileged(new PrivilegedExceptionAction(){
-                  public Object run() throws Exception
+               return AccessController.doPrivileged(new PrivilegedExceptionAction<Method>(){
+                  public Method run() throws Exception
                   {
                      return clazz.getDeclaredMethod(name, paramTypes);
                   }
@@ -1557,7 +1557,7 @@ public class ReflectionAspect
       };
    }
    
-   private static Method[] getDeclaredMethods(Class clazz)
+   private static Method[] getDeclaredMethods(Class<?> clazz)
    {
       if (System.getSecurityManager() == null)
       {
@@ -1569,7 +1569,7 @@ public class ReflectionAspect
       }
    }
 
-   private static Field[] getDeclaredFields(Class clazz)
+   private static Field[] getDeclaredFields(Class<?> clazz)
    {
       if (System.getSecurityManager() == null)
       {
@@ -1581,7 +1581,7 @@ public class ReflectionAspect
       }
    }
 
-   private static Class[] getDeclaredClasses(Class clazz)
+   private static Class<?>[] getDeclaredClasses(Class<?> clazz)
    {
       if (System.getSecurityManager() == null)
       {
@@ -1593,7 +1593,7 @@ public class ReflectionAspect
       }
    }
 
-   private static Field getDeclaredField(Class clazz, String name) throws NoSuchFieldException
+   private static Field getDeclaredField(Class<?> clazz, String name) throws NoSuchFieldException
    {
       if (System.getSecurityManager() == null)
       {
@@ -1605,7 +1605,7 @@ public class ReflectionAspect
       }
    }
 
-   private static Method getDeclaredMethod(Class clazz, String name, Class[] paramTypes) throws NoSuchMethodException
+   private static Method getDeclaredMethod(Class<?> clazz, String name, Class<?>[] paramTypes) throws NoSuchMethodException
    {
       if (System.getSecurityManager() == null)
       {

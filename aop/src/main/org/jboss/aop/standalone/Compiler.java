@@ -35,7 +35,6 @@ import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import javassist.bytecode.ClassFile;
@@ -43,8 +42,6 @@ import javassist.bytecode.ClassFile;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.Deployment;
 import org.jboss.aop.instrument.TransformationException;
-import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * takes jar or class files and adds needed jboss bytecode
@@ -54,7 +51,6 @@ import org.jboss.logging.Logger;
  */
 public class Compiler
 {
-   private static final Logger logger = AOPLogger.getLogger(Compiler.class);
    private FileFilter classFileFilter = new FileFilter()
    {
       public boolean accept(File pathname)
@@ -123,8 +119,8 @@ public class Compiler
          System.exit(1);
          return;
       }
-      ArrayList paths = new ArrayList();
-      ArrayList files = new ArrayList();
+      ArrayList<URL> paths = new ArrayList<URL>();
+      ArrayList<File> files = new ArrayList<File>();
       boolean report = false;
       for (int i = 0; i < args.length; i++)
       {
@@ -187,7 +183,7 @@ public class Compiler
       }
 
 
-      URL[] urls = (URL[]) paths.toArray(new URL[paths.size()]);
+      URL[] urls = paths.toArray(new URL[paths.size()]);
       loader = new URLClassLoader(urls, Thread.currentThread().getContextClassLoader());
 
       Thread.currentThread().setContextClassLoader(loader);
@@ -202,7 +198,7 @@ public class Compiler
       {
          for (int i = 0; i < files.size(); i++)
          {
-            File f = (File) files.get(i);
+            File f = files.get(i);
             loadFile(f);
          }
          FileOutputStream reportFile = new FileOutputStream("aop-report.xml");
@@ -214,7 +210,7 @@ public class Compiler
          //Add all the classes to compile
          for (int i = 0 ; i < files.size() ; i++)
          {
-            File f = (File)files.get(i);
+            File f = files.get(i);
             if (f.isDirectory())
             {
                addDirectory(f);
@@ -230,16 +226,15 @@ public class Compiler
          }
 
          //Compile each class
-         for (Iterator it = classesToCompile.keySet().iterator() ; it.hasNext() ; )
+         for (String className : classesToCompile.keySet())
          {
-            String className = (String)it.next();
-            CompilerClassInfo info = (CompilerClassInfo)classesToCompile.get(className);
+            CompilerClassInfo info = classesToCompile.get(className);
             compileFile(info);
          }
       }
    }
 
-   private HashMap classesToCompile = new HashMap();
+   private HashMap<String, CompilerClassInfo> classesToCompile = new HashMap<String, CompilerClassInfo>();
    
    private void addDirectory(File dir) throws Exception
    {
@@ -288,7 +283,7 @@ public class Compiler
       return cf;
    }
    
-   private void addFilesFromSourcePathFile(ArrayList files, String sourcePathFile)
+   private void addFilesFromSourcePathFile(ArrayList<File> files, String sourcePathFile)
    {
       BufferedReader reader = null;
 
@@ -327,7 +322,7 @@ public class Compiler
       DataInputStream is = new DataInputStream(new FileInputStream(file));
       ClassFile cf = new ClassFile(is);
       is.close();
-      Class clazz = loader.loadClass(cf.getName());
+      Class<?> clazz = loader.loadClass(cf.getName());
       if (org.jboss.aop.Advised.class.isAssignableFrom(clazz))
       {
          Field f = clazz.getDeclaredField("aop$classAdvisor$aop");
@@ -347,7 +342,7 @@ public class Compiler
       
       if (info.getSuperClassName() != null)
       {
-         CompilerClassInfo superInfo = (CompilerClassInfo)classesToCompile.get(info.getSuperClassName());
+         CompilerClassInfo superInfo = classesToCompile.get(info.getSuperClassName());
          if (superInfo != null)
          {
             compileFile(superInfo);

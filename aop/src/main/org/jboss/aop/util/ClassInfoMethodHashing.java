@@ -157,7 +157,7 @@ public class ClassInfoMethodHashing
       }
    }
    
-   private static void addDeclaredMethods(HashMap advised, ClassInfo superclass) throws Exception
+   private static void addDeclaredMethods(HashMap<Long, MethodInfo> advised, ClassInfo superclass) throws Exception
    {
       MethodInfo[] declaredMethods = superclass.getDeclaredMethods();
       if (declaredMethods != null)
@@ -172,7 +172,7 @@ public class ClassInfoMethodHashing
          }
       }
    }
-   private static void populateMethodTables(HashMap advised, ClassInfo superclass)
+   private static void populateMethodTables(HashMap<Long, MethodInfo> advised, ClassInfo superclass)
       throws Exception
    {
       if (superclass == null) return;
@@ -182,16 +182,16 @@ public class ClassInfoMethodHashing
       addDeclaredMethods(advised, superclass);
    }
 
-   public static HashMap getMethodMap(ClassInfo clazz) throws Exception
+   public static HashMap<Long, MethodInfo> getMethodMap(ClassInfo clazz) throws Exception
    {
-      HashMap map = new HashMap();
+      HashMap<Long, MethodInfo> map = new HashMap<Long, MethodInfo>();
       populateMethodTables(map, clazz);
       return map;
    }
 
-   public static HashMap getDeclaredMethodMap(ClassInfo clazz) throws Exception
+   public static HashMap<Long, MethodInfo> getDeclaredMethodMap(ClassInfo clazz) throws Exception
    {
-      HashMap map = new HashMap();
+      HashMap<Long, MethodInfo> map = new HashMap<Long, MethodInfo>();
       addDeclaredMethods(map, clazz);
       return map;
    }
