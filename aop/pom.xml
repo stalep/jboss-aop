@@ -326,9 +326,14 @@
       <version>3.7.1.GA</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.microcontainer</groupId>
-      <artifactId>jboss-container</artifactId>
-      <version>2.0.0.Beta10</version>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-reflect</artifactId>
+      <version>2.0.0.Beta12</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-mdr</artifactId>
+      <version>2.0.0.Beta12</version>
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
