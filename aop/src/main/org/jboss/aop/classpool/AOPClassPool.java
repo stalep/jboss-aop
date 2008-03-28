@@ -41,18 +41,18 @@ public class AOPClassPool extends ScopedClassPool
 {
    /** Classnames of classes that will be created - we do not want to look for these in other pools */
    protected ConcurrentHashMap<String, String> generatedClasses = new ConcurrentHashMap<String, String>();
-   
+
    protected ConcurrentHashMap<String, Boolean> localResources = new ConcurrentHashMap<String, Boolean>();
-   
+
    /** Classnames of classes that have been loaded, but were not woven */
    protected ConcurrentHashMap<String, Boolean> loadedButNotWovenClasses = new ConcurrentHashMap<String, Boolean>();
 
-   static 
+   static
    {
       ClassPool.doPruning = false;
       ClassPool.releaseUnmodifiedClassFile = false;
-   }   
-   
+   }
+
    public AOPClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
    {
       this(cl, src, repository, false);
@@ -72,12 +72,12 @@ public class AOPClassPool extends ScopedClassPool
    {
       classLoader = new WeakReference<ClassLoader>(cl);
    }
-   
+
    public void registerGeneratedClass(String className)
    {
       generatedClasses.put(className, className);
    }
-      
+
    public void close()
    {
       super.close();
@@ -89,15 +89,15 @@ public class AOPClassPool extends ScopedClassPool
       CtClass clazz = getCachedLocally(classname);
       if (clazz == null)
       {
-         boolean isLocal = false; 
+         boolean isLocal = false;
 
          ClassLoader cl = getClassLoader0();
 
          if (cl != null)
          {
-            isLocal = isLocalResource(classname); 
+            isLocal = isLocalResource(classname);
          }
-         
+
          if (!isLocal)
          {
             Object o = generatedClasses.get(classname);
@@ -114,13 +114,13 @@ public class AOPClassPool extends ScopedClassPool
                         AspectManager.instance().unregisterClassLoader(pool.getClassLoader());
                         continue;
                      }
-                     
+
                      //Do not check classpools for scoped classloaders
                      if (!pool.includeInGlobalSearch())
                      {
                         continue;
                      }
-      
+
                      clazz = pool.getCachedLocally(classname);
                      if (clazz != null)
                      {
@@ -134,12 +134,12 @@ public class AOPClassPool extends ScopedClassPool
       // *NOTE* NEED TO TEST WHEN SUPERCLASS IS IN ANOTHER UCL!!!!!!
       return clazz;
    }
-   
+
    protected boolean includeInGlobalSearch()
    {
       return true;
    }
-   
+
    protected String getResourceName(String classname)
    {
       final int lastIndex = classname.lastIndexOf('$');
@@ -152,7 +152,7 @@ public class AOPClassPool extends ScopedClassPool
          return classname.substring(0, lastIndex).replaceAll("[\\.]", "/") + classname.substring(lastIndex) + ".class";
       }
    }
-   
+
    protected boolean isLocalResource(String resourceName)
    {
       String classResourceName = getResourceName(resourceName);
@@ -165,7 +165,7 @@ public class AOPClassPool extends ScopedClassPool
       localResources.put(classResourceName, localResource ? Boolean.TRUE : Boolean.FALSE);
       return localResource;
    }
-   
+
    public synchronized CtClass getLocally(String classname)
            throws NotFoundException
    {
@@ -185,7 +185,7 @@ public class AOPClassPool extends ScopedClassPool
    {
       loadedButNotWovenClasses.put(classname, Boolean.TRUE);
    }
-   
+
    public boolean isClassLoadedButNotWoven(String classname)
    {
       return loadedButNotWovenClasses.get(classname) == Boolean.TRUE;
@@ -200,7 +200,7 @@ public class AOPClassPool extends ScopedClassPool
    {
       return (AOPClassPool)AspectManager.getClassPoolFactory().create(src, repository);
    }
-   
+
    public String toString()
    {
       ClassLoader cl = null;
@@ -211,6 +211,6 @@ public class AOPClassPool extends ScopedClassPool
       catch(IllegalStateException ignore)
       {
       }
-      return super.toString() + " - dcl " + cl;
+      return this.getClass().getName() + "@" + System.identityHashCode(this) + " " + super.toString() + " - dcl " + cl;
    }
 }
