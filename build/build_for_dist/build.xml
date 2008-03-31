@@ -50,8 +50,12 @@
          <pathelement path="lib-50/jboss-common-core.jar"/>
       </path>
 
-      <path id="jboss.container.classpath">
-         <pathelement path="lib-50/jboss-container.jar"/>
+      <path id="jboss.reflect.classpath">
+         <pathelement path="lib-50/jboss-reflect.jar"/>
+      </path>
+
+      <path id="jboss.mdr.classpath">
+         <pathelement path="lib-50/jboss-mdr.jar"/>
       </path>
 
       <path id="jboss.logging.log4j.classpath">
@@ -68,7 +72,8 @@
          <path refid="trove.classpath"/>
          <path refid="qdox.classpath"/>
          <path refid="jboss.core.classpath"/>
-         <path refid="jboss.container.classpath"/>
+         <path refid="jboss.reflect.classpath"/>
+         <path refid="jboss.mdr.classpath"/>
          <path refid="jboss.logging.log4j.classpath"/>
          <path refid="jboss.logging.classpath"/>
          <!--
