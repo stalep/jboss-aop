@@ -49,7 +49,7 @@ public class GenerateInstrumentedClassLoader
 
       String code = "{"
               + " if (!$1.startsWith(\"org.jboss.aop.\") &&"
-              + " !$1.endsWith(\"$aop\") &&"
+//              + " !$1.endsWith(\"$aop\") &&"
               + " !$1.startsWith(\"javassist\") &&"
               + " !$1.startsWith(\"org.jboss.util.\") &&"
               + " !$1.startsWith(\"gnu.trove.\") &&"

@@ -438,7 +438,7 @@ public abstract class JoinPointGenerator
 
    private String getJoinpointClassName()
    {
-      return baseJoinPointClassName + getIncrement() + "$aop";
+      return baseJoinPointClassName + getIncrement();
    }
 
    private void createInitialisePerInstanceAspectsMethod(CtClass clazz, AdviceSetups setups, Class<?> advisedClass) throws CannotCompileException, NotFoundException
