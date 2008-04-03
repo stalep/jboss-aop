@@ -67,8 +67,11 @@
          <path refid="dom4j.dom4j.classpath"/>
 		   <path refid="javassist.classpath"/>
       	<path refid="jbossas/core.libs.classpath"/>
+      	<path refid="jboss/jboss.reflect.classpath"/>
+      	<path refid="jboss/jboss.mdr.classpath"/>
       	<path refid="jboss/jboss.vfs.classpath"/>
-      	<path refid="jboss.microcontainer.classpath"/>
+      	<path refid="jboss/jboss.deployers.classpath"/>
+      	<path refid="jboss/jboss.managed.classpath"/>
          <path refid="jboss.test.classpath"/>
          <path refid="junit.junit.classpath"/>
          <path refid="oswego.concurrent.classpath"/>
