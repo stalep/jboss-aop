@@ -157,13 +157,78 @@
       <property name="classpath" value=""/>
       <property name="local.classpath" value=""/>
 
+      <!-- Create jdk14 version of the mc jars reflect and mdr -->
+      <property name="jboss-reflect.location" value="${project.thirdparty}/jboss/jboss-reflect/lib/jboss-reflect.jar"/>
+      <property name="jboss-mdr.location" value="${project.thirdparty}/jboss/jboss-mdr/lib/jboss-mdr.jar"/>
+
+      <mkdir dir="output/temp/jboss-reflect-classes"/>
+      <mkdir dir="output/temp/jboss-eflect-classes14"/>
+      <mkdir dir="output/temp/jboss-mdr-classes"/>
+      <mkdir dir="output/temp/jboss-mdr-classes14"/>
+      <unjar src="${jboss-reflect.location}" dest="output/temp/jboss-reflect-classes"/>
+      <unjar src="${jboss-mdr.location}" dest="output/temp/jboss-mdr-classes"/>
+
+      <path id="jbossretro.classpath">
+         <path refid="apache.ant.classpath"/>
+         <path refid="javassist.classpath"/>
+         <path refid="jboss/jboss.retro.classpath"/>
+         <path refid="jboss/backport.concurrent.classpath"/>
+      </path>
+
+      <taskdef name="retro" classname="org.jboss.ant.tasks.retro.Retro" classpathref="jbossretro.classpath"/>
+      <retro compilerclasspathref="jbossretro.classpath" destdir="output/temp/jboss-reflect-classes14">
+         <classpath refid="jbossretro.classpath"/>
+         <classpath>
+            <pathelement path="${project.root}/aop/output/classes"/>
+            <pathelement path="output/temp/jboss-reflect-classes"/>
+         </classpath>
+         <src path="output/temp/jboss-reflect-classes"/>
+      </retro>
+
+      <retro compilerclasspathref="jbossretro.classpath" destdir="output/temp/jboss-mdr-classes14">
+         <classpath refid="jbossretro.classpath"/>
+         <classpath>
+            <pathelement path="${project.root}/aop/output/classes"/>
+            <pathelement path="output/temp/jboss-mdr-classes"/>
+         </classpath>
+         <src path="output/temp/jboss-mdr-classes"/>
+      </retro>
+
+      <jar
+      	destfile="output/temp/jboss-reflect-jdk14.jar"
+      	basedir="output/temp/jboss-reflect-classes14"
+      	includes="**"
+      	manifest="output/temp/jboss-reflect-classes/META-INF/MANIFEST.MF"/>
+ 
+      <jar
+      	destfile="output/temp/jboss-mdr-jdk14.jar"
+      	basedir="output/temp/jboss-mdr-classes14"
+      	includes="**"
+      	manifest="output/temp/jboss-mdr-classes/META-INF/MANIFEST.MF"/>
+
+      <path id="jboss/jboss.reflect14.classpath">
+         <pathelement path="${project.root}/aop/output/temp/jboss-reflect-jdk14.jar"/>
+      </path>
+      <path id="jboss/jboss.mdr14.classpath">
+         <pathelement path="${project.root}/aop/output/temp/jboss-mdr-jdk14.jar"/>
+      </path>
+
+
       <!-- The classpath required to build classes. -->
       <path id="javac.classpath">
          <pathelement path="${classpath}"/>
          <pathelement path="${local.classpath}"/>
          <path refid="thirdparty.classpath"/>
          <path refid="jboss.test14.classpath"/>
+         <path refid="jboss/jboss.reflect14.classpath"/>
+         <path refid="jboss/jboss.mdr14.classpath"/>
+         <!--
+         <pathelement path="jboss-reflect-jdk14.location"/>
+         <pathelement path="jboss-mdr-jdk14.location"/>
+         -->
+         <!--
          <path refid="jboss.microcontainer14.classpath"/>
+         -->
          <path refid="jboss/common.core.14.classpath"/>
          <pathelement path="${build.lib}/jboss-aop-jdk50.jar"/>
          <path refid="junit.junit.classpath"/>
@@ -179,7 +244,15 @@
       <path id="jbossretrort.classpath">
          <path refid="jboss/backport.concurrent.classpath"/>
          <pathelement path="${jboss/jboss.retro.lib}/jboss-retro-rt.jar"/>
+         <!--
+         <pathelement path="jboss-reflect-jdk14.location"/>
+         <pathelement path="jboss-mdr-jdk14.location"/>
+         -->
+         <path refid="jboss/jboss.reflect14.classpath"/>
+         <path refid="jboss/jboss.mdr14.classpath"/>
+         <!--
          <path refid="jboss.microcontainer14.classpath"/>
+         -->
          <path refid="jboss/common.core.14.classpath"/>
       </path>
 
