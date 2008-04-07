@@ -280,7 +280,15 @@ public abstract class JoinPointGenerator
             generatedClass = generatedClasses.get(classloader);
             if (generatedClass != null)
             {
-               clazz = classloader.loadClass(generatedClass.getGenerated().getName());
+               try
+               {
+                  clazz = classloader.loadClass(generatedClass.getGenerated().getName());
+               }
+               catch (ClassNotFoundException e)
+               {
+                  // class loader did not found the class, so, we need to generate
+                  // the class again
+               }
             }
          }
          else
