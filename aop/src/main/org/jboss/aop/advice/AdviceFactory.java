@@ -107,7 +107,11 @@ public class AdviceFactory implements InterceptorFactory
          }
          catch (Exception e)
          {
-            throw new RuntimeException(e);  //To change body of catch statement use Options | File Templates.
+            if (e instanceof RuntimeException)
+            {
+               throw (RuntimeException) e;
+            }
+            throw new RuntimeException(e);
          }
       }
       else if (aspect.getScope() == Scope.PER_CLASS)
