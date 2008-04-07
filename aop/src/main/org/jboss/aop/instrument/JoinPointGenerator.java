@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javassist.CannotCompileException;
@@ -132,8 +133,8 @@ public abstract class JoinPointGenerator
     * A cache of the generated joinpoint classes indexed by the interceptor chains for the info to 
     * avoid having to generate a new class on every single rebind
     */
-   private HashMap<String, GeneratedClassInfo> generatedJoinPointClassCache =
-      new HashMap<String, GeneratedClassInfo>();
+   private HashMap<String, Map<ClassLoader, GeneratedClassInfo>> generatedJoinPointClassCache =
+      new HashMap<String, Map<ClassLoader, GeneratedClassInfo>>();
    
    /**
     * Constructor.
@@ -270,13 +271,24 @@ public abstract class JoinPointGenerator
 
          //Attempt to get the cached information so we don't have to recreate the class every time we rebind the joinpoint
          String infoAdviceString = info.getAdviceString();
-         GeneratedClassInfo generatedClass = generatedJoinPointClassCache.get(infoAdviceString);
+         GeneratedClassInfo generatedClass = null;
          Class<?> clazz = null;
-         if (generatedClass != null)
-         {
-            clazz = classloader.loadClass(generatedClass.getGenerated().getName());
-         }
+         Map<ClassLoader, GeneratedClassInfo> generatedClasses = generatedJoinPointClassCache.get(infoAdviceString);
          
+         if (generatedClasses != null)
+         {
+            generatedClass = generatedClasses.get(classloader);
+            if (generatedClass != null)
+            {
+               clazz = classloader.loadClass(generatedClass.getGenerated().getName());
+            }
+         }
+         else
+         {
+            generatedClasses = new HashMap<ClassLoader, GeneratedClassInfo>();
+            generatedJoinPointClassCache.put(infoAdviceString, generatedClasses);
+         }
+            
          if (clazz == null)
          {
             //We need to do all the work again
@@ -286,7 +298,7 @@ public abstract class JoinPointGenerator
             
             ProtectionDomain pd = advisorClass.getProtectionDomain();
             clazz = toClass(pool, generatedClass.getGenerated(), pd);
-            generatedJoinPointClassCache.put(infoAdviceString, generatedClass);
+            generatedClasses.put(classloader, generatedClass);
          }
          Object obj = instantiateClass(clazz, generatedClass.getAroundSetups(), info);
          
