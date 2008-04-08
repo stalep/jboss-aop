@@ -21,6 +21,7 @@
   */
 package org.jboss.aop.instrument;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.security.AccessController;
@@ -33,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -133,8 +135,8 @@ public abstract class JoinPointGenerator
     * A cache of the generated joinpoint classes indexed by the interceptor chains for the info to 
     * avoid having to generate a new class on every single rebind
     */
-   private HashMap<String, Map<ClassLoader, GeneratedClassInfo>> generatedJoinPointClassCache =
-      new HashMap<String, Map<ClassLoader, GeneratedClassInfo>>();
+   private HashMap<String, Map<ClassLoader, WeakReference<GeneratedClassInfo>>> generatedJoinPointClassCache =
+      new HashMap<String, Map<ClassLoader, WeakReference<GeneratedClassInfo>>>();
    
    /**
     * Constructor.
@@ -272,48 +274,34 @@ public abstract class JoinPointGenerator
          //Attempt to get the cached information so we don't have to recreate the class every time we rebind the joinpoint
          String infoAdviceString = info.getAdviceString();
          GeneratedClassInfo generatedClass = null;
-         Class<?> clazz = null;
-         Map<ClassLoader, GeneratedClassInfo> generatedClasses = generatedJoinPointClassCache.get(infoAdviceString);
+         Map<ClassLoader, WeakReference<GeneratedClassInfo>> generatedClasses =
+               generatedJoinPointClassCache.get(infoAdviceString);
          
          if (generatedClasses != null)
          {
-            generatedClass = generatedClasses.get(classloader);
-            if (generatedClass != null)
-            {
-               try
-               {
-                  clazz = classloader.loadClass(generatedClass.getGenerated().getName());
-               }
-               catch (ClassNotFoundException e)
-               {
-                  // class loader did not found the class, so, we need to generate
-                  // the class again
-               }
-            }
+            generatedClass= generatedClasses.get(classloader).get();
          }
          else
          {
-            generatedClasses = new HashMap<ClassLoader, GeneratedClassInfo>();
+            generatedClasses = new WeakHashMap<ClassLoader, WeakReference<GeneratedClassInfo>>();
             generatedJoinPointClassCache.put(infoAdviceString, generatedClasses);
          }
             
-         if (clazz == null)
+         if (generatedClass == null)
          {
             //We need to do all the work again
             AspectManager manager = AspectManager.instance();
             ClassPool pool = manager.findClassPool(classloader);
-            generatedClass = generateJoinpointClass(pool, info);
-            
             ProtectionDomain pd = advisorClass.getProtectionDomain();
-            clazz = toClass(pool, generatedClass.getGenerated(), pd);
-            generatedClasses.put(classloader, generatedClass);
+            generatedClass = generateJoinpointClass(pool, info, classloader, pd);
+            generatedClasses.put(classloader, new WeakReference<GeneratedClassInfo>(generatedClass));
          }
-         Object obj = instantiateClass(clazz, generatedClass.getAroundSetups(), info);
+         Object obj = instantiateClass(generatedClass, info);
          
          joinpointField.set(info.getAdvisor(), obj);
          if (info.getAdvisor() instanceof InstanceAdvisor)
          {
-            Field field = clazz.getDeclaredField(IS_FOR_INSTANCE_ADVISOR);
+            Field field = generatedClass.getGenerated().getDeclaredField(IS_FOR_INSTANCE_ADVISOR);
             SecurityActions.setAccessible(field);
             field.set(obj, Boolean.TRUE);
          }
@@ -339,13 +327,14 @@ public abstract class JoinPointGenerator
       }
    }
 
-   private Class<?> toClass(ClassPool pool, CtClass ctclass, ProtectionDomain pd) throws NotFoundException, CannotCompileException, ClassNotFoundException
+   private Class<?> toClass(ClassLoader classLoader, CtClass ctclass, ProtectionDomain pd) throws NotFoundException, CannotCompileException, ClassNotFoundException
    {
-      return TransformerCommon.toClass(ctclass, pd);
+      return TransformerCommon.toClass(ctclass, classLoader, pd);
    }
    
-   private Object instantiateClass(Class<?> clazz, AdviceSetup[] aroundSetups, JoinPointInfo info) throws Exception
+   private Object instantiateClass(GeneratedClassInfo generatedClass, JoinPointInfo info) throws Exception
    {
+      Class<?> clazz = generatedClass.getGenerated();
       Constructor<?> ctor = clazz.getConstructor(new Class[] {info.getClass()});
       Object obj;
       try
@@ -362,7 +351,7 @@ public abstract class JoinPointGenerator
 //         }
          throw new RuntimeException(debugClass(sb, clazz).toString(), e);
       }
-      
+      AdviceSetup[] aroundSetups = generatedClass.getAroundSetups();
       for (int i = 0 ; i < aroundSetups.length ; i++)
       {
          if (aroundSetups[i].isNewCFlow())
@@ -412,7 +401,7 @@ public abstract class JoinPointGenerator
    
    protected abstract void initialiseJoinPointNames(JoinPointInfo info);
 
-   private GeneratedClassInfo generateJoinpointClass(ClassPool pool, JoinPointInfo newInfo) throws NotFoundException,
+   private GeneratedClassInfo generateJoinpointClass(ClassPool pool, JoinPointInfo newInfo, ClassLoader classloader, ProtectionDomain pd) throws NotFoundException,
    CannotCompileException, ClassNotFoundException
    {
       CtClass superClass = pool.get(joinpointFqn);
@@ -437,7 +426,8 @@ public abstract class JoinPointGenerator
          createInvokeNextMethod(clazz, isVoid(), setups, newInfo);
   
          overrideDispatchMethods(superClass, clazz, newInfo);
-         return new GeneratedClassInfo(clazz, setups);
+         Class<?> loadedClass= toClass(classloader, clazz, pd);
+         return new GeneratedClassInfo(loadedClass, setups);
       }
       catch (NotFoundException e)
       {
@@ -1519,16 +1509,16 @@ public abstract class JoinPointGenerator
    
    private class GeneratedClassInfo
    {
-      CtClass generated;
+      Class generated;
       AdviceSetup[] aroundSetups;
       
-      GeneratedClassInfo(CtClass generated, AdviceSetups setups)
+      GeneratedClassInfo(Class generated, AdviceSetups setups)
       {
          this.generated = generated;
          this.aroundSetups = setups.getByType(AdviceType.AROUND);
       }
       
-      CtClass getGenerated()
+      Class getGenerated()
       {
          return generated;
       }
