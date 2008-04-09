@@ -30,6 +30,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.jboss.aop.Advised;
+import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
  * A DuplicateMethodTestCase.
@@ -37,9 +38,8 @@ import org.jboss.aop.Advised;
  * @author <a href="stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-//TODO http://jira.jboss.com/jira/browse/JBAOP-540 Make extend AOPTestWithSetupAgain 
 @SuppressWarnings({"unused", "unchecked", "cast"})
-public class DuplicateMethodTestCase extends TestCase/*AOPTestWithSetup*/
+public class DuplicateMethodTestCase extends AOPTestWithSetup
 {
 
    public DuplicateMethodTestCase(String name)

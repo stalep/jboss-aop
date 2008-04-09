@@ -24,7 +24,7 @@ package org.jboss.test.aop.duplicatemethod;
 /**
  * A TestDupe.
  * 
- * @author <a href="stalep@gmail.com">Stale W. Pedersen</a>
+ * @author <a href="stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
 public class TestDupe
