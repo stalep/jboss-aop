@@ -343,6 +343,7 @@
       -->
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-reflect.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-mdr.location}"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-common-core.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${javassist.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${trove.location}"/>
       <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/META-INF/jboss-service.xml" file="output/temp/jboss-service-jdk50.xml"/>
