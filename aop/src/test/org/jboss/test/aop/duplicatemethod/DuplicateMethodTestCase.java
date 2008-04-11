@@ -39,7 +39,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @version $Revision: 1.1 $
  */
 @SuppressWarnings({"unused", "unchecked", "cast"})
-public class DuplicateMethodTestCase extends AOPTestWithSetup
+public class DuplicateMethodTestCase extends TestCase
 {
 
    public DuplicateMethodTestCase(String name)
