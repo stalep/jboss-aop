@@ -279,7 +279,10 @@ public abstract class JoinPointGenerator
          
          if (generatedClasses != null)
          {
-            generatedClass= generatedClasses.get(classloader).get();
+            if (generatedClasses.containsKey(classloader))
+            {
+               generatedClass= generatedClasses.get(classloader).get();
+            }
          }
          else
          {
