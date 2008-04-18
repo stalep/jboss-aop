@@ -69,6 +69,7 @@ import org.jboss.aop.metadata.FieldMetaData;
 import org.jboss.aop.metadata.MethodMetaData;
 import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
+import org.jboss.aop.util.JoinPointComparator;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.metadata.spi.MetaData;
 import org.jboss.metadata.spi.signature.ConstructorSignature;
@@ -347,7 +348,7 @@ public abstract class Advisor
    {
       return resolveTypedAnnotation(annotation);
    }
-
+   
    public <T extends Annotation> T resolveTypedAnnotation(Class<T> annotation)
    {
       if (metadata != null)
@@ -421,7 +422,7 @@ public abstract class Advisor
    {
       return resolveTypedAnnotation(0, m, annotation);
    }
-
+   
    public <T extends Annotation> T resolveTypedAnnotation(Method m, Class<T> annotation)
    {
       return resolveTypedAnnotation(0, m, annotation);
@@ -431,7 +432,7 @@ public abstract class Advisor
    {
       return resolveTypedAnnotation(hash, m, annotation);
    }
-
+   
    public <T extends Annotation> T resolveTypedAnnotation(long hash, Method m, Class<T> annotation)
    {
       if (metadata != null)
@@ -450,7 +451,7 @@ public abstract class Advisor
 
       //MUST call this instead of AR.resolveTypedClassAnnotation since EJB3 overrides AR.resolveClassAnnotation
       T value = (T)annotations.resolveAnnotation(m, annotation);
-      if (value == null && metadata == null)
+      if (value == null && metadata == null) 
       {
          value = AnnotationElement.getVisibleAnnotation(m, annotation);
       }
@@ -482,7 +483,7 @@ public abstract class Advisor
    {
       return resolveTypedAnnotation(f, annotation);
    }
-
+   
    public <T extends Annotation> T resolveTypedAnnotation(Field f, Class<T> annotation)
    {
       T value = null;
@@ -496,7 +497,7 @@ public abstract class Advisor
             if (value != null) return value;
          }
       }
-
+      
       //MUST call this instead of AR.resolveTypedClassAnnotation since EJB3 overrides AR.resolveClassAnnotation
       value = (T)annotations.resolveAnnotation(f, annotation);
       if (value == null && metadata == null)
@@ -510,7 +511,7 @@ public abstract class Advisor
    {
       return resolveTypedAnnotation(c, annotation);
    }
-
+   
    public <T extends Annotation> T resolveTypedAnnotation(Constructor<?> c, Class<T> annotation)
    {
       T value = null;
@@ -524,7 +525,7 @@ public abstract class Advisor
             if (value != null) return value;
          }
       }
-
+      
       //MUST call this instead of AR.resolveTypedClassAnnotation since EJB3 overrides AR.resolveClassAnnotation
       value = (T)annotations.resolveAnnotation(c, annotation);
       if (value == null && metadata == null)
@@ -582,7 +583,7 @@ public abstract class Advisor
    {
       return hasAnnotation(m, annotation.getName());
    }
-
+   
    public boolean hasAnnotation(Field m, String annotation)
    {
       if (metadata != null)
@@ -647,7 +648,7 @@ public abstract class Advisor
       }
       return false;
    }
-
+   
    public boolean hasAnnotation(CtClass clazz, String annotation)
    {
       if (annotations.hasClassAnnotation(annotation)) return true;
@@ -684,7 +685,7 @@ public abstract class Advisor
 
    /**
     * Get the metadata
-    *
+    * 
     * @return the metadata
     */
    public MetaData getMetadata()
@@ -694,7 +695,7 @@ public abstract class Advisor
 
    /**
     * Set the metadata
-    *
+    * 
     * FIXME why does this have java.lang.Object signature?
     * @param metadata the metadata
     */
@@ -743,7 +744,7 @@ public abstract class Advisor
 
    public synchronized void addInterfaceIntroduction(InterfaceIntroduction pointcut)
    {
-      initInterfaceIntroductionsList();
+      initInterfaceIntroductionsList();      
       interfaceIntroductions.add(pointcut);
    }
 
@@ -763,12 +764,12 @@ public abstract class Advisor
    public abstract void removeClassMetaData(ClassMetaDataBinding data);
 
    // This is aspect stuff.  Aspect again, is a class that encapsulates advices
-
+   
    public Object getPerVMAspect(AspectDefinition def)
    {
       return getManager().getPerVMAspect(def);
    }
-
+   
    public void addPerInstanceAspect(AspectDefinition def)
    {
       initPerInstanceAspectDefinitionsSet();
@@ -813,7 +814,7 @@ public abstract class Advisor
       }
       setJoinpoints.addAll(joinpoints);
    }
-
+   
    public void removePerInstanceJoinpointAspect(AspectDefinition def)
    {
       perInstanceJoinpointAspectDefinitions.remove(def);
@@ -896,7 +897,7 @@ public abstract class Advisor
       {
          Method method = (Method) advisedMethods.get(keys[i]);
          PointcutMethodMatch match = binding.getPointcut().matchesExecution(this, method);
-
+         
          if (match != null && match.isMatch())
          {
             adviceBindings.add(binding);
@@ -931,7 +932,7 @@ public abstract class Advisor
          methodMatchInfo.getInfo().getInterceptorChainReadWriteLock().writeLock().lock();
       }
    }
-
+   
    protected void unlockWriteChain(MethodInterceptors methodInterceptors)
    {
       Object[] methodMatchInfos = methodInterceptors.infos.getValues();
@@ -941,7 +942,7 @@ public abstract class Advisor
          methodMatchInfo.getInfo().getInterceptorChainReadWriteLock().writeLock().unlock();
       }
    }
-
+   
    protected void resetChain(MethodInterceptors methodInterceptors)
    {
       Object[] methodMatchInfos = methodInterceptors.infos.getValues();
@@ -959,12 +960,12 @@ public abstract class Advisor
          methodMatchInfo.getInfo().clear();
       }
    }
-
+   
    protected void finalizeMethodChain()
    {
       boolean maintain = AspectManager.maintainAdvisorMethodInterceptors;
       TLongObjectHashMap newMethodInfos = (maintain) ? new TLongObjectHashMap() : null;
-
+      
       long[] keys = methodInfos.keys();
       for (int i = 0; i < keys.length; i++)
       {
@@ -978,7 +979,7 @@ public abstract class Advisor
             interceptors = applyPrecedence(list.toArray(new Interceptor[list.size()]));
          }
          info.setInterceptors(interceptors);
-
+         
          if (maintain)
          {
             newMethodInfos.put(keys[i], info);
@@ -1146,7 +1147,7 @@ public abstract class Advisor
          info.setInterceptors(interceptors);
       }
    }
-
+   
    protected void lockWriteChain(JoinPointInfo[] infos)
    {
       for (int i = 0; i < infos.length; i++)
@@ -1154,7 +1155,7 @@ public abstract class Advisor
          infos[i].getInterceptorChainReadWriteLock().writeLock().lock();
       }
    }
-
+   
    protected void unlockWriteChain(JoinPointInfo[] infos)
    {
       for (int i = 0; i < infos.length; i++)
@@ -1162,7 +1163,7 @@ public abstract class Advisor
          infos[i].getInterceptorChainReadWriteLock().writeLock().unlock();
       }
    }
-
+   
    protected void resetChain(JoinPointInfo[] infos)
    {
       for (int i = 0; i < infos.length; i++)
@@ -1170,8 +1171,8 @@ public abstract class Advisor
          infos[i].clear();
       }
    }
-
-
+   
+   
 
 //   protected void finalizeConstructionChain(ArrayList newConstructionInfos)
 //   {
@@ -1296,7 +1297,7 @@ public abstract class Advisor
       //Implemented by base-classes
       throw new NotImplementedException("Not a legal operation for Advisor");
    }
-
+   
    interface DeployAnnotationOverrideAction
    {
       void deploy(Advisor advisor, AnnotationIntroduction introduction);
@@ -1336,7 +1337,7 @@ public abstract class Advisor
          }
       };
    }
-
+   
    public void cleanup()
    {
       //AspectDefinitions have strong links back to us
@@ -1345,7 +1346,7 @@ public abstract class Advisor
          removePerInstanceAspect(def);
          def.unregisterAdvisor(this);
       }
-
+      
       for(AspectDefinition def : perInstanceJoinpointAspectDefinitions.keySet())
       {
          removePerInstanceJoinpointAspect(def);
@@ -1361,13 +1362,13 @@ public abstract class Advisor
             defs[i].unregisterAdvisor(this);
          }
       }
-
+            
       if (methodInfos != null)
       {
          methodInfos. clear();
       }
    }
-
+   
    protected void initInterfaceIntroductionsList()
    {
       if (interfaceIntroductions == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
@@ -1381,7 +1382,7 @@ public abstract class Advisor
          }
       }
    }
-
+   
    protected void initClassMetaDataBindingsList()
    {
       if (classMetaDataBindings == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
@@ -1395,7 +1396,7 @@ public abstract class Advisor
          }
       }
    }
-
+   
    protected void initPerInstanceAspectDefinitionsSet()
    {
       if (perInstanceAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_COPYONWRITE_ARRAYSET)
@@ -1409,7 +1410,7 @@ public abstract class Advisor
          }
       }
    }
-
+   
    protected void initPerInstanceJoinpointAspectDefinitionsMap()
    {
       if (perInstanceJoinpointAspectDefinitions == UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP)
@@ -1437,5 +1438,22 @@ public abstract class Advisor
          }
       }
    }
+   
+   public boolean hasSameMethodAspects(Advisor other)
+   {
+      long[] keys = this.methodInfos.infos.keys();
+      for (int i = 0 ; i < keys.length ; i++)
+      {
+         MethodInfo myInfo = this.getMethodInfo(keys[i]);
+         MethodInfo otherInfo = other.getMethodInfo(keys[i]);
+         
+        if (!JoinPointComparator.hasSameChains(myInfo, otherInfo))
+        {
+           return false;
+        }
+      }
+      return true;
+   }
+   
 
 }
