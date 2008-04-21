@@ -20,8 +20,7 @@
       <title>Installing Standalone</title>
 
       <para>
-         There's nothing really to install if you're running outside the JBoss application server.  If you are using
-         JDK 1.4.x, use the libraries under the <literal>lib-14/</literal> directory to build your JBoss AOP applications.
+         There's nothing really to install if you're running outside the JBoss application server.
          If you're using JDK 5.0, use the libraries under <literal>lib-50/</literal>.
       </para>
    </sect1>
@@ -50,55 +49,6 @@
             In JBoss 4.0.4.GA and later, move <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/javassist.jar]]></literal>
             to <literal><![CDATA[server/<config-name>/lib/javassist.jar]]></literal>. Any existing javassist.jar in that location is copied to
             <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer.bak/lib/javassist.bak]]></literal>
-         </listitem>
-         <listitem>
-            If you NOT upgrading from a previous AOP 2 distribution, open up
-            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-aspect-library-jdk50.jar]]></literal> and
-            delete all classes and subpackages under <literal>org.jboss.aop</literal>. In AOP 2.0 we changed the packaging, these
-            classes now exist inside <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-aop-as4-deployer.jar]]></literal>. 
-            Also, we delete any files that also exist in 
-            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-standalone-aspect-library-jdk14.jar]]></literal>
-         </listitem>
-      </orderedlist>
-   </sect1>
-
-   <sect1 id="installing-jboss40-jdk14" revision="1">
-      <title>Installing with JBoss 4.0.x Application Server for JDK 1.4</title>
-
-      <para>
-         To install JBoss AOP in JBoss 4.0.x with JDK 1.4 (JBoss 4.2.x requires JDK 5), there is an ant build script to
-         install into the application server. It lives in <literal>jboss-40-install/jboss-aop-jdk14.deployer/build.xml</literal>.
-         Modify <literal>jboss-40-install/jboss-aop-jdk14.deployer/jboss.properties</literal>  to point to the the root of your
-         JBoss installation and specify the application server configuration you want to upgrade. These are the steps taken by
-         the ant script:
-      </para>
-      <orderedlist spacing="compact">
-         <listitem>
-             Back up the existing <literal>jboss-40-install/jboss-aop.deployer</literal> (if upgrading from AOP 1.x)
-             or <literal>jboss-40-install/jboss-aop-jdk14.deployer</literal> (if upgrading from AOP 2.x) to
-            <literal><![CDATA[server/<config-name>/deploy/jboss-aop.deployer.bak]]></literal>
-         </listitem>
-         <listitem>
-             Copy the files from <literal>jboss-40-install/jboss-aop-jdk14.deployer</literal> to
-            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer]]></literal>
-         </listitem>
-         <listitem>
-            In JBoss 4.0.4.GA and later, move <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/javassist.jar]]></literal>
-            to <literal><![CDATA[server/<config-name>/lib/javassist.jar]]></literal>. Any existing javassist.jar in that location is copied to
-            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer.bak/lib/javassist.bak]]></literal>
-         </listitem>
-         <listitem>
-            In JBoss 4.0.4.GA and later, move <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jbossretro-rt.jar]]></literal>
-            to <literal><![CDATA[server/<config-name>/lib/jbossretro-rt.jar]]></literal>. Any existing jbossretro-rt.jar in that location is copied to
-            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer.bak/lib/jbossretro-rt.bak]]></literal>
-         </listitem>
-         <listitem>
-            In JBoss 4.0.4.GA and later, move <literal><![CDATA[client/jbossretro-rt.jar]]></literal>
-            to <literal><![CDATA[client/jbossretro-rt.bak]]></literal>. 
-         </listitem>
-         <listitem>
-            In JBoss 4.0.4.GA and later, move <literal><![CDATA[client/javassist.jar]]></literal>
-            to <literal><![CDATA[client/javassist.bak]]></literal>. 
          </listitem>
          <listitem>
             If you NOT upgrading from a previous AOP 2 distribution, open up

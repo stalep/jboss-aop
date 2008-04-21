@@ -9,7 +9,6 @@
 <!ENTITY xml                    SYSTEM "modules/xml.xml">
 <!ENTITY annotated              SYSTEM "modules/annotated.xml">
 <!ENTITY dynamic                SYSTEM "modules/dynamic.xml">
-<!ENTITY jdk14compatibility     SYSTEM "modules/jdk14compatibility.xml">
 <!ENTITY installing             SYSTEM "modules/installing.xml">
 <!ENTITY compiling              SYSTEM "modules/compiling.xml">
 <!ENTITY running                SYSTEM "modules/running.xml">

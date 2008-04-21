@@ -4,6 +4,9 @@
    <sect1 id="aopide-intro" revision="1">
       <title>The AOP IDE</title>
       <para>
+        NOTE: JBoss AOP IDE is currently not usable with the latest releases of JBoss AOP!
+
+
       	JBoss AOP comes with an Eclipse plugin that helps you define interceptors to an eclipse project 
 			via a GUI, and to run the appication from within Eclipse. This is a new project, and expect the
 			feature set to grow quickly!

@@ -6,8 +6,7 @@
 
    <para>
          JDK 5.0 has introduced a new concept called annotations. Annotations can be
-         used as an alternative to XML for configuring classes for AOP. For backward compatibility
-         with JDK 1.4.2, refer to <xref linkend="jdk14compatibility"/>
+         used as an alternative to XML for configuring classes for AOP. 
    </para>
 
    <!-- *********************************** Aspect ******************************** -->

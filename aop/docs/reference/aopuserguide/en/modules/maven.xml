@@ -97,8 +97,8 @@
         </para>
       </listitem>
     </itemizedlist>
-    There is a lot of options that can be set, but noone are mandatory (if they are mandatory 
-    they have a default value set). The average user would moste likely only change <literal>aoppaths</literal>.
+    There are a lot of options that can be set, but noone are mandatory (if they are mandatory 
+    they have a default value set). The average user would most likely only change <literal>aoppaths</literal>.
     A more complete example would look like:
     <programlisting><![CDATA[
 <plugin>
