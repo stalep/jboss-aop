@@ -124,29 +124,14 @@
 
       &libraries;
 
-<!--
-      <property name="aop.14.location" value="${project.root}/aop/output/lib/jboss-aop.jar"/>
-      -->
       <property name="aop.50.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50.jar"/>
-      <!--
-      <property name="aop.aspect-library14.location" value="${project.root}/aspects/output/lib/jboss-standalone-aspect-library-jdk14.jar"/>
-      -->
       <property name="aop.aspect-library50.location" value="${project.root}/aspects/output/lib/jboss-standalone-aspect-library-jdk50.jar"/>
       <property name="aop.as4-deployer.location" value="${project.root}/asintegration/output/lib/jboss-aop-as4-deployer.jar"/>
-      <!--
-      <property name="aop.as4-deployer-jdk14.location" value="${project.root}/asintegration/output/lib/jboss-aop-as4-deployer-jdk14.jar"/>
-      -->
       <property name="aop.jboss4.jdk50.location" value="${project.root}/asintegration/output/lib/jboss-aop-jboss4-jdk50.jar"/>
-      <!--
-      <property name="aop.jboss4.jdk14.location" value="${project.root}/asintegration/output/lib/jboss-aop-jboss4-jdk14.jar"/>
-      -->
       <!-- TODO I would like to call this  jboss-aop-deployer.jar instead, and update name in appserver trunk -->
       <property name="aop.as5-deployer.location" value="${project.root}/asintegration/output/lib/jboss-aop-deployer-jdk50.jar"/>
       <property name="aop.jrockit-pluggable-instrumentor.location" value="${project.root}/aop/output/lib/jrockit-pluggable-instrumentor.jar"/>
       <property name="aop.pluggable-instrumentor.location" value="${project.root}/aop/output/lib/pluggable-instrumentor.jar"/>
-      <!--
-      <property name="aop.jdk14-pluggable-instrumentor.location" value="${project.root}/aop/output/lib/jdk14-pluggable-instrumentor.jar"/>
-      -->
       <property name="aop.readme-as4.location" value="${project.root}/asintegration/src/etc/ReadMe-AS4.txt"/>
       <property name="aop.readme-as5.location" value="${project.root}/asintegration/src/etc/ReadMe-AS5.txt"/>
       <property name="aop.jboss-service.location" value="${project.root}/asintegration/src/resources/META-INF/jboss-service.xml"/>
@@ -154,116 +139,15 @@
       <property name="javassist.location" value="${javassist.javassist.lib}/javassist.jar"/>
       <property name="jboss-backport-concurrent.location" value="${jboss/backport.concurrent.lib}/jboss-backport-concurrent.jar"/>
       <property name="jboss-common-core.location" value="${jboss/common.core.lib}/jboss-common-core.jar"/>
-      <!--
-      <property name="jboss-common-core14.location" value="${jboss/common.core.14.lib}/jboss-common-core-jdk14.jar"/>
-      -->
       <property name="jboss-logging-log4j.location" value="${jboss/common.logging.log4j.lib}/jboss-logging-log4j.jar"/>
       <property name="jboss-logging-spi.location" value="${jboss/common.logging.spi.lib}/jboss-logging-spi.jar"/>
-      <!--
-      <property name="jboss-container.location" value="${jboss.microcontainer.lib}/jboss-container.jar"/>
-      <property name="jboss-container14.location" value="${jboss.microcontainer14.lib}/jboss-container-jdk14.jar"/>
-      -->
 
       <property name="jboss-reflect.location" value="${project.thirdparty}/jboss/jboss-reflect/lib/jboss-reflect.jar"/>
       <property name="jboss-mdr.location" value="${project.thirdparty}/jboss/jboss-mdr/lib/jboss-mdr.jar"/>
 
-      <!-- Use the "old" jboss retro names, see "hack" in aop/build.xml/configure -->
-      <property name="jbossretro.location" value="${jboss/jboss.retro.lib}/jboss-retro.jar"/>
-      <property name="jbossretro-rt.location" value="${jboss/jboss.retro.lib}/jboss-retro-rt.jar"/>
-
       <property name="log4j.location" value="${apache.log4j.lib}/log4j.jar"/>
       <property name="qdox.location" value="${qdox.qdox.lib}/qdox.jar"/>
       <property name="trove.location" value="${trove.trove.lib}/trove.jar"/>
-
-
-<!--
-      <mkdir dir="output/temp/jboss-reflect-classes"/>
-      <mkdir dir="output/temp/jboss-reflect-classes14"/>
-      <mkdir dir="output/temp/jboss-mdr-classes"/>
-      <mkdir dir="output/temp/jboss-mdr-classes14"/>
-      <unjar src="${jboss-reflect.location}" dest="output/temp/jboss-reflect-classes"/>
-      <unjar src="${jboss-mdr.location}" dest="output/temp/jboss-mdr-classes"/>
-
-      <path id="jbossretro.classpath">
-         <path refid="apache.ant.classpath"/>
-         <path refid="javassist.classpath"/>
-         <path refid="jboss/jboss.retro.classpath"/>
-         <path refid="jboss/backport.concurrent.classpath"/>
-      </path>
-
-      <taskdef name="retro" classname="org.jboss.ant.tasks.retro.Retro" classpathref="jbossretro.classpath"/>
-      <retro compilerclasspathref="jbossretro.classpath" destdir="output/temp/jboss-reflect-classes14">
-         <classpath refid="jbossretro.classpath"/>
-         <classpath>
-            <pathelement path="${project.root}/aop/output/classes"/>
-            <pathelement path="output/temp/jboss-reflect-classes"/>
-         </classpath>
-         <src path="output/temp/jboss-reflect-classes"/>
-      </retro>
-
-      <retro compilerclasspathref="jbossretro.classpath" destdir="output/temp/jboss-mdr-classes14">
-         <classpath refid="jbossretro.classpath"/>
-         <classpath>
-            <pathelement path="${project.root}/aop/output/classes"/>
-            <pathelement path="output/temp/jboss-mdr-classes"/>
-         </classpath>
-         <src path="output/temp/jboss-mdr-classes"/>
-      </retro>
-
-      <jar
-      	destfile="output/temp/jboss-reflect-jdk14.jar"
-      	basedir="output/temp/jboss-reflect-classes14"
-      	includes="**"
-      	manifest="output/temp/jboss-reflect-classes/META-INF/MANIFEST.MF"/>
- 
-      <jar
-      	destfile="output/temp/jboss-mdr-jdk14.jar"
-      	basedir="output/temp/jboss-mdr-classes14"
-      	includes="**"
-      	manifest="output/temp/jboss-mdr-classes/META-INF/MANIFEST.MF"/>
-
-      <property name="jboss-reflect-jdk14.location" value="output/temp/jboss-reflect-jdk14.jar"/>
-      <property name="jboss-mdr-jdk14.location" value="output/temp/jboss-mdr-jdk14.jar"/>
-      -->
-
-      <!--
-      	Create the MC container.jar subset with org.jboss.metadata.spi and org.jboss.annotation,factory classes since
-      	those files do not exist in JBoss 4.0.x or 4.2.x, which is shipped with MC version 2.0.
-      	This should be redundant once the mc is properly released. The maven build for container MC already creates the
-      	jboss-container-metadata-spi.jar, but does not exist in any repository yet.
-      	http://www.jboss.com/index.html?module=bb&op=viewtopic&p=4044342#4044342
-      -->
-      <!--
-      <mkdir dir="output/temp/jboss-container-classes"/>
-      <mkdir dir="output/temp/jboss-container-classes14"/>
-      <unjar src="${jboss-container.location}" dest="output/temp/jboss-container-classes"/>
-      <unjar src="${jboss-container14.location}" dest="output/temp/jboss-container-classes14"/>
-      <jar
-      	destfile="output/temp/jboss-container-metadata-spi.jar"
-      	basedir="output/temp/jboss-container-classes"
-      	includes="org/jboss/metadata/spi/**"
-      	manifest="output/temp/jboss-container-classes/META-INF/MANIFEST.MF"/>
-      <jar
-      	destfile="output/temp/jboss-container-metadata-spi14.jar"
-      	basedir="output/temp/jboss-container-classes14"
-      	includes="org/jboss/metadata/spi/**"
-      	manifest="output/temp/jboss-container-classes14/META-INF/MANIFEST.MF"/>
-      <jar
-      	destfile="output/temp/jboss-container-annotation.jar"
-      	basedir="output/temp/jboss-container-classes"
-      	includes="org/jboss/annotation/factory/**"
-      	manifest="output/temp/jboss-container-classes/META-INF/MANIFEST.MF"/>
-      <jar
-      	destfile="output/temp/jboss-container-annotation14.jar"
-      	basedir="output/temp/jboss-container-classes14"
-      	includes="org/jboss/annotation/factory/**"
-      	manifest="output/temp/jboss-container-classes14/META-INF/MANIFEST.MF"/>
-
-      <property name="jboss-container-metadata-spi.location" value="output/temp/jboss-container-metadata-spi.jar"/>
-      <property name="jboss-container-metadata-spi14.location" value="output/temp/jboss-container-metadata-spi14.jar"/>
-      <property name="jboss-container-annotation.location" value="output/temp/jboss-container-annotation.jar"/>
-      <property name="jboss-container-annotation14.location" value="output/temp/jboss-container-annotation14.jar"/>
-      -->
 
       <!-- Copy across the eula -->
       <copy todir="${project.release}" file="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
@@ -276,9 +160,6 @@
       <copy todir="${project.release}/lib-50" file="${aop.pluggable-instrumentor.location}"/>
       <copy todir="${project.release}/lib-50" file="${javassist.location}"/>
       <copy todir="${project.release}/lib-50" file="${jboss-common-core.location}"/>
-      <!--
-      <copy todir="${project.release}/lib-50" file="${jboss-container.location}"/>
-      -->
 
       <copy todir="${project.release}/lib-50" file="${jboss-reflect.location}"/>
       <copy todir="${project.release}/lib-50" file="${jboss-mdr.location}"/>
@@ -287,70 +168,6 @@
       <copy todir="${project.release}/lib-50" file="${jboss-logging-spi.location}"/>
       <copy todir="${project.release}/lib-50" file="${log4j.location}"/>
       <copy todir="${project.release}/lib-50" file="${trove.location}"/>
-      <copy todir="${project.release}/lib-50/retro" file="${jboss-backport-concurrent.location}"/>
-      <copy todir="${project.release}/lib-50/retro" file="${jbossretro.location}"/>
-
-      <!-- The JDK 1.4 libs -->
-      <!--
-      <copy todir="${project.release}/lib-14" file="${aop.14.location}"/>
-      <copy todir="${project.release}/lib-14" file="${aop.aspect-library14.location}"/>
-      <copy todir="${project.release}/lib-14" file="${aop.jdk14-pluggable-instrumentor.location}"/>
-      <copy todir="${project.release}/lib-14" file="${javassist.location}"/>
-      <copy todir="${project.release}/lib-14" file="${jboss-common-core14.location}"/>
-      <copy todir="${project.release}/lib-14" file="${jboss-backport-concurrent.location}"/>
-      -->
-
-<!--
-      <copy todir="${project.release}/lib-14" file="${jboss-container14.location}"/>
-      -->
-      <!--
-      <copy todir="${project.release}/lib-14" file="${jboss-reflect-jdk14.location}"/>
-      <copy todir="${project.release}/lib-14" file="${jboss-mdr-jdk14.location}"/>
-
-      <copy todir="${project.release}/lib-14" file="${jboss-logging-log4j.location}"/>
-      <copy todir="${project.release}/lib-14" file="${jboss-logging-spi.location}"/>
-      <copy todir="${project.release}/lib-14" file="${jbossretro-rt.location}"/>
-      <copy todir="${project.release}/lib-14" file="${log4j.location}"/>
-      <copy todir="${project.release}/lib-14" file="${qdox.location}"/>
-      <copy todir="${project.release}/lib-14" file="${trove.location}"/>
-      -->
-
-      <!-- The JBoss 4.0.x libs for JDK 1.4 (JBoss 4.2.x needs JDK 5)-->
-      <!--
-      <copy file="${aop.jboss-service.location}" tofile="output/temp/jboss-service-jdk4.xml" filtering="true">
-         <filterset>
-            <filter token="SERVICE_NAME" value="org.jboss.aop.deployment.AspectManagerService"/>
-         </filterset>
-      </copy>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="../aop/src/etc/annotations.txt"/>
-      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/build.xml" file="../asintegration/src/etc/jboss-40-install-jboss-aop-jdk14-build.xml"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="../asintegration/src/etc/jboss.properties"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.14.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.aspect-library14.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.as4-deployer-jdk14.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${aop.jboss4.jdk14.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/" file="${aop.readme-as4.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-backport-concurrent.location}"/>
-      -->
-      <!-- TODO figure out for what versions of jboss this is necessary, and if it exists in other locations -->
-
-<!--
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/" file="${jboss-reflect-jdk14.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/" file="${jboss-mdr-jdk14.location}"/>
-      -->
-      <!--
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-container-metadata-spi14.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jboss-container-annotation14.location}"/>
-      -->
-      <!--
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${javassist.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${jbossretro-rt.location}"/>
-      -->
-      <!-- TODO figure out for what versions of jboss this is necessary, and if it exists in other locations -->
-      <!--
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer" file="${trove.location}"/>
-      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk14.deployer/META-INF/jboss-service.xml" file="output/temp/jboss-service-jdk4.xml"/>
-      -->
 
       <!-- The JBoss 4.0.x and 4.2.x libs for JDK 5 -->
       <copy file="${aop.jboss-service.location}" tofile="output/temp/jboss-service-jdk50.xml" filtering="true">
