@@ -97,8 +97,6 @@
 
    &dynamic;
 
-   &jdk14compatibility;
-
    &installing;
 
    &compiling;
