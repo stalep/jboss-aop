@@ -99,7 +99,6 @@
       <property name="build.reports" value="${module.output}/reports"/>
       <property name="build.gen-src" value="${module.output}/gen-src"/>
       <property name="build.classes" value="${module.output}/classes"/>
-      <property name="build.classes.retro" value="${module.output}/classes-retro"/>
       <property name="build.resources" value="${module.output}/resources"/>
       <property name="build.lib" value="${module.output}/lib"/>
       <property name="build.unpacked" value="${module.output}/unpacked"/>
@@ -136,12 +135,6 @@
          <pathelement path="${build.classes}"/>
          <path refid="javac.classpath"/>
       </path>
-      <path id="jbossretro.classpath">
-         <path refid="apache.ant.classpath"/>
-         <path refid="javassist.classpath"/>
-         <path refid="jboss/jboss.retro.classpath"/>
-         <path refid="jboss/backport.concurrent.classpath"/>
-      </path>
 
    </target>
 
@@ -156,7 +149,7 @@
 
    <target name="compile"
       description="Compile all source files."
-      depends="_default:compile-etc, _default:compile-resources, compile-classes, retrotranslate">
+      depends="_default:compile-etc, _default:compile-resources, compile-classes ">
       <!-- Add module specific elements here. -->
    </target>
 
@@ -180,21 +173,6 @@
          <classpath refid="javac.classpath"/>
       </javac>
    </target>
-
-   <target name="retrotranslate" depends="compile-classes">
-      <mkdir dir="${build.classes.retro}"/>
-
-      <taskdef name="retro" classname="org.jboss.ant.tasks.retro.Retro" classpathref="jbossretro.classpath"/>
-      <retro compilerclasspathref="jbossretro.classpath" destdir="${build.classes.retro}">
-         <classpath refid="jbossretro.classpath"/>
-         <classpath refid="javac15.classpath"/>
-         <classpath>
-            <pathelement path="${build.classes}"/>
-         </classpath>
-         <src path="${build.classes}"/>
-      </retro>
-   </target>
-
 
    <!--+====================================================================+-->
    <!--| Generate Output                                                    |-->
@@ -250,37 +228,6 @@
       </jar>
    </target>
 
-
-   <target name="jars14" depends="compile-classes, source-jar">
-      <mkdir dir="${build.lib}"/>
-
-      <!-- Build jboss-aop-as4deployer.jar for Jboss 4 with JDK 1.4 -->
-      <jar destfile="${build.lib}/jboss-aop-as4-deployer-jdk14.jar" manifest="${build.etc}/default.mf"
-         update="${jar.update}" index="${jar.index}">
-         <fileset dir="${build.classes.retro}">
-            <!-- Include everything else -->
-            <include name="org/jboss/aop/asintegration/**"/>
-            <include name="org/jboss/aop/classpool/**"/>
-            <include name="org/jboss/aop/deploy*/**"/>
-            <include name="org/jboss/aop/domain/**"/>
-            <exclude name="org/jboss/aop/deployers/*.class"/>
-         </fileset>
-         <fileset file ="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
-      </jar>
-
-      <jar destfile="${build.lib}/jboss-aop-jboss4-jdk14.jar" manifest="${build.etc}/default.mf"
-         update="${jar.update}" index="${jar.index}">
-         <fileset dir="${build.classes.retro}">
-            <!-- Include everything else -->
-			   <include name="org/jboss/aop/asintegration/jboss4/**"/>
-         </fileset>
-         <fileset file ="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
-      </jar>
-
-		<!-- Generate checksums -->
-      <call target="_default:compile-checksums"/>
-
-   </target>
 
    <target name="source-jar" depends="init">
       <mkdir dir="${build.lib}"/>
@@ -349,11 +296,11 @@
 
    <target name="all"
       description="Builds everything."
-      depends="output, jars14, docs"/>
+      depends="output, docs"/>
 
    <target name="most"
       description="Builds almost everything."
-      depends="output, jars14"/>
+      depends="output"/>
 
    <target name="help"
       description="Show this help message."
