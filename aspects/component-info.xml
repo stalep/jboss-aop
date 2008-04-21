@@ -19,7 +19,9 @@
       <artifact id="jboss-aspect-library32.jar" />
       <artifact id="jboss-aspect-library.jar.md5" />
       <artifact id="jboss-aspect-library32.jar.md5" />      
+      <!--
       <artifact id="jboss-aop.deployer" />      
+      -->
       <artifact id="jboss-aop-jdk50.deployer"/>
       <artifact id="jboss-aspect-library-jdk50-jb32.jar"/>      
       <artifact id="jboss-aspect-library-jdk50.jar"/>       
@@ -27,7 +29,9 @@
       <export>
           <include input="jboss-aspect-library.jar" />
           <include input="jboss-aspect-library32.jar" />
+          <!--
           <include input="jboss-aop.deployer" />          
+          -->
           <include input="jboss-aop-jdk50.deployer"/>
           <include input="jboss-aspect-library-jdk50.jar"/>
        </export>

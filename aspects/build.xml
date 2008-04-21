@@ -81,7 +81,9 @@
 	      <path refid="jboss/common.core.classpath"/>
    	   <path refid="jboss/common.logging.spi.classpath"/>
       	<path refid="jboss/common.logging.log4j.classpath"/>
+        <!--
 	      <path refid="jboss/common.logging.jdk.classpath"/>
+          -->
       </path>
 
       <!-- ===== -->
@@ -99,7 +101,9 @@
       <property name="build.reports" value="${module.output}/reports"/>
       <property name="build.gen-src" value="${module.output}/gen-src"/>
       <property name="build.classes" value="${module.output}/classes"/>
+      <!--
       <property name="build.classes.retro" value="${module.output}/classes-retro"/>
+      -->
       <property name="build.resources" value="${module.output}/resources"/>
       <property name="build.lib" value="${module.output}/lib"/>
       <property name="build.unpacked" value="${module.output}/unpacked"/>
@@ -136,14 +140,17 @@
          <path refid="javac.classpath"/>
       </path>
 
+<!--
       <path id="jbossretro.classpath">
          <path refid="apache.ant.classpath"/>
          <path refid="javassist.classpath"/>
          <path refid="jboss/jboss.retro.classpath"/>
          <path refid="jboss/backport.concurrent.classpath"/>
       </path>
+      -->
 
       <!-- xdoclet -->
+      <!--
       <path id="xdoclet.task.classpath">
          <path refid="javac.classpath"/>
          <fileset dir="${xdoclet.xdoclet.lib}">
@@ -152,6 +159,7 @@
       </path>
       <property name="xdoclet.task.classpath"
          refid="xdoclet.task.classpath"/>
+         -->
 
    </target>
 
@@ -166,7 +174,7 @@
 
    <target name="compile"
       description="Compile all source files."
-      depends="compile-etc, _default:compile-resources, compile-classes, retrotranslate, source-jar">
+      depends="compile-etc, _default:compile-resources, compile-classes, source-jar">
       <!-- Add module specific elements here. -->
    </target>
 
@@ -201,6 +209,7 @@
       </copy>
    </target>
 
+<!--
    <target name="retrotranslate" depends="compile-classes">
       <mkdir dir="${build.classes.retro}"/>
 
@@ -214,6 +223,7 @@
          <src path="${build.classes}"/>
       </retro>
    </target>
+   -->
 
 
    <!--+====================================================================+-->
@@ -243,6 +253,7 @@
       </jar>
 
       <!-- Build jboss-standalone-aspect-library-jdk14.jar -->
+      <!--
       <jar destfile="${build.lib}/jboss-standalone-aspect-library-jdk14.jar" manifest="${build.etc}/default.mf"
          update="${jar.update}" index="${jar.index}">
          <fileset dir="${build.classes.retro}">
@@ -250,6 +261,7 @@
             <include name="org/jboss/aspects/**"/>
          </fileset>
       </jar>
+      -->
    </target>
 
 
