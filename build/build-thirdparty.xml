@@ -48,27 +48,20 @@
       <componentref name="beanshell" version="1.3.0"/>
       <componentref name="javassist" version="3.7.1.GA"/>
       <componentref name="jboss/backport-concurrent" version="2.1.0.GA"/>
-      <componentref name="jboss/common-core" version="2.2.3.GA"/>
-      <componentref name="jboss/common-core-14" version="2.2.1.GA"/>
-      <componentref name="jboss/common-logging-jdk" version="2.0.2.GA"/>
-      <componentref name="jboss/common-logging-log4j" version="2.0.2.GA"/>
-      <componentref name="jboss/common-logging-spi" version="2.0.2.GA"/>
-      <componentref name="jboss/jboss-retro" version="1.1.2"/>
+      <componentref name="jboss/common-core" version="2.2.5.GA"/>
+      <componentref name="jboss/common-logging-log4j" version="2.0.5.GA"/>
+      <componentref name="jboss/common-logging-spi" version="2.0.5.GA"/>
+
       <componentref name="jboss/integration" version="5.0.0.Beta4"/>
       <componentref name="jboss/jboss-mdr" version="2.0.0.Beta12"/>
       <componentref name="jboss/jboss-reflect" version="2.0.0.Beta12"/>
       <componentref name="jboss/jboss-vfs" version="2.0.0.Beta9"/>
       <componentref name="jboss/jboss-deployers" version="2.0.0.Beta12"/>
       <componentref name="jboss/jboss-managed" version="2.0.0.Beta10.1"/>
-      <!--
-      <componentref name="jboss/microcontainer" version="2.0.0.Beta10"/>
-      <componentref name="jboss/microcontainer14" version="2.0.0.Beta4"/>
-      -->
       <componentref name="jboss/profiler/jvmti" version="1.0.0.CR5"/>
       <componentref name="jboss/test" version="1.0.3.GA"/>
-      <componentref name="jboss/test14" version="1.0.3.GA"/>
-		<componentref name="jboss/jboss-vfs" version="2.0.0.Beta6"/>
-		<componentref name="jbossas/core-libs" version="4.0.4.GA"/>
+      <componentref name="jboss/jboss-vfs" version="2.0.0.Beta6"/>
+      <componentref name="jbossas/core-libs" version="4.0.4.GA"/>
       <componentref name="junit" version="3.8.2-brew"/>
       <componentref name="qdox" version="1.6.1"/>
       <componentref name="sun-javacc" version="4.0-brew"/>
