@@ -14,16 +14,16 @@ SET JROCKIT_PATH=%JROCKIT_HOME%\bin;%PATH%
 REM ###############################################################
 REM Compile for jdk 1.4 with normal sun compiler
 
-call ant clean main compile-test-classes 
+REM call ant clean main compile-test-classes 
 
 REM ###############################################################
 REM Switch to JRockit and run jdk 1.4 tests
 
-SET PATH=%JROCKIT_PATH%
-SET JAVA_HOME=%JROCKIT_HOME%
+REM SET PATH=%JROCKIT_PATH%
+REM SET JAVA_HOME=%JROCKIT_HOME%
 
-call ant bootclasspath-tests
-call ant precompiled-tests
+REM call ant bootclasspath-tests
+REM call ant precompiled-tests
 
 REM ###############################################################
 REM Compile for jdk 5.0 with normal sun compiler

@@ -58,6 +58,7 @@
       <!-- jboss-aop.jar                                                -->
       <!-- ============================================================ -->
 
+<!--
       <artifactdef artifact="jboss-aop.jar">
          <include input="main">
             <include pattern="org/jboss/aop/**"/>
@@ -68,16 +69,19 @@
             <include pattern="jboss-aop_1_0.dtd"/>
          </include>
       </artifactdef>
+      -->
       
       
       <!-- ============================================================ -->
       <!-- jdk14-pluggable-instrumentor.jar                             -->
       <!-- ============================================================ -->      
+      <!--
       <artifactdef artifact="jdk14-pluggable-instrumentor.jar">
          <include input="main">
             <include pattern="org/jboss/aop/hook/JDK14*.class"/>
          </include>
       </artifactdef>
+      -->
       
       <!-- ============================================================ -->
       <!-- jboss-aop-jdk50jar                                           -->

@@ -84,7 +84,9 @@
          <path refid="jboss.profiler.jvmti.classpath"/>
          <path refid="jboss/common.core.classpath"/>
          <path refid="jboss/common.logging.log4j.classpath"/>
+         <!--
          <path refid="jboss/common.logging.jdk.classpath"/>
+         -->
          <path refid="jboss/common.logging.spi.classpath"/>
          <path refid="jboss/jboss.reflect.classpath"/>
          <path refid="jboss/jboss.mdr.classpath"/>
@@ -137,7 +139,9 @@
       <property name="build.reports" value="${module.output}/reports"/>
       <property name="build.stylesheets" value="${module.output}/stylesheets"/>
       <property name="build.classes" value="${module.output}/classes"/>
+      <!--
       <property name="build.classes.retro" value="${module.output}/classes-retro"/>
+      -->
       <property name="build.lib" value="${module.output}/lib"/>
       <property name="build.api" value="${module.output}/api"/>
       <property name="build.etc" value="${module.output}/etc"/>
@@ -184,12 +188,14 @@
          <path refid="javac.classpath"/>
       </path>
 
+<!--
       <path id="jbossretro.classpath">
          <path refid="apache.ant.classpath"/>
          <path refid="javassist.classpath"/>
          <path refid="jboss/jboss.retro.classpath"/>
          <path refid="jboss/backport.concurrent.classpath"/>
       </path>
+      -->
 
 
       <!-- Packages to include when generating api documentation -->
@@ -240,7 +246,7 @@
 
    <target name="compile"
       description="Compile all source files."
-      depends="compile-classes, compile-etc, compile-jrockit-classes, retrotranslate"/>
+      depends="compile-classes, compile-etc, compile-jrockit-classes"/>
 
    <!-- Compile all class files -->
    <target name="compile-classes" depends="init">
@@ -297,6 +303,7 @@
       </copy>
    </target>
 
+<!--
    <target name="retrotranslate" depends="compile-classes">
       <mkdir dir="${build.classes.retro}"/>
 
@@ -310,6 +317,7 @@
          <src path="${build.classes}"/>
       </retro>
    </target>
+   -->
 
    <!-- ================================================================== -->
    <!-- Archives                                                           -->
@@ -327,10 +335,10 @@
       <mkdir dir="${build.lib}"/>
 
       <!-- Build the jboss-aop.jar -->
+      <!--
       <jar jarfile="${build.lib}/jboss-aop.jar"
          manifest="${build.etc}/default.mf">
          <fileset dir="${build.classes.retro}">
-            <!-- Include everything else -->
             <include name="org/jboss/aop/**"/>
             <include name="org/jboss/lang/**"/>
             <include name="org/jboss/aspects/**"/>
@@ -338,15 +346,17 @@
          <fileset file="docs/jboss-aop_1_0.dtd"/>
          <fileset file ="${source.etc}/jbossorg-eula.txt"/>
       </jar>
+      -->
 
+<!--
       <jar jarfile="${build.lib}/jdk14-pluggable-instrumentor.jar"
          manifest="${build.etc}/default.mf">
          <fileset dir="${build.classes.retro}">
-            <!-- Include everything else -->
             <include name="org/jboss/aop/hook/JDK14*.class"/>
          </fileset>
          <fileset file ="${source.etc}/jbossorg-eula.txt"/>
       </jar>
+      -->
 
       <!-- Update the build marker to allow bypassing -->
       <touch file="${build-bypass.marker}"/>
