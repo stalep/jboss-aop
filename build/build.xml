@@ -334,11 +334,15 @@
 
       <property name="aop15.dir" value="${repository.home}/jboss/aop/${ver}/lib"/>
       <property name="aop15.resources.dir" value="${repository.home}/jboss/aop/${ver}/resources"/>  
+      <!--
       <property name="aop14.dir" value="${repository.home}/jboss/aop14/${ver}/lib"/>
+      -->
 
       <mkdir dir="${aop15.dir}"/>
       <mkdir dir="${aop15.resources.dir}"/>
+      <!--
       <mkdir dir="${aop14.dir}"/>
+      -->
 
       <copy todir="${aop15.dir}">
          <fileset dir="../aop/output/lib">
@@ -366,6 +370,7 @@
             <include name="jboss-aspect-library-beans.xml"/>
          </fileset>  
       </copy>  
+      <!--
       <copy todir="${aop14.dir}">
          <fileset dir="../aop/output/lib">
             <include name="jboss-aop.jar"/>
@@ -383,6 +388,7 @@
             <include name="jboss-standalone-aspects-src.zip"/>
          </fileset>
       </copy>
+      -->
    </target>
 
 </project>
