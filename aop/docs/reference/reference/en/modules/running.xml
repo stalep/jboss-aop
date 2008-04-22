@@ -475,7 +475,7 @@ $ run-load15 classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotat
    <sect1 id="jboss" revision="1">
       <title>JBoss Application Server</title>
       <para>
-         JBoss AOP is integrated with JBoss 4.0.1+ and JBoss 3.2.6+ application server.  The integration steps are different
+         JBoss AOP is integrated with JBoss 4.0.1+ application server.  The integration steps are different
          depending on what version of JBoss AS you are using and what JDK version you are using.  It is also dependent
          on whether you want to use loadtime or compiletime instrumentation.
       </para>
