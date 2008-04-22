@@ -29,8 +29,7 @@
          JBoss AOP comes with an ant task that you can use for precompiling your
          classes with the aop precompiler. An example build.xml file is the basis
          for the explanation. (It is quite similar to the one used in the previous
-         chapter.) There will be differences in the build.xml file if you are using
-         JDK 1.4.2 or JDK 5.0, these are outlined below:
+         chapter.) 
       </para>
       <para>
          <programlisting><![CDATA[
@@ -49,7 +48,7 @@
          </programlisting>
       </para>
       <para>
-         Include the jars AOP depends on, these are common to all JDK's
+         Include the jars AOP depends on.
          <programlisting><![CDATA[
       <path id="javassist.classpath">
          <pathelement path="../../../javassist.jar"/>
@@ -66,7 +65,6 @@
       <path refid="jboss.common.core.classpath"/>
       <path refid="jboss.common.logging.spi.classpath"/>
       <path refid="jboss.common.logging.log4j.classpath"/>
-      <path refid="jboss.common.logging.jdk.classpath"/>
          <pathelement path="../../../jboss-common.jar"/>
       </path>
 
@@ -77,30 +75,14 @@
          <path refid="jboss.common.core.classpath"/>
          <path refid="jboss.common.logging.spi.classpath"/>
          <path refid="jboss.common.logging.log4j.classpath"/>
-         <path refid="jboss.common.logging.jdk.classpath"/>
          <path refid="concurrent.classpath"/>
       </path>]]>
          </programlisting>
       </para>
-      <para>
-         This snippet shows what to do for JDK 1.4. It will also work with
-         JDK 5.0 if your classes do not use JDK 5.0 style annotations and enums:
-         <programlisting><![CDATA[
-      <!--                  JDK version 1.4.2                         -->
-      <!-- Do not include this if using JDK 5 with annotations!!!!  -->
-
-      <path id="jboss.aop.classpath">
-         <pathelement path="../../../jboss-aop.jar"/>
-      </path>
-
-      <!--            JDK version 1.4.2 - END                         -->]]>
-         </programlisting>
-      </para>
-      <para>
-         This snippet shows what to do for JDK 5.0 if you are using JDK 5.0 annotations:
+     <para>
+         This snippet shows what to do if you are using JDK 5.0 annotations:
          <programlisting><![CDATA[
       <!--            JDK version 1.5                                 -->
-      <!-- Do not include this if using JDK 1.4.2!!!!                 -->
 
       <path id="jboss.aop.classpath">
          <pathelement path="../../../jboss-aop-jdk50.jar"/>
@@ -108,8 +90,6 @@
 
       <!--            JDK version 1.5 - END                           -->]]>
          </programlisting>
-   	   (You should only use one of the two previous snippets for setting up
-   	   jboss.aop.classpath)
       </para>
       <para>
          Now we set up the full classpath of all the needed libraries:
@@ -160,12 +140,6 @@
    </target>
 </project>]]>
          </programlisting>
-
-         If you are using JDK 1.4.2 and wish to use annotations, you need to define the
-         <literal>org.jboss.aop.ant.AnnotationC</literal> ant task, and run that BEFORE you
-         invoke the
-         <literal>org.jboss.aop.ant.AopC</literal> task. How to do this is shown
-         in the previous chapter.
       </para>
       <para>
          The
@@ -311,9 +285,7 @@
          <literal>@Aspect</literal> (See Chapter "Annotated Bindings").
             JBoss AOP will browse all classes in this path to see if they are annotated.
             The property can have one or files it points to delimited by the operating
-            systems specific classpath delimiter (';' on windows, ':' on unix). Note for this to
-            have effect with JDK 1.4, you first have to run the annotation compiler with
-            bytecode=true.
+            systems specific classpath delimiter (';' on windows, ':' on unix). 
       </para>
       <para>
             It is invoked as:
@@ -326,12 +298,7 @@ $java -classpath ... [-Djboss.aop.path=...] [-Djboss.aop.class.path=...] \
       <para>
          In the /bin folder of the distribution we have provided batch/script files to make
          this easier. It includes all the aop libs for you, so you just have to worry
-         about your files. The usage for JDK 1.4 is:
-         <programlisting>
-$ aopc &lt;classpath&gt; [-aoppath ...] [-aopclasspath ...] [-report] [-verbose] \
-      &lt;class files or directories&gt;+
-         </programlisting>
-         And for JDK 5:
+         about your files. The usage:
          <programlisting>
 $ aopc15 &lt;classpath&gt; [-aoppath ...] [-aopclasspath ...] [-report] [-verbose] \
       &lt;class files or directories&gt;+

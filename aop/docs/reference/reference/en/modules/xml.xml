@@ -8,7 +8,7 @@
          In the last sections you saw how to
          code aspects and how pointcut expressions are formed.  This chapter puts it all together.  There are two
          forms of bindings for advices, mixins, and introductions.  One is XML which will be the focus of this chapter.
-         The Annotated Bindings chapter discusses how you can replace XML with JDK 5.0 annotations.
+         The Annotated Bindings chapter discusses how you can replace XML with annotations.
       </para>
    </sect1>
    <sect1 id="xml-resolving" revision="1">

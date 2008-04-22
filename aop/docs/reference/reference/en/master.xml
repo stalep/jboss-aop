@@ -13,6 +13,7 @@
 <!ENTITY compiling              SYSTEM "modules/compiling.xml">
 <!ENTITY running                SYSTEM "modules/running.xml">
 <!ENTITY reflection             SYSTEM "modules/reflection.xml">
+<!ENTITY maven                  SYSTEM "modules/maven.xml">
 ]>
 
 <book lang="en">
@@ -100,10 +101,11 @@
 
    &compiling;
 
+   &maven;
+
    &running;
 
    &reflection;
 
-   &aopide;
 </book>
 

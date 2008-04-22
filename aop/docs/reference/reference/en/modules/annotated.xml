@@ -5,8 +5,7 @@
    <!-- *********************************** Intro ******************************** -->
 
    <para>
-         JDK 5.0 has introduced a new concept called annotations. Annotations can be
-         used as an alternative to XML for configuring classes for AOP. 
+         Annotations can be used as an alternative to XML for configuring classes for AOP. 
    </para>
 
    <!-- *********************************** Aspect ******************************** -->
