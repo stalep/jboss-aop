@@ -13,7 +13,6 @@
 <!ENTITY compiling              SYSTEM "modules/compiling.xml">
 <!ENTITY running                SYSTEM "modules/running.xml">
 <!ENTITY reflection             SYSTEM "modules/reflection.xml">
-<!ENTITY aopide                 SYSTEM "modules/aopide.xml">
 ]>
 
 <book lang="en">
