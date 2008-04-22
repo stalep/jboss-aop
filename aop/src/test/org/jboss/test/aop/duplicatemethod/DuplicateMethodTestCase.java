@@ -26,7 +26,6 @@ import java.lang.reflect.Method;
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.ProxyFactory;
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.jboss.aop.Advised;
@@ -39,7 +38,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @version $Revision: 1.1 $
  */
 @SuppressWarnings({"unused", "unchecked", "cast"})
-public class DuplicateMethodTestCase extends TestCase
+public class DuplicateMethodTestCase extends AOPTestWithSetup
 {
 
    public DuplicateMethodTestCase(String name)
