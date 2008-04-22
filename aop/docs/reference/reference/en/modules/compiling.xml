@@ -221,12 +221,9 @@
                than one xml file, for example if you have both a "normal"
             <literal>jboss-aop.xml</literal>
                file, and a
-            <literal>metadata-aop.xml</literal> file having used the JDK 1.4.2 annotation
-               compiler, you can specify these as follows:
             <programlisting>
                &lt;aoppath&gt;
                &lt;pathelement path="jboss-aop.xml"/&gt;
-               &lt;pathelement path="metadata-aop.xml"/&gt;
                &lt;pathelement path="xmldir"/&gt;
                &lt;/aoppath&gt;
             </programlisting>
