@@ -135,8 +135,8 @@ public abstract class JoinPointGenerator
     * A cache of the generated joinpoint classes indexed by the interceptor chains for the info to 
     * avoid having to generate a new class on every single rebind
     */
-   private HashMap<String, Map<ClassLoader, WeakReference<GeneratedClassInfo>>> generatedJoinPointClassCache =
-      new HashMap<String, Map<ClassLoader, WeakReference<GeneratedClassInfo>>>();
+   private HashMap<String, Map<ClassLoader, GeneratedClassInfo>> generatedJoinPointClassCache =
+      new HashMap<String, Map<ClassLoader, GeneratedClassInfo>>();
    
    /**
     * Constructor.
@@ -225,7 +225,7 @@ public abstract class JoinPointGenerator
          System.out.println(sb.toString());
          
          throw new RuntimeException(e);
-      }   
+      }
    }
       
    /**
@@ -274,19 +274,18 @@ public abstract class JoinPointGenerator
          //Attempt to get the cached information so we don't have to recreate the class every time we rebind the joinpoint
          String infoAdviceString = info.getAdviceString();
          GeneratedClassInfo generatedClass = null;
-         Map<ClassLoader, WeakReference<GeneratedClassInfo>> generatedClasses =
+         Map<ClassLoader, GeneratedClassInfo> generatedClasses =
                generatedJoinPointClassCache.get(infoAdviceString);
-         
          if (generatedClasses != null)
          {
             if (generatedClasses.containsKey(classloader))
             {
-               generatedClass= generatedClasses.get(classloader).get();
+               generatedClass= generatedClasses.get(classloader);
             }
          }
          else
          {
-            generatedClasses = new WeakHashMap<ClassLoader, WeakReference<GeneratedClassInfo>>();
+            generatedClasses = new WeakHashMap<ClassLoader, GeneratedClassInfo>();
             generatedJoinPointClassCache.put(infoAdviceString, generatedClasses);
          }
             
@@ -297,14 +296,14 @@ public abstract class JoinPointGenerator
             ClassPool pool = manager.findClassPool(classloader);
             ProtectionDomain pd = advisorClass.getProtectionDomain();
             generatedClass = generateJoinpointClass(pool, info, classloader, pd);
-            generatedClasses.put(classloader, new WeakReference<GeneratedClassInfo>(generatedClass));
+            generatedClasses.put(classloader, generatedClass);
          }
-         Object obj = instantiateClass(generatedClass, info);
+         Object obj = instantiateClass(generatedClass, info, classloader);
          
          joinpointField.set(info.getAdvisor(), obj);
          if (info.getAdvisor() instanceof InstanceAdvisor)
          {
-            Field field = generatedClass.getGenerated().getDeclaredField(IS_FOR_INSTANCE_ADVISOR);
+            Field field = generatedClass.getGenerated(classloader).getDeclaredField(IS_FOR_INSTANCE_ADVISOR);
             SecurityActions.setAccessible(field);
             field.set(obj, Boolean.TRUE);
          }
@@ -335,9 +334,9 @@ public abstract class JoinPointGenerator
       return TransformerCommon.toClass(ctclass, classLoader, pd);
    }
    
-   private Object instantiateClass(GeneratedClassInfo generatedClass, JoinPointInfo info) throws Exception
+   private Object instantiateClass(GeneratedClassInfo generatedClass, JoinPointInfo info, ClassLoader classloader) throws Exception
    {
-      Class<?> clazz = generatedClass.getGenerated();
+      Class<?> clazz = generatedClass.getGenerated(classloader);
       Constructor<?> ctor = clazz.getConstructor(new Class[] {info.getClass()});
       Object obj;
       try
@@ -1512,18 +1511,33 @@ public abstract class JoinPointGenerator
    
    private class GeneratedClassInfo
    {
-      Class generated;
+      WeakReference<Class<?>> generated;
+      String generatedName;
       AdviceSetup[] aroundSetups;
       
       GeneratedClassInfo(Class generated, AdviceSetups setups)
       {
-         this.generated = generated;
+         this.generated = new WeakReference<Class<?>>(generated);
+         this.generatedName = generated.getName();
          this.aroundSetups = setups.getByType(AdviceType.AROUND);
       }
       
-      Class getGenerated()
+      Class<?> getGenerated(ClassLoader classloader)
       {
-         return generated;
+         Class<?> generatedClass = generated.get();
+         if (generatedClass == null)
+         {
+            try
+            {
+               generatedClass = classloader.loadClass(generatedName);
+            }
+            catch (ClassNotFoundException e)
+            {
+               throw new RuntimeException("Unexpected exception: " + e, e);
+            }
+            generated = new WeakReference<Class<?>>(generatedClass);
+         }
+         return generatedClass;
       }
       
       AdviceSetup[] getAroundSetups()
