@@ -4,32 +4,10 @@
 
    <import file="../examples-build.xml"/>
 
-   <target name="annotationc" depends="_prepare">
-      <!-- The annotation compiler only exists in the jdk 1.4 dist -->
-      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath14"/>
-      <annotationc compilerclasspathref="classpath14" classpathref="classpath14" output="metadata-aop.xml" xml="true">
-         <src path="."/>
-      </annotationc>
-   </target>
-
-   <target name="aopc50" depends="_compile50, annotationc">
+   <target name="aopc50" depends="_compile50">
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath50"/>
 
       <aopc compilerclasspathref="classpath50" classpathref="classpath50" verbose="true">
-         <classpath path="."/>
-         <src path="."/>
-         <aoppath>
-            <pathelement path="jboss-aop.xml"/>
-            <pathelement path="metadata-aop.xml"/>
-         </aoppath>
-      </aopc>
-
-   </target>
-
-   <target name="aopc14" depends="_compile14, annotationc">
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath14"/>
-
-      <aopc compilerclasspathref="classpath50" classpathref="classpath14" verbose="true">
          <classpath path="."/>
          <src path="."/>
          <aoppath>
@@ -47,7 +25,7 @@
       </java>
    </target>
 
-   <target name="run.loadtime.50" depends="_compile50, annotationc">
+   <target name="run.loadtime.50" depends="_compile50">
       <java fork="yes" failOnError="true" className="Driver">
          <sysproperty key="jboss.aop.path" value="metadata-aop.xml${path.separator}jboss-aop.xml"/>
          <classpath refid="classpath50"/>
@@ -55,33 +33,4 @@
       </java>
    </target>
 
-   <target name="run.aopc.14" depends="aopc14">
-      <java fork="yes" failOnError="true" className="Driver">
-         <sysproperty key="jboss.aop.path" value="metadata-aop.xml${path.separator}jboss-aop.xml"/>
-         <classpath refid="classpath14"/>
-      </java>
-   </target>
-
-   <target name="run.loadtime.14" depends="_compile14, annotationc">
-      <!-- Create the classloader hook -->
-      <mkdir dir="jboss.aop.lib14/jdk14hook"/>
-      <java fork="yes" classname="org.jboss.aop.hook.GenerateInstrumentedClassLoader">
-         <classpath>
-            <path refid="jboss.aop.classpath14"/>
-         </classpath>
-         <arg value="${jboss.aop.lib14}/jdk14hook"/>
-      </java>
-
-      <path id="bootclasspath">
-         <pathelement location="${jboss.aop.lib14}/jdk14hook"/>
-         <path refid="jboss.aop.classpath14"/>
-      </path>
-      <property name="bootclasspath" refid="bootclasspath"/>
-
-      <java fork="yes" failOnError="true" className="Driver">
-         <sysproperty key="jboss.aop.path" value="metadata-aop.xml${path.separator}jboss-aop.xml"/>
-         <jvmarg value="-Xbootclasspath/p:${bootclasspath}"/>
-         <classpath path="."/>
-      </java>
-   </target>
 </project>

@@ -30,29 +30,3 @@ transformed when first loaded) and performs the following steps:
    the java runtime to enable loadtime weaving</li>
 </ul>
 
-<h2>Run with JDK 1.4</h2>
-<p>The following two targets illustrate the steps to run
-annotated code on JDK 1.4.
-<pre>
-$ ant run.aopc.14
-$ ant run.loadtime.14
-</pre>
-<p>These are compiled against the JBoss AOP libraries for JDK 1.4, and so will work regardless of if your chosen JDK
-is JDK 1.4 or JDK 5.
-
-<h3>ant.run.aopc.14</h3>
-<p>The <i>ant.run.aopc.14</i> target uses compile-time weaving, and performs the following steps
-<ul>
-   <li>Compiles the classes using your chosen JDK</li>
-   <li>Runs the AOPC compiler</li>
-   <li>Runs the woven example using your chosen JDK</li>
-</ul>
-
-<h3>ant.loadtime.14</h3>
-<p>The <i>ant.loadtime.14</i> target uses loadtime-time weaving (the classes are
-transformed when first loaded) and performs the following steps:
-<ul>
-   <li>Compiles the classes using your chosen JDK</li>
-   <li>Runs the example using JDK 5, with the <i>-Xbootclasspath/p:</i> switch passed in to
-   the java runtime to enable loadtime weaving</li>
-</ul>

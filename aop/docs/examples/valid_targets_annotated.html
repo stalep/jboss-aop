@@ -29,35 +29,4 @@ transformed when first loaded) and performs the following steps:</p>
    the java runtime to enable loadtime weaving</li>
 </ul>
 
-<h2>Run with JDK 1.4</h2>
-<p>We might want to make use of annotations in our code, but still deploy to a JDK 1.4 environment.
-JBoss AOP ships with JBoss Retro which allows you to modify JDK 5 bytecode to run on JDK 1.4. To use
-annotations we still need to compile with JDK 5, the following two targets illustrate the steps to run
-annotated code on JDK 1.4:</p>
-<pre>
-$ ant run.aopc.14
-$ ant run.loadtime.14
-</pre>
-
-<h3>ant.run.aopc.14</h3>
-<p>The <i>ant.run.aopc.14</i> target uses compile-time weaving, and performs the following steps:</p>
-<ul>
-   <li>Compiles the classes using JDK 5 (otherwise the annotations will not compile)</li>
-   <li>Runs the JBoss Retro processor to transform the JDK 5 bytecode into JDK 1.4 bytecode</li>
-   <li>Runs the AOPC compiler</li>
-   <li>Switches to JDK 1.4, and runs the woven example using JDK 1.4 with jbossretro-rt.jar on the classpath.
-   You need to specify the location of the JDK 1.4 executable in the <i>jdk14.java</i> property in the
-   <a href="../examples/examples.properties">examples.properties</a> file.</li>
-</ul>
-
-<h3>ant.loadtime.14</h3>
-<p>The <i>ant.loadtime.14</i> target uses loadtime-time weaving (the classes are:</p>
-transformed when first loaded) and performs the following steps:
-<ul>
-   <li>Compiles the classes using JDK 5 (otherwise the annotations will not compile)</li>
-   <li>Runs the JBoss Retro processor to transform the JDK 5 bytecode into JDK 1.4 bytecode</li>
-   <li>Switches to JDK 1.4, and runs the woven example using JDK 1.4 with jbossretro-rt.jar on the classpath,
-   and with the <i>-Xbootclasspath/p:</i> switch passed in to the java runtime to enable loadtime weaving.
-   You need to specify the location of the JDK 1.4 executable in the <i>jdk14.java</i> property in the
-   <a href="../examples/examples.properties">examples.properties</a> file.</li>
 </ul>

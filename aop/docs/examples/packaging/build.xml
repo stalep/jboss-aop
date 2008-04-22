@@ -12,22 +12,6 @@
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
          <sysproperty key="jboss.aop.verbose" value="true"/>
          <classpath path="."/>
-         <src path="."/>
-         <aoppath path="resources/META-INF/jboss-aop.xml"/>
-      </aopc>
-   </target>
-
-   <target name="_aopc14.private" depends="_compile14"
-      description="Compile-time weave the classes (JDK 1.4) using a jboss-aop.xml file">
-
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath14"/>
-
-      <aopc compilerclasspathref="classpath14" classpathref="classpath14" verbose="true">
-         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
-         <sysproperty key="jboss.aop.verbose" value="true"/>
-         <classpath path="."/>
-         <src path="."/>
-         <aoppath path="resources/META-INF/jboss-aop.xml"/>
       </aopc>
    </target>
 
@@ -68,55 +52,5 @@
       </java>
    </target>
 
-   <target name="run.aopc.14" depends="_aopc14.private"
-      description="Run the example using compile-time weaving on JDK 1.4, using a jboss-aop.xml file">
-
-      <jar jarfile="example.jar">
-         <fileset dir=".">
-            <include name="*.class"/>
-         </fileset>
-         <fileset dir="resources">
-            <include name="META-INF/jboss-aop.xml"/>
-         </fileset>
-      </jar>
-
-      <java fork="yes" failOnError="true" className="Driver">
-         <classpath refid="jboss.aop.classpath14"/>
-         <classpath path="example.jar"/>
-      </java>
-   </target>
-
-   <target name="run.loadtime.14" depends="_compile14"
-      description="Run the example using loadtime-time weaving on JDK 1.4, using a jboss-aop.xml file">
-
-      <jar jarfile="example.jar">
-         <fileset dir=".">
-            <include name="*.class"/>
-         </fileset>
-         <fileset dir="resources">
-            <include name="META-INF/jboss-aop.xml"/>
-         </fileset>
-      </jar>
-
-      <!-- Create the classloader hook -->
-      <mkdir dir="jboss.aop.lib14/jdk14hook"/>
-      <java fork="yes" classname="org.jboss.aop.hook.GenerateInstrumentedClassLoader">
-         <classpath>
-            <path refid="jboss.aop.classpath14"/>
-         </classpath>
-         <arg value="${jboss.aop.lib14}/jdk14hook"/>
-      </java>
-
-      <path id="bootclasspath">
-         <pathelement location="${jboss.aop.lib14}/jdk14hook"/>
-         <path refid="jboss.aop.classpath14"/>
-      </path>
-      <property name="bootclasspath" refid="bootclasspath"/>
-
-      <java fork="yes" failOnError="true" className="Driver">
-         <jvmarg value="-Xbootclasspath/p:${bootclasspath}"/>
-         <classpath path="example.jar"/>
-      </java>
-   </target>
 </project>
 

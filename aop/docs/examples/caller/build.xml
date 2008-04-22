@@ -6,9 +6,5 @@
    <target name="run.aopc.50" depends="_run.aopc.50"/>
 
    <target name="run.loadtime.50" depends="_run.loadtime.50"/>
-
-   <target name="run.aopc.14" depends="_run.aopc.14"/>
-
-   <target name="run.loadtime.14" depends="_run.loadtime.14"/>
 </project>
 
