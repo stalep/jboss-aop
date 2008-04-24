@@ -59,33 +59,33 @@
       <componentref name="jboss/common-logging-log4j" version="2.0.5.GA"/>
       <!-- common-logging-spi: aop, asintegration, aspects -->
       <componentref name="jboss/common-logging-spi" version="2.0.5.GA"/>
-		<!-- integration/jboss-classloading-spi.jar: asintegration -->
+      <!-- integration/jboss-classloading-spi.jar: asintegration -->
       <componentref name="jboss/integration" version="5.0.0.Beta4"/>
-		<!-- jboss-mdr: aop, asintegration -->
+      <!-- jboss-mdr: aop, asintegration -->
       <componentref name="jboss/jboss-mdr" version="2.0.0.Beta12"/>
-		<!-- jboss-reflect: aop -->
+      <!-- jboss-reflect: aop -->
       <componentref name="jboss/jboss-reflect" version="2.0.0.Beta12"/>
-		<!-- jboss-reflect: asintegration -->
+      <!-- jboss-reflect: asintegration -->
       <componentref name="jboss/jboss-vfs" version="2.0.0.Beta9"/>
-		<!-- jboss-deployers: asintegration -->
+      <!-- jboss-deployers: asintegration -->
       <componentref name="jboss/jboss-deployers" version="2.0.0.Beta12"/>
-		<!-- jboss-deployers: asintegration build dependency -->
+      <!-- jboss-deployers: asintegration build dependency -->
       <componentref name="jboss/jboss-managed" version="2.0.0.Beta10.1"/>
-		<!-- jvmti: aop memory tests -->
+      <!-- jvmti: aop memory tests -->
       <componentref name="jboss/profiler/jvmti" version="1.0.0.CR5"/>
-		<!-- jvmti: aop tests -->
+      <!-- jvmti: aop tests -->
       <componentref name="jboss/test" version="1.0.3.GA"/>
-		<!-- core-libs: asintegration (for jboss 4) -->
+      <!-- core-libs: asintegration (for jboss 4) -->
       <componentref name="jbossas/core-libs" version="4.0.4.GA"/>
-		<!-- junit: aop, asintegration,  tests -->
+      <!-- junit: aop, asintegration,  tests -->
       <componentref name="junit" version="3.8.2-brew"/>
-		<!-- qdox: aop -->
+      <!-- qdox: aop -->
       <componentref name="qdox" version="1.6.1"/>
-		<!-- sun-javacc: parsers in aop -->
+      <!-- sun-javacc: parsers in aop -->
       <componentref name="sun-javacc" version="4.0-brew"/>
-		<!-- trove: aop -->
+      <!-- trove: aop -->
       <componentref name="trove" version="2.1.1"/>
-		<!-- xdoclet: aop -->
+      <!-- xdoclet: aop -->
       <componentref name="xdoclet" version="1.2.3-brew"/>
    </build>
 
