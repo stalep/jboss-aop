@@ -74,7 +74,6 @@
       	<path refid="jboss/jboss.managed.classpath"/>
          <path refid="jboss.test.classpath"/>
          <path refid="junit.junit.classpath"/>
-         <path refid="oswego.concurrent.classpath"/>
       	<path refid="qdox.classpath"/>
          <path refid="trove.classpath"/>
       </path>
