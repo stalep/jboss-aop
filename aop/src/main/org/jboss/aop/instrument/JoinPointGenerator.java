@@ -1515,7 +1515,7 @@ public abstract class JoinPointGenerator
       String generatedName;
       AdviceSetup[] aroundSetups;
       
-      GeneratedClassInfo(Class generated, AdviceSetups setups)
+      GeneratedClassInfo(Class<?> generated, AdviceSetups setups)
       {
          this.generated = new WeakReference<Class<?>>(generated);
          this.generatedName = generated.getName();
