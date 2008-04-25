@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE aop SYSTEM "jboss-aop_1_0.dtd">
-
 <aop>
    <interceptor class="org.jboss.test.aop.callerscope.PerVmInterceptor" scope="PER_VM"/>
    <interceptor class="org.jboss.test.aop.callerscope.PerClassInterceptor" scope="PER_CLASS"/>

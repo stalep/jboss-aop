@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE aop SYSTEM "jboss-aop_1_0.dtd">
-
 <aop>
    <aspect class="org.jboss.test.aop.arguments.ArgumentsAspect" scope="PER_VM"/>
-  
+
    <stack name="getAndChange">
 		<advice name="getArgumentsAdvice1" aspect="org.jboss.test.aop.arguments.ArgumentsAspect"/>
       <advice name="getAndChangeArgumentsAdvice" aspect="org.jboss.test.aop.arguments.ArgumentsAspect"/>
-      <advice name="getArgumentsAdvice2" aspect="org.jboss.test.aop.arguments.ArgumentsAspect"/>      
+      <advice name="getArgumentsAdvice2" aspect="org.jboss.test.aop.arguments.ArgumentsAspect"/>
    </stack>
-  
+
    <cflow-stack name="ArgumentsPOJO1_constructor">
       <called expr="org.jboss.test.aop.arguments.ArgumentsPOJO1->new(..)"/>
    </cflow-stack>
-   
+
    <cflow-stack name="ArgumentsPOJO1_method">
       <called expr="* org.jboss.test.aop.arguments.ArgumentsPOJO1->*(..)"/>
    </cflow-stack>
@@ -39,15 +37,15 @@
       <advice name="setArgumentsAdvice" aspect="org.jboss.test.aop.arguments.ArgumentsAspect"/>
       <advice name="getArgumentsAdvice2" aspect="org.jboss.test.aop.arguments.ArgumentsAspect"/>
    </stack>
-   
+
    <cflow-stack name="ArgumentsPOJO2_constructor">
       <called expr="org.jboss.test.aop.arguments.ArgumentsPOJO2->new(..)"/>
    </cflow-stack>
-   
+
    <cflow-stack name="ArgumentsPOJO2_method">
       <called expr="* org.jboss.test.aop.arguments.ArgumentsPOJO2->*(..)"/>
    </cflow-stack>
-   
+
    <bind pointcut="all(org.jboss.test.aop.arguments.ArgumentsPOJO2)">
       <stack-ref name="set"/>
    </bind>

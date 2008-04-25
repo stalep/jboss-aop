@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE aop SYSTEM "jboss-aop_1_0.dtd">
-
 <aop>
 
 
@@ -248,7 +246,7 @@
    <bind pointcut="execution(* $instanceof{org.jboss.test.aop.basic.InterfaceUsedInHas}->*(..))">
       <interceptor class="org.jboss.test.aop.basic.CallerInterceptor"/>
    </bind>
-   
+
    <!-- typedef tests -->
    <typedef name="ETD" expr="(class(org.jboss.test.aop.basic.ExecutionTypedefPOJO) AND has(* *->method(..))) OR class($instanceof{org.jboss.test.aop.basic.ExecutionTypedefInterface}) OR class(@executionTypedef)"/>
    <typedef name="ETD1" expr="class(org.jboss.test.aop.basic.ExecutionTypedefPOJO)"/>
@@ -390,34 +388,34 @@
       </default>
    </metadata>
 
-   <bind pointcut="execution(org.jboss.test.aop.basic.POJO->new(..) throws org.jboss.test.aop.basic.SomeException)"> 
-      <interceptor class="org.jboss.test.aop.basic.InstanceOfInterceptor"/>   
-   </bind>
-   
-   <bind pointcut="execution(void org.jboss.test.aop.basic.POJO->withSomeException() throws org.jboss.test.aop.basic.SomeException)"> 
-      <interceptor class="org.jboss.test.aop.basic.InstanceOfInterceptor"/>   
-   </bind>
-   
-   <bind pointcut="execution(void org.jboss.test.aop.basic.POJO->withExceptionAndOthers(java.lang.String) throws java.lang.CloneNotSupportedException)"> 
+   <bind pointcut="execution(org.jboss.test.aop.basic.POJO->new(..) throws org.jboss.test.aop.basic.SomeException)">
       <interceptor class="org.jboss.test.aop.basic.InstanceOfInterceptor"/>
    </bind>
-   
-   <bind pointcut="execution(void org.jboss.test.aop.basic.POJO->withExceptionAndOthers(int) throws org.jboss.test.aop.basic.SomeException, java.io.NotSerializableException)"> 
+
+   <bind pointcut="execution(void org.jboss.test.aop.basic.POJO->withSomeException() throws org.jboss.test.aop.basic.SomeException)">
       <interceptor class="org.jboss.test.aop.basic.InstanceOfInterceptor"/>
    </bind>
-   
-   <bind pointcut="execution(* org.jboss.test.aop.basic.POJO->*(..) throws java.lang.ClassCastException)"> 
+
+   <bind pointcut="execution(void org.jboss.test.aop.basic.POJO->withExceptionAndOthers(java.lang.String) throws java.lang.CloneNotSupportedException)">
+      <interceptor class="org.jboss.test.aop.basic.InstanceOfInterceptor"/>
+   </bind>
+
+   <bind pointcut="execution(void org.jboss.test.aop.basic.POJO->withExceptionAndOthers(int) throws org.jboss.test.aop.basic.SomeException, java.io.NotSerializableException)">
+      <interceptor class="org.jboss.test.aop.basic.InstanceOfInterceptor"/>
+   </bind>
+
+   <bind pointcut="execution(* org.jboss.test.aop.basic.POJO->*(..) throws java.lang.ClassCastException)">
       <interceptor class="org.jboss.test.aop.basic.InstanceOfInterceptor"/>
    </bind>
 
    <bind pointcut="call(org.jboss.test.aop.basic.NonadvisedPOJO->new(..) throws org.jboss.test.aop.basic.SomeException) AND withincode(* org.jboss.test.aop.basic.CallingPOJO->*(..))">
       <interceptor class="org.jboss.test.aop.basic.CallerInterceptor"/>
    </bind>
-   
+
    <bind pointcut="call(public java.lang.String org.jboss.test.aop.basic.NonadvisedPOJO->withException(java.lang.String, int) throws org.jboss.test.aop.basic.SomeException) AND withincode(* org.jboss.test.aop.basic.CallingPOJO->*(..))">
       <interceptor class="org.jboss.test.aop.basic.CallerInterceptor"/>
    </bind>
-   
+
    <!-- Mix .. and specified parameters -->
    <interceptor name="NamedNotBound" class="org.jboss.test.aop.basic.NamedInterceptor">
    	<attribute name="name">NotBound</attribute>
@@ -472,7 +470,7 @@
    </bind>
    <bind pointcut="execution(org.jboss.test.aop.basic.MixedParametersPOJO->new(.., java.lang.Object, ..))">
       <interceptor-ref name="NamedNotBound"/>
-   </bind>   
+   </bind>
    <bind pointcut="execution(* org.jboss.test.aop.basic.MixedParametersPOJO->method(..,int, ..))">
       <interceptor-ref name="NamedA"/>
    </bind>

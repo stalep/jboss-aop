@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE aop SYSTEM "jboss-aop_1_0.dtd">
-
 <aop>
-   
+
    <interceptor name="CountingInterceptor" class="org.jboss.test.aop.override.CountingInterceptor"/>
    <interceptor name="MetadataInterceptor" class="org.jboss.test.aop.override.MetadataInterceptor"/>
    <aspect name="CountingAspect" class="org.jboss.test.aop.override.CountingAspect"/>
@@ -15,13 +13,13 @@
       <advice aspect="CountingAspect" name="test"/>
       <advice aspect="CountingAspect" name="test"/>
    </bind>
-      
+
    <bind pointcut="execution(void org.jboss.test.aop.override.POJO->superOnlyNoSub())">
       <interceptor-ref name="CountingInterceptor"/>
       <interceptor-ref name="CountingInterceptor"/>
       <advice aspect="CountingAspect" name="test"/>
    </bind>
-      
+
    <bind pointcut="execution(void org.jboss.test.aop.override.POJO->overridden())">
       <advice aspect="CountingAspect" name="test"/>
       <interceptor-ref name="CountingInterceptor"/>
@@ -29,29 +27,29 @@
       <advice aspect="CountingAspect" name="test"/>
       <advice aspect="CountingAspect" name="test"/>
    </bind>
-      
+
    <bind pointcut="execution(void org.jboss.test.aop.override.SubPOJO->overridden())">
       <interceptor-ref name="CountingInterceptor"/>
       <advice aspect="CountingAspect" name="test"/>
    </bind>
-      
+
    <bind pointcut="execution(void org.jboss.test.aop.override.SubPOJOOverrideAll->overridden())">
       <interceptor-ref name="CountingInterceptor"/>
       <advice aspect="CountingAspect" name="test"/>
    </bind>
-      
+
    <bind pointcut="execution(void org.jboss.test.aop.override.SubSubPOJO->overridden())">
       <interceptor-ref name="CountingInterceptor"/>
       <interceptor-ref name="CountingInterceptor"/>
       <advice aspect="CountingAspect" name="test"/>
    </bind>
-      
+
    <bind pointcut="execution(void org.jboss.test.aop.override.SubSubPOJOOverrideAll->overridden())">
       <interceptor-ref name="CountingInterceptor"/>
       <interceptor-ref name="CountingInterceptor"/>
       <advice aspect="CountingAspect" name="test"/>
    </bind>
-      
+
    <bind pointcut="execution(void org.jboss.test.aop.override.POJO->overriddenNoSub())">
       <advice aspect="CountingAspect" name="test"/>
       <interceptor-ref name="CountingInterceptor"/>
@@ -62,7 +60,7 @@
       <advice aspect="CountingAspect" name="test"/>
       <advice aspect="CountingAspect" name="test"/>
    </bind>
-      
+
    <bind pointcut="execution(void org.jboss.test.aop.override.SubPOJO->subOnly())">
       <interceptor-ref name="CountingInterceptor"/>
       <interceptor-ref name="CountingInterceptor"/>
@@ -70,7 +68,7 @@
       <advice aspect="CountingAspect" name="test"/>
       <advice aspect="CountingAspect" name="test"/>
    </bind>
-   
+
    <bind pointcut="execution(void org.jboss.test.aop.override.SubPOJOOverrideAll->subOnly())">
       <interceptor-ref name="CountingInterceptor"/>
       <interceptor-ref name="CountingInterceptor"/>
@@ -78,35 +76,35 @@
       <advice aspect="CountingAspect" name="test"/>
       <advice aspect="CountingAspect" name="test"/>
    </bind>
-   
+
    <bind pointcut="execution(void org.jboss.test.aop.override.SubPOJO->superOnly())">
       <interceptor-ref name="CountingInterceptor"/>
       <advice aspect="CountingAspect" name="test"/>
    </bind>
-   
+
    <bind pointcut="execution(void org.jboss.test.aop.override.SubPOJOOverrideAll->superOnly())">
       <interceptor-ref name="CountingInterceptor"/>
       <advice aspect="CountingAspect" name="test"/>
    </bind>
-   
+
    <bind pointcut="execution(void org.jboss.test.aop.override.SubSubPOJO->superOnly())">
       <interceptor-ref name="CountingInterceptor"/>
       <interceptor-ref name="CountingInterceptor"/>
       <advice aspect="CountingAspect" name="test"/>
       <advice aspect="CountingAspect" name="test"/>
    </bind>
-   
+
    <bind pointcut="execution(void org.jboss.test.aop.override.SubSubPOJOOverrideAll->superOnly())">
       <interceptor-ref name="CountingInterceptor"/>
       <interceptor-ref name="CountingInterceptor"/>
       <advice aspect="CountingAspect" name="test"/>
       <advice aspect="CountingAspect" name="test"/>
    </bind>
-   
+
    <bind pointcut="execution(void $instanceof{org.jboss.test.aop.override.POJO}->*(..))">
       <interceptor-ref name="MetadataInterceptor"/>
    </bind>
-   
+
    <metadata tag="test" class="org.jboss.test.aop.override.POJO">
       <method expr="void superOnly()">
          <data>p.s</data>
@@ -121,7 +119,7 @@
          <data>pojo.ons</data>
       </method>
    </metadata>
-   
+
    <metadata tag="test" class="org.jboss.test.aop.override.SubPOJO">
       <method expr="void superOnly()">
          <data>subpojo.superOnly</data>
@@ -133,7 +131,7 @@
          <data>subpojo.subOnly</data>
       </method>
    </metadata>
-   
+
    <metadata tag="test" class="org.jboss.test.aop.override.SubSubPOJO">
       <method expr="void superOnly()">
          <data>subsubpojo.superOnly</data>
@@ -145,7 +143,7 @@
          <data>subsubpojo.subOnly</data>
       </method>
    </metadata>
-   
+
    <metadata tag="test" class="org.jboss.test.aop.override.POJO">
       <method expr="void superOnly()">
          <data>pojo.superOnly</data>
@@ -160,5 +158,5 @@
          <data>pojo.overriddenNoSub</data>
       </method>
    </metadata>
-   
+
 </aop>
