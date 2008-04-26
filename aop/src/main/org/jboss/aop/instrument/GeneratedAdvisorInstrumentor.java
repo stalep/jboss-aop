@@ -666,7 +666,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
          return true;
       }
 
-      return !isAdvised(supa);
+      return super.isBaseClass(clazz);
    }
    
    public static String updatedAdvicesName(String infoName)
