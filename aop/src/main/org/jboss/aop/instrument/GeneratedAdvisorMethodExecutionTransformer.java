@@ -467,10 +467,6 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
       
       String code =
          "{" +
-         "   if (" + infoName + " == null) {"+
-         "         " + getAopReturnStr(trans.getWMethod()) + "$1." + trans.getWrappedName() + "(" + getNonStaticJavasistParamString(trans.getWMethod().getParameterTypes().length) + ");" +
-         (trans.getWMethod().getReturnType().equals(CtClass.voidType)? "return;":"") +
-             "}" +
          GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
          "   try" +
          "   {" +
