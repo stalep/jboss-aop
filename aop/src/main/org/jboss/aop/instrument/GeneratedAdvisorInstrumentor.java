@@ -238,7 +238,8 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             INITIALISE_METHODS,
             EMPTY_SIG,
             EMPTY_EXCEPTIONS,
-            (isBaseClass(clazz)) ?
+            // isBaseClass?
+            (superAdvisor == null) ?
                   null : "{super." + INITIALISE_METHODS + "();}",
             genadvisor);
       genadvisor.addMethod(initialiseMethods);
@@ -263,7 +264,8 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             INITIALISE_CONSTRUCTIONS,
             superInitialiseConstructions.getParameterTypes(),
             EMPTY_EXCEPTIONS,
-            (isBaseClass(clazz)) ?
+            // isBaseClass?
+            (superAdvisor == null) ?
                   null : "{super." + INITIALISE_CONSTRUCTIONS + "($1);}",
             genadvisor);
       genadvisor.addMethod(initialiseConstructions);
@@ -276,7 +278,8 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             INITIALISE_FIELD_READS,
             superInitialiseFieldReads.getParameterTypes(),
             EMPTY_EXCEPTIONS,
-            (isBaseClass(clazz)) ?
+            // isBaseClass?
+            (superAdvisor == null) ?
                   null : "{super." + INITIALISE_FIELD_READS + "($1);}",
             genadvisor);
       genadvisor.addMethod(initialiseFieldReads);
@@ -289,7 +292,8 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             INITIALISE_FIELD_WRITES,
             superInitialiseFieldWrites.getParameterTypes(),
             EMPTY_EXCEPTIONS,
-            (isBaseClass(clazz)) ?
+            // isBaseClass?
+            (superAdvisor == null) ?
                   null : "{super." + INITIALISE_FIELD_WRITES + "($1);}",
             genadvisor);
       genadvisor.addMethod(initialiseFieldWrites);
@@ -300,7 +304,8 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             INITIALISE_CALLERS,
             EMPTY_SIG,
             EMPTY_EXCEPTIONS,
-            (isBaseClass(clazz)) ?
+            // isBaseClass?
+            (superAdvisor == null) ?
                   null : "{super." + INITIALISE_CALLERS + "();}",
             genadvisor);
       genadvisor.addMethod(initialiseCallers);
