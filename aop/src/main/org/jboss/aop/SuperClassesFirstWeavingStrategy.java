@@ -125,6 +125,10 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 
    private CtClass instrumentClass(AspectManager manager, AOPClassPool pool, CtClass clazz, boolean isLoadedClass) throws NotFoundException, Exception
    {
+      if (pool.isClassLoadedButNotWoven(clazz.getName()))
+      {
+         return null;
+      }
       try
       {
          CtClass superClass = clazz.getSuperclass();
