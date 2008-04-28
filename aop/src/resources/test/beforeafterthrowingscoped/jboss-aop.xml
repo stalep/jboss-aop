@@ -62,7 +62,7 @@
       (useful when the caller is a constructor that throws an exception) -->
    <aspect class="org.jboss.test.aop.beforeafterthrowingscoped.CallerAspect" scope="PER_VM"/>
    
-   <bind pointcut="call(* org.jboss.test.aop.beforeafterthrowingscoped.*TargetPOJO*->*(boolean)) OR call(org.jboss.test.aop.beforeafterthrowingscoped.*TargetPOJO*->new(boolean))"> -->
+   <bind pointcut="call(* org.jboss.test.aop.beforeafterthrowingscoped.*TargetPOJO*->*(boolean)) OR call(org.jboss.test.aop.beforeafterthrowingscoped.*TargetPOJO*->new(boolean))">
       <stack-ref name="PER_INSTANCE"/>
       <stack-ref name="PER_JOINPOINT"/>
       <stack-ref name="PER_CLASS_JOINPOINT"/>
