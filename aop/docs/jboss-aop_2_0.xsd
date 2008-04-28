@@ -7,11 +7,6 @@ $Id: aop-beans_1_0.xsd 71751 2008-04-06 21:46:33Z kabir.khan@jboss.com $
    attributeFormDefault="unqualified"
    version="1.0"
 >
-
-<!-- 
-   targetNamespace="urn:jboss:aop_xml:2.0"
-   xmlns="urn:jboss:aop_xml:2.0"
- -->   
    <xsd:annotation>
       <xsd:documentation>
          <![CDATA[
