@@ -1433,7 +1433,7 @@ public class AspectXmlLoader implements XmlLoader
       docBuilderFactory = DocumentBuilderFactory.newInstance();
       docBuilderFactory.setValidating(false);
       InputSource source = new InputSource(is);
-      URL url = AspectXmlLoader.class.getResource("/jboss-aop_1_0.dtd");
+      URL url = AspectXmlLoader.class.getResource("/jboss-aop_2_0.xsd");
       source.setSystemId(url.toString());
       DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
       docBuilder.setEntityResolver(new Resolver());

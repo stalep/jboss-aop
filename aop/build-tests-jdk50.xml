@@ -886,6 +886,7 @@
                <exclude name="org/jboss/test/aop/unit/assignability/ParameterizedTypeTest.class"/>
                <exclude name="org/jboss/test/aop/unit/assignability/VariableTargetAlgorithmTest.class"/>
                <include name="org/jboss/test/aop/ejb3dependencies/EJB3CompatibilityTestCase.class"/>
+               <include name="org/jboss/test/aop/schema/SchemaTestCase.class"/>
             </fileset>
          </batchtest>
       </junit>
