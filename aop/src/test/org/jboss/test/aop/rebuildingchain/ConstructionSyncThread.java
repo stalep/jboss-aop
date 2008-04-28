@@ -39,6 +39,7 @@ public class ConstructionSyncThread extends SyncThread
    
    private static class Pojo
    {
+      // TODO JBAOP-567 Remove this constructor.
       public Pojo() {}
    }
 }

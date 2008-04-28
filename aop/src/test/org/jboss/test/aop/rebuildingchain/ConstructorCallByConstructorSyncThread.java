@@ -45,9 +45,9 @@ public class ConstructorCallByConstructorSyncThread extends SyncThread
       }
    }
    
-   // TODO test omitting this constructor
    private static class Pojo2
    {
+      // TODO JBAOP-567 Remove this constructor.
       public Pojo2(){}
    }
 }
