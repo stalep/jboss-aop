@@ -157,7 +157,8 @@ public class RebuildingChainTestCase extends AOPTestWithSetup
             StaticMethodExecutionSyncThread.NAME);
    }
    
-   public void testConstructorCallByConstructorWithSetDone() throws Exception
+   // TODO This must be uncommented as part of task JBAOP-537 after JBAOP-433 is fixed
+   /*public void testConstructorCallByConstructorWithSetDone() throws Exception
    {
       assertRebuildingChainWithSetDone(new ConstructorCallByConstructorSyncThread(),
             ConstructorCallByConstructorSyncThread.POINTCUT,
@@ -171,8 +172,7 @@ public class RebuildingChainTestCase extends AOPTestWithSetup
             ConstructorCallByConstructorSyncThread.NAME);
    }
    
-   // TODO This must be uncommented as part of task JBAOP-537 after JBAOP-433 is fixed
-   /*public void testConstructorCallByMethodWithSetDone() throws Exception
+   public void testConstructorCallByMethodWithSetDone() throws Exception
    {
       assertRebuildingChainWithSetDone(new ConstructorCallByMethodSyncThread(),
             ConstructorCallByMethodSyncThread.POINTCUT,
