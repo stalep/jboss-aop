@@ -43,20 +43,8 @@ public class SyncInterceptor implements Interceptor
    public synchronized Object invoke(Invocation invocation) throws Throwable
    {
       long time = System.currentTimeMillis();
-      try
-      {
-         System.out.println("SyncInterceptor: " + time);
-         SyncThread.setStatus(true);
-         return invocation.invokeNext();
-      }
-      catch(Exception e)
-      {
-         throw e;
-      }
-      finally
-      {
-         SyncThread.setStatus(false);
-         System.out.println("SyncInterceptor EXITED");
-      }
+      System.out.println("SyncInterceptor: " + time);
+      SyncThread.setStatus(true);
+      return invocation.invokeNext();
    }
 }

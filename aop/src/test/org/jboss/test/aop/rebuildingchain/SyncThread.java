@@ -27,25 +27,38 @@ package org.jboss.test.aop.rebuildingchain;
  * @author <a href="stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-public class SyncThread extends Thread
+public abstract class SyncThread extends Thread
 {
    private static Object lock = new Object();
    private static volatile boolean status = false;
+   private volatile boolean done = false;
    
    @Override
    public void run()
    {
-      for(int i=0; i < 30; i++)
+      try
       {
-         
-         checkStatus();
+         for(int i = 0; i < 30; i++)
+         {
+            setStatus(false);
+            invokeJoinPoint();
+            checkStatus();
+            if(isDone())
+            {
+               return;
+            }
+         }
+      }
+      catch (Exception e)
+      {
+         System.out.println("An exception occurred: " + e);
+         e.printStackTrace();
+         RebuildingChainTestCase.setTestFailed();
       }
    }
    
    private void checkStatus()
    {
-      long time = System.currentTimeMillis();
-      System.out.println("CHECKING STATUS: " + time);
       System.out.println("ST checking status...");
       if(getStatus() == false)
       {
@@ -69,4 +82,16 @@ public class SyncThread extends Thread
          status = b;
       }
    }
+   
+   public void setDone(boolean b)
+   {
+      done = b;
+   }
+   
+   private boolean isDone()
+   {
+      return done;
+   }
+   
+   protected abstract void invokeJoinPoint();
 }

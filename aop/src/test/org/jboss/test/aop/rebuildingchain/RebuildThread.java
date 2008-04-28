@@ -33,36 +33,52 @@ import org.jboss.aop.pointcut.ast.ParseException;
  */
 public class RebuildThread extends Thread
 {
+   private volatile boolean done = false;
+   private String pointcutExpression;
+   private String bindingPrefix;
    
+   public RebuildThread(String pointcutExpression, String bindingPrefix)
+   {
+      this.pointcutExpression = pointcutExpression;
+      this.bindingPrefix = bindingPrefix;
+   }
    
    @Override
    public void run()
    {
-      for(int i=0; i < 30; i++)
-      {
-         linkNewAdvice("Test" + i);
-         unlinkAdvice("Test" + i);
-      }
-
-   }
-
-   public void linkNewAdvice()
-   {
-      linkNewAdvice("Base");
-   }
-    
-   private void linkNewAdvice(String name)
-   {
-      //System.out.println("adding new advice" + name);
-      AdviceBinding binding1 = null;
       try
       {
-         binding1 = new AdviceBinding("execution(* org.jboss.test.aop.rebuildingchain.SyncThread->checkStatus())", null);
+         for(int i = 0; i < 30; i++)
+         {
+            linkNewAdvice(bindingPrefix + i);
+            unlinkAdvice(bindingPrefix + i);
+            if(isDone())
+            {
+               return;
+            }
+         }
       }
-      catch (ParseException e)
+      catch(Exception e)
       {
+         System.out.println("An exception occurred: " + e);
          e.printStackTrace();
+         RebuildingChainTestCase.setTestFailed();
       }
+   }
+
+   public void linkNewAdvice() throws ParseException
+   {
+      linkNewAdvice(bindingPrefix + "Base");
+   }
+   
+   public void unlinkAdvice()
+   {
+      unlinkAdvice(bindingPrefix + "Base");
+   }
+    
+   private void linkNewAdvice(String name) throws ParseException
+   {
+      AdviceBinding binding1 = new AdviceBinding(pointcutExpression, null);
       binding1.addInterceptor(SyncInterceptor.class);
       binding1.setName(name);
       AspectManager.instance().addBinding(binding1);
@@ -70,8 +86,17 @@ public class RebuildThread extends Thread
    
    private void unlinkAdvice(String name)
    {
-      //System.out.println("unlinking " + name); 
       AspectManager.instance().removeBinding(name);
    }
-  
+   
+
+   public void setDone(boolean b)
+   {
+      done = b;
+   }
+   
+   private boolean isDone()
+   {
+      return done;
+   }
 }

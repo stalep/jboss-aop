@@ -262,26 +262,26 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       {
          code =
             "{" +
-            "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
-            "   {" +
             GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
-            "      try" +
+            "   try" +
+            "   {" +
+            "      if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "      {" +
             "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "         {" +
             "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
             "         }" +
-            "      } finally {" +
-            GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
             "      }" +
-            "   }" +
-            "   if (" + joinpointName + " == null)" +
-            "   { " +
-            "       return " + clazz.getName() + "." + field.getName() + ";" +
-            "   }" +
-            "   else" +
-            "   {" +
-            "    " + MethodExecutionTransformer.getAopReturnStr(false) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "();" +
+            "      if (" + joinpointName + " == null)" +
+            "      { " +
+            "         return " + clazz.getName() + "." + field.getName() + ";" +
+            "      }" +
+            "      else" +
+            "      {" +
+            "       " + MethodExecutionTransformer.getAopReturnStr(false) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "();" +
+            "      }" +
+            "   } finally {" +
+            GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
             "   }" +
             "}";
       }
@@ -289,26 +289,26 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       {
          code =
             "{" +
-            "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
-            "   {" +
             GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
-            "      try" +
+            "   try" +
+            "   {" +
+            "      if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "      {" +
             "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "         {" +
             "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
             "         }" +
-            "      } finally {" +
-            GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
             "      }" +
-            "   }" +
-            "   if (" + joinpointName + " == null)" +
-            "   { " +
-            "       return ((" + clazz.getName() + ")$1)." + field.getName() + ";" +
-            "   }" +
-            "   else" +
-            "   {" +
-            "    " + MethodExecutionTransformer.getAopReturnStr(false) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "((" + clazz.getName() + ")$1);" +
+            "      if (" + joinpointName + " == null)" +
+            "      { " +
+            "         return ((" + clazz.getName() + ")$1)." + field.getName() + ";" +
+            "      }" +
+            "      else" +
+            "      {" +
+            "       " + MethodExecutionTransformer.getAopReturnStr(false) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "((" + clazz.getName() + ")$1);" +
+            "      }" +
+            "   } finally {" +
+            GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
             "   }" +
             "}";
       }
@@ -329,27 +329,27 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
          String fieldString = clazz.getName() +  "." + field.getName();
          code =
             "{" +
-            "    " + getArrayWriteRegistration(shouldReplaceArrayAccess, targetString, field, fieldString, "$2") +
-            "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
-            "   {" +
             GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
-            "      try" +
+            "   try" +
+            "   {" +
+            "      " + getArrayWriteRegistration(shouldReplaceArrayAccess, targetString, field, fieldString, "$2") +
+            "      if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "      {" +
             "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "         {" +
             "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
             "         }" +
-            "      } finally {" +
-            GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
             "      }" +
-            "   }" +
-            "   if (" + joinpointName + " == null)" +
-            "   { " +
-            "   " + fieldString + " = $2;" +
-            "   }" +
-            "   else" +
-            "   {" +
-            "   " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($2);" +
+            "      if (" + joinpointName + " == null)" +
+            "      { " +
+            "      " + fieldString + " = $2;" +
+            "      }" +
+            "      else" +
+            "      {" +
+            "      " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($2);" +
+            "      }" +
+            "   } finally {" +
+            GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
             "   }" +
             "}";
       }
@@ -359,27 +359,27 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
          String fieldString = targetString + "." + field.getName();
          code =
             "{" +
-            "    " + getArrayWriteRegistration(shouldReplaceArrayAccess, targetString, field, fieldString, "$2") +
-            "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
-            "   {" +
             GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
-            "      try" +
+            "   try" +
+            "   {" +
+            "      " + getArrayWriteRegistration(shouldReplaceArrayAccess, targetString, field, fieldString, "$2") +
+            "      if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "      {" +
             "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
             "         {" +
             "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
             "         }" +
-            "      } finally {" +
-            GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
             "      }" +
-            "   }" +
-            "   if (" + joinpointName + " == null)" +
-            "   { " +
-            "       " + fieldString + " = $2;" +
-            "   }" +
-            "   else" +
-            "   {" +
-            "   " + MethodExecutionTransformer.getAopReturnStr(false) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "((" + clazz.getName() + ")$1, $2);" +
+            "      if (" + joinpointName + " == null)" +
+            "      { " +
+            "         " + fieldString + " = $2;" +
+            "      }" +
+            "      else" +
+            "      {" +
+            "      " + MethodExecutionTransformer.getAopReturnStr(false) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "((" + clazz.getName() + ")$1, $2);" +
+            "      }" +
+            "   } finally {" +
+            GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
             "   }" +
             "}";
       }
@@ -534,5 +534,4 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
          }
       }
    }
-
 }

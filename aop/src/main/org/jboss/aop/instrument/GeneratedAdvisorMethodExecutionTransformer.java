@@ -434,26 +434,26 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
 
       String code =
          "{" +
-         "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
-         "   {" +
          GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
-         "      try" +
+         "   try" +
+         "   {" +
+         "      if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
          "      {" +
          "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
          "         {" +
          "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
          "         }" +
-         "      } finally {" +
-         GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
+         "      }" + 
+         "      if (" + joinpointName + " == null)" +
+         "      { " +
+         "           " + getReturnStr(trans.getWMethod()) + trans.getClazzName() + "." + trans.getWrappedName() +"($$);" +
          "      }" +
-         "   }" +
-         "   if (" + joinpointName + " == null)" +
-         "   { " +
-         "      " + getReturnStr(trans.getWMethod()) + trans.getClazzName() + "." + trans.getWrappedName() +"($$);" +
-         "   }" +
-         "   else" +
-         "   {" +
-         "    " + getAopReturnStr(trans.getWMethod()) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+         "      else" +
+         "      {" +
+         "          " + getAopReturnStr(trans.getWMethod()) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+         "      }" +
+         "   } finally {" +
+         GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
          "   }" +
          "}";
 

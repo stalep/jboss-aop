@@ -142,26 +142,26 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          String infoName = cd.callerInfoField;
          String code =
                "{" +
-               "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
-               "   {" +
                GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
-               "      try" +
-               "      {" + 
+               "   try" +
+               "   {" +
+               "      if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
+               "      {" +
                "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
                "         {" +
                "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
                "         }" +
-               "      } finally {" +
-               GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
                "      }" +
-               "   }" +
-               "   if (" + joinpointName + " == null)" +
-               "   { " +
-               "      " + proceed +
-               "   }" +
-               "   else" +
-               "   {" +
-               "      return " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+               "      if (" + joinpointName + " == null)" +
+               "      { " +
+               "        " + proceed +
+               "      }" +
+               "      else" +
+               "      {" +
+               "         return " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+               "      }" +
+               "   } finally {" +
+               GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
                "   }" +
                "}";
 
@@ -253,26 +253,26 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          String infoName = md.callerInfoField;
          String code =
                "{" +
-               "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
-               "   {" +
                GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
-               "      try" +
+               "   try" +
+               "   {" +
+               "      if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
                "      {" +
                "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
                "         {" +
                "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
                "         }" +
-               "      } finally {" +
-               GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
                "      }" +
-               "   }" +
-               "   if (" + joinpointName + " == null)" +
-               "   { " +
-               "      " + proceed +
-               "   }" +
-               "   else" +
-               "   {" +
-               "      " + MethodExecutionTransformer.getReturnStr(md.calledMethod) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+               "      if (" + joinpointName + " == null)" +
+               "      { " +
+               "        " + proceed +
+               "      }" +
+               "      else" +
+               "      {" +
+               "       " + MethodExecutionTransformer.getReturnStr(md.calledMethod) + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+               "      }" +
+               "   } finally {" +
+               GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
                "   }" +
                "}";
 
@@ -354,27 +354,28 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          String infoName = cd.callerInfoField;
          StringBuffer code = new StringBuffer();
          code.append("{");
-         code.append("   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())");
-         code.append("   {");
          code.append(GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName));
-         code.append("      try" );
+         code.append("   try" );
+         code.append("   {");
+         code.append("      if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())");
          code.append("      {");
          code.append("         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())");
          code.append("         {");
          code.append("            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");");
          code.append("         }");
-         code.append("      } finally {");
-         code.append(GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName));
          code.append("      }");
+         code.append("      if (" + joinpointName + " == null)");
+         code.append("      { ");
+         code.append("         return new " + cd.calledConstructor.getDeclaringClass().getName() + "(" + getArguments(params.length, hasCallingObject ? 1 : 0) + "); ");
+         code.append("      }");
+         code.append("      else");
+         code.append("      {");
+         code.append("         return " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);");
+         code.append("      }");
+         code.append("   } finally {");
+         code.append(GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName));
          code.append("   }");
-         code.append("   if (" + joinpointName + " == null)");
-         code.append("   { ");
-         code.append("      return new " + cd.calledConstructor.getDeclaringClass().getName() + "(" + getArguments(params.length, hasCallingObject ? 1 : 0) + "); ");
-         code.append("   }");
-         code.append("   else");
-         code.append("   {");
-         code.append("      return " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);");
-         code.append("   }");
+
          code.append("}");
 
          try
@@ -444,26 +445,26 @@ public class GeneratedAdvisorCallerTransformer extends CallerTransformer
          String infoName = cd.callerInfoField;
          String code =
                "{" +
-               "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
-               "   {" +
                GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
-               "      try" +
+               "   try" +
+               "   {" +
+               "      if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
                "      {" +
                "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
                "         {" +
                "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
                "         }" +
-               "       } finally {" +
+               "      }" +
+               "      if (" + joinpointName + " == null)" +
+               "      { " +
+               "         return new " + cd.calledConstructor.getDeclaringClass().getName() + "(" + getArguments(params.length, 1) + "); " +
+               "      }" +
+               "      else" +
+               "      {" +
+               "         return " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+               "      }" +
+               "   } finally {" +
                GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
-               "       }" +
-               "   }" +
-               "   if (" + joinpointName + " == null)" +
-               "   { " +
-               "      return new " + cd.calledConstructor.getDeclaringClass().getName() + "(" + getArguments(params.length, 1) + "); " +
-               "   }" +
-               "   else" +
-               "   {" +
-               "      return " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
                "   }" +
                "}";
 

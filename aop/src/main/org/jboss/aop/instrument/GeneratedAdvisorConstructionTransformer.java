@@ -146,22 +146,22 @@ public class GeneratedAdvisorConstructionTransformer extends ConstructionTransfo
       String infoName = getConstructionInfoFieldName(constructor.getDeclaringClass().getSimpleName(), index);
       String code =
          "{" +
-         "   if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
-         "   {" +
          GeneratedAdvisorInstrumentor.generateInterceptorChainLockCode(infoName) +
-         "      try" +
+         "   try" +
+         "   {" +
+         "      if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
          "      {" +
          "         if (" + joinpointName + " == null && " + infoName + " != null && " + infoName + ".hasAdvices())" +
          "         {" +
          "            super." + JoinPointGenerator.GENERATE_JOINPOINT_CLASS + "(" + infoName + ");" +
          "         }" +
-         "      } finally {" +
-         GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
          "      }" +
-         "   }" +
-         "   if (" + joinpointName + " != null)" +
-         "   { " +
-         "    " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+         "      if (" + joinpointName + " != null)" +
+         "      { " +
+         "        " + joinpointName + "." + JoinPointGenerator.INVOKE_JOINPOINT + "($$);" +
+         "      }" +
+         "   } finally {" +
+         GeneratedAdvisorInstrumentor.generateInterceptorChainUnlockCode(infoName) +
          "   }" +
          "}";
 
