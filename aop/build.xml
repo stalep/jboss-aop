@@ -387,6 +387,7 @@
          <fileset dir="${build.classes}">
             <exclude name="org/jboss/aop/standalone/PluggableInstrumentor.class"/>
          </fileset>
+         <fileset file="docs/jboss-aop_1_0.dtd"/>
          <fileset file="docs/jboss-aop_2_0.xsd"/>
          <fileset file ="${source.etc}/jbossorg-eula.txt"/>
       </jar>

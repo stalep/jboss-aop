@@ -1413,6 +1413,20 @@ public class AspectXmlLoader implements XmlLoader
                return null;
             }
          }
+         else if (systemId.endsWith("jboss-aop_2_0.xsd"))
+         {
+            try
+            {
+               URL url = AspectXmlLoader.class.getResource("/jboss-aop_2_0.xsd");
+               InputStream is = url.openStream();
+               return new InputSource(is);
+            }
+            catch (IOException e)
+            {
+               e.printStackTrace();
+               return null;
+            }
+         }
          return null;
       }
    }
@@ -1433,8 +1447,8 @@ public class AspectXmlLoader implements XmlLoader
       docBuilderFactory = DocumentBuilderFactory.newInstance();
       docBuilderFactory.setValidating(false);
       InputSource source = new InputSource(is);
-      URL url = AspectXmlLoader.class.getResource("/jboss-aop_2_0.xsd");
-      source.setSystemId(url.toString());
+      //URL url = AspectXmlLoader.class.getResource("/jboss-aop_2_0.xsd");
+      //source.setSystemId(url.toString());
       DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
       docBuilder.setEntityResolver(new Resolver());
       //docBuilder.setErrorHandler(new LocalErrorHandler());

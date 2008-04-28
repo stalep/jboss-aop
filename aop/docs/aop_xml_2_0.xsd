@@ -1,0 +1,786 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A prototype xsd schema for javabeans
+$Id: aop-beans_1_0.xsd 71751 2008-04-06 21:46:33Z kabir.khan@jboss.com $
+ -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   targetNamespace="urn:jboss:aop_xml:2.0"
+   xmlns="urn:jboss:aop_xml:2.0"
+   elementFormDefault="qualified"
+   attributeFormDefault="unqualified"
+   version="1.0"
+>   
+   <xsd:annotation>
+      <xsd:documentation>
+         <![CDATA[
+         A schema for constructing aop beans.
+         ]]>
+      </xsd:documentation>
+   </xsd:annotation>
+
+   <xsd:element name="aop" type="aopType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           An AOP Deployment
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+
+   <xsd:complexType name="aopType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           An AOP Deployment
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+         <xsd:element name="annotation" type="aopAnnotationType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="annotation-introduction" type="annotationIntroductionType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="arraybind" type="arraybindType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="arrayreplacement" type="arrayreplacementType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="aspect" type="aspectOrInterceptorType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="bind" type="bindType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="cflow-stack" type="cflowStackType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="declare-error" type="declareType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="declare-warning" type="declareType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="domain" type="domainType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="dynamic-cflow" type="dynamicCflowStackType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="interceptor" type="aspectOrInterceptorType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="introduction" type="introductionType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="loader-repository" type="loaderRepositoryType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="metadata" type="metadataType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="metadata-loader" type="metadataLoaderType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="pointcut" type="pointcutType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="precedence" type="precedenceType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="prepare" type="prepareType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="stack" type="stackType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="typedef" type="typedefType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:any namespace="##other" processContents="strict" minOccurs="0">
+            <xsd:annotation>
+               <xsd:documentation>An extension value</xsd:documentation>
+            </xsd:annotation>
+         </xsd:any>
+      </xsd:choice>
+   </xsd:complexType>
+
+   <xsd:element name="domain" type="domainType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           An AOP domain
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+
+   <xsd:complexType name="domainType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           An AOP domain
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:choice minOccurs="0" maxOccurs="1">
+         <xsd:element name="annotation" type="aopAnnotationType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="annotation-introduction" type="annotationIntroductionType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="arraybind" type="arraybindType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="arrayreplacement" type="arrayreplacementType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="aspect" type="aspectOrInterceptorType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="bind" type="bindType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="cflow-stack" type="cflowStackType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="declare-error" type="declareType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="declare-warning" type="declareType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="dynamic-cflow" type="dynamicCflowStackType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="interceptor" type="aspectOrInterceptorType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="introduction" type="introductionType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="metadata" type="metadataType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="metadata-loader" type="metadataLoaderType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="pointcut" type="pointcutType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="precedence" type="precedenceType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="prepare" type="prepareType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="stack" type="stackType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="typedef" type="typedefType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:any namespace="##other" processContents="strict" minOccurs="0">
+            <xsd:annotation>
+               <xsd:documentation>An extension value</xsd:documentation>
+            </xsd:annotation>
+         </xsd:any>
+      </xsd:choice>
+      <xsd:attribute name="name" type="xsd:string" use="required"/>
+      <xsd:attribute name="parentFirst" type="xsd:boolean" use="optional" default="false"/>
+      <xsd:attribute name="inheritDefinitions" type="xsd:boolean" use="optional" default="true"/>
+      <xsd:attribute name="inheritBindings" type="xsd:boolean" use="optional" default="false"/>
+      <xsd:attribute name="extends" type="xsd:string" use="optional"/>
+   </xsd:complexType> 
+
+   <xsd:element name="interceptor" type="aspectOrInterceptorType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           An interceptor
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   
+   <xsd:element name="aspect" type="aspectOrInterceptorType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           An aspect
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   
+   <xsd:complexType name="aspectOrInterceptorType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           aspects or interceptors 
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:choice minOccurs="0" maxOccurs="1">
+         <xsd:any namespace="##other" processContents="strict" minOccurs="0">
+         </xsd:any>
+      </xsd:choice>   
+      <xsd:attribute name="name" type="xsd:string" use="optional"/>
+      <xsd:attribute name="class" type="xsd:string" use="optional"/>
+      <xsd:attribute name="scope" type="xsd:string" use="optional"/>
+      <xsd:attribute name="factory" type="xsd:string" use="optional"/>
+   </xsd:complexType>
+
+   <xsd:element name="bind" type="bindType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A binding
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   
+   <xsd:complexType name="bindType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           A binding
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:choice minOccurs="1" maxOccurs="unbounded">
+         <xsd:element name="interceptor" type="aspectOrInterceptorType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="interceptor-ref" type="interceptorRefType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="stack-ref" type="stackRefType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="advice" type="adviceType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="around" type="adviceType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="before" type="beforeType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="after" type="afterType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="throwing" type="throwingType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="finally" type="finallyType" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:choice>
+      <xsd:attribute name="name" type="xsd:string" use="optional" />
+      <xsd:attribute name="pointcut" type="xsd:string" use="required" />
+      <xsd:attribute name="cflow" type="xsd:string" use="optional" />
+   </xsd:complexType>
+
+   <xsd:element name="stack" type="stackType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           An interceptor stack
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   
+   <xsd:complexType name="stackType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           An interceptor stack
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:choice minOccurs="1" maxOccurs="unbounded">
+         <xsd:element name="interceptor" type="aspectOrInterceptorType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="interceptor-ref" type="interceptorRefType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="stack-ref" type="stackRefType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="advice" type="adviceType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="around" type="adviceType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="before" type="beforeType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="after" type="afterType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="throwing" type="throwingType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="finally" type="finallyType" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:choice>
+      <xsd:attribute name="name" type="xsd:string" use="required" />
+   </xsd:complexType>
+
+   <xsd:complexType name="bindContentType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           base type for bind content: stack-ref, interceptor-ref and advice
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:attribute name="name" use="required"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="interceptorRefType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           A interceptor-ref within a bind or intereptor-stack
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="bindContentType">
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="stackRefType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           A stack-ref within a bind or interceptor-stack
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="bindContentType">
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="adviceType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           A advice or around within a bind or interceptor-stack
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="bindContentType">
+            <xsd:attribute name="aspect" type="xsd:string" use="required"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="beforeType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           A before within a bind or interceptor-stack
+           
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="adviceType"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="afterType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           A after within a bind or interceptor-stack
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="adviceType"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="throwingType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           A throwing within a bind or interceptor-stack
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="adviceType"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="finallyType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           A finally within a bind or interceptor-stack
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="adviceType"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:element name="typedef" type="typedefType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A typedef
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   
+   <xsd:complexType name="typedefType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A typedef 
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:attribute name="name" type="xsd:string" use="required"/>
+      <xsd:attribute name="expr" type="xsd:string" use="required"/>
+   </xsd:complexType>
+
+   <xsd:element name="cflow-stack" type="cflowStackType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A cflow-stack
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   
+   <xsd:complexType name="cflowStackType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A cflow-stack 
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:choice minOccurs="1" maxOccurs="unbounded">
+         <xsd:element name="called" type="cflowStackEntryType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="not-called" type="cflowStackEntryType" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:choice>
+      <xsd:attribute name="name" type="xsd:string" use="required"/>
+   </xsd:complexType>
+   
+   <xsd:complexType name="cflowStackEntryType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           The called or not-called children of cflow-stack
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:attribute name="expr" use="required"/>
+   </xsd:complexType>
+
+   <xsd:element name="dynamic-cflow" type="dynamicCflowStackType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A dynamic cflow
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+
+   <xsd:complexType name="dynamicCflowStackType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A dynamic cflow
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:attribute name="name" type="xsd:string" use="required"/>
+      <xsd:attribute name="class" type="xsd:string" use="required"/>
+   </xsd:complexType>
+   
+   <xsd:element name="declare-error" type="declareType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A declare error
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+
+   <xsd:element name="declare-warning" type="declareType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A declare warning
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+
+   <xsd:complexType name="declareType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A declare-error or declare-warning
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleContent>
+         <xsd:extension base="xsd:string">
+            <xsd:attribute name="name" type="xsd:string" use="required"/>
+            <xsd:attribute name="expr" type="xsd:string" use="required"/>
+         </xsd:extension>
+      </xsd:simpleContent>
+   </xsd:complexType>
+   
+   <xsd:element name="pointcut" type="pointcutType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A named pointcut
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+
+   <xsd:complexType name="pointcutType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A named pointcut
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:attribute name="name" type="xsd:string" use="required"/>
+      <xsd:attribute name="expr" type="xsd:string" use="required"/>
+   </xsd:complexType>
+   
+   <xsd:element name="prepare" type="prepareType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A prepare statement
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+
+   <xsd:complexType name="prepareType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A prepare statement
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:attribute name="name" type="xsd:string" use="optional"/>
+      <xsd:attribute name="expr" type="xsd:string" use="required"/>
+   </xsd:complexType>
+
+   <xsd:element name="annotation-introduction" type="annotationIntroductionType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A annotation-introduction
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+
+   <xsd:complexType name="annotationIntroductionType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A annotation-introduction
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:attribute name="expr" type="xsd:string" use="required"/>
+      <xsd:attribute name="invisible" type="xsd:boolean" use="required"/>
+   </xsd:complexType>
+
+   <xsd:element name="annotation" type="aopAnnotationType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A annotation override
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+
+   <xsd:complexType name="aopAnnotationType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A annotation override
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="annotationIntroductionType"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:element name="precedence" type="precedenceType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A precedence
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+
+   <xsd:complexType name="precedenceType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           A annotation override
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:choice minOccurs="1" maxOccurs="unbounded">
+         <xsd:element name="interceptor-ref" type="interceptorRefType" minOccurs="0" maxOccurs="unbounded" />
+         <xsd:element name="advice" type="adviceType" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:choice>
+      <xsd:attribute name="name" type="xsd:string" use="optional"></xsd:attribute>
+   </xsd:complexType>
+
+   <xsd:element name="introduction" type="introductionType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A interface introduction
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+
+   <xsd:complexType name="introductionType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           A interface introduction
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:choice minOccurs="1" maxOccurs="1">
+         <xsd:element name="interfaces" type="interfacesType" minOccurs="0" maxOccurs="1" />
+         <xsd:element name="mixin" type="mixinType" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:choice>
+      <xsd:attribute name="class" type="xsd:string" use="optional"></xsd:attribute>
+      <xsd:attribute name="expr" type="xsd:string" use="optional"></xsd:attribute>
+   </xsd:complexType>
+
+   <xsd:complexType name="mixinType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           A mixin within an interface introduction
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:choice minOccurs="1" maxOccurs="1">
+         <xsd:element name="interfaces" type="interfacesType" minOccurs="1" maxOccurs="1" />
+         <xsd:element name="class" type="classType" minOccurs="1" maxOccurs="1" />
+         <xsd:element name="construction" type="constructionType" minOccurs="0" maxOccurs="1" />
+         <xsd:element name="transient" type="transientType" minOccurs="0" maxOccurs="1" />
+      </xsd:choice>
+   </xsd:complexType>
+
+   <xsd:complexType name="interfacesType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           A interfaces within an introduction or an introduction/mixin
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleContent>
+         <xsd:extension base="xsd:string"/>
+      </xsd:simpleContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="classType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           A class within an interface/mixin
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleContent>
+         <xsd:extension base="xsd:string"/>
+      </xsd:simpleContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="constructionType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           How to construct an interface/mixin
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleContent>
+         <xsd:extension base="xsd:string"/>
+      </xsd:simpleContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="transientType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           Whether an interface/mixin should be transient
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleContent>
+         <xsd:extension base="xsd:string"/>
+      </xsd:simpleContent>
+   </xsd:complexType>
+
+   <xsd:element name="metadata" type="metadataType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A metadata
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   
+   <xsd:complexType name="metadataType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A metadata
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:choice minOccurs="0" maxOccurs="1">
+         <xsd:any namespace="##other" processContents="strict" minOccurs="0">
+         </xsd:any>
+      </xsd:choice>
+      <xsd:attribute name="tag" type="xsd:string" use="required"></xsd:attribute>
+      <xsd:attribute name="class" type="xsd:string" use="required"></xsd:attribute>
+   </xsd:complexType>
+
+   <xsd:element name="metadata-loader" type="metadataLoaderType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A metadata
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   
+   <xsd:complexType name="metadataLoaderType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           A metadata
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:choice minOccurs="0" maxOccurs="1">
+         <xsd:any namespace="##other" processContents="strict" minOccurs="0">
+         </xsd:any>
+      </xsd:choice>
+      <xsd:attribute name="tag" type="xsd:string" use="required"></xsd:attribute>
+      <xsd:attribute name="class" type="xsd:string" use="required"></xsd:attribute>
+   </xsd:complexType>
+
+   <xsd:element name="arrayreplacement" type="arrayreplacementType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           An array replacement
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+
+   <xsd:complexType name="arrayreplacementType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           An array replacement
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:attribute name="name" type="xsd:string" use="optional"></xsd:attribute>
+      <xsd:attribute name="class" type="xsd:string" use="optional"></xsd:attribute>
+      <xsd:attribute name="expr" type="xsd:string" use="optional"></xsd:attribute>
+   </xsd:complexType>
+
+   <xsd:element name="arraybind" type="arraybindType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           An array binding
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+
+   <xsd:complexType name="arraybindType">
+      <xsd:annotation>
+         <xsd:documentation>
+            <![CDATA[
+           An array binding
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:choice minOccurs="1" maxOccurs="unbounded">
+         <xsd:element name="interceptor" type="aspectOrInterceptorType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="interceptor-ref" type="interceptorRefType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="stack-ref" type="stackRefType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="advice" type="adviceType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="around" type="adviceType" minOccurs="0" maxOccurs="unbounded"/>
+         <!-- b/a/t/f is not supported yet for arrays 
+         <xsd:element name="before" type="beforeType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="after" type="afterType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="throwing" type="throwingType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="finally" type="finallyType" minOccurs="0" maxOccurs="unbounded"/>
+         -->
+      </xsd:choice>
+      <xsd:attribute name="name" type="xsd:string" use="optional"></xsd:attribute>
+      <xsd:attribute name="type" type="xsd:string" use="required"></xsd:attribute>
+   </xsd:complexType>
+
+   
+   <xsd:element name="loader-repository">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           Which loader repository to attach to
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   
+   <xsd:simpleType name="loaderRepositoryType">
+      <xsd:annotation>
+         <xsd:documentation>
+           <![CDATA[
+           The name of the loader repository to attach to
+           ]]>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+      </xsd:restriction>
+   </xsd:simpleType>
+</xsd:schema>
