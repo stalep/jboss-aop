@@ -86,7 +86,7 @@
       <before name="before3" aspect="org.jboss.test.aop.annotatedAdviceParams.ArgAspect"/>
    </bind>
 
-   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ArgsInvalidPOJO->bunch3After1(..))">/>
+   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ArgsInvalidPOJO->bunch3After1(..))">
 		<after name="after1" aspect="org.jboss.test.aop.annotatedAdviceParams.ArgAspect"/>
    </bind>
 
@@ -899,7 +899,7 @@
    </bind>
 
    <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.JoinPointInvalidPOJO->method1Finally9(..))">
-=      <finally name="finally9" aspect="org.jboss.test.aop.annotatedAdviceParams.JoinPointAspect"/>
+      <finally name="finally9" aspect="org.jboss.test.aop.annotatedAdviceParams.JoinPointAspect"/>
    </bind>
 
 	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.JoinPointPOJO->method2(..))">
