@@ -255,7 +255,18 @@ public class ClassContainer extends Advisor
    {
       initializeMethodChain();
       initializeConstructorChain();
+      makeInterceptorChains();
+   }
+   
+   protected void updateInterceptorChains()
+   {
+      resetChain(this.methodInfos);
+      resetChain(this.constructorInfos);
+      makeInterceptorChains();
+   }
 
+   private void makeInterceptorChains()
+   {
       LinkedHashMap<String, AdviceBinding> bindings = manager.getBindings();
       synchronized (bindings)
       {
@@ -276,31 +287,6 @@ public class ClassContainer extends Advisor
       doesHaveAspects = adviceBindings.size() > 0;
    }
    
-   protected void updateInterceptorChains()
-   {
-      resetChain(this.methodInfos);
-      resetChain(this.constructorInfos);
-
-      LinkedHashMap<String, AdviceBinding> bindings = manager.getBindings();
-      synchronized (bindings)
-      {
-         if (bindings.size() > 0)
-         {
-            for (AdviceBinding binding : bindings.values())
-            {
-               if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName());
-               resolveMethodPointcut(binding);
-               resolveConstructorPointcut(binding);
-            }
-         }
-      }
-      finalizeChain(constructorInfos);
-      finalizeMethodChain();
-      populateInterceptorsFromInfos();
-
-      doesHaveAspects = adviceBindings.size() > 0;
-   }
-
    /**
     * @return the value of chainOverridingForInheritedMethods
     * @see Advisor#chainOverridingForInheritedMethods()
