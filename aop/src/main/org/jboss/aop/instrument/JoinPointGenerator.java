@@ -353,14 +353,14 @@ public abstract class JoinPointGenerator
 //         }
          throw new RuntimeException(debugClass(sb, clazz).toString(), e);
       }
-      AdviceSetup[] aroundSetups = generatedClass.getAroundSetups();
-      for (int i = 0 ; i < aroundSetups.length ; i++)
+      AroundCFlow[] aroundCFlows = generatedClass.getAroundCFlows();
+      if (aroundCFlows != null)
       {
-         if (aroundSetups[i].isNewCFlow())
+         for (int i = 0 ; i < aroundCFlows.length ; i++)
          {
-            Field field = clazz.getDeclaredField("cflow" + aroundSetups[i].useCFlowFrom());
+            Field field = clazz.getDeclaredField(aroundCFlows[i].getFieldName());
             field.setAccessible(true);
-            field.set(obj, aroundSetups[i].getCFlow());
+            field.set(obj, aroundCFlows[i].getCflowExpression());
          }
       }
       return obj;
@@ -1509,17 +1509,64 @@ public abstract class JoinPointGenerator
       }
    }
    
+   private static class AroundCFlow
+   {
+      private String fieldName;
+      private ASTCFlowExpression cflowExpression;
+      
+      public AroundCFlow(String fieldName, ASTCFlowExpression cflowEXpression)
+      {
+         this.fieldName = fieldName;
+         this.cflowExpression = cflowEXpression;
+      }
+      
+      public String getFieldName()
+      {
+         return this.fieldName;
+      }
+      
+      public ASTCFlowExpression getCflowExpression()
+      {
+         return cflowExpression;
+      }
+   }
+   
    private class GeneratedClassInfo
    {
       WeakReference<Class<?>> generated;
       String generatedName;
-      AdviceSetup[] aroundSetups;
+      AroundCFlow[] aroundCFlows;
       
       GeneratedClassInfo(Class<?> generated, AdviceSetups setups)
       {
          this.generated = new WeakReference<Class<?>>(generated);
          this.generatedName = generated.getName();
-         this.aroundSetups = setups.getByType(AdviceType.AROUND);
+         AdviceSetup[] aroundSetups = setups.getByType(AdviceType.AROUND);
+         int size = 0;
+         if (aroundSetups != null)
+         {
+            for (int i = 0; i < aroundSetups.length; i++)
+            {
+               if (aroundSetups[i].isNewCFlow())
+               {
+                  size++;
+               }
+            }
+         }
+         if (size > 0)
+         {
+            aroundCFlows = new AroundCFlow[size];
+            int j = 0;
+            for (int i = 0; i < aroundSetups.length; i++)
+            {
+               if (aroundSetups[i].isNewCFlow())
+               {
+                  aroundCFlows[j++] = new AroundCFlow(
+                        "cflow" + aroundSetups[i].useCFlowFrom(),
+                        aroundSetups[i].getCFlow());
+               }
+            }
+         }
       }
       
       Class<?> getGenerated(ClassLoader classloader)
@@ -1540,9 +1587,9 @@ public abstract class JoinPointGenerator
          return generatedClass;
       }
       
-      AdviceSetup[] getAroundSetups()
+      AroundCFlow[] getAroundCFlows()
       {
-         return (aroundSetups == null) ? new AdviceSetup[0] : aroundSetups;
+         return aroundCFlows;
       }
    }
    
