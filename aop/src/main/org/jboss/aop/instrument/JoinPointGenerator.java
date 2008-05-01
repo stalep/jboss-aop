@@ -21,7 +21,6 @@
   */
 package org.jboss.aop.instrument;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.security.AccessController;
@@ -1524,15 +1523,11 @@ public abstract class JoinPointGenerator
    
    private class GeneratedClassInfo
    {
-      WeakReference<Class<?>> generated;
-      String generatedName;
       Object[] ctorParams;
       Constructor<?> publicConstructor;
       
       GeneratedClassInfo(Class<?> generated, AdviceSetups setups)
       {
-         this.generated = new WeakReference<Class<?>>(generated);
-         this.generatedName = generated.getName();
          AdviceSetup[] aroundSetups = setups.getByType(AdviceType.AROUND);
          int size = 0;
          if (aroundSetups != null)
@@ -1567,24 +1562,6 @@ public abstract class JoinPointGenerator
          }
       }
       
-      private Class<?> getGenerated(ClassLoader classloader)
-      {
-         Class<?> generatedClass = generated.get();
-         if (generatedClass == null)
-         {
-            try
-            {
-               generatedClass = classloader.loadClass(generatedName);
-            }
-            catch (ClassNotFoundException e)
-            {
-               throw new RuntimeException("Unexpected exception: " + e, e);
-            }
-            generated = new WeakReference<Class<?>>(generatedClass);
-         }
-         return generatedClass;
-      }
-      
       Object createJoinPointInstance(ClassLoader classloader, JoinPointInfo info)
       {
          try
@@ -1595,13 +1572,8 @@ public abstract class JoinPointGenerator
          catch (Exception e)
          {
             StringBuffer sb = new StringBuffer();
-//            Class advisedClass = info.getClazz();
-//            if (advisedClass != null)
-//            {
-//               sb.append("Target: " + advisedClass.getName() + " " + advisedClass.getClassLoader() + "\n");
-//            }
-            throw new RuntimeException(
-            debugClass(sb, publicConstructor.getDeclaringClass()).toString(), e);
+            throw new RuntimeException( debugClass(sb,
+                  publicConstructor.getDeclaringClass()).toString(), e);
          }
       }
    }
