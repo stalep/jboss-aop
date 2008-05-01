@@ -301,12 +301,6 @@ public abstract class JoinPointGenerator
          Object obj = generatedClass.createJoinPointInstance(classloader, info);
          
          joinpointField.set(info.getAdvisor(), obj);
-         if (info.getAdvisor() instanceof InstanceAdvisor)
-         {
-            Field field = generatedClass.getGenerated(classloader).getDeclaredField(IS_FOR_INSTANCE_ADVISOR);
-            SecurityActions.setAccessible(field);
-            field.set(obj, Boolean.TRUE);
-         }
          return obj;
       }
       catch (NoMatchingAdviceException e)
@@ -1087,13 +1081,12 @@ public abstract class JoinPointGenerator
             String cflowInitialization = body.toString();
             body.setLength(0);
             body.append("{super(");
-            if (superCtorParamTypes.length > 0)
+            // it is supposed to contain at least the info object as first parameter
+            //if (superCtorParamTypes.length > 0)
+            body.append("$1");
+            for (int i = 1; i < superCtorParamTypes.length; i++)
             {
-               body.append("$1");
-               for (int i = 1; i < superCtorParamTypes.length; i++)
-               {
-                  body.append(",$" + (i + 1));
-               }
+               body.append(",$" + (i + 1));
             }
             body.append(");");
             body.append(cflowInitialization);
@@ -1104,7 +1097,9 @@ public abstract class JoinPointGenerator
             paramTypes = superCtor.getParameterTypes();
          }
 
-  
+         body.append(IS_FOR_INSTANCE_ADVISOR).append("=($1.getAdvisor() instanceof ");
+         body.append(InstanceAdvisor.class.getName()).append(");");
+         
          //Initialise all the aspects not scoped per_instance or per_joinpoint
          AdviceSetup[] allSetups = setups.getAllSetups();
          for (int i = 0 ; i < allSetups.length ; i++)
