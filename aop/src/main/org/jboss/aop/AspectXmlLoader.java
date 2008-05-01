@@ -209,8 +209,12 @@ public class AspectXmlLoader implements XmlLoader
          def = new AspectDefinition(name, scope, aspectFactory);
          manager.addAspectDefinition(def);
       }
-      ScopedInterceptorFactory factory = new ScopedInterceptorFactory(def);
-      manager.addInterceptorFactory(factory.getName(), factory);
+      InterceptorFactory factory = manager.getInterceptorFactory(name); 
+      if (factory == null)
+      {
+         factory = new ScopedInterceptorFactory(def);
+         manager.addInterceptorFactory(name, factory);
+      }
       return factory;
    }
 
