@@ -31,9 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -134,8 +132,8 @@ public abstract class JoinPointGenerator
     * A cache of the generated joinpoint classes indexed by the interceptor chains for the info to 
     * avoid having to generate a new class on every single rebind
     */
-   private HashMap<String, Map<ClassLoader, GeneratedClassInfo>> generatedJoinPointClassCache =
-      new HashMap<String, Map<ClassLoader, GeneratedClassInfo>>();
+   private HashMap<String, GeneratedClassInfo> generatedJoinPointClassCache =
+      new HashMap<String, GeneratedClassInfo>();
    
    /**
     * Constructor.
@@ -273,29 +271,18 @@ public abstract class JoinPointGenerator
          //Attempt to get the cached information so we don't have to recreate the class every time we rebind the joinpoint
          String infoAdviceString = info.getAdviceString();
          GeneratedClassInfo generatedClass = null;
-         Map<ClassLoader, GeneratedClassInfo> generatedClasses =
-               generatedJoinPointClassCache.get(infoAdviceString);
-         if (generatedClasses != null)
+         if (generatedJoinPointClassCache.containsKey(infoAdviceString))
          {
-            if (generatedClasses.containsKey(classloader))
-            {
-               generatedClass= generatedClasses.get(classloader);
-            }
-         }
+            generatedClass= generatedJoinPointClassCache.get(infoAdviceString);
+         }  
          else
-         {
-            generatedClasses = new WeakHashMap<ClassLoader, GeneratedClassInfo>();
-            generatedJoinPointClassCache.put(infoAdviceString, generatedClasses);
-         }
-            
-         if (generatedClass == null)
          {
             //We need to do all the work again
             AspectManager manager = AspectManager.instance();
             ClassPool pool = manager.findClassPool(classloader);
             ProtectionDomain pd = advisorClass.getProtectionDomain();
             generatedClass = generateJoinpointClass(pool, info, classloader, pd);
-            generatedClasses.put(classloader, generatedClass);
+            generatedJoinPointClassCache.put(infoAdviceString, generatedClass);
          }
          Object obj = generatedClass.createJoinPointInstance(classloader, info);
          
