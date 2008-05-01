@@ -28,11 +28,12 @@ import org.jboss.aop.advice.Interceptor;
 /**
  * A RebuilCallInterceptor.
  * 
- * @author <a href="RebuildCallInterceptorle W. Pedersen</a>
+ * @author <a href="stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
 public class RebuildCallerChainInterceptor implements Interceptor
 {
+   public static boolean method = false;
    //@Override
    public String getName()
    {
@@ -44,8 +45,9 @@ public class RebuildCallerChainInterceptor implements Interceptor
    {
       try
       {
-         System.out.println("Interceptor ignoring call...");
-         return null;
+//         System.out.println("Interceptor ignoring call...");
+         method = true;
+         return invocation.invokeNext();
       }
       catch(Exception e)
       {

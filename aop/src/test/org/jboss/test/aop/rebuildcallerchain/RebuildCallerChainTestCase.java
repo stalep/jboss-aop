@@ -53,7 +53,7 @@ public class RebuildCallerChainTestCase extends AOPTestWithSetup
    {
       try
       {
-         new Caller1().execute();
+//         new Caller1().execute();
 
          AdviceBinding bindingCall = new AdviceBinding( 
                "call(* org.jboss.test.aop.rebuildcallerchain.*->execute())", null); 
@@ -62,9 +62,11 @@ public class RebuildCallerChainTestCase extends AOPTestWithSetup
          AspectManager.instance().addBinding(bindingCall); 
 
          new Caller1().execute(); // loaded before addBinding => not ok 
+         assertTrue("caller1 was not rebuilded", RebuildCallerChainInterceptor.method);
+         RebuildCallerChainInterceptor.method = false;
          new Caller2().execute(); // loaded after addBindingok => ok 
-
-         assertTrue("Rebuilded chain", true);
+         assertTrue("caller2 not ok", RebuildCallerChainInterceptor.method);
+//         assertTrue("Rebuilded chain", true);
       } 
       catch (Exception e) 
       {
