@@ -298,7 +298,7 @@ public abstract class JoinPointGenerator
             generatedClass = generateJoinpointClass(pool, info, classloader, pd);
             generatedClasses.put(classloader, generatedClass);
          }
-         Object obj = instantiateClass(generatedClass, info, classloader);
+         Object obj = generatedClass.createJoinPointInstance(classloader, info);
          
          joinpointField.set(info.getAdvisor(), obj);
          if (info.getAdvisor() instanceof InstanceAdvisor)
@@ -325,6 +325,7 @@ public abstract class JoinPointGenerator
 //            System.out.println(" - - - - - - - - - - - - - ");
 //            System.out.println(icptr.getName());
 //         }
+         e.printStackTrace();
          throw new RuntimeException("Error generating joinpoint class for joinpoint " + info, e);
       }
    }
@@ -334,38 +335,6 @@ public abstract class JoinPointGenerator
       return TransformerCommon.toClass(ctclass, classLoader, pd);
    }
    
-   private Object instantiateClass(GeneratedClassInfo generatedClass, JoinPointInfo info, ClassLoader classloader) throws Exception
-   {
-      Class<?> clazz = generatedClass.getGenerated(classloader);
-      Constructor<?> ctor = clazz.getConstructor(new Class[] {info.getClass()});
-      Object obj;
-      try
-      {
-         obj = ctor.newInstance(new Object[] {info});
-      }
-      catch (Exception e)
-      {
-         StringBuffer sb = new StringBuffer();
-//         Class advisedClass = info.getClazz();
-//         if (advisedClass != null)
-//         {
-//            sb.append("Target: " + advisedClass.getName() + " " + advisedClass.getClassLoader() + "\n");
-//         }
-         throw new RuntimeException(debugClass(sb, clazz).toString(), e);
-      }
-      AroundCFlow[] aroundCFlows = generatedClass.getAroundCFlows();
-      if (aroundCFlows != null)
-      {
-         for (int i = 0 ; i < aroundCFlows.length ; i++)
-         {
-            Field field = clazz.getDeclaredField(aroundCFlows[i].getFieldName());
-            field.setAccessible(true);
-            field.set(obj, aroundCFlows[i].getCflowExpression());
-         }
-      }
-      return obj;
-   }
-    
    private StringBuffer debugClass(StringBuffer sb, Class<?> clazz)
    {
       sb.append("\n\t\t" + Modifier.toString(clazz.getModifiers()) + " " + clazz.getName() + " " + clazz.getClassLoader()); 
@@ -1055,7 +1024,7 @@ public abstract class JoinPointGenerator
          createDefaultConstructor(superCtors[defaultIndex], clazz);
       }
       
-      createPublicConstructor(superCtors[publicIndex], clazz, setups);
+      createPublicConstructor(pool, superCtors[publicIndex], clazz, setups);
       if (protectedIndex2 == -1)
       {
          createProtectedConstructors(pool, superCtors[protectedIndex1], null, clazz, setups);
@@ -1080,12 +1049,61 @@ public abstract class JoinPointGenerator
     * This is the constructor that will be called by the GeneratedClassAdvisor, make sure it
     * initialises all the non-per-instance aspects
     */
-   private void createPublicConstructor(CtConstructor superCtor, CtClass clazz, AdviceSetups setups)throws CannotCompileException, NotFoundException
+   private void createPublicConstructor(ClassPool pool, CtConstructor superCtor, CtClass clazz, AdviceSetups setups)throws CannotCompileException, NotFoundException
    {
       StringBuffer body = new StringBuffer();
       try
       {
-         body.append("{super($$);");
+         AdviceSetup[] aroundSetups = setups.getByType(AdviceType.AROUND);
+         int size = 0;
+         int firstIndex = superCtor.getParameterTypes().length;
+         if (aroundSetups != null)
+         {
+            for (int i = 0; i < aroundSetups.length; i++)
+            {
+               if (aroundSetups[i].isNewCFlow())
+               {
+                  size++;
+                  body.append("cflow").append(aroundSetups[i].useCFlowFrom());
+                  body.append(" = $").append(++firstIndex).append(";");
+               }
+            }
+         }
+         
+         CtClass[] paramTypes = null;
+         if (size > 0)
+         {
+            // set paramTypes
+            paramTypes = new CtClass[firstIndex];
+            CtClass[] superCtorParamTypes = superCtor.getParameterTypes();
+            System.arraycopy(superCtorParamTypes, 0, paramTypes, 0, superCtorParamTypes.length);
+            CtClass astCFlowExpression = pool.get(ASTCFlowExpression.class.getName());
+            for (int i = superCtorParamTypes.length; i < firstIndex; i++)
+            {
+               paramTypes[i] = astCFlowExpression;
+            }
+            
+            // reset buffer
+            String cflowInitialization = body.toString();
+            body.setLength(0);
+            body.append("{super(");
+            if (superCtorParamTypes.length > 0)
+            {
+               body.append("$1");
+               for (int i = 1; i < superCtorParamTypes.length; i++)
+               {
+                  body.append(",$" + (i + 1));
+               }
+            }
+            body.append(");");
+            body.append(cflowInitialization);
+         }
+         else
+         {
+            body.append("{super($$);");
+            paramTypes = superCtor.getParameterTypes();
+         }
+
   
          //Initialise all the aspects not scoped per_instance or per_joinpoint
          AdviceSetup[] allSetups = setups.getAllSetups();
@@ -1096,10 +1114,10 @@ public abstract class JoinPointGenerator
                body.append(allSetups[i].getAspectFieldName() + " = " + allSetups[i].getAspectInitialiserName() + "();");
             }
          }
-         
+                  
          body.append("}");
 
-         CtConstructor ctor = CtNewConstructor.make(superCtor.getParameterTypes(), superCtor.getExceptionTypes(), body.toString(), clazz);
+         CtConstructor ctor = CtNewConstructor.make(paramTypes, superCtor.getExceptionTypes(), body.toString(), clazz);
          ctor.setModifiers(superCtor.getModifiers());
          clazz.addConstructor(ctor);
       }
@@ -1509,33 +1527,12 @@ public abstract class JoinPointGenerator
       }
    }
    
-   private static class AroundCFlow
-   {
-      private String fieldName;
-      private ASTCFlowExpression cflowExpression;
-      
-      public AroundCFlow(String fieldName, ASTCFlowExpression cflowEXpression)
-      {
-         this.fieldName = fieldName;
-         this.cflowExpression = cflowEXpression;
-      }
-      
-      public String getFieldName()
-      {
-         return this.fieldName;
-      }
-      
-      public ASTCFlowExpression getCflowExpression()
-      {
-         return cflowExpression;
-      }
-   }
-   
    private class GeneratedClassInfo
    {
       WeakReference<Class<?>> generated;
       String generatedName;
-      AroundCFlow[] aroundCFlows;
+      Object[] ctorParams;
+      Constructor<?> publicConstructor;
       
       GeneratedClassInfo(Class<?> generated, AdviceSetups setups)
       {
@@ -1553,23 +1550,29 @@ public abstract class JoinPointGenerator
                }
             }
          }
+         ctorParams = new Object[size + 1];
          if (size > 0)
          {
-            aroundCFlows = new AroundCFlow[size];
-            int j = 0;
+            int j = 1;
             for (int i = 0; i < aroundSetups.length; i++)
             {
                if (aroundSetups[i].isNewCFlow())
                {
-                  aroundCFlows[j++] = new AroundCFlow(
-                        "cflow" + aroundSetups[i].useCFlowFrom(),
-                        aroundSetups[i].getCFlow());
+                  ctorParams[j++] = aroundSetups[i].getCFlow();
                }
+            }
+         }
+         for (Constructor<?> currentConstructor: generated.getDeclaredConstructors())
+         {
+            if (currentConstructor.getParameterTypes().length > 0 &&
+                Modifier.isPublic(currentConstructor.getModifiers()))
+            {
+               this.publicConstructor = currentConstructor;
             }
          }
       }
       
-      Class<?> getGenerated(ClassLoader classloader)
+      private Class<?> getGenerated(ClassLoader classloader)
       {
          Class<?> generatedClass = generated.get();
          if (generatedClass == null)
@@ -1587,9 +1590,24 @@ public abstract class JoinPointGenerator
          return generatedClass;
       }
       
-      AroundCFlow[] getAroundCFlows()
+      Object createJoinPointInstance(ClassLoader classloader, JoinPointInfo info)
       {
-         return aroundCFlows;
+         try
+         {
+            ctorParams[0] = info;
+            return publicConstructor.newInstance(ctorParams);
+         }
+         catch (Exception e)
+         {
+            StringBuffer sb = new StringBuffer();
+//            Class advisedClass = info.getClazz();
+//            if (advisedClass != null)
+//            {
+//               sb.append("Target: " + advisedClass.getName() + " " + advisedClass.getClassLoader() + "\n");
+//            }
+            throw new RuntimeException(
+            debugClass(sb, publicConstructor.getDeclaringClass()).toString(), e);
+         }
       }
    }
    
