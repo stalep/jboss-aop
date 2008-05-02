@@ -22,6 +22,7 @@
         <directory>docs</directory>
         <includes>
           <include>jboss-aop_1_0.dtd</include>
+          <include>jboss-aop_2_0.xsd</include>
         </includes>
       </resource>
       <resource>
@@ -336,7 +337,7 @@
           <groupId>jboss</groupId>
           <artifactId>jboss-common-logging-spi</artifactId>
         </exclusion>
-      </exclusions>      
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
@@ -372,7 +373,7 @@
       <version>1.2.14</version>
       <scope>test</scope>
     </dependency>
-    -->    
+    -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
