@@ -5,8 +5,40 @@
 <body>
 
 
+
+<h2>Release Notes - JBoss AOP - Version 2.0.0.CR9</h2>
+
+<h3>Bug</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-256'>JBAOP-256</a>] - java.lang.RuntimeException: defrost(): org.jboss.jms.client.delegate.ClientBrowserDelegate$... was pruned</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-537'>JBAOP-537</a>] - JoinPointInfo synchronization is not working on wrappers</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-545'>JBAOP-545</a>] - Instrumented methods contained in the super class may be ignored</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-550'>JBAOP-550</a>] - Generated JoinPoint class cache ignores class loader</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-554'>JBAOP-554</a>] - Duplicated InterceptorFactories</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-562'>JBAOP-562</a>] - Cached GeneratedClassInfo objects are being gc'ed</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-565'>JBAOP-565</a>] - SuperClassesFirstWeavingStrategy instruments classes already loaded</li>
+</ul>
+
+<h3>Feature Request</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-521'>JBAOP-521</a>] - maven-jbossaop-plugin documentation</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-540'>JBAOP-540</a>] - Modify DuplicateTestCase to extend AOPTestWithSetup</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-551'>JBAOP-551</a>] - Create a Schema for jboss-aop.xml files</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-561'>JBAOP-561</a>] - Remove reference to AOP IDE from reference docs</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-568'>JBAOP-568</a>] - Avoid extra info from being kept in the generated jp cache</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-570'>JBAOP-570</a>] - Ignore the ClassLoader on the JoinPointGenerator.generatedJoinPointClassCache</li>
+</ul>
+
+<h3>Task</h3>
+<ul>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-395'>JBAOP-395</a>] - Release/Packaging  holder task</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-547'>JBAOP-547</a>] - Update microcontainer dependencies</li>
+<li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-555'>JBAOP-555</a>] - Remove support for jdk1.4</li>
+</ul>
+
+
 <h2>Release Notes - JBoss AOP - Version 2.0.0.CR8</h2>
-    
+
 <h3>Bug</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-492'>JBAOP-492</a>] - Duplicate _getAdvisor</li>
@@ -18,7 +50,7 @@
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-534'>JBAOP-534</a>] - JBoss AOP ignore classes packaged in org.jboss.aop, it should be org.jboss.aop.</li>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-536'>JBAOP-536</a>] - Generated invokeNext method should be synchronized</li>
 </ul>
-        
+
 <h3>Feature Request</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-516'>JBAOP-516</a>] - Support exclude=* in order to just include some package in current project</li>
@@ -29,12 +61,12 @@
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-541'>JBAOP-541</a>] - Use simple synchronization rather than rw locks when initialising lazy collections</li>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-543'>JBAOP-543</a>] - Replace exception when undeploying non-existant domain with a log warning</li>
 </ul>
-                    
+
 <h3>Task</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-530'>JBAOP-530</a>] - Missing classes in AOP-client JAR</li>
 </ul>
-    
+
 <h3>Thirdparty Change</h3>
 <ul>
 <li>[<a href='http://jira.jboss.com/jira/browse/JBAOP-533'>JBAOP-533</a>] - Upgrade javassist to 3.7.1.GA</li>
