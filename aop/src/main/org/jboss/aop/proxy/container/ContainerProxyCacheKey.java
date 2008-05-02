@@ -174,8 +174,9 @@ public class ContainerProxyCacheKey implements Serializable
    
    public String toString()
    {
-      StringBuffer buf = new StringBuffer("ContainerProxyCache");
+      StringBuffer buf = new StringBuffer("ContainerProxyCache{");
       buf.append((clazzRef.get()).getName());
+      buf.append(";fqn=" + managerFqn); 
       buf.append(";interfaces=");
       if (addedInterfaces == null)
       {
@@ -194,6 +195,7 @@ public class ContainerProxyCacheKey implements Serializable
       {
          buf.append(Arrays.asList(addedMixins));
       }
+      buf.append("}");
       return buf.toString();
    }
    
