@@ -62,7 +62,7 @@
       <!-- integration/jboss-classloading-spi.jar: asintegration -->
       <componentref name="jboss/integration" version="5.0.0.Beta4"/>
       <!-- jboss-mdr: aop, asintegration -->
-      <componentref name="jboss/jboss-mdr" version="2.0.0.Beta12"/>
+      <componentref name="jboss/jboss-mdr" version="2.0.0.Beta15"/>
       <!-- jboss-reflect: aop -->
       <componentref name="jboss/jboss-reflect" version="2.0.0.Beta12"/>
       <!-- jboss-reflect: asintegration -->
