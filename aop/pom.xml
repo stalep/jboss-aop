@@ -10,7 +10,6 @@
   <groupId>org.jboss.aop</groupId>
   <artifactId>jboss-aop</artifactId>
   <packaging>jar</packaging>
-  <version>2.0.0-SNAPSHOT</version>
   <name>JBoss AOP</name>
   <description>JBoss AOP Framework</description>
   <url>http://labs.jboss.org/jbossaop</url>
@@ -314,24 +313,14 @@
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
-      <version>1.7.0</version>
     </dependency>
-    <!-- not necessary?
-    <dependency>
-      <groupId>apache-xerces</groupId>
-      <artifactId>xml-apis</artifactId>
-      <version>2.7.1</version>
-    </dependency>
-    -->
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>javassist</artifactId>
-      <version>3.7.1.GA</version>
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-reflect</artifactId>
-      <version>2.0.0.Beta12</version>
       <exclusions>
         <exclusion>
           <groupId>jboss</groupId>
@@ -342,7 +331,6 @@
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-mdr</artifactId>
-      <version>2.0.0.Beta15</version>
       <exclusions>
         <exclusion>
           <groupId>jboss</groupId>
@@ -353,56 +341,36 @@
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-common-core</artifactId>
-      <version>2.2.5.GA</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-spi</artifactId>
-      <version>2.0.5.GA</version>
     </dependency>
-    <!-- Not necessary?
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging-log4j</artifactId>
-      <version>2.0.5.GA</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>apache-log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.14</version>
-      <scope>test</scope>
-    </dependency>
-    -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>qdox</groupId>
       <artifactId>qdox</artifactId>
-      <version>1.6</version>
     </dependency>
     <dependency>
       <groupId>trove</groupId>
       <artifactId>trove</artifactId>
-      <version>2.1.1</version>
     </dependency>
     <dependency>
       <groupId>jboss.profiler.jvmti</groupId>
       <artifactId>jboss-profiler-jvmti</artifactId>
-      <version>1.0.0.CR5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.test</groupId>
       <artifactId>jboss-test</artifactId>
-      <version>1.1.0.GA</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
   <profiles>
 
   <!-- The test profiles are currently not working until some maven issues are fixed.
