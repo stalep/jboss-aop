@@ -23,6 +23,7 @@ package org.jboss.aop.proxy.container;
 
 import java.io.Externalizable;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
@@ -67,14 +68,18 @@ import org.jboss.aop.util.JavassistMethodHashing;
  */
 public class ContainerProxyFactory
 {
+   final static String DELEGATE = Delegate.class.getName();
+   final static String ASPECT_MANAGED = AspectManaged.class.getName();
+   
    @SuppressWarnings("unchecked") private static final HashMap EMPTY_HASHMAP = new HashMap();
    private static final String ADVISED = Advised.class.getName();
    private static final String INSTANCE_ADVISED = InstanceAdvised.class.getName();
    private static final CtClass[] EMPTY_CTCLASS_ARRAY = new CtClass[0];
+//   private static final String[] EMPTY_STRING_ARRAY = new String[0];
    public static final String PROXY_NAME_PREFIX = "AOPContainerProxy$";
    
    private static Object maplock = new Object();
-   private static WeakHashMap<Class<?>, Map<ContainerProxyCacheKey, Class<?>>> proxyCache = new WeakHashMap<Class<?>, Map<ContainerProxyCacheKey, Class<?>>>();
+   private static WeakHashMap<ClassLoader, WeakHashMap<Class<?>, Map<ContainerProxyCacheKey, WeakReference<Class<?>>>>> proxyCache = new WeakHashMap<ClassLoader, WeakHashMap<Class<?>, Map<ContainerProxyCacheKey, WeakReference<Class<?>>>>>();
    private static volatile int counter = 0;
    
    private static CtMethod setDelegateMethod;
@@ -125,24 +130,38 @@ public class ContainerProxyFactory
       // Don't make a proxy of a proxy !
       if (Delegate.class.isAssignableFrom(clazz)) clazz = clazz.getSuperclass();
 
+      ClassPool pool = AspectManager.instance().findClassPool(clazz.getClassLoader());
+      if (pool == null) throw new NullPointerException("Could not find ClassPool");
+
       Class<?> proxyClass = null;
       synchronized (maplock)
       {
-         Map<ContainerProxyCacheKey, Class<?>> map = proxyCache.get(clazz);
+         WeakHashMap<Class<?>, Map<ContainerProxyCacheKey, WeakReference<Class<?>>>> proxiesForLoader = proxyCache.get(pool.getClassLoader());
+         if (proxiesForLoader == null)
+         {
+            proxiesForLoader = new WeakHashMap<Class<?>, Map<ContainerProxyCacheKey, WeakReference<Class<?>>>>();
+            proxyCache.put(pool.getClassLoader(), proxiesForLoader);
+         }
+
+         Map<ContainerProxyCacheKey, WeakReference<Class<?>>> map = proxiesForLoader.get(clazz);
          if (map == null)
          {
-            map = new HashMap<ContainerProxyCacheKey, Class<?>>();
-            proxyCache.put(clazz, map);
+            map = new HashMap<ContainerProxyCacheKey, WeakReference<Class<?>>>();
+            proxiesForLoader.put(clazz, map);
          }
          else
          {
-            proxyClass = map.get(key);
+            WeakReference<Class<?>> proxyClassRef = map.get(key);
+            if (proxyClassRef != null)
+            {
+               proxyClass = proxyClassRef.get();
+            }
          }
          
          if (proxyClass == null)
          {
             proxyClass = generateProxy(objectAsSuper, clazz, advisor, outOfVmProxy);
-            map.put(key, proxyClass);
+            map.put(key, new WeakReference<Class<?>>(proxyClass));
          }
       }
       return proxyClass;
@@ -152,8 +171,9 @@ public class ContainerProxyFactory
    {
       ArrayList<InterfaceIntroduction> introductions = advisor.getInterfaceIntroductions();
       CtClass proxy = createProxyCtClass(objectAsSuper, introductions, clazz, advisor, outOfVmProxy);
+//      ClassLoader loader = determineClassLoaderToUse(clazz, proxy);
       ProtectionDomain pd = clazz.getProtectionDomain();
-      Class<?> proxyClass = TransformerCommon.toClass(proxy, pd);
+      Class<?> proxyClass = TransformerCommon.toClass(proxy, /*loader,*/ pd);
       return proxyClass;
    }
 
@@ -882,7 +902,7 @@ public class ContainerProxyFactory
          destFile.addAttribute(sig.copy(destFile.getConstPool(), EMPTY_HASHMAP));
       }
    }
-   
+
    private interface ProxyStrategy
    {
       /**

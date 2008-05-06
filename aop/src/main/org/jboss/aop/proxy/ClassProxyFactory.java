@@ -57,7 +57,7 @@ public class ClassProxyFactory
 {
    private static Object maplock = new Object();
    private static WeakValueHashMap<String, Class<?>> classnameMap = new WeakValueHashMap<String, Class<?>>();
-   private static WeakHashMap<Class<?>, WeakReference<Class<?>>> proxyCache = new WeakHashMap<Class<?>, WeakReference<Class<?>>>();
+   private static WeakHashMap<ClassLoader, WeakHashMap<Class<?>, WeakReference<Class<?>>>> proxyCache = new WeakHashMap<ClassLoader, WeakHashMap<Class<?>, WeakReference<Class<?>>>>();
    private static WeakHashMap<Class<?>, Map<Long, MethodPersistentReference>> methodMapCache = new WeakHashMap<Class<?>, Map<Long, MethodPersistentReference>>();
 
    public static ClassProxy newInstance(Class<?> clazz) throws Exception
@@ -76,19 +76,32 @@ public class ClassProxyFactory
       // Don't make a proxy of a proxy !
       if (ClassProxy.class.isAssignableFrom(clazz)) clazz = clazz.getSuperclass();
 
+      ClassPool pool = AspectManager.instance().findClassPool(clazz.getClassLoader());
+      if (pool == null) throw new NullPointerException("Could not find ClassPool");
+
+      
       Class<?> proxyClass = null;
       synchronized (maplock)
       {
-         WeakReference<Class<?>> ref = proxyCache.get(clazz);
-         if (ref != null)
+         WeakHashMap<Class<?>, WeakReference<Class<?>>> proxiesForLoader = proxyCache.get(pool.getClassLoader());
+         if (proxiesForLoader == null)
          {
-            proxyClass = ref.get();
+            proxiesForLoader = new WeakHashMap<Class<?>, WeakReference<Class<?>>>();
+            proxyCache.put(pool.getClassLoader(), proxiesForLoader);
+         }
+         if (proxiesForLoader != null)
+         {
+            WeakReference<Class<?>> ref = proxiesForLoader.get(pool.getClassLoader());
+            if (ref != null)
+            {
+               proxyClass = ref.get();
+            }
          }
          if (proxyClass == null)
          {
-            proxyClass = generateProxy(clazz, mixins);
+            proxyClass = generateProxy(pool, clazz, mixins);
             classnameMap.put(clazz.getName(), proxyClass);
-            proxyCache.put(clazz, new WeakReference<Class<?>>(proxyClass));
+            proxiesForLoader.put(clazz, new WeakReference<Class<?>>(proxyClass));
             HashMap<Long, MethodPersistentReference> map = methodMap(clazz);
             methodMapCache.put(proxyClass, map);
          }
@@ -132,12 +145,9 @@ public class ClassProxyFactory
 
    private static int counter = 0;
 
-   private static CtClass createProxyCtClass(ProxyMixin[] mixins, Class<?> clazz)
+   private static CtClass createProxyCtClass(ClassPool pool, ProxyMixin[] mixins, Class<?> clazz)
    throws Exception
    {
-      ClassPool pool = AspectManager.instance().findClassPool(clazz.getClassLoader());
-      if (pool == null) throw new NullPointerException("Could not find ClassPool");
-
       String classname = "AOPClassProxy$" + counter++;
 
       CtClass template = pool.get("org.jboss.aop.proxy.ClassProxyTemplate");
@@ -303,9 +313,9 @@ public class ClassProxyFactory
       return proxy;
    }
 
-   private static Class<?> generateProxy(Class<?> clazz, ProxyMixin[] mixins) throws Exception
+   private static Class<?> generateProxy(ClassPool pool, Class<?> clazz, ProxyMixin[] mixins) throws Exception
    {
-      CtClass proxy = createProxyCtClass(mixins, clazz);
+      CtClass proxy = createProxyCtClass(pool, mixins, clazz);
       ProtectionDomain pd = clazz.getProtectionDomain();
       Class<?> proxyClass = TransformerCommon.toClass(proxy, pd);
       Map<Long, MethodPersistentReference> methodmap = ClassProxyFactory.getMethodMap(proxyClass); 
@@ -333,7 +343,7 @@ public class ClassProxyFactory
             {
                long hash = org.jboss.aop.util.MethodHashing.methodHash(declaredMethods[i]);
                if(!ignoredHash.contains(new Long(hash)))
-                  advised.put(new Long(hash), new MethodPersistentReference(declaredMethods[i], PersistentReference.REFERENCE_SOFT));
+                  advised.put(new Long(hash), new MethodPersistentReference(declaredMethods[i], PersistentReference.REFERENCE_WEAK));
             }
             else
             {
