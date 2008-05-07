@@ -68,23 +68,22 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>javassist</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.aop</groupId>
       <artifactId>jboss-aop</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.javaee</groupId>
-      <artifactId>jboss-jca-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.javaee</groupId>
-      <artifactId>jboss-servlet-api</artifactId>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-spi</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.test</groupId>

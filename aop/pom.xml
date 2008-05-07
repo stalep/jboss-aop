@@ -10,7 +10,7 @@
   <groupId>org.jboss.aop</groupId>
   <artifactId>jboss-aop</artifactId>
   <packaging>jar</packaging>
-  <name>JBoss AOP</name>
+  <name>JBoss AOP Framework</name>
   <description>JBoss AOP Framework</description>
   <url>http://labs.jboss.org/jbossaop</url>
   <build>

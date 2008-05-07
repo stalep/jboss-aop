@@ -14,8 +14,8 @@
   <packaging>pom</packaging>
   <version>2.0.0-SNAPSHOT</version>
   <description>JBoss AOP</description>
-  <name>JBoss AOP Parent</name>
-  <url>http://labs.jboss.org/jbossaop/</url>
+  <name>JBoss AOP Parent POM</name>
+  <url>http://www.jboss.org/jbossaop/</url>
   <scm>
     <connection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/aop/trunk/</connection>
   </scm>
@@ -26,8 +26,39 @@
     <module>asintegration</module>
   </modules>
   
+  <properties>
+    <version.org.jboss.jbossas>5.0.0.Beta4</version.org.jboss.jbossas>
+    <version.org.jboss.microcontainer>2.0.0.Beta10</version.org.jboss.microcontainer>
+  </properties>
+  
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>apache-xerces</groupId>
+        <artifactId>xml-apis</artifactId>
+        <version>2.7.1</version>
+      </dependency>
+      <dependency>
+        <groupId>bsh</groupId>
+        <artifactId>bsh</artifactId>
+        <version>1.3.0</version>
+      </dependency>
+      <dependency>
+        <groupId>jboss.profiler.jvmti</groupId>
+        <artifactId>jboss-profiler-jvmti</artifactId>
+        <version>1.0.0.CR5</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>3.8.1</version>
+      </dependency>
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.14</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.ant</groupId>
         <artifactId>ant</artifactId>
@@ -66,64 +97,14 @@
         <version>2.2.5.GA</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.logging</groupId>
-        <artifactId>jboss-logging-spi</artifactId>
-        <version>2.0.5.GA</version>
-      </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>3.8.1</version>
-      </dependency>
-      <dependency>
-        <groupId>qdox</groupId>
-        <artifactId>qdox</artifactId>
-        <version>1.6</version>
-      </dependency>
-      <dependency>
-        <groupId>trove</groupId>
-        <artifactId>trove</artifactId>
-        <version>2.1.1</version>
-      </dependency>
-      <dependency>
-        <groupId>jboss.profiler.jvmti</groupId>
-        <artifactId>jboss-profiler-jvmti</artifactId>
-        <version>1.0.0.CR5</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.test</groupId>
-        <artifactId>jboss-test</artifactId>
-        <version>1.1.0.GA</version>
-      </dependency>
-    
-    <!-- as integration -->
-      <dependency>
-        <groupId>org.jboss.aop</groupId>
-        <artifactId>jboss-aop</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-vfs</artifactId>
         <version>2.0.0.Beta11</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossas</groupId>
-        <artifactId>jboss-as-system-jmx</artifactId>
-        <version>5.0.0.Beta4</version>
-      </dependency>
-      
-    <!-- aspects -->
-      <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>1.2.14</version>
-      </dependency>
-      <dependency>
-        <groupId>bsh</groupId>
-        <artifactId>bsh</artifactId>
-        <version>1.3.0</version>
+        <groupId>org.jboss.aop</groupId>
+        <artifactId>jboss-aop</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.javaee</groupId>
@@ -135,9 +116,63 @@
         <artifactId>jboss-servlet-api</artifactId>
         <version>2.5.0.CR1</version>
       </dependency>
-      
+      <dependency>
+        <groupId>org.jboss.jbossas</groupId>
+        <artifactId>jboss-as-j2se</artifactId>
+        <version>${version.org.jboss.jbossas}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.jbossas</groupId>
+        <artifactId>jboss-as-jmx</artifactId>
+        <version>${version.org.jboss.jbossas}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.jbossas</groupId>
+        <artifactId>jboss-as-system-jmx</artifactId>
+        <version>${version.org.jboss.jbossas}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.logging</groupId>
+        <artifactId>jboss-logging-spi</artifactId>
+        <version>2.0.5.GA</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.microcontainer</groupId>
+        <artifactId>jboss-deployers-core-spi</artifactId>
+        <version>${version.org.jboss.microcontainer}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.microcontainer</groupId>
+        <artifactId>jboss-deployers-spi</artifactId>
+        <version>${version.org.jboss.microcontainer}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.microcontainer</groupId>
+        <artifactId>jboss-deployers-vfs-spi</artifactId>
+        <version>${version.org.jboss.microcontainer}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.test</groupId>
+        <artifactId>jboss-test</artifactId>
+        <version>1.1.0.GA</version>
+        <exclusions>
+          <exclusion>
+            <groupId>apache-log4j</groupId>
+            <artifactId>log4j</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>qdox</groupId>
+        <artifactId>qdox</artifactId>
+        <version>1.6</version>
+      </dependency>
+      <dependency>
+        <groupId>trove</groupId>
+        <artifactId>trove</artifactId>
+        <version>2.1.1</version>
+      </dependency>
     </dependencies>
-    
   </dependencyManagement>
   
 </project>
