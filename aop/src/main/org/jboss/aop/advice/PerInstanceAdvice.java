@@ -105,7 +105,10 @@ public class PerInstanceAdvice extends AbstractAdvice
           }
           aspect = instanceAdvisor.getPerInstanceAspect(aspectDefinition);
       }
-      
+      if (aspect == null)
+      {
+         return invocation.invokeNext();
+      }
       if (!initialized)
       {
          init(adviceName, aspect.getClass());

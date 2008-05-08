@@ -45,7 +45,7 @@ import org.w3c.dom.NodeList;
  * @version $Revision$
  */
 public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
-{
+{   
    private static final Logger logger = AOPLogger.getLogger(GenericAspectFactory.class);
    
    final static Class<?>[] ADVISOR_INJECTOR_SIGNATURE = new Class[]{Advisor.class};

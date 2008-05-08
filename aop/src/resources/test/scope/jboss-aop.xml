@@ -21,7 +21,7 @@
    <bind pointcut="execution(* org.jboss.test.aop.scope.POJO*WithAspectFactory->perVm*(..))">
       <advice aspect="vmAFactory" name="advice"/>
    </bind>
-
+   
    <!-- PER CLASS -->
    <interceptor name="classInterceptor" class="org.jboss.test.aop.scope.PerClassInterceptor" scope="PER_CLASS"/>
    <aspect name="classAspect" class="org.jboss.test.aop.scope.PerClassAspect" scope="PER_CLASS"/>
@@ -110,13 +110,55 @@
       <advice aspect="joinpointAFactory" name="advice"/>
    </bind>
 
+   <!-- NULL ASPECT/INTERCEPTOR FACTORY -->
+
+   <interceptor name="vmNullIFactory" factory="org.jboss.test.aop.scope.NullAspectFactory"/>
+   <aspect name="vmNullFactory" factory="org.jboss.test.aop.scope.NullAspectFactory"/>
+   <interceptor name="classNullIFactory" factory="org.jboss.test.aop.scope.NullAspectFactory" scope="PER_CLASS"/>
+   <aspect name="classNullFactory" factory="org.jboss.test.aop.scope.NullAspectFactory" scope="PER_CLASS"/>
+   <interceptor name="classJoinpointNullIFactory" factory="org.jboss.test.aop.scope.NullAspectFactory" scope="PER_CLASS_JOINPOINT"/>
+   <aspect name="classJoinpointNullFactory" factory="org.jboss.test.aop.scope.NullAspectFactory" scope="PER_CLASS_JOINPOINT"/>
+   <interceptor name="instanceNullIFactory" factory="org.jboss.test.aop.scope.NullAspectFactory" scope="PER_INSTANCE"/>
+   <aspect name="instanceNullFactory" factory="org.jboss.test.aop.scope.NullAspectFactory" scope="PER_INSTANCE"/>
+   <interceptor name="joinpointNullIFactory" factory="org.jboss.test.aop.scope.NullAspectFactory" scope="PER_JOINPOINT"/>
+   <aspect name="joinpointNullFactory" factory="org.jboss.test.aop.scope.NullAspectFactory" scope="PER_JOINPOINT"/>
+   
+   <stack name="nullFactoryStack">
+      <interceptor-ref name="vmNullIFactory"/>
+      <advice aspect="vmNullFactory" name="anyAdvice"/>
+      <interceptor-ref name="classNullIFactory"/>
+      <advice aspect="classNullFactory" name="anyAdvice"/>
+      <interceptor-ref name="classJoinpointNullIFactory"/>
+      <advice aspect="classJoinpointNullFactory" name="anyAdvice"/>
+      <interceptor-ref name="instanceNullIFactory"/>
+      <advice aspect="instanceNullFactory" name="anyAdvice"/>
+      <interceptor-ref name="joinpointNullIFactory"/>
+      <advice aspect="joinpointNullFactory" name="anyAdvice"/>
+   </stack>
+   
+   <bind pointcut="field(int org.jboss.test.aop.scope.POJOWithNullAspect->*)">
+      <stack-ref name="nullFactoryStack"/>
+   </bind>
+   
+   <bind pointcut="construction(org.jboss.test.aop.scope.POJOWithNullAspect->new(..))">
+      <stack-ref name="nullFactoryStack"/>
+   </bind>
+   
+   <bind pointcut="execution(org.jboss.test.aop.scope.POJOWithNullAspect->new(..))">
+      <stack-ref name="nullFactoryStack"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.scope.POJOWithNullAspect->*(..))">
+      <stack-ref name="nullFactoryStack"/>
+   </bind>
+   
    <!-- PER_INSTANCE AND PER_CLASS -->
    <bind pointcut="execution(* org.jboss.test.aop.scope.POJOWithInstanceAndClass->method(..))">
       <interceptor-ref name="joinpointInterceptor"/>
       <advice aspect="classJoinpointAFactory" name="advice"/>
       <advice aspect="instanceAFactory" name="advice"/>
    </bind>
-
+   
    <!-- MIXED CHAINS -->   
    <stack name="mixed-stack">
       <interceptor-ref name="joinpointInterceptor"/>
@@ -141,6 +183,11 @@
    </bind>
    <bind pointcut="call(* org.jboss.test.aop.scope.CalledPOJO->*(..)) AND within(org.jboss.test.aop.scope.CallingPOJO)">
       <stack-ref name="mixed-stack"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.scope.POJOWithNullAspect->mixedMethod(..))">
+      <stack-ref name="nullFactoryStack"/>
+      <interceptor-ref name="vmIFactory"/>
    </bind>
 
    <!-- MIXED CHAINS WITH COPY INVOCATION -->

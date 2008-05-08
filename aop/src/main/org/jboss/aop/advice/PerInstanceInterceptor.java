@@ -58,53 +58,60 @@ public class PerInstanceInterceptor implements Interceptor
          //to make sure that there is only one instance per target rather than caller
          Object callingObject = ((CallerInvocation) invocation).getCallingObject();
 
-         if (callingObject == null) return invocation.invokeNext(); // called from static method
-         
-         Advised advised = (Advised) callingObject;
-         InstanceAdvisor advisor = advised._getInstanceAdvisor();
-         Interceptor interceptor = (Interceptor) advisor.getPerInstanceAspect(aspectDefinition);
-         return interceptor.invoke(invocation);         
-         
+         if (callingObject != null) // called from static method
+         {
+            Advised advised = (Advised) callingObject;
+            InstanceAdvisor advisor = advised._getInstanceAdvisor();
+            Interceptor interceptor = (Interceptor) advisor.getPerInstanceAspect(aspectDefinition);
+            if (interceptor != null)
+            {
+               return interceptor.invoke(invocation);
+            }
+         }
       }
       else
       {
          Object targetObject = invocation.getTargetObject();
-         if (targetObject == null) return invocation.invokeNext(); // static method call or static field call
-
          InstanceAdvisor instanceAdvisor = null;
-         if (targetObject instanceof Advised)
+         // non-static method call or non-static field call
+         if (targetObject != null) 
          {
-            Advised advised = (Advised) targetObject;
-            instanceAdvisor = advised._getInstanceAdvisor();
+            instanceAdvisor = getInstanceAdvisor(invocation, targetObject);
          }
-         else
+         if (instanceAdvisor != null)
          {
-            Advisor advisor = invocation.getAdvisor();
-            if (advisor == null)
+            Interceptor interceptor = getAspectInstance(instanceAdvisor);
+            if (interceptor != null)
             {
-               return invocation.invokeNext();
-            }
-            
-            if (advisor instanceof InstanceAdvisor)
-            {
-               instanceAdvisor = (InstanceAdvisor) advisor;
-            }
-            else 
-            {
-               if (advisor instanceof ClassProxyContainer && invocation instanceof ContainerProxyMethodInvocation)
-               {
-                  ContainerProxyMethodInvocation pi = (ContainerProxyMethodInvocation)invocation;
-                  instanceAdvisor = pi.getProxy().getInstanceAdvisor();
-               }
-               else
-               {
-                  return invocation.invokeNext();
-               }
+               return interceptor.invoke(invocation);
             }
          }
-         Interceptor interceptor = getAspectInstance(instanceAdvisor);
-         return interceptor.invoke(invocation);
       }
+      return invocation.invokeNext(); 
+   }
+
+   private InstanceAdvisor getInstanceAdvisor(Invocation invocation, Object targetObject)
+   {
+      if (targetObject instanceof Advised)
+      {
+         Advised advised = (Advised) targetObject;
+         return advised._getInstanceAdvisor();
+      }
+      Advisor advisor = invocation.getAdvisor();
+      if (advisor != null)
+      {
+         if (advisor instanceof InstanceAdvisor)
+         {
+            return (InstanceAdvisor) advisor;
+         }
+         if (advisor instanceof ClassProxyContainer && 
+               invocation instanceof ContainerProxyMethodInvocation)
+         {
+            ContainerProxyMethodInvocation pi = (ContainerProxyMethodInvocation)invocation;
+            return pi.getProxy().getInstanceAdvisor();
+         }
+      }
+      return null;
    }
    
    public Interceptor getAspectInstance(InstanceAdvisor ia)

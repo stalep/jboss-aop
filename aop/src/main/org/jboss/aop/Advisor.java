@@ -839,6 +839,10 @@ public abstract class Advisor
    {
       if (aspects.containsKey(def.getName())) return;
       Object aspect = def.getFactory().createPerClass(this);
+      if (aspect == null)
+      {
+         return;
+      }
       aspects.put(def.getName(), aspect);
       def.registerAdvisor(this);
    }
@@ -886,7 +890,14 @@ public abstract class Advisor
          {
             throw new RuntimeException("Before/After/Throwing is only supported for Generated Advisors");
          }
-         if (factories[i].isDeployed()) newinterceptors.add(factories[i].create(this, joinpoint));
+         if (factories[i].isDeployed())
+         {
+            Interceptor interceptor = factories[i].create(this, joinpoint);
+            if (interceptor != null)
+            {
+               newinterceptors.add(interceptor);
+            }
+         }
       }
    }
 

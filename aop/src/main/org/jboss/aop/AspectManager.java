@@ -1886,7 +1886,10 @@ public class AspectManager
             }
             instance = adef.getFactory().createPerVM();
             initPerVMAspectsMap();
-            perVMAspects.put(def, instance);
+            if (instance != null)
+            {
+               perVMAspects.put(def, instance);
+            }
          }
          finally
          {
@@ -2523,5 +2526,4 @@ public class AspectManager
          }
       }
    }
-
 }

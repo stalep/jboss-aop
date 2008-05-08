@@ -52,7 +52,14 @@ public class AdviceStack
       for (int i = 0; i < interceptorFactories.size(); i++)
       {
          InterceptorFactory factory = interceptorFactories.get(i);
-         if (factory.isDeployed()) interceptors.add(factory.create(advisor, jp));
+         if (factory.isDeployed())
+         {
+            Interceptor interceptor = factory.create(advisor, jp);
+            if (interceptor != null)
+            {
+               interceptors.add(interceptor);
+            }
+         }
       }
       return interceptors.toArray(new Interceptor[interceptors.size()]);
    }

@@ -423,6 +423,10 @@ public class GeneratedAdvisorInterceptor implements Interceptor
             }
          }
       }
+      if (lazyInterceptor == null)
+      {
+         return invocation.invokeNext();
+      }
       return lazyInterceptor.invoke(invocation);
    }
 

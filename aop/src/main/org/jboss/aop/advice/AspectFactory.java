@@ -57,7 +57,8 @@ public interface AspectFactory
     * Creates an aspect with scope value {@link Scope#PER_VM}.
     * 
     * @return the single aspect instance that will be invoked for all applicable
-    *         joinpoints during  Java VM execution
+    *         joinpoints during  Java VM execution. If {@code null}, the aspect
+    *         represented by this factory is ignored, resulting in no interception.
     */
    Object createPerVM();
    
@@ -67,7 +68,10 @@ public interface AspectFactory
     * @param advisor manages all the interceptions that should occur during execution
     *                of a specific class
     * @return        the aspect instance that will be invoked for all applicable
-    *                joinpoints contained in the class managed by {@code advisor}
+    *                joinpoints contained in the class managed by {@code advisor}. If
+    *                {@code null}, the aspect represented by this factory is ignored,
+    *                resulting in no interception of the joinpoints contained in the
+    *                referred class.
     * @see Advisor#getClazz() 
     */
    Object createPerClass(Advisor advisor);
@@ -83,7 +87,10 @@ public interface AspectFactory
     *                        {@code advisor}
     * @return                the aspect instance that will be invoked for all
     *                        applicable joinpoints contained in the instance managed
-    *                        by {@code instanceAdvisor}
+    *                        by {@code instanceAdvisor}. If {@code null}, the aspect
+    *                        represented by this factory is ignored, resulting in no
+    *                        interception of the joinpoints contained in the referred
+    *                        instance.
     * @see Advisor#getClazz()
     * @see InstanceAdvisor#getInstance()
     */
@@ -105,7 +112,8 @@ public interface AspectFactory
     *                This joinpoint is contained in the class managed by
     *                {@code advisor}
     * @return        the aspect instance that will be invoked only to intercept
-    *                {@code jp}
+    *                {@code jp}. If {@code null}, the aspect represented by this
+    *                factory is ignored, resulting in no interception of {@code jp}.
     * @see Advisor#getClazz()
     * @see Joinpoint
     */
@@ -128,7 +136,10 @@ public interface AspectFactory
     *                        {@code advisor}
     * @return                the aspect instance that will be invoked only to
     *                        intercept {@code jp} when it happens on the instance
-    *                        managed by {@code instanceAdvisor}
+    *                        managed by {@code instanceAdvisor}. If {@code null}, the
+    *                        aspect represented by this factory is ignored, resulting
+    *                        in no interception of {@code jp} when it is executed in
+    *                        the context of the referred instance.
     * @see Advisor#getClazz()
     * @see InstanceAdvisor#getInstance()
     * @see Joinpoint

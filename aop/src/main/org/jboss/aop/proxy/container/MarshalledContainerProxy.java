@@ -406,7 +406,10 @@ public class MarshalledContainerProxy implements Serializable
                   {
                      icptr = icptrs[i];
                   }
-                  allIcptrs.add(icptr);
+                  if (icptr != null)
+                  {
+                     allIcptrs.add(icptr);
+                  }
                }
                else
                {

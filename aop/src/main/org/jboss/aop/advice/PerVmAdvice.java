@@ -49,12 +49,20 @@ public class PerVmAdvice
    public static synchronized Interceptor generateOptimized(Joinpoint joinpoint, AspectManager manager, String adviceName, AspectDefinition a) throws Exception
    {
       Object aspect = manager.getPerVMAspect(a);
+      if (aspect == null)
+      {
+         return null;
+      }
       return generateInterceptor(joinpoint, aspect, adviceName);
 
    }
 
    public static Interceptor generateInterceptor(Joinpoint joinpoint, Object aspect, String adviceName) throws Exception
    {
+      if (aspect == null)
+      {
+         return null;
+      }
       ClassLoader cl = aspect.getClass().getClassLoader();
       String name = "org.jboss.aop.advice." + aspect.getClass().getName() + "_z_" + adviceName + "_" + System.identityHashCode(cl);
       Class<?> iclass = null;

@@ -150,7 +150,12 @@ public class InstanceAdvisorDelegate implements Serializable
       Set<Joinpoint> joinpoints = jpAspects.get(def);
       for (Joinpoint joinpoint : joinpoints)
       {
-         joins.put(joinpoint, def.getFactory().createPerJoinpoint(getClassAdvisor(), instanceAdvisor, joinpoint));
+         Object aspect = def.getFactory().createPerJoinpoint(getClassAdvisor(),
+               instanceAdvisor, joinpoint);
+         if (aspect != null)
+         {
+            joins.put(joinpoint, aspect);
+         }
       }
    }
    
@@ -174,25 +179,24 @@ public class InstanceAdvisorDelegate implements Serializable
             return aspects.get(def);
          }
       }
-      Object aspect = aspects.get(def);
-      if (aspect == null)
+      if (!aspects.containsKey(def))
       {
          synchronized (this) // doublecheck, but I don't want to synchronize everywhere and dynamic aspects are rare
          {
-            aspect = aspects.get(def);
-            if (aspect != null) return aspect;
+            if (aspects.containsKey(def)) return aspects.get(def);
             if (classAdvisor != null && getClassAdvisor() instanceof ClassAdvisor)
             {
                ClassAdvisor cadvisor = (ClassAdvisor) getClassAdvisor();
                cadvisor.getPerInstanceAspectDefinitions().add(def);
-               aspect = def.getFactory().createPerInstance(null, null);
+               Object aspect = def.getFactory().createPerInstance(null, null);
                WeakHashMap<AspectDefinition, Object> copy = new WeakHashMap<AspectDefinition, Object>(aspects);
                copy.put(def, aspect);
                aspects = copy;
+               return aspect;
             }
          }
       }
-      return aspect;
+      return aspects.get(def);
    }
 
    public Object getPerInstanceJoinpointAspect(Joinpoint joinpoint, AspectDefinition def)
@@ -215,6 +219,10 @@ public class InstanceAdvisorDelegate implements Serializable
                ClassAdvisor cadvisor = (ClassAdvisor) getClassAdvisor();
                cadvisor.addPerInstanceJoinpointAspect(joinpoint, def);
                aspect = def.getFactory().createPerJoinpoint(getClassAdvisor(), instanceAdvisor, joinpoint);
+               if (aspect == null)
+               {
+                  return null;
+               }
                WeakHashMap<AspectDefinition, ConcurrentHashMap<Joinpoint, Object>> copy = new WeakHashMap<AspectDefinition, ConcurrentHashMap<Joinpoint, Object>>(joinpointAspects);
                Map<Joinpoint, Object> map = copy.get(def);
                if (map == null)

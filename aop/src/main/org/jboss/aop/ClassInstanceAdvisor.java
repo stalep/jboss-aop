@@ -273,6 +273,10 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
       {
          if (!factory.isDeployed()) continue;
          Interceptor interceptor = factory.create(classAdvisor, null);
+         if (interceptor == null)
+         {
+            continue;
+         }
          insertInterceptor(interceptor);
          interceptorsAdded ++;
       }
@@ -298,6 +302,10 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
       {
          if (!factory.isDeployed()) continue;
          Interceptor interceptor = factory.create(classAdvisor, null);
+         if (interceptor == null)
+         {
+            continue;
+         }
          appendInterceptor(interceptor);
          interceptorsAdded ++;
       }
@@ -323,7 +331,10 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
       {
          if (!factory.isDeployed()) continue;
          Interceptor interceptor = factory.create(classAdvisor, null);
-         interceptorsRemoved += internalRemoveInterceptor(interceptor.getName());
+         if (interceptor != null)
+         {
+            interceptorsRemoved += internalRemoveInterceptor(interceptor.getName());
+         }
       }
       if (interceptorChainObserver != null)
       {

@@ -156,8 +156,11 @@ public class PerJoinpointAdvice extends AbstractAdvice
             }
          }
          aspect = instanceAdvisor.getPerInstanceJoinpointAspect(joinpoint, aspectDefinition);
-      }  
-      
+      }
+      if (aspect == null)
+      {
+         return invocation.invokeNext();
+      }
       if (!initialized)
       {
          init(adviceName, aspect.getClass());

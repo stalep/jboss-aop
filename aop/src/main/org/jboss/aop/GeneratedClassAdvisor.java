@@ -891,7 +891,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
       if (joinpoints.get(joinpoint) == null)
       {
-         joinpoints.put(joinpoint, def.getFactory().createPerJoinpoint(this, joinpoint));
+         Object aspect = def.getFactory().createPerJoinpoint(this, joinpoint);
+         if (aspect != null)
+         {
+            joinpoints.put(joinpoint, aspect);
+         }
       }
       def.registerAdvisor(this);
    }

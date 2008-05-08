@@ -96,7 +96,12 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
       {
          for (Interceptor icptr : insertedInterceptors)
          {
-            newlist.add(((GeneratedAdvisorInterceptor)icptr).create(null, null));
+            Interceptor interceptor = ((GeneratedAdvisorInterceptor)icptr).
+               create(null, null);
+            if (interceptor != null)
+            {
+               newlist.add(interceptor);
+            }
          }
       }
       if (appendedInterceptors != null && appendedInterceptors.size() > 0) 
@@ -120,7 +125,12 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
       {
          for (Interceptor icptr : insertedInterceptors)
          {
-            newlist.add(((GeneratedAdvisorInterceptor)icptr).create(null, null));
+            Interceptor interceptor = ((GeneratedAdvisorInterceptor)icptr).
+               create(null, null);
+            if (interceptor != null)
+            {
+               newlist.add(interceptor);
+            }
          }
       }
       if (advisorChain != null)
@@ -305,6 +315,10 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
       {
          if (!factory.isDeployed()) continue;
          Interceptor interceptor = factory.create(classAdvisor, null);
+         if (interceptor == null)
+         {
+            continue;
+         }
          insertInterceptor(interceptor);
          interceptorsAdded ++;
       }
@@ -331,6 +345,10 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
       {
          if (!factory.isDeployed()) continue;
          Interceptor interceptor = factory.create(classAdvisor, null);
+         if (interceptor == null)
+         {
+            continue;
+         }
          appendInterceptor(interceptor);
          interceptorsAdded ++;
       }
@@ -357,7 +375,10 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
       {
          if (!factory.isDeployed()) continue;
          Interceptor interceptor = factory.create(classAdvisor, null);
-         interceptorsRemoved += internalRemoveInterceptor(interceptor.getName());
+         if (interceptor != null)
+         {
+            interceptorsRemoved += internalRemoveInterceptor(interceptor.getName());
+         }
       }
       if (interceptorChainObserver != null)
       {

@@ -28,6 +28,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -511,7 +512,7 @@ public abstract class JoinPointGenerator
    private AdviceSetups initialiseAdviceInfosAndAddFields(ClassPool pool, CtClass clazz, JoinPointInfo info) throws ClassNotFoundException, NotFoundException, CannotCompileException
    {
       HashMap<String, Integer> cflows = new HashMap<String, Integer>();
-      AdviceSetup[] setups = new AdviceSetup[info.getInterceptors().length];
+      Collection<AdviceSetup> setups = new ArrayList<AdviceSetup>(info.getInterceptors().length);
       
       ClassLoader classLoader = pool.getClassLoader();
       if (classLoader == null)
@@ -522,23 +523,33 @@ public abstract class JoinPointGenerator
 
       for (int i = 0 ; i < info.getInterceptors().length ; i++)
       {
-         setups[i] = new AdviceSetup(i, (GeneratedAdvisorInterceptor)info.getInterceptors()[i], info, classLoader);
-         addAspectFieldAndGetter(pool, clazz, setups[i]);
-         addCFlowFieldsAndGetters(pool, setups[i], clazz, cflows);
+         AdviceSetup setup = new AdviceSetup(i, (GeneratedAdvisorInterceptor)info.getInterceptors()[i], info, classLoader);
+         if (!setup.shouldInvokeAspect())
+         {
+            continue;
+         }
+         setups.add(setup);
+         addAspectFieldAndGetter(pool, clazz, setup);
+         addCFlowFieldsAndGetters(pool, setup, clazz, cflows);
       }
       addLightweightInstanceAspectsTrackerFields(clazz);
-      return new AdviceSetups(info, setups);
+      AdviceSetup[] setupArray = setups.toArray(new AdviceSetup[setups.size()]);
+      return new AdviceSetups(info, setupArray);
    }
    
+   /**
+    * 
+    * @param pool
+    * @param clazz
+    * @param setup represents an advice that should be invoked (i.e.,
+    *              {@code setup.shouldBeInvoked()} is {@code true})
+    * @throws NotFoundException
+    * @throws CannotCompileException
+    */
    private void addAspectFieldAndGetter(ClassPool pool, CtClass clazz, AdviceSetup setup) throws NotFoundException, CannotCompileException
    {
       CtClass aspectClass = setup.getAspectCtClass();
       
-      if (!setup.shouldInvokeAspect())
-      {
-         return;
-      }
-
       CtField field = new CtField(aspectClass, setup.getAspectFieldName(), clazz);
       field.setModifiers(Modifier.PRIVATE | Modifier.TRANSIENT);
       clazz.addField(field);
@@ -1125,11 +1136,6 @@ public abstract class JoinPointGenerator
       AdviceSetup[] allSetups = setups.getAllSetups();
       for (int i = 0 ; i < allSetups.length ; i++)
       {
-         if (!allSetups[i].shouldInvokeAspect())
-         {
-            continue;
-         }
-         
          if (allSetups[i].requiresInstanceAdvisor())
          {
             adviceInit.append(allSetups[i].getAspectFieldName());
@@ -1389,14 +1395,19 @@ public abstract class JoinPointGenerator
          if (ifw.isAspectFactory())
          {
             Object aspectInstance = ((GeneratedAdvisorInterceptor)info.getInterceptors()[index]).getAspect(info.getAdvisor(), info.getJoinpoint(), true);
-            aspectClass = aspectInstance.getClass();
+            if (aspectInstance != null)
+            {
+               aspectClass = aspectInstance.getClass();
+            }
          }
          else
          {
             aspectClass = classLoader.loadClass(ifw.getAspectClassName());
          }
-         aspectCtClass = ReflectToJavassist.classToJavassist(aspectClass);
-
+         if (aspectClass != null)
+         {
+            aspectCtClass = ReflectToJavassist.classToJavassist(aspectClass);
+         }
          type = ifw.getType();
       }
       
@@ -1459,7 +1470,7 @@ public abstract class JoinPointGenerator
       
       boolean shouldInvokeAspect()
       {
-         return !(isPerInstance() && isStaticCall());
+         return !((isPerInstance() && isStaticCall()) || aspectClass == null);
       }
       
       boolean requiresInstanceAdvisor()
@@ -1572,7 +1583,14 @@ public abstract class JoinPointGenerator
       List<AdviceSetup> lightweightAdvicesRequiringInstanceAdvisor;
       boolean hasAroundAdvices;
       boolean hasArgsAroundAdvices;
-      
+
+      /**
+       * 
+       * @param info
+       * @param allSetups contains only setups that represent advices to be invoked
+       *                  (i.e., allSetups[i].shouldInvoke() equals true for
+       *                  0 <= i <= allSetups.length)
+       */
       AdviceSetups(JoinPointInfo info, AdviceSetup[] allSetups)
       {
          this.allSetups = allSetups;
@@ -1581,10 +1599,6 @@ public abstract class JoinPointGenerator
          
          for (int i = 0 ; i < allSetups.length ; i++)
          {
-            if (!allSetups[i].shouldInvokeAspect())
-            {
-               continue;
-            }
             AdviceMethodProperties properties = getAdviceMethodProperties(info, allSetups[i]);
             AdviceType type = allSetups[i].getType();
             int index = type.ordinal();
@@ -1742,6 +1756,18 @@ public abstract class JoinPointGenerator
       }
       
       protected abstract String generateKey(JoinPointGenerator generator);
+      /**
+       * 
+       * @param setup represents an advice that should be invoked (i.e.,
+       *              {@code setup.shouldBeInvoked()} is {@code true})
+       * @param key
+       * @param beforeCall
+       * @param call
+       * @param generator
+       * @param info
+       * @return
+       * @throws NotFoundException
+       */
       protected abstract boolean appendAdviceCall(AdviceSetup setup, String key,
            StringBuffer beforeCall, StringBuffer call, JoinPointGenerator generator, JoinPointInfo info) throws NotFoundException;
       
@@ -1889,16 +1915,10 @@ public abstract class JoinPointGenerator
          }
          return "return ($w)";
       }
-      
+
       public boolean appendAdviceCall(AdviceSetup setup, String key,
             StringBuffer beforeCall, StringBuffer call, JoinPointGenerator generator, JoinPointInfo info)
       {
-         if (!setup.shouldInvokeAspect())
-         {
-            //We are invoking a static method/ctor, do not include advice in chain
-            return false;
-         }
-      
          boolean result = false;
          
          AdviceMethodProperties properties = setup.getAdviceMethodProperties();
