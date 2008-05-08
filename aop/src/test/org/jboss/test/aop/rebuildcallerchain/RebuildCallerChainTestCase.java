@@ -48,30 +48,47 @@ public class RebuildCallerChainTestCase extends AOPTestWithSetup
       suite.addTestSuite(RebuildCallerChainTestCase.class);
       return suite;
    }
-
-   public void testRebuildCallerChain() throws Exception
+  
+   public void testRebuildCallerChainConCalledCon() throws Exception
    {
       try
       {
-//         new Caller1().execute();
-
+//         new Caller2();  // concallcon wont work if the class is already loaded by the cl
+         
          AdviceBinding bindingCall = new AdviceBinding( 
-               "call(* org.jboss.test.aop.rebuildcallerchain.*->execute())", null); 
+               "call(org.jboss.test.aop.rebuildcallerchain.Caller1->new(int))", null); 
          bindingCall.addInterceptor(RebuildCallerChainInterceptor.class); 
-
          AspectManager.instance().addBinding(bindingCall); 
 
-         new Caller1().execute(); // loaded before addBinding => not ok 
-         assertTrue("caller1 was not rebuilded", RebuildCallerChainInterceptor.method);
-         RebuildCallerChainInterceptor.method = false;
-         new Caller2().execute(); // loaded after addBindingok => ok 
-         assertTrue("caller2 not ok", RebuildCallerChainInterceptor.method);
-//         assertTrue("Rebuilded chain", true);
+         RebuildCallerChainInterceptor.call = false;
+         new Caller2(true);
+         assertTrue("caller2 was not rebuilded", RebuildCallerChainInterceptor.call);
       } 
       catch (Exception e) 
       {
          assertFalse("Failed to rebuild chain....", true);
       }
-}
+   }
+   
+   public void testRebuildCallerChainMethodCalledMethod() throws Exception
+   {
+      try
+      {
+         new Caller1().execute();
+         
+         AdviceBinding bindingCall = new AdviceBinding( 
+               "call(* org.jboss.test.aop.rebuildcallerchain.*->execute())", null); 
+         bindingCall.addInterceptor(RebuildCallerChainInterceptor.class); 
+         AspectManager.instance().addBinding(bindingCall); 
+
+         new Caller1().execute();
+         assertTrue("caller1 was not rebuilded", RebuildCallerChainInterceptor.call);
+         RebuildCallerChainInterceptor.call = false;
+      } 
+      catch (Exception e) 
+      {
+         assertFalse("Failed to rebuild chain....", true);
+      }
+   }
 
 }

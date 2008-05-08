@@ -33,20 +33,18 @@ import org.jboss.aop.advice.Interceptor;
  */
 public class RebuildCallerChainInterceptor implements Interceptor
 {
-   public static boolean method = false;
-   //@Override
+   public static boolean call = false;
+   
    public String getName()
    {
       return this.getClass().getName();
    }
 
-   //@Override
    public Object invoke(Invocation invocation) throws Throwable
    {
       try
       {
-//         System.out.println("Interceptor ignoring call...");
-         method = true;
+         call = true;
          return invocation.invokeNext();
       }
       catch(Exception e)

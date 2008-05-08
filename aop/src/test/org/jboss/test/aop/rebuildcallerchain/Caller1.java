@@ -29,13 +29,18 @@ package org.jboss.test.aop.rebuildcallerchain;
  */
 public class Caller1
 {
+   public Caller1() { }
+   
+   public Caller1(boolean b){ }
+   
+   public Caller1(int i) { }
 
    public void execute() throws Exception
    {
-//      throw new Exception("This method should not have been called!");
    }
    
-   public void foo() {
+   public void foo() 
+   {
       
    }
 }

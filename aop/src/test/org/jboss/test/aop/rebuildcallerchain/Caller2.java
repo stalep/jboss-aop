@@ -29,9 +29,15 @@ package org.jboss.test.aop.rebuildcallerchain;
  */
 public class Caller2
 {
+   
+   public Caller2() { }
+   
+   public Caller2(boolean b)
+   {
+      new Caller1(1);
+   }
 
    public void execute() throws Exception
    {
-//      throw new Exception("This method should not have been called!");
    }
 }

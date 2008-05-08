@@ -790,16 +790,59 @@ public class ClassAdvisor extends Advisor
 
    private ArrayList<AdviceBinding> getConstructorCallerBindings(int callingIndex, String cname, long calledHash)
    {
-      HashMap<String, TLongObjectHashMap> calledClasses = methodCalledByConBindings[callingIndex];
-      TLongObjectHashMap calledMethods = calledClasses.get(cname);
-      return (ArrayList<AdviceBinding>) calledMethods.get(calledHash);
+      try
+      {
+         Constructor<?> callingConstructor = constructors[callingIndex];
+         if (callingConstructor == null) throw new RuntimeException("Unable to figure out calling method of a caller pointcut");
+         // FIXME ClassLoader - how do we know the class is visible from the context classloader?
+         Class<?> called = SecurityActions.getContextClassLoader().loadClass(cname);
+         Method calledMethod = MethodHashing.findMethodByHash(called, calledHash);
+         if (calledMethod == null) throw new RuntimeException("Unable to figure out calledmethod of a caller pointcut");
+
+         ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(manager.getBindings().size());
+         for(AdviceBinding ab : manager.getBindings().values())
+         {
+            if (ab.getPointcut().matchesCall(this, callingConstructor, called, calledMethod))
+            {
+               bindings.add(ab);
+            }
+         }
+         
+         return bindings;
+      }
+      catch(Exception e)
+      {
+         logger.error("Error happened with methodCallConBinding",e);
+         return new ArrayList<AdviceBinding>();
+      }
    }
 
    private ArrayList<AdviceBinding> getConCalledByConBindings(int callingIndex, String cname, long calledHash)
    {
-      HashMap<String, TLongObjectHashMap> calledClasses = conCalledByConBindings[callingIndex];
-      TLongObjectHashMap calledMethods = calledClasses.get(cname);
-      return (ArrayList<AdviceBinding>) calledMethods.get(calledHash);
+      try
+      {
+         Constructor<?> callingConstructor = constructors[callingIndex];
+         if (callingConstructor == null) throw new RuntimeException("Unable to figure out calling method of a caller pointcut");
+         // FIXME ClassLoader - how do we know the class is visible from the context classloader?
+         Class<?> called = SecurityActions.getContextClassLoader().loadClass(cname);
+         Constructor<?> calledCon = MethodHashing.findConstructorByHash(called, calledHash);
+         if (calledCon == null) throw new RuntimeException("Unable to figure out calledcon of a caller pointcut");
+
+         ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(manager.getBindings().size());
+         for(AdviceBinding ab : manager.getBindings().values())   
+         {
+            if (ab.getPointcut().matchesCall(this, callingConstructor, called, calledCon))
+            {
+               bindings.add(ab);
+            }
+         }
+         return bindings;
+      }
+      catch(Exception e)
+      {
+         logger.error("Error happened for conCalledConBindings", e);
+         return new ArrayList<AdviceBinding>();
+      }
    }
 
    protected void finalizeMethodCalledByMethodInterceptorChain(MethodByMethodInfo info)
@@ -2224,10 +2267,30 @@ public class ClassAdvisor extends Advisor
 
       private ArrayList<AdviceBinding> getCallerBindings(long callingHash, String cname, long calledHash)
       {
-         //Called via resolveCallerMethodInfo, maps are initialised
-         HashMap<String, TLongObjectHashMap> calledClasses = (HashMap<String, TLongObjectHashMap>) methodCalledByMethodBindings.get(callingHash);
-         TLongObjectHashMap calledMethods = calledClasses.get(cname);
-         return (ArrayList<AdviceBinding>) calledMethods.get(calledHash);
+         try
+         {
+            Method callingMethod = MethodHashing.findMethodByHash(clazz, callingHash);
+            if (callingMethod == null) throw new RuntimeException("Unable to figure out calling method of a caller pointcut");
+            // FIXME ClassLoader - how do we know the class is visible from the context classloader?
+            Class<?> called = SecurityActions.getContextClassLoader().loadClass(cname);
+            Method calledMethod = MethodHashing.findMethodByHash(called, calledHash);
+            if (calledMethod == null) throw new RuntimeException("Unable to figure out calledmethod of a caller pointcut");
+
+            ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(manager.getBindings().size());
+            for(AdviceBinding ab : manager.getBindings().values())
+            {
+               if (ab.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledMethod))
+               {
+                  bindings.add(ab);
+               }
+            }
+            return bindings;
+         }
+         catch(Exception e)
+         {
+            logger.error("Error happened when getting callerBindings",e);
+            return new ArrayList<AdviceBinding>();
+         }
       }
 
       private void bindCallerInterceptorChain(ArrayList<AdviceBinding> bindings, long callingHash, String cname, long calledHash, Method calling)
@@ -2272,10 +2335,32 @@ public class ClassAdvisor extends Advisor
       }
 
       public ArrayList<AdviceBinding> getConCalledByMethodBindings(long callingHash, String cname, long calledHash)
-      {
-         HashMap<String, TLongObjectHashMap> calledClasses = (HashMap<String, TLongObjectHashMap>) conCalledByMethodBindings.get(callingHash);
-         TLongObjectHashMap calledCons = calledClasses.get(cname);
-         return (ArrayList<AdviceBinding>) calledCons.get(calledHash);
+      { 
+         try
+         {
+            Method callingMethod = MethodHashing.findMethodByHash(clazz, callingHash);
+            if (callingMethod == null) throw new RuntimeException("Unable to figure out calling method of a constructor caller pointcut");
+            // FIXME ClassLoader - how do we know the class is visible from the context classloader?
+            Class<?> called = SecurityActions.getContextClassLoader().loadClass(cname);
+            Constructor<?> calledCon = MethodHashing.findConstructorByHash(called, calledHash);
+            if (calledCon == null) throw new RuntimeException("Unable to figure out calledcon of a constructor caller pointcut");
+
+            ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(manager.getBindings().size());
+            for(AdviceBinding ab : manager.getBindings().values())
+            {
+               if (ab.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledCon))
+               {
+                  bindings.add(ab);
+               }
+            }
+            return bindings;
+         }
+         catch(Exception e)
+         {
+            logger.error("Error happened conCalledMethod bindings", e);
+            return new ArrayList<AdviceBinding>();
+         }
+         
       }
 
       public void rebuildCallerInterceptors() throws Exception
