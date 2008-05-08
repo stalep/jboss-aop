@@ -88,11 +88,9 @@
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="rebuildingchain"/>
       </antcall>
-      <!--
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="rebuildcallerchain"/>
       </antcall>
-      -->
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="array"/>
       </antcall>
