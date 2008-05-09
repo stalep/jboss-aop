@@ -949,6 +949,41 @@ public class BeforeAfterThrowingScopedTestCase extends AOPTestWithSetup
       assertEquals(pv1, PerVmAspect.before);
    }
    
+   public void testNullAspectFactory() throws Exception
+   {
+      // check that all joinpoints execute without exceptions
+      int value = POJOWithNullAspect.staticField;
+      POJOWithNullAspect.staticField = value + 1;
+      POJOWithNullAspect.staticMethod();
+      POJOWithNullAspect pojo = new POJOWithNullAspect();
+      value += pojo.field;
+      pojo.field = value - 10;
+      pojo.method();
+      
+      // check that mixed method does get correctly intercepted without errors
+      PerInstanceAspect.reset();
+      pojo.mixedMethod(false);
+      assertNotNull(PerInstanceAspect.before);
+      assertNotNull(PerInstanceAspect.after);
+      assertNull(PerInstanceAspect.throwing);
+      assertNotNull(PerInstanceAspect.finaly);
+      PerInstanceAspect.reset();
+      boolean thrown = false;
+      try
+      {
+         pojo.mixedMethod(true);
+      }
+      catch(Exception e)
+      {
+         thrown = true;
+      }
+      assertTrue(thrown);
+      assertNotNull(PerInstanceAspect.before);
+      assertNull(PerInstanceAspect.after);
+      assertNotNull(PerInstanceAspect.throwing);
+      assertNotNull(PerInstanceAspect.finaly);
+   }
+   
    
    //PER_JOINPOINT should act like PER_CLASS_JOINPOINT for static fields and methods  
 }
