@@ -140,15 +140,27 @@
       <stack-ref name="nullFactoryStack"/>
    </bind>
    
-   <bind pointcut="construction(org.jboss.test.aop.scope.POJOWithNullAspect->new(..))">
+   <bind pointcut="construction(org.jboss.test.aop.scope.POJOWithNullAspect->new())">
       <stack-ref name="nullFactoryStack"/>
    </bind>
    
-   <bind pointcut="execution(org.jboss.test.aop.scope.POJOWithNullAspect->new(..))">
+   <bind pointcut="execution(org.jboss.test.aop.scope.POJOWithNullAspect->new())">
       <stack-ref name="nullFactoryStack"/>
    </bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.scope.POJOWithNullAspect->*(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.scope.POJOWithNullAspect->method(..))">
+      <stack-ref name="nullFactoryStack"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.scope.POJOWithNullAspect->staticMethod(..))">
+      <stack-ref name="nullFactoryStack"/>
+   </bind>
+   
+   <bind pointcut="call(* org.jboss.test.aop.scope.POJOWithNullAspect->calledMethod*(..))">
+      <stack-ref name="nullFactoryStack"/>
+   </bind>
+   
+   <bind pointcut="call(org.jboss.test.aop.scope.POJOWithNullAspect->new(int))">
       <stack-ref name="nullFactoryStack"/>
    </bind>
    

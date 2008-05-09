@@ -28,11 +28,42 @@ package org.jboss.test.aop.scope;
  */
 public class POJOWithNullAspect
 {
+   // for get and set joinpoints
    public int field;
    public static int staticField;
+   
+   // for execution and construction joinpoints
    public POJOWithNullAspect() {}
+   
+   // for execution joinpoints
    public void method() {}
    public static void staticMethod() {}
+   
+   // for call joinpoints
+   // callers:
+   public POJOWithNullAspect(int value1, int value2)
+   {
+      POJOWithNullAspect pojo = new POJOWithNullAspect(1);
+      pojo.calledMethod1();
+      calledMethod2();
+   }
+   public void callerMethod1()
+   {
+      POJOWithNullAspect pojo = new POJOWithNullAspect(1);
+      pojo.calledMethod1();
+      calledMethod2();
+   }
+   public static void callerMethod2()
+   {
+      POJOWithNullAspect pojo = new POJOWithNullAspect(2);
+      pojo.calledMethod1();
+      calledMethod2();
+   }
+   // called:
+   public POJOWithNullAspect(int value) {}
+   public void calledMethod1() {}
+   public static void calledMethod2() {}
+   
    // method that will be intercepted by both normal factories and
    // NullAspectFactories
    public void mixedMethod(){}
