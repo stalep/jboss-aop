@@ -108,15 +108,27 @@
       <stack-ref name="nullFactoryStack"/>
    </bind>
    
-   <bind pointcut="construction(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithNullAspect->new(..))">
+   <bind pointcut="construction(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithNullAspect->new())">
       <stack-ref name="nullFactoryStack"/>
    </bind>
    
-   <bind pointcut="execution(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithNullAspect->new(..))">
+   <bind pointcut="execution(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithNullAspect->new())">
       <stack-ref name="nullFactoryStack"/>
    </bind>
    
-   <bind pointcut="execution(* org.jboss.test.aop.beforeafterthrowingscoped.POJOWithNullAspect->*(..))">
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterthrowingscoped.POJOWithNullAspect->method(..))">
+      <stack-ref name="nullFactoryStack"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.beforeafterthrowingscoped.POJOWithNullAspect->staticMethod(..))">
+      <stack-ref name="nullFactoryStack"/>
+   </bind>
+   
+   <bind pointcut="call(* org.jboss.test.aop.beforeafterthrowingscoped.POJOWithNullAspect->calledMethod*(..))">
+      <stack-ref name="nullFactoryStack"/>
+   </bind>
+   
+   <bind pointcut="call(org.jboss.test.aop.beforeafterthrowingscoped.POJOWithNullAspect->new(int))">
       <stack-ref name="nullFactoryStack"/>
    </bind>
    

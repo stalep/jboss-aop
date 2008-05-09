@@ -955,10 +955,13 @@ public class BeforeAfterThrowingScopedTestCase extends AOPTestWithSetup
       int value = POJOWithNullAspect.staticField;
       POJOWithNullAspect.staticField = value + 1;
       POJOWithNullAspect.staticMethod();
+      POJOWithNullAspect.callerMethod2();
       POJOWithNullAspect pojo = new POJOWithNullAspect();
       value += pojo.field;
       pojo.field = value - 10;
       pojo.method();
+      pojo.callerMethod1();
+      new POJOWithNullAspect(5, 6);
       
       // check that mixed method does get correctly intercepted without errors
       PerInstanceAspect.reset();
