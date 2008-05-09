@@ -554,23 +554,19 @@ public class ScopeTestCase extends AOPTestWithSetup
    
    public void testNullAspectFactory()
    {
-      System.out.println("RUNNING TEST NULL ASPECT FACTORY");
-      Interceptions.clear();
-      assertEquals(0, Interceptions.size());
+      // check that all joinpoints execute without exceptions
       int value = POJOWithNullAspect.staticField;
       POJOWithNullAspect.staticField = value + 1;
       POJOWithNullAspect.staticMethod();
-      
       POJOWithNullAspect pojo = new POJOWithNullAspect();
       value += pojo.field;
       pojo.field = value - 10;
       pojo.method();
       
-      assertEquals(0, Interceptions.size());
+      // check that mixed method does get correctly intercepted without errors
+      Interceptions.clear();
       pojo.mixedMethod();
       assertEquals(1, Interceptions.size());
-      System.out.println("FINISHED TEST NULL ASPECT FACTORY");
-      System.out.println();
    }
    
    final static String[] staticNames = {
