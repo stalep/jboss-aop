@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aop>
-<prepare expr="call(* org.jboss.test.aop.rebuildcallerchain.*->execute())" />
+<prepare expr="call(* org.jboss.test.aop.rebuildcallerchain.Caller*->*(..))" />
+<prepare expr="call(org.jboss.test.aop.rebuildcallerchain.Caller*->new(..))" />
 
 <!--
   <bind pointcut="call(* org.jboss.test.aop.rebuildcallerchain.*->execute())">                
