@@ -75,6 +75,7 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
       return classAdvisor;
    }
 
+
    public Object getPerInstanceAspect(String aspectName)
    {
       return delegate.getPerInstanceAspect(aspectName);
@@ -203,6 +204,7 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
     * If the target instance is advised, make sure that we set the unadvised method to the one stored by the class advisor
     * so that we don't get double invocations.
     */
+   @Override
    public MethodInfo getMethodInfo(long hash)
    {
       MethodInfo info = super.getMethodInfo(hash);
@@ -218,6 +220,7 @@ public class InstanceProxyContainer extends ClassProxyContainer implements Insta
       return info;
    }
 
+   @Override
    protected Advisor getParentAdvisor()
    {
       return classAdvisor;

@@ -119,6 +119,7 @@ public class ClassContainer extends Advisor
 
    }
 
+   @Override
    protected void rebuildInterceptors()
    {
       adviceBindings.clear();
@@ -132,6 +133,7 @@ public class ClassContainer extends Advisor
       }
    }
 
+   @Override
    public void addClassMetaData(ClassMetaDataBinding data)
    {
       initClassMetaDataBindingsList();
@@ -148,6 +150,7 @@ public class ClassContainer extends Advisor
 
 
 
+   @Override
    public void removeClassMetaData(ClassMetaDataBinding data)
    {
       if (classMetaDataBindings.remove(data))

@@ -176,6 +176,7 @@ public class ClassProxyContainer extends ClassContainer
       return null;
    }
 
+   @Override
    public void addPerClassAspect(AspectDefinition def)
    {
       Advisor parentAdvisor = getParentAdvisor();
@@ -191,6 +192,7 @@ public class ClassProxyContainer extends ClassContainer
     * If this is an instance advisor, will check with parent advisor if the aspect
     * is already registered. If so, we should use the one from the parent advisor
     */
+   @Override
    public Object getPerClassAspect(AspectDefinition def)
    {
       Advisor parentAdvisor = getParentAdvisor();
