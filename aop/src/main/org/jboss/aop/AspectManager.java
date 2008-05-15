@@ -105,6 +105,9 @@ public class AspectManager
         implements Translator
 {
    private static final Logger logger = AOPLogger.getLogger(AspectManager.class);
+   
+   /** Indicates that a call to the factory has been made, but it returned null. */
+   private static final Object NULL_ASPECT = new Object();
 
    /** Lock to be used when lazy creating the collections */
    Object lazyCollectionLock = new Object();
@@ -1869,6 +1872,10 @@ public class AspectManager
             }
          }
       }
+      if (aspect == NULL_ASPECT)
+      {
+         return null;
+      }
       return aspect;
    }
 
@@ -1886,7 +1893,13 @@ public class AspectManager
             }
             instance = adef.getFactory().createPerVM();
             initPerVMAspectsMap();
-            if (instance != null)
+            if (instance == null)
+            {
+            	// indicates that the factory must not be called again
+            	// the factory has already been called and returned null
+               perVMAspects.put(def, NULL_ASPECT);
+            }
+            else
             {
                perVMAspects.put(def, instance);
             }

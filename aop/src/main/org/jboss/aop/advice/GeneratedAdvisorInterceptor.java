@@ -67,6 +67,20 @@ import org.jboss.logging.Logger;
 public class GeneratedAdvisorInterceptor implements Interceptor
 {
    private static final Logger logger = AOPLogger.getLogger(GeneratedAdvisorInterceptor.class);
+   // important to indicate that the factory has already been called, but a null
+   // interceptor was returned
+   private static final Interceptor EMPTY_INTERCEPTOR = new Interceptor()
+   {
+      public Object invoke(Invocation invocation) throws Throwable
+      {
+         return invocation.invokeNext();
+      }
+
+      public String getName()
+      {
+         return "NULL";
+      }
+   };
    private InterceptorFactory factory;
    private volatile Object instance; 
    private String cflowString;
@@ -190,6 +204,11 @@ public class GeneratedAdvisorInterceptor implements Interceptor
          {
             instance = advisor.getPerVMAspect(def);
          }
+         if (instance == null || instance == EMPTY_INTERCEPTOR)
+         {
+            instance = EMPTY_INTERCEPTOR;
+            return null;
+         }
          return instance;
       }
       else if (scope == Scope.PER_CLASS)
@@ -203,6 +222,12 @@ public class GeneratedAdvisorInterceptor implements Interceptor
             }
             advisor.addPerClassAspect(def);
             instance = advisor.getPerClassAspect(def);
+         }
+         if (instance == null || instance == EMPTY_INTERCEPTOR)
+         {
+            // indicates that the instance has already been retrieved
+            instance = EMPTY_INTERCEPTOR;
+            return null;
          }
          return instance;
       }
@@ -226,6 +251,14 @@ public class GeneratedAdvisorInterceptor implements Interceptor
             
             ((GeneratedClassAdvisor)advisor).addPerClassJoinpointAspect(def, joinpoint);
             instance = ((GeneratedClassAdvisor)advisor).getPerClassJoinpointAspect(def, joinpoint);
+            if (instance == null)
+            {
+               instance = EMPTY_INTERCEPTOR;
+            }
+         }
+         if (instance == EMPTY_INTERCEPTOR)
+         {
+            return null;
          }
          return instance;
       }
@@ -268,6 +301,11 @@ public class GeneratedAdvisorInterceptor implements Interceptor
                ((GeneratedClassAdvisor)advisor).addPerClassJoinpointAspect(def, joinpoint);
                instance = ((GeneratedClassAdvisor)advisor).getPerClassJoinpointAspect(def, joinpoint);
             }
+         }
+         if (instance == null || instance == EMPTY_INTERCEPTOR)
+         {
+            instance = EMPTY_INTERCEPTOR;
+            return null;
          }
          return instance;
       }
@@ -419,13 +457,13 @@ public class GeneratedAdvisorInterceptor implements Interceptor
                else
                {
                   lazyInterceptor = create(invocation.getAdvisor(), getJoinpoint(invocation));
+                  if (lazyInterceptor == null)
+                  {
+                     lazyInterceptor = EMPTY_INTERCEPTOR;
+                  }
                }
             }
          }
-      }
-      if (lazyInterceptor == null)
-      {
-         return invocation.invokeNext();
       }
       return lazyInterceptor.invoke(invocation);
    }

@@ -165,21 +165,20 @@ public class ClassAdvisor extends Advisor
          }
       }
 
-      Object aspect = map.get(joinpoint);
-      if (aspect == null)
+      if (map.containsKey(joinpoint))
       {
-         synchronized (map)
-         {
-            aspect = map.get(joinpoint);
-            if (aspect == null)
-            {
-               aspect = def.getFactory().createPerJoinpoint(this, joinpoint);
-               map.put(joinpoint, aspect);
-            }
-         }
+         return map.get(joinpoint);
       }
-
-      return aspect;
+      synchronized (map)
+      {
+         if (map.containsKey(joinpoint))
+         {
+            return map.get(joinpoint);
+         }
+         Object aspect = def.getFactory().createPerJoinpoint(this, joinpoint);
+         map.put(joinpoint, aspect);
+         return aspect;
+      }
    }
 
    public Field[] getAdvisedFields()

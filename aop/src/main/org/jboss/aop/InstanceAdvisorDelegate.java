@@ -42,7 +42,8 @@ import org.jboss.aop.metadata.SimpleMetaData;
 public class InstanceAdvisorDelegate implements Serializable
 {
    private static final long serialVersionUID = -5421366346785427537L;
-   
+   /** Indicates that a call to the factory has been made, but the factory returned null */
+   private static final Object NULL_ASPECT = new Object();
    protected transient WeakReference<Advisor> classAdvisor;
    InstanceAdvisor instanceAdvisor;
    protected transient WeakHashMap<AspectDefinition, Object> aspects;
@@ -152,7 +153,11 @@ public class InstanceAdvisorDelegate implements Serializable
       {
          Object aspect = def.getFactory().createPerJoinpoint(getClassAdvisor(),
                instanceAdvisor, joinpoint);
-         if (aspect != null)
+         if (aspect == null)
+         {
+            joins.put(joinpoint, NULL_ASPECT);
+         }
+         else
          {
             joins.put(joinpoint, aspect);
          }
@@ -213,26 +218,40 @@ public class InstanceAdvisorDelegate implements Serializable
          synchronized (this) // doublecheck, but I don't want to synchronize everywhere and dynamic aspects are rare
          {
             aspect = getJoinpointAspect(def, joinpoint);
-            if (aspect != null) return aspect;
+            if (aspect != null)
+            {
+               if (aspect == NULL_ASPECT)
+               {
+                  return null;
+               }
+               return aspect;
+            }
             if (classAdvisor != null && getClassAdvisor() instanceof ClassAdvisor)
             {
                ClassAdvisor cadvisor = (ClassAdvisor) getClassAdvisor();
                cadvisor.addPerInstanceJoinpointAspect(joinpoint, def);
                aspect = def.getFactory().createPerJoinpoint(getClassAdvisor(), instanceAdvisor, joinpoint);
-               if (aspect == null)
-               {
-                  return null;
-               }
                WeakHashMap<AspectDefinition, ConcurrentHashMap<Joinpoint, Object>> copy = new WeakHashMap<AspectDefinition, ConcurrentHashMap<Joinpoint, Object>>(joinpointAspects);
                Map<Joinpoint, Object> map = copy.get(def);
                if (map == null)
                {
                   map = new ConcurrentHashMap<Joinpoint, Object>();
                }
-               map.put(joinpoint, aspect);
+               if (aspect == null)
+               {
+                  map.put(joinpoint, NULL_ASPECT);
+               }
+               else
+               {
+                  map.put(joinpoint, aspect);
+               }
                joinpointAspects = copy;
             }
          }
+      }
+      if (aspect == NULL_ASPECT)
+      {
+         return null;
       }
       return aspect;
    }

@@ -173,6 +173,12 @@ public abstract class Advisor
    /** The meta data */
    private MetaData metadata;
 
+   /**
+    * Indicates that a call to factory create has already been made, but the factory
+    * returned {@code null}.
+    */
+   protected static Object NULL_ASPECT = new Object();
+   
    public Advisor(String name, AspectManager manager)
    {
       this.name = name;
@@ -827,12 +833,22 @@ public abstract class Advisor
 
    public Object getPerClassAspect(AspectDefinition def)
    {
-      return aspects.get(def.getName());
+      Object aspect = aspects.get(def.getName());
+      if (aspect == NULL_ASPECT)
+      {
+         return null;
+      }
+      return aspect;
    }
 
    public Object getPerClassAspect(String def)
    {
-      return aspects.get(def);
+      Object aspect = aspects.get(def);
+      if (aspect == NULL_ASPECT)
+      {
+         return null;
+      }
+      return aspect;
    }
 
    public void addPerClassAspect(AspectDefinition def)
@@ -841,7 +857,7 @@ public abstract class Advisor
       Object aspect = def.getFactory().createPerClass(this);
       if (aspect == null)
       {
-         return;
+         aspect = NULL_ASPECT;
       }
       aspects.put(def.getName(), aspect);
       def.registerAdvisor(this);

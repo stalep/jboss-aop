@@ -889,10 +889,14 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          perClassJoinpointAspectDefinitions.put(def, joinpoints);
       }
 
-      if (joinpoints.get(joinpoint) == null)
+      if (!joinpoints.containsKey(joinpoint))
       {
          Object aspect = def.getFactory().createPerJoinpoint(this, joinpoint);
-         if (aspect != null)
+         if (aspect == null)
+         {
+            joinpoints.put(joinpoint, NULL_ASPECT);
+         }
+         else
          {
             joinpoints.put(joinpoint, aspect);
          }
@@ -1463,7 +1467,11 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          Map<Joinpoint, Object> joinpoints = perClassJoinpointAspectDefinitions.get(def);
          if (joinpoints != null)
          {
-            return joinpoints.get(joinpoint);
+            Object aspect = joinpoints.get(joinpoint);
+            if (aspect != NULL_ASPECT)
+            {
+               return aspect;
+            }
          }
          return null;
       }
