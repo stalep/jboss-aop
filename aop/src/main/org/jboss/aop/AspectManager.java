@@ -1470,7 +1470,7 @@ public class AspectManager
                {
                   if (AspectManager.verbose && logger.isDebugEnabled())
                      logger.debug("softmatch succeeded for : " + advisor.getName() + " " + binding + " " + binding.getPointcut().getExpr());
-                  advisor.newBindingAdded();
+                  advisor.newBindingAdded(binding);
                   //affectedAdvisors.remove(advisor);
                }
                else

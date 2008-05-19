@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -232,6 +233,13 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    {
       version++;
       advisorStrategy.rebuildInterceptors();
+   }
+   
+   @Override
+   protected void rebuildInterceptorsForAddedBinding(AdviceBinding binding)
+   {
+      version++;
+      advisorStrategy.rebuildInterceptorsForAddedBinding(binding);
    }
    
    /**
@@ -824,7 +832,8 @@ public class GeneratedClassAdvisor extends ClassAdvisor
 
    private void finalizeChainAndRebindJoinPoint(Map<Joinpoint, Interceptor[]> oldInfos, JoinPointInfo info, JoinPointGenerator generator, OldInfoMaps oldInfoMapInstance)
    {
-      ArrayList<Interceptor> list = info.getInterceptorChain();
+      adjustInfoForAddedBinding(info);
+      List<Interceptor> list = info.getInterceptorChain();
       GeneratedAdvisorInterceptor[] factories = null;
       if (list.size() > 0)
       {
@@ -1220,6 +1229,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       Set<AspectDefinition> getPerInstanceAspectDefinitions();
       Map<AspectDefinition, Set<Joinpoint>> getPerInstanceJoinpointAspectDefinitions();
       void rebuildInterceptors();
+      void rebuildInterceptorsForAddedBinding(AdviceBinding binding);
       void resolveConstructorPointcut(AdviceBinding binding);
       void resolveConstructionPointcut(AdviceBinding binding);
       void finalizeConstructorChain(ConstructorInfo[] newConstructorInfos);
@@ -1511,6 +1521,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          version++;
          GeneratedClassAdvisor.super.rebuildInterceptors();
       }
+      
+      public void rebuildInterceptorsForAddedBinding(AdviceBinding binding)
+      {
+         version++;
+         GeneratedClassAdvisor.super.rebuildInterceptorsForAddedBinding(binding);
+      }
 
       public void resolveConstructorPointcut(AdviceBinding binding)
       {
@@ -1720,7 +1736,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          }
          else
          {
-            // check if it is initilized
+            // check if it is initialized
             if (GeneratedClassAdvisor.this.fieldReadInfos == null)
             {
                try
@@ -1742,6 +1758,39 @@ public class GeneratedClassAdvisor extends ClassAdvisor
             }
          }
       }
+
+      public void rebuildInterceptorsForAddedBinding(AdviceBinding binding)
+      {
+         if (getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices() != null && GeneratedClassAdvisor.this.version != parent.version)
+         {
+            adviceBindings.clear();
+            needsRebuild = true;
+         }
+         else
+         {
+            // check if it is initialized
+            if (!GeneratedClassAdvisor.this.initialized)
+            {
+               try
+               {
+                  GeneratedClassAdvisor.this.createInterceptorChains();
+               }
+               catch (Exception ex)
+               {
+                  if (ex instanceof RuntimeException)
+                  {
+                     throw (RuntimeException) ex;
+                  }
+                  throw new RuntimeException(ex);
+               }
+            }
+            else
+            {
+               GeneratedClassAdvisor.super.rebuildInterceptorsForAddedBinding(binding);
+            }
+         }
+      }
+
 
       public void resolveConstructorPointcut(AdviceBinding binding)
       {

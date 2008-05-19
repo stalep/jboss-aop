@@ -132,6 +132,23 @@ public class ClassContainer extends Advisor
          updateInterceptorChains();
       }
    }
+   
+   @Override
+   protected void rebuildInterceptorsForAddedBinding(AdviceBinding binding)
+   {
+      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName());
+      resetChainKeepInterceptors(methodInfos);
+      resetChainKeepInterceptors(constructorInfos);
+
+      resolveMethodPointcut(binding);
+      resolveConstructorPointcut(binding);
+      
+      finalizeChain(constructorInfos);
+      finalizeMethodChain();
+      
+      populateInterceptorsFromInfos();
+      doesHaveAspects = adviceBindings.size() > 0;
+   }
 
    @Override
    public void addClassMetaData(ClassMetaDataBinding data)

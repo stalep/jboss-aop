@@ -28,6 +28,7 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.Domain;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.MethodInfo;
+import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.Joinpoint;
@@ -73,6 +74,11 @@ public class MarshalledProxyAdvisor extends Advisor implements InstanceAdvisor
 
    @Override
    protected void rebuildInterceptors()
+   {
+      //Noop, all interceptors are added via addMethodInfo
+   }
+   
+   protected void rebuildInterceptorsForAddedBinding(AdviceBinding binding)
    {
       //Noop, all interceptors are added via addMethodInfo
    }

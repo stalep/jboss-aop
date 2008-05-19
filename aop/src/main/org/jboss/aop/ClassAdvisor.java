@@ -592,12 +592,7 @@ public class ClassAdvisor extends Advisor
       {
          for (AdviceBinding binding : manager.getBindings().values())
          {
-            if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName() + " " + binding.getPointcut().getExpr());
-            resolveMethodPointcut(binding);
-            resolveFieldPointcut(fieldReadInfos, binding, false);
-            resolveFieldPointcut(fieldWriteInfos, binding, true);
-            resolveConstructorPointcut(binding);
-            resolveConstructionPointcut(binding);
+            resolvePointcuts(binding);
          }
       }
 
@@ -620,29 +615,16 @@ public class ClassAdvisor extends Advisor
          logger.debug("Updating chains for " + clazz + " " + ((clazz != null) ? clazz.getClassLoader() : null ));
       }
 
-      lockWriteChain(methodInfos);
-      lockWriteChain(fieldReadInfos);
-      lockWriteChain(fieldWriteInfos);
-      lockWriteChain(constructorInfos);
-      lockWriteChain(constructionInfos);
+      lockWriteChains();
       try
       {
-         resetChain(methodInfos);
-         resetChain(fieldReadInfos);
-         resetChain(fieldWriteInfos);
-         resetChain(constructorInfos);
-         resetChain(constructionInfos);
-
+         resetChains();
+         
          synchronized (manager.getBindings())
          {
             for (AdviceBinding binding : manager.getBindings().values())
             {
-               if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName() + " " + binding.getPointcut().getExpr());
-               resolveMethodPointcut(binding);
-               resolveFieldPointcut(fieldReadInfos, binding, false);
-               resolveFieldPointcut(fieldWriteInfos, binding, true);
-               resolveConstructorPointcut(binding);
-               resolveConstructionPointcut(binding);
+               resolvePointcuts(binding);
             }
          }
 
@@ -651,11 +633,7 @@ public class ClassAdvisor extends Advisor
       }
       finally
       {
-         unlockWriteChain(methodInfos);
-         unlockWriteChain(fieldReadInfos);
-         unlockWriteChain(fieldWriteInfos);
-         unlockWriteChain(constructorInfos);
-         unlockWriteChain(constructionInfos);
+         unlockWriteChains();
       }
 
       doesHaveAspects = adviceBindings.size() > 0;
@@ -667,6 +645,42 @@ public class ClassAdvisor extends Advisor
       }
    }
 
+   private void lockWriteChains()
+   {
+      lockWriteChain(methodInfos);
+      lockWriteChain(fieldReadInfos);
+      lockWriteChain(fieldWriteInfos);
+      lockWriteChain(constructorInfos);
+      lockWriteChain(constructionInfos);
+   }
+
+   private void unlockWriteChains()
+   {
+      unlockWriteChain(methodInfos);
+      unlockWriteChain(fieldReadInfos);
+      unlockWriteChain(fieldWriteInfos);
+      unlockWriteChain(constructorInfos);
+      unlockWriteChain(constructionInfos);
+   }
+   
+   private void resetChains()
+   {
+      resetChain(methodInfos);
+      resetChain(fieldReadInfos);
+      resetChain(fieldWriteInfos);
+      resetChain(constructorInfos);
+      resetChain(constructionInfos);
+   }
+   
+   private void resetChainsKeepInterceptors()
+   {
+      resetChainKeepInterceptors(methodInfos);
+      resetChainKeepInterceptors(fieldReadInfos);
+      resetChainKeepInterceptors(fieldWriteInfos);
+      resetChainKeepInterceptors(constructorInfos);
+      resetChainKeepInterceptors(constructionInfos);
+   }
+   
    protected void finalizeChains()
    {
       finalizeMethodChain();
@@ -674,6 +688,16 @@ public class ClassAdvisor extends Advisor
       finalizeChain(fieldWriteInfos);
       finalizeChain(constructorInfos);
       finalizeChain(constructionInfos);
+   }
+   
+   protected void resolvePointcuts(AdviceBinding binding)
+   {
+      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName() + " " + binding.getPointcut().getExpr());
+      resolveMethodPointcut(binding);
+      resolveFieldPointcut(fieldReadInfos, binding, false);
+      resolveFieldPointcut(fieldWriteInfos, binding, true);
+      resolveConstructorPointcut(binding);
+      resolveConstructionPointcut(binding);
    }
 
    private MethodByConInfo initializeConstructorCallerInterceptorsMap(Class<?> callingClass, int callingIndex, String calledClass, long calledMethodHash, Method calledMethod) throws Exception
@@ -786,6 +810,8 @@ public class ClassAdvisor extends Advisor
          }
       }
    }
+   
+   
 
    private ArrayList<AdviceBinding> getConstructorCallerBindings(int callingIndex, String cname, long calledHash)
    {
@@ -846,6 +872,7 @@ public class ClassAdvisor extends Advisor
 
    protected void finalizeMethodCalledByMethodInterceptorChain(MethodByMethodInfo info)
    {
+      adjustInfoForAddedBinding(info);
       ArrayList<Interceptor> list = info.getInterceptorChain();
       Interceptor[] interceptors = null;
       if (list.size() > 0)
@@ -857,6 +884,7 @@ public class ClassAdvisor extends Advisor
 
    protected void finalizeConCalledByMethodInterceptorChain(ConByMethodInfo info)
    {
+      adjustInfoForAddedBinding(info);
       ArrayList<Interceptor> list = info.getInterceptorChain();
       Interceptor[] interceptors = null;
       if (list.size() > 0)
@@ -879,6 +907,7 @@ public class ClassAdvisor extends Advisor
 
    protected void finalizeConCalledByConInterceptorChain(ConByConInfo info)
    {
+      adjustInfoForAddedBinding(info);
       ArrayList<Interceptor> list = info.getInterceptorChain();
       Interceptor[] interceptors = null;
       if (list.size() > 0)
@@ -901,6 +930,7 @@ public class ClassAdvisor extends Advisor
 
    protected void finalizeMethodCalledByConInterceptorChain(MethodByConInfo info)
    {
+      adjustInfoForAddedBinding(info);
       ArrayList<Interceptor> list = info.getInterceptorChain();
       Interceptor[] interceptors = null;
       if (list.size() > 0)
@@ -930,7 +960,7 @@ public class ClassAdvisor extends Advisor
       try
       {
          adviceBindings.clear();
-         if (this.constructionInfos == null)
+         if (!this.initialized)
          {
             createInterceptorChains();
          }
@@ -949,6 +979,55 @@ public class ClassAdvisor extends Advisor
          throw new RuntimeException(ex);
       }
    }
+
+   protected void rebuildInterceptorsForAddedBinding(AdviceBinding binding)
+   {
+      if (initialized)
+      {
+         if (System.getSecurityManager() == null)
+         {
+            RebuildInterceptorsAction.NON_PRIVILEGED.rebuildInterceptorsForAddedBinding(this, binding);
+         }
+         else
+         {
+            RebuildInterceptorsAction.PRIVILEGED.rebuildInterceptorsForAddedBinding(this, binding);
+         }
+      }
+   }
+
+   protected void doRebuildInterceptorsForAddedBinding(AdviceBinding binding)
+   {
+      try
+      {
+         if (!this.initialized)
+         {
+            throw new IllegalStateException("This should only be called when adding bindings to an exisiting advisor");
+         }
+         lockWriteChains();
+         try
+         {
+            resetChainsKeepInterceptors();
+            resolvePointcuts(binding);
+            finalizeChains();
+         }
+         finally
+         {
+            unlockWriteChains();
+         }
+         //TODO: Optimize this
+         rebuildCallerInterceptors();
+      }
+      catch (Exception ex)
+      {
+         if (ex instanceof RuntimeException)
+         {
+            throw (RuntimeException) ex;
+         }
+         throw new RuntimeException(ex);
+      }
+   }
+   
+   
    protected void bindClassMetaData(ClassMetaDataBinding data)
    {
       try
@@ -1823,12 +1902,18 @@ public class ClassAdvisor extends Advisor
       {
          fieldWriteInterceptors[i] = fieldWriteInfos[i].getInterceptors();
       }
-      constructionInterceptors = new Interceptor[constructionInfos.length][];
-      for (int i = 0 ; i < constructionInfos.length ; i++)
+      if (constructionInfos == null)
       {
-         constructionInterceptors[i] = constructionInfos[i].getInterceptors();
+         constructionInterceptors = new Interceptor[0][];
       }
-
+      else
+      {
+         constructionInterceptors = new Interceptor[constructionInfos.length][];
+         for (int i = 0 ; i < constructionInfos.length ; i++)
+         {
+            constructionInterceptors[i] = constructionInfos[i].getInterceptors();
+         }
+      }
    }
 
    protected MethodByMethodData getMethodByMethodData()
@@ -2019,6 +2104,7 @@ public class ClassAdvisor extends Advisor
    interface RebuildInterceptorsAction
    {
       void rebuildInterceptors(ClassAdvisor advisor);
+      void rebuildInterceptorsForAddedBinding(ClassAdvisor advisor, AdviceBinding binding);
 
       RebuildInterceptorsAction PRIVILEGED = new RebuildInterceptorsAction()
       {
@@ -2045,6 +2131,30 @@ public class ClassAdvisor extends Advisor
                throw new RuntimeException(ex);
             }
          }
+
+         public void rebuildInterceptorsForAddedBinding(final ClassAdvisor advisor, final AdviceBinding binding)
+         {
+            try
+            {
+               AccessController.doPrivileged(new PrivilegedExceptionAction<Object>()
+               {
+                  public Object run()
+                  {
+                     advisor.doRebuildInterceptorsForAddedBinding(binding);
+                     return null;
+                  }
+               });
+            }
+            catch (PrivilegedActionException e)
+            {
+               Exception ex = e.getException();
+               if (ex instanceof RuntimeException)
+               {
+                  throw (RuntimeException) ex;
+               }
+               throw new RuntimeException(ex);
+            }
+         }
       };
 
       RebuildInterceptorsAction NON_PRIVILEGED = new RebuildInterceptorsAction()
@@ -2052,6 +2162,11 @@ public class ClassAdvisor extends Advisor
          public void rebuildInterceptors(ClassAdvisor advisor)
          {
             advisor.doRebuildInterceptors();
+         }
+
+         public void rebuildInterceptorsForAddedBinding(ClassAdvisor advisor, AdviceBinding binding)
+         {
+            advisor.doRebuildInterceptorsForAddedBinding(binding);
          }
       };
    }

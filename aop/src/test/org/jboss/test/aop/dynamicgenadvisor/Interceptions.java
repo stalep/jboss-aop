@@ -155,4 +155,9 @@ public class Interceptions
    {
       return s.substring(s.lastIndexOf('.') + 1);
    }
+   
+   public static String getToString()
+   {
+      return interceptions.toString();
+   }
 }

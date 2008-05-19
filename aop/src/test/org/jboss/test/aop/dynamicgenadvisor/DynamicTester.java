@@ -21,6 +21,11 @@
   */
 package org.jboss.test.aop.dynamicgenadvisor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
@@ -97,7 +102,7 @@ public class DynamicTester extends AOPTestWithSetup
       
       Interceptions.clear();
       pojo = new POJO();
-      assertEquals(3, Interceptions.size());
+      assertEquals(Interceptions.getToString(), 3, Interceptions.size());
       assertEquals(Interceptions.getConstructorName("MyInterceptor", "POJO"), Interceptions.get(0));
       assertEquals(Interceptions.getConstructorName("MyAspect", "POJO"), Interceptions.get(1));
       assertEquals(Interceptions.getConstructorName("MyInterceptor", "POJO"), Interceptions.get(2));
@@ -179,7 +184,7 @@ public class DynamicTester extends AOPTestWithSetup
       
       Interceptions.clear();
       pojo.someMethod(123);
-      assertEquals(3, Interceptions.size());
+      assertEquals(Interceptions.getToString(), 3, Interceptions.size());
       assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
       assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(1));
       assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(2));
@@ -314,7 +319,7 @@ public class DynamicTester extends AOPTestWithSetup
       
       Interceptions.clear();
       pojo2.someMethod(123);
-      assertEquals(1, Interceptions.size());
+      assertEquals(Interceptions.getToString(), 1, Interceptions.size());
       assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
 
       getInstanceDomain(pojo2).removeBinding(name);
@@ -383,16 +388,21 @@ public class DynamicTester extends AOPTestWithSetup
       Interceptions.clear();
       pojo1.someMethod(123);
       assertEquals(3, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
-      assertEquals(Interceptions.getMethodName("YourInterceptor", "POJO", "someMethod"), Interceptions.get(1));
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(2));
+      Interceptions.printInterceptions();
+      //Since we are adding at the top-level that will get added to the end of the chain, i.e. the order is no longer guaranteed
+      checkInterceptions(createExpectedList(
+            Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), 
+            Interceptions.getMethodName("YourInterceptor", "POJO", "someMethod"), 
+            Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod")));
 
       Interceptions.clear();
       pojo2.someMethod(123);
       assertEquals(3, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
-      assertEquals(Interceptions.getMethodName("YourInterceptor", "POJO", "someMethod"), Interceptions.get(1));
-      assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(2));
+      //Since we are adding at the top-level that will get added to the end of the chain, i.e. the order is no longer guaranteed
+      checkInterceptions(createExpectedList(
+            Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), 
+            Interceptions.getMethodName("YourInterceptor", "POJO", "someMethod"),
+            Interceptions.getMethodName("MyAspect", "POJO", "someMethod")));
 
       
       Interceptions.clear();
@@ -564,21 +574,25 @@ public class DynamicTester extends AOPTestWithSetup
       pojo1.i = 66;
       assertEquals(66, pojo1.i);
       assertEquals(5, Interceptions.size());
-      assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(0));
-      assertEquals(Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), Interceptions.get(1));
-      assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(2));
-      assertEquals(Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), Interceptions.get(3));
-      assertEquals(Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), Interceptions.get(4));
+      //Since we are adding at the top-level that will get added to the end of the chain, i.e. the order is no longer guaranteed
+      checkInterceptions(createExpectedList(
+            Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), 
+            Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), 
+            Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), 
+            Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"),
+            Interceptions.getFieldReadName("YourInterceptor", "POJO", "i")));
 
       Interceptions.clear();
       pojo2.i = 99;
       assertEquals(99, pojo2.i);
       assertEquals(5, Interceptions.size());
-      assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(0));
-      assertEquals(Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), Interceptions.get(1));
-      assertEquals(Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), Interceptions.get(2));
-      assertEquals(Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), Interceptions.get(3));
-      assertEquals(Interceptions.getFieldReadName("MyAspect", "POJO", "i"), Interceptions.get(4));
+      //Since we are adding at the top-level that will get added to the end of the chain, i.e. the order is no longer guaranteed
+      checkInterceptions(createExpectedList(
+            Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"),
+            Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), 
+            Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), 
+            Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), 
+            Interceptions.getFieldReadName("MyAspect", "POJO", "i")));
 
       
       Interceptions.clear();
@@ -1149,5 +1163,36 @@ public class DynamicTester extends AOPTestWithSetup
    public static void main(String[] args)
    {
       TestRunner.run(suite());
+   }
+   
+   private List<String> createExpectedList(String...elements)
+   {
+      return Arrays.asList(elements);
+   }
+   
+   private void checkInterceptions(List<String> expected)
+   {
+      List<String> buf = new ArrayList<String>();
+      buf.addAll(expected);
+      
+      assertEquals(buf.size(), Interceptions.size());
+      for (int i = 0 ; i < Interceptions.size() ; i++)
+      {
+         String name = Interceptions.get(i);
+         boolean found = false;
+         for (Iterator<String> it = buf.iterator() ; it.hasNext() ; i++)
+         {
+            String expectedName = it.next();
+            if (expectedName.equals(name))
+            {
+               it.remove();
+               found = true;
+            }
+         }
+         if (!found)
+         {
+            fail("Unexpected interception " + name);
+         }
+      }
    }
 }

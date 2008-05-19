@@ -32,6 +32,7 @@ import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -742,6 +743,12 @@ public abstract class Advisor
       rebuildInterceptors();
       doesHaveAspects = adviceBindings.size() > 0;
    }
+   
+   public synchronized void newBindingAdded(AdviceBinding binding)
+   {
+      rebuildInterceptorsForAddedBinding(binding);
+      doesHaveAspects = adviceBindings.size() > 0;
+   }
 
    public ArrayList<InterfaceIntroduction> getInterfaceIntroductions()
    {
@@ -761,6 +768,29 @@ public abstract class Advisor
 
    protected abstract void rebuildInterceptors();
 
+   protected abstract void rebuildInterceptorsForAddedBinding(AdviceBinding binding);
+
+   /**
+    * If the info was updated in response to a rebuildInterceptorsForAddedBinding call it will have the
+    * original interceptors in the interceptors array, and the appended interceptors in the interceptorChain
+    * List. We need to merge the two so that all the interceptors appear in the interceptorChain List before finalizing
+    * the chain  
+    */
+   protected final void adjustInfoForAddedBinding(JoinPointInfo info)
+   {
+      Interceptor[] icptrs = info.getInterceptors();
+      if (icptrs != null && icptrs.length > 0)
+      {
+         List<Interceptor> chain = info.getInterceptorChain();
+         List<Interceptor> buf = new ArrayList<Interceptor>(chain.size() + icptrs.length);
+         buf.addAll(Arrays.asList(icptrs));
+         buf.addAll(chain);
+
+         chain.clear();
+         chain.addAll(buf);
+      }
+   }
+   
    ////////////////////////////////
    // Metadata.  Metadata will be used for things like Transaction attributes (Required, RequiresNew, etc...)
    //
@@ -988,6 +1018,17 @@ public abstract class Advisor
       }
    }
    
+   protected void resetChainKeepInterceptors(MethodInterceptors methodInterceptors)
+   {
+      Object[] methodMatchInfos = methodInterceptors.infos.getValues();
+      for (int i = 0; i < methodMatchInfos.length; i++)
+      {
+         MethodMatchInfo methodMatchInfo = (MethodMatchInfo) methodMatchInfos[i];
+         JoinPointInfo info = methodMatchInfo.getInfo();
+         info.clear();
+      }
+   }
+   
    protected void finalizeMethodChain()
    {
       boolean maintain = AspectManager.maintainAdvisorMethodInterceptors;
@@ -999,6 +1040,7 @@ public abstract class Advisor
          MethodMatchInfo matchInfo = methodInfos.getMatchInfo(keys[i]);
          matchInfo.populateBindings();
          MethodInfo info = matchInfo.getInfo();
+         adjustInfoForAddedBinding(info);
          ArrayList<Interceptor> list = info.getInterceptorChain();
          Interceptor[] interceptors = null;
          if (list.size() > 0)
@@ -1162,14 +1204,19 @@ public abstract class Advisor
 
    protected void finalizeChain(JoinPointInfo[] infos)
    {
+      if (infos == null)
+      {
+         return;
+      }
       for (int i = 0; i < infos.length; i++)
       {
          JoinPointInfo info = infos[i];
+         adjustInfoForAddedBinding(info);
          ArrayList<Interceptor> list = info.getInterceptorChain();
          Interceptor[] interceptors = null;
          if (list.size() > 0)
          {
-          interceptors = applyPrecedence(list.toArray(new Interceptor[list.size()]));
+            interceptors = applyPrecedence(list.toArray(new Interceptor[list.size()]));
          }
          info.setInterceptors(interceptors);
       }
@@ -1177,6 +1224,10 @@ public abstract class Advisor
    
    protected void lockWriteChain(JoinPointInfo[] infos)
    {
+      if (infos == null)
+      {
+         return;
+      }
       for (int i = 0; i < infos.length; i++)
       {
          infos[i].getInterceptorChainReadWriteLock().writeLock().lock();
@@ -1185,6 +1236,10 @@ public abstract class Advisor
    
    protected void unlockWriteChain(JoinPointInfo[] infos)
    {
+      if (infos == null)
+      {
+         return;
+      }
       for (int i = 0; i < infos.length; i++)
       {
          infos[i].getInterceptorChainReadWriteLock().writeLock().unlock();
@@ -1193,13 +1248,27 @@ public abstract class Advisor
    
    protected void resetChain(JoinPointInfo[] infos)
    {
+      if (infos == null)
+      {
+         return;
+      }
       for (int i = 0; i < infos.length; i++)
       {
          infos[i].clear();
       }
    }
    
-   
+   protected void resetChainKeepInterceptors(JoinPointInfo[] infos)
+   {
+      if (infos == null)
+      {
+         return;
+      }
+      for (int i = 0; i < infos.length; i++)
+      {
+         infos[i].resetChainKeepInterceptors();
+      }
+   }  
 
 //   protected void finalizeConstructionChain(ArrayList newConstructionInfos)
 //   {
@@ -1253,10 +1322,18 @@ public abstract class Advisor
    /** @deprecated We should just be using xxxxInfos */
    protected void populateInterceptorsFromInfos()
    {
-      constructorInterceptors = new Interceptor[constructorInfos.length][];
-      for (int i = 0 ; i < constructorInfos.length ; i++)
+      if (constructorInfos == null)
       {
-         constructorInterceptors[i] = constructorInfos[i].getInterceptors();
+         constructorInterceptors = new Interceptor[0][];
+         
+      }
+      else
+      {
+         constructorInterceptors = new Interceptor[constructorInfos.length][];
+         for (int i = 0 ; i < constructorInfos.length ; i++)
+         {
+            constructorInterceptors[i] = constructorInfos[i].getInterceptors();
+         }
       }
    }
 
