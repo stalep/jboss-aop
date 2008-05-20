@@ -72,8 +72,12 @@ public class PointcutStats implements PointcutExpressionParserVisitor
    protected ASTStart start;
    protected AspectManager manager;
    protected boolean execution = false;
+   protected boolean methodExecution = false;
+   protected boolean constructorExecution = false;
    protected boolean construction = false;
    protected boolean call = false;
+   protected boolean methodCall = false;
+   protected boolean constructorCall = false;
    protected boolean within = false;
    protected boolean get = false;
    protected boolean set = false;
@@ -91,6 +95,16 @@ public class PointcutStats implements PointcutExpressionParserVisitor
       return execution;
    }
 
+   public boolean isMethodExecution()
+   {
+      return methodExecution;
+   }
+
+   public boolean isConstructorExecution()
+   {
+      return constructorExecution;
+   }
+
    public boolean isConstruction()
    {
       return construction;
@@ -99,6 +113,16 @@ public class PointcutStats implements PointcutExpressionParserVisitor
    public boolean isCall()
    {
       return call;
+   }
+   
+   public boolean isMethodCall()
+   {
+      return methodCall;
+   }
+
+   public boolean isConstructorCall()
+   {
+      return constructorCall;
    }
 
    public boolean isWithin()
@@ -227,6 +251,8 @@ public class PointcutStats implements PointcutExpressionParserVisitor
       execution = true;
       get = true;
       set = true;
+      methodExecution = true;
+      constructorExecution = true;
       return Boolean.FALSE;
    }
 
@@ -239,6 +265,9 @@ public class PointcutStats implements PointcutExpressionParserVisitor
    public Object visit(ASTCall node, Object data)
    {
       call = true;
+      //For ASTCall the expression lives in behaviour rather than in chilren
+      //node.childrenAccept(this, node);
+      node.getBehavior().jjtAccept(this, node);
       return Boolean.FALSE;
    }
 
@@ -257,12 +286,46 @@ public class PointcutStats implements PointcutExpressionParserVisitor
    public Object visit(ASTExecution node, Object data)
    {
       execution = true;
+      node.childrenAccept(this, node);
       return Boolean.FALSE;
    }
 
    public Object visit(ASTConstruction node, Object data)
    {
       construction = true;
+      return Boolean.FALSE;
+   }
+
+   public Object visit(ASTConstructor node, Object data)
+   {
+      Object parent = data; //Passed in if parent node was ASTCall or ASTExecution
+      if (parent instanceof ASTExecution)
+      {
+         execution = constructorExecution = true;
+      }
+      else if (parent instanceof ASTCall)
+      {
+         call = constructorCall = true;
+      }
+      return Boolean.FALSE;
+   }
+
+   public Object visit(ASTMethod node, Object data)
+   {
+      Object parent = data; //Passed in if parent node was ASTCall or ASTExecution
+      if (parent instanceof ASTExecution)
+      {
+         execution = methodExecution = true;
+      }
+      else if (parent instanceof ASTCall)
+      {
+         call = methodCall = true;
+      }
+      return Boolean.FALSE;
+   }
+
+   public Object visit(ASTParameter node, Object data)
+   {
       return Boolean.FALSE;
    }
 
@@ -327,22 +390,7 @@ public class PointcutStats implements PointcutExpressionParserVisitor
       return Boolean.FALSE;
    }
 
-   public Object visit(ASTMethod node, Object data)
-   {
-      return Boolean.FALSE;
-   }
-
    public Object visit(ASTAttribute node, Object data)
-   {
-      return Boolean.FALSE;
-   }
-
-   public Object visit(ASTConstructor node, Object data)
-   {
-      return Boolean.FALSE;
-   }
-
-   public Object visit(ASTParameter node, Object data)
    {
       return Boolean.FALSE;
    }

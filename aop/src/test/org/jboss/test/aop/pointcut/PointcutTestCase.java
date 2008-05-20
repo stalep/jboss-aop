@@ -26,6 +26,9 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.jboss.aop.AspectManager;
+import org.jboss.aop.pointcut.PointcutExpression;
+import org.jboss.aop.pointcut.PointcutStats;
 import org.jboss.aop.pointcut.ast.ASTStart;
 import org.jboss.aop.pointcut.ast.PointcutExpressionParser;
 import org.jboss.aop.pointcut.ast.PointcutExpressionParserVisitor;
@@ -374,6 +377,67 @@ public class PointcutTestCase extends AOPTestWithSetup
 
       checkFailures(e.failures);
    }
+   
+   public void testPointcutClassification() throws Exception
+   {
+      createAndCheckPointcut("execution(void org.acme.Class->method())", true, false, false, false, false, false, false, false);
+      createAndCheckPointcut("execution(org.acme.Class->new())", false, true, false, false, false, false, false, false);
+      createAndCheckPointcut("field(int org.acme.Class->fld)", false, false, true, true, false, false, false, false);
+      createAndCheckPointcut("get(int org.acme.Class->fld)", false, false, true, false, false, false, false, false);
+      createAndCheckPointcut("set(int org.acme.Class->fld)", false, false, false, true, false, false, false, false);
+      createAndCheckPointcut("construction(org.acme.Class->new())", false, false, false, false, true, false, false, false);
+      createAndCheckPointcut("call(int org.acme.Class->method())", false, false, false, false, false, true, false, false);
+      createAndCheckPointcut("call(org.acme.Class->new())", false, false, false, false, false, false, true, false);
+      createAndCheckPointcut("call(org.acme.Class->new())", false, false, false, false, false, false, true, false);
+      createAndCheckPointcut("all(org.acme.Class)", true, true, true, true, false, false, false, false);
+      createAndCheckPointcut("call(org.acme.Class->new()) AND withincode(* org.acme.Class->method())", false, false, false, false, false, false, true, true);
+      createAndCheckPointcut("execution(org.acme.Class->new()) OR field(* org.acme.Class->fld)", false, true, true, true, false, false, false, false);
+   }
+   
+   private void createAndCheckPointcut(
+         String expression, 
+         boolean methodExecution, 
+         boolean constructorExecution, 
+         boolean get,
+         boolean set,
+         boolean construction,
+         boolean methodCall,
+         boolean constructorCall,
+         boolean withincode) throws Exception
+   {
+      AspectManager manager = AspectManager.instance();
+      PointcutExpression pointcut = new PointcutExpression("TEST", expression);
+      manager.addPointcut(pointcut);
+      PointcutStats stats = pointcut.getStats(); 
+      assertEquals(methodExecution, stats.isMethodExecution());
+      assertEquals(constructorExecution, stats.isConstructorExecution());
+      assertEquals(get, stats.isGet());
+      assertEquals(set, stats.isSet());
+      assertEquals(construction, stats.isConstruction());
+      assertEquals(methodCall, stats.isMethodCall());
+      assertEquals(constructorCall, stats.isConstructorCall());
+      assertEquals(withincode, stats.isWithincode());
+      
+      if (methodExecution || constructorExecution)
+      {
+         assertTrue(stats.isExecution());
+      }
+      else
+      {
+         assertFalse(stats.isExecution());
+      }
+      
+      if (methodCall || constructorCall)
+      {
+         assertTrue(stats.isCall());
+      }
+      else
+      {
+         assertFalse(stats.isCall());
+      }
+      manager.removePointcut("TEST");
+   }
+   
    
    private void checkFailures(ArrayList failures)
    {
