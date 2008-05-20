@@ -392,6 +392,25 @@ public class PointcutTestCase extends AOPTestWithSetup
       createAndCheckPointcut("all(org.acme.Class)", true, true, true, true, false, false, false, false);
       createAndCheckPointcut("call(org.acme.Class->new()) AND withincode(* org.acme.Class->method())", false, false, false, false, false, false, true, true);
       createAndCheckPointcut("execution(org.acme.Class->new()) OR field(* org.acme.Class->fld)", false, true, true, true, false, false, false, false);
+      
+      //Check that named pointcuts work
+      AspectManager manager = AspectManager.instance();
+      PointcutExpression pointcut1 = new PointcutExpression("METHOD", "execution(void org.acme.Class->method())");
+      manager.addPointcut(pointcut1);
+      PointcutExpression pointcut2 = new PointcutExpression("CONSTRUCTOR", "execution(org.acme.Class->new())");
+      manager.addPointcut(pointcut2);
+      PointcutExpression pointcut3 = new PointcutExpression("COMPOSITION", "METHOD OR CONSTRUCTOR");
+      manager.addPointcut(pointcut3);
+      PointcutStats stats = pointcut3.getStats();
+      assertTrue(stats.isMethodExecution());
+      assertTrue(stats.isConstructorExecution());
+      assertFalse(stats.isGet());
+      assertFalse(stats.isSet());
+      assertFalse(stats.isMethodCall());
+      assertFalse(stats.isConstructorCall());
+      assertFalse(stats.isConstruction());
+      assertFalse(stats.isWithincode());
+
    }
    
    private void createAndCheckPointcut(

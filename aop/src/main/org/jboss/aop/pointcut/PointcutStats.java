@@ -227,7 +227,11 @@ public class PointcutStats implements PointcutExpressionParserVisitor
          if (stats != null)
          {
             execution |= stats.isExecution();
+            methodExecution |= stats.isMethodExecution();
+            constructorExecution |= stats.isConstructorExecution();
             call |= stats.isCall();
+            methodCall |= stats.isMethodCall();
+            constructorCall |= stats.isConstructorCall();
             within |= stats.isWithin();
             get |= stats.isGet();
             set |= stats.isSet();
