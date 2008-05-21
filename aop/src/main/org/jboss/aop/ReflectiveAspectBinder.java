@@ -49,6 +49,7 @@ import org.jboss.aop.pointcut.AnnotationMatcher;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
 import org.jboss.aop.proxy.container.InstanceProxyContainer;
 import org.jboss.aop.util.Advisable;
+import org.jboss.aop.util.BindingClassifier;
 import org.jboss.util.MethodHashing;
 
 /**
@@ -219,6 +220,10 @@ public class ReflectiveAspectBinder
       ArrayList<InterceptorFactory> advices = methodAdvices.get(mi);
       for (AdviceBinding binding : bindings.values())
       {
+         if (!BindingClassifier.isMethodExecution(binding))
+         {
+            continue;
+         }
          PointcutMethodMatch pmatch= binding.getPointcut().matchesExecution(advisor, mi);
          
          if (pmatch != null && pmatch.isMatch())
@@ -242,6 +247,10 @@ public class ReflectiveAspectBinder
       ArrayList<InterceptorFactory> advices = constructorAdvices.get(mi);
       for (AdviceBinding binding : bindings.values())
       {
+         if (!BindingClassifier.isConstructorExecution(binding))
+         {
+            continue;
+         }
          if (binding.getPointcut().matchesExecution(advisor, mi))
          {
             if (advices == null)
@@ -263,6 +272,10 @@ public class ReflectiveAspectBinder
       ArrayList<InterceptorFactory> advices = fieldReadAdvices.get(mi);
       for (AdviceBinding binding : bindings.values())
       {
+         if (!BindingClassifier.isGet(binding))
+         {
+            continue;
+         }
          if (binding.getPointcut().matchesGet(advisor, mi))
          {
             if (advices == null)
@@ -284,6 +297,10 @@ public class ReflectiveAspectBinder
       ArrayList<InterceptorFactory> advices = fieldWriteAdvices.get(mi);
       for (AdviceBinding binding : bindings.values())
       {
+         if (!BindingClassifier.isSet(binding))
+         {
+            continue;
+         }
          if (binding.getPointcut().matchesSet(advisor, mi))
          {
             if (advices == null)
