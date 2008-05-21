@@ -1438,7 +1438,8 @@ public class AspectManager
       }
       synchronized (advisors)
       {
-         updateAdvisorsForAddedBinding(binding);
+         Set<Advisor> handledAdvisors = new HashSet<Advisor>();
+         updateAdvisorsForAddedBinding(binding, handledAdvisors);
 
          if (affectedAdvisors != null && affectedAdvisors.size() > 0)
          {
@@ -1453,7 +1454,7 @@ public class AspectManager
    }
 
 
-   public void updateAdvisorsForAddedBinding(AdviceBinding binding)
+   protected void updateAdvisorsForAddedBinding(AdviceBinding binding, Set<Advisor> handledAdvisors)
    {
       synchronized (advisors)
       {
@@ -1465,7 +1466,9 @@ public class AspectManager
             {
                Advisor advisor = getAdvisorFromAdvisorsKeySetIterator(it);
                if (advisor == null) continue;
-
+               if (handledAdvisors.contains(advisor)) continue;
+               handledAdvisors.add(advisor);
+               
                if (binding.getPointcut().softMatch(advisor))
                {
                   if (AspectManager.verbose && logger.isDebugEnabled())
@@ -1493,7 +1496,7 @@ public class AspectManager
                //When interceptors are installed as beans in the microcontainer, creating the interceptor instances
                for (Domain domain : domains)
                {
-                  domain.updateAdvisorsForAddedBinding(binding);
+                  domain.updateAdvisorsForAddedBinding(binding, handledAdvisors);
                }
             }
             newSubscribers = copySubDomainsFromQueue(false);
