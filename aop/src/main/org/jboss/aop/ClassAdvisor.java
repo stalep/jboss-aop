@@ -62,6 +62,7 @@ import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.aop.metadata.ClassMetaDataBinding;
 import org.jboss.aop.metadata.ClassMetaDataLoader;
 import org.jboss.aop.util.Advisable;
+import org.jboss.aop.util.BindingClassifier;
 import org.jboss.aop.util.ConstructorComparator;
 import org.jboss.aop.util.FieldComparator;
 import org.jboss.aop.util.MethodHashing;
@@ -693,11 +694,26 @@ public class ClassAdvisor extends Advisor
    protected void resolvePointcuts(AdviceBinding binding)
    {
       if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName() + " " + binding.getPointcut().getExpr());
-      resolveMethodPointcut(binding);
-      resolveFieldPointcut(fieldReadInfos, binding, false);
-      resolveFieldPointcut(fieldWriteInfos, binding, true);
-      resolveConstructorPointcut(binding);
-      resolveConstructionPointcut(binding);
+      if (BindingClassifier.isExecution(binding))
+      {
+         resolveMethodPointcut(binding);
+      }
+      if (BindingClassifier.isGet(binding))
+      {
+         resolveFieldPointcut(fieldReadInfos, binding, false);
+      }
+      if (BindingClassifier.isSet(binding))
+      {
+         resolveFieldPointcut(fieldWriteInfos, binding, true);
+      }
+      if (BindingClassifier.isConstructorExecution(binding))
+      {
+         resolveConstructorPointcut(binding);
+      }
+      if (BindingClassifier.isConstruction(binding))
+      {
+         resolveConstructionPointcut(binding);
+      }
    }
 
    private MethodByConInfo initializeConstructorCallerInterceptorsMap(Class<?> callingClass, int callingIndex, String calledClass, long calledMethodHash, Method calledMethod) throws Exception
@@ -827,7 +843,7 @@ public class ClassAdvisor extends Advisor
          ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(manager.getBindings().size());
          for(AdviceBinding ab : manager.getBindings().values())
          {
-            if (ab.getPointcut().matchesCall(this, callingConstructor, called, calledMethod))
+            if (BindingClassifier.isMethodCall(ab) && ab.getPointcut().matchesCall(this, callingConstructor, called, calledMethod))
             {
                bindings.add(ab);
             }
@@ -856,7 +872,7 @@ public class ClassAdvisor extends Advisor
          ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(manager.getBindings().size());
          for(AdviceBinding ab : manager.getBindings().values())   
          {
-            if (ab.getPointcut().matchesCall(this, callingConstructor, called, calledCon))
+            if (BindingClassifier.isConstructorCall(ab) && ab.getPointcut().matchesCall(this, callingConstructor, called, calledCon))
             {
                bindings.add(ab);
             }
@@ -900,7 +916,10 @@ public class ClassAdvisor extends Advisor
       info.clear();
       for (AdviceBinding binding : bindings)
       {
-         pointcutResolved(info, binding, new ConstructorCalledByConstructorJoinpoint(info.getCallingConstructor(), info.getConstructor()));
+         if (BindingClassifier.isConstructorCall(binding))
+         {
+            pointcutResolved(info, binding, new ConstructorCalledByConstructorJoinpoint(info.getCallingConstructor(), info.getConstructor()));
+         }
       }
       finalizeConCalledByConInterceptorChain(info);
    }
@@ -923,7 +942,10 @@ public class ClassAdvisor extends Advisor
       info.clear();
       for (AdviceBinding binding : bindings)
       {
-         pointcutResolved(info, binding, new MethodCalledByConstructorJoinpoint(info.getCallingConstructor(), info.getMethod()));
+         if (BindingClassifier.isCall(binding))
+         {
+            pointcutResolved(info, binding, new MethodCalledByConstructorJoinpoint(info.getCallingConstructor(), info.getMethod()));
+         }
       }
       finalizeMethodCalledByConInterceptorChain(info);
    }
@@ -1435,7 +1457,7 @@ public class ClassAdvisor extends Advisor
          {
             for (AdviceBinding binding : manager.getBindings().values())
             {
-               if (binding.getPointcut().matchesCall(this, callingConstructor, called, calledMethod))
+               if (BindingClassifier.isConstructorCall(binding) && binding.getPointcut().matchesCall(this, callingConstructor, called, calledMethod))
                {
                   addConstructorCallerPointcut(callingIndex, calledClass, calledMethodHash, binding);
                   matched = true;
@@ -1500,7 +1522,7 @@ public class ClassAdvisor extends Advisor
          {
             for (AdviceBinding binding : manager.getBindings().values())
             {
-               if (binding.getPointcut().matchesCall(this, callingConstructor, called, calledCon))
+               if (BindingClassifier.isConstructorCall(binding) && binding.getPointcut().matchesCall(this, callingConstructor, called, calledCon))
                {
                   addConstructorCalledByConPointcut(callingIndex, calledClass, calledConHash, binding);
                   matched = true;
@@ -2274,7 +2296,7 @@ public class ClassAdvisor extends Advisor
             boolean matched = false;
             for (AdviceBinding binding : manager.getBindings().values())
             {
-               if (binding.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledMethod))
+               if (BindingClassifier.isMethodCall(binding) && binding.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledMethod))
                {
                   addMethodCalledByMethodPointcut(callingMethodHash, calledClass, calledMethodHash, binding);
                   matched = true;
@@ -2393,7 +2415,7 @@ public class ClassAdvisor extends Advisor
             ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(manager.getBindings().size());
             for(AdviceBinding ab : manager.getBindings().values())
             {
-               if (ab.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledMethod))
+               if (BindingClassifier.isMethodCall(ab) && ab.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledMethod))
                {
                   bindings.add(ab);
                }
@@ -2414,7 +2436,10 @@ public class ClassAdvisor extends Advisor
          info.clear();
          for (AdviceBinding binding : bindings)
          {
-            pointcutResolved(info, binding, new MethodCalledByMethodJoinpoint(info.getCallingMethod(), info.getMethod()));
+            if (BindingClassifier.isCall(binding))
+            {
+               pointcutResolved(info, binding, new MethodCalledByMethodJoinpoint(info.getCallingMethod(), info.getMethod()));
+            }
          }
          finalizeMethodCalledByMethodInterceptorChain(info);
       }
@@ -2462,7 +2487,7 @@ public class ClassAdvisor extends Advisor
             ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(manager.getBindings().size());
             for(AdviceBinding ab : manager.getBindings().values())
             {
-               if (ab.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledCon))
+               if (BindingClassifier.isConstructorCall(ab) && ab.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledCon))
                {
                   bindings.add(ab);
                }
@@ -2549,7 +2574,8 @@ public class ClassAdvisor extends Advisor
             {
                for (AdviceBinding binding : manager.getBindings().values())
                {
-                  if (binding.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledCon))
+                  if (BindingClassifier.isConstructorCall(binding) &&
+                        binding.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledCon))
                   {
                      addConstructorCalledByMethodPointcut(callingMethodHash, calledClass, calledConHash, binding);
                      matched = true;
@@ -2682,7 +2708,10 @@ public class ClassAdvisor extends Advisor
          info.clear();
          for (AdviceBinding binding : bindings)
          {
-            pointcutResolved(info, binding, new ConstructorCalledByMethodJoinpoint(info.getCallingMethod(), info.getConstructor()));
+            if (BindingClassifier.isConstructorCall(binding))
+            {
+               pointcutResolved(info, binding, new ConstructorCalledByMethodJoinpoint(info.getCallingMethod(), info.getConstructor()));
+            }
          }
          finalizeConCalledByMethodInterceptorChain(info);
       }

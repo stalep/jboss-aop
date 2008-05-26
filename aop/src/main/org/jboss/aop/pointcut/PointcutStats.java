@@ -206,7 +206,11 @@ public class PointcutStats implements PointcutExpressionParserVisitor
    {
       // can't be sure so set all
       execution = true;
+      methodExecution = true;
+      constructorExecution = true;
       call = true;
+      methodCall = true;
+      constructorCall = true;
       within = true;
       get = true;
       set = true;
