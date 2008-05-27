@@ -279,10 +279,8 @@ public class JmxIntrospectingMixin implements DynamicMBean
          }
 
          HashMap<String, MBeanAttributeInfo> attributes = new HashMap<String, MBeanAttributeInfo>();
-         Iterator<String> it = gets.keySet().iterator();
-         while (it.hasNext())
+         for (String attribute : gets.keySet())
          {
-            String attribute = it.next();
             Method m = gets.get(attribute);
             //System.out.println("*** creating get: " + attribute);
             boolean isWritable = sets.containsKey(attribute);
@@ -290,10 +288,8 @@ public class JmxIntrospectingMixin implements DynamicMBean
             MBeanAttributeInfo info = new MBeanAttributeInfo(attribute, m.getReturnType().getName(), target.getClass().getName() + "." + attribute, true, isWritable, isIs);
             attributes.put(attribute, info);
          }
-         it = sets.keySet().iterator();
-         while (it.hasNext())
+         for (String attribute : sets.keySet())
          {
-            String attribute = it.next();
             if (gets.containsKey(attribute)) continue;
             //System.out.println("*** creating set: " + attribute);
             Method m = sets.get(attribute);
@@ -302,11 +298,9 @@ public class JmxIntrospectingMixin implements DynamicMBean
          }
 
          MBeanOperationInfo[] operations = new MBeanOperationInfo[ops.size()];
-         Iterator<Method> itops = ops.values().iterator();
          int i = 0;
-         while (it.hasNext())
+         for (Method m : ops.values())
          {
-            Method m = itops.next();
             operations[i++] = new MBeanOperationInfo(m.toString(), m);
          }
          MBeanAttributeInfo[] attrs = attributes.values().toArray(new MBeanAttributeInfo[attributes.size()]);
