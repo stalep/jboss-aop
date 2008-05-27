@@ -21,6 +21,9 @@
 */ 
 package org.jboss.aop.pointcut;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
@@ -102,5 +105,113 @@ class SecurityActions
          return Thread.currentThread().getContextClassLoader();
       else
          return AccessController.doPrivileged(GetContextClassLoaderAction.INSTANCE);
+   }
+   
+   interface GetDeclaredConstructorsAction 
+   {
+      Constructor<?>[] getDeclaredConstructors(Class<?> clazz);
+      
+      GetDeclaredConstructorsAction NON_PRIVILEGED = new GetDeclaredConstructorsAction() {
+
+         public Constructor<?>[] getDeclaredConstructors(Class<?> clazz)
+         {
+            return clazz.getDeclaredConstructors();
+         }};
+
+         GetDeclaredConstructorsAction PRIVILEGED = new GetDeclaredConstructorsAction() {
+
+            public Constructor<?>[] getDeclaredConstructors(final Class<?> clazz)
+            {
+               return AccessController.doPrivileged(new PrivilegedAction<Constructor<?>[]>() {
+
+                  public Constructor<?>[] run()
+                  {
+                     return clazz.getDeclaredConstructors();
+                  }});
+            }};
+   }
+   
+   static Constructor<?>[] getDeclaredConstructors(Class<?> clazz)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         return GetDeclaredConstructorsAction.NON_PRIVILEGED.getDeclaredConstructors(clazz);
+      }
+      else
+      {
+         return GetDeclaredConstructorsAction.PRIVILEGED.getDeclaredConstructors(clazz);
+      }
+   }
+   
+   interface GetDeclaredMethodsAction 
+   {
+      Method[] getDeclaredMethods(Class<?> clazz);
+      
+      GetDeclaredMethodsAction NON_PRIVILEGED = new GetDeclaredMethodsAction() {
+
+         public Method[] getDeclaredMethods(Class<?> clazz)
+         {
+            return clazz.getDeclaredMethods();
+         }};
+
+         GetDeclaredMethodsAction PRIVILEGED = new GetDeclaredMethodsAction() {
+
+            public Method[] getDeclaredMethods(final Class<?> clazz)
+            {
+               return AccessController.doPrivileged(new PrivilegedAction<Method[]>() {
+
+                  public Method[] run()
+                  {
+                     return clazz.getDeclaredMethods();
+                  }});
+            }};
+   }
+   
+   static Method[] getDeclaredMethods(Class<?> clazz)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         return GetDeclaredMethodsAction.NON_PRIVILEGED.getDeclaredMethods(clazz);
+      }
+      else
+      {
+         return GetDeclaredMethodsAction.PRIVILEGED.getDeclaredMethods(clazz);
+      }
+   }
+   
+   interface GetDeclaredFieldsAction 
+   {
+      Field[] getDeclaredFields(Class<?> clazz);
+      
+      GetDeclaredFieldsAction NON_PRIVILEGED = new GetDeclaredFieldsAction() {
+
+         public Field[] getDeclaredFields(Class<?> clazz)
+         {
+            return clazz.getDeclaredFields();
+         }};
+
+         GetDeclaredFieldsAction PRIVILEGED = new GetDeclaredFieldsAction() {
+
+            public Field[] getDeclaredFields(final Class<?> clazz)
+            {
+               return AccessController.doPrivileged(new PrivilegedAction<Field[]>() {
+
+                  public Field[] run()
+                  {
+                     return clazz.getDeclaredFields();
+                  }});
+            }};
+   }
+   
+   static Field[] getDeclaredFields(Class<?> clazz)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         return GetDeclaredFieldsAction.NON_PRIVILEGED.getDeclaredFields(clazz);
+      }
+      else
+      {
+         return GetDeclaredFieldsAction.PRIVILEGED.getDeclaredFields(clazz);
+      }
    }
 }

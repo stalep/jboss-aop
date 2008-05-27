@@ -495,7 +495,7 @@ public class Util
    {
       Method[] methods = advisor.getAllMethods();
       if (methods == null)
-         methods = target.getDeclaredMethods();
+         methods = SecurityActions.getDeclaredMethods(target);
       for (int i = 0; i < methods.length; i++)
       {
          MethodMatcher matcher = new MethodMatcher(advisor, methods[i], null);
@@ -517,7 +517,7 @@ public class Util
    
    public static boolean has(Class<?> target, ASTField field, Advisor advisor, boolean checkSuper)
    {
-      Field[] fields = target.getDeclaredFields();
+      Field[] fields = SecurityActions.getDeclaredFields(target);
       for (int i = 0; i < fields.length; i++)
       {
          FieldGetMatcher matcher = new FieldGetMatcher(advisor, fields[i], null);
@@ -534,7 +534,7 @@ public class Util
 
    public static boolean has(Class<?> target, ASTConstructor con, Advisor advisor)
    {
-      Constructor<?>[] cons = target.getDeclaredConstructors();
+      Constructor<?>[] cons = SecurityActions.getDeclaredConstructors(target);
       for (int i = 0; i < cons.length; i++)
       {
          ConstructorMatcher matcher = new ConstructorMatcher(advisor, cons[i], null);
