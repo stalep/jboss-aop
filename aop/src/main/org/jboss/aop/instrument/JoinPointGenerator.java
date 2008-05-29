@@ -953,7 +953,7 @@ public abstract class JoinPointGenerator
       body.append("{");
       body.append("   try{");
       body.append("      switch(++" + CURRENT_ADVICE + "){");
-      AroundAdviceCallStrategy.getInstance().addInvokeCode(this, aroundSetups, body, info);
+      new AroundAdviceCallStrategy().addInvokeCode(this, aroundSetups, body, info);
       body.append("      default:");
       body.append("         " + returnStr + "this.dispatch();");
       body.append("      }");
@@ -1888,21 +1888,6 @@ public abstract class JoinPointGenerator
    
    private static class AroundAdviceCallStrategy extends AdviceCallStrategy
    {
-      private static ThreadLocal<AroundAdviceCallStrategy> INSTANCE =
-         new ThreadLocal<AroundAdviceCallStrategy>()
-         {
-            protected synchronized AroundAdviceCallStrategy initialValue() {
-               return new AroundAdviceCallStrategy();
-            }
-         };
-   
-      public static final AroundAdviceCallStrategy getInstance()
-      {
-         return INSTANCE.get();
-      }
-      
-      private AroundAdviceCallStrategy() {}
-      
       private int addedAdvice = 0;
       private boolean consistencyEnforced = false;
       
