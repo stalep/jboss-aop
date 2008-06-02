@@ -713,16 +713,31 @@ public class AspectManager
       synchronized (getRegisteredCLs())
       {
          if (!advisors.containsKey(advisor.getClazz())) return false;
-         ScopedClassPool pool = (ScopedClassPool) getRegisteredClassPool(advisor.getClazz().getClassLoader());
-         if (pool == null) return false;
-         if (pool.isUnloadedClassLoader())
+         if (classLoaderValidator != null)
          {
-            unregisterClassLoader(advisor.getClazz().getClassLoader());
-            return false;
+            if (classLoaderValidator.isValidClassLoader(advisor.getClazz().getClassLoader()))
+            {
+               return true;
+            }
+            else
+            {
+               unregisterClassLoader(advisor.getClazz().getClassLoader());
+               return false;
+            }
          }
          else
          {
-            return true;
+            ScopedClassPool pool = (ScopedClassPool) getRegisteredClassPool(advisor.getClazz().getClassLoader());
+            if (pool == null) return false;
+            if (pool.isUnloadedClassLoader())
+            {
+               unregisterClassLoader(advisor.getClazz().getClassLoader());
+               return false;
+            }
+            else
+            {
+               return true;
+            }
          }
       }
    }
