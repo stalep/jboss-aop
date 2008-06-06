@@ -35,7 +35,6 @@ import javax.management.ReflectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Introspects a class to provide the JMX management interface.
