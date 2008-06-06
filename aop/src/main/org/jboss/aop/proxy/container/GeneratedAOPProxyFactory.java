@@ -104,8 +104,8 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
             ContainerCache cache = params.getContainerCache();
             if (cache == null)
             {
-               params.setContainerCache(
-                     ContainerCache.initialise(AspectManager.instance(), params));
+               cache = ContainerCache.initialise(AspectManager.instance(), params); 
+               params.setContainerCache(cache); 
             }
 
             if (!cache.hasAspects() && !cache.requiresInstanceAdvisor())
