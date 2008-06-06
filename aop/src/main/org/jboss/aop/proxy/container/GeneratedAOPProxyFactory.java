@@ -101,13 +101,14 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
 
          synchronized (ContainerCache.mapLock)
          {
-            if (params.getContainerCache() == null)
+            ContainerCache cache = params.getContainerCache();
+            if (cache == null)
             {
                params.setContainerCache(
                      ContainerCache.initialise(AspectManager.instance(), params));
             }
 
-            if (!params.getContainerCache().hasAspects() && !params.getContainerCache().requiresInstanceAdvisor())
+            if (!cache.hasAspects() && !cache.requiresInstanceAdvisor())
             {
                return params.getTarget();
             }
