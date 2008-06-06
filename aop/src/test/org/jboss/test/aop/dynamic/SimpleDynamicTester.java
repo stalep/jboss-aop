@@ -22,23 +22,16 @@
 package org.jboss.test.aop.dynamic;
 
 
-import java.lang.reflect.Method;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.jboss.aop.Advised;
 import org.jboss.aop.AspectManager;
-import org.jboss.aop.ClassContainer;
-import org.jboss.aop.MethodInfo;
 import org.jboss.aop.advice.AdviceBinding;
-import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.advice.InterceptorFactory;
-import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.aop.pointcut.ast.ParseException;
 import org.jboss.aop.proxy.container.AOPProxyFactoryParameters;
 import org.jboss.aop.proxy.container.GeneratedAOPProxyFactory;
-import org.jboss.aop.util.MethodHashing;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 /**
@@ -201,18 +194,6 @@ public class SimpleDynamicTester extends AOPTestWithSetup
       assertPerInstanceInterceptors(int1, int2);
    }
    
-   private MethodInvocation getMethodInvocation(ClassContainer advisor, String methodName, Object target) throws Exception
-   {
-      Method method = target.getClass().getMethod(methodName, new Class[0]);
-      long hash = MethodHashing.calculateHash(method);
-      MethodInfo info = advisor.getMethodInfo(hash);
-      Interceptor[] interceptors = info.getInterceptors();
-      MethodInvocation invocation = new MethodInvocation(interceptors, hash, method, method, advisor);
-      invocation.setTargetObject(target);
-      invocation.setArguments(new Object[0]);
-      return invocation;
-   }
-
    private void assertInterceptors(boolean int1, boolean int2)
    {
       assertEquals(int1, Interceptor1.intercepted);
