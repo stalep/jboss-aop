@@ -448,6 +448,19 @@
          </fileset>
          <fileset file ="${source.etc}/jbossorg-eula.txt"/>
       </jar>
+      
+      <jar jarfile="${build.lib}/jboss-aop-jdk50-single.jar" manifest="${build.etc}/default.mf">
+         <zipfileset src="${build.lib}/jboss-aop-jdk50.jar"/>
+         <zipfileset src="${javassist.javassist.lib}/javassist.jar"/>
+         <zipfileset src="${jboss/common.core.lib}/jboss-common-core.jar"/>
+         <zipfileset src="${jboss/jboss.reflect.lib}/jboss-reflect.jar"/>
+         <zipfileset src="${jboss/jboss.mdr.lib}/jboss-mdr.jar"/>
+         <zipfileset src="${jboss/common.logging.log4j.lib}/jboss-logging-log4j.jar"/>
+         <zipfileset src="${jboss/common.logging.spi.lib}/jboss-logging-spi.jar"/>
+         <zipfileset src="${apache.log4j.lib}/log4j.jar"/>
+         <zipfileset src="${trove.trove.lib}/trove.jar"/>
+         <fileset file ="${source.etc}/jbossorg-eula.txt"/>
+      </jar>
    </target>
 
 	<target name="source-jar" depends="compile-etc">
@@ -580,7 +593,6 @@
          <source file="${source.java}/org/jboss/aop/MethodByConInfo.java"/>
          <source file="${source.java}/org/jboss/aop/MethodByMethodInfo.java"/>
          <source file="${source.java}/org/jboss/aop/MethodInfo.java"/>
-         <source file="${source.java}/org/jboss/aop/GeneratedAdvised.java"/>
          <source file="${source.java}/org/jboss/aop/InstanceAdvised.java"/>
          <source file="${source.java}/org/jboss/aop/InstanceAdvisor.java"/>
          <source file="${source.java}/org/jboss/aop/InstanceDomain.java"/> <!--?? Keep this one here?? -->

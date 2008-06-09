@@ -125,6 +125,7 @@
       &libraries;
 
       <property name="aop.50.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50.jar"/>
+      <property name="aop.50.single.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50-single.jar"/>
       <property name="aop.aspect-library50.location" value="${project.root}/aspects/output/lib/jboss-standalone-aspect-library-jdk50.jar"/>
       <property name="aop.as4-deployer.location" value="${project.root}/asintegration/output/lib/jboss-aop-as4-deployer.jar"/>
       <property name="aop.jboss4.jdk50.location" value="${project.root}/asintegration/output/lib/jboss-aop-jboss4-jdk50.jar"/>
@@ -154,6 +155,7 @@
 
       <!-- The JDK 5 libs -->
       <copy todir="${project.release}/lib-50" file="${aop.50.location}"/>
+      <copy todir="${project.release}/lib-50" file="${aop.50.single.location}"/>
       <copy todir="${project.release}/lib-50" file="${project.root}/aop/output/lib/jboss-aop-jdk50-client.jar"/>
       <copy todir="${project.release}/lib-50" file="${aop.aspect-library50.location}"/>
       <copy todir="${project.release}/lib-50" file="${aop.jrockit-pluggable-instrumentor.location}"/>
