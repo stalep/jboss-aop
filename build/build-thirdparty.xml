@@ -54,7 +54,7 @@
       <!-- jboss-cl: jboss-classloader.jar used by asintegration tests -->
       <componentref name="jboss/jboss-cl" version="2.0.0.Beta11"/>
       <!-- common-core: aop, asintegration, aspects -->
-      <componentref name="jboss/common-core" version="2.2.5.GA"/>
+      <componentref name="jboss/common-core" version="2.2.6.GA"/>
       <!-- common-logging-log4j: Needed for standalone release -->
       <componentref name="jboss/common-logging-log4j" version="2.0.5.GA"/>
       <!-- common-logging-spi: aop, asintegration, aspects -->
