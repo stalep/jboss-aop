@@ -1543,21 +1543,28 @@ public abstract class Advisor
       }
    }
    
-   public boolean hasSameMethodAspects(Advisor other)
+   public boolean hasSameMethodAspectLength(Advisor other)
    {
-      long[] keys = this.methodInfos.infos.keys();
-      for (int i = 0 ; i < keys.length ; i++)
+      if (this.getClazz() != other.getClazz())
       {
-         MethodInfo myInfo = this.getMethodInfo(keys[i]);
-         MethodInfo otherInfo = other.getMethodInfo(keys[i]);
-         
-        if (!JoinPointComparator.hasSameChains(myInfo, otherInfo))
-        {
-           return false;
-        }
+         throw new IllegalArgumentException("The advisors must be of the same type. Mine: " + 
+               this.getClazz().getName() + "; other: " + other.getClazz().getName());
       }
-      return true;
+      
+      long[] myKeys = this.methodInfos.infos.keys();
+      long[] otherKeys = other.methodInfos.keys();
+      return JoinPointComparator.hasSameMethodAspectLength(myKeys, otherKeys, this, other);
    }
    
-
+   public boolean hasSameConstructorAspectLength(Advisor other)
+   {
+      if (this.getClazz() != other.getClazz())
+      {
+         throw new IllegalArgumentException("The advisors must be of the same type. Mine: " + 
+               this.getClazz().getName() + "; other: " + other.getClazz().getName());
+      }
+      ConstructorInfo[] myInfos = this.getConstructorInfos();
+      ConstructorInfo[] otherInfos = other.getConstructorInfos();
+      return JoinPointComparator.hasSameConstructorAspectLength(myInfos, otherInfos);
+   }
 }

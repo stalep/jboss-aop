@@ -108,13 +108,27 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
                params.setContainerCache(cache); 
             }
 
-            if (!cache.hasAspects() && !cache.requiresInstanceAdvisor())
+            boolean hasMoreAdvicesOrIntroductionsForInstance = cache.hasMoreAdvicesOrIntroductionsForInstance();
+            
+            if (!cache.hasAspects() && !hasMoreAdvicesOrIntroductionsForInstance)
             {
                return params.getTarget();
             }
             else
             {
-               proxyClass = generateProxy(params);
+               boolean needsProxy = false;
+               if (isAdvised && hasMoreAdvicesOrIntroductionsForInstance)
+               {
+                  needsProxy = true;
+               }
+               else
+               {
+                  needsProxy = true;
+               }
+               if (needsProxy)
+               {
+                  proxyClass = generateProxy(params);
+               }
             }
          }
 

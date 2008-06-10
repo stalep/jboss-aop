@@ -24,6 +24,7 @@ package org.jboss.test.aop.proxy;
 import java.io.Externalizable;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.rmi.MarshalledObject;
 
@@ -50,6 +51,13 @@ import org.jboss.aop.proxy.container.ContainerProxyCacheKey;
 import org.jboss.aop.proxy.container.ContainerProxyFactory;
 import org.jboss.aop.proxy.container.Delegate;
 import org.jboss.aop.proxy.container.GeneratedAOPProxyFactory;
+import org.jboss.metadata.plugins.loader.memory.MemoryMetaDataLoader;
+import org.jboss.metadata.plugins.repository.basic.BasicMetaDataRepository;
+import org.jboss.metadata.spi.MetaData;
+import org.jboss.metadata.spi.repository.MutableMetaDataRepository;
+import org.jboss.metadata.spi.retrieval.MetaDataRetrievalToMetaDataBridge;
+import org.jboss.metadata.spi.scope.CommonLevels;
+import org.jboss.metadata.spi.scope.ScopeKey;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 import junit.framework.Test;
@@ -366,17 +374,6 @@ public class ProxyTestCase extends AOPTestWithSetup
    @SuppressWarnings("unchecked")
    public void testAnnotationsExistInProxy() throws Exception
    {
-      //THis test fails if we run with jboss retro
-      try
-      {
-         Class.forName("org.jboss.lang.ClassRedirects");
-         System.out.println("IGNORING TEST ON JDK 1.4");
-         return;
-      }
-      catch(Exception ignoreWeAreRunningWithJDK5)
-      {
-      }  
-      
       AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
       params.setInterfaces(new Class[]{SomeInterface.class});
       params.setTarget(new AnnotatedPOJO());
@@ -392,19 +389,105 @@ public class ProxyTestCase extends AOPTestWithSetup
       checkExpectedAnnotations(proxyClass);
    }
    
-    private void checkExpectedAnnotations(Class<?> clazz) throws Exception
+   public void testProxyWithMetaData() throws Exception
    {
-      Annotation ann = clazz.getAnnotation(Annotation.class);
+      AspectManager manager = AspectManager.instance();
+      AspectDefinition def = new AspectDefinition("aspect", Scope.PER_INSTANCE, new GenericAspectFactory(TestInterceptor.class.getName(), null));
+      AdviceFactory advice = new AdviceFactory(def, "invoke");
+      PointcutExpression pointcut = new PointcutExpression("pointcut", "execution(* " + Annotation.class.getName() + "->*(..))");
+      InterceptorFactory[] interceptors = {advice};
+      AdviceBinding binding = new AdviceBinding("binding", pointcut, null, null, interceptors);
+      try
+      {
+         manager.addAspectDefinition(def);
+         manager.addInterceptorFactory(advice.getName(), advice);
+         manager.addPointcut(pointcut);
+         manager.addBinding(binding);
+         
+         AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
+         params.setTarget(new POJO());
+         
+         GeneratedAOPProxyFactory factory = new GeneratedAOPProxyFactory();
+         POJO plain = (POJO)factory.createAdvisedProxy(params);
+         
+         assertFalse(plain instanceof AspectManaged);
+         
+         MetaData someAnnMD = setupMetaData(POJO.class, new SomeAnnotationImpl());
+         params.setMetaData(someAnnMD);
+         params.setMetaDataHasInstanceLevelData(true);
+         params.setContainerCache(null);
+         POJO instanceAnnotationWithNoBindings = (POJO)factory.createAdvisedProxy(params);
+         assertFalse(instanceAnnotationWithNoBindings instanceof AspectManaged);
+         
+         MetaData annMD = setupMetaData(POJO.class, new AnnotationImpl());
+         params.setMetaData(annMD);
+         params.setMetaDataHasInstanceLevelData(true);
+         params.setContainerCache(null);
+         POJO instanceAnnotationWithBindings = (POJO)factory.createAdvisedProxy(params);
+         assertFalse(instanceAnnotationWithBindings instanceof AspectManaged);
+         assertTrue(TestInterceptor.invoked);
+
+         InterfaceIntroduction intro = new InterfaceIntroduction("intro", "@" + SomeAnnotation.class.getName(), new String[] {SomeInterface.class.getName()});
+         manager.addInterfaceIntroduction(intro);
+         params.setMetaData(someAnnMD);
+         params.setContainerCache(null);
+         POJO introduced = (POJO)factory.createAdvisedProxy(params);
+         assertTrue(introduced instanceof AspectManaged);
+         assertTrue(introduced instanceof SomeInterface);
+      }
+      finally
+      {
+         manager.removeBinding("binding");
+         manager.removePointcut("pointcut");
+         manager.removeInterceptorFactory("aspect");
+         manager.removeInterfaceIntroduction("intro");
+      }
+   }
+   
+   private MetaData setupMetaData(Class<?> clazz, Annotation...annotations) 
+   {
+      MutableMetaDataRepository repository = new BasicMetaDataRepository();
+      
+      ScopeKey scopeKey = ScopeKey.DEFAULT_SCOPE.clone();
+      scopeKey.addScope(CommonLevels.INSTANCE, "Test");
+      scopeKey.addScope(CommonLevels.CLASS, clazz.getName());
+      scopeKey.addScope(CommonLevels.WORK, String.valueOf(hashCode()));
+      ScopeKey mutableScope = new ScopeKey(CommonLevels.INSTANCE, "Test".toString());
+      MemoryMetaDataLoader mutable = new MemoryMetaDataLoader(mutableScope);
+      repository.addMetaDataRetrieval(mutable);
+      addClassAnnotations(clazz, mutable, annotations);
+      
+      MetaData metadata = new MetaDataRetrievalToMetaDataBridge(mutable); 
+      
+      return metadata;
+   }
+   
+   private void addClassAnnotations(Class<?> clazz, MemoryMetaDataLoader mutable, Annotation[] extraAnnotations)
+   {
+      Annotation[] anns = clazz.getAnnotations();
+      for (Annotation ann : anns)
+      {
+         mutable.addAnnotation(ann);
+      }
+      for (Annotation ann : extraAnnotations)
+      {
+         mutable.addAnnotation(ann);
+      }
+   }
+   
+   private void checkExpectedAnnotations(Class<?> clazz) throws Exception
+   {
+      org.jboss.test.aop.proxy.Annotation ann = clazz.getAnnotation(org.jboss.test.aop.proxy.Annotation.class);
       assertNotNull(ann);
 
       Method getter = clazz.getMethod("getX");
-      assertNotNull(getter.getAnnotation(Annotation.class));
+      assertNotNull(getter.getAnnotation(org.jboss.test.aop.proxy.Annotation.class));
       
       Method setter = clazz.getMethod("setX", Object.class);
-      assertNotNull(setter.getAnnotation(Annotation.class));
+      assertNotNull(setter.getAnnotation(org.jboss.test.aop.proxy.Annotation.class));
       assertEquals(1, setter.getParameterTypes().length);
       assertEquals(1, setter.getParameterAnnotations().length);
       assertEquals(1, setter.getParameterAnnotations()[0].length);
-      assertEquals(Annotation.class, setter.getParameterAnnotations()[0][0].annotationType());
+      assertEquals(org.jboss.test.aop.proxy.Annotation.class, setter.getParameterAnnotations()[0][0].annotationType());
    }
 }

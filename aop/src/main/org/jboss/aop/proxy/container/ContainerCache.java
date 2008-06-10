@@ -287,6 +287,36 @@ public class ContainerCache
          instanceContainer = InstanceProxyContainer.createInstanceProxyContainer(classAdvisor, introduction, metaData);
       }
    }
+   
+   public boolean hasMoreAdvicesOrIntroductionsForInstance()
+   {
+      if (classAdvisor == null)
+      {
+         throw new IllegalStateException("initialise() must be called first");
+      }
+      
+      if (instanceContainer == null)
+      {
+         return false;
+      }
+      
+      if (!classAdvisor.hasSameMethodAspectLength(instanceContainer))
+      {
+         return true;
+      }
+      
+      if (!classAdvisor.hasSameConstructorAspectLength(instanceContainer))
+      {
+         return true;
+      }
+      
+      if (instanceContainer.getInterfaceIntroductions().size() > classAdvisor.getInterfaceIntroductions().size())
+      {
+         return true;
+      }
+      return false;
+   }
+   
 }
 
 
