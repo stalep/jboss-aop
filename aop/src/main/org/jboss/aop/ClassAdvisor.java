@@ -50,6 +50,7 @@ import org.jboss.aop.joinpoint.ConstructorCalledByConstructorJoinpoint;
 import org.jboss.aop.joinpoint.ConstructorCalledByMethodInvocation;
 import org.jboss.aop.joinpoint.ConstructorCalledByMethodJoinpoint;
 import org.jboss.aop.joinpoint.ConstructorInvocation;
+import org.jboss.aop.joinpoint.ConstructorJoinpoint;
 import org.jboss.aop.joinpoint.FieldJoinpoint;
 import org.jboss.aop.joinpoint.FieldReadInvocation;
 import org.jboss.aop.joinpoint.FieldWriteInvocation;
@@ -714,6 +715,68 @@ public class ClassAdvisor extends Advisor
       {
          resolveConstructionPointcut(binding);
       }
+   }
+   
+   @Override
+   protected  void rebuildInterceptorsForRemovedBinding(AdviceBinding removedBinding)
+   {
+     
+      if (BindingClassifier.isExecution(removedBinding))
+      {
+         //TODO: this method is more optimal, but needs further testing...
+//         updateMethodPointcutAfterRemove(removedBinding);
+         resetChain(methodInfos);
+         for(AdviceBinding ab : manager.getBindings().values())
+         {
+            if(BindingClassifier.isMethodExecution(ab))
+               resolveMethodPointcut(ab);
+         }
+      }
+      if (BindingClassifier.isGet(removedBinding) || BindingClassifier.isSet(removedBinding))
+      {
+         resetChain(fieldReadInfos);
+         resetChain(fieldWriteInfos);
+         for(AdviceBinding ab : manager.getBindings().values())
+         {
+            if(BindingClassifier.isGet(ab))
+               resolveFieldPointcut(fieldReadInfos, ab, false);
+            if(BindingClassifier.isSet(ab))
+               resolveFieldPointcut(fieldWriteInfos, ab, true);
+         }
+      }
+      if (BindingClassifier.isConstructorExecution(removedBinding) ||
+            BindingClassifier.isConstructorCall(removedBinding))
+      {
+         resetChain(constructorInfos);
+         for(AdviceBinding ab : manager.getBindings().values())
+         {
+            if(BindingClassifier.isConstructorExecution(ab))
+               resolveConstructorPointcut(ab);
+         }
+      }
+      if (BindingClassifier.isConstruction(removedBinding))
+      {
+         resetChain(constructionInfos);
+         for(AdviceBinding ab : manager.getBindings().values())
+         {
+            if(BindingClassifier.isConstruction(ab))
+               resolveConstructionPointcut(ab);
+         }
+      }
+
+      finalizeChains();
+
+      
+      //TODO: optimize this
+      try
+      {
+         rebuildCallerInterceptors();
+      }
+      catch(Exception e)
+      {
+
+      }
+
    }
 
    private MethodByConInfo initializeConstructorCallerInterceptorsMap(Class<?> callingClass, int callingIndex, String calledClass, long calledMethodHash, Method calledMethod) throws Exception

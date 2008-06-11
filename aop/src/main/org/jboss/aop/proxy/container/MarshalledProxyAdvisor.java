@@ -78,11 +78,18 @@ public class MarshalledProxyAdvisor extends Advisor implements InstanceAdvisor
       //Noop, all interceptors are added via addMethodInfo
    }
    
+   @Override
    protected void rebuildInterceptorsForAddedBinding(AdviceBinding binding)
    {
       //Noop, all interceptors are added via addMethodInfo
    }
-
+   
+   @Override
+   protected  void rebuildInterceptorsForRemovedBinding(AdviceBinding removedBinding)
+   {
+      //Noop, all interceptors are added via addMethodInfo
+   }
+   
    @Override
    public void removeClassMetaData(ClassMetaDataBinding data)
    {

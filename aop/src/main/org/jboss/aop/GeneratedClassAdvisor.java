@@ -242,6 +242,13 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       advisorStrategy.rebuildInterceptorsForAddedBinding(binding);
    }
    
+   @Override
+   protected void rebuildInterceptorsForRemovedBinding(AdviceBinding binding)
+   {
+      version++;
+      advisorStrategy.rebuildInterceptorsForRemovedBinding(binding);
+   }
+   
    /**
     * Callback for instance advisors to rebuild their interceptors when their
     * version number is out of sync
@@ -1230,6 +1237,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       Map<AspectDefinition, Set<Joinpoint>> getPerInstanceJoinpointAspectDefinitions();
       void rebuildInterceptors();
       void rebuildInterceptorsForAddedBinding(AdviceBinding binding);
+      void rebuildInterceptorsForRemovedBinding(AdviceBinding binding);
       void resolveConstructorPointcut(AdviceBinding binding);
       void resolveConstructionPointcut(AdviceBinding binding);
       void finalizeConstructorChain(ConstructorInfo[] newConstructorInfos);
@@ -1527,6 +1535,12 @@ public class GeneratedClassAdvisor extends ClassAdvisor
          version++;
          GeneratedClassAdvisor.super.rebuildInterceptorsForAddedBinding(binding);
       }
+      
+      public void rebuildInterceptorsForRemovedBinding(AdviceBinding binding)
+      {
+         version++;
+         GeneratedClassAdvisor.super.rebuildInterceptorsForRemovedBinding(binding);
+      }
 
       public void resolveConstructorPointcut(AdviceBinding binding)
       {
@@ -1787,6 +1801,38 @@ public class GeneratedClassAdvisor extends ClassAdvisor
             else
             {
                GeneratedClassAdvisor.super.rebuildInterceptorsForAddedBinding(binding);
+            }
+         }
+      }
+      
+      public void rebuildInterceptorsForRemovedBinding(AdviceBinding binding)
+      {
+         if (getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices() != null && GeneratedClassAdvisor.this.version != parent.version)
+         {
+            adviceBindings.clear();
+            needsRebuild = true;
+         }
+         else
+         {
+            // check if it is initialized
+            if (!GeneratedClassAdvisor.this.initialized)
+            {
+               try
+               {
+                  GeneratedClassAdvisor.this.createInterceptorChains();
+               }
+               catch (Exception ex)
+               {
+                  if (ex instanceof RuntimeException)
+                  {
+                     throw (RuntimeException) ex;
+                  }
+                  throw new RuntimeException(ex);
+               }
+            }
+            else
+            {
+               GeneratedClassAdvisor.super.rebuildInterceptorsForRemovedBinding(binding);
             }
          }
       }

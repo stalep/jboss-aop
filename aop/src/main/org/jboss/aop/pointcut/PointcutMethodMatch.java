@@ -60,4 +60,23 @@ public class PointcutMethodMatch
    {
       return isInstanceOf;
    }
+   
+   @Override
+   public boolean equals(Object o)
+   {
+      if(o != null && o instanceof PointcutMethodMatch &&
+            this.getMatchLevel() == ((PointcutMethodMatch) o).getMatchLevel() &&
+            this.getMatchedClass().getName().equals(((PointcutMethodMatch) o).getMatchedClass().getName()) &&
+            this.isInstanceOf() == ((PointcutMethodMatch) o).isInstanceOf())
+         return true;
+      else
+         return false;
+   }
+
+   @Override
+   public int hashCode()
+   {
+      return matchedClass.getName().hashCode();
+   }
+
 }

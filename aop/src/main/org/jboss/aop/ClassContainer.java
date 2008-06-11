@@ -149,6 +149,12 @@ public class ClassContainer extends Advisor
       populateInterceptorsFromInfos();
       doesHaveAspects = adviceBindings.size() > 0;
    }
+   
+   @Override
+   protected void rebuildInterceptorsForRemovedBinding(AdviceBinding binding)
+   {
+      rebuildInterceptors();
+   }
 
    @Override
    public void addClassMetaData(ClassMetaDataBinding data)

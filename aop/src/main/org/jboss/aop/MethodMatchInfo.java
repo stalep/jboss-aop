@@ -62,6 +62,16 @@ class MethodMatchInfo
       bindings.add(binding);
       pointcutMethodMatches.add(pointcutMethodMatch);
    }
+   
+   public void removeMatchedBinding(AdviceBinding binding, PointcutMethodMatch pointcutMethodMatch)
+   {
+      if(binding != null && pointcutMethodMatch != null 
+            && bindings != null && pointcutMethodMatches != null)
+      {
+         bindings.remove(binding);
+         pointcutMethodMatches.remove(pointcutMethodMatch);
+      }
+   }
 
    public MethodInfo getInfo()
    {

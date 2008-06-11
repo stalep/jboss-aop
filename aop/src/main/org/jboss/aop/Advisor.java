@@ -70,6 +70,7 @@ import org.jboss.aop.metadata.FieldMetaData;
 import org.jboss.aop.metadata.MethodMetaData;
 import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
+import org.jboss.aop.util.BindingClassifier;
 import org.jboss.aop.util.JoinPointComparator;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.metadata.spi.MetaData;
@@ -724,7 +725,7 @@ public abstract class Advisor
    public synchronized void removeAdviceBinding(AdviceBinding binding)
    {
       adviceBindings.remove(binding);
-      rebuildInterceptors();
+      rebuildInterceptorsForRemovedBinding(binding);
       doesHaveAspects = adviceBindings.size() > 0;
    }
 
@@ -769,6 +770,8 @@ public abstract class Advisor
    protected abstract void rebuildInterceptors();
 
    protected abstract void rebuildInterceptorsForAddedBinding(AdviceBinding binding);
+   
+   protected  abstract void rebuildInterceptorsForRemovedBinding(AdviceBinding removedBinding);
 
    /**
     * If the info was updated in response to a rebuildInterceptorsForAddedBinding call it will have the
@@ -976,6 +979,27 @@ public abstract class Advisor
             binding.addAdvisor(this);
             MethodMatchInfo info = methodInfos.getMatchInfo(keys[i]);
             info.addMatchedBinding(binding, match);
+         }
+      }
+   }
+   
+   protected void updateMethodPointcutAfterRemove(AdviceBinding binding)
+   {
+      long[] keys = methodInfos.keys();
+      for(int i =0; i < keys.length; i++)
+      {
+         Method method = (Method) advisedMethods.get(keys[i]);
+         PointcutMethodMatch match = binding.getPointcut().matchesExecution(this, method);
+
+         if (match != null && match.isMatch())
+         {
+            if (AspectManager.verbose)
+            {
+               System.err.println("[debug] removing matched binding: "+method.toString());
+            }
+            MethodMatchInfo info = methodInfos.getMatchInfo(keys[i]);
+            info.removeMatchedBinding(binding, match);
+            info.getInfo().clear();
          }
       }
    }

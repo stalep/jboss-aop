@@ -132,7 +132,7 @@ public class ScopedInterceptorFactory implements InterceptorFactory
       if (this == obj) return true;
       if (!(obj instanceof ScopedInterceptorFactory)) return false;
       
-      AspectDefinition otherAspect = ((GenericInterceptorFactory)obj).getAspect();
+      AspectDefinition otherAspect = ((ScopedInterceptorFactory)obj).getAspect();
       
       if (!this.aspect.getName().equals(otherAspect.getName())) return false;
       if (!this.aspect.getFactory().getName().equals(otherAspect.getFactory().getName()))return false;

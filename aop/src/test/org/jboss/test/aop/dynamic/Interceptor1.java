@@ -32,6 +32,7 @@ import org.jboss.aop.joinpoint.Invocation;
 public class Interceptor1 implements Interceptor
 {
    public static boolean intercepted;
+   public static int numberOfInterceptions = 0;
    
    public String getName()
    {
@@ -41,7 +42,14 @@ public class Interceptor1 implements Interceptor
    public Object invoke(Invocation invocation) throws Throwable
    {
       intercepted = true;
+      numberOfInterceptions++;
       return invocation.invokeNext();
    }
+   
+   public static void clear()
+   {
+      numberOfInterceptions = 0;
+   }
+
 
 }
