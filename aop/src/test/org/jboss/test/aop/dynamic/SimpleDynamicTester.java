@@ -251,6 +251,7 @@ public class SimpleDynamicTester extends AOPTestWithSetup
 
       p.method();
       assertTrue("POJO.method was not intercepted", Interceptor2.intercepted);
+      assertFalse("POJO.method should not be intercepted by Intercepor1", Interceptor1.intercepted);
       Interceptor2.intercepted = false;
       AspectManager.instance().removeBinding("dynMethod2");
 

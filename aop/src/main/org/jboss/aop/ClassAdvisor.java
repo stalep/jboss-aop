@@ -718,9 +718,26 @@ public class ClassAdvisor extends Advisor
    }
    
    @Override
-   protected  void rebuildInterceptorsForRemovedBinding(AdviceBinding removedBinding)
+   protected void rebuildInterceptorsForRemovedBinding(AdviceBinding binding)
    {
-     
+      if (initialized)
+      {
+         if (System.getSecurityManager() == null)
+         {
+            RebuildInterceptorsAction.NON_PRIVILEGED.rebuildInterceptorsForRemovedBinding(this, binding);
+         }
+         else
+         {
+            RebuildInterceptorsAction.PRIVILEGED.rebuildInterceptorsForRemovedBinding(this, binding);
+         }
+      }
+   }
+   
+   
+   protected  void doRebuildInterceptorsForRemovedBinding(AdviceBinding removedBinding)
+   {
+      lockWriteChains();
+      
       if (BindingClassifier.isExecution(removedBinding))
       {
          //TODO: this method is more optimal, but needs further testing...
@@ -744,8 +761,7 @@ public class ClassAdvisor extends Advisor
                resolveFieldPointcut(fieldWriteInfos, ab, true);
          }
       }
-      if (BindingClassifier.isConstructorExecution(removedBinding) ||
-            BindingClassifier.isConstructorCall(removedBinding))
+      if (BindingClassifier.isConstructorExecution(removedBinding))
       {
          resetChain(constructorInfos);
          for(AdviceBinding ab : manager.getBindings().values())
@@ -766,6 +782,7 @@ public class ClassAdvisor extends Advisor
 
       finalizeChains();
 
+      unlockWriteChains();
       
       //TODO: optimize this
       try
@@ -778,6 +795,52 @@ public class ClassAdvisor extends Advisor
       }
 
    }
+   
+   protected void updateFieldPointcutAfterRemove(FieldInfo[] fieldInfos, AdviceBinding binding, boolean write)
+   {
+      for (int i = 0; i < fieldInfos.length; i++)
+      {
+         Field field = fieldInfos[i].getField();
+
+         if ((!write && binding.getPointcut().matchesGet(this, field))
+         || (write && binding.getPointcut().matchesSet(this, field)))
+         {
+            if (AspectManager.verbose) System.err.println("[debug] Removing field, matched " + ((write) ? "write" : "read") + " binding: " + field);
+            fieldInfos[i].clear();
+         }
+      }
+   }
+   
+   protected void updateConstructorPointcutAfterRemove(AdviceBinding binding)
+   {
+      for (int i = 0; i < constructors.length; i++)
+      {
+         Constructor<?> constructor = constructors[i];
+         if (binding.getPointcut().matchesExecution(this, constructor))
+         {
+            if (AspectManager.verbose) System.err.println("[debug] Removing constructor, matched binding: " + constructor);
+            constructorInfos[i].clear();
+         }
+      }
+   }
+   
+   protected void updateConstructionPointcutAfterRemove(AdviceBinding binding)
+   {
+      if (constructionInfos.length > 0)
+      {
+         for (int i = 0; i < constructionInfos.length ;i++)
+         {
+            ConstructionInfo info = constructionInfos[i];
+            Constructor<?> constructor = info.getConstructor();
+            if (binding.getPointcut().matchesConstruction(this, constructor))
+            {
+               if (AspectManager.verbose) System.err.println("[debug] Removing construction, matched binding: " + constructor);
+               constructionInfos[i].clear();
+            }
+         }
+      }
+   }
+
 
    private MethodByConInfo initializeConstructorCallerInterceptorsMap(Class<?> callingClass, int callingIndex, String calledClass, long calledMethodHash, Method calledMethod) throws Exception
    {
@@ -2190,6 +2253,7 @@ public class ClassAdvisor extends Advisor
    {
       void rebuildInterceptors(ClassAdvisor advisor);
       void rebuildInterceptorsForAddedBinding(ClassAdvisor advisor, AdviceBinding binding);
+      void rebuildInterceptorsForRemovedBinding(ClassAdvisor advisor, AdviceBinding binding);
 
       RebuildInterceptorsAction PRIVILEGED = new RebuildInterceptorsAction()
       {
@@ -2240,6 +2304,31 @@ public class ClassAdvisor extends Advisor
                throw new RuntimeException(ex);
             }
          }
+         
+         public void rebuildInterceptorsForRemovedBinding(final ClassAdvisor advisor, final AdviceBinding binding)
+         {
+            try
+            {
+               AccessController.doPrivileged(new PrivilegedExceptionAction<Object>()
+               {
+                  public Object run()
+                  {
+                     advisor.doRebuildInterceptorsForRemovedBinding(binding);
+                     return null;
+                  }
+               });
+            }
+            catch (PrivilegedActionException e)
+            {
+               Exception ex = e.getException();
+               if (ex instanceof RuntimeException)
+               {
+                  throw (RuntimeException) ex;
+               }
+               throw new RuntimeException(ex);
+            }
+         }
+         
       };
 
       RebuildInterceptorsAction NON_PRIVILEGED = new RebuildInterceptorsAction()
@@ -2253,6 +2342,12 @@ public class ClassAdvisor extends Advisor
          {
             advisor.doRebuildInterceptorsForAddedBinding(binding);
          }
+         
+         public void rebuildInterceptorsForRemovedBinding(ClassAdvisor advisor, AdviceBinding binding)
+         {
+            advisor.doRebuildInterceptorsForRemovedBinding(binding);
+         }
+         
       };
    }
 

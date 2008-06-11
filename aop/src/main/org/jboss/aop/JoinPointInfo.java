@@ -80,6 +80,7 @@ public abstract class JoinPointInfo implements JoinPointBean
    {
       interceptorChain.clear();
       interceptors = null;
+      interceptors = new Interceptor[0];
    }
    
    protected void resetChainKeepInterceptors()
