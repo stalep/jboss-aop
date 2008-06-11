@@ -743,46 +743,65 @@ public class ClassAdvisor extends Advisor
          //TODO: this method is more optimal, but needs further testing...
 //         updateMethodPointcutAfterRemove(removedBinding);
          resetChain(methodInfos);
-         for(AdviceBinding ab : manager.getBindings().values())
+         synchronized (manager.getBindings())
          {
-            if(BindingClassifier.isMethodExecution(ab))
-               resolveMethodPointcut(ab);
+            for(AdviceBinding ab : manager.getBindings().values())
+            {
+               if(BindingClassifier.isMethodExecution(ab))
+                  resolveMethodPointcut(ab);
+            }
          }
       }
       if (BindingClassifier.isGet(removedBinding) || BindingClassifier.isSet(removedBinding))
       {
          resetChain(fieldReadInfos);
          resetChain(fieldWriteInfos);
-         for(AdviceBinding ab : manager.getBindings().values())
+         synchronized (manager.getBindings())
          {
-            if(BindingClassifier.isGet(ab))
-               resolveFieldPointcut(fieldReadInfos, ab, false);
-            if(BindingClassifier.isSet(ab))
-               resolveFieldPointcut(fieldWriteInfos, ab, true);
+            for(AdviceBinding ab : manager.getBindings().values())
+            {
+               if(BindingClassifier.isGet(ab))
+                  resolveFieldPointcut(fieldReadInfos, ab, false);
+               if(BindingClassifier.isSet(ab))
+                  resolveFieldPointcut(fieldWriteInfos, ab, true);
+            }
          }
       }
       if (BindingClassifier.isConstructorExecution(removedBinding))
       {
          resetChain(constructorInfos);
-         for(AdviceBinding ab : manager.getBindings().values())
+         synchronized (manager.getBindings())
          {
-            if(BindingClassifier.isConstructorExecution(ab))
-               resolveConstructorPointcut(ab);
+            for(AdviceBinding ab : manager.getBindings().values())
+            {
+               if(BindingClassifier.isConstructorExecution(ab))
+                  resolveConstructorPointcut(ab);
+            }
          }
       }
       if (BindingClassifier.isConstruction(removedBinding))
       {
          resetChain(constructionInfos);
-         for(AdviceBinding ab : manager.getBindings().values())
+         synchronized (manager.getBindings())
          {
-            if(BindingClassifier.isConstruction(ab))
-               resolveConstructionPointcut(ab);
+            for(AdviceBinding ab : manager.getBindings().values())
+            {
+               if(BindingClassifier.isConstruction(ab))
+                  resolveConstructionPointcut(ab);
+            }
          }
       }
 
       finalizeChains();
 
       unlockWriteChains();
+      
+      // Notify observer about this change
+      if (this.interceptorChainObserver != null)
+      {
+         this.interceptorChainObserver.interceptorChainsUpdated(fieldReadInterceptors, fieldWriteInterceptors,
+               constructorInterceptors, methodInfos);
+      }
       
       //TODO: optimize this
       try
@@ -1088,6 +1107,7 @@ public class ClassAdvisor extends Advisor
       info.setInterceptors(interceptors);
    }
 
+   @Override
    protected void rebuildInterceptors()
    {
       if (initialized)
