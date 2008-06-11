@@ -75,6 +75,11 @@
             </itemizedlist>
          </para>
          <para>
+            As an alternative, you can replace all those jars by
+            <literal>jboss-aop-jdk50-single.jar</literal>, that bundles the 
+            libraries used by JBoss AOP with JBoss AOP class files in a single jar.
+         </para>
+         <para>
             JBoss AOP finds XML configuration files in these two ways:
             <itemizedlist>
                <listitem>

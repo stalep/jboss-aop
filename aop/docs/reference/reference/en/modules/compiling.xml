@@ -101,6 +101,25 @@
          </programlisting>
       </para>
       <para>
+         As an alternative, we can use the single jar provided with JBoss AOP. This
+         jar bundles all the libraries used by JBoss AOP in a single unit. To use this
+         jar, just define:
+         <programlisting><![CDATA[
+      <!--            JDK version 1.5                                 -->
+
+      <path id="jboss.aop.classpath">
+         <pathelement path="../../../jboss-aop-jdk50.jar"/>
+      </path>
+      
+      <!--            JDK version 1.5 - END                           -->
+      
+      <path id="classpath">
+         <path refid="jboss.aop.classpath"/>
+      </path id="classpath">]]>
+      <!--            JDK version 1.5 - END                           -->
+         </programlisting>
+      </para>
+      <para>
          Define the
          <literal>org.jboss.aop.ant.AopC</literal> ant aop precompiler task:
          <programlisting><![CDATA[
