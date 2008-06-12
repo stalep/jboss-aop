@@ -12,7 +12,6 @@
    
    <bind pointcut="execution(java.util.List POJO->*())">
       <around name="aroundDefaultSignature" aspect="Aspect"/>
-      <around name="aroundCollection" aspect="Aspect"/>
       <after name="afterUnmodifiableList" aspect="Aspect"/>
       <after name="afterVoid" aspect="Aspect"/>
    </bind>
