@@ -410,6 +410,7 @@
             <include name="org/jboss/aop/AspectManager$*.class"/>
             <include name="org/jboss/aop/ClassAdvisor.class"/>
             <include name="org/jboss/aop/ClassInstanceAdvisor.class"/>
+            <include name="org/jboss/aop/DynamicAOPStrategy.class"/>
             <include name="org/jboss/aop/InstanceAdvisorDelegate.class"/>
             <include name="org/jboss/aop/Domain.class"/>
             <include name="org/jboss/aop/InstanceAdvisor.class"/>
