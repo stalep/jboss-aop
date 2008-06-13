@@ -70,7 +70,12 @@ public class ClassProxyFactory
       return newInstance(clazz, mixins, new ClassInstanceAdvisor());
    }
 
-   private static Class<?> getProxyClass(Class<?> clazz, ProxyMixin[] mixins)
+   public static ClassProxy newInstance(Class<?> clazz, ProxyMixin[] mixins, boolean interceptWriteReplace) throws Exception
+   {
+      return newInstance(clazz, mixins, new ClassInstanceAdvisor(), interceptWriteReplace);
+   }
+
+   private static Class<?> getProxyClass(Class<?> clazz, ProxyMixin[] mixins, boolean interceptWriteReplace)
    throws Exception
    {
       // Don't make a proxy of a proxy !
@@ -99,7 +104,7 @@ public class ClassProxyFactory
          }
          if (proxyClass == null)
          {
-            proxyClass = generateProxy(pool, clazz, mixins);
+            proxyClass = generateProxy(pool, clazz, mixins, interceptWriteReplace);
             classnameMap.put(clazz.getName(), proxyClass);
             proxiesForLoader.put(clazz, new WeakReference<Class<?>>(proxyClass));
             HashMap<Long, MethodPersistentReference> map = methodMap(clazz);
@@ -111,7 +116,13 @@ public class ClassProxyFactory
 
    public static ClassProxy newInstance(Class<?> clazz, ProxyMixin[] mixins, InstanceAdvisor advisor) throws Exception
    {
-      Class<?> proxyClass = getProxyClass(clazz, mixins);
+      return newInstance(clazz, mixins, advisor, false);
+
+   }
+
+   public static ClassProxy newInstance(Class<?> clazz, ProxyMixin[] mixins, InstanceAdvisor advisor, boolean interceptWriteReplace) throws Exception
+   {
+      Class<?> proxyClass = getProxyClass(clazz, mixins, interceptWriteReplace);
       ClassProxy proxy = (ClassProxy) proxyClass.newInstance();
       proxy.setMixins(mixins);
       proxy._setInstanceAdvisor(advisor);
@@ -145,7 +156,7 @@ public class ClassProxyFactory
 
    private static int counter = 0;
 
-   private static CtClass createProxyCtClass(ClassPool pool, ProxyMixin[] mixins, Class<?> clazz)
+   private static CtClass createProxyCtClass(ClassPool pool, ProxyMixin[] mixins, Class<?> clazz, boolean interceptWriteReplace)
    throws Exception
    {
       String classname = "AOPClassProxy$" + counter++;
@@ -206,7 +217,8 @@ public class ClassProxyFactory
       proxy.addMethod(setInstanceAdvisor);
       proxy.addMethod(dynamicInvoke);
       proxy.addMethod(setMixins);
-      proxy.addMethod(writeReplace);
+      if (!interceptWriteReplace)
+         proxy.addMethod(writeReplace);
 
       /*
       CtMethod writeEx = template.getDeclaredMethod("writeExternal");
@@ -284,7 +296,10 @@ public class ClassProxyFactory
       }
 
       HashMap<Long, CtMethod> allMethods = JavassistMethodHashing.getMethodMap(superclass);
-
+      
+      if (interceptWriteReplace)
+         allMethods.put(JavassistMethodHashing.methodHash(writeReplace), writeReplace);
+     
       for (Map.Entry<Long, CtMethod> entry : allMethods.entrySet())
       {
          CtMethod m = entry.getValue();
@@ -313,9 +328,9 @@ public class ClassProxyFactory
       return proxy;
    }
 
-   private static Class<?> generateProxy(ClassPool pool, Class<?> clazz, ProxyMixin[] mixins) throws Exception
+   private static Class<?> generateProxy(ClassPool pool, Class<?> clazz, ProxyMixin[] mixins, boolean interceptWriteReplace) throws Exception
    {
-      CtClass proxy = createProxyCtClass(pool, mixins, clazz);
+      CtClass proxy = createProxyCtClass(pool, mixins, clazz, interceptWriteReplace);
       ProtectionDomain pd = clazz.getProtectionDomain();
       Class<?> proxyClass = TransformerCommon.toClass(proxy, pd);
       Map<Long, MethodPersistentReference> methodmap = ClassProxyFactory.getMethodMap(proxyClass); 
