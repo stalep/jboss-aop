@@ -61,7 +61,7 @@ public class DynamicAddRemoveBenchTester extends AOPTestWithSetup
       {
          AdviceBinding binding = new AdviceBinding( 
                "execution(public void org.jboss.test.aop.dynamic.POJO->i())", null); 
-         binding.setName("method"+size);
+         binding.setName("method"+i);
          binding.addInterceptor(Interceptor1.class);
       }
       System.out.println("Creating the bindings took: "+(System.currentTimeMillis()-time));
