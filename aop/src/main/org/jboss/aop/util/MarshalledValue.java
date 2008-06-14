@@ -26,7 +26,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.OutputStream;
 import java.util.Arrays;
 
 /**
@@ -205,6 +204,6 @@ public class MarshalledValue
    public void writeExternal(ObjectOutput out) throws IOException
    {
       out.writeInt(baos.size());
-      baos.writeTo((OutputStream)out);
+      out.write(baos.toByteArray()); 
    }
 }
