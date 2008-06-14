@@ -70,7 +70,6 @@ import org.jboss.aop.metadata.FieldMetaData;
 import org.jboss.aop.metadata.MethodMetaData;
 import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
-import org.jboss.aop.util.BindingClassifier;
 import org.jboss.aop.util.JoinPointComparator;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.metadata.spi.MetaData;
@@ -81,17 +80,31 @@ import org.jboss.util.NestedRuntimeException;
 import org.jboss.util.NotImplementedException;
 
 /**
+ * Manages the interceptor chains of an aspect context (usually, this context is
+ * composed by either all joinpoints of a class, or the joinponts of an instance).
+ * 
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @author adrian@jboss.org
  * @version $Revision$
  */
 public abstract class Advisor
 {
+   /**
+    * Returns the {@code MethodInfo} that represents the execution of the method
+    * identified by {@code hash}.
+    * 
+    * @param hash a hash code that identifies uniquely a method inside the context.
+    * @return     a {@code MethodInfo} representing the queried method execution
+    *             joinpoint.
+    */
    public MethodInfo getMethodInfo(long hash)
    {
       return methodInfos.getMethodInfo(hash);
    }
 
+   /**
+    * Identifies an advice.
+    */
    private class AdviceInterceptorKey
    {
       private String adviceName;
@@ -130,26 +143,41 @@ public abstract class Advisor
    /** Read/Write lock to be used when lazy creating the collections */
    protected Object lazyCollectionLock = new Object();
 
+   /** The collection of bindings that are applied to one or more joinpoints in the advised context. */
    protected Set<AdviceBinding> adviceBindings = new HashSet<AdviceBinding>();
+   /** The collection of interface introductions that affect the advised context. */
    protected volatile ArrayList<InterfaceIntroduction> interfaceIntroductions = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+   /** The collection of class metadata bindings that are applied to the advised context. */
    protected volatile ArrayList<ClassMetaDataBinding> classMetaDataBindings = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+   /** Meta data that apply to all advised joinpoints. */
    protected SimpleMetaData defaultMetaData = new SimpleMetaData();
+   /** Method execution joinpoints meta data.*/
    protected MethodMetaData methodMetaData = new MethodMetaData();
+   /** Field read/write joinpoints meta data. */
    protected FieldMetaData fieldMetaData = new FieldMetaData();
+   /** The target class meta data.*/
    protected SimpleMetaData classMetaData = new SimpleMetaData();
+   /** Constructor execution joinpoints meta data. */
    protected ConstructorMetaData constructorMetaData = new ConstructorMetaData();
    //Does not seem to be used
    //protected HashMap classAnnotations = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
+   /** Repository that contains all annotations applied to the context of this advisor */
    protected AnnotationRepository annotations = new AnnotationRepository();
+   /** Indicates whether there is one or more aspects applied to this context. */
    protected boolean doesHaveAspects = false;
-
+   /** Name that identifies this advisor. */
    protected String name;
+   /** Contains all the aspect instances applied to this context. */
    protected ConcurrentHashMap<String, Object> aspects = new ConcurrentHashMap<String, Object>();
+   /** Contains all the interceptor instances applied to this context. */
    protected HashMap<AspectDefinition, Map<String, Interceptor>> adviceInterceptors = new HashMap<AspectDefinition, Map<String, Interceptor>>();
+   /** Contains all definitions of PER_INSTANCE aspects applied to this context. */
    protected volatile CopyOnWriteArraySet<AspectDefinition> perInstanceAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_COPYONWRITE_ARRAYSET;
+   /** Contains all definitions of PER_JOINPOINT scoped aspects applied to this sccontext*/
    protected volatile ConcurrentHashMap<AspectDefinition, Set<Joinpoint>> perInstanceJoinpointAspectDefinitions = UnmodifiableEmptyCollections.EMPTY_CONCURRENT_HASHMAP;
-
+   /** The {@code java.lang.String} class */
    static Class<?> cl = java.lang.String.class;
+   /** Maps all advised methods to their interceptor chains. */
    protected volatile TLongObjectHashMap advisedMethods = UnmodifiableEmptyCollections.EMPTY_TLONG_OBJECT_HASHMAP;
    // The method signatures are sorted at transformation and load time to
    // make sure the tables line up.
@@ -158,9 +186,17 @@ public abstract class Advisor
     * @see AspectManager#maintainAdvisorMethodInterceptors
     */
    protected TLongObjectHashMap methodInterceptors = new TLongObjectHashMap();
+   /** Collection of method execution joinpoints. */
    protected MethodInterceptors methodInfos = new MethodInterceptors(this);;
+   /** Domain to which this advisor belongs. */
    protected AspectManager manager;
+   
+   /** Target class of the advised joinpoint. */ 
    protected Class<?> clazz = null;
+   
+   /** Target class loader of the advised joinpoint. */
+   protected WeakReference<ClassLoader> loader = null;
+   /** Contains the constructors that belong to the advised context. */
    protected Constructor<?>[] constructors;
 
    /** @deprecated Use constructorInfos instead */
@@ -172,21 +208,34 @@ public abstract class Advisor
    protected ConstructionInfo[] constructionInfos;
 
 
-   /** The meta data */
+   /** The advisor meta data. */
    private MetaData metadata;
-
    /**
     * Indicates that a call to factory create has already been made, but the factory
     * returned {@code null}.
     */
    protected static Object NULL_ASPECT = new Object();
    
+   /**
+    * Constructor.
+    * <p>
+    * Do not use this method to create {@code Advisor} instances. Instead, use the
+    * {@code create} methods of {@linke AdvisorFactory}.
+    * 
+    * @param name    identifies the advisor to be created.
+    * @param manager the domain to which this advisor belongs.
+    */
    public Advisor(String name, AspectManager manager)
    {
       this.name = name;
       this.manager = manager;
    }
 
+   /**
+    * Returns the list of constructors that belong to the advised context.
+    * 
+    * @return an array of constructors
+    */
    public Constructor<?>[] getConstructors()
    {
       return constructors;
@@ -198,6 +247,11 @@ public abstract class Advisor
       return constructorInterceptors;
    }
 
+   /**
+    * Returns the list of advised constructor execution joinpoints.
+    * 
+    * @return an array of {@code ConstructorInfo} objects
+    */
    public ConstructorInfo[] getConstructorInfos()
    {
       return constructorInfos;
@@ -209,6 +263,11 @@ public abstract class Advisor
       return constructionInterceptors;
    }
 
+   /**
+    * Returns the list of advised construction joinpoints.
+    * 
+    * @return an array of {@code ConstructionInfo} objects
+    */
    public ConstructionInfo[] getConstructionInfos()
    {
       return constructionInfos;
@@ -224,53 +283,101 @@ public abstract class Advisor
       return null;
    }
 
+   /**
+    * Returns the aspect manager that represents the domain to which this
+    * {@code Advisor} belongs.
+    * 
+    * @return an {@link AspectManager} instance.
+    */
    public AspectManager getManager()
    {
       return manager;
    }
 
    /**
-    * For use by generated advisors. They will explicitly set the manager
-    * @param name
+    * For use by generated advisors. They will explicitly set the manager.
+    * 
+    * @param manager the domain to which this {@code Advisor} belongs.
     */
    protected void setManager(AspectManager manager)
    {
       this.manager = manager;
    }
 
-
+   /**
+    * Returns the collection of class meta data bindings that are applied to the
+    * advised context.
+    * 
+    * @return a list of {@code ClassMetaDataBinding}. This list is not a copy, and,
+    *         hence, must not be edited.
+    */
    public List<ClassMetaDataBinding> getClassMetadataBindings()
    {
       return classMetaDataBindings;
    }
 
+   /**
+    * Returns the target class meta data.
+    * 
+    * @return the target class meta data. This object is not a copy, and, hence, must
+    *         not be edited.
+    */
    public SimpleMetaData getClassMetaData()
    {
       return classMetaData;
    }
 
+   /**
+    * Returns the meta data that is applied to all joinpoints and to the target
+    * class.
+    * 
+    * @return the meta data that apply to all joinpoints and to the target class.
+    *         This object is not a copy, and, hence, must not be edited. 
+    */
    public SimpleMetaData getDefaultMetaData()
    {
       return defaultMetaData;
    }
 
+   /**
+    * Returns the method joinpoints meta data
+    * 
+    * @return the method joinpoints meta data. This object is not a copy, and, hence,
+    *         must not be edited. 
+    */
    public MethodMetaData getMethodMetaData()
    {
       return methodMetaData;
    }
 
+   /**
+    * Returns the field joinpoints meta data
+    * 
+    * @return the field joinpoints meta data. This object is not a copy, and, hence,
+    *         must not be edited. 
+    */
    public FieldMetaData getFieldMetaData()
    {
       return fieldMetaData;
    }
 
+   /**
+    * Returns the constructor joinpoints meta data
+    * 
+    * @return the constructor joinpoints meta data. This object is not a copy, and,
+    *         hence, must not be edited. 
+    */
    public ConstructorMetaData getConstructorMetaData()
    {
       return constructorMetaData;
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.aop.AdvisorIF#deployAnnotationOverrides()
+   /**
+    * Deploys to the advised context all {@code AnnotationIntroduction} that should
+    * override current annotions, in case they are present.
+    * <br>
+    * The annotation introductions to be deployed are extracted from this advisor
+    * domain ({@link AspectManager#getAnnotationOverrides()}).
     */
    public void deployAnnotationOverrides()
    {
@@ -285,6 +392,13 @@ public abstract class Advisor
       }
    }
 
+   /**
+    * Deploys {@code introduction} to the advised context, overriding current
+    * annotions with the same name, in case they are present.
+    * 
+    * @param introduction an annotation introduction that must be applied to the
+    *        advised context.
+    */
    public void deployAnnotationOverride(AnnotationIntroduction introduction)
    {
       if (System.getSecurityManager() == null)
@@ -297,6 +411,19 @@ public abstract class Advisor
       }
    }
 
+   /**
+    * Deploys {@code introduction} to the advised context, overriding current
+    * annotions with the same name, in case they are present.
+    * <br>
+    * <b>This method must not be called externally</b>, since it will perform
+    * deployment from outside a privileged environment. Use
+    * {@link #deployAnnotationOverride(AnnotationIntroduction)} instead.
+    * 
+    * @param introduction an annotation introduction that must be applied to the
+    *        advised context.
+    * 
+    * @param introduction
+    */
    public void doDeployAnnotationOverride(AnnotationIntroduction introduction)
    {
       if (introduction.matches(this, clazz))
@@ -325,11 +452,28 @@ public abstract class Advisor
       }
    }
 
+   /**
+    * Deploys to the advised context all {@code InterfaceIntroduction} whose pointcut
+    * matches one or more advised joinpoints.
+    * <br>
+    * The interface introductions to be deployed are extracted from this advisor
+    * domain ({@link AspectManager#getInterfaceIntroductions()}).
+    */
    protected void initializeInterfaceIntroductions(Class<?> theClass)
    {
       manager.applyInterfaceIntroductions(this, theClass);
    }
 
+   /**
+    * Recursively deploys all method annotation introductions, overriding annotations
+    * with the same name.
+    * <p><i>For internal use only.</i>
+    * 
+    * @param theClass      the class that contains the affected methods. Must be
+    *                      equal to {@link #getClazz()} or to one of its super
+    *                      classes.
+    * @param introduction  the introduction to be deployed.
+    */
    protected void deployMethodAnnotationOverrides(Class<?> theClass, AnnotationIntroduction introduction)
    {
       if (theClass.getSuperclass() != null)
@@ -346,17 +490,37 @@ public abstract class Advisor
       }
    }
 
-
+   /**
+    * Returns the annotation repository used by this advisor to keep all annotations
+    * that are applied to the advised joinpoints.
+    * <p><i>For internal use only.</i>
+    * 
+    * @return the annotation repository.
+    */
    public AnnotationRepository getAnnotations()
    {
       return annotations;
    }
 
+   /**
+    * Returns an object representing the meta data of type {@code annotation}, if
+    * present. 
+    * 
+    * @param  annotation the type of meta data/annotation queried
+    * @return the meta data/annotation of type {@code annotation}
+    */
    public Object resolveAnnotation(Class<? extends Annotation> annotation)
    {
       return resolveTypedAnnotation(annotation);
    }
    
+   /**
+    * Returns an object representing the meta data of type {@code annotation}, if
+    * present. 
+    * 
+    * @param  annotation the type of meta data/annotation queried
+    * @return the meta data/annotation of type {@code annotation}
+    */
    public <T extends Annotation> T resolveTypedAnnotation(Class<T> annotation)
    {
       if (metadata != null)
@@ -378,16 +542,42 @@ public abstract class Advisor
       return value;
    }
 
+   /**
+    * Indicates whether the advised class has an annotation/meta data whose name is
+    * {@code annotation}.
+    * 
+    * @param  annotation the name of an annotation
+    * @return {@code true} if there is an annotation/meta data whose name is {@code
+    *         annotation}
+    */
    public boolean hasAnnotation(String annotation)
    {
       return hasAnnotation(clazz, annotation);
    }
 
+   /**
+    * Indicates whether {@code tgt} has an annotation/meta data whose name is {@code
+    * annotation}.
+    * 
+    * @param  tgt the target class whose annotations/meta data will be examined.
+    * @param  annotation the name of an annotation
+    * @return {@code true} if there is an annotation/meta data whose name is {@code
+    *         annotation}
+    */
    public boolean hasAnnotation(Class<?> tgt, String annotation)
    {
       return hasAnnotation(tgt, annotation, null);
    }
 
+   /**
+    * Indicates whether {@code tgt} has an annotation/meta data whose type is {@code
+    * annotation}.
+    * 
+    * @param  tgt the target class whose annotations/meta data will be examined.
+    * @param  annotation the type of an annotation
+    * @return {@code true} if {@code tgt} has an annotation/meta data whose type is
+    * {@code annotation}
+    */
    public boolean hasAnnotation(Class<?> tgt, Class<? extends Annotation> annotation)
    {
       return hasAnnotation(tgt, null, annotation);
