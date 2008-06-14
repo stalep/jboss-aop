@@ -610,7 +610,7 @@ public abstract class Instrumentor
     * Find all classes that this class references.  If any of those classes are advised and have field and/or constructor
     * interception, do instrumentation on this class so that those fields and constructors are instrumented
     */
-   protected boolean convertReferences(CtClass clazz) throws Exception
+   protected boolean convertReferences(CtClass clazz, ClassAdvisor clazzAdvisor) throws Exception
    {
       boolean converted = false;
       String ref = null;
@@ -632,30 +632,37 @@ public abstract class Instrumentor
             }
             // Only need a temporary advisor for resolving metadata
             CtClass ctRef = null;
-            try
+            ClassAdvisor advisor = null;
+            if (ref.equals(clazz.getName()))
             {
-               ctRef = pool.get(ref);
+               ctRef = clazz;
+               advisor = clazzAdvisor;
             }
-            catch (NotFoundException e)
+            else
             {
-               if (AspectManager.suppressReferenceErrors)
+               try
                {
-                  System.err.println("[warn] Could not find class " + ref + " that " + clazz.getName() + " references.  It may not be in your classpath and you may not be getting field and constructor weaving for this class.");
-                  if (AspectManager.verbose) e.printStackTrace();
-                  continue;
+                  ctRef = pool.get(ref);
                }
-               else
+               catch (NotFoundException e)
                {
-                  throw e;
+                  if (AspectManager.suppressReferenceErrors)
+                  {
+                     System.err.println("[warn] Could not find class " + ref + " that " + clazz.getName() + " references.  It may not be in your classpath and you may not be getting field and constructor weaving for this class.");
+                     if (AspectManager.verbose) e.printStackTrace();
+                     continue;
+                  }
+                  else
+                  {
+                     throw e;
+                  }
                }
+               if (!isTransformable(ctRef)) continue;
+               advisor = manager.getTempClassAdvisor(ctRef);
             }
-            if (!isTransformable(ctRef)) continue;
-
             it.addSuperClass(ctRef);
-
-            ClassAdvisor advisor = manager.getTempClassAdvisor(ctRef);
-
-
+            //converted = false;
+            
             if (!manager.getInterceptionMarkers().shouldSkipFieldAccess(ref) && !ref.equals(clazz.getName()))
             {
                List<CtField> fields = getAdvisableFields(ctRef);
@@ -746,7 +753,7 @@ public abstract class Instrumentor
 
          instrumentIntroductions(clazz, advisor);
 
-         converted = convertReferences(clazz) || converted;
+         converted = convertReferences(clazz, advisor) || converted;
 
          boolean shouldReplaceArrayAccess = replaceArrayAccess(clazz, advisor);
          converted = converted || shouldReplaceArrayAccess;
