@@ -361,8 +361,7 @@ public class Util
       {
          if (advisor != null)
          {
-            // FIXME ClassLoader - why should the class be visible from the context classloader?
-            ClassLoader cl = SecurityActions.getContextClassLoader();
+            ClassLoader cl = advisor.getClassLoader();
             ArrayList<InterfaceIntroduction> intros = advisor.getInterfaceIntroductions();
             if (intros.size() > 0)
             {

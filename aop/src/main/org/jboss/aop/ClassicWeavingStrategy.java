@@ -92,7 +92,7 @@ public class ClassicWeavingStrategy extends WeavingStrategySupport
              clazz.defrost();
           }
 
-          ClassAdvisor advisor = new ClassAdvisor(className, manager);
+          ClassAdvisor advisor = AdvisorFactory.getClassAdvisor(clazz, manager);
           Instrumentor instrumentor = InstrumentorFactory.getInstrumentor(
                 pool,
                 manager,

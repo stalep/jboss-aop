@@ -97,12 +97,16 @@ public class AdvisorFactory
 
    public static ClassAdvisor getClassAdvisor(Class<?> clazz, AspectManager am)
    {
-      return getClassAdvisor(clazz.getName(), am, clazz);
+      ClassAdvisor classAdvisor = getClassAdvisor(clazz.getName(), am, clazz);
+      classAdvisor.setClazz(clazz);
+      return classAdvisor;
    }
    
    public static ClassAdvisor getClassAdvisor(CtClass clazz, AspectManager am)
    {
-      return getClassAdvisor(clazz.getName(), am, null);
+      ClassAdvisor classAdvisor = getClassAdvisor(clazz.getName(), am, null);
+      classAdvisor.setClassLoader(clazz.getClassPool().getClassLoader());
+      return classAdvisor;
    }
    
    private static ClassAdvisor getClassAdvisor(String className, AspectManager am, Class<?> loadedClass)

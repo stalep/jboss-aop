@@ -1315,6 +1315,59 @@ public abstract class Advisor
    }
 
    /**
+    * Defines the class loader associated with the advised context.
+    * 
+    * @param loader the class loader that loaded all joinpoints contained in the
+    *        advised context.
+    * @throws IllegalStateException when there is already a class associated with
+    *         this advisor ({@link #getClazz()}), and {@link loader} is non-null and
+    *         different from the class loader that loaded the advised class.
+    */
+   void setClassLoader(ClassLoader loader) throws IllegalStateException
+   {
+      if (this.clazz != null && loader != null &&
+            loader != this.clazz.getClassLoader())
+      {
+         throw new IllegalStateException("Cannot have both loader and class");
+      }
+      if (loader == null)
+      {
+         this.loader = null;
+      }
+      else
+      {
+         this.loader = new WeakReference<ClassLoader>(loader);
+      }
+   }
+
+   /**
+    * Returns the class loader associated with this advisor.
+    * 
+    * @return the class loader that loaded all joinpoints contained in the advised
+    *         context. 
+    */
+   public ClassLoader getClassLoader()
+   {
+      if (this.loader != null)
+      {
+         ClassLoader cl = loader.get();
+         if (cl != null)
+         {
+            return cl;
+         }
+      }
+      if (clazz != null)
+      {
+         ClassLoader cl = SecurityActions.getClassLoader(clazz);
+         if (cl != null)
+         {
+            return cl;
+         }
+      }
+      return null;
+   }
+
+   /**
     * @deprecated Use Class.getSimpleName() instead
     */
    public static String getSimpleName(Class<?> clazz)
