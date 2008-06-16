@@ -21,7 +21,6 @@ public class TestInterceptor implements Interceptor
       try
       {
          System.out.println("<<< TestInterceptor intercepting");
-         invocation.resolveClassAnnotation(ImplementingInterface.class);
          return invocation.invokeNext();
       }
       finally
