@@ -9,9 +9,9 @@
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath50"/>
 
       <aopc compilerclasspathref="classpath50" classpathref="classpath50" verbose="true">
-         <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
          <sysproperty key="jboss.aop.verbose" value="true"/>
          <classpath path="."/>
+         <src path="."/>
       </aopc>
    </target>
 
@@ -21,12 +21,15 @@
       <jar jarfile="example.jar">
          <fileset dir=".">
             <include name="*.class"/>
-         </fileset>
-         <fileset dir="resources">
             <include name="META-INF/jboss-aop.xml"/>
          </fileset>
       </jar>
 
+      <delete>
+         <fileset dir="." includes="*.class"/>
+      </delete>
+
+      
       <java fork="yes" failOnError="true" className="Driver">
          <classpath refid="jboss.aop.classpath50"/>
          <classpath path="example.jar"/>
@@ -39,12 +42,14 @@
       <jar jarfile="example.jar">
          <fileset dir=".">
             <include name="*.class"/>
-         </fileset>
-         <fileset dir="resources">
             <include name="META-INF/jboss-aop.xml"/>
          </fileset>
       </jar>
 
+      <delete>
+         <fileset dir="." includes="*.class"/>
+      </delete>
+      
       <java fork="yes" failOnError="true" className="Driver">
          <jvmarg value="-javaagent:${aop50jar}"/>
          <classpath refid="jboss.aop.classpath50"/>
