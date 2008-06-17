@@ -42,8 +42,9 @@
       <sect2 id="xml-resolving2" revision="1">
          <title>Application Server XML Resolving</title>
          <para>
-         When you are running JBoss AOP outside of the application server there are a few ways that the JBoss AOP
-         framework can resolve XML files.  One is to place an XML file with the suffix
+         On the other hand, when you are running JBoss AOP integrated with the
+            application server, XML files can be deployed in two different ways.
+            One is to place an XML file with the suffix
             <literal>*-aop.xml</literal>
             in the deploy directory.  The other way is to JAR up your classes and provide a
             <literal>META-INF/jboss-aop.xml</literal>
