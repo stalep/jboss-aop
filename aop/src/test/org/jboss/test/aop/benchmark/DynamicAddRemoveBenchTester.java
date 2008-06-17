@@ -54,17 +54,21 @@ public class DynamicAddRemoveBenchTester extends AOPTestWithSetup
    
    public void testPerformance() throws ParseException
    {
-      int size = 50000;
+      int size = 500;
       ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(size);
       long time = System.currentTimeMillis();
       for(int i = 0; i < size; i++)
       {
          AdviceBinding binding = new AdviceBinding( 
-               "execution(public void org.jboss.test.aop.dynamic.POJO->i())", null); 
+               "execution(public void org.jboss.test.aop.benchmark.POJO->foo())", null); 
          binding.setName("method"+i);
          binding.addInterceptor(Interceptor1.class);
+         bindings.add(binding);
       }
       System.out.println("Creating the bindings took: "+(System.currentTimeMillis()-time));
+      
+      POJO p = new POJO();
+      p.foo();
       
       time = System.currentTimeMillis();
       for(AdviceBinding ab : bindings)
