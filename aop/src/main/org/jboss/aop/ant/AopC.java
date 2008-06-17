@@ -48,7 +48,7 @@ public class AopC extends MatchingTask
 {
    final static String SYS_OPTIMIZED = "jboss.aop.optimized";
    final static String SYS_INSTRUMENTOR = "jboss.aop.instrumentor";
-   
+   private final static String MSG_PREFIX = "\n[aopc] ";
    private static String lSep = System.getProperty("line.separator");
    private int maxSrc = 1000;
 
@@ -306,7 +306,16 @@ public class AopC extends MatchingTask
            throws BuildException
    {
       CommandlineJava cmd = new CommandlineJava();
-
+      if (compileSourcepath == null)
+      {
+         throw new BuildException(MSG_PREFIX + "'src' path element not found");
+      }
+      
+      if (classpath == null)
+      {
+         throw new BuildException(MSG_PREFIX + "classpath undefined (use 'classpath' path elements and/or the 'classpathref' attribute)");
+      }
+      
       if (verbose)
          cmd.createArgument().setValue("-verbose");
       if (suppress)
@@ -390,7 +399,7 @@ public class AopC extends MatchingTask
          }
          else
          {
-            throw new BuildException("Error running aopc compiler: ",
+            throw new BuildException(MSG_PREFIX + "error running aopc compiler",
                     ex, getLocation());
          }
       }
@@ -415,7 +424,7 @@ public class AopC extends MatchingTask
          File srcDir = getProject().resolveFile(list[i]);
          if (!srcDir.exists())
          {
-            throw new BuildException("srcdir \""
+            throw new BuildException(MSG_PREFIX + "srcdir \""
                     + srcDir.getPath()
                     + "\" does not exist!", getLocation());
          }
