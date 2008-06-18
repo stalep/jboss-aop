@@ -66,6 +66,7 @@ public class PointcutMethodMatch
    {
       if(o != null && o instanceof PointcutMethodMatch &&
             this.getMatchLevel() == ((PointcutMethodMatch) o).getMatchLevel() &&
+            this.getMatchedClass() != null && ((PointcutMethodMatch) o).getMatchedClass() != null &&
             this.getMatchedClass().getName().equals(((PointcutMethodMatch) o).getMatchedClass().getName()) &&
             this.isInstanceOf() == ((PointcutMethodMatch) o).isInstanceOf())
          return true;

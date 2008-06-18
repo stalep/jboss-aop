@@ -88,6 +88,11 @@ public abstract class JoinPointInfo implements JoinPointBean
       interceptorChain.clear();
    }
    
+   protected void resetInterceptors()
+   {
+      interceptors = new Interceptor[0];
+   }
+   
    public Advisor getAdvisor() 
    {
       if (advisor == null)

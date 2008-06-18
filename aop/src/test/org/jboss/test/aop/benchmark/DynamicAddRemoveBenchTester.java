@@ -52,7 +52,7 @@ public class DynamicAddRemoveBenchTester extends AOPTestWithSetup
       super(name);
    }
    
-   public void testPerformance() throws ParseException
+   public void testMethodPerformance() throws ParseException
    {
       int size = 500;
       ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(size);
@@ -65,7 +65,7 @@ public class DynamicAddRemoveBenchTester extends AOPTestWithSetup
          binding.addInterceptor(Interceptor1.class);
          bindings.add(binding);
       }
-      System.out.println("Creating the bindings took: "+(System.currentTimeMillis()-time));
+      System.out.println("Creating the methodbindings took: "+(System.currentTimeMillis()-time));
       
       POJO p = new POJO();
       p.foo();
@@ -75,14 +75,57 @@ public class DynamicAddRemoveBenchTester extends AOPTestWithSetup
       {
          AspectManager.instance().addBinding(ab);
       }
-      System.out.println("Adding the bindings took: "+(System.currentTimeMillis()-time));
+      System.out.println("Adding the methodbindings took: "+(System.currentTimeMillis()-time));
       
       time = System.currentTimeMillis();
       for(AdviceBinding ab : bindings)
       {
          AspectManager.instance().removeBinding(ab.getName());
       }
-      System.out.println("Removing the bindings took: "+(System.currentTimeMillis()-time));
+      System.out.println("Removing the methodbindings took: "+(System.currentTimeMillis()-time));
+      
+      
+      assertTrue(true);
+   }
+   
+   public void testFieldPerformance() throws ParseException
+   {
+      int size = 500;
+      ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(size);
+      long time = System.currentTimeMillis();
+      for(int i = 0; i < size/2; i++)
+      {
+         AdviceBinding binding = new AdviceBinding( 
+               "set(* org.jboss.test.aop.benchmark.POJO->i)", null); 
+         binding.setName("set"+i);
+         binding.addInterceptor(Interceptor1.class);
+         bindings.add(binding);
+         
+         AdviceBinding binding2 = new AdviceBinding( 
+               "get(* org.jboss.test.aop.benchmark.POJO->i)", null); 
+         binding2.setName("get"+i);
+         binding2.addInterceptor(Interceptor1.class);
+         bindings.add(binding2);
+         
+      }
+      System.out.println("Creating the fieldbindings took: "+(System.currentTimeMillis()-time));
+      
+      POJO p = new POJO();
+      p.foo();
+      
+      time = System.currentTimeMillis();
+      for(AdviceBinding ab : bindings)
+      {
+         AspectManager.instance().addBinding(ab);
+      }
+      System.out.println("Adding the fieldbindings took: "+(System.currentTimeMillis()-time));
+      
+      time = System.currentTimeMillis();
+      for(AdviceBinding ab : bindings)
+      {
+         AspectManager.instance().removeBinding(ab.getName());
+      }
+      System.out.println("Removing the fieldbindings took: "+(System.currentTimeMillis()-time));
       
       
       assertTrue(true);

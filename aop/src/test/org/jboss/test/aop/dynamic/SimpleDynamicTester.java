@@ -285,21 +285,18 @@ public class SimpleDynamicTester extends AOPTestWithSetup
       POJO p = new POJO();
       p.field = 7;
       assertTrue("POJO.field was not intercepted", Interceptor1.intercepted);
-      System.out.println("NumberOfInterceptions is: "+Interceptor1.numberOfInterceptions);
+      assertEquals("POJO.field should have been intercepted 2 times", 2, Interceptor1.numberOfInterceptions);
 
       Interceptor2.intercepted = false;
       int i = p.field;
       assertTrue("POJO.field was not intercepted", Interceptor2.intercepted);
-      System.out.println("NumberOfInterceptions is: "+Interceptor1.numberOfInterceptions);
-
+      assertEquals("POJO.field should have been intercepted 3 times", 3, Interceptor1.numberOfInterceptions);
+      
       Interceptor1.intercepted = false;
       AspectManager.instance().removeBinding("set1");
 
       p.field = 4;
-      System.out.println("NumberOfInterceptions is: "+Interceptor1.numberOfInterceptions);
       assertEquals("POJO.field should have been intercepted 4 times", 4, Interceptor1.numberOfInterceptions);
-      //      assertFalse("POJO.field was intercepted, shouldnt be.", Interceptor1.intercepted);
-
 
       Interceptor2.intercepted = false;
       AspectManager.instance().removeBinding("get1");
