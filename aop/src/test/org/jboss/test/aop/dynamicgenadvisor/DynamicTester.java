@@ -30,7 +30,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-
 import org.jboss.aop.Advised;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.Domain;
@@ -334,123 +333,138 @@ public class DynamicTester extends AOPTestWithSetup
 
    public void testInstanceUsingDomainForMethod()throws Exception
    {
-      System.out.println("TEST INSTANCE USING DOMAIN FOR METHOD");
-      AdviceBinding bindingTopA = new AdviceBinding("execution(* org.jboss.test.aop.dynamicgenadvisor.POJO->someMethod(..))", null);
-      String nameTopA = bindingTopA.getName();
-      bindingTopA.addInterceptor(MyInterceptor.class);
-      AspectManager.instance().addBinding(bindingTopA);
-      
-      POJO pojo1 = new POJO();
-      POJO pojo2 = new POJO();
-      
-      Interceptions.clear();
-      pojo1.someMethod(123);
-      pojo2.someMethod(123);
-      assertEquals(2, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(1));
-      
-      //Add instance advices
-      AdviceBinding bindingA = new AdviceBinding("execution(* org.jboss.test.aop.dynamicgenadvisor.POJO->someMethod(..))", null);
-      String nameA = bindingA.getName();
-      bindingA.addInterceptor(MyInterceptor.class);
-      getInstanceDomain(pojo1).addBinding(bindingA);
-      
-      AdviceBinding bindingB = new AdviceBinding("execution(* org.jboss.test.aop.dynamicgenadvisor.POJO->someMethod(..))", null);
-      String nameB = bindingB.getName();
-      AspectDefinition myAspect = AspectManager.instance().getAspectDefinition("org.jboss.test.aop.dynamicgenadvisor.MyAspect"); 
-      bindingB.addInterceptorFactory(new AdviceFactory(myAspect, "intercept"));
-      getInstanceDomain(pojo2).addBinding(bindingB);
-      
-      System.out.println("Added instance advices");
-      Interceptions.clear();
-      pojo1.someMethod(123);
-      assertEquals(2, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(1));
-      
-      
-      Interceptions.clear();
-      pojo2.someMethod(123);
-      assertEquals(2, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
-      assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(1));
-     
-      //Add top level advice
-      POJO pojo3 = new POJO();
-      AdviceBinding bindingTopB = new AdviceBinding("execution(* org.jboss.test.aop.dynamicgenadvisor.POJO->someMethod(..))", null);
-      String nameTopB = bindingTopB.getName();
-      bindingTopB.addInterceptor(YourInterceptor.class);
-      AspectManager.instance().addBinding(bindingTopB);
-      
-      System.out.println("Added top level advice");
-      
-      Interceptions.clear();
-      pojo1.someMethod(123);
-      assertEquals(3, Interceptions.size());
-      Interceptions.printInterceptions();
-      //Since we are adding at the top-level that will get added to the end of the chain, i.e. the order is no longer guaranteed
-      checkInterceptions(createExpectedList(
-            Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), 
-            Interceptions.getMethodName("YourInterceptor", "POJO", "someMethod"), 
-            Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod")));
-
-      Interceptions.clear();
-      pojo2.someMethod(123);
-      assertEquals(3, Interceptions.size());
-      //Since we are adding at the top-level that will get added to the end of the chain, i.e. the order is no longer guaranteed
-      checkInterceptions(createExpectedList(
-            Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), 
-            Interceptions.getMethodName("YourInterceptor", "POJO", "someMethod"),
-            Interceptions.getMethodName("MyAspect", "POJO", "someMethod")));
-
-      
-      Interceptions.clear();
-      pojo3.someMethod(123);
-      assertEquals(2, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
-      assertEquals(Interceptions.getMethodName("YourInterceptor", "POJO", "someMethod"), Interceptions.get(1));
-
-      
-      AspectManager.instance().removeBinding(nameTopB);
-
-      Interceptions.clear();
-      pojo1.someMethod(123);
-      assertEquals(2, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(1));
-      
-      Interceptions.clear();
-      pojo2.someMethod(123);
-      assertEquals(2, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
-      assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(1));
-      
-      getInstanceDomain(pojo1).removeBinding(nameA);
-      
-      Interceptions.clear();
-      pojo1.someMethod(123);
-      assertEquals(1, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
-      
-      AspectManager.instance().removeBinding(nameTopA);
-      
-      Interceptions.clear();
-      pojo1.someMethod(123);
-      assertEquals(0, Interceptions.size());
-      
-      Interceptions.clear();
-      
-      pojo2.someMethod(123);
-      assertEquals(1, Interceptions.size());
-      assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(0));
-
-      getInstanceDomain(pojo2).removeBinding(nameB);
-
-      Interceptions.clear();
-      pojo1.someMethod(123);
-      pojo2.someMethod(123);
-      assertEquals(0, Interceptions.size());
+      String nameTopA = null, nameTopB = null;
+      try
+      {
+         System.out.println("TEST INSTANCE USING DOMAIN FOR METHOD");
+         AdviceBinding bindingTopA = new AdviceBinding("execution(* org.jboss.test.aop.dynamicgenadvisor.POJO->someMethod(..))", null);
+         nameTopA = bindingTopA.getName();
+         bindingTopA.addInterceptor(MyInterceptor.class);
+         AspectManager.instance().addBinding(bindingTopA);
+         
+         POJO pojo1 = new POJO();
+         POJO pojo2 = new POJO();
+         
+         Interceptions.clear();
+         pojo1.someMethod(123);
+         pojo2.someMethod(123);
+         assertEquals(2, Interceptions.size());
+         assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
+         assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(1));
+         
+         //Add instance advices
+         AdviceBinding bindingA = new AdviceBinding("execution(* org.jboss.test.aop.dynamicgenadvisor.POJO->someMethod(..))", null);
+         String nameA = bindingA.getName();
+         bindingA.addInterceptor(MyInterceptor.class);
+         getInstanceDomain(pojo1).addBinding(bindingA);
+         
+         AdviceBinding bindingB = new AdviceBinding("execution(* org.jboss.test.aop.dynamicgenadvisor.POJO->someMethod(..))", null);
+         String nameB = bindingB.getName();
+         AspectDefinition myAspect = AspectManager.instance().getAspectDefinition("org.jboss.test.aop.dynamicgenadvisor.MyAspect"); 
+         bindingB.addInterceptorFactory(new AdviceFactory(myAspect, "intercept"));
+         getInstanceDomain(pojo2).addBinding(bindingB);
+         
+         System.out.println("Added instance advices");
+         Interceptions.clear();
+         pojo1.someMethod(123);
+         assertEquals(2, Interceptions.size());
+         assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
+         assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(1));
+         
+         
+         Interceptions.clear();
+         pojo2.someMethod(123);
+         assertEquals(2, Interceptions.size());
+         assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
+         assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(1));
+        
+         //Add top level advice
+         POJO pojo3 = new POJO();
+         AdviceBinding bindingTopB = new AdviceBinding("execution(* org.jboss.test.aop.dynamicgenadvisor.POJO->someMethod(..))", null);
+         nameTopB = bindingTopB.getName();
+         bindingTopB.addInterceptor(YourInterceptor.class);
+         AspectManager.instance().addBinding(bindingTopB);
+         
+         System.out.println("Added top level advice");
+         
+         Interceptions.clear();
+         pojo1.someMethod(123);
+         assertEquals(3, Interceptions.size());
+         Interceptions.printInterceptions();
+         //Since we are adding at the top-level that will get added to the end of the chain, i.e. the order is no longer guaranteed
+         checkInterceptions(createExpectedList(
+               Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), 
+               Interceptions.getMethodName("YourInterceptor", "POJO", "someMethod"), 
+               Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod")));
+   
+         Interceptions.clear();
+         pojo2.someMethod(123);
+         assertEquals(3, Interceptions.size());
+         //Since we are adding at the top-level that will get added to the end of the chain, i.e. the order is no longer guaranteed
+         checkInterceptions(createExpectedList(
+               Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), 
+               Interceptions.getMethodName("YourInterceptor", "POJO", "someMethod"),
+               Interceptions.getMethodName("MyAspect", "POJO", "someMethod")));
+   
+         
+         Interceptions.clear();
+         pojo3.someMethod(123);
+         assertEquals(2, Interceptions.size());
+         assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
+         assertEquals(Interceptions.getMethodName("YourInterceptor", "POJO", "someMethod"), Interceptions.get(1));
+   
+         
+         AspectManager.instance().removeBinding(nameTopB);
+   
+         Interceptions.clear();
+         pojo1.someMethod(123);
+         assertEquals(2, Interceptions.size());
+         assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
+         assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(1));
+         
+         Interceptions.clear();
+         pojo2.someMethod(123);
+         assertEquals(2, Interceptions.size());
+         assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
+         assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(1));
+         
+         getInstanceDomain(pojo1).removeBinding(nameA);
+         
+         Interceptions.clear();
+         pojo1.someMethod(123);
+         assertEquals(1, Interceptions.size());
+         assertEquals(Interceptions.getMethodName("MyInterceptor", "POJO", "someMethod"), Interceptions.get(0));
+         
+         AspectManager.instance().removeBinding(nameTopA);
+         
+         Interceptions.clear();
+         pojo1.someMethod(123);
+         assertEquals(0, Interceptions.size());
+         
+         Interceptions.clear();
+         
+         pojo2.someMethod(123);
+         assertEquals(1, Interceptions.size());
+         assertEquals(Interceptions.getMethodName("MyAspect", "POJO", "someMethod"), Interceptions.get(0));
+   
+         getInstanceDomain(pojo2).removeBinding(nameB);
+   
+         Interceptions.clear();
+         pojo1.someMethod(123);
+         pojo2.someMethod(123);
+         assertEquals(0, Interceptions.size());
+      }
+      finally
+      {
+         if (nameTopA != null)
+         {
+            AspectManager.instance().removeBinding(nameTopA);
+         }
+         if (nameTopB != null)
+         {
+            AspectManager.instance().removeBinding(nameTopB);
+         }
+      }
    }
    
    public void testSimpleInstanceUsingDomainForField() throws Exception
@@ -512,154 +526,170 @@ public class DynamicTester extends AOPTestWithSetup
 
    public void testInstanceUsingDomainForField()throws Exception
    {
-      System.out.println("TEST INSTANCE USING DOMAIN FOR FIELD");
-      AdviceBinding bindingTopA = new AdviceBinding("field(* org.jboss.test.aop.dynamicgenadvisor.POJO->i)", null);
-      String nameTopA = bindingTopA.getName();
-      bindingTopA.addInterceptor(MyInterceptor.class);
-      AspectManager.instance().addBinding(bindingTopA);
-      
-      POJO pojo1 = new POJO();
-      POJO pojo2 = new POJO();
-      
-      Interceptions.clear();
-      pojo1.i = 10;
-      pojo2.i=20;
-      assertEquals(10, pojo1.i);
-      assertEquals(20, pojo2.i);
-      assertEquals(4, Interceptions.size());
-      assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(0));
-      assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(1));
-      assertEquals(Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), Interceptions.get(2));
-      assertEquals(Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), Interceptions.get(3));
-      
-      //Add instance advices
-      AdviceBinding bindingA = new AdviceBinding("set(* org.jboss.test.aop.dynamicgenadvisor.POJO->i)", null);
-      String nameA = bindingA.getName();
-      bindingA.addInterceptor(MyInterceptor.class);
-      getInstanceDomain(pojo1).addBinding(bindingA);
-      
-      AdviceBinding bindingB = new AdviceBinding("get(* org.jboss.test.aop.dynamicgenadvisor.POJO->i)", null);
-      String nameB = bindingB.getName();
-      AspectDefinition myAspect = AspectManager.instance().getAspectDefinition("org.jboss.test.aop.dynamicgenadvisor.MyAspect"); 
-      bindingB.addInterceptorFactory(new AdviceFactory(myAspect, "intercept"));
-      getInstanceDomain(pojo2).addBinding(bindingB);
-      
-      System.out.println("Added instance advices");
-      Interceptions.clear();
-      pojo1.i = 50;
-      assertEquals(50, pojo1.i);
-      assertEquals(3, Interceptions.size());
-      assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(0));
-      assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(1));
-      assertEquals(Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), Interceptions.get(2));
-      
-      Interceptions.clear();
-      pojo2.i = 100;
-      assertEquals(100, pojo2.i);
-      assertEquals(3, Interceptions.size());
-      assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(0));
-      assertEquals(Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), Interceptions.get(1));
-      assertEquals(Interceptions.getFieldReadName("MyAspect", "POJO", "i"), Interceptions.get(2));
-     
-      //Add top level advice
-      POJO pojo3 = new POJO();
-      AdviceBinding bindingTopB = new AdviceBinding("field(* org.jboss.test.aop.dynamicgenadvisor.POJO->i)", null);
-      String nameTopB = bindingTopB.getName();
-      bindingTopB.addInterceptor(YourInterceptor.class);
-      AspectManager.instance().addBinding(bindingTopB);
-      
-      System.out.println("Added top level advice");
-      
-      Interceptions.clear();
-      pojo1.i = 66;
-      assertEquals(66, pojo1.i);
-      assertEquals(5, Interceptions.size());
-      //Since we are adding at the top-level that will get added to the end of the chain, i.e. the order is no longer guaranteed
-      checkInterceptions(createExpectedList(
-            Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), 
-            Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), 
-            Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), 
-            Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"),
-            Interceptions.getFieldReadName("YourInterceptor", "POJO", "i")));
-
-      Interceptions.clear();
-      pojo2.i = 99;
-      assertEquals(99, pojo2.i);
-      assertEquals(5, Interceptions.size());
-      //Since we are adding at the top-level that will get added to the end of the chain, i.e. the order is no longer guaranteed
-      checkInterceptions(createExpectedList(
-            Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"),
-            Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), 
-            Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), 
-            Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), 
-            Interceptions.getFieldReadName("MyAspect", "POJO", "i")));
-
-      
-      Interceptions.clear();
-      pojo3.i = 12;
-      assertEquals(12, pojo3.i);
-      assertEquals(4, Interceptions.size());
-      assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(0));
-      assertEquals(Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), Interceptions.get(1));
-      assertEquals(Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), Interceptions.get(2));
-      assertEquals(Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), Interceptions.get(3));
-
-      
-      AspectManager.instance().removeBinding(nameTopA);
-      Interceptions.clear();
-      pojo1.i = 50;
-      assertEquals(50, pojo1.i);
-      assertEquals(3, Interceptions.size());
-      assertEquals(Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), Interceptions.get(0));
-      assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(1));
-      assertEquals(Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), Interceptions.get(2));
-      
-      Interceptions.clear();
-      pojo2.i = 100;
-      assertEquals(100, pojo2.i);
-      assertEquals(3, Interceptions.size());
-      assertEquals(Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), Interceptions.get(0));
-      assertEquals(Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), Interceptions.get(1));
-      assertEquals(Interceptions.getFieldReadName("MyAspect", "POJO", "i"), Interceptions.get(2));
-
-
-      System.out.println("================> removing binding");
-      getInstanceDomain(pojo1).removeBinding(nameA);
-
-      
-      Interceptions.clear();
-      pojo1.i = 50;
-      assertEquals(50, pojo1.i);
-      Interceptions.printInterceptions();
-      assertEquals(2, Interceptions.size());
-      assertEquals(Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), Interceptions.get(0));
-      assertEquals(Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), Interceptions.get(1));
-      
-      Interceptions.clear();
-      pojo2.i = 100;
-      assertEquals(100, pojo2.i);
-      assertEquals(3, Interceptions.size());
-      assertEquals(Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), Interceptions.get(0));
-      assertEquals(Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), Interceptions.get(1));
-      assertEquals(Interceptions.getFieldReadName("MyAspect", "POJO", "i"), Interceptions.get(2));
-
-      AspectManager.instance().removeBinding(nameTopB);
-      Interceptions.clear();
-      pojo1.i = 14;
-      assertEquals(14, pojo1.i);
-      pojo2.i = 100;
-      assertEquals(100, pojo2.i);
-      assertEquals(1, Interceptions.size());
-      assertEquals(Interceptions.getFieldReadName("MyAspect", "POJO", "i"), Interceptions.get(0));
-
-      getInstanceDomain(pojo2).removeBinding(nameB);
-      
-      Interceptions.clear();
-      pojo1.i = 123;
-      assertEquals(123, pojo1.i);
-      pojo2.i = 123;
-      assertEquals(123, pojo2.i);
-      assertEquals(0, Interceptions.size());
+      String nameTopA = null;
+      String nameTopB = null;
+      try
+      {
+         System.out.println("TEST INSTANCE USING DOMAIN FOR FIELD");
+         AdviceBinding bindingTopA = new AdviceBinding("field(* org.jboss.test.aop.dynamicgenadvisor.POJO->i)", null);
+         nameTopA = bindingTopA.getName();
+         bindingTopA.addInterceptor(MyInterceptor.class);
+         AspectManager.instance().addBinding(bindingTopA);
+         
+         POJO pojo1 = new POJO();
+         POJO pojo2 = new POJO();
+         
+         Interceptions.clear();
+         pojo1.i = 10;
+         pojo2.i=20;
+         assertEquals(10, pojo1.i);
+         assertEquals(20, pojo2.i);
+         assertEquals(4, Interceptions.size());
+         assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(0));
+         assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(1));
+         assertEquals(Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), Interceptions.get(2));
+         assertEquals(Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), Interceptions.get(3));
+         
+         //Add instance advices
+         AdviceBinding bindingA = new AdviceBinding("set(* org.jboss.test.aop.dynamicgenadvisor.POJO->i)", null);
+         String nameA = bindingA.getName();
+         bindingA.addInterceptor(MyInterceptor.class);
+         getInstanceDomain(pojo1).addBinding(bindingA);
+         
+         AdviceBinding bindingB = new AdviceBinding("get(* org.jboss.test.aop.dynamicgenadvisor.POJO->i)", null);
+         String nameB = bindingB.getName();
+         AspectDefinition myAspect = AspectManager.instance().getAspectDefinition("org.jboss.test.aop.dynamicgenadvisor.MyAspect"); 
+         bindingB.addInterceptorFactory(new AdviceFactory(myAspect, "intercept"));
+         getInstanceDomain(pojo2).addBinding(bindingB);
+         
+         System.out.println("Added instance advices");
+         Interceptions.clear();
+         pojo1.i = 50;
+         assertEquals(50, pojo1.i);
+         assertEquals(3, Interceptions.size());
+         assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(0));
+         assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(1));
+         assertEquals(Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), Interceptions.get(2));
+         
+         Interceptions.clear();
+         pojo2.i = 100;
+         assertEquals(100, pojo2.i);
+         assertEquals(3, Interceptions.size());
+         assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(0));
+         assertEquals(Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), Interceptions.get(1));
+         assertEquals(Interceptions.getFieldReadName("MyAspect", "POJO", "i"), Interceptions.get(2));
+        
+         //Add top level advice
+         POJO pojo3 = new POJO();
+         AdviceBinding bindingTopB = new AdviceBinding("field(* org.jboss.test.aop.dynamicgenadvisor.POJO->i)", null);
+         nameTopB = bindingTopB.getName();
+         bindingTopB.addInterceptor(YourInterceptor.class);
+         AspectManager.instance().addBinding(bindingTopB);
+         
+         System.out.println("Added top level advice");
+         
+         Interceptions.clear();
+         pojo1.i = 66;
+         assertEquals(66, pojo1.i);
+         assertEquals(5, Interceptions.size());
+         //Since we are adding at the top-level that will get added to the end of the chain, i.e. the order is no longer guaranteed
+         checkInterceptions(createExpectedList(
+               Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), 
+               Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), 
+               Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), 
+               Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"),
+               Interceptions.getFieldReadName("YourInterceptor", "POJO", "i")));
+   
+         Interceptions.clear();
+         pojo2.i = 99;
+         assertEquals(99, pojo2.i);
+         assertEquals(5, Interceptions.size());
+         //Since we are adding at the top-level that will get added to the end of the chain, i.e. the order is no longer guaranteed
+         checkInterceptions(createExpectedList(
+               Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"),
+               Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), 
+               Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), 
+               Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), 
+               Interceptions.getFieldReadName("MyAspect", "POJO", "i")));
+   
+         
+         Interceptions.clear();
+         pojo3.i = 12;
+         assertEquals(12, pojo3.i);
+         assertEquals(4, Interceptions.size());
+         assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(0));
+         assertEquals(Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), Interceptions.get(1));
+         assertEquals(Interceptions.getFieldReadName("MyInterceptor", "POJO", "i"), Interceptions.get(2));
+         assertEquals(Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), Interceptions.get(3));
+   
+         
+         AspectManager.instance().removeBinding(nameTopA);
+         Interceptions.clear();
+         pojo1.i = 50;
+         assertEquals(50, pojo1.i);
+         assertEquals(3, Interceptions.size());
+         assertEquals(Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), Interceptions.get(0));
+         assertEquals(Interceptions.getFieldWriteName("MyInterceptor", "POJO", "i"), Interceptions.get(1));
+         assertEquals(Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), Interceptions.get(2));
+         
+         Interceptions.clear();
+         pojo2.i = 100;
+         assertEquals(100, pojo2.i);
+         assertEquals(3, Interceptions.size());
+         assertEquals(Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), Interceptions.get(0));
+         assertEquals(Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), Interceptions.get(1));
+         assertEquals(Interceptions.getFieldReadName("MyAspect", "POJO", "i"), Interceptions.get(2));
+   
+   
+         System.out.println("================> removing binding");
+         getInstanceDomain(pojo1).removeBinding(nameA);
+   
+         
+         Interceptions.clear();
+         pojo1.i = 50;
+         assertEquals(50, pojo1.i);
+         Interceptions.printInterceptions();
+         assertEquals(2, Interceptions.size());
+         assertEquals(Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), Interceptions.get(0));
+         assertEquals(Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), Interceptions.get(1));
+         
+         Interceptions.clear();
+         pojo2.i = 100;
+         assertEquals(100, pojo2.i);
+         assertEquals(3, Interceptions.size());
+         assertEquals(Interceptions.getFieldWriteName("YourInterceptor", "POJO", "i"), Interceptions.get(0));
+         assertEquals(Interceptions.getFieldReadName("YourInterceptor", "POJO", "i"), Interceptions.get(1));
+         assertEquals(Interceptions.getFieldReadName("MyAspect", "POJO", "i"), Interceptions.get(2));
+   
+         AspectManager.instance().removeBinding(nameTopB);
+         Interceptions.clear();
+         pojo1.i = 14;
+         assertEquals(14, pojo1.i);
+         pojo2.i = 100;
+         assertEquals(100, pojo2.i);
+         assertEquals(1, Interceptions.size());
+         assertEquals(Interceptions.getFieldReadName("MyAspect", "POJO", "i"), Interceptions.get(0));
+   
+         getInstanceDomain(pojo2).removeBinding(nameB);
+         
+         Interceptions.clear();
+         pojo1.i = 123;
+         assertEquals(123, pojo1.i);
+         pojo2.i = 123;
+         assertEquals(123, pojo2.i);
+         assertEquals(0, Interceptions.size());
+      }
+      finally
+      {
+         if (nameTopA != null)
+         {
+            AspectManager.instance().removeBinding(nameTopA);
+         }
+         if (nameTopB != null)
+         {
+            AspectManager.instance().removeBinding(nameTopB);
+         }
+      }
    }
    
    public void testInstanceUsingOldApiForMethod() throws Exception
@@ -794,175 +824,197 @@ public class DynamicTester extends AOPTestWithSetup
    
    public void testAddClassMetadata()throws Exception
    {
-      System.out.println("TEST ADD CLASS METADATA");
-
-      DynamicSimpleClassMetadataLoader loader = new DynamicSimpleClassMetadataLoader(
-            "T1", "TEST", "org.jboss.test.aop.dynamicgenadvisor.POJO");
-      loader.addDefaultMetaData("default", "default");
-      loader.addClassMetaData("class", "class");
-      loader.addMethodMetaData("* someMethod(..)", "fm", "someMethod");
-      loader.addFieldMetaData("i", "fm", "i");
-      AspectManager.instance().addClassMetaData(loader.getClassMetaDataBinding());
-      
-      AdviceBinding binding = new AdviceBinding("all(org.jboss.test.aop.dynamicgenadvisor.POJO)", null);
-      binding.addInterceptor(MetadataInterceptor.class);
-      AspectManager.instance().addBinding(binding);
-      
-      POJO pojo = new POJO();
-      
-      MetadataInterceptor.clear();
-      pojo.someMethod(123);
-      pojo.i = 100;
-      pojo.notPrepared();
-      assertTrue(MetadataInterceptor.intercepted);
-      assertEquals(2, MetadataInterceptor.lastDefaultMetadata.size());
-      assertEquals(2, MetadataInterceptor.lastClassMetadata.size());
-      assertEquals(1, MetadataInterceptor.lastMethodMetadata.size());
-      assertEquals(1, MetadataInterceptor.lastFieldMetadata.size());
-      
-      //Make sure we get the metadata expected
-      assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(0));
-      assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(1));
-      
-      assertEquals("class", MetadataInterceptor.lastClassMetadata.get(0));
-      assertEquals("class", MetadataInterceptor.lastClassMetadata.get(1));
-      
-      assertEquals("someMethod", MetadataInterceptor.lastMethodMetadata.get(0));
-      
-      assertEquals("i", MetadataInterceptor.lastFieldMetadata.get(0));
-      
-      AspectManager.instance().removeClassMetaData(loader.getClassMetaDataBinding().getName());
-
-      MetadataInterceptor.clear();
-      pojo.someMethod(123);
-      pojo.i = 100;
-      pojo.notPrepared();
-      assertEquals(0, MetadataInterceptor.lastDefaultMetadata.size());
-      assertEquals(0, MetadataInterceptor.lastClassMetadata.size());
-      assertEquals(0, MetadataInterceptor.lastMethodMetadata.size());
-      assertEquals(0, MetadataInterceptor.lastFieldMetadata.size());
-      
-      //Try adding metadata again now that instance already exists
-      AspectManager.instance().addClassMetaData(loader.getClassMetaDataBinding());
-
-      MetadataInterceptor.clear();
-      pojo.someMethod(123);
-      pojo.i = 100;
-      pojo.notPrepared();
-      assertEquals(2, MetadataInterceptor.lastDefaultMetadata.size());
-      assertEquals(2, MetadataInterceptor.lastClassMetadata.size());
-      assertEquals(1, MetadataInterceptor.lastMethodMetadata.size());
-      assertEquals(1, MetadataInterceptor.lastFieldMetadata.size());
-      
-      //Make sure we get the metadata expected
-      assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(0));
-      assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(1));
-      
-      assertEquals("class", MetadataInterceptor.lastClassMetadata.get(0));
-      assertEquals("class", MetadataInterceptor.lastClassMetadata.get(1));
-      
-      assertEquals("someMethod", MetadataInterceptor.lastMethodMetadata.get(0));
-      
-      assertEquals("i", MetadataInterceptor.lastFieldMetadata.get(0));
-      
-      AspectManager.instance().removeClassMetaData(loader.getClassMetaDataBinding().getName());
-
-      MetadataInterceptor.clear();
-      pojo.someMethod(123);
-      pojo.i = 100;
-      pojo.notPrepared();
-      assertEquals(0, MetadataInterceptor.lastDefaultMetadata.size());
-      assertEquals(0, MetadataInterceptor.lastClassMetadata.size());
-      assertEquals(0, MetadataInterceptor.lastMethodMetadata.size());
-      assertEquals(0, MetadataInterceptor.lastFieldMetadata.size());
-      
-      AspectManager.instance().removeBinding(binding.getName());
-      MetadataInterceptor.clear();
-      pojo.someMethod(123);
-      assertFalse(MetadataInterceptor.intercepted);
+      AdviceBinding binding = null;
+      try
+      {
+         System.out.println("TEST ADD CLASS METADATA");
+   
+         DynamicSimpleClassMetadataLoader loader = new DynamicSimpleClassMetadataLoader(
+               "T1", "TEST", "org.jboss.test.aop.dynamicgenadvisor.POJO");
+         loader.addDefaultMetaData("default", "default");
+         loader.addClassMetaData("class", "class");
+         loader.addMethodMetaData("* someMethod(..)", "fm", "someMethod");
+         loader.addFieldMetaData("i", "fm", "i");
+         AspectManager.instance().addClassMetaData(loader.getClassMetaDataBinding());
+         
+         binding = new AdviceBinding("all(org.jboss.test.aop.dynamicgenadvisor.POJO)", null);
+         binding.addInterceptor(MetadataInterceptor.class);
+         AspectManager.instance().addBinding(binding);
+         
+         POJO pojo = new POJO();
+         
+         MetadataInterceptor.clear();
+         pojo.someMethod(123);
+         pojo.i = 100;
+         pojo.notPrepared();
+         assertTrue(MetadataInterceptor.intercepted);
+         assertEquals(2, MetadataInterceptor.lastDefaultMetadata.size());
+         assertEquals(2, MetadataInterceptor.lastClassMetadata.size());
+         assertEquals(1, MetadataInterceptor.lastMethodMetadata.size());
+         assertEquals(1, MetadataInterceptor.lastFieldMetadata.size());
+         
+         //Make sure we get the metadata expected
+         assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(0));
+         assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(1));
+         
+         assertEquals("class", MetadataInterceptor.lastClassMetadata.get(0));
+         assertEquals("class", MetadataInterceptor.lastClassMetadata.get(1));
+         
+         assertEquals("someMethod", MetadataInterceptor.lastMethodMetadata.get(0));
+         
+         assertEquals("i", MetadataInterceptor.lastFieldMetadata.get(0));
+         
+         AspectManager.instance().removeClassMetaData(loader.getClassMetaDataBinding().getName());
+   
+         MetadataInterceptor.clear();
+         pojo.someMethod(123);
+         pojo.i = 100;
+         pojo.notPrepared();
+         assertEquals(0, MetadataInterceptor.lastDefaultMetadata.size());
+         assertEquals(0, MetadataInterceptor.lastClassMetadata.size());
+         assertEquals(0, MetadataInterceptor.lastMethodMetadata.size());
+         assertEquals(0, MetadataInterceptor.lastFieldMetadata.size());
+         
+         //Try adding metadata again now that instance already exists
+         AspectManager.instance().addClassMetaData(loader.getClassMetaDataBinding());
+   
+         MetadataInterceptor.clear();
+         pojo.someMethod(123);
+         pojo.i = 100;
+         pojo.notPrepared();
+         assertEquals(2, MetadataInterceptor.lastDefaultMetadata.size());
+         assertEquals(2, MetadataInterceptor.lastClassMetadata.size());
+         assertEquals(1, MetadataInterceptor.lastMethodMetadata.size());
+         assertEquals(1, MetadataInterceptor.lastFieldMetadata.size());
+         
+         //Make sure we get the metadata expected
+         assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(0));
+         assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(1));
+         
+         assertEquals("class", MetadataInterceptor.lastClassMetadata.get(0));
+         assertEquals("class", MetadataInterceptor.lastClassMetadata.get(1));
+         
+         assertEquals("someMethod", MetadataInterceptor.lastMethodMetadata.get(0));
+         
+         assertEquals("i", MetadataInterceptor.lastFieldMetadata.get(0));
+         
+         AspectManager.instance().removeClassMetaData(loader.getClassMetaDataBinding().getName());
+   
+         MetadataInterceptor.clear();
+         pojo.someMethod(123);
+         pojo.i = 100;
+         pojo.notPrepared();
+         assertEquals(0, MetadataInterceptor.lastDefaultMetadata.size());
+         assertEquals(0, MetadataInterceptor.lastClassMetadata.size());
+         assertEquals(0, MetadataInterceptor.lastMethodMetadata.size());
+         assertEquals(0, MetadataInterceptor.lastFieldMetadata.size());
+         
+         AspectManager.instance().removeBinding(binding.getName());
+         MetadataInterceptor.clear();
+         pojo.someMethod(123);
+         assertFalse(MetadataInterceptor.intercepted);
+      }
+      finally
+      {
+         if (binding != null)
+         {
+            AspectManager.instance().removeBinding(binding.getName());
+         }
+      }
    }
 
    public void testBindingsUpdatedWhenAddMetadata() throws Exception
    {
-      System.out.println("TEST BINDINGS UPDATED WHEN ADD METADATA");
-      
-      AdviceBinding binding = new AdviceBinding("all(@TEST)", null);
-      binding.addInterceptor(MetadataInterceptor.class);
-      AspectManager.instance().addBinding(binding);
-      
-      MetadataInterceptor.clear();
-      POJO pojox = new POJO();
-      pojox.someMethod(123);
-      assertFalse(MetadataInterceptor.intercepted);
-      
-      //Add metadata so binding takes effect
-      DynamicSimpleClassMetadataLoader loader = new DynamicSimpleClassMetadataLoader(
-            "DA", "TEST", "org.jboss.test.aop.dynamicgenadvisor.POJO");
-            loader.addDefaultMetaData("default", "default");
-            loader.addClassMetaData("class", "class");
-            loader.addMethodMetaData("* someMethod(..)", "fm", "someMethod");
-            loader.addFieldMetaData("i", "fm", "i");
-            AspectManager.instance().addClassMetaData(loader.getClassMetaDataBinding());
-            
-      MetadataInterceptor.clear();
-      POJO pojo = new POJO();
-      pojo.someMethod(123);
-      int i = pojo.i;
-      assertTrue(MetadataInterceptor.intercepted);
-      assertEquals(3, MetadataInterceptor.lastDefaultMetadata.size());
-      assertEquals(3, MetadataInterceptor.lastClassMetadata.size());
-      assertEquals(1, MetadataInterceptor.lastMethodMetadata.size());
-      assertEquals(1, MetadataInterceptor.lastFieldMetadata.size());
-      
-      assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(0));
-      assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(1));
-      assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(2));
-      
-      assertEquals("class", MetadataInterceptor.lastClassMetadata.get(0));
-      assertEquals("class", MetadataInterceptor.lastClassMetadata.get(1));
-      assertEquals("class", MetadataInterceptor.lastClassMetadata.get(2));
-      
-      assertEquals("someMethod", MetadataInterceptor.lastMethodMetadata.get(0));
-      
-      assertEquals("i", MetadataInterceptor.lastFieldMetadata.get(0));
-      
-      MetadataInterceptor.clear();
-      pojox.someMethod(123);
-      assertTrue(MetadataInterceptor.intercepted);
-      
-      AspectManager.instance().removeClassMetaData("DA");
-      MetadataInterceptor.clear();
-      pojo.someMethod(123);
-      pojo.i = 100;
-      assertFalse(MetadataInterceptor.intercepted);
-      
-      //Add metadata to instance domain so binding takes effect
-      getInstanceDomain(pojo).addClassMetaData(loader.getClassMetaDataBinding());
-      MetadataInterceptor.clear();
-      pojo.someMethod(123);
-      i = pojo.i;
-      assertTrue(MetadataInterceptor.intercepted);
-      assertEquals(2, MetadataInterceptor.lastDefaultMetadata.size());
-      assertEquals(2, MetadataInterceptor.lastClassMetadata.size());
-      assertEquals(1, MetadataInterceptor.lastMethodMetadata.size());
-      assertEquals(1, MetadataInterceptor.lastFieldMetadata.size());
-      
-      assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(0));
-      assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(1));
-      
-      assertEquals("class", MetadataInterceptor.lastClassMetadata.get(0));
-      assertEquals("class", MetadataInterceptor.lastClassMetadata.get(1));
-      
-      assertEquals("someMethod", MetadataInterceptor.lastMethodMetadata.get(0));
-      
-      assertEquals("i", MetadataInterceptor.lastFieldMetadata.get(0));
-      
-      //Clean up
-      getInstanceDomain(pojo).removeClassMetaData(loader.getClassMetaDataBinding().getName());
-      AspectManager.instance().removeBinding(binding.getName());
-      MetadataInterceptor.clear();
-      pojo.someMethod(123);
-      assertFalse(MetadataInterceptor.intercepted);
+      AdviceBinding binding = null;
+      try
+      {
+         System.out.println("TEST BINDINGS UPDATED WHEN ADD METADATA");
+         
+         binding = new AdviceBinding("all(@TEST)", null);
+         binding.addInterceptor(MetadataInterceptor.class);
+         AspectManager.instance().addBinding(binding);
+         
+         MetadataInterceptor.clear();
+         POJO pojox = new POJO();
+         pojox.someMethod(123);
+         assertFalse(MetadataInterceptor.intercepted);
+         
+         //Add metadata so binding takes effect
+         DynamicSimpleClassMetadataLoader loader = new DynamicSimpleClassMetadataLoader(
+               "DA", "TEST", "org.jboss.test.aop.dynamicgenadvisor.POJO");
+               loader.addDefaultMetaData("default", "default");
+               loader.addClassMetaData("class", "class");
+               loader.addMethodMetaData("* someMethod(..)", "fm", "someMethod");
+               loader.addFieldMetaData("i", "fm", "i");
+               AspectManager.instance().addClassMetaData(loader.getClassMetaDataBinding());
+               
+         MetadataInterceptor.clear();
+         POJO pojo = new POJO();
+         pojo.someMethod(123);
+         int i = pojo.i;
+         assertTrue(MetadataInterceptor.intercepted);
+         assertEquals(3, MetadataInterceptor.lastDefaultMetadata.size());
+         assertEquals(3, MetadataInterceptor.lastClassMetadata.size());
+         assertEquals(1, MetadataInterceptor.lastMethodMetadata.size());
+         assertEquals(1, MetadataInterceptor.lastFieldMetadata.size());
+         
+         assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(0));
+         assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(1));
+         assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(2));
+         
+         assertEquals("class", MetadataInterceptor.lastClassMetadata.get(0));
+         assertEquals("class", MetadataInterceptor.lastClassMetadata.get(1));
+         assertEquals("class", MetadataInterceptor.lastClassMetadata.get(2));
+         
+         assertEquals("someMethod", MetadataInterceptor.lastMethodMetadata.get(0));
+         
+         assertEquals("i", MetadataInterceptor.lastFieldMetadata.get(0));
+         
+         MetadataInterceptor.clear();
+         pojox.someMethod(123);
+         assertTrue(MetadataInterceptor.intercepted);
+         
+         AspectManager.instance().removeClassMetaData("DA");
+         MetadataInterceptor.clear();
+         pojo.someMethod(123);
+         pojo.i = 100;
+         assertFalse(MetadataInterceptor.intercepted);
+         
+         //Add metadata to instance domain so binding takes effect
+         getInstanceDomain(pojo).addClassMetaData(loader.getClassMetaDataBinding());
+         MetadataInterceptor.clear();
+         pojo.someMethod(123);
+         i = pojo.i;
+         assertTrue(MetadataInterceptor.intercepted);
+         assertEquals(2, MetadataInterceptor.lastDefaultMetadata.size());
+         assertEquals(2, MetadataInterceptor.lastClassMetadata.size());
+         assertEquals(1, MetadataInterceptor.lastMethodMetadata.size());
+         assertEquals(1, MetadataInterceptor.lastFieldMetadata.size());
+         
+         assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(0));
+         assertEquals("default", MetadataInterceptor.lastDefaultMetadata.get(1));
+         
+         assertEquals("class", MetadataInterceptor.lastClassMetadata.get(0));
+         assertEquals("class", MetadataInterceptor.lastClassMetadata.get(1));
+         
+         assertEquals("someMethod", MetadataInterceptor.lastMethodMetadata.get(0));
+         
+         assertEquals("i", MetadataInterceptor.lastFieldMetadata.get(0));
+         
+         //Clean up
+         getInstanceDomain(pojo).removeClassMetaData(loader.getClassMetaDataBinding().getName());
+         AspectManager.instance().removeBinding(binding.getName());
+         MetadataInterceptor.clear();
+         pojo.someMethod(123);
+         assertFalse(MetadataInterceptor.intercepted);
+      }
+      finally
+      {
+         if (binding != null)
+         {
+            AspectManager.instance().removeBinding(binding.getName());
+         }
+      }
    }
    
    public void testAddInstanceMetadata() throws Exception
