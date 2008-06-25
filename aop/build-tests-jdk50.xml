@@ -320,6 +320,9 @@
 
       <delete dir="${build.tests.classes}"/>
       <antcall target="precompiled-compatibility-tests" inheritRefs="true"/>
+
+      <antcall target="jrockit-tests" inheritRefs="true"/>
+      <antcall target="jrockit-genadvisor-tests" inheritRefs="true"/>
    </target>
 
    <target name="all-tests" depends="tests">
@@ -331,8 +334,6 @@
       <antcall target="jdk15-precompiled-tests" inheritRefs="true"/>
 
       <delete dir="${build.tests.classes}"/>
-      <antcall target="jrockit-tests" inheritRefs="true"/>
-      <antcall target="jrockit-genadvisor-tests" inheritRefs="true"/>
    </target>
 
    <target name="_base-jdk50-tests">
