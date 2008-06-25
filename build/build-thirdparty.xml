@@ -50,7 +50,7 @@
       <!-- beanshell: aspects -->
       <componentref name="beanshell" version="1.3.0"/>
       <!-- javassist: aop, asintegration, aspects-->
-      <componentref name="javassist" version="3.7.1.GA"/>
+      <componentref name="javassist" version="3.8.0.GA"/>
       <!-- jboss-cl: jboss-classloader.jar used by asintegration tests -->
       <componentref name="jboss/jboss-cl" version="2.0.0.Beta11"/>
       <!-- common-core: aop, asintegration, aspects -->
