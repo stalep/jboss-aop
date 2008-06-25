@@ -40,7 +40,7 @@ public class BindingClassifier
       {
          return stats.isExecution();
       }
-      return false;
+      return true;
    }
 
    public static boolean isMethodExecution(AdviceBinding binding)
@@ -50,7 +50,7 @@ public class BindingClassifier
       {
          return stats.isMethodExecution();
       }
-      return false;
+      return true;
    }
 
    public static boolean isConstructorExecution(AdviceBinding binding)
@@ -60,7 +60,7 @@ public class BindingClassifier
       {
          return stats.isConstructorExecution();
       }
-      return false;
+      return true;
    }
 
    public static boolean isConstruction(AdviceBinding binding)
@@ -70,7 +70,7 @@ public class BindingClassifier
       {
          return stats.isConstruction();
       }
-      return false;
+      return true;
    }
 
    public static boolean isCall(AdviceBinding binding)
@@ -80,7 +80,7 @@ public class BindingClassifier
       {
          return stats.isCall();
       }
-      return false;
+      return true;
    }
    
    public static boolean isMethodCall(AdviceBinding binding)
@@ -90,7 +90,7 @@ public class BindingClassifier
       {
          return stats.isMethodCall();
       }
-      return false;
+      return true;
    }
 
    public static boolean isConstructorCall(AdviceBinding binding)
@@ -100,7 +100,7 @@ public class BindingClassifier
       {
          return stats.isConstructorCall();
       }
-      return false;
+      return true;
    }
 
    public static boolean isWithin(AdviceBinding binding)
@@ -110,7 +110,7 @@ public class BindingClassifier
       {
          return stats.isWithin();
       }
-      return false;
+      return true;
    }
 
    public static boolean isGet(AdviceBinding binding)
@@ -120,7 +120,7 @@ public class BindingClassifier
       {
          return stats.isGet();
       }
-      return false;
+      return true;
    }
 
    public static boolean isSet(AdviceBinding binding)
@@ -130,7 +130,7 @@ public class BindingClassifier
       {
          return stats.isSet();
       }
-      return false;
+      return true;
    }
 
    public static boolean isWithincode(AdviceBinding binding)
@@ -140,7 +140,7 @@ public class BindingClassifier
       {
          return stats.isWithincode();
       }
-      return false;
+      return true;
    }
 
    private static PointcutStats getPointcutStats(AdviceBinding binding)
@@ -153,5 +153,4 @@ public class BindingClassifier
       }
       return null;
    }
-
 }
