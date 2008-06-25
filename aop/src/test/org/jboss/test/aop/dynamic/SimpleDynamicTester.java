@@ -33,7 +33,6 @@ import org.jboss.aop.pointcut.ast.ParseException;
 import org.jboss.aop.proxy.container.AOPProxyFactoryParameters;
 import org.jboss.aop.proxy.container.GeneratedAOPProxyFactory;
 import org.jboss.test.aop.AOPTestWithSetup;
-import org.jboss.test.aop.rebuildcallerchain.RebuildCallerChainInterceptor;
 
 /**
  * Comment
@@ -288,6 +287,7 @@ public class SimpleDynamicTester extends AOPTestWithSetup
       assertEquals("POJO.field should have been intercepted 2 times", 2, Interceptor1.numberOfInterceptions);
 
       Interceptor2.intercepted = false;
+      @SuppressWarnings("unused")
       int i = p.field;
       assertTrue("POJO.field was not intercepted", Interceptor2.intercepted);
       assertEquals("POJO.field should have been intercepted 3 times", 3, Interceptor1.numberOfInterceptions);

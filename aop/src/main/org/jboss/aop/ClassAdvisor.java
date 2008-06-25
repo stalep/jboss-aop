@@ -41,7 +41,6 @@ import java.util.Map;
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.Interceptor;
-import org.jboss.aop.instrument.ConstructionJoinPointGenerator;
 import org.jboss.aop.instrument.ConstructorExecutionTransformer;
 import org.jboss.aop.instrument.FieldAccessTransformer;
 import org.jboss.aop.instrument.MethodExecutionTransformer;

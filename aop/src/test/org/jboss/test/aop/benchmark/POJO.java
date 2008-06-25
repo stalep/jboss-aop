@@ -29,8 +29,9 @@ package org.jboss.test.aop.benchmark;
  */
 public class POJO
 {
-   
+   @SuppressWarnings("unused")
    private int i;
+   @SuppressWarnings("unused")
    private int j;
    
    public POJO() { }
