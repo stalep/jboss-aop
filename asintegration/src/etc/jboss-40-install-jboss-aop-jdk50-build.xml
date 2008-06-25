@@ -10,9 +10,13 @@
 
       <!-- The rest are automatic -->
       <property name="jboss.config.dir" value="${jboss.home}/server/${jboss.config}"/>
-
+      <property name="jboss.bin.dir" value="${jboss.home}/bin"/>
+      
       <available file="${jboss.home}" property="jboss.exists" type="dir"/>
       <fail unless="jboss.exists" message="${jboss.home} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+      
+      <available file="${jboss.bin.dir}" property="bin.exists" type="dir"/>
+      <fail unless="bin.exists" message="${jboss.bin.dir} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
 
       <available file="${jboss.config.dir}" property="config.exists" type="dir"/>
       <fail unless="config.exists" message="${jboss.config.dir} does not exist. Modify 'jboss.config' in build.xml to be a valid server configuration"/>
@@ -90,8 +94,17 @@
    <target name="backup.javassist.post.4.0.4" depends="init" if="backup.javassist">
       <move file="${lib.javassist}" tofile="${bak.javassist}"/>
    </target>
+   
+   <target name="install.bin" depends="init">
+      <copy todir="${jboss.bin.dir}">
+         <fileset dir="../../lib-50">
+            <include name="pluggable-instrumentor.jar"/>
+            <include name="jrockit-pluggable-instrumentor.jar"/>
+         </fileset>
+      </copy>
+   </target>
 
-   <target name="install.post.4.0.4" depends="install.deployer, backup.javassist.post.4.0.4" if="jboss.post.4.0.4">
+   <target name="install.post.4.0.4" depends="install.deployer, install.bin, backup.javassist.post.4.0.4" if="jboss.post.4.0.4">
       <delete file="${aspect.deployer}/javassist.jar"/>
       <copy file="javassist.jar" tofile="${lib.javassist}" overwrite="true"/>
    </target>
