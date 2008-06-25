@@ -48,6 +48,7 @@ import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AdviceStack;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.AspectFactoryWithClassLoader;
+import org.jboss.aop.advice.ClassifiedBindingCollection;
 import org.jboss.aop.advice.DynamicCFlowDefinition;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.PrecedenceDef;
@@ -133,7 +134,9 @@ public class AspectManager
    protected volatile LinkedHashMap<String, ArrayBinding> arrayBindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    protected volatile LinkedHashMap<String, AnnotationIntroduction> annotationIntroductions =UnmodifiableEmptyCollections. EMPTY_LINKED_HASHMAP;
    protected volatile LinkedHashMap<String, AnnotationIntroduction> annotationOverrides = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   @Deprecated
    protected volatile LinkedHashMap<String, AdviceBinding> bindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   volatile ClassifiedBindingCollection bindingCollection;
    protected volatile LinkedHashMap<String, Typedef> typedefs = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    protected volatile HashMap<String, InterceptorFactory> interceptorFactories = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
    protected volatile HashMap<String,ClassMetaDataLoader> classMetaDataLoaders = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
@@ -470,7 +473,7 @@ public class AspectManager
     */
    public AspectManager()
    {
-
+      this.bindingCollection = new ClassifiedBindingCollection();
    }
    /**
     * Every &lt;class-metadata&gt; tag corresponds to
@@ -523,9 +526,31 @@ public class AspectManager
       throw new RuntimeException("OPERATION NOT SUPPORTED ANYMORE");
    }
 
+   /**
+    * Returns the binding map.
+    * <p>
+    * The returned map must be used for read purposes only. To edit the
+    * binding collection, call {@link #addBinding(AdviceBinding)} and
+    * {@link #removeBinding(String)} instead.
+    * 
+    * @return the map containing all advice bindings indexed by their names
+    */
    public LinkedHashMap<String, AdviceBinding> getBindings()
    {
-      return bindings;
+      return bindingCollection.getBindings();
+   }
+   
+   /**
+    * Returns the classified binding collection.
+    * <p>
+    * <b>Attention:</b> this collection is not supposed to be edited. Hence, only
+    * get methods can be called by clients.
+    * 
+    * @return the classified binding collection
+    */
+   ClassifiedBindingCollection getBindingCollection()
+   {
+      return bindingCollection;
    }
 
    protected Map<Class<?>, WeakReference<Domain>> getSubDomainsPerClass()
@@ -1374,26 +1399,16 @@ public class AspectManager
       clearUnregisteredClassLoaders();
 
       HashSet<Advisor> bindingAdvisors = new HashSet<Advisor>();
-      ArrayList<AdviceBinding> removedBindings = new ArrayList<AdviceBinding>();
-      synchronized (bindings)
+      ArrayList<AdviceBinding> removedBindings = null;
+      synchronized (bindingCollection)
       {
-         int bindSize = binds.size();
-
-         for (int i = 0; i < bindSize; i++)
+         removedBindings = this.bindingCollection.remove(binds);
+         for (AdviceBinding removedBinding: removedBindings)
          {
-
-            AdviceBinding binding = bindings.get(binds.get(i));
-            if (binding == null)
-            {
-               logger.debug("AspectManager.removeBindings() no binding found with name " + binds.get(i));
-               continue;
-            }
-            ArrayList<Advisor> ads = binding.getAdvisors();
+            ArrayList<Advisor> ads = removedBinding.getAdvisors();
             bindingAdvisors.addAll(ads);
-            bindings.remove(binding.getName());
-            Pointcut pointcut = binding.getPointcut();
+            Pointcut pointcut = removedBinding.getPointcut();
             this.removePointcut(pointcut.getName());
-            removedBindings.add(binding);
          }
       }
       Iterator<Advisor> it = bindingAdvisors.iterator();
@@ -1435,12 +1450,6 @@ public class AspectManager
       {
          removedBinding = internalRemoveBinding(binding.getName());
          affectedAdvisors = removedBinding == null ? null : new HashSet<Advisor>(removedBinding.getAdvisors());
-         initBindingsMap();
-         synchronized (bindings)
-         {
-            bindings.put(binding.getName(), binding);
-         }
-
          initPointcutsMap();
          initPointcutInfosMap();
          synchronized (pointcuts)
@@ -1449,6 +1458,12 @@ public class AspectManager
             pointcuts.put(pointcut.getName(), pointcut);
             pointcutInfos.put(pointcut.getName(), new PointcutInfo(pointcut, binding, this.transformationStarted));
             updatePointcutStats(pointcut);
+         }
+         
+         initBindingsMap();
+         synchronized (bindingCollection)
+         {
+            bindingCollection.add(binding);
          }
       }
       synchronized (advisors)
@@ -2066,9 +2081,9 @@ public class AspectManager
     */
    private synchronized AdviceBinding internalRemoveBinding(String name)
    {
-      synchronized (bindings)
+      synchronized (bindingCollection)
       {
-         AdviceBinding binding = bindings.remove(name);
+         AdviceBinding binding = bindingCollection.remove(name);
          if (binding == null)
          {
             return null;
@@ -2349,13 +2364,14 @@ public class AspectManager
 
    protected void initBindingsMap()
    {
-      if (bindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      if (!bindingCollection.isInitialized())
       {
          synchronized(lazyCollectionLock)
          {
-            if (bindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+            if (!bindingCollection.isInitialized())
             {
-               bindings = new LinkedHashMap<String, AdviceBinding>();
+               bindingCollection.initialize();
+               bindings = bindingCollection.getBindings();
             }
          }
       }

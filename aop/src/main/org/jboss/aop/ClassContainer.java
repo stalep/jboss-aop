@@ -27,10 +27,11 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 
 import org.jboss.aop.advice.AdviceBinding;
+import org.jboss.aop.advice.ClassifiedBindingCollection;
 import org.jboss.aop.metadata.ClassMetaDataBinding;
 import org.jboss.aop.metadata.ClassMetaDataLoader;
 import org.jboss.aop.util.Advisable;
@@ -293,17 +294,20 @@ public class ClassContainer extends Advisor
 
    private void makeInterceptorChains()
    {
-      LinkedHashMap<String, AdviceBinding> bindings = manager.getBindings();
-      synchronized (bindings)
+      ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+      synchronized (bindingCol)
       {
-         if (bindings.size() > 0)
+         Collection<AdviceBinding> bindings = bindingCol.getConstructorExecutionBindings(); 
+         for (AdviceBinding binding : bindings)
          {
-            for (AdviceBinding binding : bindings.values())
-            {
-               if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName());
-               resolveMethodPointcut(binding);
-               resolveConstructorPointcut(binding);
-            }
+            if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName());
+            resolveConstructorPointcut(binding);
+         }
+         bindings = bindingCol.getMethodExecutionBindings(); 
+         for (AdviceBinding binding : bindings)
+         {
+            if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("iterate binding " + binding.getName());
+            resolveMethodPointcut(binding);
          }
       }
       finalizeChain(constructorInfos);

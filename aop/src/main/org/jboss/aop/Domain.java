@@ -25,14 +25,17 @@ import java.lang.ref.WeakReference;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AdviceStack;
 import org.jboss.aop.advice.AspectDefinition;
+import org.jboss.aop.advice.ClassifiedBindingCollection;
 import org.jboss.aop.advice.DynamicCFlowDefinition;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.PrecedenceDef;
@@ -79,6 +82,7 @@ public class Domain extends AspectManager
 
    public Domain(AspectManager manager, String name, boolean parentFirst)
    {
+      bindingCollection = new DomainClassifiedBindingCollection();
       this.parent = manager;
       this.parentFirst = parentFirst;
       this.name = name;
@@ -159,12 +163,12 @@ public class Domain extends AspectManager
          {
             // when child first, parent bindings go in first so that they can be overridden by child.
             LinkedHashMap<String, AdviceBinding> map = new LinkedHashMap<String, AdviceBinding>(parent.getBindings());
-            map.putAll(this.bindings);
+            map.putAll(this.bindingCollection.getBindings());
             return map;
          }
          else
          {
-            LinkedHashMap<String, AdviceBinding> map = new LinkedHashMap<String, AdviceBinding>(this.bindings);
+            LinkedHashMap<String, AdviceBinding> map = new LinkedHashMap<String, AdviceBinding>(this.bindingCollection.getBindings());
             map.putAll(parent.getBindings());
             return map;
          }
@@ -189,15 +193,15 @@ public class Domain extends AspectManager
    public synchronized void removeBinding(String name)
    {
       super.removeBinding(name);
-      hasOwnBindings = bindings.size() > 0;
+      hasOwnBindings = !bindingCollection.isEmpty();
    }
    
    @Override
    public synchronized void removeBindings(ArrayList<String> binds)
    {
       super.removeBindings(binds);
-      hasOwnBindings = bindings.size() > 0;
-      hasOwnPointcuts = bindings.size() > 0;
+      hasOwnBindings = !bindingCollection.isEmpty();
+      hasOwnPointcuts = !bindingCollection.isEmpty();
    }
    
    @Override
@@ -1097,5 +1101,89 @@ public class Domain extends AspectManager
    public boolean isSet()
    {
       return parent.isSet();
+   }
+   
+   private class DomainClassifiedBindingCollection extends ClassifiedBindingCollection
+   {
+      public Collection<AdviceBinding> getFieldReadBindings()
+      {
+         Collection<AdviceBinding> result = super.getFieldReadBindings();
+         Collection<AdviceBinding> parentResult = parent.getBindingCollection().
+            getFieldReadBindings();
+         return unifyCollections(result, parentResult, parentFirst);
+      }
+      
+      public Collection<AdviceBinding> getFieldWriteBindings()
+      {
+         Collection<AdviceBinding> result = super.getFieldWriteBindings();
+         Collection<AdviceBinding> parentResult = parent.getBindingCollection().
+            getFieldWriteBindings();
+         return unifyCollections(result, parentResult, parentFirst);
+      }
+      
+      public Collection<AdviceBinding> getConstructionBindings()
+      {
+         Collection<AdviceBinding> result = super.getConstructionBindings();
+         Collection<AdviceBinding> parentResult = parent.getBindingCollection().
+            getConstructionBindings();
+         return unifyCollections(result, parentResult, parentFirst);
+      }
+      
+      public Collection<AdviceBinding> getConstructorExecutionBindings()
+      {
+         Collection<AdviceBinding> result = super.getConstructorExecutionBindings();
+         Collection<AdviceBinding> parentResult = parent.getBindingCollection().
+            getConstructorExecutionBindings();
+         return unifyCollections(result, parentResult, parentFirst);
+      }
+      
+      public Collection<AdviceBinding> getMethodExecutionBindings()
+      {
+         Collection<AdviceBinding> result = super.getMethodExecutionBindings();
+         Collection<AdviceBinding> parentResult = parent.getBindingCollection().
+            getMethodExecutionBindings();
+         return unifyCollections(result, parentResult, parentFirst);
+      }
+      
+      public Collection<AdviceBinding> getConstructorCallBindings()
+      {
+         Collection<AdviceBinding> result = super.getConstructorCallBindings();
+         Collection<AdviceBinding> parentResult = parent.getBindingCollection().
+            getConstructorCallBindings();
+         return unifyCollections(result, parentResult, parentFirst);
+      }
+      
+      public Collection<AdviceBinding> getMethodCallBindings()
+      {
+         Collection<AdviceBinding> result = super.getMethodCallBindings();
+         Collection<AdviceBinding> parentResult = parent.getBindingCollection().
+            getMethodCallBindings();
+         return unifyCollections(result, parentResult, parentFirst);
+      }
+      
+      private <T> Collection<T> unifyCollections(Collection<T> collection1,
+            Collection<T> collection2, boolean prioritizeFirst)
+      {
+         if (collection1.isEmpty())
+         {
+            return collection2;
+         }
+         if (collection2.isEmpty())
+         {
+            return collection1;
+         }
+         if (prioritizeFirst)
+         {
+            collection1 = new LinkedHashSet<T>(collection1);
+            collection1.addAll(collection2);
+         }
+         else
+         {
+            Collection<T> temp = collection1;
+            collection1 = new LinkedHashSet<T>(collection2);
+            collection1.addAll(temp);
+         }
+         return collection1;
+      }
    }
 }

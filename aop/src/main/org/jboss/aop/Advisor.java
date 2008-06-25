@@ -583,6 +583,17 @@ public abstract class Advisor
       return hasAnnotation(tgt, null, annotation);
    }
 
+   /**
+    * Indicates whether {@code tgt} has an annotation/meta data whose type is {@code
+    * annotationClass}, and name is {@code annotation}.
+    * 
+    * @param  tgt             the target class whose annotations/meta data will be
+    *                         examined
+    * @param  annotation      the name of an annotation
+    * @param  annotationClass the type of an annotation
+    * @return {@code true} if {@code tgt} has an annotation/meta data whose type is
+    * {@code annotationClass} and name is {@code annotation}
+    */
    private boolean hasAnnotation(Class<?> tgt, String annotation, Class<? extends Annotation> annotationClass)
    {
       if (annotation == null && annotationClass == null)
@@ -616,21 +627,59 @@ public abstract class Advisor
       return false;
    }
 
+   /**
+    * Returns an object representing the method {@code m} annotation of type
+    * {@code annotation}, if {@code m} has such annotation.
+    * 
+    * @param  m          the method whose annotation is being queried
+    * @param  annotation the type of the queried annotation
+    * @return the meta data/annotation of type {@code annotation} that apply to
+    *         {@code m}
+    */
    public Object resolveAnnotation(Method m, Class<? extends Annotation> annotation)
    {
       return resolveTypedAnnotation(0, m, annotation);
    }
    
+   /**
+    * Returns an object representing the method {@code m} annotation of type
+    * {@code annotation}, if {@code m} has such annotation.
+    * 
+    * @param  m          the method whose annotation is being queried
+    * @param  annotation the type of the queried annotation
+    * @return the meta data/annotation of type {@code annotation} that apply to
+    *         {@code m}
+    */
    public <T extends Annotation> T resolveTypedAnnotation(Method m, Class<T> annotation)
    {
       return resolveTypedAnnotation(0, m, annotation);
    }
 
+   /**
+    * Returns an object representing the method {@code m} annotation of type
+    * {@code annotation}, if {@code m} has such annotation.
+    * 
+    * @param hash        the hashcode of {@code m}
+    * @param  m          the method whose annotation is being queried
+    * @param  annotation the type of the queried annotation
+    * @return the meta data/annotation of type {@code annotation} that apply to
+    *         {@code m}
+    */
    public Object resolveAnnotation(long hash, Method m, Class<? extends Annotation> annotation)
    {
       return resolveTypedAnnotation(hash, m, annotation);
    }
    
+   /**
+    * Returns an object representing the method {@code m} annotation of type
+    * {@code annotation}, if {@code m} has such annotation.
+    * 
+    * @param hash        the hashcode of {@code m}
+    * @param  m          the method whose annotation is being queried
+    * @param  annotation the type of the queried annotation
+    * @return the meta data/annotation of type {@code annotation} that apply to
+    *         {@code m}
+    */
    public <T extends Annotation> T resolveTypedAnnotation(long hash, Method m, Class<T> annotation)
    {
       if (metadata != null)
@@ -656,6 +705,17 @@ public abstract class Advisor
       return value;
    }
 
+   /**
+    * Returns an object representing the method {@code m} annotation whose type is
+    * one of the elements in {@code annotationChoices}, if {@code m} has such
+    * annotation.
+    * 
+    * @param  m                 the method whose annotation is being queried
+    * @param  annotationChoices the queried annotation must have one of the types
+    *                           contained in this array
+    * @return the meta data/annotation that apply to {@code m} whose type is in
+    *         {@code annotationChoices} 
+    */
    public Object resolveAnnotation(Method m, Class<?>[] annotationChoices)
    {
       for (Class<?> ann : annotationChoices)
@@ -666,6 +726,17 @@ public abstract class Advisor
       return null;
    }
 
+   /**
+    * Returns an object representing the method {@code m} annotation whose type is
+    * one of the elements in {@code annotationChoices}, if {@code m} has such
+    * annotation.
+    * 
+    * @param  m                 the method whose annotation is being queried
+    * @param  annotationChoices the queried annotation must have one of the types
+    *                           contained in this array
+    * @return the meta data/annotation that apply to {@code m} whose type is in
+    *         {@code annotationChoices} 
+    */
    public <T extends Annotation> T resolveTypedAnnotation(Method m, Class<T>[] annotationChoices)
    {
       for (Class<T> ann : annotationChoices)

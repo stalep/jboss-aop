@@ -34,12 +34,14 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AspectDefinition;
+import org.jboss.aop.advice.ClassifiedBindingCollection;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.instrument.ConstructorExecutionTransformer;
 import org.jboss.aop.instrument.FieldAccessTransformer;
@@ -267,7 +269,6 @@ public class ClassAdvisor extends Advisor
       {
          //long start = System.currentTimeMillis();
 
-         final ClassAdvisor THIS = this;
          final AspectManager theManager = manager;
          //register class loader: necessary when clazz was precompiled through aopc
          manager.registerClassLoader(clazz.getClassLoader());
@@ -275,20 +276,20 @@ public class ClassAdvisor extends Advisor
          {
             public Object run() throws Exception
             {
-               theManager.attachMetaData(THIS, clazz);
+               theManager.attachMetaData(ClassAdvisor.this, clazz);
                interfaceIntroductions.clear();
                // metadata should always come before creation of interceptor chain
                // so that the interceptor factories have access to metadata.
                // and so that metadata joinpoints can be checked
                //
 
-               THIS.clazz = clazz;
+               ClassAdvisor.this.clazz = clazz;
 
                // Also metadata needs to be applied before applyIntroductionPointcuts because
                // an annotation may be triggered by XML metadata as well as
                // after populateMixinMethods so that proper metadata is applied to added methods
                rebindClassMetaData();
-               theManager.applyInterfaceIntroductions(THIS, clazz);
+               theManager.applyInterfaceIntroductions(ClassAdvisor.this, clazz);
                createFieldTable();
                createMethodTables();
                createConstructorTables();
@@ -573,9 +574,14 @@ public class ClassAdvisor extends Advisor
 //      }
 //   }
 
+   @SuppressWarnings("deprecation")
    protected void createInterceptorChains() throws Exception
    {
-      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Creating chains for " + clazz + " " + ((clazz != null) ? clazz.getClassLoader() : null ));
+      if (AspectManager.verbose && logger.isDebugEnabled())
+      {
+         logger.debug("Creating chains for " + clazz + " " +
+               ((clazz != null) ? clazz.getClassLoader() : null ));
+      }
       // TODO flavia remove this
       // this if is here because the subclass GeneratedClassAdvisor shouldn't be calling
       // this method anymore: the infos are already created during this class initalization (initalise method)
@@ -589,15 +595,9 @@ public class ClassAdvisor extends Advisor
 
       initializeConstructorChain();
       initializeConstructionChain();
-
-      synchronized (manager.getBindings())
-      {
-         for (AdviceBinding binding : manager.getBindings().values())
-         {
-            resolvePointcuts(binding);
-         }
-      }
-
+      
+      resolveBindings(manager);
+      
       finalizeChains();
       populateInterceptorsFromInfos();
 
@@ -610,6 +610,60 @@ public class ClassAdvisor extends Advisor
       }
    }
 
+   @SuppressWarnings("deprecation")
+   private void resolveBindings(AspectManager manager)
+   {
+      ClassifiedBindingCollection bindingCol = manager.bindingCollection;
+      synchronized (bindingCol)
+      {
+         for (AdviceBinding binding: bindingCol.getFieldReadBindings())
+         {
+            if (AspectManager.verbose && logger.isDebugEnabled())
+            {
+               logger.debug("iterate binding " + binding.getName() + " " +
+                     binding.getPointcut().getExpr());
+            }
+            resolveFieldPointcut(fieldReadInfos, binding, false);
+         }
+         for (AdviceBinding binding: bindingCol.getFieldWriteBindings())
+         {
+            if (AspectManager.verbose && logger.isDebugEnabled())
+            {
+               logger.debug("iterate binding " + binding.getName() + " " +
+                     binding.getPointcut().getExpr());
+            }
+            resolveFieldPointcut(fieldWriteInfos, binding, true);
+         }
+         for (AdviceBinding binding: bindingCol.getConstructionBindings())
+         {
+            if (AspectManager.verbose && logger.isDebugEnabled())
+            {
+               logger.debug("iterate binding " + binding.getName() + " " +
+                     binding.getPointcut().getExpr());
+            }
+            resolveConstructionPointcut(binding);
+         }
+         for (AdviceBinding binding: bindingCol.getConstructorExecutionBindings())
+         {
+            if (AspectManager.verbose && logger.isDebugEnabled())
+            {
+               logger.debug("iterate binding " + binding.getName() + " " +
+                     binding.getPointcut().getExpr());
+            }
+            resolveConstructorPointcut(binding);
+         }
+         for (AdviceBinding binding: bindingCol.getMethodExecutionBindings())
+         {
+            if (AspectManager.verbose && logger.isDebugEnabled())
+            {
+               logger.debug("iterate binding " + binding.getName() + " " +
+                     binding.getPointcut().getExpr());
+            }
+            resolveMethodPointcut(binding);
+         }
+      }
+   }
+   
    protected void updateInterceptorChains() throws Exception
    {
       if (AspectManager.verbose && logger.isDebugEnabled())
@@ -622,13 +676,7 @@ public class ClassAdvisor extends Advisor
       {
          resetChains();
          
-         synchronized (manager.getBindings())
-         {
-            for (AdviceBinding binding : manager.getBindings().values())
-            {
-               resolvePointcuts(binding);
-            }
-         }
+         resolveBindings(manager);
 
          finalizeChains();
          populateInterceptorsFromInfos();
@@ -780,6 +828,9 @@ public class ClassAdvisor extends Advisor
    
    protected void updateFieldPointcutAfterRemove(FieldInfo[] fieldInfos, AdviceBinding binding, boolean write)
    {
+      ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+      Collection<AdviceBinding> bindings = write? bindingCol.getFieldWriteBindings():
+            bindingCol.getFieldReadBindings();
       for (int i = 0; i < fieldInfos.length; i++)
       {
          Field field = fieldInfos[i].getField();
@@ -791,7 +842,7 @@ public class ClassAdvisor extends Advisor
             if (AspectManager.verbose) System.err.println("[debug] Removing field, matched " + ((write) ? "write" : "read") + " binding: " + field);
             fieldInfos[i].clear();
             
-            for(AdviceBinding ab : manager.getBindings().values())
+            for(AdviceBinding ab : bindings)
             {
                if ((!write && ab.getPointcut().matchesGet(this, field))
                      || (write && ab.getPointcut().matchesSet(this, field)))
@@ -805,6 +856,7 @@ public class ClassAdvisor extends Advisor
    
    protected void updateConstructorPointcutAfterRemove(AdviceBinding binding)
    {
+      ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
       if(constructorInfos != null && constructorInfos.length > 0)
       {
          for (int i = 0; i < constructors.length; i++)
@@ -815,7 +867,7 @@ public class ClassAdvisor extends Advisor
             {
                if (AspectManager.verbose) System.err.println("[debug] Removing constructor, matched binding: " + constructor);
                constructorInfos[i].clear();
-               for(AdviceBinding ab : manager.getBindings().values())
+               for(AdviceBinding ab : bindingCol.getConstructorExecutionBindings())
                {
                   if (ab.getPointcut().matchesExecution(this, constructor))
                   {
@@ -829,6 +881,7 @@ public class ClassAdvisor extends Advisor
    
    protected void updateConstructionPointcutAfterRemove(AdviceBinding binding)
    {
+      ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
       if (constructionInfos.length > 0)
       {
          for (int i = 0; i < constructionInfos.length ;i++)
@@ -840,7 +893,7 @@ public class ClassAdvisor extends Advisor
             {
                if (AspectManager.verbose) System.err.println("[debug] Removing construction, matched binding: " + constructor);
                constructionInfos[i].clear();
-               for(AdviceBinding ab : manager.getBindings().values())
+               for(AdviceBinding ab : bindingCol.getConstructionBindings())
                {
                   if (binding.getPointcut().matchesConstruction(this, constructor))
                   {
@@ -964,8 +1017,6 @@ public class ClassAdvisor extends Advisor
       }
    }
    
-   
-
    private ArrayList<AdviceBinding> getConstructorCallerBindings(int callingIndex, String cname, long calledHash)
    {
       try
@@ -977,16 +1028,18 @@ public class ClassAdvisor extends Advisor
          Method calledMethod = MethodHashing.findMethodByHash(called, calledHash);
          if (calledMethod == null) throw new RuntimeException("Unable to figure out calledmethod of a caller pointcut");
 
-         ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(manager.getBindings().size());
-         for(AdviceBinding ab : manager.getBindings().values())
+         Collection<AdviceBinding> bindings = manager.getBindingCollection().
+            getMethodCallBindings();
+         ArrayList<AdviceBinding> result = new ArrayList<AdviceBinding>(bindings.size());
+         for(AdviceBinding ab : bindings)
          {
-            if (BindingClassifier.isMethodCall(ab) && ab.getPointcut().matchesCall(this, callingConstructor, called, calledMethod))
+            if (ab.getPointcut().matchesCall(this, callingConstructor, called, calledMethod))
             {
-               bindings.add(ab);
+               result.add(ab);
             }
          }
          
-         return bindings;
+         return result;
       }
       catch(Exception e)
       {
@@ -1006,15 +1059,17 @@ public class ClassAdvisor extends Advisor
          Constructor<?> calledCon = MethodHashing.findConstructorByHash(called, calledHash);
          if (calledCon == null) throw new RuntimeException("Unable to figure out calledcon of a caller pointcut");
 
-         ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(manager.getBindings().size());
-         for(AdviceBinding ab : manager.getBindings().values())   
+         Collection<AdviceBinding> bindings = manager.getBindingCollection().
+            getConstructorCallBindings();
+         ArrayList<AdviceBinding> result= new ArrayList<AdviceBinding>(bindings.size());
+         for(AdviceBinding ab : bindings)   
          {
-            if (BindingClassifier.isConstructorCall(ab) && ab.getPointcut().matchesCall(this, callingConstructor, called, calledCon))
+            if (ab.getPointcut().matchesCall(this, callingConstructor, called, calledCon))
             {
-               bindings.add(ab);
+               result.add(ab);
             }
          }
-         return bindings;
+         return result;
       }
       catch(Exception e)
       {
@@ -1590,12 +1645,12 @@ public class ClassAdvisor extends Advisor
          if (calledMethod == null) throw new RuntimeException("Unable to figure out calledmethod of a caller pointcut");
 
          boolean matched = false;
-
-         synchronized (manager.getBindings())
+         ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+         synchronized (bindingCol)
          {
-            for (AdviceBinding binding : manager.getBindings().values())
+            for (AdviceBinding binding : bindingCol.getConstructorCallBindings())
             {
-               if (BindingClassifier.isConstructorCall(binding) && binding.getPointcut().matchesCall(this, callingConstructor, called, calledMethod))
+               if (binding.getPointcut().matchesCall(this, callingConstructor, called, calledMethod))
                {
                   addConstructorCallerPointcut(callingIndex, calledClass, calledMethodHash, binding);
                   matched = true;
@@ -1656,11 +1711,12 @@ public class ClassAdvisor extends Advisor
          if (calledCon == null) throw new RuntimeException("Unable to figure out calledcon of a caller pointcut");
 
          boolean matched = false;
-         synchronized (manager.getBindings())
+         ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+         synchronized (bindingCol)
          {
-            for (AdviceBinding binding : manager.getBindings().values())
+            for (AdviceBinding binding : bindingCol.getConstructorCallBindings())
             {
-               if (BindingClassifier.isConstructorCall(binding) && binding.getPointcut().matchesCall(this, callingConstructor, called, calledCon))
+               if (binding.getPointcut().matchesCall(this, callingConstructor, called, calledCon))
                {
                   addConstructorCalledByConPointcut(callingIndex, calledClass, calledConHash, binding);
                   matched = true;
@@ -2464,9 +2520,9 @@ public class ClassAdvisor extends Advisor
             if (calledMethod == null) throw new RuntimeException("Unable to figure out calledmethod of a caller pointcut");
 
             boolean matched = false;
-            for (AdviceBinding binding : manager.getBindings().values())
+            for (AdviceBinding binding : manager.getBindingCollection().getMethodCallBindings())
             {
-               if (BindingClassifier.isMethodCall(binding) && binding.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledMethod))
+               if (binding.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledMethod))
                {
                   addMethodCalledByMethodPointcut(callingMethodHash, calledClass, calledMethodHash, binding);
                   matched = true;
@@ -2582,15 +2638,17 @@ public class ClassAdvisor extends Advisor
             Method calledMethod = MethodHashing.findMethodByHash(called, calledHash);
             if (calledMethod == null) throw new RuntimeException("Unable to figure out calledmethod of a caller pointcut");
 
-            ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(manager.getBindings().size());
-            for(AdviceBinding ab : manager.getBindings().values())
+            Collection<AdviceBinding> bindings = manager.getBindingCollection().
+               getMethodCallBindings();
+            ArrayList<AdviceBinding> result = new ArrayList<AdviceBinding>(bindings.size());
+            for(AdviceBinding ab : bindings)
             {
-               if (BindingClassifier.isMethodCall(ab) && ab.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledMethod))
+               if (ab.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledMethod))
                {
-                  bindings.add(ab);
+                  result.add(ab);
                }
             }
-            return bindings;
+            return result;
          }
          catch(Exception e)
          {
@@ -2653,16 +2711,18 @@ public class ClassAdvisor extends Advisor
             Class<?> called = SecurityActions.getContextClassLoader().loadClass(cname);
             Constructor<?> calledCon = MethodHashing.findConstructorByHash(called, calledHash);
             if (calledCon == null) throw new RuntimeException("Unable to figure out calledcon of a constructor caller pointcut");
-
-            ArrayList<AdviceBinding> bindings = new ArrayList<AdviceBinding>(manager.getBindings().size());
-            for(AdviceBinding ab : manager.getBindings().values())
+            
+            Collection<AdviceBinding> bindings = manager.getBindingCollection().
+               getConstructorCallBindings();
+            ArrayList<AdviceBinding> result = new ArrayList<AdviceBinding>(bindings.size());
+            for(AdviceBinding ab : bindings)
             {
-               if (BindingClassifier.isConstructorCall(ab) && ab.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledCon))
+               if (ab.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledCon))
                {
-                  bindings.add(ab);
+                  result.add(ab);
                }
             }
-            return bindings;
+            return result;
          }
          catch(Exception e)
          {
@@ -2740,12 +2800,12 @@ public class ClassAdvisor extends Advisor
             if (calledCon == null) throw new RuntimeException("Unable to figure out calledcon of a constructor caller pointcut");
 
             boolean matched = false;
-            synchronized (manager.getBindings())
+            ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+            synchronized (bindingCol)
             {
-               for (AdviceBinding binding : manager.getBindings().values())
+               for (AdviceBinding binding : bindingCol.getConstructorCallBindings())
                {
-                  if (BindingClassifier.isConstructorCall(binding) &&
-                        binding.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledCon))
+                  if (binding.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledCon))
                   {
                      addConstructorCalledByMethodPointcut(callingMethodHash, calledClass, calledConHash, binding);
                      matched = true;

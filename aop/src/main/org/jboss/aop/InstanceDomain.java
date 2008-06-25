@@ -53,9 +53,9 @@ public class InstanceDomain extends Domain
    {
       removeBinding(binding.getName());
       super.initBindingsMap();
-      synchronized (bindings)
+      synchronized (bindingCollection)
       {
-         bindings.put(binding.getName(), binding);
+         bindingCollection.add(binding);
       }
       if (advisor != null) advisor.newBindingAdded();
    }
