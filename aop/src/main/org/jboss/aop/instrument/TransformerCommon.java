@@ -28,6 +28,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.security.ProtectionDomain;
@@ -110,7 +111,7 @@ public class TransformerCommon {
 
          if (AspectManager.debugClasses)
          {
-            newClass.debugWriteFile();
+            debugWriteFile(newClass);
          }
       }
       catch (Exception e)
@@ -145,6 +146,18 @@ public class TransformerCommon {
       else
       {
          return ToClassAction.PRIVILEGED.toClass(newClass, loader, pd);
+      }
+   }
+   
+   public static void debugWriteFile(CtClass clazz)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         DebugWriteFileAction.NON_PRIVILEGED.debugWriteFile(clazz);
+      }
+      else
+      {
+         DebugWriteFileAction.PRIVILEGED.debugWriteFile(clazz);
       }
    }
 
@@ -291,6 +304,34 @@ public class TransformerCommon {
                clazz.debugWriteFile();
             }
             return clazz.toClass(loader, pd);
+         }
+      };
+   }
+
+   private interface DebugWriteFileAction
+   {
+      void debugWriteFile(CtClass clazz);
+
+      DebugWriteFileAction PRIVILEGED = new DebugWriteFileAction()
+      {
+         public void debugWriteFile(final CtClass clazz)
+         {
+            AccessController.doPrivileged(new PrivilegedAction<Object>()
+            {
+               public Object run()
+               {
+                  clazz.debugWriteFile();
+                  return null;
+               }
+            });
+         }
+      };
+
+      DebugWriteFileAction NON_PRIVILEGED = new DebugWriteFileAction()
+      {
+         public void debugWriteFile(CtClass clazz)
+         {
+            clazz.debugWriteFile();
          }
       };
    }
