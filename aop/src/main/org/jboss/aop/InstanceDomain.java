@@ -57,6 +57,7 @@ public class InstanceDomain extends Domain
       {
          bindingCollection.add(binding);
       }
+      super.addPointcut(binding.getPointcut());
       if (advisor != null) advisor.newBindingAdded();
    }
 
