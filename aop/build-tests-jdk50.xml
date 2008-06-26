@@ -863,7 +863,7 @@
       </annotationc>
 
       <junit printsummary="yes" fork="no" haltonfailure="no" >
-         <sysproperty key="jboss.aop.debug.classes" value="false"/>
+         <sysproperty key="jboss.aop.debug.classes" value="${jboss.aop.debug.classes}"/>
          <classpath>
             <path refid="javac.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -1451,7 +1451,7 @@
          <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
-         <sysproperty key="jboss.aop.debug.classes" value="true"/>
+         <sysproperty key="jboss.aop.debug.classes" value="${jboss.aop.debug.classes}"/>
          <formatter type="plain" extension="-${caller}.txt"/>
          <classpath refid="test.classpath"/>
          <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-${caller}.xml"/>
