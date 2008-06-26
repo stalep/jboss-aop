@@ -321,10 +321,8 @@
       <delete dir="${build.tests.classes}"/>
       <antcall target="precompiled-compatibility-tests" inheritRefs="true"/>
       
-      <!--
       <antcall target="jrockit-tests" inheritRefs="true"/>
       <antcall target="jrockit-genadvisor-tests" inheritRefs="true"/>
-      -->
    </target>
 
    <target name="all-tests" depends="tests">
