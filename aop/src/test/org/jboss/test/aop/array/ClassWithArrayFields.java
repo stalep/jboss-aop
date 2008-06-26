@@ -29,6 +29,7 @@ package org.jboss.test.aop.array;
 public class ClassWithArrayFields
 {
    public Object[] objects = new Object[] {"1", "2", "3"};
+   public String[] strings = new String[] {"1", "2", "3"};
    public byte[] bytes = new byte[] {1, 2, 3};
    public boolean[] booleans = new boolean[] {true, true, true};
    public char[] chars = new char[] {'a', 'b', 'c'};

@@ -48,6 +48,26 @@ public class AOPArrayTestCase extends AOPTestWithSetup
       return suite;
    }
 
+   public void testStringArray()
+   {
+      ClassWithArrayFields obj = new ClassWithArrayFields();
+      clearInterceptors();
+      AspectForPrecedence.invoked = false;
+      obj.strings[2] = "X";
+      assertEquals(2, TestArrayElementInterceptor.index);
+      assertEquals("X", TestArrayElementInterceptor.value);
+      assertTrue(AspectForPrecedence.invoked);
+      checkWrite();
+      
+      clearInterceptors();
+      AspectForPrecedence.invoked = false;
+      String s = obj.strings[0];
+      assertEquals("1", s);
+      assertEquals(0, TestArrayElementInterceptor.index);
+      assertTrue(AspectForPrecedence.invoked);
+      checkRead();
+   }
+
    public void testObjectArray()
    {
       ClassWithArrayFields obj = new ClassWithArrayFields();
