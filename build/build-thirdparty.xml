@@ -66,7 +66,7 @@
       <!-- jboss-reflect: aop -->
       <componentref name="jboss/jboss-reflect" version="2.0.0.Beta12"/>
       <!-- jboss-reflect: asintegration -->
-      <componentref name="jboss/jboss-vfs" version="2.0.0.Beta9"/>
+      <componentref name="jboss/jboss-vfs" version="2.0.0.Beta19"/>
       <!-- jboss-deployers: asintegration -->
       <componentref name="jboss/jboss-deployers" version="2.0.0.Beta12"/>
       <!-- jboss-deployers: asintegration build dependency -->
