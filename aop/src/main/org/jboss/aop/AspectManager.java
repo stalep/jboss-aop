@@ -84,7 +84,6 @@ import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.aop.util.logging.AOPLogger;
 import org.jboss.logging.Logger;
 import org.jboss.util.collection.WeakValueHashMap;
-import org.jboss.util.loading.Translatable;
 import org.jboss.util.loading.Translator;
 
 /**
@@ -769,9 +768,11 @@ public class AspectManager
 
    public ClassPool findClassPool(ClassLoader cl)
    {
-      if (!(cl instanceof Translatable))
+      if (cl == null)
       {
-         // findClassPool has problems with boot and system classes.
+         //!(cl instanceof Translatable)
+         // findClassPool has problems with boot and system classes, because
+         // they may be null
          return registerClassLoader(SecurityActions.getContextClassLoader());
       }
       return registerClassLoader(cl);
