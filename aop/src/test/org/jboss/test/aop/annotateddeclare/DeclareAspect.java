@@ -21,6 +21,8 @@
   */
 package org.jboss.test.aop.annotateddeclare;
 
+import org.jboss.aop.Aspect;
+import org.jboss.aop.advice.Scope;
 import org.jboss.aop.pointcut.Pointcut;
 
 /**
@@ -29,12 +31,13 @@ import org.jboss.aop.pointcut.Pointcut;
  * @version $Revision$
  * @@org.jboss.aop.Aspect (scope=org.jboss.aop.advice.Scope.PER_VM)
  */
+@Aspect(scope=Scope.PER_VM)
 public class DeclareAspect
 {
-    @org.jboss.aop.DeclareError (expr="call(* org.jboss.test.aop.annotated.declare.POJO->someMethod()) AND withincode(* org.jboss.test.aop.annotated.declare.POJO->otherMethod())", msg="Should not happen")
+    @org.jboss.aop.DeclareError (expr="call(* org.jboss.test.aop.annotateddeclare.POJO->someMethod()) AND withincode(* org.jboss.test.aop.annotateddeclare.POJO->otherMethod())", msg="Should not happen")
    Pointcut error;
 
-   @org.jboss.aop.DeclareWarning (expr="call(* org.jboss.test.aop.annotated.declare.POJO->otherMethod()) AND withincode(* org.jboss.test.aop.annotated.declare.POJO->someMethod())", msg="Expected annotated warning")
+   @org.jboss.aop.DeclareWarning (expr="call(* org.jboss.test.aop.annotateddeclare.POJO->otherMethod()) AND withincode(* org.jboss.test.aop.annotateddeclare.POJO->someMethod())", msg="Expected annotated warning")
    Pointcut warning;
    
 }
