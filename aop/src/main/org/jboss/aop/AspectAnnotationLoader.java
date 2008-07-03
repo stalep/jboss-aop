@@ -41,31 +41,15 @@ import javassist.bytecode.annotation.ClassMemberValue;
 import javassist.bytecode.annotation.MemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 
-import org.jboss.aop.advice.AdviceBinding;
-import org.jboss.aop.advice.AdviceFactory;
-import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.AspectFactory;
-import org.jboss.aop.advice.AspectFactoryDelegator;
-import org.jboss.aop.advice.AspectFactoryWithClassLoader;
-import org.jboss.aop.advice.DynamicCFlowDefinition;
-import org.jboss.aop.advice.GenericAspectFactory;
 import org.jboss.aop.advice.Interceptor;
-import org.jboss.aop.advice.InterceptorFactory;
-import org.jboss.aop.advice.PrecedenceDef;
 import org.jboss.aop.advice.PrecedenceDefEntry;
 import org.jboss.aop.advice.Scope;
-import org.jboss.aop.advice.ScopedInterceptorFactory;
 import org.jboss.annotation.factory.javassist.AnnotationProxy;
-import org.jboss.aop.introduction.AnnotationIntroduction;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.pointcut.CFlow;
 import org.jboss.aop.pointcut.CFlowStack;
-import org.jboss.aop.pointcut.DeclareDef;
 import org.jboss.aop.pointcut.DynamicCFlow;
-import org.jboss.aop.pointcut.Pointcut;
-import org.jboss.aop.pointcut.PointcutExpression;
-import org.jboss.aop.pointcut.Typedef;
-import org.jboss.aop.pointcut.TypedefExpression;
 import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
 import org.jboss.aop.pointcut.ast.ASTStart;
 import org.jboss.aop.pointcut.ast.PointcutExpressionParser;
@@ -88,10 +72,18 @@ public class AspectAnnotationLoader
 
    protected AspectManager manager;
    private ClassLoader cl; 
+   private final AspectAnnotationLoaderStrategy loaderStrategy;
 
    public AspectAnnotationLoader(AspectManager manager)
    {
       this.manager = manager;
+      loaderStrategy = new AspectManagerAnnotationLoaderStrategy();
+   }
+   
+   public AspectAnnotationLoader(AspectManager manager, AspectManagerAnnotationLoaderStrategy loaderStrategy)
+   {
+      this.manager = manager;
+      this.loaderStrategy = this.loaderStrategy;
    }
 
    public void setClassLoader(ClassLoader cl)
@@ -99,6 +91,16 @@ public class AspectAnnotationLoader
       this.cl = cl;
    }
    
+   public AspectManager getAspectManager()
+   {
+      return manager;
+   }
+
+   public ClassLoader getClassLoader()
+   {
+      return cl;
+   }
+
    public void deployInputStreamIterator(Iterator<InputStream> it) throws Exception
    {
       while (it.hasNext())
@@ -125,19 +127,19 @@ public class AspectAnnotationLoader
       AnnotationsAttribute visible = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
       if (visible != null)
       {
-         AspectDefinition def = deployAspect(visible, cf);
+         boolean deployed = deployAspect(visible, cf);
 
-         if (def == null)
+         if (!deployed)
          {
-            def = deployInterceptor(visible, cf);
+            deployed = deployInterceptor(visible, cf);
          }
 
-         if (def == null)
+         if (!deployed)
          {
             deployDynamicCFlow(visible, cf);
          }
 
-         if (def == null)
+         if (!deployed)
          {
             if (!deployPreparedClass(visible, cf))
             {
@@ -199,7 +201,7 @@ public class AspectAnnotationLoader
       }
    }
 
-   private AspectDefinition deployAspect(AnnotationsAttribute visible, ClassFile cf) throws Exception
+   private boolean deployAspect(AnnotationsAttribute visible, ClassFile cf) throws Exception
    {
       //Check for Aspect
       javassist.bytecode.annotation.Annotation info = visible.getAnnotation(Aspect.class.getName());
@@ -219,27 +221,16 @@ public class AspectAnnotationLoader
                break;
             }
          }
-         AspectFactory factory = null;
-         if (isFactory)
-         {
-            factory = new AspectFactoryDelegator(cf.getName(), null);
-            ((AspectFactoryWithClassLoader)factory).setClassLoader(cl);
-         }
-         else
-         {
-            factory = new GenericAspectFactory(cf.getName(), null);
-            ((AspectFactoryWithClassLoader)factory).setClassLoader(cl);
-         }
-         AspectDefinition def = new AspectDefinition(cf.getName(), scope, factory);
-         manager.addAspectDefinition(def);
+
+         loaderStrategy.deployAspect(this, isFactory, cf.getName(), scope);
          if (!isFactory)
          {
-            deployAspectMethodBindings(cf, def);
+            deployAspectMethodBindings(cf, cf.getName());
          }
 
-         return def;
+         return true;
       }
-      return null;
+      return false;
    }
 
    private void undeployAspect(AnnotationsAttribute visible, ClassFile cf) throws Exception
@@ -249,13 +240,13 @@ public class AspectAnnotationLoader
       if (info != null)
       {
          if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Undeploying @Aspect in: " + cf.getName());
-         manager.removeAspectDefinition(cf.getName());
+         loaderStrategy.undeployAspect(this, cf.getName());
 
          undeployAspectMethodBindings(cf);
       }
    }
 
-   private AspectDefinition deployInterceptor(AnnotationsAttribute visible, ClassFile cf) throws Exception
+   private boolean deployInterceptor(AnnotationsAttribute visible, ClassFile cf) throws Exception
    {
       //Check for InterceptorDef
       javassist.bytecode.annotation.Annotation info = visible.getAnnotation(InterceptorDef.class.getName());
@@ -280,29 +271,14 @@ public class AspectAnnotationLoader
             }
          }
 
-         AspectFactory aspectFactory;
-         if (isFactory)
-         {
-            aspectFactory = new AspectFactoryDelegator(cf.getName(), null);
-            ((AspectFactoryWithClassLoader)aspectFactory).setClassLoader(cl);
-         }
-         else
-         {
-            aspectFactory = new GenericAspectFactory(cf.getName(), null);
-            ((AspectFactoryWithClassLoader)aspectFactory).setClassLoader(cl);
-         }
+         loaderStrategy.deployInterceptor(this, isFactory, cf.getName(), scope);
 
-         AspectDefinition def = new AspectDefinition(cf.getName(), scope, aspectFactory);
-         manager.addAspectDefinition(def);
-         ScopedInterceptorFactory factory = new ScopedInterceptorFactory(def);
-         manager.addInterceptorFactory(factory.getName(), factory);
+         deployInterceptorBindings(visible, cf, cf.getName());
 
-         deployInterceptorBindings(visible, cf, factory);
-
-         return def;
+         return true;
       }
 
-      return null;
+      return false;
    }
 
    private void undeployInterceptor(AnnotationsAttribute visible, ClassFile cf) throws Exception
@@ -314,11 +290,10 @@ public class AspectAnnotationLoader
          if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Undeploying @InterceptorDef in: " + cf.getName());
          AnnotationProxy.createProxy(info, Aspect.class);
 
-         manager.removeAspectDefinition(cf.getName());
-         manager.removeInterceptorFactory(cf.getName());
+         loaderStrategy.undeployInterceptor(this, cf.getName());
+
          undeployInterceptorBindings(visible, cf);
       }
-
    }
 
    private void deployDynamicCFlow(AnnotationsAttribute visible, ClassFile cf) throws Exception
@@ -344,7 +319,7 @@ public class AspectAnnotationLoader
          }
          if (!foundDCFlow) throw new RuntimeException("@DynamicCFlow annotated class: " + clazz + " must implement " + DynamicCFlow.class.getName());
 
-         manager.addDynamicCFlow(name, new DynamicCFlowDefinition(null, clazz, name));
+         loaderStrategy.deployDynamicCFlow(this, clazz, name);
       }
    }
 
@@ -355,7 +330,7 @@ public class AspectAnnotationLoader
       {
          if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Undeploying @DynamicCFlowDef in: " + cf.getName());
          String name = cf.getName();
-         manager.removeDynamicCFlow(name);
+         loaderStrategy.undeployDynamicCFlow(this, name);
       }
    }
 
@@ -370,8 +345,7 @@ public class AspectAnnotationLoader
 
          String name = cf.getName() + "." + visible.getName();
          String expr = replaceThisInExpr(prepare.value(), cf.getName());
-         Pointcut p = new PointcutExpression(name, expr);
-         manager.addPointcut(p);
+         loaderStrategy.deployPointcut(this, name, expr);
          return true;
       }
       
@@ -385,7 +359,7 @@ public class AspectAnnotationLoader
       if (info != null)
       {
          String name = cf.getName() + "." + visible.getName();
-         manager.removePointcut(name);
+         loaderStrategy.undeployPointcut(this, name);
       }
    }
    
@@ -421,8 +395,7 @@ public class AspectAnnotationLoader
             }
          }
          PrecedenceDefEntry[] pentries = entries.toArray(new PrecedenceDefEntry[entries.size()]); 
-         PrecedenceDef precedenceDef = new PrecedenceDef(cf.getName(), pentries);
-         manager.addPrecedence(precedenceDef);
+         loaderStrategy.deployPrecedence(this, cf.getName(), pentries);
       }
    }
    
@@ -431,11 +404,11 @@ public class AspectAnnotationLoader
       javassist.bytecode.annotation.Annotation info = visible.getAnnotation(Precedence.class.getName());
       if (info != null)
       {
-         manager.removePrecedence(cf.getName());
+         loaderStrategy.undeployPrecedence(this, cf.getName());
       }
    }
 
-   private void deployAspectMethodBindings(ClassFile cf, AspectDefinition def)
+   private void deployAspectMethodBindings(ClassFile cf, String aspectDefName/*, AspectDefinition def*/)
    throws Exception
    {
       Iterator<MethodInfo> methods = cf.getMethods().iterator();
@@ -458,22 +431,8 @@ public class AspectAnnotationLoader
          }
          
          org.jboss.aop.advice.AdviceType internalAdviceType = getInternalAdviceType(binding.type());
-         AdviceFactory factory = null;
-         if (internalAdviceType == org.jboss.aop.advice.AdviceType.AROUND)
-         {
-            factory = new AdviceFactory(def, minfo.getName());
-         }
-         else
-         {
-            factory = new AdviceFactory(def, minfo.getName(), internalAdviceType);
-         }
-         
-         manager.addInterceptorFactory(factory.getName(), factory);
-         InterceptorFactory[] fact = {factory};
-         String name = getAspectMethodBindingName(cf, minfo);
-         PointcutExpression pointcut = new PointcutExpression(name, pointcutString);
-         AdviceBinding abinding = new AdviceBinding(name, pointcut, cflowExpression, cflow, fact);
-         manager.addBinding(abinding);
+         String bindingName = getAspectMethodBindingName(cf, minfo);
+         loaderStrategy.deployAspectMethodBinding(this, internalAdviceType,  aspectDefName,  minfo.getName(),  bindingName, pointcutString, cflow, cflowExpression);
       }
    }
 
@@ -515,11 +474,8 @@ public class AspectAnnotationLoader
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(Bind.class.getName());
          if (binfo == null) continue;
 
-         String adviceName = cf.getName() + "." + minfo.getName();
-         manager.removeInterceptorFactory(adviceName);
-         String name = getAspectMethodBindingName(cf, minfo);
-         manager.removePointcut(name);
-         manager.removeBinding(name);
+         String bindingName = getAspectMethodBindingName(cf, minfo);
+         loaderStrategy.undeployAspectMethodBinding(this, bindingName, cf.getName(), minfo.getName());
       }
    }
 
@@ -530,7 +486,7 @@ public class AspectAnnotationLoader
       return method + " " + MethodHashing.createHash(fullMethod);
    }
 
-   private void deployInterceptorBindings(AnnotationsAttribute visible, ClassFile cf, InterceptorFactory factory)
+   private void deployInterceptorBindings(AnnotationsAttribute visible, ClassFile cf, String name)
    throws Exception
    {
       javassist.bytecode.annotation.Annotation binfo = visible.getAnnotation(Bind.class.getName());
@@ -546,12 +502,7 @@ public class AspectAnnotationLoader
 
       }
 
-      String name = cf.getName();
-      InterceptorFactory[] inters = {factory};
-      Pointcut p = null;
-      p = new PointcutExpression(name, pointcutString);
-      AdviceBinding binding = new AdviceBinding(name, p, cflowExpression, cflow, inters);
-      manager.addBinding(binding);
+      loaderStrategy.deployInterceptorBinding(this, name, pointcutString, cflow, cflowExpression);
    }
 
    private void undeployInterceptorBindings(AnnotationsAttribute visible, ClassFile cf)
@@ -560,9 +511,7 @@ public class AspectAnnotationLoader
       javassist.bytecode.annotation.Annotation binfo = visible.getAnnotation(Bind.class.getName());
       if (binfo == null) return;
 
-      String name = cf.getName();
-      manager.removePointcut(name);
-      manager.removeBinding(name);
+      loaderStrategy.undeployInterceptorBinding(this, cf.getName());
    }
 
 
@@ -579,9 +528,7 @@ public class AspectAnnotationLoader
          if (binfo == null) continue;
          PointcutDef pdef = (PointcutDef) AnnotationProxy.createProxy(binfo, PointcutDef.class);
 
-         PointcutExpression pointcut = new PointcutExpression(getPointcutName(cf, finfo), pdef.value());
-
-         manager.addPointcut(pointcut);
+         loaderStrategy.deployPointcut(this, getPointcutName(cf, finfo), pdef.value());
       }
    }
 
@@ -596,7 +543,7 @@ public class AspectAnnotationLoader
          if (mgroup == null) continue;
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(PointcutDef.class.getName());
          if (binfo == null) continue;
-         manager.removePointcut(getPointcutName(cf, finfo));
+         loaderStrategy.undeployPointcut(this, getPointcutName(cf, finfo));
       }
    }
 
@@ -720,7 +667,7 @@ public class AspectAnnotationLoader
          
          intro.getMixins().add(new InterfaceIntroduction.Mixin(classname, interfaces, construction, isTransient));
 
-         manager.addInterfaceIntroduction(intro);
+         loaderStrategy.deployInterfaceIntroduction(this, intro);
       }
    }
 
@@ -737,7 +684,7 @@ public class AspectAnnotationLoader
          if (binfo == null) continue;
 
          String name = cf.getName() + "." + minfo.getName(); //Name of the method defined on
-         manager.removeInterfaceIntroduction(name);
+         loaderStrategy.undeployInterfaceIntroduction(this, name);
       }
    }
 
@@ -777,7 +724,7 @@ public class AspectAnnotationLoader
          String name = cf.getName() + "." + finfo.getName(); //Name of the field defined on
 
          InterfaceIntroduction interfaceIntro = createIntroduction(name, target, typeExpression, interfaces, null, null);
-         manager.addInterfaceIntroduction(interfaceIntro);
+         loaderStrategy.deployInterfaceIntroduction(this, interfaceIntro);
       }
    }
 
@@ -795,7 +742,7 @@ public class AspectAnnotationLoader
 
          String name = cf.getName() + "." + finfo.getName(); //Name of the field defined on
 
-         manager.removeInterfaceIntroduction(name);
+         loaderStrategy.undeployInterfaceIntroduction(this, name);
       }
    }
 
@@ -813,9 +760,8 @@ public class AspectAnnotationLoader
 
          String name = getTypedefName(cf, finfo);
          String expr = typeDefinition.value();
-         Typedef typedef = new TypedefExpression(name, expr);
-         manager.addTypedef(typedef);
-
+         
+         loaderStrategy.deployTypedef(this, name, expr);
       }
    }
 
@@ -832,8 +778,7 @@ public class AspectAnnotationLoader
 
          AnnotationProxy.createProxy(binfo, TypeDef.class);
 
-         manager.removeTypedef(getTypedefName(cf, finfo));
-
+         loaderStrategy.undeployTypedef(this, getTypedefName(cf, finfo));
       }
    }
 
@@ -865,7 +810,7 @@ public class AspectAnnotationLoader
             stack.addCFlow(new CFlow(cflow.expr(), not));
          }
 
-         manager.addCFlowStack(stack);
+         loaderStrategy.deployCFlow(this, stack);
       }
    }
 
@@ -881,7 +826,7 @@ public class AspectAnnotationLoader
          if (binfo == null) continue;
          AnnotationProxy.createProxy(binfo, CFlowStackDef.class);
 
-         manager.removeCFlowStack(getStackDefName(cf, finfo));
+         loaderStrategy.undeployCFlow(this, getStackDefName(cf, finfo));
       }
    }
 
@@ -904,8 +849,7 @@ public class AspectAnnotationLoader
 
          String name = getPrepareName(cf, finfo);
          String expr = prepare.value();
-         Pointcut p = new PointcutExpression(name, expr);
-         manager.addPointcut(p);
+         loaderStrategy.deployPointcut(this, name, expr);
       }
    }
 
@@ -921,7 +865,7 @@ public class AspectAnnotationLoader
          if (binfo == null) continue;
          AnnotationProxy.createProxy(binfo, Prepare.class);
 
-         manager.removePointcut(getPrepareName(cf, finfo));
+         loaderStrategy.undeployPointcut(this, getPrepareName(cf, finfo));
       }
    }
 
@@ -948,8 +892,7 @@ public class AspectAnnotationLoader
 
          annotation = annotation.replace('\'', '"');
 
-         AnnotationIntroduction annIntro = AnnotationIntroduction.createComplexAnnotationIntroduction(expr, annotation, invisible);
-         manager.addAnnotationIntroduction(annIntro);
+         loaderStrategy.deployAnnotationIntroduction(this, expr, annotation, invisible);
       }
    }
 
@@ -971,8 +914,7 @@ public class AspectAnnotationLoader
 
          annotation = annotation.replace('\'', '"');
 
-         AnnotationIntroduction annIntro = AnnotationIntroduction.createComplexAnnotationIntroduction(expr, annotation, invisible);
-         manager.removeAnnotationIntroduction(annIntro);
+         loaderStrategy.undeployAnnotationIntroduction(this, expr, annotation, invisible);
       }
    }
 
@@ -1007,9 +949,8 @@ public class AspectAnnotationLoader
             msg = dwarning.msg();
             warning = true;
          }
-         DeclareDef def = new DeclareDef(name, expr, warning, msg);
-
-         manager.addDeclare(def);
+         
+         loaderStrategy.deployDeclare(this, name, expr, warning, msg);
       }
    }
 
