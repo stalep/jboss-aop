@@ -34,7 +34,7 @@ import org.jboss.util.collection.WeakIdentityHashMap;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
-@SuppressWarnings({"unused", "cast", "unchecked", "serial"})
+@SuppressWarnings({"unused"})
 public class CallerScopeTestCase extends AOPTestWithSetup
 {
    Caller caller = new Caller();

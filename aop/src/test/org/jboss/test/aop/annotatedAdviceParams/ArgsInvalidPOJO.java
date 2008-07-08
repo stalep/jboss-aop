@@ -38,7 +38,7 @@ import java.util.List;
  * @see ArgInvalidTestCase
  * @see ArgsInvalidTestCase
  */
-@SuppressWarnings({"unused", "cast", "unchecked"})
+@SuppressWarnings({"cast", "unchecked"})
 public class ArgsInvalidPOJO
 {
    /* Object field1 */

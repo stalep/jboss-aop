@@ -29,7 +29,7 @@ import org.jboss.aop.joinpoint.Invocation;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-@SuppressWarnings({"unused", "unchecked"})
+@SuppressWarnings({"unchecked"})
 public class NotConstructionInterceptor implements Interceptor
 {
    static boolean intercepted;

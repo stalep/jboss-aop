@@ -31,7 +31,7 @@ import java.util.ArrayList;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
-@SuppressWarnings({"unused", "cast", "unchecked"})
+@SuppressWarnings({"unchecked"})
 public class InvokedConfigs
 {
    static ArrayList invokedConfs = new ArrayList();

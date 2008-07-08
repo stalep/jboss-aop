@@ -35,7 +35,7 @@ import org.jboss.aop.joinpoint.MethodInvocation;
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-@SuppressWarnings({"unused", "cast", "unchecked"})
+@SuppressWarnings({"cast"})
 public class ArgsAspect
 {
    static boolean before1 = false;

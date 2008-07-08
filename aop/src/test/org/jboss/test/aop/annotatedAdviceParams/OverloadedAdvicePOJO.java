@@ -26,7 +26,7 @@ package org.jboss.test.aop.annotatedAdviceParams;
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-@SuppressWarnings({"unused", "unchecked", "cast"})
+@SuppressWarnings({"cast"})
 public class OverloadedAdvicePOJO
 {
    public String text;

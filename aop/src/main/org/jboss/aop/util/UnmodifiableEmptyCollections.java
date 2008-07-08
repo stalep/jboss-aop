@@ -51,7 +51,7 @@ public class UnmodifiableEmptyCollections
    @SuppressWarnings("unchecked") public static final WeakValueHashMap EMPTY_WEAK_VALUE_HASHMAP = new LockedWeakValueHashMap();
    @SuppressWarnings("unchecked") public static final ArrayList EMPTY_ARRAYLIST = new LockedArrayList();
    @SuppressWarnings("unchecked") public static final CopyOnWriteArraySet EMPTY_COPYONWRITE_ARRAYSET = new LockedCopyOnWriteArraySet();
-   @SuppressWarnings("unchecked") public static final TLongObjectHashMap EMPTY_TLONG_OBJECT_HASHMAP = new LockedTLongObjectHashMap();
+   public static final TLongObjectHashMap EMPTY_TLONG_OBJECT_HASHMAP = new LockedTLongObjectHashMap();
    @SuppressWarnings("unchecked") public static final ConcurrentHashMap EMPTY_CONCURRENT_HASHMAP = new LockedConcurrentHashMap();
 
    private static class LockedHashMap<K,V> extends HashMap<K,V>

@@ -37,7 +37,7 @@ import org.jboss.aop.util.MethodHashing;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision$
  */
-@SuppressWarnings({"unused", "unchecked"})
+@SuppressWarnings({"unchecked"})
 public class MethodHashingTestCase extends TestCase
 {
 

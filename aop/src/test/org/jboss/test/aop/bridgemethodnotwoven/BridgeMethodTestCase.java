@@ -42,7 +42,7 @@ import org.jboss.test.aop.bridgemethod.SuperPOJO;
  * @author <a href="mailto:stalep@conduct.no">Stale W. Pedersen</a>
  * @version $Revision
  */
-@SuppressWarnings({"unused", "cast", "unchecked", "serial"})
+@SuppressWarnings({"unused", "unchecked"})
 public class BridgeMethodTestCase extends AOPTestWithSetup
 {
    

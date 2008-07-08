@@ -39,6 +39,7 @@ import org.jboss.util.NotImplementedException;
  */
 public abstract class ArrayElementInvocation extends InvocationBase
 {
+   private static final long serialVersionUID = 1L;
    int index;
    
    public ArrayElementInvocation(Interceptor[] interceptors, Object array, int index)

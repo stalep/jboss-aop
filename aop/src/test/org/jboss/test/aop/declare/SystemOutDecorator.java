@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
-@SuppressWarnings({"unused", "cast", "unchecked", "serial"})
+@SuppressWarnings({"unchecked"})
 public class SystemOutDecorator extends PrintStream
 {
    static PrintStream sysout = null;

@@ -34,7 +34,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision$
  */
-@SuppressWarnings({"unused", "unchecked", "cast"})
+@SuppressWarnings({"unchecked"})
 public class PrecedenceTester extends AOPTestWithSetup
 {
    //Don't list per_instance aspects for constructor

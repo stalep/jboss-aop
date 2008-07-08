@@ -40,7 +40,7 @@ import junit.framework.TestSuite;
  * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision: 45977 $
  */
-@SuppressWarnings({"unused", "unchecked"})
+@SuppressWarnings({"unused"})
 public class PackageTestCase extends AOPTestWithSetup
 {
    public static Test suite()

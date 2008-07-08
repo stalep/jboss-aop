@@ -30,6 +30,8 @@ import org.jboss.aop.advice.Interceptor;
  */
 public abstract class ArrayElementWriteInvocation extends ArrayElementInvocation
 {
+   private static final long serialVersionUID = 1L;
+
    public ArrayElementWriteInvocation(Interceptor[] interceptors, Object array, int index)
    {
       super(interceptors, array, index);

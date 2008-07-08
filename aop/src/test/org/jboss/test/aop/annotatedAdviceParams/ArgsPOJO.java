@@ -29,7 +29,7 @@ import java.util.List;
  * 
  * @author <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-@SuppressWarnings({"unused", "unchecked", "cast"})
+@SuppressWarnings({"unchecked", "cast"})
 public class ArgsPOJO
 {
    public Object field1;

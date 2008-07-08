@@ -37,7 +37,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-@SuppressWarnings({"unused", "unchecked", "cast"})
+@SuppressWarnings({"unchecked"})
 public class DuplicateMethodTestCase extends AOPTestWithSetup
 {
 

@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.jboss.aop.advice.PrecedenceDefEntry;
 import org.jboss.aop.advice.Scope;
-import org.jboss.aop.pointcut.CFlowStack;
 import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
 
 /**

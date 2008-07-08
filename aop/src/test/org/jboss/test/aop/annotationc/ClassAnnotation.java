@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
  * @version $Revision$
  */
 @Target(ElementType.TYPE)@Retention(RetentionPolicy.RUNTIME)
-@SuppressWarnings({"unused", "cast", "unchecked"})
+@SuppressWarnings({"unchecked"})
 public @interface ClassAnnotation
 {
    Class value();

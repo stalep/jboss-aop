@@ -62,7 +62,6 @@ public class SimpleDynamicTester extends AOPTestWithSetup
    public void testDynamic() throws Exception
    {
       reset();
-      @SuppressWarnings("unused")
       POJO tmp = new POJO();
       assertInstanceOf(tmp, Advised.class);
       assertInterceptors(false, false);
@@ -89,7 +88,6 @@ public class SimpleDynamicTester extends AOPTestWithSetup
    public void testDynamicPerInstance() throws Exception
    {
       reset();
-      @SuppressWarnings("unused")
       POJOPerInstance tmp = new POJOPerInstance();
       assertInstanceOf(tmp, Advised.class);
       assertInterceptors(false, false);

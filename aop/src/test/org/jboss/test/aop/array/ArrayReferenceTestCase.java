@@ -38,7 +38,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-@SuppressWarnings({"unused", "cast", "unchecked"})
+@SuppressWarnings({"unused", "unchecked"})
 public class ArrayReferenceTestCase extends AOPTestWithSetup
 {
    public ArrayReferenceTestCase(String name)

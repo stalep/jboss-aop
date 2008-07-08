@@ -33,7 +33,7 @@ enum InvalidCallType {CONSTRUCTOR_BEFORE, CONSTRUCTOR_AROUND, CONSTRUCTOR_AFTER,
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-@SuppressWarnings({"unused", "cast"})
+@SuppressWarnings({"cast"})
 public class TargetCallerInvalidPOJO
 {
    public TargetCallerInvalidPOJO(){}

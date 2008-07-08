@@ -48,8 +48,6 @@ import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.advice.PrecedenceDefEntry;
 import org.jboss.aop.advice.Scope;
 import org.jboss.annotation.factory.javassist.AnnotationProxy;
-import org.jboss.aop.pointcut.CFlow;
-import org.jboss.aop.pointcut.CFlowStack;
 import org.jboss.aop.pointcut.DynamicCFlow;
 import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
 import org.jboss.aop.pointcut.ast.PointcutExpressionParser;

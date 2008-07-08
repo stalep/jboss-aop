@@ -38,7 +38,7 @@ import junit.textui.TestRunner;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-@SuppressWarnings({"unused", "unchecked", "cast"})
+@SuppressWarnings({"unchecked"})
 public class AOPTester extends AOPTestWithSetup
 {
    public static void main(String[] args)

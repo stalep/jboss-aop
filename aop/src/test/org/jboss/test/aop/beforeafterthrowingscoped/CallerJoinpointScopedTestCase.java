@@ -35,7 +35,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
  */
-@SuppressWarnings({"unused", "cast", "unchecked", "serial"})
+@SuppressWarnings({"unchecked"})
 public class CallerJoinpointScopedTestCase extends AOPTestWithSetup
 {
    public CallerJoinpointScopedTestCase(String arg)

@@ -57,7 +57,6 @@ public class TestAdvisor<T> extends ClassContainer
       return advisor;
    }
    
-   @SuppressWarnings("unchecked")
    protected Class<? extends T> getBeanClass()
    {
       return getAdvisor().getClazz();

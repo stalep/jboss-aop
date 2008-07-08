@@ -22,8 +22,6 @@
 package org.jboss.aop.pointcut;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Comment

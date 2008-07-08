@@ -30,6 +30,8 @@ import org.jboss.aop.advice.Interceptor;
  */
 public abstract class ArrayElementReadInvocation extends ArrayElementInvocation
 {
+   private static final long serialVersionUID = 1L;
+
    public ArrayElementReadInvocation(Interceptor[] interceptors, Object array, int index)
    {
       // FIXME ArrayElementReadInvocation constructor

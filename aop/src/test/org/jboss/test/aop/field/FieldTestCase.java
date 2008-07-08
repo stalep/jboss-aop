@@ -40,7 +40,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="mailto:stalep@conduct.no">Stale W. Pedersen</a>
  * @version $Revision
  */
-@SuppressWarnings({"unused", "cast", "unchecked", "serial"})
+@SuppressWarnings({"unused"})
 public class FieldTestCase extends AOPTestWithSetup
 {
    

@@ -36,7 +36,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * 
  * @see ArgsInvalidTestCase
  */
-@SuppressWarnings({"unused", "cast", "unchecked"})
+@SuppressWarnings({"cast"})
 public class ArgInvalidTestCase extends AOPTestWithSetup
 {
    private ArgsInvalidPOJO pojo;

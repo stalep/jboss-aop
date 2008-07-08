@@ -41,7 +41,7 @@ import java.util.Arrays;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-@SuppressWarnings({"unused", "cast", "unchecked"})
+@SuppressWarnings({"unchecked"})
 public class AnnotationTester extends AOPTestWithSetup
 {
    public static Test suite()

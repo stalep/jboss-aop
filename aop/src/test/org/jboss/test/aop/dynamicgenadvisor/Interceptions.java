@@ -26,7 +26,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-@SuppressWarnings({"unused", "cast", "unchecked", "serial"})
+@SuppressWarnings({"unchecked"})
 public class Interceptions
 {
    private static ArrayList interceptions = new ArrayList();

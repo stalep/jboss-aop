@@ -47,7 +47,7 @@ import org.jboss.test.aop.AOPTestWithSetup;
  * @author <a href="mailto:kabir.khan@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-@SuppressWarnings({"unused", "cast", "unchecked", "serial", "static-access"})
+@SuppressWarnings({"unused", "static-access"})
 public class DynamicTester extends AOPTestWithSetup
 {
    public static Test suite()

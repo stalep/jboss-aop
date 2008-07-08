@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-@SuppressWarnings({"unused", "unchecked", "cast"})
+@SuppressWarnings({"unchecked"})
 public class Person
 {
    public Person()

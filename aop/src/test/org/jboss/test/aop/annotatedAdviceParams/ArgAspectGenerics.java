@@ -39,7 +39,7 @@ import org.jboss.aop.joinpoint.CurrentInvocation;
  * @see org.jboss.test.aop.annotatedAdviceParams.ArgAspect
  * @see org.jboss.test.aop.annotatedAdviceParams.ArgAspetInterfaces
  */
-@SuppressWarnings({"unused", "unchecked"})
+@SuppressWarnings({"unchecked"})
 public class ArgAspectGenerics
 {
    static boolean before1 = false;
