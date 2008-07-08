@@ -22,6 +22,8 @@
 package org.jboss.aop.pointcut;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Comment
@@ -50,6 +52,11 @@ public class CFlowStack
       cflows.add(cflow);
    }
 
+   public List<CFlow> getCFlows()
+   {
+      return Collections.unmodifiableList(cflows);
+   }
+   
    public boolean matches(StackTraceElement[] stack)
    {
       int stackIndex = stack.length - 1;
