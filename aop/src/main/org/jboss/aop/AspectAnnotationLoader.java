@@ -80,10 +80,10 @@ public class AspectAnnotationLoader
       loaderStrategy = new AspectManagerAnnotationLoaderStrategy();
    }
    
-   public AspectAnnotationLoader(AspectManager manager, AspectManagerAnnotationLoaderStrategy loaderStrategy)
+   public AspectAnnotationLoader(AspectManager manager, AspectAnnotationLoaderStrategy loaderStrategy)
    {
       this.manager = manager;
-      this.loaderStrategy = this.loaderStrategy;
+      this.loaderStrategy = loaderStrategy;
    }
 
    public void setClassLoader(ClassLoader cl)
@@ -137,25 +137,11 @@ public class AspectAnnotationLoader
          if (!deployed)
          {
             deployDynamicCFlow(visible, cf);
-         }
 
-         if (!deployed)
-         {
             if (!deployPreparedClass(visible, cf))
             {
                deployPrecedence(visible, cf);
             }
-         }
-         else
-         {
-            deployPointcuts(cf);
-            deployMixins(cf);
-            deployIntroductions(cf);
-            deployTypedefs(cf);
-            deployCFlowStackDefs(cf);
-            deployPrepares(cf);
-            deployAnnotationIntroductions(cf);
-            deployDeclares(cf);
          }
       }
    }
@@ -223,6 +209,9 @@ public class AspectAnnotationLoader
          }
 
          loaderStrategy.deployAspect(this, isFactory, cf.getName(), scope);
+         
+         deployAspectOrInterceptorFields(cf);
+         
          if (!isFactory)
          {
             deployAspectMethodBindings(cf, cf.getName());
@@ -272,6 +261,8 @@ public class AspectAnnotationLoader
          }
 
          loaderStrategy.deployInterceptor(this, isFactory, cf.getName(), scope);
+         
+         deployAspectOrInterceptorFields(cf);
 
          deployInterceptorBindings(visible, cf, cf.getName());
 
@@ -1071,5 +1062,17 @@ public class AspectAnnotationLoader
       }
       buf.append(expr.substring(lastindex));
       return buf.toString();
+   }
+   
+   private void deployAspectOrInterceptorFields(ClassFile cf) throws Exception
+   {
+      deployPointcuts(cf);
+      deployMixins(cf);
+      deployIntroductions(cf);
+      deployTypedefs(cf);
+      deployCFlowStackDefs(cf);
+      deployPrepares(cf);
+      deployAnnotationIntroductions(cf);
+      deployDeclares(cf);
    }
 }
