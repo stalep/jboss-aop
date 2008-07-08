@@ -24,8 +24,6 @@ package org.jboss.aop;
 import org.jboss.aop.advice.AdviceType;
 import org.jboss.aop.advice.PrecedenceDefEntry;
 import org.jboss.aop.advice.Scope;
-import org.jboss.aop.introduction.InterfaceIntroduction;
-import org.jboss.aop.pointcut.CFlowStack;
 import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
 
 /**
@@ -52,7 +50,7 @@ public class AspectAnnotationLoaderStrategySupport implements AspectAnnotationLo
    {
    }
 
-   public void deployCFlow(AspectAnnotationLoader loader, CFlowStack stack)
+   public void deployCFlow(AspectAnnotationLoader loader, CFlowStackInfo stack)
    {
    }
 
@@ -74,7 +72,7 @@ public class AspectAnnotationLoaderStrategySupport implements AspectAnnotationLo
    {
    }
 
-   public void deployInterfaceIntroduction(AspectAnnotationLoader loader, InterfaceIntroduction introduction)
+   public void deployInterfaceIntroduction(AspectAnnotationLoader loader, InterfaceIntroductionInfo introduction)
    {
    }
 

@@ -138,16 +138,6 @@ public class CFlow
       return true;
    }
    
-   public String getExpr()
-   {
-      return original;
-   }
-
-   public boolean isNot()
-   {
-      return not;
-   }
-
    private Class<?> loadClass(String name)
    {
       return SecurityActions.loadClass(name);

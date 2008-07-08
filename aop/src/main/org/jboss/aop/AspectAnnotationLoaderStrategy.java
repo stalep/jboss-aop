@@ -21,9 +21,11 @@
 */ 
 package org.jboss.aop;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.aop.advice.PrecedenceDefEntry;
 import org.jboss.aop.advice.Scope;
-import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.pointcut.CFlowStack;
 import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
 
@@ -35,7 +37,7 @@ import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
 public interface AspectAnnotationLoaderStrategy
 {
 
-   void deployAspect(AspectAnnotationLoader loader, boolean isFactory, String name, Scope scope);
+   void deployAspect(AspectAnnotationLoader loader, boolean isFactory, String name, Scope scope) throws Exception;
    
    void deployAspectMethodBinding(
          AspectAnnotationLoader loader, 
@@ -51,7 +53,7 @@ public interface AspectAnnotationLoaderStrategy
    
    void undeployAspectMethodBinding(AspectAnnotationLoader loader, String bindingName, String className, String methodName);
    
-   void deployInterceptor(AspectAnnotationLoader loader, boolean isFactory, String name, Scope scope);
+   void deployInterceptor(AspectAnnotationLoader loader, boolean isFactory, String name, Scope scope) throws Exception;
    
    void deployInterceptorBinding(AspectAnnotationLoader loader, String name, String pointcutString, String cflow, ASTCFlowExpression cflowExpression) throws Exception;
    
@@ -59,7 +61,7 @@ public interface AspectAnnotationLoaderStrategy
    
    void undeployInterceptorBinding(AspectAnnotationLoader loader, String name);
    
-   void deployDynamicCFlow(AspectAnnotationLoader loader, String name, String clazz);
+   void deployDynamicCFlow(AspectAnnotationLoader loader, String name, String clazz) throws Exception;
    
    void undeployDynamicCFlow(AspectAnnotationLoader loader, String name);
    
@@ -67,7 +69,7 @@ public interface AspectAnnotationLoaderStrategy
    
    void undeployPointcut(AspectAnnotationLoader loader, String name);
    
-   void deployPrecedence(AspectAnnotationLoader loader, String name, PrecedenceDefEntry[] pentries);
+   void deployPrecedence(AspectAnnotationLoader loader, String name, PrecedenceDefEntry[] pentries) throws Exception;
 
    void undeployPrecedence(AspectAnnotationLoader loader, String name);
    
@@ -77,15 +79,171 @@ public interface AspectAnnotationLoaderStrategy
 
    void deployDeclare(AspectAnnotationLoader loader, String name, String expr, boolean warning, String msg) throws Exception;
    
-   void deployAnnotationIntroduction(AspectAnnotationLoader loader, String expr, String annotation, boolean invisible);
+   void deployAnnotationIntroduction(AspectAnnotationLoader loader, String expr, String annotation, boolean invisible) throws Exception;
 
    void undeployAnnotationIntroduction(AspectAnnotationLoader loader, String expr, String annotation, boolean invisible);
 
-   void deployCFlow(AspectAnnotationLoader loader, CFlowStack stack);
+   void deployCFlow(AspectAnnotationLoader loader, CFlowStackInfo stack) throws Exception;
    
    void undeployCFlow(AspectAnnotationLoader loader, String name);
    
-   void deployInterfaceIntroduction(AspectAnnotationLoader loader, InterfaceIntroduction introduction);
+   void deployInterfaceIntroduction(AspectAnnotationLoader loader, InterfaceIntroductionInfo introduction) throws Exception;
 
    void undeployInterfaceIntroduction(AspectAnnotationLoader loader, String name);
+   
+   public class InterfaceIntroductionInfo
+   {
+      private String name;
+      private String[] interfaces;
+      private String target;
+      private String expr;
+      private List<InterfaceIntroductionMixinInfo> mixins;
+      private String constructorClass;
+      private String constructorMethod;
+
+      public InterfaceIntroductionInfo(String name, String[] interfaces, String target, String expr, String constructorClass, String constructorMethod)
+      {
+         super();
+         this.name = name;
+         this.interfaces = interfaces;
+         this.target = target;
+         this.expr = expr;
+         this.constructorClass = constructorClass;
+         this.constructorMethod = constructorMethod;
+      }
+      
+      public String getName()
+      {
+         return name;
+      }
+      
+      public String[] getInterfaces()
+      {
+         return interfaces;
+      }
+      
+      public String getTarget()
+      {
+         return target;
+      }
+      
+      public String getExpr()
+      {
+         return expr;
+      }
+      
+      public void addMixin(InterfaceIntroductionMixinInfo mixin)
+      {
+         if (mixins == null)
+         {
+            mixins = new ArrayList<InterfaceIntroductionMixinInfo>();
+         }
+         mixins.add(mixin);
+      }
+      
+      public InterfaceIntroductionMixinInfo[] getMixins()
+      {
+         if (mixins == null)
+         {
+            return null;
+         }
+         return mixins.toArray(new InterfaceIntroductionMixinInfo[mixins.size()]);
+      }
+
+      public String getConstructorClass()
+      {
+         return constructorClass;
+      }
+
+      public String getConstructorMethod()
+      {
+         return constructorMethod;
+      }
+   }
+   
+   public class InterfaceIntroductionMixinInfo
+   {
+      private String classname;
+      private String[] interfaces;
+      private String construction;
+      private boolean trans;
+
+      public InterfaceIntroductionMixinInfo(String classname, String[] interfaces, String construction, boolean trans)
+      {
+         super();
+         this.classname = classname;
+         this.interfaces = interfaces;
+         this.construction = construction;
+         this.trans = trans;
+      }
+
+      public String getClassname()
+      {
+         return classname;
+      }
+
+      public String[] getInterfaces()
+      {
+         return interfaces;
+      }
+
+      public String getConstruction()
+      {
+         return construction;
+      }
+
+      public boolean isTrans()
+      {
+         return trans;
+      }
+   }
+   
+   public class CFlowStackInfo
+   {
+      String name;
+      List<CFlowInfo> cflows = new ArrayList<CFlowInfo>();
+      
+      public CFlowStackInfo(String name)
+      {
+         this.name = name;
+      }
+      
+      public void addCFlow(CFlowInfo info)
+      {
+         cflows.add(info);
+      }
+      
+      public CFlowInfo[] getCFlows()
+      {
+         return cflows.toArray(new CFlowInfo[cflows.size()]);
+      }
+      
+      public String getName()
+      {
+         return name;
+      }
+   }
+   
+   public class CFlowInfo
+   {
+      String expr;
+      boolean not;
+
+      public CFlowInfo(String expr, boolean not)
+      {
+         super();
+         this.expr = expr;
+         this.not = not;
+      }
+
+      public String getExpr()
+      {
+         return expr;
+      }
+
+      public boolean isNot()
+      {
+         return not;
+      }
+   }
 }

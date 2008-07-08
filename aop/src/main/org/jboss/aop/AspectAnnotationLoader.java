@@ -41,19 +41,18 @@ import javassist.bytecode.annotation.ClassMemberValue;
 import javassist.bytecode.annotation.MemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 
+import org.jboss.aop.AspectAnnotationLoaderStrategy.InterfaceIntroductionInfo;
+import org.jboss.aop.AspectAnnotationLoaderStrategy.InterfaceIntroductionMixinInfo;
 import org.jboss.aop.advice.AspectFactory;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.advice.PrecedenceDefEntry;
 import org.jboss.aop.advice.Scope;
 import org.jboss.annotation.factory.javassist.AnnotationProxy;
-import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.pointcut.CFlow;
 import org.jboss.aop.pointcut.CFlowStack;
 import org.jboss.aop.pointcut.DynamicCFlow;
 import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
-import org.jboss.aop.pointcut.ast.ASTStart;
 import org.jboss.aop.pointcut.ast.PointcutExpressionParser;
-import org.jboss.aop.pointcut.ast.TypeExpressionParser;
 import org.jboss.aop.util.MethodHashing;
 import org.jboss.aop.util.logging.AOPLogger;
 import org.jboss.logging.Logger;
@@ -68,7 +67,6 @@ public class AspectAnnotationLoader
 {
    
    private static final Logger logger = AOPLogger.getLogger(AspectAnnotationLoader.class);
-   //TODO: We need something to undeploy everything...
 
    protected AspectManager manager;
    private ClassLoader cl; 
@@ -581,7 +579,7 @@ public class AspectAnnotationLoader
 
          String name = cf.getName() + "." + minfo.getName(); //Name of the method defined on
          
-         InterfaceIntroduction intro = null;
+         InterfaceIntroductionInfo intro = null;
          String construction = name;
          switch(Descriptor.numOfParameters(minfo.getDescriptor()))
          {
@@ -656,7 +654,7 @@ public class AspectAnnotationLoader
          //Parse the descriptor to get the returntype of the method.
          String classname = getReturnType(minfo);
          
-         intro.getMixins().add(new InterfaceIntroduction.Mixin(classname, interfaces, construction, isTransient));
+         intro.addMixin(new InterfaceIntroductionMixinInfo(classname, interfaces, construction, isTransient));
 
          loaderStrategy.deployInterfaceIntroduction(this, intro);
       }
@@ -714,7 +712,7 @@ public class AspectAnnotationLoader
 
          String name = cf.getName() + "." + finfo.getName(); //Name of the field defined on
 
-         InterfaceIntroduction interfaceIntro = createIntroduction(name, target, typeExpression, interfaces, null, null);
+         InterfaceIntroductionInfo interfaceIntro = createIntroduction(name, target, typeExpression, interfaces, null, null);
          loaderStrategy.deployInterfaceIntroduction(this, interfaceIntro);
       }
    }
@@ -792,13 +790,13 @@ public class AspectAnnotationLoader
 
          String name = getStackDefName(cf, finfo);
          CFlowDef[] cflows = stackDef.cflows();
-         CFlowStack stack = new CFlowStack(name);
+         AspectAnnotationLoaderStrategy.CFlowStackInfo stack = new AspectAnnotationLoaderStrategy.CFlowStackInfo(name);
 
          for (int i = 0; i < cflows.length; i++)
          {
             CFlowDef cflow = cflows[i];
             boolean not = !cflow.called();
-            stack.addCFlow(new CFlow(cflow.expr(), not));
+            stack.addCFlow(new AspectAnnotationLoaderStrategy.CFlowInfo(cflow.expr(), not));
          }
 
          loaderStrategy.deployCFlow(this, stack);
@@ -950,7 +948,7 @@ public class AspectAnnotationLoader
       return cf.getName() + "." + finfo.getName();
    }
 
-   private InterfaceIntroduction createIntroduction(String name, String target, String typeExpression, String[] interfaces,
+   private InterfaceIntroductionInfo createIntroduction(String name, String target, String typeExpression, String[] interfaces,
          String constructorClass, String constructorMethod)
    throws Exception
    {
@@ -974,18 +972,7 @@ public class AspectAnnotationLoader
          throw new RuntimeException("You cannot define both a target and typeExpression attribute in the same @Mixin");
       }
 
-
-      InterfaceIntroduction intro = null;
-
-      if (target != null)
-      {
-         intro = new InterfaceIntroduction(name, target, interfaces, constructorClass, constructorMethod);
-      }
-      else
-      {
-         ASTStart start = new TypeExpressionParser(new StringReader(typeExpression)).Start();
-         intro = new InterfaceIntroduction(name, start, interfaces, constructorClass, constructorMethod);
-      }
+      InterfaceIntroductionInfo intro = new InterfaceIntroductionInfo(name, interfaces, target, typeExpression, constructorClass, constructorMethod);
 
       return intro;
    }

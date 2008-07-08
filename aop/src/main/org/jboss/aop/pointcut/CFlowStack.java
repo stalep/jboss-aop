@@ -52,11 +52,6 @@ public class CFlowStack
       cflows.add(cflow);
    }
 
-   public List<CFlow> getCFlows()
-   {
-      return Collections.unmodifiableList(cflows);
-   }
-   
    public boolean matches(StackTraceElement[] stack)
    {
       int stackIndex = stack.length - 1;

@@ -21,6 +21,8 @@
 */ 
 package org.jboss.aop;
 
+import java.io.StringReader;
+
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AdviceFactory;
 import org.jboss.aop.advice.AspectDefinition;
@@ -36,6 +38,7 @@ import org.jboss.aop.advice.Scope;
 import org.jboss.aop.advice.ScopedInterceptorFactory;
 import org.jboss.aop.introduction.AnnotationIntroduction;
 import org.jboss.aop.introduction.InterfaceIntroduction;
+import org.jboss.aop.pointcut.CFlow;
 import org.jboss.aop.pointcut.CFlowStack;
 import org.jboss.aop.pointcut.DeclareDef;
 import org.jboss.aop.pointcut.Pointcut;
@@ -43,6 +46,8 @@ import org.jboss.aop.pointcut.PointcutExpression;
 import org.jboss.aop.pointcut.Typedef;
 import org.jboss.aop.pointcut.TypedefExpression;
 import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
+import org.jboss.aop.pointcut.ast.ASTStart;
+import org.jboss.aop.pointcut.ast.TypeExpressionParser;
 
 /**
  * 
@@ -202,8 +207,13 @@ public class AspectManagerAnnotationLoaderStrategy implements AspectAnnotationLo
       loader.getAspectManager().removeAnnotationIntroduction(annIntro);
    }
    
-   public void deployCFlow(AspectAnnotationLoader loader, CFlowStack stack)
+   public void deployCFlow(AspectAnnotationLoader loader, CFlowStackInfo info)
    {
+      CFlowStack stack = new CFlowStack(info.getName());
+      for (CFlowInfo cinfo : info.getCFlows())
+      {
+         stack.addCFlow(new CFlow(cinfo.getExpr(), cinfo.isNot()));
+      }
       loader.getAspectManager().addCFlowStack(stack);
    }
    
@@ -212,9 +222,28 @@ public class AspectManagerAnnotationLoaderStrategy implements AspectAnnotationLo
       loader.getAspectManager().removeCFlowStack(name);
    }
    
-   public void deployInterfaceIntroduction(AspectAnnotationLoader loader, InterfaceIntroduction introduction)
+   public void deployInterfaceIntroduction(AspectAnnotationLoader loader, AspectAnnotationLoaderStrategy.InterfaceIntroductionInfo introduction) throws Exception
    {
-      loader.getAspectManager().addInterfaceIntroduction(introduction);
+      InterfaceIntroduction intro = null;
+      if (introduction.getTarget() != null)
+      {
+         intro = new InterfaceIntroduction(introduction.getName(), introduction.getTarget(), introduction.getInterfaces(), introduction.getConstructorClass(), introduction.getConstructorMethod());
+      }
+      else
+      {
+         ASTStart start = new TypeExpressionParser(new StringReader(introduction.getExpr())).Start();
+         intro = new InterfaceIntroduction(introduction.getName(), start, introduction.getInterfaces(), introduction.getConstructorClass(), introduction.getConstructorMethod());
+      }
+
+      if (introduction.getMixins() != null)
+      {
+         for (AspectAnnotationLoaderStrategy.InterfaceIntroductionMixinInfo mixin : introduction.getMixins())
+         {
+            intro.getMixins().add(new InterfaceIntroduction.Mixin(mixin.getClassname(), mixin.getInterfaces(), mixin.getConstruction(), mixin.isTrans()));
+         }
+      }
+      
+      loader.getAspectManager().addInterfaceIntroduction(intro);
    }
    
    public void undeployInterfaceIntroduction(AspectAnnotationLoader loader, String name)
