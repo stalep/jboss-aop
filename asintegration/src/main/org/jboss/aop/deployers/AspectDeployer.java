@@ -239,7 +239,7 @@ public class AspectDeployer extends AbstractVFSRealDeployer
          catch (Exception e)
          {
             //Unwind things already installed, in the reverse order
-            for (int i = deployedFiles.size() ; i >= 0 ; i-- )
+            for (int i = deployedFiles.size() - 1; i >= 0 ; i-- )
             {
                undeployAnnotation(loader, deployedFiles.get(i));
             }
