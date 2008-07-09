@@ -180,6 +180,7 @@ public class AspectAnnotationLoader
          undeployCFlowStackDefs(cf);
          undeployPrepares(cf);
          undeployAnnotationIntroductions(cf);
+         undeployDeclares(cf);
       }
    }
 
@@ -938,6 +939,24 @@ public class AspectAnnotationLoader
          }
          
          loaderStrategy.deployDeclare(this, name, expr, warning, msg);
+      }
+   }
+
+   private void undeployDeclares(ClassFile cf) throws Exception
+   {
+      Iterator<FieldInfo> fields = cf.getFields().iterator();
+      while (fields.hasNext())
+      {
+         FieldInfo finfo = fields.next();
+         AnnotationsAttribute mgroup = (AnnotationsAttribute) finfo.getAttribute(AnnotationsAttribute.visibleTag);
+         if (mgroup == null) continue;
+         javassist.bytecode.annotation.Annotation dwinfo = mgroup.getAnnotation(DeclareWarning.class.getName());
+         javassist.bytecode.annotation.Annotation deinfo = mgroup.getAnnotation(DeclareError.class.getName());
+         
+         if (dwinfo == null && deinfo == null) continue;
+         String name = getDeclareName(cf, finfo);
+
+         loaderStrategy.undeployDeclare(this, name);
       }
    }
 

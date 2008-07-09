@@ -59,6 +59,11 @@ public class AspectAnnotationLoaderStrategySupport implements AspectAnnotationLo
    {
    }
 
+   public void undeployDeclare(AspectAnnotationLoader loader, String name)
+   throws Exception
+   {
+   }
+
    public void deployDynamicCFlow(AspectAnnotationLoader loader, String name, String clazz)
    {
    }

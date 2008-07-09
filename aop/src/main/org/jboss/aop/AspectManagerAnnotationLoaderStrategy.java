@@ -195,6 +195,11 @@ public class AspectManagerAnnotationLoaderStrategy implements AspectAnnotationLo
       loader.getAspectManager().addDeclare(def);
    }
    
+   public void undeployDeclare(AspectAnnotationLoader loader, String name) throws Exception
+   {
+      loader.getAspectManager().removeDeclare(name);
+   }
+
    public void deployAnnotationIntroduction(AspectAnnotationLoader loader, String expr, String annotation, boolean invisible)
    {
       AnnotationIntroduction annIntro = AnnotationIntroduction.createComplexAnnotationIntroduction(expr, annotation, invisible);

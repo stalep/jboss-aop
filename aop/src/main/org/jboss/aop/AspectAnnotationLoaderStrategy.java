@@ -78,6 +78,8 @@ public interface AspectAnnotationLoaderStrategy
 
    void deployDeclare(AspectAnnotationLoader loader, String name, String expr, boolean warning, String msg) throws Exception;
    
+   void undeployDeclare(AspectAnnotationLoader loader, String name) throws Exception;
+   
    void deployAnnotationIntroduction(AspectAnnotationLoader loader, String expr, String annotation, boolean invisible) throws Exception;
 
    void undeployAnnotationIntroduction(AspectAnnotationLoader loader, String expr, String annotation, boolean invisible);
