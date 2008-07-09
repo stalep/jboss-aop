@@ -110,7 +110,7 @@ public class GeneratedAOPProxyFactory implements AOPProxyFactory
 
             boolean hasMoreAdvicesOrIntroductionsForInstance = cache.hasMoreAdvicesOrIntroductionsForInstance();
             
-            if (!cache.hasAspects() && !hasMoreAdvicesOrIntroductionsForInstance)
+            if (!cache.hasAspects() && !cache.hasIntroductionsForClassAdvisor() && !hasMoreAdvicesOrIntroductionsForInstance)
             {
                return params.getTarget();
             }

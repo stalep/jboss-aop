@@ -124,6 +124,11 @@ public class ContainerCache
       }
       return classAdvisor.hasAspects();
    }
+   
+   public boolean hasIntroductionsForClassAdvisor()
+   {
+      return classAdvisor.getInterfaceIntroductions().size() > 0; 
+   }
 
    public boolean requiresInstanceAdvisor()
    {

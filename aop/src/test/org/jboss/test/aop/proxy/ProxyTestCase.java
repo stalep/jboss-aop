@@ -444,6 +444,29 @@ public class ProxyTestCase extends AOPTestWithSetup
       }
    }
    
+   public void testProxyWithOnlyIntroductions() throws Exception
+   {
+      AspectManager manager = AspectManager.instance();
+      InterfaceIntroduction intro = new InterfaceIntroduction("intro", POJOWithIntroduction.class.getName(), new String[] {Serializable.class.getName()});
+      try
+      {
+         manager.addInterfaceIntroduction(intro);
+         
+         AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
+         params.setTarget(new POJOWithIntroduction());
+         
+         GeneratedAOPProxyFactory factory = new GeneratedAOPProxyFactory();
+         POJOWithIntroduction pojo = (POJOWithIntroduction)factory.createAdvisedProxy(params);
+         assertTrue(pojo instanceof AspectManaged);
+         
+         assertInstanceOf(pojo, Serializable.class);
+      }
+      finally
+      {
+         manager.removeInterfaceIntroduction(intro.getName());
+      }
+   }
+   
    private MetaData setupMetaData(Class<?> clazz, Annotation...annotations) 
    {
       MutableMetaDataRepository repository = new BasicMetaDataRepository();
