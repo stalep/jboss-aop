@@ -408,8 +408,8 @@ public class AspectAnnotationLoader
          javassist.bytecode.annotation.Annotation binfo = mgroup.getAnnotation(Bind.class.getName());
          if (binfo == null) continue;
          Bind binding = (Bind) AnnotationProxy.createProxy(binfo, Bind.class);
-         String pointcutString = binding.pointcut();
-         String cflow = binding.cflow();
+         String pointcutString = replaceThisInExpr(binding.pointcut(), cf.getName());
+         String cflow = replaceThisInExpr(binding.cflow(), cf.getName());
          if (cflow == null || cflow.trim().equals("")) cflow = null;
          ASTCFlowExpression cflowExpression = null;
          if (cflow != null)
@@ -480,8 +480,8 @@ public class AspectAnnotationLoader
       javassist.bytecode.annotation.Annotation binfo = visible.getAnnotation(Bind.class.getName());
       if (binfo == null) return;
       Bind bind = (Bind) AnnotationProxy.createProxy(binfo, Bind.class);
-      String pointcutString = bind.pointcut();
-      String cflow = bind.cflow();
+      String pointcutString = replaceThisInExpr(bind.pointcut(), cf.getName());
+      String cflow = replaceThisInExpr(bind.cflow(), cf.getName());
       if (cflow == null || cflow.trim().equals("")) cflow = null;
       ASTCFlowExpression cflowExpression = null;
       if (cflow != null)

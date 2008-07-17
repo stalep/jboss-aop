@@ -23,6 +23,7 @@ package org.jboss.test.aop.jdk15annotated;
 
 import org.jboss.aop.Aspect;
 import org.jboss.aop.Bind;
+import org.jboss.aop.PointcutDef;
 import org.jboss.aop.advice.Scope;
 import org.jboss.aop.joinpoint.FieldReadInvocation;
 import org.jboss.aop.joinpoint.FieldWriteInvocation;
@@ -38,8 +39,14 @@ import org.jboss.aop.joinpoint.MethodInvocation;
    public int methodCalled;
    public int fieldRead;
    public int fieldWrite;
+   
+   @PointcutDef("execution(void org.jboss.test.aop.jdk15annotated.POJO*->someMethod())")
+   Object pointcut;
+   
+   @PointcutDef("set(* org.jboss.test.aop.jdk15annotated.POJO*->field)")
+   Object pointcut2;
 
-   @Bind(pointcut = "execution(void org.jboss.test.aop.jdk15annotated.POJO*->someMethod())")
+   @Bind(pointcut = "this.pointcut")
            public Object methodAdvice(MethodInvocation invocation) throws Throwable
    {
       System.out.println("AspectPerInstance.methodAdvice accessing: " + invocation.getMethod().toString());
@@ -47,7 +54,7 @@ import org.jboss.aop.joinpoint.MethodInvocation;
       return invocation.invokeNext();
    }
 
-   @Bind(pointcut = "set(* org.jboss.test.aop.jdk15annotated.POJO*->field)")
+   @Bind(pointcut = "org.jboss.test.aop.jdk15annotated.AspectPerInstance.pointcut2")
            public Object fieldAdvice(FieldWriteInvocation invocation) throws Throwable
    {
       System.out.println("AspectPerInstance.fieldAdvice writing to field: " + invocation.getField().getName());

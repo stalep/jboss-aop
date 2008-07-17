@@ -41,7 +41,7 @@ public class TypedefAspect
    @TypeDef ("class(org.jboss.test.aop.jdk15annotated.VariaPOJO)")
    public static Typedef myTypedef;
 
-    @Bind (pointcut="execution(* $typedef{org.jboss.test.aop.jdk15annotated.TypedefAspect.myTypedef}->methodWithTypedef())")
+    @Bind (pointcut="execution(* $typedef{this.myTypedef}->methodWithTypedef())")
     public Object typedefAdvice(Invocation invocation) throws Throwable
    {
       intercepted = true;

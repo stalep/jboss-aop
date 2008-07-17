@@ -44,7 +44,7 @@ public class CFlowAspect
    public static CFlowStack cfNot1And2Stack;
 
 
-   @org.jboss.aop.Bind (pointcut="execution(void org.jboss.test.aop.jdk15annotated.VariaPOJO*->privateMethod())", cflow="(org.jboss.test.aop.jdk15annotated.CFlowAspect.cf1And2Stack OR org.jboss.test.aop.jdk15annotated.CFlowAspect.cfNot1And2Stack)")
+   @org.jboss.aop.Bind (pointcut="execution(void org.jboss.test.aop.jdk15annotated.VariaPOJO*->privateMethod())", cflow="(this.cf1And2Stack OR org.jboss.test.aop.jdk15annotated.CFlowAspect.cfNot1And2Stack)")
    public Object cflowAdvice(Invocation invocation) throws Throwable
    {
       System.out.println("CFlowAspect.cflowAdvice");
