@@ -138,10 +138,10 @@
       <property name="aop.jboss-service.location" value="${project.root}/asintegration/src/resources/META-INF/jboss-service.xml"/>
 
       <property name="javassist.location" value="${javassist.javassist.lib}/javassist.jar"/>
-      <property name="jboss-backport-concurrent.location" value="${jboss/backport.concurrent.lib}/jboss-backport-concurrent.jar"/>
-      <property name="jboss-common-core.location" value="${jboss/common.core.lib}/jboss-common-core.jar"/>
-      <property name="jboss-logging-log4j.location" value="${jboss/common.logging.log4j.lib}/jboss-logging-log4j.jar"/>
-      <property name="jboss-logging-spi.location" value="${jboss/common.logging.spi.lib}/jboss-logging-spi.jar"/>
+      <property name="jboss-backport-concurrent.location" value="${jboss.backport.concurrent.lib}/jboss-backport-concurrent.jar"/>
+      <property name="jboss-common-core.location" value="${jboss.common.core.lib}/jboss-common-core.jar"/>
+      <property name="jboss-logging-log4j.location" value="${jboss.common.logging.log4j.lib}/jboss-logging-log4j.jar"/>
+      <property name="jboss-logging-spi.location" value="${jboss.common.logging.spi.lib}/jboss-logging-spi.jar"/>
 
       <property name="jboss-reflect.location" value="${project.thirdparty}/jboss/jboss-reflect/lib/jboss-reflect.jar"/>
       <property name="jboss-mdr.location" value="${project.thirdparty}/jboss/jboss-mdr/lib/jboss-mdr.jar"/>

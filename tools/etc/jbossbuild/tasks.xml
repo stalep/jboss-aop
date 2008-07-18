@@ -118,6 +118,13 @@
             classpath="${jboss.tasks.path}"
    />
    
+   <!-- Generate a componentref graph and resolve the components -->
+   <taskdef name="resolvecomponents"
+            classname="org.jboss.ant.tasks.build.ResolveComponentRefsTask"
+            loaderRef="jboss.tasks.path"
+            classpath="${jboss.tasks.path}"
+   />   
+   
    <!-- A task which allows a visitor to visit the graph -->
    <taskdef name="visit-componentref-graph"
             classname="org.jboss.ant.tasks.build.VisitComponentRefGraphTask"
@@ -160,9 +167,13 @@
             classpath="${jboss.tasks.path}"
    />  
    
-  
+   <!-- File release task -->
+   <taskdef name="release-deployments"
+            classname="org.jboss.ant.tasks.build.ReleaseDeploymentsTask"
+            loaderRef="jboss.tasks.path"
+            classpath="${jboss.tasks.path}"
+   />    
    
-
    
 
 <!-- ================================================================== -->
@@ -242,7 +253,7 @@
          -->
          <main>
             <mkdir dir="@{releaseDir}"/>
-            <antCall target="release"/>
+            <execute-target target="release"/>
          </main>
 
 
@@ -627,9 +638,12 @@
       <!-- ============================================================ -->
 
       <targetdef target="release">
-      
-
-          <!-- Copy the artifact into the release -->
+       
+       <main>
+        <echo message="target is being executed"/>
+        <release-deployments/>
+       </main>
+          <!-- Copy the artifact into the release 
          <artifact when="@{tofile}">
              <copy-release release="@{release}" tofile="@{tofile}" requiredJDK="@{requiredJDK}"
              exploded="@{exploded}" overwrite="@{overwrite}">
@@ -645,7 +659,7 @@
               >
                <output/>
             </copy-release>
-         </artifact>         
+         </artifact>     -->    
 
       </targetdef>
 
@@ -757,6 +771,7 @@
 
       <targetdef target="clean" description="Clean">
          <common>
+            <echo message="executing common outputdir is @{output}"/>
             <delete dir="@{output}" failonerror="false"/>
          </common>
       </targetdef>
@@ -804,7 +819,13 @@
 
          <!-- If the component exists we just do a cvs update -->
          <componentmain if="@{exists}">
-           <cvs dest="@{dir}" command="update"/>
+            <get src="@{location}/${jbossbuild.component.info}"
+               dest="@{dir}/${jbossbuild.component.info}"
+               useTimestamp="true"
+               verbose="true"
+            />
+	   
+           <cvs dest="@{dir}" command="update -dP"/>
             <!-- NOTE: unable to delegate to component until JBBUILD-62 is resolved -->
             <!--invoke target="synchronize" dir="@{dir}"/--> 
             <!--execant target="synchronize.after" dir="@{dir}"/--> 
@@ -814,6 +835,7 @@
               get the source build check it out from cvs
          -->
          <componentmain unless="@{exists}" if="@{local}">
+            <echo message="doing component @{id}"/>
             <cvs dest="@{dir.parent}">
                <commandline>
                   <argument value="-d"/>
@@ -1007,7 +1029,7 @@
       />
       <sequential>
          <!-- Invoke using a new ant -->
-         <ant antfile="jbossbuild.xml" dir="@{dir}" target="@{target}"/>
+         <ant antfile="jbossbuild.xml" dir="@{dir}" target="@{target}" inheritRefs="false"/>
       </sequential>
    </macrodef>
 
