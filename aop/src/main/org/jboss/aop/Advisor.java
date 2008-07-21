@@ -33,6 +33,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -65,6 +66,7 @@ import org.jboss.aop.joinpoint.InvocationResponse;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.aop.metadata.ClassMetaDataBinding;
+import org.jboss.aop.metadata.ClassMetaDataLoader;
 import org.jboss.aop.metadata.ConstructorMetaData;
 import org.jboss.aop.metadata.FieldMetaData;
 import org.jboss.aop.metadata.MethodMetaData;
@@ -215,6 +217,9 @@ public abstract class Advisor
     * returned {@code null}.
     */
    protected static Object NULL_ASPECT = new Object();
+   
+   //When resolving annotations from the annotation repository we don't want to hit the annotation repository with the metadata from base-aspects.xml (@security, @transaction etc.)
+   //EJB 3 uses a custom metadata loader that tries to load up all these classes by name, and that will cause errors when loading up the annotations
    
    /**
     * Constructor.
@@ -428,7 +433,15 @@ public abstract class Advisor
    {
       if (introduction.matches(this, clazz))
       {
-         annotations.addClassAnnotation(introduction.getAnnotation().getIdentifier(), introduction.getOriginalAnnotationExpr());
+         try
+         {
+            annotations.addClassAnnotation(introduction.getAnnotation().getIdentifier(), introduction.getOriginalAnnotationExpr());
+         }
+         catch(Exception ignore)
+         {
+            //When resolving annotations from the annotation repository we don't want to hit the annotation repository with the metadata from base-aspects.xml (@security, @transaction etc.)
+            //EJB 3 uses a custom metadata loader that tries to load up all these classes by name, and that will cause errors when loading up the annotations
+         }
       }
 
       Class<?> theClass = clazz;
@@ -439,7 +452,15 @@ public abstract class Advisor
       {
          if (introduction.matches(this, fields[i]))
          {
-            annotations.addAnnotation(fields[i], introduction.getAnnotation().getIdentifier(), introduction.getOriginalAnnotationExpr());
+            try
+            {
+               annotations.addAnnotation(fields[i], introduction.getAnnotation().getIdentifier(), introduction.getOriginalAnnotationExpr());
+            }
+            catch(Exception ignore)
+            {
+               //When resolving annotations from the annotation repository we don't want to hit the annotation repository with the metadata from base-aspects.xml (@security, @transaction etc.)
+               //EJB 3 uses a custom metadata loader that tries to load up all these classes by name, and that will cause errors when loading up the annotations
+            }
          }
       }
       Constructor<?>[] cons = theClass.getDeclaredConstructors();
@@ -447,7 +468,15 @@ public abstract class Advisor
       {
          if (introduction.matches(this, cons[i]))
          {
-            annotations.addAnnotation(cons[i], introduction.getAnnotation().getIdentifier(), introduction.getOriginalAnnotationExpr());
+            try
+            {
+               annotations.addAnnotation(cons[i], introduction.getAnnotation().getIdentifier(), introduction.getOriginalAnnotationExpr());
+            }
+            catch(Exception ignore)
+            {
+               //When resolving annotations from the annotation repository we don't want to hit the annotation repository with the metadata from base-aspects.xml (@security, @transaction etc.)
+               //EJB 3 uses a custom metadata loader that tries to load up all these classes by name, and that will cause errors when loading up the annotations
+            }
          }
       }
    }
@@ -485,7 +514,15 @@ public abstract class Advisor
       {
          if (introduction.matches(this, methods[i]))
          {
-            annotations.addAnnotation(methods[i], introduction.getAnnotation().getIdentifier(), introduction.getOriginalAnnotationExpr());
+            try
+            {
+               annotations.addAnnotation(methods[i], introduction.getAnnotation().getIdentifier(), introduction.getOriginalAnnotationExpr());
+            }
+            catch(Exception ignore)
+            {
+               //When resolving annotations from the annotation repository we don't want to hit the annotation repository with the metadata from base-aspects.xml (@security, @transaction etc.)
+               //EJB 3 uses a custom metadata loader that tries to load up all these classes by name, and that will cause errors when loading up the annotations
+            }
          }
       }
    }
@@ -530,6 +567,7 @@ public abstract class Advisor
       }
 
       //Need to use the untyped version since that is used by EJB3
+
       if (annotations.isDisabled(annotation))
          return null;
 
@@ -611,7 +649,16 @@ public abstract class Advisor
          if (metadata.isMetaDataPresent(annotation)) return true;
       }
 
-      if (annotations.hasClassAnnotation(annotation)) return true;
+      try
+      {
+         if (annotations.hasClassAnnotation(annotation)) return true;
+      }
+      catch(Exception ignore)
+      {
+         //When resolving annotations from the annotation repository we don't want to hit the annotation repository with the metadata from base-aspects.xml (@security, @transaction etc.)
+         //EJB 3 uses a custom metadata loader that tries to load up all these classes by name, and that will cause errors when loading up the annotations
+      }
+
       if (tgt == null) return false;
       try
       {
@@ -833,7 +880,16 @@ public abstract class Advisor
          }
       }
 
-      if (annotations.hasAnnotation(m, annotation)) return true;
+      try
+      {
+         if (annotations.hasAnnotation(m, annotation)) return true;
+      }
+      catch(Exception ignore)
+      {
+         //When resolving annotations from the annotation repository we don't want to hit the annotation repository with the metadata from base-aspects.xml (@security, @transaction etc.)
+         //EJB 3 uses a custom metadata loader that tries to load up all these classes by name, and that will cause errors when loading up the annotations
+      }
+
       try
       {
          if (metadata == null)
@@ -862,7 +918,16 @@ public abstract class Advisor
             return true;
          }
       }
-      if (annotations.hasAnnotation(m, annotation)) return true;
+      try
+      {
+         if (annotations.hasAnnotation(m, annotation)) return true;
+      }
+      catch(Exception ignore)
+      {
+         //When resolving annotations from the annotation repository we don't want to hit the annotation repository with the metadata from base-aspects.xml (@security, @transaction etc.)
+         //EJB 3 uses a custom metadata loader that tries to load up all these classes by name, and that will cause errors when loading up the annotations
+      }
+
       try
       {
          if (metadata == null)
@@ -886,7 +951,16 @@ public abstract class Advisor
             return true;
          }
       }
-      if (annotations.hasAnnotation(m, annotation)) return true;
+      try
+      {
+         if (annotations.hasAnnotation(m, annotation)) return true;
+      }
+      catch(Exception ignore)
+      {
+         //When resolving annotations from the annotation repository we don't want to hit the annotation repository with the metadata from base-aspects.xml (@security, @transaction etc.)
+         //EJB 3 uses a custom metadata loader that tries to load up all these classes by name, and that will cause errors when loading up the annotations
+      }
+
       try
       {
          if (metadata == null)
@@ -920,7 +994,16 @@ public abstract class Advisor
    
    public boolean hasAnnotation(CtClass clazz, String annotation)
    {
-      if (annotations.hasClassAnnotation(annotation)) return true;
+      try
+      {
+         if (annotations.hasClassAnnotation(annotation)) return true;
+      }
+      catch(Exception ignore)
+      {
+         //When resolving annotations from the annotation repository we don't want to hit the annotation repository with the metadata from base-aspects.xml (@security, @transaction etc.)
+         //EJB 3 uses a custom metadata loader that tries to load up all these classes by name, and that will cause errors when loading up the annotations
+      }
+
       try
       {
          return AnnotationElement.isAnyAnnotationPresent(clazz, annotation);
@@ -934,21 +1017,48 @@ public abstract class Advisor
    public boolean hasAnnotation(CtMethod member, String annotation)
    {
       // todo these are here so that we can chain configuration domains
-      if (annotations.hasAnnotation(member, annotation)) return true;
+      try
+      {
+         if (annotations.hasAnnotation(member, annotation)) return true;
+      }
+      catch(Exception ignore)
+      {
+         //When resolving annotations from the annotation repository we don't want to hit the annotation repository with the metadata from base-aspects.xml (@security, @transaction etc.)
+         //EJB 3 uses a custom metadata loader that tries to load up all these classes by name, and that will cause errors when loading up the annotations
+      }
+
       return AnnotationElement.isAnyAnnotationPresent(member, annotation);
    }
 
    public boolean hasAnnotation(CtField member, String annotation)
    {
       // todo these are here so that we can chain configuration domains
-      if (annotations.hasAnnotation(member, annotation)) return true;
+      try
+      {
+         if (annotations.hasAnnotation(member, annotation)) return true;
+      }
+      catch(Exception ignore)
+      {
+         //When resolving annotations from the annotation repository we don't want to hit the annotation repository with the metadata from base-aspects.xml (@security, @transaction etc.)
+         //EJB 3 uses a custom metadata loader that tries to load up all these classes by name, and that will cause errors when loading up the annotations
+      }
+
       return AnnotationElement.isAnyAnnotationPresent(member, annotation);
    }
 
    public boolean hasAnnotation(CtConstructor member, String annotation)
    {
       // todo these are here so that we can chain configuration domains
-      if (annotations.hasAnnotation(member, annotation)) return true;
+      try
+      {
+         if (annotations.hasAnnotation(member, annotation)) return true;
+      }
+      catch(Exception ignore)
+      {
+         //When resolving annotations from the annotation repository we don't want to hit the annotation repository with the metadata from base-aspects.xml (@security, @transaction etc.)
+         //EJB 3 uses a custom metadata loader that tries to load up all these classes by name, and that will cause errors when loading up the annotations
+      }
+
       return AnnotationElement.isAnyAnnotationPresent(member, annotation);
    }
 
