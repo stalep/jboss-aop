@@ -50,6 +50,13 @@
               </mapping>
             </dependency>
             <dependency>
+              <groupId>jboss.jbossas.core-libs</groupId>
+              <artifactId>*</artifactId>
+              <mapping>
+                <componentId>jbossas.core-libs</componentId>
+              </mapping>
+            </dependency>
+            <dependency>
               <groupId>net.java.dev.javacc</groupId>
               <artifactId>javacc</artifactId>
               <mapping>
@@ -276,6 +283,98 @@
       <groupId>jboss.profiler.jvmti</groupId>
       <artifactId>jboss-profiler-jvmti</artifactId>
     </dependency>
+    
+    <!-- JBossAS core libs -->
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-aspect-library</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jbossha</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-jaxrpc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-saaj</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-xml-binding</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>namespace</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-common-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-hibernate</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-jca</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-jca</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jbosssx</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jmx-invoker-adaptor-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-j2ee</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-jmx</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-system</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jnp-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-common-jdbc-wrapper</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-local-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-transaction</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jnpserver</artifactId>
+    </dependency>
+    <!-- End JBoss AS core libs -->
+    
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
