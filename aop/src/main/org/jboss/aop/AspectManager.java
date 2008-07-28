@@ -1222,7 +1222,7 @@ public class AspectManager
                }
                catch (NoSuchFieldException e)
                {
-                  superClass = clazz.getSuperclass();
+                  superClass = superClass.getSuperclass();
                }
             }
          }
