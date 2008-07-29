@@ -21,38 +21,20 @@
 */
 public class POJO
 {
-   /**
-    * @@trace
-    * @@billable (amount=0.01)
-    */
    public POJO() 
    {
       System.out.println("empty constructor");
    }
 
-   /**
-    * @@trace
-    * @@billable (amount=0.01)
-    */
    public POJO(int i)
    {
       System.out.println("int constructor");
    }
 
-   /**
-    * @@billable (amount=0.05)
-    * @@trace
-    */
    public void someMethod()
    {
       System.out.println("someMethod");
    }
 
-   /**
-    * @@trace
-    */
    public int field;
 }
-
-
-
