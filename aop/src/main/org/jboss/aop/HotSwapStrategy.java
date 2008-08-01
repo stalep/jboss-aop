@@ -29,6 +29,8 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.WeakHashMap;
 
 import javassist.ClassPool;
@@ -246,7 +248,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
       private Interceptor[][] fieldReadInterceptors;
       private Interceptor[][] fieldWriteInterceptors;
       private Interceptor[][] constructorInterceptors;
-      private MethodInterceptors methodInterceptors;
+      private Map<MethodInfo, Interceptor[]> methodInterceptors;
       private int[] constructorIndexMap;
       
       /**
@@ -311,7 +313,14 @@ public class HotSwapStrategy implements DynamicAOPStrategy
          this.fieldReadInterceptors = fieldReadInterceptors;
          this.fieldWriteInterceptors = fieldWriteInterceptors;
          this.constructorInterceptors = constructorInterceptors;
-         this.methodInterceptors = methodInterceptors;
+         this.methodInterceptors = new HashMap<MethodInfo, Interceptor[]>();
+         long[] methodKeys = methodInterceptors.keys();
+         for (int i = 0; i < methodKeys.length; i++)
+         {
+            long key = methodKeys[i];
+            MethodInfo methodInfo = methodInterceptors.getMethodInfo(key);
+            this.methodInterceptors.put(methodInfo, methodInfo.getInterceptors());
+         }
          this.fields = fieldReadInterceptors.length;
          this.constructors = constructorInterceptors.length;
          this.methods = methodInterceptors.size();
@@ -328,17 +337,18 @@ public class HotSwapStrategy implements DynamicAOPStrategy
       {
          if (instanceInterceptors == 0)
          {
-            long[] methodKeys = methodInterceptors.keys();
+            long[] methodKeys = newMethodInterceptors.keys();
             for (int i = 0; i < methodKeys.length; i++)
             {
                long key = methodKeys[i];
-               MethodInfo oldMethodInfo = methodInterceptors.getMethodInfo(key);
                MethodInfo newMethodInfo = newMethodInterceptors.getMethodInfo(key);
-               if (oldMethodInfo.getInterceptorChain().isEmpty() && !newMethodInfo.getInterceptorChain().isEmpty())
+               Interceptor[] oldInterceptorChain = this.methodInterceptors.get(newMethodInfo);
+               if ((oldInterceptorChain == null || oldInterceptorChain.length == 0)
+                     && !newMethodInfo.getInterceptorChain().isEmpty())
                {
                   newlyAdvised.methodExecutions.add(newMethodInfo);  
                }
-               else if (!oldMethodInfo.getInterceptorChain().isEmpty() && newMethodInfo.getInterceptorChain().isEmpty())
+               else if ((oldInterceptorChain != null && oldInterceptorChain.length > 0) && newMethodInfo.getInterceptorChain().isEmpty())
                {
                   newlyUnadvised.methodExecutions.add(newMethodInfo);
                }
@@ -351,7 +361,13 @@ public class HotSwapStrategy implements DynamicAOPStrategy
          this.fieldReadInterceptors = newFieldReadInterceptors;
          this.fieldWriteInterceptors = newFieldWriteInterceptors;
          this.constructorInterceptors = newConstructorInterceptors;
-         this.methodInterceptors = newMethodInterceptors;
+         long[] methodKeys = newMethodInterceptors.keys();
+         for (int i = 0; i < methodKeys.length; i++)
+         {
+            long key = methodKeys[i];
+            MethodInfo methodInfo = newMethodInterceptors.getMethodInfo(key);
+            this.methodInterceptors.put(methodInfo, methodInfo.getInterceptors());
+         }
       }
       
       /**
@@ -515,14 +531,11 @@ public class HotSwapStrategy implements DynamicAOPStrategy
       {
          if (this.instanceInterceptors == 0)
          {
-            long[] methodKeys = this.methodInterceptors.keys();
-            for (int i = 0; i < methodKeys.length; i++)
+            for (Map.Entry<MethodInfo, Interceptor[]> entry: methodInterceptors.entrySet())
             {
-               long key = methodKeys[i];
-               MethodInfo methodInfo = this.methodInterceptors.getMethodInfo(key);
-               if (methodInfo.getInterceptorChain().isEmpty())
+               if (entry.getValue() == null || entry.getValue().length == 0)
                {
-                  joinpoints.methodExecutions.add(methodInfo);  
+                  joinpoints.methodExecutions.add(entry.getKey());
                }
             }
             findUnadvisedJoinpoints(this.fieldReadInterceptors, joinpoints.fieldReads);
