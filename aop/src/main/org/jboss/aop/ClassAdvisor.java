@@ -1231,9 +1231,12 @@ public class ClassAdvisor extends Advisor
          }
          //TODO: Optimize this
          rebuildCallerInterceptors();
-         this.interceptorChainObserver.interceptorChainsUpdated(
-               fieldReadInterceptors, fieldWriteInterceptors,
-               constructionInterceptors, methodInfos);
+         if (interceptorChainObserver != null)
+         {
+            this.interceptorChainObserver.interceptorChainsUpdated(
+                  fieldReadInterceptors, fieldWriteInterceptors,
+                  constructionInterceptors, methodInfos);
+         }
       }
       catch (Exception ex)
       {
