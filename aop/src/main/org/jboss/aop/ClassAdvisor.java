@@ -850,7 +850,15 @@ public class ClassAdvisor extends Advisor
                   pointcutResolved(fieldInfos[i], ab, new FieldJoinpoint(field));
                }
             }
-         }
+            if (write)
+            {
+               this.fieldWriteInterceptors[i] = fieldInfos[i].getInterceptors();
+            }
+            else
+            {
+               this.fieldReadInterceptors[i] = fieldInfos[i].getInterceptors();
+            }
+         }         
       }
    }
    
@@ -874,6 +882,7 @@ public class ClassAdvisor extends Advisor
                      pointcutResolved(constructorInfos[i], ab, new ConstructorJoinpoint(constructor));
                   }
                }
+               this.constructorInterceptors[i] = constructorInfos[i].getInterceptors();
             }
          }
       }
