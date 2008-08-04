@@ -32,7 +32,7 @@
   </para>
 
 
-  <sect1 id="compiling" revision="1">
+  <sect1 id="compiling_maven" revision="1">
     <title>AOP Compile with Maven2</title>
     <para>
     The aop compile plugin is configured to run after the default maven compile phase has ended. By default it
@@ -161,7 +161,7 @@
     </para>
   </sect1>
 
-  <sect1 id="running" revision="1">
+  <sect1 id="maven_running" revision="1">
     <title>Running precompiled with Maven2</title>
     <para>
     JBoss aop run plugin is configured to run after the package phase. There are less options here than for
