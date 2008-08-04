@@ -310,9 +310,9 @@ public class HotSwapStrategy implements DynamicAOPStrategy
             }
          }
          
-         this.fieldReadInterceptors = fieldReadInterceptors;
-         this.fieldWriteInterceptors = fieldWriteInterceptors;
-         this.constructorInterceptors = constructorInterceptors;
+         this.fieldReadInterceptors = copyInterceptorChains(fieldReadInterceptors);
+         this.fieldWriteInterceptors = copyInterceptorChains(fieldWriteInterceptors);
+         this.constructorInterceptors = copyInterceptorChains(constructorInterceptors);
          this.methodInterceptors = new HashMap<MethodInfo, Interceptor[]>();
          long[] methodKeys = methodInterceptors.keys();
          for (int i = 0; i < methodKeys.length; i++)
@@ -358,9 +358,9 @@ public class HotSwapStrategy implements DynamicAOPStrategy
             fillNewStateCollections(constructorInterceptors, newConstructorInterceptors, newlyAdvised.constructorExecutions, newlyUnadvised.constructorExecutions, this.constructorIndexMap);
             newJoinpointUpdate(this.getJoinpointStatusUpdate());
          }
-         this.fieldReadInterceptors = newFieldReadInterceptors;
-         this.fieldWriteInterceptors = newFieldWriteInterceptors;
-         this.constructorInterceptors = newConstructorInterceptors;
+         this.fieldReadInterceptors = copyInterceptorChains(newFieldReadInterceptors);
+         this.fieldWriteInterceptors = copyInterceptorChains(newFieldWriteInterceptors);
+         this.constructorInterceptors = copyInterceptorChains(newConstructorInterceptors);
          long[] methodKeys = newMethodInterceptors.keys();
          for (int i = 0; i < methodKeys.length; i++)
          {
@@ -434,7 +434,22 @@ public class HotSwapStrategy implements DynamicAOPStrategy
          updateAdvisenessStatus(this.newlyUnadvised);
          HotSwapStrategy.this.interceptorChainsUpdated();
       }
-
+      
+      /**
+       * Creates a copy of {@code chains}.
+       * 
+       * @param chains array of chains to be copied
+       */
+      private Interceptor[][] copyInterceptorChains(Interceptor[][] chains)
+      {
+         Interceptor[][] copy = new Interceptor[chains.length][];
+         for (int i = 0; i < chains.length; i++)
+         {
+            copy[i] = chains[i];
+         }
+         return copy;
+      }
+      
       /**
        * Gets the joinpoint status update containing all the observed interceptor
        * chain changes information.
