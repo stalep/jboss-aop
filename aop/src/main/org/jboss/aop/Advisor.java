@@ -33,7 +33,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -50,6 +50,7 @@ import javassist.CtMethod;
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.CFlowInterceptor;
+import org.jboss.aop.advice.ClassifiedBindingCollection;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.PrecedenceSorter;
@@ -61,6 +62,7 @@ import org.jboss.aop.instrument.ConstructorExecutionTransformer;
 import org.jboss.aop.introduction.AnnotationIntroduction;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.joinpoint.ConstructorJoinpoint;
+import org.jboss.aop.joinpoint.FieldJoinpoint;
 import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.InvocationResponse;
 import org.jboss.aop.joinpoint.Joinpoint;
@@ -1371,6 +1373,85 @@ public abstract class Advisor
             MethodMatchInfo info = methodInfos.getMatchInfo(keys[i]);
             info.removeMatchedBinding(binding, match);
             info.getInfo().clear();
+         }
+      }
+   }
+   
+   protected void updateFieldPointcutAfterRemove(FieldInfo[] fieldInfos, AdviceBinding binding, boolean write)
+   {
+      ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+      Collection<AdviceBinding> bindings = write? bindingCol.getFieldWriteBindings():
+            bindingCol.getFieldReadBindings();
+      for (int i = 0; i < fieldInfos.length; i++)
+      {
+         Field field = fieldInfos[i].getField();
+         fieldInfos[i].resetInterceptors();
+
+         if ((!write && binding.getPointcut().matchesGet(this, field))
+         || (write && binding.getPointcut().matchesSet(this, field)))
+         {
+            if (AspectManager.verbose) System.err.println("[debug] Removing field, matched " + ((write) ? "write" : "read") + " binding: " + field);
+            fieldInfos[i].clear();
+            
+            for(AdviceBinding ab : bindings)
+            {
+               if ((!write && ab.getPointcut().matchesGet(this, field))
+                     || (write && ab.getPointcut().matchesSet(this, field)))
+               {    
+                  pointcutResolved(fieldInfos[i], ab, new FieldJoinpoint(field));
+               }
+            }
+         }
+      }
+   }
+   
+   protected void updateConstructorPointcutAfterRemove(AdviceBinding binding)
+   {
+      ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+      if(constructorInfos != null && constructorInfos.length > 0)
+      {
+         for (int i = 0; i < constructors.length; i++)
+         {
+            constructorInfos[i].resetInterceptors();
+            Constructor<?> constructor = constructors[i];
+            if (binding.getPointcut().matchesExecution(this, constructor))
+            {
+               if (AspectManager.verbose) System.err.println("[debug] Removing constructor, matched binding: " + constructor);
+               constructorInfos[i].clear();
+               for(AdviceBinding ab : bindingCol.getConstructorExecutionBindings())
+               {
+                  if (ab.getPointcut().matchesExecution(this, constructor))
+                  {
+                     pointcutResolved(constructorInfos[i], ab, new ConstructorJoinpoint(constructor));
+                  }
+               }
+            }
+         }
+      }
+   }
+   
+   protected void updateConstructionPointcutAfterRemove(AdviceBinding binding)
+   {
+      ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+      if (constructionInfos.length > 0)
+      {
+         for (int i = 0; i < constructionInfos.length ;i++)
+         {
+            constructionInfos[i].resetInterceptors();
+            ConstructionInfo info = constructionInfos[i];
+            Constructor<?> constructor = info.getConstructor();
+            if (binding.getPointcut().matchesConstruction(this, constructor))
+            {
+               if (AspectManager.verbose) System.err.println("[debug] Removing construction, matched binding: " + constructor);
+               constructionInfos[i].clear();
+               for(AdviceBinding ab : bindingCol.getConstructionBindings())
+               {
+                  if (binding.getPointcut().matchesConstruction(this, constructor))
+                  {
+                     pointcutResolved(constructionInfos[i], ab, new ConstructorJoinpoint(constructor));
+                  }
+               }
+            }
          }
       }
    }

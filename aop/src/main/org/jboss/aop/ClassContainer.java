@@ -35,6 +35,7 @@ import org.jboss.aop.advice.ClassifiedBindingCollection;
 import org.jboss.aop.metadata.ClassMetaDataBinding;
 import org.jboss.aop.metadata.ClassMetaDataLoader;
 import org.jboss.aop.util.Advisable;
+import org.jboss.aop.util.BindingClassifier;
 import org.jboss.aop.util.ConstructorComparator;
 import org.jboss.aop.util.FieldComparator;
 import org.jboss.aop.util.MethodHashing;
@@ -154,7 +155,26 @@ public class ClassContainer extends Advisor
    @Override
    protected void rebuildInterceptorsForRemovedBinding(AdviceBinding binding)
    {
-      rebuildInterceptors();
+      
+      if (BindingClassifier.isExecution(binding))
+      {
+         updateMethodPointcutAfterRemove(binding);
+      }
+      if (BindingClassifier.isConstructorExecution(binding))
+      {
+         updateConstructorPointcutAfterRemove(binding);
+      }
+      
+      if (BindingClassifier.isExecution(binding))
+      {
+         finalizeMethodChain();
+      }
+      if (BindingClassifier.isConstructorExecution(binding))
+      {
+         finalizeChain(constructorInfos);
+      }
+      
+      doesHaveAspects = adviceBindings.size() > 0;
    }
 
    @Override
