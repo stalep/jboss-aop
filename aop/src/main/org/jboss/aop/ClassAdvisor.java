@@ -608,8 +608,8 @@ public class ClassAdvisor extends Advisor
       // Notify observer about this change
       if (this.interceptorChainObserver != null)
       {
-         this.interceptorChainObserver.interceptorChainsUpdated(fieldReadInterceptors, fieldWriteInterceptors,
-               constructorInterceptors, methodInfos);
+         this.interceptorChainObserver.interceptorChainsUpdated(fieldReadInfos,
+               fieldWriteInfos, constructorInfos, methodInfos);
       }
    }
 
@@ -693,8 +693,8 @@ public class ClassAdvisor extends Advisor
       // Notify observer about this change
       if (this.interceptorChainObserver != null)
       {
-         this.interceptorChainObserver.interceptorChainsUpdated(fieldReadInterceptors, fieldWriteInterceptors,
-               constructorInterceptors, methodInfos);
+         this.interceptorChainObserver.interceptorChainsUpdated(fieldReadInfos,
+               fieldWriteInfos, constructorInfos, methodInfos);
       }
    }
 
@@ -813,8 +813,8 @@ public class ClassAdvisor extends Advisor
       // Notify observer about this change
       if (this.interceptorChainObserver != null)
       {
-         this.interceptorChainObserver.interceptorChainsUpdated(fieldReadInterceptors, fieldWriteInterceptors,
-               constructorInterceptors, methodInfos);
+         this.interceptorChainObserver.interceptorChainsUpdated(fieldReadInfos,
+               fieldWriteInfos, constructorInfos, methodInfos);
       }
       
       //TODO: optimize this
@@ -1172,9 +1172,8 @@ public class ClassAdvisor extends Advisor
          rebuildCallerInterceptors();
          if (interceptorChainObserver != null)
          {
-            this.interceptorChainObserver.interceptorChainsUpdated(
-                  fieldReadInterceptors, fieldWriteInterceptors,
-                  constructionInterceptors, methodInfos);
+            this.interceptorChainObserver.interceptorChainsUpdated(fieldReadInfos,
+                  fieldWriteInfos, constructorInfos, methodInfos);
          }
       }
       catch (Exception ex)
@@ -2042,8 +2041,8 @@ public class ClassAdvisor extends Advisor
    {
       if (observer != null)
       {
-         observer.initialInterceptorChains(this.clazz, fieldReadInterceptors, fieldWriteInterceptors,
-               constructorInterceptors, methodInfos);
+         observer.initialInterceptorChains(this.clazz, fieldReadInfos,
+               fieldWriteInfos, constructorInfos, methodInfos);
       }
       this.interceptorChainObserver = observer;
    }

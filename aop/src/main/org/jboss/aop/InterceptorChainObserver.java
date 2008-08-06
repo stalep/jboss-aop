@@ -21,7 +21,6 @@
   */
 package org.jboss.aop;
 
-import org.jboss.aop.advice.Interceptor;
 
 /**
  * Observes all the interceptor chains related to a class. 
@@ -40,8 +39,8 @@ interface InterceptorChainObserver
     * @param methodInterceptors interceptor chains to be applied at methods' executions.
     * @param clazz the reflection class whose joinpoints the interceptor chains will be applied to.
     */
-   public void initialInterceptorChains(Class<?> clazz, Interceptor[][] fieldReadInterceptors, Interceptor[][] fieldWriteInterceptors,
-         Interceptor[][] constructorInterceptors, MethodInterceptors methodInterceptors);
+   public void initialInterceptorChains(Class<?> clazz, FieldInfo[] fieldReadInfos, FieldInfo[] fieldWriteInfos,
+         ConstructorInfo[] constructorInfos, MethodInterceptors methodInterceptors);
 
    /**
     * Notifies the observer that the class interceptor chains were updated.
@@ -50,8 +49,8 @@ interface InterceptorChainObserver
     * @param newConstructorInterceptors new interceptor chains to be applied at constructors' executions.
     * @param newMethodInterceptors new interceptor chains to be applied at methods' executions.
     */
-   public void interceptorChainsUpdated(Interceptor[][] newFieldReadInterceptors, Interceptor[][] newFieldWriteInterceptors,
-         Interceptor[][] newConstructorInterceptors, MethodInterceptors newMethodInterceptors);
+   public void interceptorChainsUpdated(FieldInfo[] fieldReadInfos, FieldInfo[] fieldWriteInfos,
+         ConstructorInfo[] constructorInfos, MethodInterceptors methodInterceptors);
    
    /**
     * Notifies that an interceptor was added to an instance of

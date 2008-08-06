@@ -265,8 +265,8 @@ public class HotSwapStrategy implements DynamicAOPStrategy
        * This method must be called before any other notification method is invoked.
        * @see org.jboss.aop.InterceptorChainObserver#initialInterceptorChains(Interceptor[][], Interceptor[][], Interceptor[][], TLongObjectHashMap)
        */
-      public synchronized void initialInterceptorChains(final Class<?> reflectionClass, Interceptor[][] fieldReadInterceptors, Interceptor[][] fieldWriteInterceptors,
-            Interceptor[][] constructorInterceptors, MethodInterceptors methodInterceptors)
+      public synchronized void initialInterceptorChains(final Class<?> reflectionClass, FieldInfo[] fieldReadInfos, FieldInfo[] fieldWriteInfos,
+            ConstructorInfo[] constructorInfos, MethodInterceptors methodInterceptors)
       {
          Constructor<?>[] declaredConstructors = null;
          if (System.getSecurityManager() == null)
@@ -310,9 +310,9 @@ public class HotSwapStrategy implements DynamicAOPStrategy
             }
          }
          
-         this.fieldReadInterceptors = copyInterceptorChains(fieldReadInterceptors);
-         this.fieldWriteInterceptors = copyInterceptorChains(fieldWriteInterceptors);
-         this.constructorInterceptors = copyInterceptorChains(constructorInterceptors);
+         this.fieldReadInterceptors = copyInterceptorChains(fieldReadInfos);
+         this.fieldWriteInterceptors = copyInterceptorChains(fieldWriteInfos);
+         this.constructorInterceptors = copyInterceptorChains(constructorInfos);
          this.methodInterceptors = new HashMap<MethodInfo, Interceptor[]>();
          long[] methodKeys = methodInterceptors.keys();
          for (int i = 0; i < methodKeys.length; i++)
@@ -321,8 +321,8 @@ public class HotSwapStrategy implements DynamicAOPStrategy
             MethodInfo methodInfo = methodInterceptors.getMethodInfo(key);
             this.methodInterceptors.put(methodInfo, methodInfo.getInterceptors());
          }
-         this.fields = fieldReadInterceptors.length;
-         this.constructors = constructorInterceptors.length;
+         this.fields = fieldReadInfos.length;
+         this.constructors = constructorInfos.length;
          this.methods = methodInterceptors.size();
          this.newlyAdvised = new JoinpointStatusUpdate.ClassJoinpoints(fields, constructors, methods);
          this.newlyUnadvised = new JoinpointStatusUpdate.ClassJoinpoints(fields, constructors, methods);
@@ -332,8 +332,8 @@ public class HotSwapStrategy implements DynamicAOPStrategy
        * Notification method.
        * @see InterceptorChainObserver#interceptorChainsUpdated(Interceptor[][], Interceptor[][], Interceptor[][], MethodInterceptors)
        */
-      public synchronized void interceptorChainsUpdated(Interceptor[][] newFieldReadInterceptors, Interceptor[][] newFieldWriteInterceptors,
-            Interceptor[][] newConstructorInterceptors, MethodInterceptors newMethodInterceptors)
+      public synchronized void interceptorChainsUpdated(FieldInfo[] newFieldReadInfos, FieldInfo[] newFieldWriteInfos,
+            ConstructorInfo[] newConstructorInfos, MethodInterceptors newMethodInterceptors)
       {
          if (instanceInterceptors == 0)
          {
@@ -353,14 +353,14 @@ public class HotSwapStrategy implements DynamicAOPStrategy
                   newlyUnadvised.methodExecutions.add(newMethodInfo);
                }
             }
-            fillNewStateCollections(fieldReadInterceptors, newFieldReadInterceptors, newlyAdvised.fieldReads, newlyUnadvised.fieldReads, null);
-            fillNewStateCollections(fieldWriteInterceptors, newFieldWriteInterceptors, newlyAdvised.fieldWrites, newlyUnadvised.fieldWrites, null);
-            fillNewStateCollections(constructorInterceptors, newConstructorInterceptors, newlyAdvised.constructorExecutions, newlyUnadvised.constructorExecutions, this.constructorIndexMap);
+            fillNewStateCollections(fieldReadInterceptors, newFieldReadInfos, newlyAdvised.fieldReads, newlyUnadvised.fieldReads, null);
+            fillNewStateCollections(fieldWriteInterceptors, newFieldWriteInfos, newlyAdvised.fieldWrites, newlyUnadvised.fieldWrites, null);
+            fillNewStateCollections(constructorInterceptors, newConstructorInfos, newlyAdvised.constructorExecutions, newlyUnadvised.constructorExecutions, this.constructorIndexMap);
             newJoinpointUpdate(this.getJoinpointStatusUpdate());
          }
-         this.fieldReadInterceptors = copyInterceptorChains(newFieldReadInterceptors);
-         this.fieldWriteInterceptors = copyInterceptorChains(newFieldWriteInterceptors);
-         this.constructorInterceptors = copyInterceptorChains(newConstructorInterceptors);
+         this.fieldReadInterceptors = copyInterceptorChains(newFieldReadInfos);
+         this.fieldWriteInterceptors = copyInterceptorChains(newFieldWriteInfos);
+         this.constructorInterceptors = copyInterceptorChains(newConstructorInfos);
          long[] methodKeys = newMethodInterceptors.keys();
          for (int i = 0; i < methodKeys.length; i++)
          {
@@ -440,12 +440,12 @@ public class HotSwapStrategy implements DynamicAOPStrategy
        * 
        * @param chains array of chains to be copied
        */
-      private Interceptor[][] copyInterceptorChains(Interceptor[][] chains)
+      private Interceptor[][] copyInterceptorChains(JoinPointInfo[] updatedInfos)
       {
-         Interceptor[][] copy = new Interceptor[chains.length][];
-         for (int i = 0; i < chains.length; i++)
+         Interceptor[][] copy = new Interceptor[updatedInfos.length][];
+         for (int i = 0; i < updatedInfos.length; i++)
          {
-            copy[i] = chains[i];
+            copy[i] = updatedInfos[i].getInterceptors();
          }
          return copy;
       }
@@ -474,14 +474,14 @@ public class HotSwapStrategy implements DynamicAOPStrategy
        * @param newlyAdvised collection to which the newly advised joinpoints will be added.
        * @param newlyAdvised collection to which the newly unadvised joinpoints will be added.
        */
-      private void fillNewStateCollections(Interceptor[][] interceptors, Interceptor[][] newInterceptors,
+      private void fillNewStateCollections(Interceptor[][] interceptors, JoinPointInfo[] updatedInfos,
             Collection<Integer> newlyAdvised, Collection<Integer> newlyUnadvised, int[] indexMap)
       {
          if (instanceInterceptors > 0)
             return;
          for (int i = 0; i < interceptors.length; i++) {
             Interceptor[] oldInterceptorsChain = interceptors[i];
-            Interceptor[] newInterceptorsChain = newInterceptors[i];
+            Interceptor[] newInterceptorsChain = updatedInfos[i].getInterceptors();
             boolean interceptedBefore = oldInterceptorsChain != null && oldInterceptorsChain.length > 0;
             boolean interceptedNow = newInterceptorsChain != null && newInterceptorsChain.length > 0;
             if (!interceptedBefore && interceptedNow)
