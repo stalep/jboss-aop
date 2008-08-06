@@ -310,13 +310,13 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    }
 
    @Override
-   protected void resolveFieldPointcut(FieldInfo[] newFieldInfos, AdviceBinding binding, boolean write)
+   protected void resolveFieldPointcut(FieldInfo[] newFieldInfos, Interceptor[][] fieldInterceptors, AdviceBinding binding, boolean write)
    {
       GeneratedClassAdvisor classAdvisor = getClassAdvisorIfInstanceAdvisorWithNoOwnDataWithEffectOnAdvices();
       if (classAdvisor == null)
       {
          //We are either the class advisor or an instanceadvisor with own data so we need to do all the work
-         super.resolveFieldPointcut(newFieldInfos, binding, write);
+         super.resolveFieldPointcut(newFieldInfos, fieldInterceptors, binding, write);
       }
    }
 

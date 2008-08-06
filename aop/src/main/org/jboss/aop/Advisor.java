@@ -68,7 +68,6 @@ import org.jboss.aop.joinpoint.InvocationResponse;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.aop.metadata.ClassMetaDataBinding;
-import org.jboss.aop.metadata.ClassMetaDataLoader;
 import org.jboss.aop.metadata.ConstructorMetaData;
 import org.jboss.aop.metadata.FieldMetaData;
 import org.jboss.aop.metadata.MethodMetaData;
@@ -1352,6 +1351,10 @@ public abstract class Advisor
             binding.addAdvisor(this);
             MethodMatchInfo info = methodInfos.getMatchInfo(keys[i]);
             info.addMatchedBinding(binding, match);
+            if (AspectManager.maintainAdvisorMethodInterceptors)
+            {
+               methodInterceptors.put(keys[i], info);
+            }
          }
       }
    }
@@ -1373,6 +1376,10 @@ public abstract class Advisor
             MethodMatchInfo info = methodInfos.getMatchInfo(keys[i]);
             info.removeMatchedBinding(binding, match);
             info.getInfo().clear();
+            if (AspectManager.maintainAdvisorMethodInterceptors)
+            {
+               methodInterceptors.put(keys[i], info);
+            }
          }
       }
    }
@@ -1401,8 +1408,14 @@ public abstract class Advisor
                   pointcutResolved(fieldInfos[i], ab, new FieldJoinpoint(field));
                }
             }
-         }
+            this.updateFieldPointcutAfterRemove(fieldInfos[i], i, write);
+         }         
       }
+   }
+   
+   protected void updateFieldPointcutAfterRemove(FieldInfo fieldInfo, int i,
+         boolean write)
+   {
    }
    
    protected void updateConstructorPointcutAfterRemove(AdviceBinding binding)
@@ -1424,6 +1437,10 @@ public abstract class Advisor
                   {
                      pointcutResolved(constructorInfos[i], ab, new ConstructorJoinpoint(constructor));
                   }
+               }
+               if (AspectManager.maintainAdvisorMethodInterceptors)
+               {
+                  this.constructorInterceptors[i] = constructorInfos[i].getInterceptors();
                }
             }
          }
@@ -1450,6 +1467,10 @@ public abstract class Advisor
                   {
                      pointcutResolved(constructionInfos[i], ab, new ConstructorJoinpoint(constructor));
                   }
+               }
+               if (AspectManager.maintainAdvisorMethodInterceptors)
+               {
+                  this.constructionInterceptors[i] = constructionInfos[i].getInterceptors();
                }
             }
          }
@@ -1825,6 +1846,10 @@ public abstract class Advisor
             adviceBindings.add(binding);
             binding.addAdvisor(this);
             pointcutResolved(constructorInfos[i], binding, new ConstructorJoinpoint(constructor));
+            if (AspectManager.maintainAdvisorMethodInterceptors)
+            {
+               constructorInterceptors[i] = constructorInfos[i].getInterceptors();
+            }
          }
       }
    }
@@ -1843,6 +1868,10 @@ public abstract class Advisor
                adviceBindings.add(binding);
                binding.addAdvisor(this);
                pointcutResolved(info, binding, new ConstructorJoinpoint(constructor));
+               if (AspectManager.maintainAdvisorMethodInterceptors)
+               {
+                  this.constructionInterceptors[i] = constructionInfos[i].getInterceptors();
+               }
             }
          }
       }
@@ -1851,6 +1880,10 @@ public abstract class Advisor
    /** @deprecated We should just be using xxxxInfos */
    protected void populateInterceptorsFromInfos()
    {
+      if (!AspectManager.maintainAdvisorMethodInterceptors)
+      {
+         return;
+      }
       if (constructorInfos == null)
       {
          constructorInterceptors = new Interceptor[0][];

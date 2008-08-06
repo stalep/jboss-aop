@@ -52,7 +52,6 @@ import org.jboss.aop.joinpoint.ConstructorCalledByConstructorJoinpoint;
 import org.jboss.aop.joinpoint.ConstructorCalledByMethodInvocation;
 import org.jboss.aop.joinpoint.ConstructorCalledByMethodJoinpoint;
 import org.jboss.aop.joinpoint.ConstructorInvocation;
-import org.jboss.aop.joinpoint.ConstructorJoinpoint;
 import org.jboss.aop.joinpoint.FieldJoinpoint;
 import org.jboss.aop.joinpoint.FieldReadInvocation;
 import org.jboss.aop.joinpoint.FieldWriteInvocation;
@@ -429,7 +428,7 @@ public class ClassAdvisor extends Advisor
       doesHaveAspects = adviceBindings.size() > 0;
    }
 
-   protected void resolveFieldPointcut(FieldInfo[] newFieldInfos, AdviceBinding binding, boolean write)
+   protected void resolveFieldPointcut(FieldInfo[] newFieldInfos, Interceptor[][] interceptors, AdviceBinding binding, boolean write)
    {
       for (int i = 0; i < newFieldInfos.length; i++)
       {
@@ -442,6 +441,10 @@ public class ClassAdvisor extends Advisor
             adviceBindings.add(binding);
             binding.addAdvisor(this);
             pointcutResolved(newFieldInfos[i], binding, new FieldJoinpoint(field));
+            if (AspectManager.maintainAdvisorMethodInterceptors)
+            {
+               interceptors[i] = newFieldInfos[i].getInterceptors();
+            }
          }
       }
    }
@@ -623,7 +626,7 @@ public class ClassAdvisor extends Advisor
                logger.debug("iterate binding " + binding.getName() + " " +
                      binding.getPointcut().getExpr());
             }
-            resolveFieldPointcut(fieldReadInfos, binding, false);
+            resolveFieldPointcut(fieldReadInfos, fieldReadInterceptors, binding, false);
          }
          for (AdviceBinding binding: bindingCol.getFieldWriteBindings())
          {
@@ -632,7 +635,7 @@ public class ClassAdvisor extends Advisor
                logger.debug("iterate binding " + binding.getName() + " " +
                      binding.getPointcut().getExpr());
             }
-            resolveFieldPointcut(fieldWriteInfos, binding, true);
+            resolveFieldPointcut(fieldWriteInfos, fieldWriteInterceptors, binding, true);
          }
          for (AdviceBinding binding: bindingCol.getConstructionBindings())
          {
@@ -749,11 +752,11 @@ public class ClassAdvisor extends Advisor
       }
       if (BindingClassifier.isGet(binding))
       {
-         resolveFieldPointcut(fieldReadInfos, binding, false);
+         resolveFieldPointcut(fieldReadInfos, fieldReadInterceptors, binding, false);
       }
       if (BindingClassifier.isSet(binding))
       {
-         resolveFieldPointcut(fieldWriteInfos, binding, true);
+         resolveFieldPointcut(fieldWriteInfos, fieldWriteInterceptors, binding, true);
       }
       if (BindingClassifier.isConstructorExecution(binding))
       {
@@ -824,6 +827,22 @@ public class ClassAdvisor extends Advisor
 
       }
       
+   }
+   
+   @Override
+   protected void updateFieldPointcutAfterRemove(FieldInfo fieldInfo, int i, boolean write)
+   {
+      if (AspectManager.maintainAdvisorMethodInterceptors)
+      {
+         if (write)
+         {
+            this.fieldWriteInterceptors[i] = fieldInfo.getInterceptors();
+         }
+         else
+         {
+            this.fieldReadInterceptors[i] = fieldInfo.getInterceptors();
+         }
+      }
    }
    
    private MethodByConInfo initializeConstructorCallerInterceptorsMap(Class<?> callingClass, int callingIndex, String calledClass, long calledMethodHash, Method calledMethod) throws Exception
@@ -2033,6 +2052,10 @@ public class ClassAdvisor extends Advisor
    @Override
    protected void populateInterceptorsFromInfos()
    {
+      if (!AspectManager.maintainAdvisorMethodInterceptors)
+      {
+         return;
+      }
       super.populateInterceptorsFromInfos();
       fieldReadInterceptors = new Interceptor[fieldReadInfos.length][];
       for (int i = 0 ; i < fieldReadInfos.length ; i++)
