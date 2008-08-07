@@ -1846,7 +1846,8 @@ public abstract class Advisor
             adviceBindings.add(binding);
             binding.addAdvisor(this);
             pointcutResolved(constructorInfos[i], binding, new ConstructorJoinpoint(constructor));
-            if (AspectManager.maintainAdvisorMethodInterceptors)
+            // if we must keep track of deprecated fields and the field is already initialized
+            if (AspectManager.maintainAdvisorMethodInterceptors && constructorInterceptors != null)
             {
                constructorInterceptors[i] = constructorInfos[i].getInterceptors();
             }
@@ -1868,7 +1869,8 @@ public abstract class Advisor
                adviceBindings.add(binding);
                binding.addAdvisor(this);
                pointcutResolved(info, binding, new ConstructorJoinpoint(constructor));
-               if (AspectManager.maintainAdvisorMethodInterceptors)
+               // if we must keep track of deprecated fields and the field is already initialized
+               if (AspectManager.maintainAdvisorMethodInterceptors && this.constructionInterceptors != null)
                {
                   this.constructionInterceptors[i] = constructionInfos[i].getInterceptors();
                }

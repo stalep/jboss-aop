@@ -441,7 +441,7 @@ public class ClassAdvisor extends Advisor
             adviceBindings.add(binding);
             binding.addAdvisor(this);
             pointcutResolved(newFieldInfos[i], binding, new FieldJoinpoint(field));
-            if (AspectManager.maintainAdvisorMethodInterceptors)
+            if (AspectManager.maintainAdvisorMethodInterceptors && this.initialized)
             {
                interceptors[i] = newFieldInfos[i].getInterceptors();
             }
