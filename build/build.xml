@@ -277,20 +277,55 @@
    <!-- create the thirdparty folder from items in the repository -->
    <!-- then generate a new libraries.ent file and include it in  -->
    <!-- the build                                                 -->
+  
+  <macrodef name="maven">
+      <attribute name="goal" />
+      <attribute name="basedir" />
+      <element name="args" implicit="true" optional="true" />
+      <sequential>
+          <echo message="Calling mvn command located in ${maven.dir}"/>
+          <java classname="org.codehaus.classworlds.Launcher" fork="true" 
+                dir="@{basedir}" resultproperty="maven.result">
+              <classpath>
+                  <fileset dir="${maven.dir}/boot">
+                      <include name="*.jar" />
+                  </fileset>
+                  <fileset dir="${maven.dir}/lib">
+                      <include name="*.jar" />
+                  </fileset>
+                  <fileset dir="${maven.dir}/bin">
+                      <include name="*.*" />
+                  </fileset>
+              </classpath>
+              <sysproperty key="classworlds.conf" value="${maven.dir}/bin/m2.conf" />
+              <sysproperty key="maven.home" value="${maven.dir}" />
+              <arg line="--batch-mode ${thirdparty.maven.opts} @{goal}" />
+          </java>
+      </sequential>
+  </macrodef> 
+
    <target name="createthirdparty" unless="inhibit.downloads"
       depends="check.inhibit.downloads, set.proxy">
-      <ant antfile="build-thirdparty.xml" target="generate-lib-file"/>
+     
+      <property name="maven.dir" value="${basedir}/../tools/maven"/>
+      <property name="thirdparty.maven.opts" value=""/>
+      
+      <maven basedir="${basedir}/../thirdparty" goal="package"/>
+      
+      <fail message="Unable to build thirdparty directory.  See maven output for details.">
+        <condition>
+          <not>
+            <equals arg1="${maven.result}" arg2="0"/>
+          </not>
+        </condition>
+      </fail>
+      
    </target>
 
    <!-- check if thirdparty libraries are to be downloaded -->
    <target name="check.inhibit.downloads">
       <condition property="inhibit.downloads">
-         <or>
-            <uptodate property="dependencies.current"
- 	      srcfile="build-thirdparty.xml"
-               targetfile="../thirdparty/libraries.ent"/>
-            <istrue value="${nodownload}"/>
-         </or>
+        <istrue value="${nodownload}"/>
       </condition>
   </target>
 
