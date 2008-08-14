@@ -212,7 +212,7 @@ public abstract class MethodExecutionTransformer
          CtClass[] javassistParameterTypes = new CtClass[parameterTypes.length];
          for (int i = 0; i < parameterTypes.length; i++)
          {
-            classPool.getLocally(parameterTypes[i].getName());
+            javassistParameterTypes[i] = classPool.getLocally(parameterTypes[i].getName());
          }
          CtMethod javassistWMethod = clazz.getDeclaredMethod(method.getName(), javassistParameterTypes);
          if (wrapper.isNotPrepared(javassistWMethod, WrapperTransformer.SINGLE_TRANSFORMATION_INDEX))
