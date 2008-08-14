@@ -68,6 +68,7 @@ import org.jboss.aop.util.BindingClassifier;
 import org.jboss.aop.util.ConstructorComparator;
 import org.jboss.aop.util.FieldComparator;
 import org.jboss.aop.util.MethodHashing;
+import org.jboss.aop.util.ReflectUtils;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.aop.util.logging.AOPLogger;
 import org.jboss.logging.Logger;
@@ -1421,7 +1422,8 @@ public class ClassAdvisor extends Advisor
             method.getReturnType().equals(InstanceAdvisor.class)) &&
       !(method.getName().equals("_setInstanceAdvisor") &&
             method.getParameterTypes().length == 1 &&
-            method.getParameterTypes()[0].equals(InstanceAdvisor.class)));
+            method.getParameterTypes()[0].equals(InstanceAdvisor.class)) &&
+       ReflectUtils.isNotAccessMethod(method));
    }
 
    private void populateFieldTable(ArrayList<Field> fields, Class<?> superclass)
