@@ -192,7 +192,7 @@
    <sect1 id="impl-interceptor" revision="1">
       <title>Interceptors</title>
       <para>
-         Interceptors are a special type of aspect that contains only one advice. This advice has it
+         Interceptors are a special type of aspect that contains only one advice. This advice has its
          signature defined by an interface, <literal>org.jboss.aop.advice.Interceptor</literal>:
       </para>
       <programlisting><![CDATA[public interface Interceptor
