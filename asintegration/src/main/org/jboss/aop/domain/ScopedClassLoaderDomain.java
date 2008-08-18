@@ -110,6 +110,12 @@ public abstract class ScopedClassLoaderDomain extends Domain
       }
    }
    
+   @Override
+   protected Object createPerVmAspect(String def, AspectDefinition adef, ClassLoader scopedClassLoader)
+   {
+      return super.createPerVmAspect(def, adef, getClassLoader());
+   }
+   
    protected Object getSuperPerVmAspect(String def)
    {
       return super.getPerVMAspect(def);
