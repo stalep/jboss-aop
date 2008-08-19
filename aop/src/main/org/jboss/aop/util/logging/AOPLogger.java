@@ -34,10 +34,6 @@ public class AOPLogger extends Logger
 {
    private static final long serialVersionUID = 1L;
 
-   static {
-      init();
-   }
-
    protected AOPLogger(String arg0)
    {
       super(arg0);
@@ -45,6 +41,7 @@ public class AOPLogger extends Logger
    
    public static Logger getLogger(String name)
    {
+      initLogger();
       return Logger.getLogger(name);
    }
 
@@ -55,6 +52,7 @@ public class AOPLogger extends Logger
 
    public static Logger getLogger(Class<?> clazz)
    {
+      initLogger();
       return Logger.getLogger(clazz);
    }
 
@@ -64,9 +62,10 @@ public class AOPLogger extends Logger
    }
    
    
-   protected static void init()
+   protected static void initLogger()
    {
-      if (pluginClass == org.jboss.logging.NullLoggerPlugin.class)
+      if (pluginClass == org.jboss.logging.NullLoggerPlugin.class &&
+            !System.getProperty("jboss.aop.logger.ignore", "false").equals("true"))
       {
          pluginClass = SystemOutLoggerPlugin.class;
          pluginClassName = SystemOutLoggerPlugin.class.getName();
