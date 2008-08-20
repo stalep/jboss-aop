@@ -121,31 +121,19 @@ public class CFlow
       }
       else
       {
-         try
+         Class<?> clazz = SecurityActions.loadClass(element.getClassName());
+         
+         if (Untransformable.class.isAssignableFrom(clazz))
          {
-            Class<?> clazz = cl.loadClass(element.getClassName());
-            
-            if (Untransformable.class.isAssignableFrom(clazz))
-            {
-               //Invocation classes should not be checked (they are not in the cache at runtime)
-               return false;
-            }
-            if (!Util.matchesClassExpr(expr, clazz))
-            {
-               return false;
-            }
+            //Invocation classes should not be checked (they are not in the cache at runtime)
+            return false;
          }
-         catch(ClassNotFoundException e)
+         if (!Util.matchesClassExpr(expr, clazz))
          {
-            throw new RuntimeException(e);
+            return false;
          }
       }
       
       return true;
-   }
-   
-   private Class<?> loadClass(String name)
-   {
-      return SecurityActions.loadClass(name);
    }
 }

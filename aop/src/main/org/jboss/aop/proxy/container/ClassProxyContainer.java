@@ -167,8 +167,10 @@ public class ClassProxyContainer extends ClassContainer
       return ia;
    }
 
+   @SuppressWarnings("deprecation")
    public void initialise(Class<?> proxiedClass)
    {
+      
       setClass(proxiedClass);
       ((ProxyAdvisorDomain)manager).attachAdvisor();
       initializeInterfaceIntroductions(proxiedClass);

@@ -59,12 +59,21 @@ public class ClassContainer extends Advisor
       super(name, manager);
    }
 
+   @SuppressWarnings("deprecation")
+   public void initializeClassContainer(Class<?> clazz)
+   {
+      setClass(clazz);
+      initializeClassContainer();
+   }
+   
+   @Deprecated
    public void initializeClassContainer()
    {
       initializeMetadata();
       rebuildInterceptors();
    }
 
+   @Deprecated
    public void setClass(Class<?> clazz)
    {
       this.clazz = clazz;
@@ -79,7 +88,7 @@ public class ClassContainer extends Advisor
       rebindClassMetaData();
       deployAnnotationOverrides();
    }
-
+   
    protected Field[] advisedFields;
 
    private void populateFieldTable(ArrayList<Field> fields, final Class<?> superclass)
