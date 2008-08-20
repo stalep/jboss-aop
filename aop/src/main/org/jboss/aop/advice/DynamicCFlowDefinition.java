@@ -55,14 +55,13 @@ public class DynamicCFlowDefinition
       return className;
    }
 
-   public DynamicCFlow create()
+   public DynamicCFlow create(ClassLoader cl)
    {
       if (pClass == null)
       {
          try
          {
-            // FIXME ClassLoader - why should the class be visible from the context classloader?
-            pClass = SecurityActions.getContextClassLoader().loadClass(className);
+            pClass = cl.loadClass(className);
          }
          catch (ClassNotFoundException e)
          {

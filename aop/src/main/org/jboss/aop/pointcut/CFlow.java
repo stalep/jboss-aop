@@ -64,28 +64,28 @@ public class CFlow
       this.not = not;
    }
 
-   public int matches(StackTraceElement[] stack, int index)
+   public int matches(StackTraceElement[] stack, int index, ClassLoader cl)
    {
       int found = NOT_FOUND;
       if (point instanceof ASTMethod)
       {
-         found = matches((ASTMethod) point, stack, index);
+         found = matches((ASTMethod) point, stack, index, cl);
       }
       else
       {
-         found = matches((ASTConstructor) point, stack, index);
+         found = matches((ASTConstructor) point, stack, index, cl);
       }
       if ((found == NOT_FOUND) && not) return index;
       if (found > NOT_FOUND && not) return NOT_FOUND;
       return found;
    }
 
-   private int matches(ASTMethod method, StackTraceElement[] stack, int index)
+   private int matches(ASTMethod method, StackTraceElement[] stack, int index, ClassLoader cl)
    {
       for (int i = index; i >= 0; i--)
       {
          ClassExpression expr = method.getClazz();
-         if (!matchesClass(expr, stack[i])) continue;
+         if (!matchesClass(expr, stack[i], cl)) continue;
          
          if (method.getMethodIdentifier().matches(stack[i].getMethodName()))
          {
@@ -95,12 +95,12 @@ public class CFlow
       return -2;
    }
    
-   private int matches(ASTConstructor con, StackTraceElement[] stack, int index)
+   private int matches(ASTConstructor con, StackTraceElement[] stack, int index, ClassLoader cl)
    {
       for (int i = index; i >= 0; i--)
       {
          ClassExpression expr = con.getClazz(); 
-         if (!matchesClass(expr, stack[i])) continue;
+         if (!matchesClass(expr, stack[i], cl)) continue;
 
          if (stack[i].getMethodName().equals("<init>"))
          {
@@ -110,7 +110,7 @@ public class CFlow
       return -2;
    }
    
-   private boolean matchesClass(ClassExpression expr, StackTraceElement element)
+   private boolean matchesClass(ClassExpression expr, StackTraceElement element, ClassLoader cl)
    {
       if (expr.isSimple())
       {
@@ -121,17 +121,23 @@ public class CFlow
       }
       else
       {
-         // FIXME ClassLoader - why should the class be visible from the context classloader?
-         Class<?> clazz = loadClass(element.getClassName());
-         
-         if (Untransformable.class.isAssignableFrom(clazz))
+         try
          {
-            //Invocation classes should not be checked (they are not in the cache at runtime)
-            return false;
+            Class<?> clazz = cl.loadClass(element.getClassName());
+            
+            if (Untransformable.class.isAssignableFrom(clazz))
+            {
+               //Invocation classes should not be checked (they are not in the cache at runtime)
+               return false;
+            }
+            if (!Util.matchesClassExpr(expr, clazz))
+            {
+               return false;
+            }
          }
-         if (!Util.matchesClassExpr(expr, clazz))
+         catch(ClassNotFoundException e)
          {
-            return false;
+            throw new RuntimeException(e);
          }
       }
       

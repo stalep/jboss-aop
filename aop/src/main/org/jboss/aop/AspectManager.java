@@ -422,13 +422,13 @@ public class AspectManager
       cflowStacks.remove(name);
    }
 
-   public DynamicCFlow getDynamicCFlow(String name)
+   public DynamicCFlow getDynamicCFlow(String name, ClassLoader cl)
    {
       DynamicCFlowDefinition def = dynamicCFlows.get(name);
 
       if (def != null)
       {
-         return def.create();
+         return def.create(cl);
       }
       return null;
    }

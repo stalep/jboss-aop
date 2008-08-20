@@ -121,9 +121,18 @@ public class CFlowMatcher extends MatcherHelper
       else
          manager = invocation.getAdvisor().getManager();
       CFlowStack cflow = manager.getCFlowStack(node.getPointcutName());
-      if (cflow != null) return new Boolean(cflow.matches(getStack()));
+      
+      //Use the current advisor to guess the classloader
+      ClassLoader cl = invocation.getAdvisor().getClassLoader();
+      if (cl == null)
+      {
+         //Fall back to context classloader if null
+         cl = SecurityActions.getContextClassLoader();
+      }
+      
+      if (cflow != null) return new Boolean(cflow.matches(getStack(), cl));
 
-      DynamicCFlow dcflow = manager.getDynamicCFlow(node.getPointcutName());
+      DynamicCFlow dcflow = manager.getDynamicCFlow(node.getPointcutName(), cl);
       return new Boolean(dcflow.shouldExecute(invocation));
    }
 }

@@ -24,8 +24,6 @@ package org.jboss.aop.proxy.container;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
-import org.jboss.aop.SecurityActions.GetClassLoaderAction;
-
 /**
  * SecurityActions.
  * 

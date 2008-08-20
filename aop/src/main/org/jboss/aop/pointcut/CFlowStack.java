@@ -50,13 +50,13 @@ public class CFlowStack
       cflows.add(cflow);
    }
 
-   public boolean matches(StackTraceElement[] stack)
+   public boolean matches(StackTraceElement[] stack, ClassLoader cl)
    {
       int stackIndex = stack.length - 1;
       for (int i = 0; i < cflows.size(); i++)
       {
          CFlow cflow = cflows.get(i);
-         stackIndex = cflow.matches(stack, stackIndex);
+         stackIndex = cflow.matches(stack, stackIndex, cl);
          if (stackIndex == org.jboss.aop.pointcut.CFlow.NOT_FOUND)
          {
             return false;

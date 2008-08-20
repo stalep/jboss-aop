@@ -905,32 +905,32 @@ public class Domain extends AspectManager
 
 
    @Override
-   public DynamicCFlow getDynamicCFlow(String name)
+   public DynamicCFlow getDynamicCFlow(String name, ClassLoader cl)
    {
       if (inheritsBindings)
       {
          if (!parentFirst)
          {
-            DynamicCFlow cflow = super.getDynamicCFlow(name);
+            DynamicCFlow cflow = super.getDynamicCFlow(name, cl);
             if (cflow == null)
             {
-               cflow = parent.getDynamicCFlow(name);
+               cflow = parent.getDynamicCFlow(name, cl);
             }
             return cflow;
          }
          else
          {
-            DynamicCFlow cflow = parent.getDynamicCFlow(name);
+            DynamicCFlow cflow = parent.getDynamicCFlow(name, cl);
             if (cflow == null)
             {
-               cflow = super.getDynamicCFlow(name);
+               cflow = super.getDynamicCFlow(name, cl);
             }
             return cflow;
          }
       }
       else
       {
-         return super.getDynamicCFlow(name);
+         return super.getDynamicCFlow(name, cl);
       }
    }
 

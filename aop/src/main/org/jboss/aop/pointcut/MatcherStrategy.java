@@ -64,7 +64,6 @@ public abstract class MatcherStrategy
          String sub = instanceOf.getInstanceOfAnnotation().substring(1);
          try
          {
-            // FIXME ClassLoader - why should the class be visible from the context classloader?
             ClassLoader cl = advisor.getClassLoader();
             if (cl == null)
             {
