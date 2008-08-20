@@ -422,6 +422,12 @@ public class AspectManager
       cflowStacks.remove(name);
    }
 
+   @Deprecated
+   public DynamicCFlow getDynamicCFlow(String name)
+   {
+      return getDynamicCFlow(name, SecurityActions.getContextClassLoader());
+   }
+   
    public DynamicCFlow getDynamicCFlow(String name, ClassLoader cl)
    {
       DynamicCFlowDefinition def = dynamicCFlows.get(name);
