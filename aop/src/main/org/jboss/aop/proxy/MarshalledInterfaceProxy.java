@@ -58,7 +58,12 @@ public class MarshalledInterfaceProxy implements Serializable
    {
       try
       {
-         ClassLoader cl = SecurityActions.getClassLoader(advisor.getInstance().getClass());
+         ClassLoader cl = null;
+         if (advisor.getInstance() != null)
+         {
+            cl = SecurityActions.getClassLoader(advisor.getInstance().getClass());
+         }
+         //FIXME: When will instance not be null?
          if (cl == null)
          {
             //Fall back to the context classloader
