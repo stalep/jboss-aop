@@ -44,7 +44,6 @@ public class ProxyAdvisorDomain extends GeneratedAdvisorDomain
    
    public ProxyAdvisorDomain(AspectManager manager, String name, Class<?> clazz, boolean instanceDomain)
    {
-      // FIXME ProxyAdvisorDomain constructor
       super(manager, name, clazz, instanceDomain);
       super.setInheritsBindings(true);
       super.setInheritsDeclarations(true);
