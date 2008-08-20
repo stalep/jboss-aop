@@ -1076,7 +1076,6 @@ public abstract class Advisor
    /**
     * Set the metadata
     * 
-    * FIXME why does this have java.lang.Object signature?
     * @param metadata the metadata
     */
    public void setMetadata(MetaData metadata)
@@ -1609,7 +1608,7 @@ public abstract class Advisor
    void setClassLoader(ClassLoader loader) throws IllegalStateException
    {
       if (this.clazz != null && loader != null &&
-            loader != this.clazz.getClassLoader())
+            loader != SecurityActions.getClassLoader(this.clazz))
       {
          throw new IllegalStateException("Cannot have both loader and class");
       }

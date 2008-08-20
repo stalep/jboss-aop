@@ -50,8 +50,12 @@ public class ProxyMatcherStrategy extends MatcherStrategy
       {
          if (advisor != null)
          {
-            // FIXME ClassLoader - why should the class be visible from the context classloader?
-            ClassLoader cl = SecurityActions.getContextClassLoader();
+            ClassLoader cl = advisor.getClassLoader();
+            if (cl == null)
+            {
+               //Fall back to context classloader
+               cl = SecurityActions.getContextClassLoader();
+            }
             ArrayList<InterfaceIntroduction> intros = advisor.getInterfaceIntroductions();
             if (intros.size() > 0)
             {

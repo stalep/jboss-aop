@@ -64,8 +64,13 @@ public abstract class MatcherStrategy
          String sub = instanceOf.getInstanceOfAnnotation().substring(1);
          try
          {
-            // FIXME ClassLoader - why should the class be visible from the context classloader? 
-            Class<?> annotation = SecurityActions.getContextClassLoader().loadClass(sub);
+            // FIXME ClassLoader - why should the class be visible from the context classloader?
+            ClassLoader cl = advisor.getClassLoader();
+            if (cl == null)
+            {
+               cl = SecurityActions.getContextClassLoader();
+            }
+            Class<?> annotation = cl.loadClass(sub);
             if (Annotation.class.isAssignableFrom(annotation))
             {
                if (AnnotationElement.getAnyAnnotation(clazz, (Class<? extends Annotation>)annotation) != null)

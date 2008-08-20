@@ -71,7 +71,7 @@ public class AdvisorFactory
          {         
             try
             {
-               // FIXME ClassLoader - why should this class be visible from the context classloader?
+               //Context classloader is fine in this case since this is only called when initialising the main AspectManager
                Class<?> otherAdvisorClass = SecurityActions.getContextClassLoader().loadClass(property);
                otherAdvisorConstructor = otherAdvisorClass.getConstructor(CONSTRUCTOR_SIG);
             }

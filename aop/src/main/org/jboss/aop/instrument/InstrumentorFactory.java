@@ -66,7 +66,7 @@ public class InstrumentorFactory
             
             try
             {
-               // FIXME ClassLoader - why should the class be visible from the context classloader?
+               //Context classloader is fine in this case since this is only called when initialising the main AspectManager
                Class<?> otherInstrumentorClass = SecurityActions.getContextClassLoader().loadClass(property);
                otherInstrumentorConstructor = otherInstrumentorClass.getConstructor(CONSTRUCTOR_SIG);
                instrumentor = InstrumentorEnum.OTHER_INSTRUMENTOR;

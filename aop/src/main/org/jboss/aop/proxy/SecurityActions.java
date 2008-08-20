@@ -98,4 +98,40 @@ class SecurityActions
       else
          return AccessController.doPrivileged(GetContextClassLoaderAction.INSTANCE);
    }
+   
+   interface GetClassLoaderAction 
+   {
+      ClassLoader getClassLoader(Class<?> clazz);
+      
+      GetClassLoaderAction NON_PRIVILEGED = new GetClassLoaderAction() {
+
+         public ClassLoader getClassLoader(Class<?> clazz)
+         {
+            return clazz.getClassLoader();
+         }};
+
+     GetClassLoaderAction PRIVILEGED = new GetClassLoaderAction() {
+
+         public ClassLoader getClassLoader(final Class<?> clazz)
+         {
+            return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+
+               public ClassLoader run()
+               {
+                  return clazz.getClassLoader();
+               }});
+         }};
+   }
+   
+   static ClassLoader getClassLoader(Class<?> clazz)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         return GetClassLoaderAction.NON_PRIVILEGED.getClassLoader(clazz);
+      }
+      else
+      {
+         return GetClassLoaderAction.PRIVILEGED.getClassLoader(clazz);
+      }
+   }
 }

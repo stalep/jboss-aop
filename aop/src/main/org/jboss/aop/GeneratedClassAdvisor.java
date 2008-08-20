@@ -1039,49 +1039,49 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    protected void generateJoinPointClass(MethodInfo info)
    {
       MethodJoinPointGenerator generator = getJoinPointGenerator(info);
-      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+      generator.generateJoinPointClass(getClassLoader(), info);
    }
 
    protected void generateJoinPointClass(FieldInfo info)
    {
       FieldJoinPointGenerator generator = getJoinPointGenerator(info);
-      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+      generator.generateJoinPointClass(getClassLoader(), info);
    }
 
    protected void generateJoinPointClass(ConstructorInfo info)
    {
       ConstructorJoinPointGenerator generator = getJoinPointGenerator(info);
-      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+      generator.generateJoinPointClass(getClassLoader(), info);
    }
 
    protected void generateJoinPointClass(ConstructionInfo info)
    {
       ConstructionJoinPointGenerator generator = getJoinPointGenerator(info);
-      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+      generator.generateJoinPointClass(getClassLoader(), info);
    }
 
    protected void generateJoinPointClass(MethodByMethodInfo info)
    {
       MethodByMethodJoinPointGenerator generator = getJoinPointGenerator(info);
-      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+      generator.generateJoinPointClass(getClassLoader(), info);
    }
 
    protected void generateJoinPointClass(ConByMethodInfo info)
    {
       ConByMethodJoinPointGenerator generator = getJoinPointGenerator(info);
-      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+      generator.generateJoinPointClass(getClassLoader(), info);
    }
 
    protected void generateJoinPointClass(ConByConInfo info)
    {
       ConByConJoinPointGenerator generator = getJoinPointGenerator(info);
-      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+      generator.generateJoinPointClass(getClassLoader(), info);
    }
 
    protected void generateJoinPointClass(MethodByConInfo info)
    {
       MethodByConJoinPointGenerator generator = getJoinPointGenerator(info);
-      generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+      generator.generateJoinPointClass(getClassLoader(), info);
    }
    
    protected Object rebindJoinPointWithInstanceInformation(JoinPointInfo info)
@@ -1091,7 +1091,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
       {
          JoinPointGenerator generator = getJoinPointGenerator(info);
          generator.rebindJoinpoint(info);
-         return generator.generateJoinPointClass(this.getClass().getClassLoader(), info);
+         return generator.generateJoinPointClass(getClassLoader(), info);
       }
       finally
       {

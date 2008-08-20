@@ -87,8 +87,13 @@ public class GenericInterceptorFactory implements InterceptorFactory
             }
             if (clazz != null)
             {
-               // FIXME ClassLoader - why should the class be visible from the context classloader?
-               clazz = SecurityActions.getContextClassLoader().loadClass(classname);
+               ClassLoader cl = advisor.getClassLoader();
+               if (cl == null)
+               {
+                  //Fall back to context classloader
+                  cl = SecurityActions.getContextClassLoader();
+               }
+               clazz = cl.loadClass(classname);
                classRef = new WeakReference<Class<?>>(clazz);
             }
          }
