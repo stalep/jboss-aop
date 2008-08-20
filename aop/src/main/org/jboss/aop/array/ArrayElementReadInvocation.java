@@ -34,7 +34,6 @@ public abstract class ArrayElementReadInvocation extends ArrayElementInvocation
 
    public ArrayElementReadInvocation(Interceptor[] interceptors, Object array, int index)
    {
-      // FIXME ArrayElementReadInvocation constructor
       super(interceptors, array, index);
    }
 }

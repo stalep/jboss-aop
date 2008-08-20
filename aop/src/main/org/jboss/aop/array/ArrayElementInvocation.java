@@ -44,7 +44,6 @@ public abstract class ArrayElementInvocation extends InvocationBase
    
    public ArrayElementInvocation(Interceptor[] interceptors, Object array, int index)
    {
-      // FIXME ArrayElementInvocation constructor
       super(interceptors);
       super.setTargetObject(array);
       this.index = index;

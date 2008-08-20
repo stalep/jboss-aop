@@ -32,7 +32,6 @@ public class FieldArrayRegistryEntry extends ArrayRegistryEntry
    
    FieldArrayRegistryEntry(Object owner, String fieldName, Object array)
    {
-      // FIXME FieldArrayRegistryEntry constructor
       super(owner, true, array);
       this.fieldName = fieldName;
    }
