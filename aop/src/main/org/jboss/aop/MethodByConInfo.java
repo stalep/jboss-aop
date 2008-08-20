@@ -42,7 +42,6 @@ public class MethodByConInfo extends CallerMethodInfo implements MethodCallByCon
    
    public MethodByConInfo(Advisor advisor, Class<?> calledClass, Class<?> callingClass, int callingIndex, Method m, long calledMethodHash, Interceptor[] in)
    {
-      // FIXME MethodByConInfo constructor
       super(advisor, calledClass, m, calledMethodHash, in, callingClass);
       this.callingIndex = callingIndex;
       Advisor tempAdvisor = advisor;
