@@ -1563,6 +1563,13 @@ public abstract class Advisor
          MethodInvocation methodInvocation = (MethodInvocation) invocation;
          long hash = methodInvocation.getMethodHash();
          MethodInfo info = methodInfos.getMethodInfo(hash);
+         // this method may be unadvised. In this case, just create an info 
+         // to use as parameter of MethodInvocation
+         if (info == null)
+         {
+            info = new MethodInfo(clazz, hash, hash, this);
+            methodInfos.put(hash, info);
+         }
          aspects = info.getInterceptors();
          if (aspects == null) aspects = new Interceptor[0];
          if (target != null && target instanceof Advised)
