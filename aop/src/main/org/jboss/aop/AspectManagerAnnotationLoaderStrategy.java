@@ -175,7 +175,7 @@ public class AspectManagerAnnotationLoaderStrategy implements AspectAnnotationLo
    
    public void undeployPrecedence(AspectAnnotationLoader loader, String name)
    {
-      loader.getAspectManager().removePointcut(name);
+      loader.getAspectManager().removePrecedence(name);
    }
 
    public void deployTypedef(AspectAnnotationLoader loader, String name, String expr) throws Exception

@@ -136,20 +136,23 @@ public class PrecedenceSorter
 
    private static boolean matches(InterceptorEntry ientry, PrecedenceDefEntry pentry)
    {
-      if (ientry.classname.equals(pentry.interceptorClass))
+      if (ientry.classname != null && pentry.interceptorClass != null)
       {
-         if (ientry.method == null)
+         if (ientry.classname.equals(pentry.interceptorClass))
          {
-            if (pentry.adviceMethod == null)
+            if (ientry.method == null)
             {
-               return true;
+               if (pentry.adviceMethod == null)
+               {
+                  return true;
+               }
             }
-         }
-         else if (pentry.adviceMethod != null)
-         {
-            //This was:
-            //return ientry.classname.equals(pentry.interceptorClass);
-            return ientry.method.equals(pentry.adviceMethod);
+            else if (pentry.adviceMethod != null)
+            {
+               //This was:
+               //return ientry.classname.equals(pentry.interceptorClass);
+               return ientry.method.equals(pentry.adviceMethod);
+            }
          }
       }
       return false;
