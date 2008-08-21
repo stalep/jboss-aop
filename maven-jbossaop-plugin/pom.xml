@@ -127,7 +127,7 @@
           <artifactId>jboss-profiler-jvmti</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.jboss</groupId>
+          <groupId>jboss</groupId>
           <artifactId>jboss-test</artifactId>
         </exclusion>
       </exclusions>

@@ -365,7 +365,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.test</groupId>
+      <groupId>jboss</groupId>
       <artifactId>jboss-test</artifactId>
       <scope>test</scope>
     </dependency>
