@@ -70,7 +70,6 @@ import org.jboss.aop.pointcut.ast.PointcutExpressionParser;
 import org.jboss.aop.pointcut.ast.TypeExpressionParser;
 import org.jboss.aop.util.XmlHelper;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 import org.jboss.util.xml.XmlLoadable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -86,7 +85,7 @@ import org.xml.sax.SAXException;
  */
 public class AspectXmlLoader implements XmlLoader
 {
-   private static final Logger logger = AOPLogger.getLogger(AspectXmlLoader.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(AspectXmlLoader.class);
    
    // Attributes ---------------------------------------------------
 

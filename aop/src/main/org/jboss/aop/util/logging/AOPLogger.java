@@ -21,7 +21,8 @@
 */ 
 package org.jboss.aop.util.logging;
 
-import org.jboss.logging.Logger;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A thin wrapper around the jboss logging framework, so that if a proper logger is not installed
@@ -30,45 +31,116 @@ import org.jboss.logging.Logger;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class AOPLogger extends Logger
+public class AOPLogger
 {
-   private static final long serialVersionUID = 1L;
-
-   protected AOPLogger(String arg0)
-   {
-      super(arg0);
-   }
+   private static final ConcurrentMap<Class<?>, AOPLogger> loggers = new ConcurrentHashMap<Class<?>, AOPLogger>();
    
-   public static Logger getLogger(String name)
+   public static AOPLogger getLogger(final Class<?> clazz)
    {
-      initLogger();
-      return Logger.getLogger(name);
-   }
-
-   public static Logger getLogger(String name, String suffix)
-   {
-      return Logger.getLogger(name + "." + suffix);
-   }
-
-   public static Logger getLogger(Class<?> clazz)
-   {
-      initLogger();
-      return Logger.getLogger(clazz);
-   }
-
-   public static Logger getLogger(Class<?> clazz, String suffix)
-   {
-      return Logger.getLogger(clazz.getName() + "." + suffix);
-   }
-   
-   
-   protected static void initLogger()
-   {
-      if (pluginClass == org.jboss.logging.NullLoggerPlugin.class &&
-            !System.getProperty("jboss.aop.logger.ignore", "false").equals("true"))
+      AOPLogger logger = loggers.get(clazz);
+      
+      if (logger == null)
       {
-         pluginClass = SystemOutLoggerPlugin.class;
-         pluginClassName = SystemOutLoggerPlugin.class.getName();
-      }
+         logger = new AOPLogger(clazz);
+         
+         AOPLogger oldLogger = loggers.putIfAbsent(clazz, logger);
+         
+         if (oldLogger != null)
+         {
+            logger = oldLogger;
+         }
+      }      
+      
+      return logger;
    }
+
+   private final org.jboss.logging.Logger logger;
+
+   private AOPLogger(final Class<?> clazz)
+   {
+      if(!"org.jboss.logging.Log4jLoggerPlugin.class".equals(org.jboss.logging.Logger.getPluginClassName()))
+      {
+         if(org.jboss.logging.Logger.getPluginClassName() == org.jboss.logging.NullLoggerPlugin.class.getName()
+               || org.jboss.logging.Logger.getPluginClassName() == null)   
+            org.jboss.logging.Logger.setPluginClassName(SystemOutLoggerPlugin.class.getName());
+      }
+      logger = org.jboss.logging.Logger.getLogger(clazz);
+   }
+
+   public boolean isInfoEnabled()
+   {
+      return logger.isInfoEnabled();
+   }
+
+   public boolean isDebugEnabled()
+   {
+      return logger.isDebugEnabled();
+   }
+
+   public boolean isTraceEnabled()
+   {
+      return logger.isTraceEnabled();
+   }
+   
+   public void fatal(final Object message)
+   {
+      logger.fatal(message);
+   }
+   
+   public void fatal(final Object message, final Throwable t)
+   {
+      logger.fatal(message, t);
+   }
+   
+   public void error(final Object message)
+   {
+      logger.error(message);
+   }
+   
+   public void error(final Object message, final Throwable t)
+   {
+      logger.error(message, t);
+   }
+   
+   public void warn(final Object message)
+   {
+      logger.warn(message);
+   }
+   
+   public void warn(final Object message, final Throwable t)
+   {
+      logger.warn(message, t);
+   }
+   
+   public void info(final Object message)
+   {
+      logger.info(message);
+   }
+   
+   public void info(final Object message, final Throwable t)
+   {
+      logger.info(message, t);
+   }
+   
+   public void debug(final Object message)
+   {
+      logger.debug(message);
+   }
+   
+   public void debug(final Object message, final Throwable t)
+   {
+      logger.debug(message, t);
+   }
+   
+   public void trace(final Object message)
+   {
+      logger.trace(message);
+   }
+   
+   public void trace(final Object message, final Throwable t)
+   {
+      logger.trace(message, t);
+   }
+   
+
 }

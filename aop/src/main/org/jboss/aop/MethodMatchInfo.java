@@ -27,7 +27,6 @@ import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.joinpoint.MethodJoinpoint;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * 
@@ -36,7 +35,7 @@ import org.jboss.logging.Logger;
  */
 class MethodMatchInfo
 {
-   private static final Logger logger = AOPLogger.getLogger(MethodMatchInfo.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(MethodMatchInfo.class);
    
    Advisor advisor;
    MethodInfo info;

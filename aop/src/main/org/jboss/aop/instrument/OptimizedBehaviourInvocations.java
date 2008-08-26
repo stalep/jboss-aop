@@ -33,7 +33,6 @@ import javassist.NotFoundException;
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.aop.util.JavassistToReflect;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -43,7 +42,7 @@ import org.jboss.logging.Logger;
  */
 public abstract class OptimizedBehaviourInvocations extends OptimizedInvocations
 {
-   private static final Logger logger = AOPLogger.getLogger(OptimizedBehaviourInvocations.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(OptimizedBehaviourInvocations.class);
    
    /**
     * Name of method that enforces consistency between the values contained in typed

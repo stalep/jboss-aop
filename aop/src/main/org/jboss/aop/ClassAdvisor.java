@@ -71,7 +71,6 @@ import org.jboss.aop.util.MethodHashing;
 import org.jboss.aop.util.ReflectUtils;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 import org.jboss.util.NotImplementedException;
 
 /**
@@ -88,7 +87,7 @@ import org.jboss.util.NotImplementedException;
  */
 public class ClassAdvisor extends Advisor
 {
-   private static final Logger logger = AOPLogger.getLogger(ClassAdvisor.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(ClassAdvisor.class);
 
    /**
     * Suffix added to unadvised methods.

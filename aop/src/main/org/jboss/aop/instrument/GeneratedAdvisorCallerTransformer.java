@@ -33,7 +33,6 @@ import javassist.NotFoundException;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * Used with the GeneratedClassAdvisor
@@ -43,7 +42,7 @@ import org.jboss.logging.Logger;
  */
 public class GeneratedAdvisorCallerTransformer extends CallerTransformer
 {
-   private static final Logger logger = AOPLogger.getLogger(GeneratedAdvisorCallerTransformer.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(GeneratedAdvisorCallerTransformer.class);
    
    public GeneratedAdvisorCallerTransformer(Instrumentor instrumentor, AspectManager manager)
    {

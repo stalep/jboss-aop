@@ -40,7 +40,6 @@ import org.jboss.aop.util.ConstructorComparator;
 import org.jboss.aop.util.FieldComparator;
 import org.jboss.aop.util.MethodHashing;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -50,7 +49,7 @@ import org.jboss.logging.Logger;
  */
 public class ClassContainer extends Advisor
 {
-   private static final Logger logger = AOPLogger.getLogger(ClassContainer.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(ClassContainer.class);
    
    private boolean chainOverridingForInheritedMethods;
    

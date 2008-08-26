@@ -33,7 +33,6 @@ import javassist.NotFoundException;
 
 import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -43,7 +42,7 @@ import org.jboss.logging.Logger;
  */
 public class OptimizedCallerInvocations extends OptimizedBehaviourInvocations
 {
-   private static final Logger logger = AOPLogger.getLogger(OptimizedBehaviourInvocations.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(OptimizedBehaviourInvocations.class);
 
    protected static String createOptimizedMethodCalledByConInvocationClass(
          Instrumentor instrumentor, 

@@ -32,7 +32,6 @@ import javassist.NotFoundException;
 
 import org.jboss.aop.util.JavassistMethodHashing;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -43,7 +42,7 @@ import org.jboss.logging.Logger;
 public class GeneratedAdvisorConstructorExecutionTransformer extends
       ConstructorExecutionTransformer
 {
-   private static final Logger logger = AOPLogger.getLogger(GeneratedAdvisorConstructorExecutionTransformer.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(GeneratedAdvisorConstructorExecutionTransformer.class);
    
    public GeneratedAdvisorConstructorExecutionTransformer(Instrumentor instrumentor)
    {

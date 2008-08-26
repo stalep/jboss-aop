@@ -26,7 +26,6 @@ import java.lang.reflect.Constructor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -36,7 +35,7 @@ import org.jboss.logging.Logger;
  */
 public class InstrumentorFactory 
 {
-   private static final Logger logger = AOPLogger.getLogger(InstrumentorFactory.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(InstrumentorFactory.class);
    
    protected static InstrumentorEnum instrumentor; 
    

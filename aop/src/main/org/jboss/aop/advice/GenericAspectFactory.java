@@ -33,7 +33,6 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -46,7 +45,7 @@ import org.w3c.dom.NodeList;
  */
 public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
 {   
-   private static final Logger logger = AOPLogger.getLogger(GenericAspectFactory.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(GenericAspectFactory.class);
    
    final static Class<?>[] ADVISOR_INJECTOR_SIGNATURE = new Class[]{Advisor.class};
    final static Class<?>[] INSTANCE_ADVISOR_INJECTOR_SIGNATURE = new Class[]{InstanceAdvisor.class};

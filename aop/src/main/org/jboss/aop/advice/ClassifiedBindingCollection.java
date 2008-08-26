@@ -30,7 +30,6 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.util.BindingClassifier;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * Manages the binding collection contained in a domain. All bindings
@@ -42,7 +41,7 @@ import org.jboss.logging.Logger;
  */
 public class ClassifiedBindingCollection
 {
-   private static final Logger logger = AOPLogger.getLogger(AspectManager.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(AspectManager.class);
   
    private volatile LinkedHashMap<String, AdviceBinding> bindings;
    private volatile Collection<AdviceBinding> fieldReadBindings;

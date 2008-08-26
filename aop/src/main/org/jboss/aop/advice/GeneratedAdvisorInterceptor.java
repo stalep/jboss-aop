@@ -50,7 +50,6 @@ import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.aop.joinpoint.MethodJoinpoint;
 import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * Special interceptor wrapping the interceptor factory, so that generated advisors have 
@@ -66,7 +65,7 @@ import org.jboss.logging.Logger;
  */
 public class GeneratedAdvisorInterceptor implements Interceptor
 {
-   private static final Logger logger = AOPLogger.getLogger(GeneratedAdvisorInterceptor.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(GeneratedAdvisorInterceptor.class);
    // important to indicate that the factory has already been called, but a null
    // interceptor was returned
    private static final Interceptor EMPTY_INTERCEPTOR = new Interceptor()

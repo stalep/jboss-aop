@@ -30,7 +30,6 @@ import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.pointcut.Pointcut;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * This joinpoint classifier is anaware of differences between <code>
@@ -47,7 +46,7 @@ import org.jboss.logging.Logger;
  */
 public class JoinpointSimpleClassifier extends JoinpointClassifier
 {
-   private static final Logger logger = AOPLogger.getLogger(JoinpointSimpleClassifier.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(JoinpointSimpleClassifier.class);
    /**
     * Classifies the execution of a joinpoint. The joinpoint being classified
     * is identified by <code>matcher</code>.

@@ -65,7 +65,6 @@ import org.jboss.aop.pointcut.ast.ClassExpression;
 import org.jboss.aop.util.JavassistUtils;
 import org.jboss.aop.util.ReflectToJavassist;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * Creates the Joinpoint invocation replacement classes used with Generated advisors
@@ -76,7 +75,7 @@ import org.jboss.logging.Logger;
  */
 public abstract class JoinPointGenerator
 {
-   private static final Logger logger = AOPLogger.getLogger(JoinPointGenerator.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(JoinPointGenerator.class);
    
    public static final String INFO_FIELD = "info";
    public static final String INITIALISED_LIGHTWEIGHT_INSTANCE_ASPECTS = "initialisedLightweightInstanceAspects";

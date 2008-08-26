@@ -53,7 +53,6 @@ import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
 import org.jboss.aop.pointcut.ast.PointcutExpressionParser;
 import org.jboss.aop.util.MethodHashing;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -64,7 +63,7 @@ import org.jboss.logging.Logger;
 public class AspectAnnotationLoader
 {
    
-   private static final Logger logger = AOPLogger.getLogger(AspectAnnotationLoader.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(AspectAnnotationLoader.class);
 
    protected AspectManager manager;
    private ClassLoader cl; 

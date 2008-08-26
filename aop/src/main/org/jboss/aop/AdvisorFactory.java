@@ -32,7 +32,6 @@ import org.jboss.aop.instrument.GeneratedAdvisorInstrumentor;
 import org.jboss.aop.instrument.InstrumentorEnum;
 import org.jboss.aop.instrument.InstrumentorFactory;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * 
@@ -42,7 +41,7 @@ import org.jboss.logging.Logger;
  */
 public class AdvisorFactory
 {
-   private static final Logger logger = AOPLogger.getLogger(AdvisorFactory.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(AdvisorFactory.class);
 
    protected static final int CLASS = 1;
    protected static final int OTHER_ADVISOR = 1000; //The jrockit aop advisor is in another jar which we should not depend on

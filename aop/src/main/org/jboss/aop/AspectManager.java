@@ -82,7 +82,6 @@ import org.jboss.aop.pointcut.Typedef;
 import org.jboss.aop.pointcut.ast.ClassExpression;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 import org.jboss.util.collection.WeakValueHashMap;
 import org.jboss.util.loading.Translator;
 
@@ -104,7 +103,7 @@ import org.jboss.util.loading.Translator;
 public class AspectManager
         implements Translator
 {
-   private static final Logger logger = AOPLogger.getLogger(AspectManager.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(AspectManager.class);
    
    /** Indicates that a call to the factory has been made, but it returned null. */
    private static final Object NULL_ASPECT = new Object();

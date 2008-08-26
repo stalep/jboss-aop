@@ -41,7 +41,6 @@ import javassist.bytecode.SignatureAttribute;
 import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.pointcut.Pointcut;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * Comment
@@ -51,7 +50,7 @@ import org.jboss.logging.Logger;
  */
 public abstract class ConstructorExecutionTransformer implements CodeConversionObserver
 {
-   private static final Logger logger = AOPLogger.getLogger(ConstructorExecutionTransformer.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(ConstructorExecutionTransformer.class);
    
    protected static final String CONSTRUCTOR_INFO_CLASS_NAME = "org.jboss.aop.ConstructorInfo";
    

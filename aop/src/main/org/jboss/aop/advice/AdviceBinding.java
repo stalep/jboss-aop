@@ -37,7 +37,6 @@ import org.jboss.aop.pointcut.ast.ASTCFlowExpression;
 import org.jboss.aop.pointcut.ast.ParseException;
 import org.jboss.aop.pointcut.ast.PointcutExpressionParser;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * Binds a pointcut expression to one ore more advices/interceptors.
@@ -49,7 +48,7 @@ import org.jboss.logging.Logger;
  */
 public class AdviceBinding
 {
-   private static final Logger logger = AOPLogger.getLogger(AdviceBinding.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(AdviceBinding.class);
    
    private static volatile long counter = 0;
 

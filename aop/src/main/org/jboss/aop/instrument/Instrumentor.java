@@ -61,7 +61,6 @@ import org.jboss.aop.util.CtConstructorComparator;
 import org.jboss.aop.util.CtFieldComparator;
 import org.jboss.aop.util.JavassistMethodHashing;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  * Transforms byte code, making a class advisable. Implements
@@ -83,7 +82,7 @@ import org.jboss.logging.Logger;
  */
 public abstract class Instrumentor
 {
-   private static final Logger logger = AOPLogger.getLogger(Instrumentor.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(Instrumentor.class);
 
    /**
     * Package of AOP classes.

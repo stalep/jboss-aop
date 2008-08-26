@@ -22,7 +22,6 @@
 package org.jboss.aop;
 
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 import org.jboss.util.file.ArchiveBrowser;
 import org.jboss.util.file.ClassFileFilter;
 
@@ -42,7 +41,7 @@ import java.util.StringTokenizer;
  */
 public class Deployment
 {
-   private static final Logger logger = AOPLogger.getLogger(Deployment.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(Deployment.class);
    
    public static boolean searchClasspath = true;
 

@@ -26,7 +26,6 @@ import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.aop.instrument.Instrumentor;
 import org.jboss.aop.instrument.InstrumentorFactory;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 import javassist.ByteArrayClassPath;
 import javassist.ClassPool;
@@ -43,7 +42,7 @@ import javassist.NotFoundException;
  */
 public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
 
-   private static final Logger logger = AOPLogger.getLogger(SuperClassesFirstWeavingStrategy.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(SuperClassesFirstWeavingStrategy.class);
    
    private boolean verbose = AspectManager.verbose;
    public static final String AOP_PACKAGE = Advised.class.getPackage().getName();

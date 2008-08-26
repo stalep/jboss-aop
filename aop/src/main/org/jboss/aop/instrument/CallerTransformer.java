@@ -31,7 +31,6 @@ import org.jboss.aop.pointcut.Pointcut;
 import org.jboss.aop.util.Advisable;
 import org.jboss.aop.util.JavassistMethodHashing;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 import javassist.CannotCompileException;
 import javassist.CtBehavior;
@@ -52,7 +51,7 @@ import javassist.expr.NewExpr;
 
 public abstract class CallerTransformer
 {
-   private static final Logger logger = AOPLogger.getLogger(CallerTransformer.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(CallerTransformer.class);
    
    public static final String CON_BY_CON_INFO_CLASS_NAME = org.jboss.aop.ConByConInfo.class.getName();
    public static final String CON_BY_METHOD_INFO_CLASS_NAME = org.jboss.aop.ConByMethodInfo.class.getName();

@@ -34,7 +34,6 @@ import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.instrument.Instrumentor;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 import javassist.ClassPool;
 import javassist.scopedpool.ScopedClassPool;
@@ -50,7 +49,7 @@ import javassist.scopedpool.ScopedClassPoolRepositoryImpl;
  */
 public class AOPClassPoolRepository implements ScopedClassPoolRepository
 {
-   private static final Logger logger = AOPLogger.getLogger(AOPClassPoolRepository.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(AOPClassPoolRepository.class);
    
    private final static AOPClassPoolRepository instance = new AOPClassPoolRepository();
    

@@ -27,7 +27,6 @@ import org.jboss.aop.Advised;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.instrument.Untransformable;
 import org.jboss.aop.util.logging.AOPLogger;
-import org.jboss.logging.Logger;
 
 /**
  *
@@ -36,7 +35,7 @@ import org.jboss.logging.Logger;
  */
 public class GeneratedAOPProxyFactory implements AOPProxyFactory
 {
-   private static final Logger logger = AOPLogger.getLogger(GeneratedAOPProxyFactory.class);
+   private static final AOPLogger logger = AOPLogger.getLogger(GeneratedAOPProxyFactory.class);
    /**
     * Create a proxy
     *
