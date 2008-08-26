@@ -42,6 +42,7 @@ import org.jboss.aop.MethodByConInfo;
 import org.jboss.aop.MethodByMethodInfo;
 import org.jboss.aop.MethodInfo;
 import org.jboss.aop.classpool.AOPClassPool;
+import org.jboss.aop.util.logging.AOPLogger;
 
 /**
  * Comment
@@ -51,6 +52,7 @@ import org.jboss.aop.classpool.AOPClassPool;
  */
 public class GeneratedAdvisorInstrumentor extends Instrumentor
 {
+   private static final AOPLogger logger = AOPLogger.getLogger(GeneratedAdvisorInstrumentor.class);
    //field names in advised class
    private static final String CURRENT_ADVISOR = "currentAdvisor$aop";
    private  static final String INSTANCE_ADVISOR = "instanceAdvisor$aop";
@@ -130,7 +132,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       {
          if (AspectManager.suppressTransformationErrors)
          {
-            System.err.println("[warn] AOP Instrumentor failed to transform " + clazz.getName());
+            logger.error("[warn] AOP Instrumentor failed to transform " + clazz.getName());
             e.printStackTrace();
             return false;
          }

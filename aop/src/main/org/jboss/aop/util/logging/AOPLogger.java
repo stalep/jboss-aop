@@ -58,20 +58,24 @@ public class AOPLogger
 
    private AOPLogger(final Class<?> clazz)
    {
-      if(!"org.jboss.logging.Log4jLoggerPlugin.class".equals(org.jboss.logging.Logger.getPluginClassName()))
+      org.jboss.logging.Logger log;
+      log = org.jboss.logging.Logger.getLogger(clazz);
+      if(log.getLoggerPlugin().getClass().getName().equals( org.jboss.logging.NullLoggerPlugin.class.getName()))
       {
-         if(org.jboss.logging.Logger.getPluginClassName() == org.jboss.logging.NullLoggerPlugin.class.getName()
-               || org.jboss.logging.Logger.getPluginClassName() == null)   
-            org.jboss.logging.Logger.setPluginClassName(SystemOutLoggerPlugin.class.getName());
+         org.jboss.logging.Logger.setPluginClassName(SystemOutLoggerPlugin.class.getName());
+         log = org.jboss.logging.Logger.getLogger(clazz);
       }
-      logger = org.jboss.logging.Logger.getLogger(clazz);
+      
+      logger = log;
    }
 
+   @SuppressWarnings("deprecation")
    public boolean isInfoEnabled()
    {
       return logger.isInfoEnabled();
    }
 
+   @SuppressWarnings("deprecation")
    public boolean isDebugEnabled()
    {
       return logger.isDebugEnabled();

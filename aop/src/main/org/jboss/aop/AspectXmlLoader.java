@@ -991,8 +991,7 @@ public class AspectXmlLoader implements XmlLoader
       }
       catch (Exception e)
       {
-         System.err.println("[error] " + e.getMessage() + " " + url);
-         if (AspectManager.verbose) e.printStackTrace();
+         logger.error(e.getMessage() + " " + url, e);
          throw new RuntimeException(e);
       }
    }

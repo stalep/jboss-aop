@@ -75,6 +75,7 @@ import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
 import org.jboss.aop.util.JoinPointComparator;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
+import org.jboss.aop.util.logging.AOPLogger;
 import org.jboss.metadata.spi.MetaData;
 import org.jboss.metadata.spi.signature.ConstructorSignature;
 import org.jboss.metadata.spi.signature.FieldSignature;
@@ -218,6 +219,8 @@ public abstract class Advisor
     * returned {@code null}.
     */
    protected static Object NULL_ASPECT = new Object();
+   
+   private static final AOPLogger logger = AOPLogger.getLogger(Advisor.class);
    
    //When resolving annotations from the annotation repository we don't want to hit the annotation repository with the metadata from base-aspects.xml (@security, @transaction etc.)
    //EJB 3 uses a custom metadata loader that tries to load up all these classes by name, and that will cause errors when loading up the annotations
@@ -1345,7 +1348,7 @@ public abstract class Advisor
                   throw new RuntimeException(e);
                }
                */
-               System.err.println("[debug] method matched binding: " + method.toString());
+               logger.debug("method matched binding: " + method.toString());
             }
             binding.addAdvisor(this);
             MethodMatchInfo info = methodInfos.getMatchInfo(keys[i]);
@@ -1370,7 +1373,7 @@ public abstract class Advisor
          {
             if (AspectManager.verbose)
             {
-               System.err.println("[debug] removing matched binding: "+method.toString());
+               logger.debug("removing matched binding: "+method.toString());
             }
             MethodMatchInfo info = methodInfos.getMatchInfo(keys[i]);
             info.removeMatchedBinding(binding, match);
@@ -1396,7 +1399,7 @@ public abstract class Advisor
          if ((!write && binding.getPointcut().matchesGet(this, field))
          || (write && binding.getPointcut().matchesSet(this, field)))
          {
-            if (AspectManager.verbose) System.err.println("[debug] Removing field, matched " + ((write) ? "write" : "read") + " binding: " + field);
+            if (AspectManager.verbose) logger.debug("Removing field, matched " + ((write) ? "write" : "read") + " binding: " + field);
             fieldInfos[i].clear();
             
             for(AdviceBinding ab : bindings)
@@ -1428,7 +1431,7 @@ public abstract class Advisor
             Constructor<?> constructor = constructors[i];
             if (binding.getPointcut().matchesExecution(this, constructor))
             {
-               if (AspectManager.verbose) System.err.println("[debug] Removing constructor, matched binding: " + constructor);
+               if (AspectManager.verbose) logger.debug("Removing constructor, matched binding: " + constructor);
                constructorInfos[i].clear();
                for(AdviceBinding ab : bindingCol.getConstructorExecutionBindings())
                {
@@ -1458,7 +1461,7 @@ public abstract class Advisor
             Constructor<?> constructor = info.getConstructor();
             if (binding.getPointcut().matchesConstruction(this, constructor))
             {
-               if (AspectManager.verbose) System.err.println("[debug] Removing construction, matched binding: " + constructor);
+               if (AspectManager.verbose) logger.debug("Removing construction, matched binding: " + constructor);
                constructionInfos[i].clear();
                for(AdviceBinding ab : bindingCol.getConstructionBindings())
                {
@@ -1848,7 +1851,7 @@ public abstract class Advisor
          Constructor<?> constructor = constructors[i];
          if (binding.getPointcut().matchesExecution(this, constructor))
          {
-            if (AspectManager.verbose) System.err.println("[debug] constructor matched binding: " + constructor);
+            if (AspectManager.verbose) logger.debug("constructor matched binding: " + constructor);
             adviceBindings.add(binding);
             binding.addAdvisor(this);
             pointcutResolved(constructorInfos[i], binding, new ConstructorJoinpoint(constructor));
@@ -1871,7 +1874,7 @@ public abstract class Advisor
             Constructor<?> constructor = info.getConstructor();
             if (binding.getPointcut().matchesConstruction(this, constructor))
             {
-               if (AspectManager.verbose) System.err.println("[debug] construction matched binding: " + constructor);
+               if (AspectManager.verbose) logger.debug("construction matched binding: " + constructor);
                adviceBindings.add(binding);
                binding.addAdvisor(this);
                pointcutResolved(info, binding, new ConstructorJoinpoint(constructor));

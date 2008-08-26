@@ -806,8 +806,7 @@ public abstract class Instrumentor
       {
          if (AspectManager.suppressTransformationErrors)
          {
-            System.err.println("[warn] AOP Instrumentor failed to transform " + clazz.getName());
-            e.printStackTrace();
+            logger.error("[warn] AOP Instrumentor failed to transform " + clazz.getName(), e);
             return false;
          }
          else
@@ -1018,8 +1017,7 @@ public abstract class Instrumentor
          e.printStackTrace();
          if (AspectManager.suppressTransformationErrors)
          {
-            System.err.println("[warn] AOP Instrumentor failed to updated wrapping status.");
-            e.printStackTrace();
+            logger.error("[warn] AOP Instrumentor failed to updated wrapping status.", e);
          }
          else
          {
@@ -1119,8 +1117,7 @@ public abstract class Instrumentor
              e.printStackTrace();
              if (AspectManager.suppressTransformationErrors)
              {
-                System.err.println("[warn] AOP Instrumentor failed to updated wrapping status.");
-                e.printStackTrace();
+                logger.error("[warn] AOP Instrumentor failed to updated wrapping status.", e);
              }
              else if (e instanceof TransformationException)
              {

@@ -27,6 +27,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 
 import org.jboss.aop.AspectManager;
+import org.jboss.aop.util.logging.AOPLogger;
 
 /**
  *
@@ -35,6 +36,8 @@ import org.jboss.aop.AspectManager;
  */
 public class PrecedenceSorter
 {
+   private static final AOPLogger logger = AOPLogger.getLogger(PrecedenceSorter.class);
+   
    static Comparator<InterceptorEntry> interceptorComparator = new Comparator<InterceptorEntry>()
    {
       public int compare(InterceptorEntry objA, InterceptorEntry objB)
@@ -122,7 +125,7 @@ public class PrecedenceSorter
          }
          catch (RuntimeException e)
          {
-            System.err.print(interceptor.getName());
+            logger.error(interceptor.getName());
             throw e;
          }
       }

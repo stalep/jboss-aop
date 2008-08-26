@@ -89,10 +89,9 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
          if (!(ex instanceof NotFoundException))
          {
             if (verbose)
-               ex.printStackTrace();
+               logger.error(ex);
             else
-               System.err.println("[error] " + ex.getMessage() +
-                                       ".. Do verbose mode if you want full stack trace.");
+               logger.error(ex.getMessage()+".. Do verbose mode if you want full stack trace.");
          }
          throw ex;
       }

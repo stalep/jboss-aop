@@ -441,7 +441,7 @@ public class ClassAdvisor extends Advisor
          if ((!write && binding.getPointcut().matchesGet(this, field))
          || (write && binding.getPointcut().matchesSet(this, field)))
          {
-            if (AspectManager.verbose) System.err.println("[debug] field matched " + ((write) ? "write" : "read") + " binding: " + field);
+            if (AspectManager.verbose) logger.debug("field matched " + ((write) ? "write" : "read") + " binding: " + field);
             adviceBindings.add(binding);
             binding.addAdvisor(this);
             pointcutResolved(newFieldInfos[i], binding, new FieldJoinpoint(field));
@@ -1301,7 +1301,7 @@ public class ClassAdvisor extends Advisor
 
    public void addConstructorCallerPointcut(int callingIndex, String calledClass, long calledMethodHash, AdviceBinding binding) throws Exception
    {
-      if (AspectManager.verbose) System.err.println("constructor call matched binding " + binding.getPointcut().getExpr());
+      if (AspectManager.verbose) logger.debug("constructor call matched binding " + binding.getPointcut().getExpr());
       adviceBindings.add(binding);
       binding.addAdvisor(this);
       HashMap<String, TLongObjectHashMap> callingCon = methodCalledByConBindings[callingIndex];
@@ -1339,7 +1339,7 @@ public class ClassAdvisor extends Advisor
 
    private void addConstructorCalledByConPointcut(int callingIndex, String calledClass, long calledConHash, AdviceBinding binding) throws Exception
    {
-      if (AspectManager.verbose) System.err.println("constructor call matched binding " + binding.getPointcut().getExpr());
+      if (AspectManager.verbose) logger.debug("constructor call matched binding " + binding.getPointcut().getExpr());
       adviceBindings.add(binding);
       binding.addAdvisor(this);
       HashMap<String, TLongObjectHashMap> callingCon = conCalledByConBindings[callingIndex];
@@ -2488,7 +2488,7 @@ public class ClassAdvisor extends Advisor
       private void addMethodCalledByMethodPointcut(long callingMethodHash, String calledClass, long calledMethodHash, AdviceBinding binding) throws Exception
       {
          //Called via resolveCallerMethodInfo, maps are initialised
-         if (AspectManager.verbose) System.err.println("method call matched binding " + binding.getPointcut().getExpr());
+         if (AspectManager.verbose) logger.debug("method call matched binding " + binding.getPointcut().getExpr());
          adviceBindings.add(binding);
          binding.addAdvisor(ClassAdvisor.this);
          HashMap<String, TLongObjectHashMap> callingMethod = (HashMap<String, TLongObjectHashMap>)methodCalledByMethodBindings.get(callingMethodHash);
@@ -2767,7 +2767,7 @@ public class ClassAdvisor extends Advisor
 
       private void addConstructorCalledByMethodPointcut(long callingMethodHash, String calledClass, long calledMethodHash, AdviceBinding binding) throws Exception
       {
-         if (AspectManager.verbose) System.err.println("method call matched binding " + binding.getPointcut().getExpr());
+         if (AspectManager.verbose) logger.debug("method call matched binding " + binding.getPointcut().getExpr());
          adviceBindings.add(binding);
          binding.addAdvisor(ClassAdvisor.this);
          HashMap<String, TLongObjectHashMap> callingMethod = (HashMap<String, TLongObjectHashMap>) conCalledByMethodBindings.get(callingMethodHash);

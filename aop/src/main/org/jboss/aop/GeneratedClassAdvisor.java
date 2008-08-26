@@ -54,6 +54,7 @@ import org.jboss.aop.joinpoint.Joinpoint;
 import org.jboss.aop.joinpoint.MethodJoinpoint;
 import org.jboss.aop.pointcut.PointcutMethodMatch;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
+import org.jboss.aop.util.logging.AOPLogger;
 
 /**
  * Comment
@@ -70,6 +71,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
    public static final String ADD_FIELD_WRITE_INFO = "addFieldWriteInfo";
    public static final String GET_PARENT_ADVISOR = "getParentAdvisor";
 
+   private static final AOPLogger logger = AOPLogger.getLogger(GeneratedClassAdvisor.class);
    
 // TODO Flavia   
 //   ArrayList<ConstructorInfo> constructorInfos = new ArrayList();
@@ -288,7 +290,7 @@ public class GeneratedClassAdvisor extends ClassAdvisor
                adviceBindings.add(binding);
                if (AspectManager.verbose)
                {
-                  System.err.println("method matched binding " + binding.getPointcut().getExpr() + " " + method.toString());     
+                  logger.error("method matched binding " + binding.getPointcut().getExpr() + " " + method.toString());     
                }
                binding.addAdvisor(this);
                pointcutResolved(info, binding, new MethodJoinpoint(method));

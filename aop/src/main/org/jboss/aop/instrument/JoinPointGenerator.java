@@ -382,17 +382,17 @@ public abstract class JoinPointGenerator
       }
       catch (NotFoundException e)
       {
-         System.err.println("Exception generating " + className + ": " + e.getMessage());
+         logger.error("Exception generating " + className + ": " + e.getMessage(), e);
          throw e;
       }
       catch (CannotCompileException e)
       {
-         System.err.println("Exception generating " + className + ": " + e.getMessage());
+         logger.error("Exception generating " + className + ": " + e.getMessage(), e);
          throw e;
       }
       catch (ClassNotFoundException e)
       {
-         System.err.println("Exception generating " + className + ": " + e.getMessage());
+         logger.error("Exception generating " + className + ": " + e.getMessage(), e);
          throw e;
       }
    }

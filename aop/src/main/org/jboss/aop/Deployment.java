@@ -97,10 +97,10 @@ public class Deployment
       String path = System.getProperty("jboss.aop.class.path", null);
       if (path == null)
       {
-         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("jboss.aop.class.path is NULL");
+         if (AspectManager.verbose) logger.debug("jboss.aop.class.path is NULL");
          return;
       }
-      if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("jboss.aop.class.path: " + path);
+      if (AspectManager.verbose) logger.debug("jboss.aop.class.path: " + path);
       StringTokenizer t = new StringTokenizer(path, File.pathSeparator);
       while (t.hasMoreTokens())
       {
@@ -108,7 +108,7 @@ public class Deployment
          File f = new File(token);
          if (!f.exists())
          {
-            System.err.println("[error] Unable to find jboss.aop.class.path: " + f.getName());
+            logger.error("Unable to find jboss.aop.class.path: " + f.getName());
          }
          try
          {
