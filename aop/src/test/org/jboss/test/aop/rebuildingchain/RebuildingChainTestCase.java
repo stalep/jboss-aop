@@ -223,8 +223,7 @@ public class RebuildingChainTestCase extends AOPTestWithSetup
       
       st.setDone(true);
       rt.setDone(true);
-      // TODO remove this when JBAOP-569 is fixed
-      //rt.unlinkAdvice();
+      rt.unlinkAdvice();
       
       assertFalse("Failed to match pointcut when rebuilding the chain....", failed);
    }

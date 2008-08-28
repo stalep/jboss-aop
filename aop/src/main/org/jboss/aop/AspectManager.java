@@ -1390,7 +1390,7 @@ public class AspectManager
    /**
     * Remove an interceptor pointcut with a given name
     */
-   public void removeBinding(String name)
+   public synchronized void removeBinding(String name)
    {
       AdviceBinding binding = internalRemoveBinding(name);
       if (binding != null)
