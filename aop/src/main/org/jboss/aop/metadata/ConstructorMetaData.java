@@ -20,14 +20,16 @@
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
 package org.jboss.aop.metadata;
-import javassist.CtConstructor;
-import org.jboss.aop.joinpoint.ConstructorInvocation;
-import org.jboss.aop.joinpoint.Invocation;
-import org.jboss.aop.util.PayloadKey;
-
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import javassist.CtConstructor;
+
+import org.jboss.aop.joinpoint.ConstructionInvocation;
+import org.jboss.aop.joinpoint.ConstructorInvocation;
+import org.jboss.aop.joinpoint.Invocation;
+import org.jboss.aop.util.PayloadKey;
 /**
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
@@ -113,7 +115,15 @@ public class ConstructorMetaData implements MetaDataResolver
 
    public Object resolve(Invocation invocation, Object tag, Object attr)
    {
-      Constructor<?> constructor = ((ConstructorInvocation)invocation).getConstructor();
+      Constructor<?> constructor = null;
+      if (invocation instanceof ConstructorInvocation)
+      {
+         constructor = ((ConstructorInvocation)invocation).getConstructor();
+      }
+      else
+      {
+         constructor = ((ConstructionInvocation)invocation).getConstructor();
+      }
       return getConstructorMetaData(constructor, tag, attr);
    }
 
