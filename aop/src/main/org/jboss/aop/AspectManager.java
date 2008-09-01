@@ -1897,7 +1897,7 @@ public class AspectManager
       return getPerVMAspect(def.getName());
    }
 
-   public Object getPerVMAspect(String def)
+   public synchronized Object getPerVMAspect(String def)
    {
       Object aspect = perVMAspects.get(def);
       if (aspect == null)
