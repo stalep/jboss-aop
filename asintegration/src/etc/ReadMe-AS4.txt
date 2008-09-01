@@ -1,3 +1,10 @@
+NOTE: 
+If you want to install JBoss AOP on JBoss 4.2.* or newer, use build.xml
+If you Want to install JBoss AOP on JBoss 4.0.* use build_jboss4.0.xml (ant -f build_jboss4.0.xml)
+
+- from the 2.0 release of JBoss AOP only JDK1.5 is supported. This means that that both JBoss AS and AOP
+need to be compiled with JDK1.5 before you upgrade JBoss AOP.
+
 * If installing in a version before JBoss 4.0.4, you should leave javassist.jar in place in this folder.
 
 *If installing in jboss 4.0.4 or later, the classes contained in javassist.jar will already be available,

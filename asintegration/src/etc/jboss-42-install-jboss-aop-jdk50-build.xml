@@ -23,15 +23,15 @@
 
       <property name="deploy.dir" value="${jboss.config.dir}/deploy"/>
 
-      <property name="aspect.deployer" value="${deploy.dir}/jboss-aop.deployer"/>
+      <property name="aspect.deployer" value="${deploy.dir}/jboss-aop-jdk50.deployer"/>
       <available file="${aspect.deployer}" property="deployer.exists" type="dir"/>
       <fail unless="deployer.exists" message="${aspect.deployer} does not exist."/>
 
-      <property name="aspect.library" value="${aspect.deployer}/jboss-aspect-library.jar"/>
+      <property name="aspect.library" value="${aspect.deployer}/jboss-aspect-library-jdk50.jar"/>
       <available file="${aspect.library}" property="library.exists"/>
       <fail unless="library.exists" message="${aspect.library} does not exist."/>
 
-      <property name="old.deployer" value="${jboss.config.dir}/deploy/jboss-aop.deployer.bak"/>
+      <property name="old.deployer" value="${jboss.config.dir}/deploy/jboss-aop-jdk50.deployer.bak"/>
       <available file="${old.deployer}" property="old.deployer.exists"/>
 
       <property name="lib.javassist" value="${jboss.config.dir}/lib/javassist.jar"/>
@@ -67,7 +67,7 @@
       <delete dir="aspect-library-temp/org/jboss/aspects/patterns"/>
       <delete file="aspect-library-temp/org/jboss/aspects/*.class"/>
 
-      <jar destfile="jboss-aspect-library.jar" basedir="aspect-library-temp" manifest="aspect-library-temp/META-INF/MANIFEST.MF"/>
+      <jar destfile="jboss-aspect-library-jdk50.jar" basedir="aspect-library-temp" manifest="aspect-library-temp/META-INF/MANIFEST.MF"/>
 
       <delete dir="aspect-library-temp"/>
    </target>
@@ -88,10 +88,10 @@
             <exclude name="jboss-aop-jdk50.deployer/jboss.properties"/>
             <exclude name="jboss-aop-jdk50.deployer/build_jboss4.0.xml"/>
             <exclude name="jboss-aop-jdk50.deployer/ReadMe-AS4.txt"/>
+            <exclude name="jboss-aop-jdk50.deployer/jboss-reflect.jar"/>
          </fileset>
       </copy>
-      <move file="${deploy.dir}/jboss-aop-jdk50.deployer" tofile="${deploy.dir}/jboss-aop.deployer"/>
-      <copy todir="${deploy.dir}/jboss-aop.deployer" file="${old.deployer}/base-aop.xml"/>
+      <copy todir="${deploy.dir}/jboss-aop-jdk50.deployer" file="${old.deployer}/base-aop.xml"/>
    </target>
 
    <target name="backup.javassist.post.4.0.4" depends="init" if="backup.javassist">
