@@ -63,6 +63,7 @@ import org.jboss.aop.classpool.AOPClassPoolRepository;
 import org.jboss.aop.instrument.GeneratedAdvisorInstrumentor;
 import org.jboss.aop.instrument.Instrumentor;
 import org.jboss.aop.instrument.InstrumentorFactory;
+import org.jboss.aop.instrument.JoinPointGenerator;
 import org.jboss.aop.instrument.TransformerCommon;
 import org.jboss.aop.introduction.AnnotationIntroduction;
 import org.jboss.aop.introduction.InterfaceIntroduction;
@@ -927,6 +928,7 @@ public class AspectManager
               classname.startsWith("org.jboss.util.") ||
               classname.startsWith("gnu.trove.") ||
               classname.startsWith("EDU.oswego.cs.dl.util.concurrent.") ||
+              classname.startsWith(JoinPointGenerator.JOINPOINT_CLASS_PREFIX) ||
       // System classes
               classname.startsWith("org.apache.tools.ant") ||
               classname.startsWith("org.apache.crimson") ||

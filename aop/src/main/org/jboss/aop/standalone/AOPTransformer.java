@@ -21,11 +21,12 @@
   */
 package org.jboss.aop.standalone;
 
-import org.jboss.aop.AspectManager;
-
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
+
+import org.jboss.aop.AspectManager;
+import org.jboss.aop.instrument.JoinPointGenerator;
 
 /**
  * Comment
@@ -57,7 +58,8 @@ public class AOPTransformer implements ClassFileTransformer
       classname.startsWith("java.") ||
       classname.startsWith("javax.") ||
       classname.startsWith("com.sun.") ||
-      classname.startsWith("$Proxy")
+      classname.startsWith("$Proxy") ||
+      classname.startsWith(JoinPointGenerator.JOINPOINT_CLASS_PREFIX)
       );
    }
 
