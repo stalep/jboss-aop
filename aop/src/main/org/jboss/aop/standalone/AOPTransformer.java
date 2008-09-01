@@ -59,7 +59,7 @@ public class AOPTransformer implements ClassFileTransformer
       classname.startsWith("javax.") ||
       classname.startsWith("com.sun.") ||
       classname.startsWith("$Proxy") ||
-      classname.startsWith(JoinPointGenerator.JOINPOINT_CLASS_PREFIX)
+      classname.contains('.' + JoinPointGenerator.JOINPOINT_CLASS_PREFIX)
       );
    }
 

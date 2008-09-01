@@ -928,7 +928,7 @@ public class AspectManager
               classname.startsWith("org.jboss.util.") ||
               classname.startsWith("gnu.trove.") ||
               classname.startsWith("EDU.oswego.cs.dl.util.concurrent.") ||
-              classname.startsWith(JoinPointGenerator.JOINPOINT_CLASS_PREFIX) ||
+              classname.contains('.' + JoinPointGenerator.JOINPOINT_CLASS_PREFIX) ||
       // System classes
               classname.startsWith("org.apache.tools.ant") ||
               classname.startsWith("org.apache.crimson") ||
