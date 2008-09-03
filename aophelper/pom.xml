@@ -1,0 +1,128 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jboss.aop</groupId>
+  <artifactId>aophelper</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>JBoss AOP Helper</name>
+
+   <pluginRepositories>
+     <pluginRepository>
+         <releases>
+            <updatePolicy>never</updatePolicy>
+         </releases>
+         <snapshots>
+            <enabled>true</enabled>
+         </snapshots>
+         <id>snapshots.jboss.org</id>
+         <name>JBoss Maven Snapshot Repository</name>
+         <url>http://snapshots.jboss.org/maven2</url>
+      </pluginRepository>
+   </pluginRepositories>
+
+  <dependencies>
+  <!--
+    <dependency>
+      <groupId>org.jboss.aop</groupId>
+      <artifactId>jboss-aop</artifactId>
+      <version>2.0.0.CR3</version>
+      <scope>compile</scope>
+    </dependency>
+    -->
+    <dependency>
+      <groupId>org.jboss.maven.plugins</groupId>
+      <artifactId>maven-jbossaop-plugin</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+     <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+    </dependency>
+  </dependencies>
+
+  <repositories>
+    <repository>
+       <id>jboss_repo</id>
+       <name>JBoss Maven Repository</name>
+       <url>http://repository.jboss.com/maven2</url>
+    </repository>
+  </repositories>
+  
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>
+    <testSourceDirectory>src/test/java</testSourceDirectory>
+    <outputDirectory>target/classes</outputDirectory>
+    <testOutputDirectory>target/test-classes</testOutputDirectory>
+    <defaultGoal>install</defaultGoal>
+    <resources>
+       <resource>
+          <directory>src/main/resources</directory>
+       </resource>
+    </resources>
+    <testResources>
+       <testResource>
+          <directory>src/test/resources</directory>
+       </testResource>
+    </testResources>
+    <directory>target</directory>
+
+
+    <plugins>
+      <plugin>
+         <artifactId>maven-compiler-plugin</artifactId>
+         <configuration>
+            <source>${jdkVersion}</source>
+            <target>${jdkVersion}</target>
+         </configuration>
+      </plugin>
+        <plugin>
+            <groupId>org.jboss.maven.plugins</groupId>
+            <artifactId>maven-jbossaop-plugin</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <executions>
+              <execution>
+                <id>compile</id>
+                <configuration>
+                <!-- if you want to include dependencies from the current module
+                     (only needed if a class inherits a class thats not defined in this module
+                  <includeProjectDependency>true</includeProjectDependency>
+                     -->
+                  <aoppaths>
+                    <aoppath>src/main/resources/jboss-aop.xml</aoppath>
+                  </aoppaths>
+                </configuration>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>run</id>
+                <configuration>
+                  <aoppaths>
+                    <aoppath>src/main/resources/jboss-aop.xml</aoppath>
+                  </aoppaths>
+                  <loadtime>true</loadtime>
+                  <executable>org.jboss.aophelper.ui.AopHelperFrame</executable>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution> 
+            </executions>
+      </plugin>
+
+
+
+
+    </plugins>
+
+  </build>
+
+  <properties>
+    <jdkVersion>1.5</jdkVersion>
+  </properties>
+
+</project>

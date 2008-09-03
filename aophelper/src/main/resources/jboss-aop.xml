@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aop>
+
+   <bind pointcut="execution(* *->@org.jboss.aophelper.annotation.AopHelperAction(..))">
+       <interceptor class="org.jboss.aophelper.core.SettingInterceptor"/>
+   </bind>
+<!--
+   <bind pointcut="execution(* *->@org.jboss.aophelper.annotation.Remove(..))">
+       <interceptor class="org.jboss.aophelper.ui.aopcompile.ClasspathInterceptor"/>
+   </bind>
+
+
+   <bind pointcut="all(@org.jboss.aop.annotation.Add)">
+       <interceptor class="org.jboss.aop.ui.aopcompile.ClasspathInterceptor"/>
+   </bind>
+   -->
+
+<!--
+   <bind pointcut="execution(public void org.jboss.aop.ui.aopcompile.*->add())">
+       <interceptor class="org.jboss.aop.ui.aopcompile.ClasspathInterceptor"/>
+   </bind>
+   -->
+
+</aop>
