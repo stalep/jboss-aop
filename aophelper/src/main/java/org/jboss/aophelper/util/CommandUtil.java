@@ -37,7 +37,7 @@ public class CommandUtil
       String[] paths = System.getProperty("java.class.path").split(pathSeparator);
       for(String p : paths)
       {
-         if(p.endsWith("jboss-aop-jdk50.jar"))
+         if(p.contains("jboss-aop-"))
             aopPaths.append(p).append(pathSeparator);
          else if(p.contains("trove-2"))
             aopPaths.append(p).append(pathSeparator);
@@ -50,6 +50,10 @@ public class CommandUtil
          else if(p.contains("jboss-container-"))
             aopPaths.append(p).append(pathSeparator);
          else if(p.contains("jboss-common-logging-spi"))
+            aopPaths.append(p).append(pathSeparator);
+         else if(p.contains("jboss-mdr-"))
+            aopPaths.append(p).append(pathSeparator);
+         else if(p.contains("jboss-reflect-"))
             aopPaths.append(p).append(pathSeparator);
          
       }
