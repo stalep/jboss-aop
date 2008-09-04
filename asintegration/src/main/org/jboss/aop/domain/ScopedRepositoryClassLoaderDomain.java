@@ -63,35 +63,38 @@ public class ScopedRepositoryClassLoaderDomain extends ScopedClassLoaderDomain
       aspect = super.getSuperPerVmAspect(def);
       if (aspect != null)
       {
-         LoaderRepository loadingRepository = getAspectRepository(aspect);
-         LoaderRepository myRepository = getScopedRepository();
-         if (loadingRepository == myRepository)
+         synchronized(myPerVMAspects)
          {
-            //The parent does not load this class
-            myPerVMAspects.put(def, aspect);
-         }
-         else
-         {
-            //The class has been loaded by a parent classloader, find out if we also have a copy
-            try
+            LoaderRepository loadingRepository = getAspectRepository(aspect);
+            LoaderRepository myRepository = getScopedRepository();
+            if (loadingRepository == myRepository)
             {
-               Class<?> clazz = myRepository.loadClass(aspect.getClass().getName());
-               if (clazz == aspect.getClass())
-               {
-                  notMyPerVMAspects.put(def, Boolean.TRUE);
-               }
-               else
-               {
-                  //We have a different version of the class deployed
-                  AspectDefinition aspectDefinition = getAspectDefinition(def);
-                  //Override the classloader to create the aspect instance
-                  aspect = createPerVmAspect(def, aspectDefinition, getClassLoader());
-                  myPerVMAspects.put(def, aspect);
-               }
+               //The parent does not load this class
+               myPerVMAspects.put(def, aspect);
             }
-            catch (ClassNotFoundException e)
+            else
             {
-               throw new RuntimeException(e);
+               //The class has been loaded by a parent classloader, find out if we also have a copy
+               try
+               {
+                  Class<?> clazz = myRepository.loadClass(aspect.getClass().getName());
+                  if (clazz == aspect.getClass())
+                  {
+                     notMyPerVMAspects.put(def, Boolean.TRUE);
+                  }
+                  else
+                  {
+                     //We have a different version of the class deployed
+                     AspectDefinition aspectDefinition = getAspectDefinition(def);
+                     //Override the classloader to create the aspect instance
+                     aspect = createPerVmAspect(def, aspectDefinition, getClassLoader());
+                     myPerVMAspects.put(def, aspect);
+                  }
+               }
+               catch (ClassNotFoundException e)
+               {
+                  throw new RuntimeException(e);
+               }
             }
          }
       }

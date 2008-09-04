@@ -1899,7 +1899,7 @@ public class AspectManager
       return getPerVMAspect(def.getName());
    }
 
-   public synchronized Object getPerVMAspect(String def)
+   public Object getPerVMAspect(String def)
    {
       Object aspect = perVMAspects.get(def);
       if (aspect == null)
@@ -1909,7 +1909,12 @@ public class AspectManager
          {
             synchronized (adef)
             {
-               aspect = createPerVmAspect(def, adef, null);
+               // double check but, now, in a sync block
+               aspect = perVMAspects.get(def);
+               if (aspect == null)
+               {
+                  aspect = createPerVmAspect(def, adef, null);
+               }
             }
          }
       }
