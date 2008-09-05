@@ -24,11 +24,13 @@ package org.jboss.aop.advice;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.util.BindingClassifier;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
+import org.jboss.aop.util.UnmodifiableLinkedHashMap;
 import org.jboss.aop.util.logging.AOPLogger;
 
 /**
@@ -42,6 +44,8 @@ import org.jboss.aop.util.logging.AOPLogger;
 public class ClassifiedBindingCollection
 {
    private static final AOPLogger logger = AOPLogger.getLogger(AspectManager.class);
+   
+   private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
   
    private volatile LinkedHashMap<String, AdviceBinding> bindings;
    private volatile Collection<AdviceBinding> fieldReadBindings;
@@ -52,12 +56,12 @@ public class ClassifiedBindingCollection
    private volatile Collection<AdviceBinding> constructorCallBindings;
    private volatile Collection<AdviceBinding> methodCallBindings;
    
-   @SuppressWarnings("all")
    /**
     * Constructor.<p>
     * All created instances must be initialized before being used for addition and
     * removal operations, by calling {@code initialize()}.
     */
+   @SuppressWarnings("all")
    public ClassifiedBindingCollection()
    {
       bindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
@@ -78,9 +82,17 @@ public class ClassifiedBindingCollection
     * @return a collection containing exclusively the bindings that may match field
     *         read pointcuts
     */
-   public synchronized Collection<AdviceBinding> getFieldReadBindings()
+   public Collection<AdviceBinding> getFieldReadBindings()
    {
-      return this.fieldReadBindings;
+      lockRead();
+      try
+      {
+         return this.fieldReadBindings;
+      }
+      finally
+      {
+         unlockRead();
+      }
    }
    
    /**
@@ -91,9 +103,17 @@ public class ClassifiedBindingCollection
     * @return a collection containing exclusively the bindings that may match field
     *         write pointcuts
     */
-   public synchronized Collection<AdviceBinding> getFieldWriteBindings()
+   public Collection<AdviceBinding> getFieldWriteBindings()
    {
-      return this.fieldWriteBindings;
+      lockRead();
+      try
+      {
+         return this.fieldWriteBindings;
+      }
+      finally
+      {
+         unlockRead();
+      }
    }
    
    /**
@@ -104,9 +124,17 @@ public class ClassifiedBindingCollection
     * @return a collection containing exclusively the bindings that may match
     *         construction pointcuts
     */
-   public synchronized Collection<AdviceBinding> getConstructionBindings()
+   public Collection<AdviceBinding> getConstructionBindings()
    {
-      return this.constructionBindings;
+      lockRead();
+      try
+      {
+         return this.constructionBindings;
+      }
+      finally
+      {
+         unlockRead();
+      }
    }
    
    /**
@@ -117,9 +145,17 @@ public class ClassifiedBindingCollection
     * @return a collection containing exclusively the bindings that may match
     *         constructor execution pointcuts
     */
-   public synchronized Collection<AdviceBinding> getConstructorExecutionBindings()
+   public Collection<AdviceBinding> getConstructorExecutionBindings()
    {
-      return this.constructorExecutionBindings;
+      lockRead();
+      try
+      {
+         return this.constructorExecutionBindings;
+      }
+      finally
+      {
+         unlockRead();
+      }
    }
    
    /**
@@ -130,9 +166,17 @@ public class ClassifiedBindingCollection
     * @return a collection containing exclusively the bindings that may match
     *         method execution pointcuts
     */
-   public synchronized Collection<AdviceBinding> getMethodExecutionBindings()
+   public Collection<AdviceBinding> getMethodExecutionBindings()
    {
-      return this.methodExecutionBindings;
+      lockRead();
+      try
+      {
+         return this.methodExecutionBindings;
+      }
+      finally
+      {
+         unlockRead();
+      }
    }
    
    /**
@@ -144,9 +188,17 @@ public class ClassifiedBindingCollection
     * @return a collection containing exclusively the bindings that may match
     *         constructor call pointcuts
     */
-   public synchronized Collection<AdviceBinding> getConstructorCallBindings()
+   public Collection<AdviceBinding> getConstructorCallBindings()
    {
-      return this.constructorCallBindings;
+      lockRead();
+      try
+      {
+         return this.constructorCallBindings;
+      }
+      finally
+      {
+         unlockRead();
+      }
    }
    
    /**
@@ -157,17 +209,33 @@ public class ClassifiedBindingCollection
     * @return a collection containing exclusively the bindings that may match
     *         method call pointcuts
     */
-   public synchronized Collection<AdviceBinding> getMethodCallBindings()
+   public Collection<AdviceBinding> getMethodCallBindings()
    {
-      return this.methodCallBindings;
+      lockRead();
+      try
+      {
+         return this.methodCallBindings;
+      }
+      finally
+      {
+         unlockRead();
+      }
    }
    
    /**
     * Indicate whether this collection is empty.
     */
-   public synchronized boolean isEmpty()
+   public boolean isEmpty()
    {
-      return this.bindings.isEmpty();
+      lockRead();
+      try
+      {
+         return this.bindings.isEmpty();
+      }
+      finally
+      {
+         unlockRead();
+      }
    }
    
    /**
@@ -177,45 +245,40 @@ public class ClassifiedBindingCollection
     */
    public LinkedHashMap<String, AdviceBinding> getBindings()
    {
-      return bindings;
+      lockRead();
+      try
+      {
+         return new UnmodifiableLinkedHashMap<String, AdviceBinding>(bindings);
+      }
+      finally
+      { 
+         unlockRead();
+      }
    }
    
    /**
     * Adds a binding to this collection.
     */
-   public synchronized void add(AdviceBinding binding)
+   public void add(AdviceBinding binding)
    {
-      bindings.put(binding.getName(), binding);
-      if (BindingClassifier.isGet(binding))
+      lockWrite();
+      try
       {
-         this.fieldReadBindings.add(binding);
+         addBinding(binding);
+         addGet(binding);
+         addSet(binding);
+         addConstruction(binding);
+         addConstructorExecution(binding);
+         addMethodExecution(binding);
+         addConstructorCall(binding);
+         addMethodCall(binding);
       }
-      if (BindingClassifier.isSet(binding))
+      finally
       {
-         this.fieldWriteBindings.add(binding);
-      }
-      if (BindingClassifier.isConstruction(binding))
-      {
-         this.constructionBindings.add(binding);
-      }
-      if (BindingClassifier.isConstructorExecution(binding))
-      {
-         this.constructorExecutionBindings.add(binding);
-      }
-      if (BindingClassifier.isMethodExecution(binding))
-      {
-         this.methodExecutionBindings.add(binding);
-      }
-      if (BindingClassifier.isConstructorCall(binding))
-      {
-         this.constructorCallBindings.add(binding);
-      }
-      if (BindingClassifier.isMethodCall(binding))
-      {
-         this.methodCallBindings.add(binding);
+         unlockWrite();
       }
    }
-   
+
    /**
     * Removes the binding named {@code name}.
     * 
@@ -223,20 +286,28 @@ public class ClassifiedBindingCollection
     * @return the removed binding. If {@code null}, indicates that there is no
     *         binding with name equal to {@code name} in this collection.
     */
-   public synchronized AdviceBinding remove(String name)
+   public AdviceBinding remove(String name)
    {
-      AdviceBinding binding = bindings.remove(name);
-      if (binding != null)
+      lockWrite();
+      try
       {
-         this.fieldReadBindings.remove(binding);
-         this.fieldWriteBindings.remove(binding);
-         this.constructionBindings.remove(binding);
-         this.constructorExecutionBindings.remove(binding);
-         this.methodExecutionBindings.remove(binding);
-         this.constructorCallBindings.remove(binding);
-         this.methodCallBindings.remove(binding);
+         AdviceBinding binding = bindings.remove(name);
+         if (binding != null)
+         {
+            this.fieldReadBindings.remove(binding);
+            this.fieldWriteBindings.remove(binding);
+            this.constructionBindings.remove(binding);
+            this.constructorExecutionBindings.remove(binding);
+            this.methodExecutionBindings.remove(binding);
+            this.constructorCallBindings.remove(binding);
+            this.methodCallBindings.remove(binding);
+         }
+         return binding;
       }
-      return binding;
+      finally
+      {
+         unlockWrite();
+      }
    }
    
    /**
@@ -245,44 +316,188 @@ public class ClassifiedBindingCollection
     * @param names names of all bindings to be removed
     * @return the collection of the removed bindings
     */
-   public synchronized ArrayList<AdviceBinding> remove(ArrayList<String> names)
+   public ArrayList<AdviceBinding> remove(ArrayList<String> names)
    {
-      ArrayList<AdviceBinding> removedBindings = new ArrayList<AdviceBinding>();
-      for (String name: names)
+      lockWrite();
+      try
       {
-         AdviceBinding binding = this.remove(name);
-         if (binding == null)
+         ArrayList<AdviceBinding> removedBindings = new ArrayList<AdviceBinding>();
+         for (String name: names)
          {
-            logger.debug("ClassifiedBindingCollection.removeBindings() no binding found with name " + name);
-            continue;
+            AdviceBinding binding = this.remove(name);
+            if (binding == null)
+            {
+               logger.debug("ClassifiedBindingCollection.removeBindings() no binding found with name " + name);
+               continue;
+            }
+            removedBindings.add(binding);
          }
-         removedBindings.add(binding);
+         return removedBindings;
       }
-      return removedBindings;
+      finally
+      {
+         unlockWrite();
+      }
+   }
+
+   /**
+    * Read-lock just this collection
+    */
+   public final void lockRead()
+   {
+      lock.readLock().lock();
    }
    
    /**
-    * Indicates if this collection is initialized. If it is not, no addition
-    * operation can be performed.
+    * Read-unlock just this collection
     */
-   public synchronized boolean isInitialized()
+   protected final void unlockRead()
    {
-      return bindings != UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+      lock.readLock().unlock();
    }
    
    /**
-    * Initializes this collection. This method must be called only if this collection
-    * is not initialized.
+    * Write-lock just this collection
     */
-   public synchronized void initialize()
+   public final void lockWrite()
    {
-      bindings = new LinkedHashMap<String, AdviceBinding>();
-      this.fieldReadBindings = new LinkedHashSet<AdviceBinding>(0);
-      this.fieldWriteBindings = new LinkedHashSet<AdviceBinding>(0);
-      this.constructionBindings = new LinkedHashSet<AdviceBinding>(0);
-      this.constructorExecutionBindings = new LinkedHashSet<AdviceBinding>(0);
-      this.methodExecutionBindings = new LinkedHashSet<AdviceBinding>(0);
-      this.constructorCallBindings = new LinkedHashSet<AdviceBinding>(0);
-      this.methodCallBindings = new LinkedHashSet<AdviceBinding>(0);
+      lock.writeLock().lock();
+   }
+   
+   /**
+    * Write-unlock this collection
+    */
+   public final void unlockWrite()
+   {
+      lock.writeLock().unlock();
+   }
+
+   /**
+    * Read-lock this collection
+    * @param if true, parent collections will be locked too
+    */
+   public void lockRead(boolean lockParents)
+   {
+      lockRead();
+   }
+   
+   /**
+    * Read-unlock this collection
+    * @param if true, parent collections will be unlocked too
+    */
+   public void unlockRead(boolean lockParents)
+   {
+      unlockRead();
+   }
+   
+   /**
+    * Write-lock this collection
+    * @param if true, parent collections will be locked too
+    */
+   public void lockWrite(boolean lockParents)
+   {
+      lockWrite();
+   }
+   
+   /**
+    * Write-unlock this collection
+    * @param if true, parent collections will be unlocked too
+    */
+   public void unlockWrite(boolean lockParents)
+   {
+      unlockWrite();
+   }
+   
+   private void addBinding(AdviceBinding binding)
+   {
+      if (bindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         bindings = new LinkedHashMap<String, AdviceBinding>();
+      }
+      bindings.put(binding.getName(), binding);
+   }
+   
+   private void addGet(AdviceBinding binding)
+   {
+      if (BindingClassifier.isGet(binding))
+      {
+         if (fieldReadBindings == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            fieldReadBindings = new CopyOnWriteArraySet<AdviceBinding>();
+         }
+         this.fieldReadBindings.add(binding);
+      }
+   }
+   
+   private void addSet(AdviceBinding binding)
+   {
+      if (BindingClassifier.isSet(binding))
+      {
+         if (fieldWriteBindings == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            fieldWriteBindings = new CopyOnWriteArraySet<AdviceBinding>();
+         }
+         this.fieldWriteBindings.add(binding);
+      }
+   }
+   
+   private void addConstruction(AdviceBinding binding)
+   {
+      if (BindingClassifier.isConstruction(binding))
+      {
+         if (constructionBindings == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            constructionBindings = new CopyOnWriteArraySet<AdviceBinding>();
+         }
+         this.constructionBindings.add(binding);
+      }
+   }
+   
+   private void addConstructorExecution(AdviceBinding binding)
+   {
+      if (BindingClassifier.isConstructorExecution(binding))
+      {
+         if (constructorExecutionBindings == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            constructorExecutionBindings = new CopyOnWriteArraySet<AdviceBinding>();
+         }
+         this.constructorExecutionBindings.add(binding);
+      }
+   }
+   
+   private void addMethodExecution(AdviceBinding binding)
+   {
+      if (BindingClassifier.isMethodExecution(binding))
+      {
+         if (methodExecutionBindings == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            methodExecutionBindings = new CopyOnWriteArraySet<AdviceBinding>();
+         }
+         this.methodExecutionBindings.add(binding);
+      }
+   }
+   
+   private void addMethodCall(AdviceBinding binding)
+   {
+      if (BindingClassifier.isMethodCall(binding))
+      {
+         if (methodCallBindings == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            methodCallBindings = new CopyOnWriteArraySet<AdviceBinding>();
+         }
+         this.methodCallBindings.add(binding);
+      }
+   }
+   
+   private void addConstructorCall(AdviceBinding binding)
+   {
+      if (BindingClassifier.isConstructorCall(binding))
+      {
+         if (constructorCallBindings == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            constructorCallBindings = new CopyOnWriteArraySet<AdviceBinding>();
+         }
+         this.constructorCallBindings.add(binding);
+      }
    }
 }

@@ -93,9 +93,17 @@ public class ReflectiveAspectBinder
       if (!initialisedAspects)
       {
          ClassifiedBindingCollection bindingCol = advisor.getManager().getBindingCollection();
-         bindMethodAdvices(clazz, bindingCol);
-         bindConstructorAdvices(bindingCol);
-         bindFieldAdvices(bindingCol);
+         bindingCol.lockRead(true);
+         try
+         {
+            bindMethodAdvices(clazz, bindingCol);
+            bindConstructorAdvices(bindingCol);
+            bindFieldAdvices(bindingCol);
+         }
+         finally
+         {
+            bindingCol.unlockRead(true);
+         }
       }
       return aspects;
    }

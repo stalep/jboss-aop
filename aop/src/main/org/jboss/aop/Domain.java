@@ -82,7 +82,7 @@ public class Domain extends AspectManager
 
    public Domain(AspectManager manager, String name, boolean parentFirst)
    {
-      bindingCollection = new DomainClassifiedBindingCollection();
+      this.bindingCollection = new DomainClassifiedBindingCollection();
       this.parent = manager;
       this.parentFirst = parentFirst;
       this.name = name;
@@ -1105,60 +1105,123 @@ public class Domain extends AspectManager
    
    private class DomainClassifiedBindingCollection extends ClassifiedBindingCollection
    {
+      @Override
       public Collection<AdviceBinding> getFieldReadBindings()
       {
-         Collection<AdviceBinding> result = super.getFieldReadBindings();
-         Collection<AdviceBinding> parentResult = parent.getBindingCollection().
-            getFieldReadBindings();
-         return unifyCollections(result, parentResult, parentFirst);
+         lockRead(true);
+         try
+         {
+            Collection<AdviceBinding> result = super.getFieldReadBindings();
+            Collection<AdviceBinding> parentResult = parent.getBindingCollection().
+               getFieldReadBindings();
+            return unifyCollections(result, parentResult, parentFirst);
+         }
+         finally
+         {
+            unlockRead(true);
+         }
       }
       
+      @Override
       public Collection<AdviceBinding> getFieldWriteBindings()
       {
-         Collection<AdviceBinding> result = super.getFieldWriteBindings();
-         Collection<AdviceBinding> parentResult = parent.getBindingCollection().
-            getFieldWriteBindings();
-         return unifyCollections(result, parentResult, parentFirst);
+         lockRead(true);
+         try
+         {
+            Collection<AdviceBinding> result = super.getFieldWriteBindings();
+            Collection<AdviceBinding> parentResult = parent.getBindingCollection().
+               getFieldWriteBindings();
+            return unifyCollections(result, parentResult, parentFirst);
+         }
+         finally
+         {
+            unlockRead(true);
+         }
       }
       
+      @Override
       public Collection<AdviceBinding> getConstructionBindings()
       {
-         Collection<AdviceBinding> result = super.getConstructionBindings();
-         Collection<AdviceBinding> parentResult = parent.getBindingCollection().
-            getConstructionBindings();
-         return unifyCollections(result, parentResult, parentFirst);
+         lockRead(true);
+         try
+         {
+            Collection<AdviceBinding> result = super.getConstructionBindings();
+            Collection<AdviceBinding> parentResult = parent.getBindingCollection().
+               getConstructionBindings();
+            return unifyCollections(result, parentResult, parentFirst);
+         }
+         finally
+         {
+            unlockRead(true);
+         }
       }
       
+      @Override
       public Collection<AdviceBinding> getConstructorExecutionBindings()
       {
-         Collection<AdviceBinding> result = super.getConstructorExecutionBindings();
-         Collection<AdviceBinding> parentResult = parent.getBindingCollection().
-            getConstructorExecutionBindings();
-         return unifyCollections(result, parentResult, parentFirst);
+         lockRead(true);
+         try
+         {
+            Collection<AdviceBinding> result = super.getConstructorExecutionBindings();
+            Collection<AdviceBinding> parentResult = parent.getBindingCollection().
+               getConstructorExecutionBindings();
+            return unifyCollections(result, parentResult, parentFirst);
+         }
+         finally
+         {
+            unlockRead(true);
+         }
       }
       
+      @Override
       public Collection<AdviceBinding> getMethodExecutionBindings()
       {
-         Collection<AdviceBinding> result = super.getMethodExecutionBindings();
-         Collection<AdviceBinding> parentResult = parent.getBindingCollection().
-            getMethodExecutionBindings();
-         return unifyCollections(result, parentResult, parentFirst);
+         lockRead(true);
+         try
+         {
+            Collection<AdviceBinding> result = super.getMethodExecutionBindings();
+            Collection<AdviceBinding> parentResult = parent.getBindingCollection().
+               getMethodExecutionBindings();
+            return unifyCollections(result, parentResult, parentFirst);
+         }
+         finally
+         { 
+            unlockRead(true);
+         }
       }
       
+      @Override
       public Collection<AdviceBinding> getConstructorCallBindings()
       {
-         Collection<AdviceBinding> result = super.getConstructorCallBindings();
-         Collection<AdviceBinding> parentResult = parent.getBindingCollection().
-            getConstructorCallBindings();
-         return unifyCollections(result, parentResult, parentFirst);
+         lockRead(true);
+         try
+         {
+            Collection<AdviceBinding> result = super.getConstructorCallBindings();
+            Collection<AdviceBinding> parentResult = parent.getBindingCollection().
+               getConstructorCallBindings();
+            return unifyCollections(result, parentResult, parentFirst);
+         }
+         finally
+         {
+            unlockRead(true);
+         }
       }
       
+      @Override
       public Collection<AdviceBinding> getMethodCallBindings()
       {
-         Collection<AdviceBinding> result = super.getMethodCallBindings();
-         Collection<AdviceBinding> parentResult = parent.getBindingCollection().
-            getMethodCallBindings();
-         return unifyCollections(result, parentResult, parentFirst);
+         lockRead(true);
+         try
+         {
+            Collection<AdviceBinding> result = super.getMethodCallBindings();
+            Collection<AdviceBinding> parentResult = parent.getBindingCollection().
+               getMethodCallBindings();
+            return unifyCollections(result, parentResult, parentFirst);
+         }
+         finally
+         {
+            unlockRead(true);
+         }
       }
       
       private <T> Collection<T> unifyCollections(Collection<T> collection1,
@@ -1184,6 +1247,46 @@ public class Domain extends AspectManager
             collection1.addAll(temp);
          }
          return collection1;
+      }
+
+      @Override
+      public void lockRead(boolean lockParents)
+      {
+         if (lockParents)
+         {
+            parent.getBindingCollection().lockRead(lockParents);
+         }
+         super.lockRead();
+      }
+
+      @Override
+      public void lockWrite(boolean lockParents)
+      {
+         if (lockParents)
+         {
+            parent.getBindingCollection().lockWrite(lockParents);
+         }
+         super.lockWrite();
+      }
+
+      @Override
+      public void unlockRead(boolean lockParents)
+      {
+         super.unlockRead();
+         if (lockParents)
+         {
+            parent.getBindingCollection().unlockRead(lockParents);
+         }
+      }
+
+      @Override
+      public void unlockWrite(boolean lockParents)
+      {
+         super.unlockWrite();
+         if (lockParents)
+         {
+            parent.getBindingCollection().unlockWrite(lockParents);
+         }
       }
    }
 }

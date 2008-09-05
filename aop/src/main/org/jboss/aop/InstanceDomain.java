@@ -52,11 +52,7 @@ public class InstanceDomain extends Domain
    public synchronized void addBinding(AdviceBinding binding)
    {
       removeBinding(binding.getName());
-      super.initBindingsMap();
-      synchronized (bindingCollection)
-      {
-         bindingCollection.add(binding);
-      }
+      bindingCollection.add(binding);
       super.addPointcut(binding.getPointcut());
       if (advisor != null) advisor.newBindingAdded();
    }

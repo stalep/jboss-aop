@@ -619,8 +619,9 @@ public class ClassAdvisor extends Advisor
    @SuppressWarnings("deprecation")
    private void resolveBindings(AspectManager manager)
    {
-      ClassifiedBindingCollection bindingCol = manager.bindingCollection;
-      synchronized (bindingCol)
+      ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+      bindingCol.lockRead(true);
+      try
       {
          for (AdviceBinding binding: bindingCol.getFieldReadBindings())
          {
@@ -667,6 +668,10 @@ public class ClassAdvisor extends Advisor
             }
             resolveMethodPointcut(binding);
          }
+      }
+      finally
+      {
+         bindingCol.unlockRead(true);
       }
    }
    
@@ -1589,15 +1594,12 @@ public class ClassAdvisor extends Advisor
 
          boolean matched = false;
          ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
-         synchronized (bindingCol)
+         for (AdviceBinding binding : bindingCol.getConstructorCallBindings())
          {
-            for (AdviceBinding binding : bindingCol.getConstructorCallBindings())
+            if (binding.getPointcut().matchesCall(this, callingConstructor, called, calledMethod))
             {
-               if (binding.getPointcut().matchesCall(this, callingConstructor, called, calledMethod))
-               {
-                  addConstructorCallerPointcut(callingIndex, calledClass, calledMethodHash, binding);
-                  matched = true;
-               }
+               addConstructorCallerPointcut(callingIndex, calledClass, calledMethodHash, binding);
+               matched = true;
             }
          }
          if (!matched) initializeEmptyConstructorCallerChain(callingIndex, calledClass, calledMethodHash);
@@ -1654,15 +1656,12 @@ public class ClassAdvisor extends Advisor
 
          boolean matched = false;
          ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
-         synchronized (bindingCol)
+         for (AdviceBinding binding : bindingCol.getConstructorCallBindings())
          {
-            for (AdviceBinding binding : bindingCol.getConstructorCallBindings())
+            if (binding.getPointcut().matchesCall(this, callingConstructor, called, calledCon))
             {
-               if (binding.getPointcut().matchesCall(this, callingConstructor, called, calledCon))
-               {
-                  addConstructorCalledByConPointcut(callingIndex, calledClass, calledConHash, binding);
-                  matched = true;
-               }
+               addConstructorCalledByConPointcut(callingIndex, calledClass, calledConHash, binding);
+               matched = true;
             }
          }
          if (!matched) initializeConCalledByConEmptyChain(callingIndex, calledClass, calledConHash);
@@ -2742,15 +2741,12 @@ public class ClassAdvisor extends Advisor
 
             boolean matched = false;
             ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
-            synchronized (bindingCol)
+            for (AdviceBinding binding : bindingCol.getConstructorCallBindings())
             {
-               for (AdviceBinding binding : bindingCol.getConstructorCallBindings())
+               if (binding.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledCon))
                {
-                  if (binding.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledCon))
-                  {
-                     addConstructorCalledByMethodPointcut(callingMethodHash, calledClass, calledConHash, binding);
-                     matched = true;
-                  }
+                  addConstructorCalledByMethodPointcut(callingMethodHash, calledClass, calledConHash, binding);
+                  matched = true;
                }
             }
             if (!matched) initializeConCalledByMethodEmptyChain(callingMethodHash, calledClass, calledConHash);

@@ -135,7 +135,7 @@ public class AspectManager
    protected volatile LinkedHashMap<String, AnnotationIntroduction> annotationOverrides = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    @Deprecated
    protected volatile LinkedHashMap<String, AdviceBinding> bindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   volatile ClassifiedBindingCollection bindingCollection;
+   protected volatile ClassifiedBindingCollection bindingCollection = new ClassifiedBindingCollection();
    protected volatile LinkedHashMap<String, Typedef> typedefs = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    protected volatile HashMap<String, InterceptorFactory> interceptorFactories = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
    protected volatile HashMap<String,ClassMetaDataLoader> classMetaDataLoaders = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
@@ -478,7 +478,6 @@ public class AspectManager
     */
    public AspectManager()
    {
-      this.bindingCollection = new ClassifiedBindingCollection();
    }
    /**
     * Every &lt;class-metadata&gt; tag corresponds to
@@ -1408,7 +1407,9 @@ public class AspectManager
 
       HashSet<Advisor> bindingAdvisors = new HashSet<Advisor>();
       ArrayList<AdviceBinding> removedBindings = null;
-      synchronized (bindingCollection)
+      
+      bindingCollection.lockWrite();
+      try
       {
          removedBindings = this.bindingCollection.remove(binds);
          for (AdviceBinding removedBinding: removedBindings)
@@ -1419,6 +1420,11 @@ public class AspectManager
             this.removePointcut(pointcut.getName());
          }
       }
+      finally
+      {
+         bindingCollection.unlockWrite();
+      }
+      
       Iterator<Advisor> it = bindingAdvisors.iterator();
       while (it.hasNext())
       {
@@ -1468,11 +1474,7 @@ public class AspectManager
             updatePointcutStats(pointcut);
          }
          
-         initBindingsMap();
-         synchronized (bindingCollection)
-         {
-            bindingCollection.add(binding);
-         }
+         bindingCollection.add(binding);
       }
       synchronized (advisors)
       {
@@ -2094,7 +2096,8 @@ public class AspectManager
     */
    private synchronized AdviceBinding internalRemoveBinding(String name)
    {
-      synchronized (bindingCollection)
+      bindingCollection.lockWrite();
+      try
       {
          AdviceBinding binding = bindingCollection.remove(name);
          if (binding == null)
@@ -2104,6 +2107,10 @@ public class AspectManager
          Pointcut pointcut = binding.getPointcut();
          this.removePointcut(pointcut.getName());
          return binding;
+      }
+      finally
+      {
+         bindingCollection.unlockWrite();
       }
    }
 
@@ -2370,21 +2377,6 @@ public class AspectManager
             if (annotationOverrides == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
             {
                annotationOverrides = new LinkedHashMap<String, AnnotationIntroduction>();
-            }
-         }
-      }
-   }
-
-   protected void initBindingsMap()
-   {
-      if (!bindingCollection.isInitialized())
-      {
-         synchronized(lazyCollectionLock)
-         {
-            if (!bindingCollection.isInitialized())
-            {
-               bindingCollection.initialize();
-               bindings = bindingCollection.getBindings();
             }
          }
       }
