@@ -136,6 +136,16 @@ public class UnmodifiableEmptyCollections
       {
          throw new UnsupportedOperationException();
       }
+      @Override
+      public boolean add(E o)
+      {
+         throw new UnsupportedOperationException();
+      }
+      @Override
+      public boolean addAll(Collection<? extends E> c)
+      {
+         throw new UnsupportedOperationException();
+      }
    }
    
    private static class LockedCopyOnWriteArraySet<E> extends CopyOnWriteArraySet<E>
@@ -147,7 +157,6 @@ public class UnmodifiableEmptyCollections
       {
          throw new UnsupportedOperationException();
       }
-
       @Override
       public boolean addAll(Collection<? extends E> arg0)
       {
