@@ -572,15 +572,17 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             Instrumentor.HELPER_FIELD_NAME,
             clazz);
       classAdvisor.setModifiers(Modifier.PRIVATE | Modifier.STATIC | Modifier.TRANSIENT);
+      addSyntheticAttribute(classAdvisor);
       clazz.addField(classAdvisor, CtField.Initializer.byExpr("new " + getAdvisorFQN(clazz) + "()"));
-//      clazz.addField(classAdvisor, CtField.Initializer.byExpr("this.getClass().getClassLoader().loadClass(" + getAdvisorFQN(clazz) + ").newInstance()"));
 
       CtMethod getAdvisor = CtNewMethod.getter("_getAdvisor", classAdvisor);
       getAdvisor.setModifiers(Modifier.PUBLIC);
+      addSyntheticAttribute(getAdvisor);
       clazz.addMethod(getAdvisor);
 
       CtMethod getClassAdvisor = CtNewMethod.getter(GET_CLASS_ADVISOR, classAdvisor);
       getClassAdvisor.setModifiers(Modifier.PUBLIC | Modifier.STATIC);
+      addSyntheticAttribute(getClassAdvisor);
       clazz.addMethod(getClassAdvisor);
 
       if (isBaseClass(clazz))
@@ -590,6 +592,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
             CURRENT_ADVISOR,
             clazz);
          currentAdvisor.setModifiers(Modifier.VOLATILE | Modifier.PROTECTED | Modifier.TRANSIENT);
+         addSyntheticAttribute(currentAdvisor);
          clazz.addField(currentAdvisor, CtField.Initializer.byExpr("_getAdvisor()"));
 
          String body =
@@ -608,6 +611,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
                EMPTY_EXCEPTIONS,
                body,
                clazz);
+         addSyntheticAttribute(getCurrentAdvisor);
          clazz.addMethod(getCurrentAdvisor);
 
          CtField instanceAdvisor = new CtField(
@@ -615,6 +619,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
                INSTANCE_ADVISOR,
                clazz);
          instanceAdvisor.setModifiers(Modifier.PROTECTED | Modifier.TRANSIENT);
+         addSyntheticAttribute(instanceAdvisor);
          clazz.addField(instanceAdvisor);
       }
 
@@ -644,6 +649,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
                new CtClass[0],
                body,
                clazz);
+         addSyntheticAttribute(getInstanceAdvisor);
          clazz.addMethod(getInstanceAdvisor);
       }
       catch (Exception e)

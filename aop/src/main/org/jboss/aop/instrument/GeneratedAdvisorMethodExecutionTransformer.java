@@ -61,7 +61,14 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
       return miname;
    }
 
+   @Override
    protected boolean addInfoAsWeakReference()
+   {
+      return false;
+   }
+
+   @Override
+   protected boolean markInfoAsSynthetic()
    {
       return false;
    }
@@ -130,6 +137,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
       moveAnnotationsAndCopySignature(original, wmethod);
 
       original.setName(wrappedName);
+      Instrumentor.addSyntheticAttribute(original);
       wmethod.setName(originalName);
 
       MethodTransformation trans = new MethodTransformation(instrumentor, clazz, original, originalName, wmethod, wrappedName, hash);
@@ -227,6 +235,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
       moveAnnotationsAndCopySignature(original, wmethod);
 
       original.setName(wrappedName);
+      Instrumentor.addSyntheticAttribute(original);
       wmethod.setName(originalName);
 
       MethodTransformation trans = new MethodTransformation(instrumentor, clazz, original, originalName, wmethod, wrappedName, hash);
@@ -287,6 +296,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
       trans.getClazz().addMethod(wmethod);
       moveAnnotationsAndCopySignature(trans.getMethod(), wmethod);
       trans.getMethod().setName(wrappedName);
+      Instrumentor.addSyntheticAttribute(trans.getMethod());
       wmethod.setName(originalName);
 
       trans.setWMethod(wmethod, wrappedName);

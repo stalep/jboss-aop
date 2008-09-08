@@ -91,7 +91,14 @@ public class GeneratedAdvisorConstructionTransformer extends ConstructionTransfo
       generateConstructionInfoField(constructor, index);
    }
 
+   @Override
    protected boolean addInfoAsWeakReference()
+   {
+      return false;
+   }
+   
+   @Override
+   protected boolean markInfoAsSynthetic()
    {
       return false;
    }
@@ -128,6 +135,7 @@ public class GeneratedAdvisorConstructionTransformer extends ConstructionTransfo
             constructor.getExceptionTypes(),
             body,
             genadvisor);
+      Instrumentor.addSyntheticAttribute(wrapper);
       genadvisor.addMethod(wrapper);
       return wrapper;
    }

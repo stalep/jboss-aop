@@ -162,15 +162,15 @@ public class TransformerCommon {
    }
 
    protected static void addInfoField(Instrumentor instrumentor, String infoClassName, String infoName,
-         int modifiers, CtClass addTo, boolean weak, CtField.Initializer init) throws NotFoundException, CannotCompileException
+         int modifiers, CtClass addTo, boolean weak, CtField.Initializer init, boolean synthetic) throws NotFoundException, CannotCompileException
    {
       if (weak)
       {
-         addWeakReferenceInfoField(instrumentor, infoClassName, infoName, modifiers, addTo, init);
+         addWeakReferenceInfoField(instrumentor, infoClassName, infoName, modifiers, addTo, init, synthetic);
       }
       else
       {
-         addStrongReferenceInfoField(instrumentor, infoClassName, infoName, modifiers, addTo, init);
+         addStrongReferenceInfoField(instrumentor, infoClassName, infoName, modifiers, addTo, init, synthetic);
       }
    }
 
@@ -185,20 +185,28 @@ public class TransformerCommon {
    }
 
    private static void addWeakReferenceInfoField(Instrumentor instrumentor, String infoClassName, String infoName,
-         int modifiers, CtClass addTo, CtField.Initializer init) throws NotFoundException, CannotCompileException
+         int modifiers, CtClass addTo, CtField.Initializer init, boolean synthetic) throws NotFoundException, CannotCompileException
    {
       CtClass type = instrumentor.forName(WEAK_REFERENCE);
       CtField field = new CtField(type, infoName, addTo);
       field.setModifiers(modifiers);
+      if (synthetic)
+      {
+         Instrumentor.addSyntheticAttribute(field);
+      }
       addTo.addField(field, init);
    }
 
    private static void addStrongReferenceInfoField(Instrumentor instrumentor, String infoClassName, String infoName,
-         int modifiers, CtClass addTo, CtField.Initializer init) throws NotFoundException, CannotCompileException
+         int modifiers, CtClass addTo, CtField.Initializer init, boolean synthetic) throws NotFoundException, CannotCompileException
    {
       CtClass type = instrumentor.forName(infoClassName);
       CtField field = new CtField(type, infoName, addTo);
       field.setModifiers(modifiers);
+      if (synthetic)
+      {
+         Instrumentor.addSyntheticAttribute(field);
+      }
       addTo.addField(field, init);
    }
 

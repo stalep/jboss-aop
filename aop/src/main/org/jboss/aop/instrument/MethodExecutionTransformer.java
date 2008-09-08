@@ -85,12 +85,17 @@ public abstract class MethodExecutionTransformer
    protected String addMethodInfoField(int modifiers, CtClass addTo, MethodTransformation trans, CtField.Initializer init) throws NotFoundException, CannotCompileException
    {
       String name = getMethodInfoFieldName(trans.getOriginalName(), trans.getHash());
-      TransformerCommon.addInfoField(instrumentor, METHOD_INFO_CLASS_NAME, name, modifiers, addTo, addInfoAsWeakReference(), init);
+      TransformerCommon.addInfoField(instrumentor, METHOD_INFO_CLASS_NAME, name, modifiers, addTo, addInfoAsWeakReference(), init, markInfoAsSynthetic());
 
       return name;
    }
 
    protected boolean addInfoAsWeakReference()
+   {
+      return true;
+   }
+
+   protected boolean markInfoAsSynthetic()
    {
       return true;
    }

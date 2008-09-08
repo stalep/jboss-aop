@@ -21,6 +21,8 @@
 */ 
 package org.jboss.test.aop.nameddomain;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 
 import junit.framework.Test;
@@ -85,6 +87,15 @@ public class NamedDomainTestCase extends AOPTestWithSetup
       
       AspectManager foundInstanceDomain = manager.findManagerByName(fqn);
       assertSame(instanceDomain, foundInstanceDomain);
+      
+      for (Field field : pojo.getClass().getDeclaredFields())
+      {
+         System.out.println("F " + field.getName() + " - " + field.isSynthetic());
+      }
+      for (Method method : pojo.getClass().getDeclaredMethods())
+      {
+         System.out.println("M " + method.getName() + " - " + method.isSynthetic());
+      }
    }
    
    public void testProxiedNamedDomains() throws Exception

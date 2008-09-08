@@ -386,7 +386,7 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
    protected String addFieldReadInfoFieldWithAccessors(int modifiers, CtClass addTo, CtField field, CtField.Initializer init) throws NotFoundException, CannotCompileException
    {
       String name = getFieldReadInfoFieldName(field.getName());
-      TransformerCommon.addInfoField(instrumentor, FIELD_INFO_CLASS_NAME, name, modifiers, addTo, addInfoAsWeakReference(), init);
+      TransformerCommon.addInfoField(instrumentor, FIELD_INFO_CLASS_NAME, name, modifiers, addTo, addInfoAsWeakReference(), init, markInfoAsSynthetic());
       return name;
    }
    
@@ -401,11 +401,16 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
    protected String addFieldWriteInfoField(int modifiers, CtClass addTo, CtField field, CtField.Initializer init) throws NotFoundException, CannotCompileException
    {
       String name = getFieldWriteInfoFieldName(field.getName());
-      TransformerCommon.addInfoField(instrumentor, FIELD_INFO_CLASS_NAME, name, modifiers, addTo, addInfoAsWeakReference(), init);
+      TransformerCommon.addInfoField(instrumentor, FIELD_INFO_CLASS_NAME, name, modifiers, addTo, addInfoAsWeakReference(), init, markInfoAsSynthetic());
       return name;
    }
    
    protected boolean addInfoAsWeakReference()
+   {
+      return true;
+   }
+
+   protected boolean markInfoAsSynthetic()
    {
       return true;
    }
@@ -551,6 +556,7 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
       code += "; return var;}";
       CtMethod rmethod = CtNewMethod.make(ftype, wrapperName, readParam, null, code, clazz);
       rmethod.setModifiers(mod);
+      Instrumentor.addSyntheticAttribute(rmethod);
       clazz.addMethod(rmethod);
       
       return rmethod;
@@ -581,6 +587,7 @@ public abstract class FieldAccessTransformer implements CodeConversionObserver
 
       CtMethod wmethod = CtNewMethod.make(CtClass.voidType, wrapperName, writeParam, null, "{}", clazz);
       wmethod.setModifiers(mod);
+      Instrumentor.addSyntheticAttribute(wmethod);
       clazz.addMethod(wmethod);
       
       SignatureAttribute ai = (SignatureAttribute) field.getFieldInfo2().getAttribute(SignatureAttribute.tag);

@@ -57,6 +57,7 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassContainer;
 import org.jboss.aop.InstanceAdvised;
 import org.jboss.aop.MethodInfo;
+import org.jboss.aop.instrument.Instrumentor;
 import org.jboss.aop.instrument.TransformerCommon;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.aop.util.JavassistMethodHashing;
@@ -442,6 +443,7 @@ public class ContainerProxyFactory
       CtClass fieldType = (type == null) ? templateField.getType() : type;
       CtField field = new CtField(fieldType, name, proxy);
       field.setModifiers(templateField.getModifiers());
+      Instrumentor.addSyntheticAttribute(field);
       proxy.addField(field);
       return field;
    }
@@ -451,6 +453,7 @@ public class ContainerProxyFactory
       CtMethod templateMethod = template.getDeclaredMethod(name);
       CtMethod method = CtNewMethod.make(templateMethod.getReturnType(), name, templateMethod.getParameterTypes(), templateMethod.getExceptionTypes(), body, proxy);
       method.setModifiers(templateMethod.getModifiers());
+      Instrumentor.addSyntheticAttribute(method);
       proxy.addMethod(method);
       hardcodedMethods.add(JavassistMethodHashing.methodHash(method));
       return method;
@@ -512,6 +515,7 @@ public class ContainerProxyFactory
       superCall.append(");");
       
       defaultCtor = CtNewConstructor.make(EMPTY_CTCLASS_ARRAY, EMPTY_CTCLASS_ARRAY, "{" + superCall.toString() + "}", proxy);
+      Instrumentor.addSyntheticAttribute(defaultCtor);
       proxy.addConstructor(defaultCtor);
    }
 
@@ -815,6 +819,7 @@ public class ContainerProxyFactory
                {
                   CtMethod m = CtNewMethod.make(methods[i].getReturnType(), methods[i].getName(), methods[i].getParameterTypes(), methods[i].getExceptionTypes(), body, proxy);
                   m.setModifiers(Modifier.PUBLIC);
+                  Instrumentor.addSyntheticAttribute(m);
                   proxy.addMethod(m);
                }
             }

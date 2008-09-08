@@ -123,7 +123,14 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       return finame;
    }
 
+   @Override
    protected boolean addInfoAsWeakReference()
+   {
+      return false;
+   }
+
+   @Override
+   protected boolean markInfoAsSynthetic()
    {
       return false;
    }

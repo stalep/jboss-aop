@@ -49,7 +49,14 @@ public class GeneratedAdvisorConstructorExecutionTransformer extends
       super(instrumentor);
    }
 
+   @Override
    protected boolean addInfoAsWeakReference()
+   {
+      return false;
+   }
+
+   @Override
+   protected boolean markInfoAsSynthetic()
    {
       return false;
    }
@@ -123,6 +130,7 @@ public class GeneratedAdvisorConstructorExecutionTransformer extends
       wmethod.setModifiers(mod);
       wmethod.setBody("{return (("  +  GeneratedAdvisorInstrumentor.getAdvisorFQN(clazz) +
             ")" + Instrumentor.HELPER_FIELD_NAME + ")." + getInnerWrapperMethodName(constructor) + "($$);}");
+      Instrumentor.addSyntheticAttribute(wmethod);
       clazz.addMethod(wmethod);
 
       // prepare ForWrapping

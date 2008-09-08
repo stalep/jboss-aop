@@ -124,6 +124,7 @@ public class ClassicInstrumentor extends Instrumentor
          modifier &= ~AccessFlag.ABSTRACT; 
       }
       nmethod.setModifiers(modifier);
+      addSyntheticAttribute(nmethod);
       clazz.addMethod(nmethod);
       
       
@@ -188,6 +189,7 @@ public class ClassicInstrumentor extends Instrumentor
                                          "    return " + ClassicInstrumentor.HELPER_FIELD_NAME + ";" +
                                          "}",
                                          clazz);
+      addSyntheticAttribute(getter);
       clazz.addMethod(getter);
    }
    
@@ -208,6 +210,7 @@ public class ClassicInstrumentor extends Instrumentor
                                  "    } " +
                                  "}",
                                  clazz);
+         addSyntheticAttribute(getter);
          clazz.addMethod(getter);
 
          CtMethod setter = CtNewMethod.make("public void _setInstanceAdvisor(org.jboss.aop.InstanceAdvisor newAdvisor)" +
@@ -217,6 +220,7 @@ public class ClassicInstrumentor extends Instrumentor
                                  "    } " +
                                  "}",
                                  clazz);
+         addSyntheticAttribute(setter);
          clazz.addMethod(setter);
 
 }

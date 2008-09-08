@@ -58,6 +58,7 @@ public class OptimizedMethodExecutionTransformer extends MethodExecutionTransfor
       moveAnnotationsAndCopySignature(trans.getMethod(), wmethod);
       String optimizedInvocation = OptimizedMethodInvocations.createOptimizedInvocationClass(trans.getInstrumentor(), trans.getClazz(), trans.getMethod(), wmethod);
       trans.getMethod().setName(wrappedName);
+      Instrumentor.addSyntheticAttribute(trans.getMethod());
       wmethod.setName(originalName);
 
       trans.setWMethod(wmethod, wrappedName);

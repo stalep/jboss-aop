@@ -36,14 +36,18 @@ import javassist.CodeConverter;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
+import javassist.CtMember;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.SerialVersionUID;
 import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
 import javassist.bytecode.FieldInfo;
 import javassist.bytecode.MethodInfo;
+import javassist.bytecode.SyntheticAttribute;
 
 import org.jboss.aop.Advised;
 import org.jboss.aop.Advisor;
@@ -256,6 +260,16 @@ public abstract class Instrumentor
                                                clazz);
       newMethod.setModifiers(Modifier.PUBLIC);
       clazz.addMethod(newMethod);
+      
+      //The following depends on javassist internals
+      ClassFile cf = clazz.getClassFile();
+      List<MethodInfo> infos = cf.getMethods();
+      MethodInfo info = infos.get(infos.size() - 2);
+      if (info.getName().startsWith("_added_m$"))
+      {
+         addSyntheticAttribute(info);
+      }
+      
       return newMethod;
    }
 
@@ -315,6 +329,7 @@ public abstract class Instrumentor
       int modifiers = Modifier.PRIVATE;
       if (mixin.isTransient()) modifiers = modifiers | Modifier.TRANSIENT;
       field.setModifiers(modifiers);
+      addSyntheticAttribute(field);
       clazz.addField(field, CtField.Initializer.byExpr(initializer));
       HashSet<Long> addedMethods = new HashSet<Long>();
 
@@ -900,6 +915,7 @@ public abstract class Instrumentor
       CtClass type = forName(typeName);
       CtField field = new CtField(type, name, clazz);
       field.setModifiers(Modifier.PRIVATE | Modifier.STATIC);
+      Instrumentor.addSyntheticAttribute(field);
       clazz.addField(field, initializer);
 
       return field;
@@ -915,6 +931,7 @@ public abstract class Instrumentor
       CtClass type = forName(typeName);
       CtField field = new CtField(type, name, clazz);
       field.setModifiers(Modifier.PROTECTED | Modifier.TRANSIENT);
+      Instrumentor.addSyntheticAttribute(field);
       if (initializer != null)
       {
          clazz.addField(field, initializer);
@@ -1054,6 +1071,31 @@ public abstract class Instrumentor
       return shouldReplaceArrayAccess;
    }
 
+   public static void addSyntheticAttribute(CtMethod method)
+   {
+      MethodInfo info = method.getMethodInfo();
+      addSyntheticAttribute(info);
+   }
+   
+   public static void addSyntheticAttribute(MethodInfo info)
+   {
+      ConstPool cp = info.getConstPool();
+      info.addAttribute(new SyntheticAttribute(cp));
+   }
+
+   public static void addSyntheticAttribute(CtConstructor ctor)
+   {
+      MethodInfo info = ctor.getMethodInfo();
+      ConstPool cp = info.getConstPool();
+      info.addAttribute(new SyntheticAttribute(cp));
+   }
+
+   public static void addSyntheticAttribute(CtField field)
+   {
+      FieldInfo info = field.getFieldInfo();
+      ConstPool cp = info.getConstPool();
+      info.addAttribute(new SyntheticAttribute(cp));
+   }
 
    /**
     * Converts all processed classes to make wrapping of the appropriate joinpoints.

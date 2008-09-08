@@ -30,6 +30,7 @@ import javassist.Modifier;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassInstanceAdvisor;
 import org.jboss.aop.InstanceAdvisor;
+import org.jboss.aop.instrument.Instrumentor;
 import org.jboss.aop.instrument.TransformerCommon;
 import org.jboss.aop.util.JavassistMethodHashing;
 import org.jboss.aop.util.reference.MethodPersistentReference;
@@ -155,9 +156,11 @@ public class ProxyFactory
       CtClass map = pool.get("java.util.Map");
       CtField methodMap = new CtField(map, "methodMap", proxy);
       methodMap.setModifiers(Modifier.PRIVATE | Modifier.STATIC);
+      Instrumentor.addSyntheticAttribute(methodMap);
       proxy.addField(methodMap);
       CtMethod getMethodMap = CtNewMethod.getter("getMethodMap", methodMap);
       getMethodMap.setModifiers(Modifier.PUBLIC);
+      Instrumentor.addSyntheticAttribute(getMethodMap);
       proxy.addMethod(getMethodMap);
 
       HashSet<String> addedInterfaces = new HashSet<String>();

@@ -35,6 +35,7 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.ClassInstanceAdvisor;
 import org.jboss.aop.InstanceAdvisor;
+import org.jboss.aop.instrument.Instrumentor;
 import org.jboss.aop.instrument.TransformerCommon;
 import org.jboss.aop.util.JavassistMethodHashing;
 import org.jboss.aop.util.reference.MethodPersistentReference;
@@ -171,6 +172,7 @@ public class ClassProxyFactory
       
       mixinField = new CtField(mixinField.getType(), "mixins", proxy);
       mixinField.setModifiers(Modifier.PRIVATE);
+      Instrumentor.addSyntheticAttribute(mixinField);
       proxy.addField(mixinField);
       instanceAdvisor = new CtField(instanceAdvisor.getType(), "instanceAdvisor", proxy);
       instanceAdvisor.setModifiers(Modifier.PRIVATE);
@@ -180,18 +182,22 @@ public class ClassProxyFactory
                                           "   throws java.io.IOException\n" +
                                           "   {\n" +
                                           "   }", proxy);
+      Instrumentor.addSyntheticAttribute(writeEx);
       CtMethod readEx = CtNewMethod.make("   public void readExternal(java.io.ObjectInput in)\n" +
                                          "   throws java.io.IOException, ClassNotFoundException\n" +
                                          "   {\n" +
                                          "   }", proxy);
+      Instrumentor.addSyntheticAttribute(readEx);
       CtMethod getInstanceAdvisor = CtNewMethod.make("   public org.jboss.aop.InstanceAdvisor _getInstanceAdvisor()\n" +
                                                      "   {\n" +
                                                      "      return instanceAdvisor;\n" +
                                                      "   }", proxy);
+      Instrumentor.addSyntheticAttribute(getInstanceAdvisor);
       CtMethod setInstanceAdvisor = CtNewMethod.make("   public void _setInstanceAdvisor(org.jboss.aop.InstanceAdvisor newAdvisor)\n" +
                                                      "   {\n" +
                                                      "      instanceAdvisor = (org.jboss.aop.ClassInstanceAdvisor) newAdvisor;\n" +
                                                      "   }", proxy);
+      Instrumentor.addSyntheticAttribute(setInstanceAdvisor);
       CtMethod dynamicInvoke = CtNewMethod.make("   public org.jboss.aop.joinpoint.InvocationResponse _dynamicInvoke(org.jboss.aop.joinpoint.Invocation invocation)\n" +
                                                 "   throws Throwable\n" +
                                                 "   {\n" +
@@ -199,17 +205,17 @@ public class ClassProxyFactory
                                                 "      org.jboss.aop.advice.Interceptor[] aspects = instanceAdvisor.getInterceptors();\n" +
                                                 "      return new org.jboss.aop.joinpoint.InvocationResponse(invocation.invokeNext(aspects));\n" +
                                                 "   }", proxy);
-
+      Instrumentor.addSyntheticAttribute(dynamicInvoke);
       CtMethod setMixins = CtNewMethod.make("   public void setMixins(org.jboss.aop.proxy.ProxyMixin[] mixins)\n" +
                                             "   {\n" +
                                             "      this.mixins = mixins;\n" +
                                             "   }", proxy);
-
+      Instrumentor.addSyntheticAttribute(setMixins);
       CtMethod writeReplace = CtNewMethod.make("   public Object writeReplace() throws java.io.ObjectStreamException\n" +
                                                "   {\n" +
                                                "      return new org.jboss.aop.proxy.MarshalledClassProxy(this.getClass().getSuperclass(), mixins, instanceAdvisor);\n" +
                                                "   }", proxy);
-
+      Instrumentor.addSyntheticAttribute(writeReplace);
 
       proxy.addMethod(writeEx);
       proxy.addMethod(readEx);

@@ -73,4 +73,10 @@ public class GeneratedAdvisorCallerInfoAdder extends CallerInfoAdder
    {
       return false;
    }
+
+   
+   protected boolean markInfoAsSynthetic()
+   {
+      return true;
+   }
 }

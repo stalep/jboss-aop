@@ -67,4 +67,9 @@ public class ClassicCallerInfoAdder extends CallerInfoAdder
    {
       return true;
    }
+   
+   protected boolean markInfoAsSynthetic()
+   {
+      return true;
+   }
 }

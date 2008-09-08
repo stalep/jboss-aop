@@ -112,7 +112,7 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
          catch(NotFoundException e)
          {
          }
-         TransformerCommon.addInfoField(instrumentor, CONSTRUCTOR_INFO_CLASS_NAME, infoName, modifiers, addTo, addInfoAsWeakReference(), init);
+         TransformerCommon.addInfoField(instrumentor, CONSTRUCTOR_INFO_CLASS_NAME, infoName, modifiers, addTo, addInfoAsWeakReference(), init, markInfoAsSynthetic());
 
       }
       return infoName;
@@ -123,6 +123,11 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
       return true;
    }
    
+   protected boolean markInfoAsSynthetic()
+   {
+      return true;
+   }
+
    public static String getConstructorInfoFieldName(String classname, int index)
    {
       if (classname.indexOf('.') >= 0)throw new RuntimeException("Simple name should be used: " + classname);
@@ -491,6 +496,7 @@ public abstract class ConstructorExecutionTransformer implements CodeConversionO
       CtMethod wmethod = CtNewMethod.make(type, constructorFactory(name), constructor.getParameterTypes(), exceptions, null, clazz);
       wmethod.setModifiers(mod);
       setTemporaryWrapperCode(type, wmethod);
+      Instrumentor.addSyntheticAttribute(wmethod);
       clazz.addMethod(wmethod);
       
       // copy attribute signature

@@ -78,13 +78,18 @@ public abstract class ConstructionTransformer
          catch(NotFoundException e)
          {
          }
-         TransformerCommon.addInfoField(instrumentor, CONSTRUCTION_INFO_CLASS_NAME, name, modifiers, addTo, addInfoAsWeakReference(), init);
+         TransformerCommon.addInfoField(instrumentor, CONSTRUCTION_INFO_CLASS_NAME, name, modifiers, addTo, addInfoAsWeakReference(), init, markInfoAsSynthetic());
          
       }
       return name;
    }
 
    protected boolean addInfoAsWeakReference()
+   {
+      return true;
+   }
+   
+   protected boolean markInfoAsSynthetic()
    {
       return true;
    }

@@ -322,7 +322,7 @@ public class AspectManager
                   ArrayList<String> list = splitString(invisibleAnnotations, ",");
                   manager.setIncludedInvisibleAnnotations(list);
                }
-
+               
                String instrument = System.getProperty("jboss.aop.instrumentor", null);
                InstrumentorFactory.initialise(instrument);
 

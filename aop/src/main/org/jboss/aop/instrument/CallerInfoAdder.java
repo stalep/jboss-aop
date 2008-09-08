@@ -85,8 +85,10 @@ public abstract class CallerInfoAdder
          String init) throws NotFoundException, CannotCompileException
    {
       CtField.Initializer initializer = (init != null ) ? CtField.Initializer.byExpr(init) : null;
-      TransformerCommon.addInfoField(instrumentor, typeName, fieldName, infoModifier, addTo, addInfoAsWeakReference(), initializer);
+      TransformerCommon.addInfoField(instrumentor, typeName, fieldName, infoModifier, addTo, addInfoAsWeakReference(), initializer, markInfoAsSynthetic());
    }
 
    protected abstract boolean addInfoAsWeakReference();
+   
+   protected abstract boolean markInfoAsSynthetic();
 }
