@@ -131,10 +131,10 @@ public class SyntheticTestCase extends AOPTestWithSetup
       assertEquals(2, POJO.staticField);
       assertTrue(SimpleInterceptor.intercepted);
       
-//      @SuppressWarnings("unused")
-//      MixinInterface mi = (MixinInterface)pojo;
-//      @SuppressWarnings("unused")
-//      SomeInterface si = (SomeInterface)pojo;
+      @SuppressWarnings("unused")
+      MixinInterface mi = (MixinInterface)pojo;
+      @SuppressWarnings("unused")
+      SomeInterface si = (SomeInterface)pojo;
 
       //Now check that we have the synthetic attributes
       for (Constructor<?> ctor : pojo.getClass().getDeclaredConstructors())
@@ -164,6 +164,35 @@ public class SyntheticTestCase extends AOPTestWithSetup
          }
       }
    }
+   
+   public void testCallerSynthetic() throws Exception
+   {
+      //These validate interception behind the scenes
+      Caller caller = new Caller();
+      caller.call();
+
+   
+      //Now check that we have the synthetic attributes
+      for (Constructor<?> ctor : caller.getClass().getDeclaredConstructors())
+      {
+         assertFalse(ctor.toString() + " should not be synthetic", ctor.isSynthetic());
+      }
+      for (Field field : caller.getClass().getDeclaredFields())
+      {
+         assertTrue(field.toString() + " should be synthetic", field.isSynthetic());
+      }
+      for (Method method : caller.getClass().getDeclaredMethods())
+      {
+         if (method.getName().equals("call"))
+         {
+            assertFalse(method.toString() + " should not be synthetic", method.isSynthetic());
+         }
+         else
+         {
+            assertTrue(method.toString() + " should be synthetic", method.isSynthetic());
+         }
+      }
+}
    
    public void testProxiedSynthetic() throws Exception
    {

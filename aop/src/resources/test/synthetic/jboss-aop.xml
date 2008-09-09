@@ -28,4 +28,10 @@
          org.jboss.test.aop.synthetic.SomeInterface
       </interfaces>
    </introduction>
+   <bind pointcut="call(org.jboss.test.aop.synthetic.Called->new())">
+      <interceptor-ref name="org.jboss.test.aop.synthetic.SimpleInterceptor"/>
+   </bind>
+   <bind pointcut="call(* org.jboss.test.aop.synthetic.Called->called())">
+      <interceptor-ref name="org.jboss.test.aop.synthetic.SimpleInterceptor"/>
+   </bind>
 </aop>

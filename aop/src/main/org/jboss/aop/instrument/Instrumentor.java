@@ -261,6 +261,7 @@ public abstract class Instrumentor
       newMethod.setModifiers(Modifier.PUBLIC);
       clazz.addMethod(newMethod);
       
+      //TODO remove this hack once we have a version of javassist that makes the _added_m$ emthods synthetic 
       //The following depends on javassist internals
       ClassFile cf = clazz.getClassFile();
       List<MethodInfo> infos = cf.getMethods();
