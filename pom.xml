@@ -12,7 +12,7 @@
   <groupId>org.jboss.aop</groupId>
   <artifactId>jboss-aop-parent</artifactId>
   <packaging>pom</packaging>
-  <version>2.0.0.CR16</version>
+  <version>2.0.0-SNAPSHOT</version>
   <description>JBoss AOP</description>
   <name>JBoss AOP Parent POM</name>
   <url>http://www.jboss.org/jbossaop/</url>
@@ -21,13 +21,18 @@
   </scm>
   
   <properties>
+    <version.javassist.javassist>3.8.1.GA</version.javassist.javassist>
     <version.jboss.jbossas.core-libs>4.0.4.GA</version.jboss.jbossas.core-libs>
     <version.org.jboss.jbossas>5.0.0.CR1</version.org.jboss.jbossas>
+    <version.org.jboss.jboss-common-core>2.2.8.GA</version.org.jboss.jboss-common-core>
     <version.org.jboss.cl>2.0.0.Beta13</version.org.jboss.cl>
     <version.org.jboss.deployers>2.0.0.Beta21</version.org.jboss.deployers>
     <version.org.jboss.integration>5.0.0.CR2</version.org.jboss.integration>
-    <version.org.jboss.man>2.0.0.Beta16</version.org.jboss.man>
-    <version.org.jboss.mdr>2.0.0.Beta17</version.org.jboss.mdr>
+    <version.org.jboss.jboss-reflect>2.0.0.CR1</version.org.jboss.jboss-reflect>
+    <version.org.jboss.jboss-vfs>2.0.0.Beta22</version.org.jboss.jboss-vfs>
+    <version.org.jboss.logging>2.0.5.GA</version.org.jboss.logging>
+    <version.org.jboss.man>2.0.0.CR1</version.org.jboss.man>
+    <version.org.jboss.mdr>2.0.0.CR1</version.org.jboss.mdr>
     <version.xdoclet>1.2.3</version.xdoclet>
   </properties>
   
@@ -191,12 +196,12 @@
       <dependency>
         <groupId>javassist</groupId>
         <artifactId>javassist</artifactId>
-        <version>3.8.1.GA</version>
+        <version>${version.javassist.javassist}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-reflect</artifactId>
-        <version>2.0.0.Beta13</version>
+        <version>${version.org.jboss.jboss-reflect}</version>
         <exclusions>
           <exclusion>
             <groupId>jboss</groupId>
@@ -207,7 +212,7 @@
       <dependency>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-mdr</artifactId>
-        <version>2.0.0.Beta17</version>
+        <version>${version.jboss.mdr}</version>
         <exclusions>
           <exclusion>
             <groupId>jboss</groupId>
@@ -218,12 +223,12 @@
       <dependency>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-common-core</artifactId>
-        <version>2.2.8.GA</version>
+        <version>${version.org.jboss.jboss-common-core}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-vfs</artifactId>
-        <version>2.0.0.Beta22</version>
+        <version>${version.org.jboss.jboss-vfs}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.aop</groupId>
@@ -353,12 +358,12 @@
       <dependency>
         <groupId>org.jboss.logging</groupId>
         <artifactId>jboss-logging-spi</artifactId>
-        <version>2.0.5.GA</version>
+        <version>${version.org.jboss.logging}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.logging</groupId>
         <artifactId>jboss-logging-log4j</artifactId>
-        <version>2.0.5.GA</version>
+        <version>${version.org.jboss.logging}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.man</groupId>
