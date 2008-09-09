@@ -212,7 +212,7 @@
       <dependency>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-mdr</artifactId>
-        <version>${version.jboss.mdr}</version>
+        <version>${version.org.jboss.mdr}</version>
         <exclusions>
           <exclusion>
             <groupId>jboss</groupId>
