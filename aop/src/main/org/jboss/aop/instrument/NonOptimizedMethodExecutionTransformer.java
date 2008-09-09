@@ -55,7 +55,7 @@ public class NonOptimizedMethodExecutionTransformer  extends MethodExecutionTran
       trans.getClazz().addMethod(wmethod);
       moveAnnotationsAndCopySignature(trans.getMethod(), wmethod);
       trans.getMethod().setName(wrappedName);
-      instrumentor.addSyntheticAttribute(trans.getMethod());
+      Instrumentor.addSyntheticAttribute(trans.getMethod());
       wmethod.setName(originalName);
       
       trans.setWMethod(wmethod, wrappedName);

@@ -36,7 +36,6 @@ import javassist.CodeConverter;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
-import javassist.CtMember;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.Modifier;
@@ -261,7 +260,7 @@ public abstract class Instrumentor
       newMethod.setModifiers(Modifier.PUBLIC);
       clazz.addMethod(newMethod);
       
-      //TODO remove this hack once we have a version of javassist that makes the _added_m$ emthods synthetic 
+      //TODO remove this hack once we have a version of javassist that makes the _added_m$ methods synthetic 
       //The following depends on javassist internals
       ClassFile cf = clazz.getClassFile();
       List<MethodInfo> infos = cf.getMethods();
