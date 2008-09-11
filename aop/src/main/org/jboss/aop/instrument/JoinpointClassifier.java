@@ -21,6 +21,8 @@
   */
 package org.jboss.aop.instrument;
 
+import java.util.Collection;
+
 import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMember;
@@ -29,6 +31,7 @@ import javassist.NotFoundException;
 
 import org.jboss.aop.Advisor;
 import org.jboss.aop.pointcut.Pointcut;
+import org.jboss.aop.pointcut.PointcutInfo;
 
 /**
  * This class performs the joinpoint classifications. It is responsible for classifying
@@ -110,6 +113,64 @@ public abstract class JoinpointClassifier
          return pointcut.matchesExecution(advisor, (CtMethod) member);
       }
    };
+
+   protected interface BindingCollectionAccessor
+   {
+      Collection<Pointcut> getPointcuts(Advisor advisor);
+      Collection<PointcutInfo> getPointcutInfos(Advisor advisor);
+   }
+   
+   private BindingCollectionAccessor fieldGetAccessor = new BindingCollectionAccessor()
+   {
+      public Collection<PointcutInfo> getPointcutInfos(Advisor advisor)
+      {
+         return advisor.getManager().getBindingCollection().getFieldReadPointcutInfos();
+      }
+
+      public Collection<Pointcut> getPointcuts(Advisor advisor)
+      {
+         return advisor.getManager().getBindingCollection().getFieldReadPointcuts();
+      }
+   };
+
+   private BindingCollectionAccessor fieldSetAccessor = new BindingCollectionAccessor()
+   {
+      public Collection<PointcutInfo> getPointcutInfos(Advisor advisor)
+      {
+         return advisor.getManager().getBindingCollection().getFieldWritePointcutInfos();
+      }
+
+      public Collection<Pointcut> getPointcuts(Advisor advisor)
+      {
+         return advisor.getManager().getBindingCollection().getFieldWritePointcuts();
+      }
+   };
+   
+   private BindingCollectionAccessor constructorAccessor = new BindingCollectionAccessor()
+   {
+      public Collection<PointcutInfo> getPointcutInfos(Advisor advisor)
+      {
+         return advisor.getManager().getBindingCollection().getConstructorExecutionPointcutInfos();
+      }
+
+      public Collection<Pointcut> getPointcuts(Advisor advisor)
+      {
+         return advisor.getManager().getBindingCollection().getConstructorExecutionPointcuts();
+      }
+   };
+
+   private BindingCollectionAccessor methodAccessor = new BindingCollectionAccessor()
+   {
+      public Collection<PointcutInfo> getPointcutInfos(Advisor advisor)
+      {
+         return advisor.getManager().getBindingCollection().getConstructorExecutionPointcutInfos();
+      }
+
+      public Collection<Pointcut> getPointcuts(Advisor advisor)
+      {
+         return advisor.getManager().getBindingCollection().getConstructorExecutionPointcuts();
+      }
+   };
    
    /**
     * Classifies a joinpoint.
@@ -122,7 +183,7 @@ public abstract class JoinpointClassifier
     * @return the joinpoint classification.
     * @throws NotFoundException thrown if the matching of pointcuts fails.
     */
-   protected abstract JoinpointClassification classifyJoinpoint(CtMember member, Advisor advisor, Matcher joinpointMatcher) throws NotFoundException;
+   protected abstract JoinpointClassification classifyJoinpoint(CtMember member, Advisor advisor, Matcher joinpointMatcher, BindingCollectionAccessor bindingCollectionAccessor) throws NotFoundException;
    
    /**
     * Classifies the reading of <code>field</code> value.
@@ -133,7 +194,7 @@ public abstract class JoinpointClassifier
     */
    public JoinpointClassification classifyFieldGet(CtField field, Advisor advisor) throws NotFoundException
    {
-      return this.classifyJoinpoint(field, advisor, fieldGetMatcher);
+      return this.classifyJoinpoint(field, advisor, fieldGetMatcher, fieldGetAccessor);
    }
    
    /**
@@ -145,7 +206,7 @@ public abstract class JoinpointClassifier
     */
    public JoinpointClassification classifyFieldSet(CtField field, Advisor advisor) throws NotFoundException
    {
-      return this.classifyJoinpoint(field, advisor, fieldSetMatcher);
+      return this.classifyJoinpoint(field, advisor, fieldSetMatcher, fieldSetAccessor);
    }
    
    /**
@@ -157,7 +218,7 @@ public abstract class JoinpointClassifier
     */
    public JoinpointClassification classifyConstructorExecution(CtConstructor cons, Advisor advisor) throws NotFoundException
    {
-      return this.classifyJoinpoint(cons, advisor, constructorMatcher);
+      return this.classifyJoinpoint(cons, advisor, constructorMatcher, constructorAccessor);
    }
 
    /**
@@ -169,6 +230,6 @@ public abstract class JoinpointClassifier
     */
    public JoinpointClassification classifyMethodExecution(CtMethod method, Advisor advisor) throws NotFoundException
    {
-      return this.classifyJoinpoint(method, advisor, methodMatcher);
+      return this.classifyJoinpoint(method, advisor, methodMatcher, methodAccessor);
    }
 }

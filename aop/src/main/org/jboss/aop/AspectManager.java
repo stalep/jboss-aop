@@ -558,7 +558,7 @@ public class AspectManager
     * 
     * @return the classified binding collection
     */
-   ClassifiedBindingAndPointcutCollection getBindingCollection()
+   public ClassifiedBindingAndPointcutCollection getBindingCollection()
    {
       return bindingCollection;
    }

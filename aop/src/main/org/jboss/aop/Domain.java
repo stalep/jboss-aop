@@ -52,7 +52,6 @@ import org.jboss.aop.pointcut.PointcutInfo;
 import org.jboss.aop.pointcut.Typedef;
 import org.jboss.aop.pointcut.ast.ClassExpression;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
-import org.jboss.aop.util.UnmodifiableLinkedHashMap;
 
 /**
  * Comment
@@ -1084,6 +1083,7 @@ public class Domain extends AspectManager
    
    private class DomainClassifiedBindingAndPointcutCollection extends ClassifiedBindingAndPointcutCollection
    {
+      
       @Override
       public LinkedHashMap<String, AdviceBinding> getBindings()
       {
@@ -1107,7 +1107,54 @@ public class Domain extends AspectManager
          }
 
       }  
-      
+
+      @Override
+      public LinkedHashMap<String, Pointcut> getPointcuts()
+      {
+         lockRead(true);
+         try
+         {
+            LinkedHashMap<String, Pointcut> result = super.getPointcutsInternal();
+            LinkedHashMap<String, Pointcut> parentResult = 
+               inheritsBindings ? 
+                     parent.getBindingCollection().getPointcutsInternal() : UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+            LinkedHashMap<String, Pointcut> overall = unifyMaps(result, parentResult, parentFirst);
+            if (overall == result || overall == parentResult)
+            {
+               return new LinkedHashMap<String, Pointcut>(overall);
+            }
+            return overall;
+         }
+         finally
+         {
+            unlockRead(true);
+         }
+      }
+
+      @Override
+      public LinkedHashMap<String, PointcutInfo> getPointcutInfos()
+      {
+         lockRead(true);
+         try
+         {
+            LinkedHashMap<String, PointcutInfo> result = super.getPointcutInfosInternal();
+            LinkedHashMap<String, PointcutInfo> parentResult = 
+               inheritsBindings ?
+                     parent.getBindingCollection().getPointcutInfosInternal() : UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+            LinkedHashMap<String, PointcutInfo> overall = unifyMaps(result, parentResult, parentFirst);
+            if (overall == result || overall == parentResult)
+            {
+               return new LinkedHashMap<String, PointcutInfo>(overall);
+            }
+            return overall;
+         }
+         finally
+         {
+            unlockRead(true);
+         }
+      }
+
+
       @Override
       public Collection<AdviceBinding> getFieldReadBindings()
       {
@@ -1234,50 +1281,242 @@ public class Domain extends AspectManager
          }
       }
 
-      @Override
-      public LinkedHashMap<String, Pointcut> getPointcuts()
+      public Collection<Pointcut> getFieldReadPointcuts()
       {
-         lockRead(true);
-         try
-         {
-            LinkedHashMap<String, Pointcut> result = super.getPointcutsInternal();
-            LinkedHashMap<String, Pointcut> parentResult = 
-               inheritsBindings ? 
-                     parent.getBindingCollection().getPointcutsInternal() : UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-            LinkedHashMap<String, Pointcut> overall = unifyMaps(result, parentResult, parentFirst);
-            if (overall == result || overall == parentResult)
+            lockRead(true);
+            try
             {
-               return new LinkedHashMap<String, Pointcut>(overall);
+               Collection<Pointcut> result = super.getFieldReadPointcuts();
+               Collection<Pointcut> parentResult = 
+                  inheritsBindings ?
+                        parent.getBindingCollection().getFieldReadPointcuts() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+               return unifyCollections(result, parentResult, parentFirst);
             }
-            return overall;
-         }
-         finally
-         {
-            unlockRead(true);
-         }
+            finally
+            { 
+               unlockRead(true);
+            }
       }
-
-      @Override
-      public LinkedHashMap<String, PointcutInfo> getPointcutInfos()
+      
+      public Collection<Pointcut> getFieldWritePointcuts()
       {
-         lockRead(true);
-         try
-         {
-            LinkedHashMap<String, PointcutInfo> result = super.getPointcutInfosInternal();
-            LinkedHashMap<String, PointcutInfo> parentResult = 
-               inheritsBindings ?
-                     parent.getBindingCollection().getPointcutInfosInternal() : UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-            LinkedHashMap<String, PointcutInfo> overall = unifyMaps(result, parentResult, parentFirst);
-            if (overall == result || overall == parentResult)
+            lockRead(true);
+            try
             {
-               return new LinkedHashMap<String, PointcutInfo>(overall);
+               Collection<Pointcut> result = super.getFieldWritePointcuts();
+               Collection<Pointcut> parentResult = 
+                  inheritsBindings ?
+                        parent.getBindingCollection().getFieldWritePointcuts() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+               return unifyCollections(result, parentResult, parentFirst);
             }
-            return overall;
-         }
-         finally
-         {
-            unlockRead(true);
-         }
+            finally
+            { 
+               unlockRead(true);
+            }
+      }
+      
+      public Collection<Pointcut> getConstructionPointcuts()
+      {
+            lockRead(true);
+            try
+            {
+               Collection<Pointcut> result = super.getConstructionPointcuts();
+               Collection<Pointcut> parentResult = 
+                  inheritsBindings ?
+                        parent.getBindingCollection().getConstructionPointcuts() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+               return unifyCollections(result, parentResult, parentFirst);
+            }
+            finally
+            { 
+               unlockRead(true);
+            }
+      }
+      
+      public Collection<Pointcut> getConstructorExecutionPointcuts()
+      {
+            lockRead(true);
+            try
+            {
+               Collection<Pointcut> result = super.getConstructorExecutionPointcuts();
+               Collection<Pointcut> parentResult = 
+                  inheritsBindings ?
+                        parent.getBindingCollection().getConstructorExecutionPointcuts() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+               return unifyCollections(result, parentResult, parentFirst);
+            }
+            finally
+            { 
+               unlockRead(true);
+            }
+      }
+      
+      public Collection<Pointcut> getMethodExecutionPointcuts()
+      {
+            lockRead(true);
+            try
+            {
+               Collection<Pointcut> result = super.getMethodExecutionPointcuts();
+               Collection<Pointcut> parentResult = 
+                  inheritsBindings ?
+                        parent.getBindingCollection().getMethodExecutionPointcuts() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+               return unifyCollections(result, parentResult, parentFirst);
+            }
+            finally
+            { 
+               unlockRead(true);
+            }
+      }
+      
+      public Collection<Pointcut> getConstructorCallPointcuts()
+      {
+            lockRead(true);
+            try
+            {
+               Collection<Pointcut> result = super.getConstructorCallPointcuts();
+               Collection<Pointcut> parentResult = 
+                  inheritsBindings ?
+                        parent.getBindingCollection().getConstructorCallPointcuts() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+               return unifyCollections(result, parentResult, parentFirst);
+            }
+            finally
+            { 
+               unlockRead(true);
+            }
+      }
+      
+      public Collection<Pointcut> getMethodCallPointcuts()
+      {
+            lockRead(true);
+            try
+            {
+               Collection<Pointcut> result = super.getMethodCallPointcuts();
+               Collection<Pointcut> parentResult = 
+                  inheritsBindings ?
+                        parent.getBindingCollection().getMethodCallPointcuts() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+               return unifyCollections(result, parentResult, parentFirst);
+            }
+            finally
+            { 
+               unlockRead(true);
+            }
+      }
+      
+      public Collection<PointcutInfo> getFieldReadPointcutInfos()
+      {
+            lockRead(true);
+            try
+            {
+               Collection<PointcutInfo> result = super.getFieldReadPointcutInfos();
+               Collection<PointcutInfo> parentResult = 
+                  inheritsBindings ?
+                        parent.getBindingCollection().getFieldReadPointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+               return unifyCollections(result, parentResult, parentFirst);
+            }
+            finally
+            { 
+               unlockRead(true);
+            }
+      }
+      
+      public Collection<PointcutInfo> getFieldWritePointcutInfos()
+      {
+            lockRead(true);
+            try
+            {
+               Collection<PointcutInfo> result = super.getFieldWritePointcutInfos();
+               Collection<PointcutInfo> parentResult = 
+                  inheritsBindings ?
+                        parent.getBindingCollection().getFieldWritePointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+               return unifyCollections(result, parentResult, parentFirst);
+            }
+            finally
+            { 
+               unlockRead(true);
+            }
+      }
+      
+      public Collection<PointcutInfo> getConstructionPointcutInfos()
+      {
+            lockRead(true);
+            try
+            {
+               Collection<PointcutInfo> result = super.getConstructionPointcutInfos();
+               Collection<PointcutInfo> parentResult = 
+                  inheritsBindings ?
+                        parent.getBindingCollection().getConstructionPointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+               return unifyCollections(result, parentResult, parentFirst);
+            }
+            finally
+            { 
+               unlockRead(true);
+            }
+      }
+      
+      public Collection<PointcutInfo> getConstructorExecutionPointcutInfos()
+      {
+            lockRead(true);
+            try
+            {
+               Collection<PointcutInfo> result = super.getConstructorExecutionPointcutInfos();
+               Collection<PointcutInfo> parentResult = 
+                  inheritsBindings ?
+                        parent.getBindingCollection().getConstructorExecutionPointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+               return unifyCollections(result, parentResult, parentFirst);
+            }
+            finally
+            { 
+               unlockRead(true);
+            }
+      }
+      
+      public Collection<PointcutInfo> getMethodExecutionPointcutInfos()
+      {
+            lockRead(true);
+            try
+            {
+               Collection<PointcutInfo> result = super.getMethodExecutionPointcutInfos();
+               Collection<PointcutInfo> parentResult = 
+                  inheritsBindings ?
+                        parent.getBindingCollection().getMethodExecutionPointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+               return unifyCollections(result, parentResult, parentFirst);
+            }
+            finally
+            { 
+               unlockRead(true);
+            }
+      }
+      
+      public Collection<PointcutInfo> getConstructorCallPointcutInfos()
+      {
+            lockRead(true);
+            try
+            {
+               Collection<PointcutInfo> result = super.getConstructorCallPointcutInfos();
+               Collection<PointcutInfo> parentResult = 
+                  inheritsBindings ?
+                        parent.getBindingCollection().getConstructorCallPointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+               return unifyCollections(result, parentResult, parentFirst);
+            }
+            finally
+            { 
+               unlockRead(true);
+            }
+      }
+      
+      public Collection<PointcutInfo> getMethodCallPointcutInfos()
+      {
+            lockRead(true);
+            try
+            {
+               Collection<PointcutInfo> result = super.getMethodCallPointcutInfos();
+               Collection<PointcutInfo> parentResult = 
+                  inheritsBindings ?
+                        parent.getBindingCollection().getMethodCallPointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+               return unifyCollections(result, parentResult, parentFirst);
+            }
+            finally
+            { 
+               unlockRead(true);
+            }
       }
 
       @Override
@@ -1408,11 +1647,11 @@ public class Domain extends AspectManager
       {
          if (map1.isEmpty())
          {
-            return new UnmodifiableLinkedHashMap<T, K>(map2);
+            return map2;
          }
          if (map2.isEmpty())
          {
-            return new UnmodifiableLinkedHashMap<T, K>(map1);
+            return map1;
          }
          if (prioritizeFirst)
          {

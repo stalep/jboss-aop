@@ -54,10 +54,10 @@ public class JoinpointFullClassifier extends JoinpointClassifier
     * <code>NOT_INSTRUMENTED</code>.
     * @see org.jboss.aop.instrument.JoinpointClassifier#classifyJoinpoint(javassist.CtMember, org.jboss.aop.Advisor, org.jboss.aop.instrument.JoinpointClassifier.Matcher)
     */
-   protected JoinpointClassification classifyJoinpoint(CtMember member, Advisor advisor, Matcher joinpointMatcher) throws NotFoundException
+   protected JoinpointClassification classifyJoinpoint(CtMember member, Advisor advisor, Matcher joinpointMatcher, BindingCollectionAccessor bindingCollectionAccessor) throws NotFoundException
    {
       JoinpointClassification classification = JoinpointClassification.NOT_INSTRUMENTED;
-      Collection<PointcutInfo> pointcuts = advisor.getManager().getPointcutInfos().values();
+      Collection<PointcutInfo> pointcuts = bindingCollectionAccessor.getPointcutInfos(advisor);
       for (PointcutInfo pointcutInfo : pointcuts)
       {
          // won't check matching of preparation pointcuts unnecessarily

@@ -24,6 +24,7 @@ package org.jboss.aop.advice;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -64,9 +65,24 @@ public class ClassifiedBindingAndPointcutCollection
    
    //Collections of pointcuts
    private volatile LinkedHashMap<String, Pointcut> pointcuts;
+   private volatile Collection<Pointcut> fieldReadPointcuts;
+   private volatile Collection<Pointcut> fieldWritePointcuts;
+   private volatile Collection<Pointcut> constructionPointcuts;
+   private volatile Collection<Pointcut> constructorExecutionPointcuts;
+   private volatile Collection<Pointcut> methodExecutionPointcuts;
+   private volatile Collection<Pointcut> constructorCallPointcuts;
+   private volatile Collection<Pointcut> methodCallPointcuts;
+   
    
    //Collections of pointcutInfos
    private volatile LinkedHashMap<String, PointcutInfo> pointcutInfos;
+   private volatile Collection<PointcutInfo> fieldReadPointcutInfos;
+   private volatile Collection<PointcutInfo> fieldWritePointcutInfos;
+   private volatile Collection<PointcutInfo> constructionPointcutInfos;
+   private volatile Collection<PointcutInfo> constructorExecutionPointcutInfos;
+   private volatile Collection<PointcutInfo> methodExecutionPointcutInfos;
+   private volatile Collection<PointcutInfo> constructorCallPointcutInfos;
+   private volatile Collection<PointcutInfo> methodCallPointcutInfos;
    
    //Pointcut stats 
    private boolean execution = false;
@@ -93,8 +109,22 @@ public class ClassifiedBindingAndPointcutCollection
       this.methodCallBindings = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
       
       pointcuts = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+      this.fieldReadPointcuts = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+      this.fieldWritePointcuts = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+      this.constructionPointcuts = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+      this.constructorExecutionPointcuts = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+      this.methodExecutionPointcuts = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+      this.constructorCallPointcuts = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+      this.methodCallPointcuts = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
       
       pointcutInfos = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+      this.fieldReadPointcutInfos = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+      this.fieldWritePointcutInfos = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+      this.constructionPointcutInfos = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+      this.constructorExecutionPointcutInfos = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+      this.methodExecutionPointcutInfos = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+      this.constructorCallPointcutInfos = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+      this.methodCallPointcutInfos = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
    }
    
    /**
@@ -252,7 +282,303 @@ public class ClassifiedBindingAndPointcutCollection
          unlockRead();
       }
    }
+
+   /**
+    * Returns only the pointcuts that may match successfully field read
+    * joinpoints.<p>
+    * <b>Attention:</b> this collection is not supposed to be edited.
+    * 
+    * @return a collection containing exclusively the pointcuts that may match field
+    *         read pointcuts
+    */
+   public Collection<Pointcut> getFieldReadPointcuts()
+   {
+      lockRead();
+      try
+      {
+         return this.fieldReadPointcuts;
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
    
+   /**
+    * Returns only the pointcuts that may match successfully field write
+    * joinpoints.<p>
+    * <b>Attention:</b> this collection is not supposed to be edited.
+    * 
+    * @return a collection containing exclusively the pointcuts that may match field
+    *         write pointcuts
+    */
+   public Collection<Pointcut> getFieldWritePointcuts()
+   {
+      lockRead();
+      try
+      {
+         return this.fieldWritePointcuts;
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns only the pointcuts that may match successfully construction
+    * joinpoints.<p>
+    * <b>Attention:</b> this collection is not supposed to be edited.
+    * 
+    * @return a collection containing exclusively the pointcuts that may match
+    *         construction pointcuts
+    */
+   public Collection<Pointcut> getConstructionPointcuts()
+   {
+      lockRead();
+      try
+      {
+         return this.constructionPointcuts;
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns only the pointcuts that may match successfully constructor
+    * execution joinpoints.<p>
+    * <b>Attention:</b> this collection is not supposed to be edited.
+    * 
+    * @return a collection containing exclusively the pointcuts that may match
+    *         constructor execution pointcuts
+    */
+   public Collection<Pointcut> getConstructorExecutionPointcuts()
+   {
+      lockRead();
+      try
+      {
+         return this.constructorExecutionPointcuts;
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns only the pointcuts that may match successfully method
+    * execution joinpoints.<p>
+    * <b>Attention:</b> this collection is not supposed to be edited.
+    * 
+    * @return a collection containing exclusively the pointcuts that may match
+    *         method execution pointcuts
+    */
+   public Collection<Pointcut> getMethodExecutionPointcuts()
+   {
+      lockRead();
+      try
+      {
+         return this.methodExecutionPointcuts;
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns only the pointcuts that may match successfully constructor
+    * call joinpoints.
+    * <p>
+    * <b>Attention:</b> this collection is not supposed to be edited.
+    * 
+    * @return a collection containing exclusively the pointcuts that may match
+    *         constructor call pointcuts
+    */
+   public Collection<Pointcut> getConstructorCallPointcuts()
+   {
+      lockRead();
+      try
+      {
+         return this.constructorCallPointcuts;
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns only the pointcuts that may match successfully method
+    * call joinpoints.<p>
+    * <b>Attention:</b> this collection is not supposed to be edited.
+    * 
+    * @return a collection containing exclusively the pointcuts that may match
+    *         method call pointcuts
+    */
+   public Collection<Pointcut> getMethodCallPointcuts()
+   {
+      lockRead();
+      try
+      {
+         return this.methodCallPointcuts;
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns only the pointcut infos that may match successfully field read
+    * joinpoints.<p>
+    * <b>Attention:</b> this collection is not supposed to be edited.
+    * 
+    * @return a collection containing exclusively the pointcut infos that may match field
+    *         read pointcuts
+    */
+   public Collection<PointcutInfo> getFieldReadPointcutInfos()
+   {
+      lockRead();
+      try
+      {
+         return this.fieldReadPointcutInfos;
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns only the pointcut infos that may match successfully field write
+    * joinpoints.<p>
+    * <b>Attention:</b> this collection is not supposed to be edited.
+    * 
+    * @return a collection containing exclusively the pointcut infos that may match field
+    *         write pointcuts
+    */
+   public Collection<PointcutInfo> getFieldWritePointcutInfos()
+   {
+      lockRead();
+      try
+      {
+         return this.fieldWritePointcutInfos;
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns only the pointcut infos that may match successfully construction
+    * joinpoints.<p>
+    * <b>Attention:</b> this collection is not supposed to be edited.
+    * 
+    * @return a collection containing exclusively the pointcut infos that may match
+    *         construction pointcuts
+    */
+   public Collection<PointcutInfo> getConstructionPointcutInfos()
+   {
+      lockRead();
+      try
+      {
+         return this.constructionPointcutInfos;
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns only the pointcut infos that may match successfully constructor
+    * execution joinpoints.<p>
+    * <b>Attention:</b> this collection is not supposed to be edited.
+    * 
+    * @return a collection containing exclusively the pointcut infos that may match
+    *         constructor execution pointcuts
+    */
+   public Collection<PointcutInfo> getConstructorExecutionPointcutInfos()
+   {
+      lockRead();
+      try
+      {
+         return this.constructorExecutionPointcutInfos;
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns only the pointcut infos that may match successfully method
+    * execution joinpoints.<p>
+    * <b>Attention:</b> this collection is not supposed to be edited.
+    * 
+    * @return a collection containing exclusively the pointcut infos that may match
+    *         method execution pointcuts
+    */
+   public Collection<PointcutInfo> getMethodExecutionPointcutInfos()
+   {
+      lockRead();
+      try
+      {
+         return this.methodExecutionPointcutInfos;
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns only the pointcut infos that may match successfully constructor
+    * call joinpoints.
+    * <p>
+    * <b>Attention:</b> this collection is not supposed to be edited.
+    * 
+    * @return a collection containing exclusively the pointcut infos that may match
+    *         constructor call pointcuts
+    */
+   public Collection<PointcutInfo> getConstructorCallPointcutInfos()
+   {
+      lockRead();
+      try
+      {
+         return this.constructorCallPointcutInfos;
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns only the pointcut infos that may match successfully method
+    * call joinpoints.<p>
+    * <b>Attention:</b> this collection is not supposed to be edited.
+    * 
+    * @return a collection containing exclusively the pointcut infos that may match
+    *         method call pointcuts
+    */
+   public Collection<PointcutInfo> getMethodCallPointcutInfos()
+   {
+      lockRead();
+      try
+      {
+         return this.methodCallPointcutInfos;
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
+
    /**
     * Indicate whether this collection is empty.
     */
@@ -408,6 +734,7 @@ public class ClassifiedBindingAndPointcutCollection
       {
          removePointcut(pointcut.getName());
          addPointcut(pointcut);
+
          updatePointcutStats(pointcut, manager);
       }
       finally
@@ -723,9 +1050,123 @@ public class ClassifiedBindingAndPointcutCollection
       {
          pointcutInfos = new LinkedHashMap<String, PointcutInfo>();
       }
-      pointcutInfos.put(pointcut.getName(), new PointcutInfo(pointcut, AspectManager.hasTransformationStarted()));
+      PointcutInfo info = new PointcutInfo(pointcut, AspectManager.hasTransformationStarted());
+      pointcutInfos.put(pointcut.getName(), info);
+
+      addFieldReadPointcut(pointcut, info);
+      addFieldWritePointcut(pointcut, info);
+      addConstructionPointcut(pointcut, info);
+      addConstructorExecutionPointcut(pointcut, info);
+      addMethodExecutionPointcut(pointcut, info);
+      addConstructorCallPointcut(pointcut, info);
+      addMethodCallPointcut(pointcut, info);
+   }
+
+   private void addFieldReadPointcut(Pointcut pointcut, PointcutInfo info)
+   {
+      if (fieldReadPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         fieldReadPointcuts = new CopyOnWriteArrayList<Pointcut>();
+      }
+      fieldReadPointcuts.add(pointcut);
+
+      if (fieldReadPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         fieldReadPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
+      }
+      fieldReadPointcutInfos.add(info);
    }
    
+   private void addFieldWritePointcut(Pointcut pointcut, PointcutInfo info)
+   {
+      if (fieldWritePointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         fieldWritePointcuts = new CopyOnWriteArrayList<Pointcut>();
+      }
+      fieldWritePointcuts.add(pointcut);
+
+      if (fieldWritePointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         fieldWritePointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
+      }
+      fieldWritePointcutInfos.add(info);
+   }
+   
+   private void addConstructionPointcut(Pointcut pointcut, PointcutInfo info)
+   {
+      if (constructionPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         constructionPointcuts = new CopyOnWriteArrayList<Pointcut>();
+      }
+      constructionPointcuts.add(pointcut);
+
+      if (constructionPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         constructionPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
+      }
+      constructionPointcutInfos.add(info);
+   }
+
+   private void addConstructorExecutionPointcut(Pointcut pointcut, PointcutInfo info)
+   {
+      if (constructorExecutionPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         constructorExecutionPointcuts = new CopyOnWriteArrayList<Pointcut>();
+      }
+      constructorExecutionPointcuts.add(pointcut);
+
+      if (constructorExecutionPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         constructorExecutionPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
+      }
+      constructorExecutionPointcutInfos.add(info);
+   }
+
+   private void addMethodExecutionPointcut(Pointcut pointcut, PointcutInfo info)
+   {
+      if (methodExecutionPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         methodExecutionPointcuts = new CopyOnWriteArrayList<Pointcut>();
+      }
+      methodExecutionPointcuts.add(pointcut);
+
+      if (methodExecutionPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         methodExecutionPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
+      }
+      methodExecutionPointcutInfos.add(info);
+   }
+
+   private void addConstructorCallPointcut(Pointcut pointcut, PointcutInfo info)
+   {
+      if (constructorCallPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         constructorCallPointcuts = new CopyOnWriteArrayList<Pointcut>();
+      }
+      constructorCallPointcuts.add(pointcut);
+
+      if (constructorCallPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         constructorCallPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
+      }
+      constructorCallPointcutInfos.add(info);
+   }
+
+   private void addMethodCallPointcut(Pointcut pointcut, PointcutInfo info)
+   {
+      if (methodCallPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         methodCallPointcuts = new CopyOnWriteArrayList<Pointcut>();
+      }
+      methodCallPointcuts.add(pointcut);
+
+      if (methodCallPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      {
+         methodCallPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
+      }
+      methodCallPointcutInfos.add(info);
+   }
+
    private void updatePointcutStats(Pointcut pointcut, AspectManager manager)
    {
       // the following is for performance reasons.

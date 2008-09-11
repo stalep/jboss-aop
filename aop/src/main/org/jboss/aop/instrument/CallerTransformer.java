@@ -21,9 +21,9 @@
   */
 package org.jboss.aop.instrument;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.ClassAdvisor;
@@ -338,23 +338,20 @@ public abstract class CallerTransformer
 
             DeclareChecker.checkDeclares(manager, call, advisor);
             
-            // todo shouldn't iterate every time.  must be a better way
-            Map<String, Pointcut> pointcuts = manager.getPointcuts();
-            synchronized (pointcuts)
+            Collection<Pointcut> pointcuts = manager.getBindingCollection().getMethodCallPointcuts();
+            for (Pointcut p : pointcuts)
             {
-               for (Pointcut p : pointcuts.values())
+               if (p.matchesCall(advisor, call))
                {
-                  if (p.matchesCall(advisor, call))
-                  {
-                     hasPointcut = true;
-                     break;
-                  }
-                  else
-                  {
-                     if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("MethodCall does not match: " + p.getExpr());
-                  }
+                  hasPointcut = true;
+                  break;
+               }
+               else
+               {
+                  if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("MethodCall does not match: " + p.getExpr());
                }
             }
+
             if (hasPointcut)
             {
                if (behavior instanceof CtMethod)
@@ -439,17 +436,13 @@ public abstract class CallerTransformer
             
             boolean hasPointcut = false;
 
-            // todo shouldn't iterate every time.  must be a better way
-            Map<String, Pointcut> pointcuts = manager.getPointcuts();
-            synchronized (pointcuts)
+            Collection<Pointcut> pointcuts = manager.getBindingCollection().getConstructorCallPointcuts();
+            for (Pointcut p : pointcuts)
             {
-               for (Pointcut p : pointcuts.values())
+               if (p.matchesCall(advisor, call))
                {
-                  if (p.matchesCall(advisor, call))
-                  {
-                     hasPointcut = true;
-                     break;
-                  }
+                  hasPointcut = true;
+                  break;
                }
             }
             if (hasPointcut)

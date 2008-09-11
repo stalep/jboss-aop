@@ -55,21 +55,18 @@ public class JoinpointSimpleClassifier extends JoinpointClassifier
     * it is classified as <code>JoinpointClassification.NOT_INSTRUMENTED</code>.
     * @see org.jboss.aop.instrument.JoinpointClassifier#classifyJoinpoint(javassist.CtMember, org.jboss.aop.Advisor, org.jboss.aop.instrument.JoinpointClassifier.Matcher)
     */
-   protected JoinpointClassification classifyJoinpoint(CtMember member, Advisor advisor, Matcher joinpointMatcher) throws NotFoundException
+   protected JoinpointClassification classifyJoinpoint(CtMember member, Advisor advisor, Matcher joinpointMatcher, BindingCollectionAccessor bindingCollectionAccessor) throws NotFoundException
    {
-      Collection<Pointcut> pointcuts = advisor.getManager().getPointcuts().values();
-      synchronized (pointcuts)
+      Collection<Pointcut> pointcuts = bindingCollectionAccessor.getPointcuts(advisor);
+      for (Pointcut pointcut : pointcuts)
       {
-         for (Pointcut pointcut : pointcuts)
+         if (joinpointMatcher.matches(pointcut, advisor, member))
          {
-            if (joinpointMatcher.matches(pointcut, advisor, member))
+            if (AspectManager.verbose && logger.isDebugEnabled())
             {
-               if (AspectManager.verbose && logger.isDebugEnabled())
-               {
-                  logger.debug(member + " matches pointcut: " + pointcut.getExpr());
-               }
-               return JoinpointClassification.WRAPPED;
+               logger.debug(member + " matches pointcut: " + pointcut.getExpr());
             }
+            return JoinpointClassification.WRAPPED;
          }
       }
       if (AspectManager.verbose && logger.isDebugEnabled())

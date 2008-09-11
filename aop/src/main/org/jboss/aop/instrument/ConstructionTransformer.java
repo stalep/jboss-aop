@@ -21,9 +21,9 @@
   */
 package org.jboss.aop.instrument;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.jboss.aop.ClassAdvisor;
 import org.jboss.aop.pointcut.Pointcut;
@@ -155,15 +155,12 @@ public abstract class ConstructionTransformer
    public static boolean isAdvisableConstructor(CtConstructor con, ClassAdvisor advisor) throws NotFoundException
    {
       
-      Map<String, Pointcut> pointcuts = advisor.getManager().getPointcuts();
-      synchronized (pointcuts)
+      Collection<Pointcut> pointcuts = advisor.getManager().getBindingCollection().getConstructionPointcuts();
+      for (Pointcut pointcut : pointcuts)
       {
-         for (Pointcut pointcut : pointcuts.values())
+         if (pointcut.matchesConstruction(advisor, con))
          {
-            if (pointcut.matchesConstruction(advisor, con))
-            {
-               return true;
-            }
+            return true;
          }
       }
       return false;
