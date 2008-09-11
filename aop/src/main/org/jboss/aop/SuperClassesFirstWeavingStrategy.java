@@ -54,7 +54,7 @@ public class SuperClassesFirstWeavingStrategy extends WeavingStrategySupport {
          return null;
       }
       setReEntry();
-      manager.transformationStarted = true;
+      super.setTransformationStarted();
       try
       {
          if (manager.isNonAdvisableClassName(className))

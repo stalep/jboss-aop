@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.jboss.aop.advice.AdviceBinding;
-import org.jboss.aop.advice.ClassifiedBindingCollection;
+import org.jboss.aop.advice.ClassifiedBindingAndPointcutCollection;
 import org.jboss.aop.metadata.ClassMetaDataBinding;
 import org.jboss.aop.metadata.ClassMetaDataLoader;
 import org.jboss.aop.util.Advisable;
@@ -322,7 +322,7 @@ public class ClassContainer extends Advisor
 
    private void makeInterceptorChains()
    {
-      ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+      ClassifiedBindingAndPointcutCollection bindingCol = manager.getBindingCollection();
       bindingCol.lockRead(true);
       try
       {

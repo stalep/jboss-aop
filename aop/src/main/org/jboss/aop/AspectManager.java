@@ -48,7 +48,7 @@ import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AdviceStack;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.AspectFactoryWithClassLoader;
-import org.jboss.aop.advice.ClassifiedBindingCollection;
+import org.jboss.aop.advice.ClassifiedBindingAndPointcutCollection;
 import org.jboss.aop.advice.DynamicCFlowDefinition;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.PrecedenceDef;
@@ -135,7 +135,7 @@ public class AspectManager
    protected volatile LinkedHashMap<String, AnnotationIntroduction> annotationOverrides = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    @Deprecated
    protected volatile LinkedHashMap<String, AdviceBinding> bindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   protected volatile ClassifiedBindingCollection bindingCollection = new ClassifiedBindingCollection();
+   protected final ClassifiedBindingAndPointcutCollection bindingCollection;
    protected volatile LinkedHashMap<String, Typedef> typedefs = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    protected volatile HashMap<String, InterceptorFactory> interceptorFactories = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
    protected volatile HashMap<String,ClassMetaDataLoader> classMetaDataLoaders = UnmodifiableEmptyCollections.EMPTY_HASHMAP;
@@ -162,9 +162,6 @@ public class AspectManager
    protected ClassExpression[] ignoreExpressions = new ClassExpression[0];
 
 
-   protected volatile LinkedHashMap<String, Pointcut> pointcuts = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-   // contains pointcuts-binding association info
-   protected volatile LinkedHashMap<String, PointcutInfo> pointcutInfos = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
    // these fields represent whether there are certain pointcut types.
    // for performance reasons the transformers and binders can make a lot of us of this.
    protected boolean execution = false;
@@ -183,8 +180,6 @@ public class AspectManager
    protected WeavingStrategy weavingStrategy;
 
    protected DynamicAOPStrategy dynamicStrategy = new LoadInterceptedClassesStrategy();
-   // indicates that the transformation process has begun
-   protected boolean transformationStarted = false;
 
    /** The classloader scoping policy */
    // This shouldn't really be static (artifact of singleton and self-bootstrap design)
@@ -398,12 +393,12 @@ public class AspectManager
 
    public LinkedHashMap<String, Pointcut> getPointcuts()
    {
-      return pointcuts;
+      return bindingCollection.getPointcuts();
    }
 
    public LinkedHashMap<String, PointcutInfo> getPointcutInfos()
    {
-      return pointcutInfos;
+      return bindingCollection.getPointcutInfos();
    }
 
    public CFlowStack getCFlowStack(String name)
@@ -478,7 +473,19 @@ public class AspectManager
     */
    public AspectManager()
    {
+      bindingCollection = createBindingCollection();
    }
+   
+   /**
+    * Creates the binding collection
+    * @return a {@link ClassifiedBindingAndPointcutCollection}
+    * @see Domain#ini 
+    */
+   protected ClassifiedBindingAndPointcutCollection createBindingCollection()
+   {
+      return new ClassifiedBindingAndPointcutCollection();
+   }
+   
    /**
     * Every &lt;class-metadata&gt; tag corresponds to
     * a ClassMetaDataLoader.  The ClassMetaDataLoader knows how to take
@@ -552,7 +559,7 @@ public class AspectManager
     * 
     * @return the classified binding collection
     */
-   ClassifiedBindingCollection getBindingCollection()
+   ClassifiedBindingAndPointcutCollection getBindingCollection()
    {
       return bindingCollection;
    }
@@ -1265,10 +1272,7 @@ public class AspectManager
     */
    public Pointcut getPointcut(String name)
    {
-      synchronized (pointcuts)
-      {
-         return pointcuts.get(name);
-      }
+      return bindingCollection.getPointcut(name);
    }
 
    /**
@@ -1276,11 +1280,7 @@ public class AspectManager
     */
    public void removePointcut(String name)
    {
-      synchronized (pointcuts)
-      {
-         pointcuts.remove(name);
-         pointcutInfos.remove(name);
-      }
+      bindingCollection.removePointcut(name);
    }
 
    /**
@@ -1288,14 +1288,7 @@ public class AspectManager
     */
    public synchronized void addPointcut(Pointcut pointcut)
    {
-      removePointcut(pointcut.getName());
-      initPointcutsMap();
-      initPointcutInfosMap();
-      synchronized (pointcuts)
-      {
-         pointcuts.put(pointcut.getName(), pointcut);
-         pointcutInfos.put(pointcut.getName(), new PointcutInfo(pointcut, this.transformationStarted));
-      }
+      bindingCollection.add(pointcut);
       updatePointcutStats(pointcut);
    }
 
@@ -1306,50 +1299,56 @@ public class AspectManager
     */
    protected void updatePointcutStats(Pointcut pointcut)
    {
-      // the following is for performance reasons.
-      if (pointcut instanceof PointcutExpression)
+      synchronized(bindingCollection)
       {
-         PointcutExpression expr = (PointcutExpression) pointcut;
-         expr.setManager(this);
-         PointcutStats stats = expr.getStats();
-         updateStats(stats);
-      }
-      else
-      {
-         // can't be sure so set all
-         execution = true;
-         construction = true;
-         call = true;
-         within = true;
-         get = true;
-         set = true;
-         withincode = true;
+         // the following is for performance reasons.
+         if (pointcut instanceof PointcutExpression)
+         {
+            PointcutExpression expr = (PointcutExpression) pointcut;
+            expr.setManager(this);
+            PointcutStats stats = expr.getStats();
+            updateStats(stats);
+         }
+         else
+         {
+            // can't be sure so set all
+            execution = true;
+            construction = true;
+            call = true;
+            within = true;
+            get = true;
+            set = true;
+            withincode = true;
+         }
       }
    }
 
-   protected void updateStats(PointcutStats stats)
+   protected synchronized void updateStats(PointcutStats stats)
    {
-      if (stats != null)
+      synchronized(bindingCollection)
       {
-         construction |= stats.isConstruction();
-         execution |= stats.isExecution();
-         call |= stats.isCall();
-         within |= stats.isWithin();
-         get |= stats.isGet();
-         set |= stats.isSet();
-         withincode |= stats.isWithincode();
-      }
-      else
-      {
-         if (verbose && logger.isDebugEnabled()) logger.debug("Setting all pointcut stats to true");
-         // can't be sure so set all
-         execution = true;
-         construction = true;
-         call = true;
-         within = true;
-         get = true;
-         set = true;
-         withincode = true;
+         if (stats != null)
+         {
+            construction |= stats.isConstruction();
+            execution |= stats.isExecution();
+            call |= stats.isCall();
+            within |= stats.isWithin();
+            get |= stats.isGet();
+            set |= stats.isSet();
+            withincode |= stats.isWithincode();
+         }
+         else
+         {
+            if (verbose && logger.isDebugEnabled()) logger.debug("Setting all pointcut stats to true");
+            // can't be sure so set all
+            execution = true;
+            construction = true;
+            call = true;
+            within = true;
+            get = true;
+            set = true;
+            withincode = true;
+         }
       }
    }
 
@@ -1411,7 +1410,7 @@ public class AspectManager
       bindingCollection.lockWrite();
       try
       {
-         removedBindings = this.bindingCollection.remove(binds);
+         removedBindings = this.bindingCollection.removeBindings(binds);
          for (AdviceBinding removedBinding: removedBindings)
          {
             ArrayList<Advisor> ads = removedBinding.getAdvisors();
@@ -1463,18 +1462,9 @@ public class AspectManager
       synchronized(this)
       {
          removedBinding = internalRemoveBinding(binding.getName());
-         affectedAdvisors = removedBinding == null ? null : new HashSet<Advisor>(removedBinding.getAdvisors());
-         initPointcutsMap();
-         initPointcutInfosMap();
-         synchronized (pointcuts)
-         {
-            Pointcut pointcut = binding.getPointcut();
-            pointcuts.put(pointcut.getName(), pointcut);
-            pointcutInfos.put(pointcut.getName(), new PointcutInfo(pointcut, binding, this.transformationStarted));
-            updatePointcutStats(pointcut);
-         }
-         
+         affectedAdvisors = removedBinding == null ? null : new HashSet<Advisor>(removedBinding.getAdvisors());         
          bindingCollection.add(binding);
+         updatePointcutStats(binding.getPointcut());
       }
       synchronized (advisors)
       {
@@ -2083,7 +2073,7 @@ public class AspectManager
    public void setDynamicAOPStrategy(DynamicAOPStrategy strategy)
    {
       // avoid users calling this method in run time
-      if (this.transformationStarted)
+      if (hasTransformationStarted())
       {
          throw new RuntimeException("Dynamic AOP Strategy Update not allowed in run time");
       }
@@ -2099,7 +2089,7 @@ public class AspectManager
       bindingCollection.lockWrite();
       try
       {
-         AdviceBinding binding = bindingCollection.remove(name);
+         AdviceBinding binding = bindingCollection.removeBinding(name);
          if (binding == null)
          {
             return null;
@@ -2224,7 +2214,10 @@ public class AspectManager
       lifecycleManager.removeLifecycleBinding(name);
    }
 
-
+   public static boolean hasTransformationStarted()
+   {
+      return WeavingStrategySupport.transformationStarted();
+   }
 
 //   public void dumpSubDomainsAndAdvisors(int indent)
 //   {
@@ -2508,35 +2501,6 @@ public class AspectManager
          }
       }
    }
-
-   protected void initPointcutsMap()
-   {
-      if (pointcuts == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
-      {
-         synchronized(lazyCollectionLock)
-         {
-            if (pointcuts == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
-            {
-               pointcuts = new LinkedHashMap<String, Pointcut>();
-            }
-         }
-      }
-   }
-
-   protected void initPointcutInfosMap()
-   {
-      if (pointcutInfos == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
-      {
-         synchronized(lazyCollectionLock)
-         {
-            if (pointcutInfos == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
-            {
-               pointcutInfos = new LinkedHashMap<String, PointcutInfo>();
-            }
-         }
-      }
-   }
-
 
    protected void initClassMetaDataMap()
    {

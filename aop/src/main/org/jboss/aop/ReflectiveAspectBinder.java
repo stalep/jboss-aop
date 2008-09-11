@@ -42,7 +42,7 @@ import java.util.Set;
 
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AspectDefinition;
-import org.jboss.aop.advice.ClassifiedBindingCollection;
+import org.jboss.aop.advice.ClassifiedBindingAndPointcutCollection;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.introduction.AnnotationIntroduction;
 import org.jboss.aop.microcontainer.lifecycle.LifecycleCallbackBinding;
@@ -92,7 +92,7 @@ public class ReflectiveAspectBinder
    {
       if (!initialisedAspects)
       {
-         ClassifiedBindingCollection bindingCol = advisor.getManager().getBindingCollection();
+         ClassifiedBindingAndPointcutCollection bindingCol = advisor.getManager().getBindingCollection();
          bindingCol.lockRead(true);
          try
          {
@@ -175,21 +175,7 @@ public class ReflectiveAspectBinder
       }
    }
    
-   @Deprecated
-   protected void bindMethodAdvices(Class<?> superClass, Map<String, AdviceBinding> bindings)
-   {
-      createMethodMap(superClass); 
-      if (methodMap != null)
-      {
-         Object[] methods = methodMap.getValues();
-         for (int i = 0 ; i < methods.length ; i++)
-         {
-            bindMethodAdvice((Method)methods[i], bindings);
-         }
-      }
-   }
-   
-   protected void bindMethodAdvices(Class<?> superClass, ClassifiedBindingCollection bindingCol)
+   protected void bindMethodAdvices(Class<?> superClass, ClassifiedBindingAndPointcutCollection bindingCol)
    {
       createMethodMap(superClass); 
       if (methodMap != null)
@@ -203,23 +189,7 @@ public class ReflectiveAspectBinder
       }
    }
 
-   @Deprecated
-   protected void bindConstructorAdvices(Map<String, AdviceBinding> bindings)
-   {
-      Constructor<?>[] cons = AccessController.doPrivileged(new PrivilegedAction<Constructor<?>[]>() 
-      {
-         public Constructor<?>[] run()
-         {
-            return clazz.getDeclaredConstructors();
-         }
-      });
-      for (int i = 0; i < cons.length; i++)
-      {
-         bindConstructorAdvice(cons[i], bindings);
-      }
-   }
-   
-   void bindConstructorAdvices(ClassifiedBindingCollection bindingCol)
+   void bindConstructorAdvices(ClassifiedBindingAndPointcutCollection bindingCol)
    {
       Constructor<?>[] cons = AccessController.doPrivileged(new PrivilegedAction<Constructor<?>[]>() 
       {
@@ -235,24 +205,7 @@ public class ReflectiveAspectBinder
       }
    }
 
-   @Deprecated
-   protected void bindFieldAdvices(Map<String, AdviceBinding> bindings)
-   {
-      Field[] fields = AccessController.doPrivileged(new PrivilegedAction<Field[]>() 
-      {
-         public Field[] run()
-         {
-            return clazz.getDeclaredFields();
-         }
-      });
-      for (int i = 0; i < fields.length; i++)
-      {
-         bindFieldGetAdvice(fields[i], bindings);
-         bindFieldSetAdvice(fields[i], bindings);
-      }
-   }
-   
-   protected void bindFieldAdvices(ClassifiedBindingCollection bindingCol)
+   protected void bindFieldAdvices(ClassifiedBindingAndPointcutCollection bindingCol)
    {
       Field[] fields = AccessController.doPrivileged(new PrivilegedAction<Field[]>() 
       {

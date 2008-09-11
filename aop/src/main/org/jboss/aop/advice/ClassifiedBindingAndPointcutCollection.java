@@ -28,25 +28,29 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.jboss.aop.AspectManager;
+import org.jboss.aop.pointcut.Pointcut;
+import org.jboss.aop.pointcut.PointcutInfo;
 import org.jboss.aop.util.BindingClassifier;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.aop.util.UnmodifiableLinkedHashMap;
 import org.jboss.aop.util.logging.AOPLogger;
 
 /**
- * Manages the binding collection contained in a domain. All bindings
+ * Manages the binding, pointcut and pointcutInfo collections contained in a domain. All entries
  * contained in this collection are indexed according to their classification.
  * <p>
  * <i>For internal use only.</i>
  * 
  * @author  <a href="flavia.rainone@jboss.com">Flavia Rainone</a>
+ * @author  <a href="kabir.khan@jboss.com">Kabir Khan</a>
  */
-public class ClassifiedBindingCollection
+public class ClassifiedBindingAndPointcutCollection
 {
    private static final AOPLogger logger = AOPLogger.getLogger(AspectManager.class);
    
    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
   
+   //Collections of bindings
    private volatile LinkedHashMap<String, AdviceBinding> bindings;
    private volatile Collection<AdviceBinding> fieldReadBindings;
    private volatile Collection<AdviceBinding> fieldWriteBindings;
@@ -56,13 +60,27 @@ public class ClassifiedBindingCollection
    private volatile Collection<AdviceBinding> constructorCallBindings;
    private volatile Collection<AdviceBinding> methodCallBindings;
    
+   //Collections of pointcuts
+   private volatile LinkedHashMap<String, Pointcut> pointcuts;
+   
+   //Collections of pointcutInfos
+   private volatile LinkedHashMap<String, PointcutInfo> pointcutInfos;
+   
+   //Pointcut stats 
+   protected boolean execution = false;
+   protected boolean construction = false;
+   protected boolean call = false;
+   protected boolean within = false;
+   protected boolean get = false;
+   protected boolean set = false;
+   protected boolean withincode = false;
+   public static boolean classicOrder = false;
+
    /**
     * Constructor.<p>
-    * All created instances must be initialized before being used for addition and
-    * removal operations, by calling {@code initialize()}.
     */
    @SuppressWarnings("all")
-   public ClassifiedBindingCollection()
+   public ClassifiedBindingAndPointcutCollection()
    {
       bindings = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
       this.fieldReadBindings = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
@@ -72,6 +90,18 @@ public class ClassifiedBindingCollection
       this.methodExecutionBindings = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
       this.constructorCallBindings = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
       this.methodCallBindings = UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+      
+      pointcuts = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+      
+      pointcutInfos = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+   }
+   
+   /**
+    * Check if there are any pointcuts stored at this level
+    */
+   public boolean hasPointcuts()
+   {
+      return pointcuts.size() > 0;
    }
    
    /**
@@ -240,8 +270,7 @@ public class ClassifiedBindingCollection
    
    /**
     * Returns the bindings map.
-    * <p>
-    * <b>Attention:</b> this collection is not supposed to be edited.
+    * @return an unmodifiable map containing all the bindings
     */
    public LinkedHashMap<String, AdviceBinding> getBindings()
    {
@@ -249,6 +278,94 @@ public class ClassifiedBindingCollection
       try
       {
          return new UnmodifiableLinkedHashMap<String, AdviceBinding>(bindings);
+      }
+      finally
+      { 
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns the bindings map. This method is only for internal use, hence the @Deprecated
+    * @return a map containing all the bindings
+    */
+   @Deprecated
+   public LinkedHashMap<String, AdviceBinding> getBindingsInternal()
+   {
+      lockRead();
+      try
+      {
+         return new UnmodifiableLinkedHashMap<String, AdviceBinding>(bindings);
+      }
+      finally
+      { 
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns the pointcuts map.
+    * @return an unmodifiable map containing all the pointcuts
+    */
+   public LinkedHashMap<String, Pointcut> getPointcuts()
+   {
+      lockRead();
+      try
+      {
+         return pointcuts;
+      }
+      finally
+      { 
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns the pointcuts map. This method is only for internal use, hence the @Deprecated
+    * @return a map containing all the pointcuts
+    */
+   @Deprecated
+   public LinkedHashMap<String, Pointcut> getPointcutsInternal()
+   {
+      lockRead();
+      try
+      {
+         return pointcuts;
+      }
+      finally
+      { 
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns the pointcutInfos map.
+    * @return an unmodifiable map containing all the pointcutInfos
+    */
+   public LinkedHashMap<String, PointcutInfo> getPointcutInfos()
+   {
+      lockRead();
+      try
+      {
+         return new UnmodifiableLinkedHashMap<String, PointcutInfo>(pointcutInfos);
+      }
+      finally
+      { 
+         unlockRead();
+      }
+   }
+   
+   /**
+    * Returns the pointcutInfos map. This method is only for internal use, hence the @Deprecated
+    * @return an unmodifiable map containing all the pointcutInfos
+    */
+   @Deprecated
+   public LinkedHashMap<String, PointcutInfo> getPointcutInfosInternal()
+   {
+      lockRead();
+      try
+      {
+         return pointcutInfos;
       }
       finally
       { 
@@ -280,13 +397,30 @@ public class ClassifiedBindingCollection
    }
 
    /**
+    * Adds a pointcut to this collection
+    */
+   public void add(Pointcut pointcut)
+   {
+      lockWrite();
+      try
+      {
+         removePointcut(pointcut.getName());
+         addPointcut(pointcut);
+      }
+      finally
+      {
+         unlockWrite();
+      }
+   }
+   
+   /**
     * Removes the binding named {@code name}.
     * 
     * @param name name of the binding to be removed.
     * @return the removed binding. If {@code null}, indicates that there is no
     *         binding with name equal to {@code name} in this collection.
     */
-   public AdviceBinding remove(String name)
+   public AdviceBinding removeBinding(String name)
    {
       lockWrite();
       try
@@ -311,12 +445,48 @@ public class ClassifiedBindingCollection
    }
    
    /**
+    * Removes the pointcut and pointcutInfo named {@code name}
+    * @param name the name of the pointcut to be removed
+    */
+   public void removePointcut(String name)
+   {
+      lockWrite();
+      try
+      {
+         pointcuts.remove(name);
+         pointcutInfos.remove(name);
+      }
+      finally
+      {
+         unlockWrite();
+      }
+   }
+   
+   /**
+    * Gets the pointcut named {@code name}
+    * @param name the name of the pointcut to get
+    * @return the pointcut
+    */
+   public Pointcut getPointcut(String name)
+   {
+      lockRead();
+      try
+      {
+         return pointcuts.get(name);
+      }
+      finally
+      {
+         unlockRead();
+      }
+   }
+   
+   /**
     * Removes all bindings whose names are contained in {@code names}.
     * 
     * @param names names of all bindings to be removed
     * @return the collection of the removed bindings
     */
-   public ArrayList<AdviceBinding> remove(ArrayList<String> names)
+   public ArrayList<AdviceBinding> removeBindings(ArrayList<String> names)
    {
       lockWrite();
       try
@@ -324,7 +494,7 @@ public class ClassifiedBindingCollection
          ArrayList<AdviceBinding> removedBindings = new ArrayList<AdviceBinding>();
          for (String name: names)
          {
-            AdviceBinding binding = this.remove(name);
+            AdviceBinding binding = this.removeBinding(name);
             if (binding == null)
             {
                logger.debug("ClassifiedBindingCollection.removeBindings() no binding found with name " + name);
@@ -338,6 +508,41 @@ public class ClassifiedBindingCollection
       {
          unlockWrite();
       }
+   }
+
+   public boolean isExecution()
+   {
+      return execution;
+   }
+
+   public boolean isConstruction()
+   {
+      return construction;
+   }
+
+   public boolean isCall()
+   {
+      return call;
+   }
+
+   public boolean isWithin()
+   {
+      return within;
+   }
+
+   public boolean isWithincode()
+   {
+      return withincode;
+   }
+
+   public boolean isGet()
+   {
+      return get;
+   }
+
+   public boolean isSet()
+   {
+      return set;
    }
 
    /**
@@ -415,6 +620,8 @@ public class ClassifiedBindingCollection
          bindings = new LinkedHashMap<String, AdviceBinding>();
       }
       bindings.put(binding.getName(), binding);
+      
+      addPointcut(binding.getPointcut());
    }
    
    private void addGet(AdviceBinding binding)
@@ -499,5 +706,20 @@ public class ClassifiedBindingCollection
          }
          this.constructorCallBindings.add(binding);
       }
+   }
+   
+   private void addPointcut(Pointcut pointcut)
+   {
+      if (pointcuts == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         pointcuts = new LinkedHashMap<String, Pointcut>();
+      }
+      pointcuts.put(pointcut.getName(), pointcut);
+
+      if (pointcutInfos == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         pointcutInfos = new LinkedHashMap<String, PointcutInfo>();
+      }
+      pointcutInfos.put(pointcut.getName(), new PointcutInfo(pointcut, AspectManager.hasTransformationStarted()));
    }
 }

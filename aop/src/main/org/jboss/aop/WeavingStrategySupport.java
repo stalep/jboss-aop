@@ -24,10 +24,13 @@ package org.jboss.aop;
 /**
  *
  * @author <a href="stalep@conduct.no">Stale W. Pedersen</a>
+ * @author <a href="mailto:kabir.khan@jboss.org">Kabir Khan</a>
  * @version $Revision:
  */
 public abstract class WeavingStrategySupport implements WeavingStrategy
 {
+   // indicates that the transformation process has begun
+   private static boolean transformationStarted = false;
    
    private static ThreadLocal<Boolean> REENTRY = new ThreadLocal<Boolean>()
    {
@@ -61,5 +64,15 @@ public abstract class WeavingStrategySupport implements WeavingStrategy
    protected static void clearReEntry()
    {
       REENTRY.set(Boolean.FALSE);
+   }
+   
+   protected static boolean transformationStarted()
+   {
+      return transformationStarted;
+   }
+   
+   protected void setTransformationStarted()
+   {
+      transformationStarted = true;
    }
 }

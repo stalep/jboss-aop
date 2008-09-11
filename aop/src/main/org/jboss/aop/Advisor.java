@@ -50,7 +50,7 @@ import javassist.CtMethod;
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.CFlowInterceptor;
-import org.jboss.aop.advice.ClassifiedBindingCollection;
+import org.jboss.aop.advice.ClassifiedBindingAndPointcutCollection;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.PrecedenceSorter;
@@ -1388,7 +1388,7 @@ public abstract class Advisor
    
    protected void updateFieldPointcutAfterRemove(FieldInfo[] fieldInfos, AdviceBinding binding, boolean write)
    {
-      ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+      ClassifiedBindingAndPointcutCollection bindingCol = manager.getBindingCollection();
       Collection<AdviceBinding> bindings = write? bindingCol.getFieldWriteBindings():
             bindingCol.getFieldReadBindings();
       for (int i = 0; i < fieldInfos.length; i++)
@@ -1422,7 +1422,7 @@ public abstract class Advisor
    
    protected void updateConstructorPointcutAfterRemove(AdviceBinding binding)
    {
-      ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+      ClassifiedBindingAndPointcutCollection bindingCol = manager.getBindingCollection();
       if(constructorInfos != null && constructorInfos.length > 0)
       {
          for (int i = 0; i < constructors.length; i++)
@@ -1451,7 +1451,7 @@ public abstract class Advisor
    
    protected void updateConstructionPointcutAfterRemove(AdviceBinding binding)
    {
-      ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+      ClassifiedBindingAndPointcutCollection bindingCol = manager.getBindingCollection();
       if (constructionInfos.length > 0)
       {
          for (int i = 0; i < constructionInfos.length ;i++)

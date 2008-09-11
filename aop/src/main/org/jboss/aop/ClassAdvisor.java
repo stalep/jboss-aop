@@ -41,7 +41,7 @@ import java.util.Map;
 
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AspectDefinition;
-import org.jboss.aop.advice.ClassifiedBindingCollection;
+import org.jboss.aop.advice.ClassifiedBindingAndPointcutCollection;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.instrument.ConstructorExecutionTransformer;
 import org.jboss.aop.instrument.FieldAccessTransformer;
@@ -619,7 +619,7 @@ public class ClassAdvisor extends Advisor
    @SuppressWarnings("deprecation")
    private void resolveBindings(AspectManager manager)
    {
-      ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+      ClassifiedBindingAndPointcutCollection bindingCol = manager.getBindingCollection();
       bindingCol.lockRead(true);
       try
       {
@@ -1593,7 +1593,7 @@ public class ClassAdvisor extends Advisor
          if (calledMethod == null) throw new RuntimeException("Unable to figure out calledmethod of a caller pointcut");
 
          boolean matched = false;
-         ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+         ClassifiedBindingAndPointcutCollection bindingCol = manager.getBindingCollection();
          for (AdviceBinding binding : bindingCol.getConstructorCallBindings())
          {
             if (binding.getPointcut().matchesCall(this, callingConstructor, called, calledMethod))
@@ -1655,7 +1655,7 @@ public class ClassAdvisor extends Advisor
          if (calledCon == null) throw new RuntimeException("Unable to figure out calledcon of a caller pointcut");
 
          boolean matched = false;
-         ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+         ClassifiedBindingAndPointcutCollection bindingCol = manager.getBindingCollection();
          for (AdviceBinding binding : bindingCol.getConstructorCallBindings())
          {
             if (binding.getPointcut().matchesCall(this, callingConstructor, called, calledCon))
@@ -2740,7 +2740,7 @@ public class ClassAdvisor extends Advisor
             if (calledCon == null) throw new RuntimeException("Unable to figure out calledcon of a constructor caller pointcut");
 
             boolean matched = false;
-            ClassifiedBindingCollection bindingCol = manager.getBindingCollection();
+            ClassifiedBindingAndPointcutCollection bindingCol = manager.getBindingCollection();
             for (AdviceBinding binding : bindingCol.getConstructorCallBindings())
             {
                if (binding.getPointcut().matchesCall(ClassAdvisor.this, callingMethod, called, calledCon))

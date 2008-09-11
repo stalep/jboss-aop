@@ -35,7 +35,7 @@ import java.util.Map;
 import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.advice.AdviceStack;
 import org.jboss.aop.advice.AspectDefinition;
-import org.jboss.aop.advice.ClassifiedBindingCollection;
+import org.jboss.aop.advice.ClassifiedBindingAndPointcutCollection;
 import org.jboss.aop.advice.DynamicCFlowDefinition;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.advice.PrecedenceDef;
@@ -52,6 +52,8 @@ import org.jboss.aop.pointcut.PointcutInfo;
 import org.jboss.aop.pointcut.PointcutStats;
 import org.jboss.aop.pointcut.Typedef;
 import org.jboss.aop.pointcut.ast.ClassExpression;
+import org.jboss.aop.util.UnmodifiableEmptyCollections;
+import org.jboss.aop.util.UnmodifiableLinkedHashMap;
 
 /**
  * Comment
@@ -82,11 +84,20 @@ public class Domain extends AspectManager
 
    public Domain(AspectManager manager, String name, boolean parentFirst)
    {
-      this.bindingCollection = new DomainClassifiedBindingCollection();
       this.parent = manager;
       this.parentFirst = parentFirst;
       this.name = name;
       manager.addSubDomainByName(this);
+   }
+
+   /**
+    * Creates the binding collection to be used as the collection by this domain
+    * @return a {@link DomainClassifiedBindingAndPointcutCollection}
+    */
+   @Override
+   protected ClassifiedBindingAndPointcutCollection createBindingCollection()
+   {
+      return new DomainClassifiedBindingAndPointcutCollection();
    }
 
    // FIXME: JBAOP-107 REMOVE THIS HACK
@@ -194,6 +205,7 @@ public class Domain extends AspectManager
    {
       super.removeBinding(name);
       hasOwnBindings = !bindingCollection.isEmpty();
+      hasOwnPointcuts = !bindingCollection.hasPointcuts();
    }
    
    @Override
@@ -201,29 +213,13 @@ public class Domain extends AspectManager
    {
       super.removeBindings(binds);
       hasOwnBindings = !bindingCollection.isEmpty();
-      hasOwnPointcuts = !bindingCollection.isEmpty();
+      hasOwnPointcuts = !bindingCollection.hasPointcuts();
    }
    
    @Override
    public LinkedHashMap<String, Pointcut> getPointcuts()
    {
-      if (inheritsBindings)
-      {
-         if (!parentFirst)
-         {
-            // when child first, parent bindings go in first so that they can be overridden by child.
-            LinkedHashMap<String, Pointcut> map = new LinkedHashMap<String, Pointcut>(parent.getPointcuts());
-            map.putAll(this.pointcuts);
-            return map;
-         }
-         else
-         {
-            LinkedHashMap<String, Pointcut> map = new LinkedHashMap<String, Pointcut>(this.pointcuts);
-            map.putAll(parent.getPointcuts());
-            return map;
-         }
-      }
-      return super.getPointcuts();
+      return bindingCollection.getPointcuts(); 
    }
 
    public boolean hasOwnPointcuts()
@@ -242,29 +238,13 @@ public class Domain extends AspectManager
    public void removePointcut(String name)
    {
       super.removePointcut(name);
-      hasOwnPointcuts = pointcuts.size() > 0;
+      hasOwnPointcuts = bindingCollection.hasPointcuts();
    }
 
    @Override
    public LinkedHashMap<String, PointcutInfo> getPointcutInfos()
    {
-      if (inheritsBindings)
-      {
-         if (!parentFirst)
-         {
-            // when child first, parent bindings go in first so that they can be overridden by child.
-            LinkedHashMap<String, PointcutInfo> map = new LinkedHashMap<String, PointcutInfo>(parent.getPointcutInfos());
-            map.putAll(this.pointcutInfos);
-            return map;
-         }
-         else
-         {
-            LinkedHashMap<String, PointcutInfo> map = new LinkedHashMap<String, PointcutInfo>(this.pointcutInfos);
-            map.putAll(parent.getPointcutInfos());
-            return map;
-         }
-      }
-      return super.getPointcutInfos();
+      return bindingCollection.getPointcutInfos();
    }
 
    @Override
@@ -1103,8 +1083,32 @@ public class Domain extends AspectManager
       return parent.isSet();
    }
    
-   private class DomainClassifiedBindingCollection extends ClassifiedBindingCollection
+   private class DomainClassifiedBindingAndPointcutCollection extends ClassifiedBindingAndPointcutCollection
    {
+      @Override
+      public LinkedHashMap<String, AdviceBinding> getBindings()
+      {
+         lockRead(true);
+         try
+         {
+            LinkedHashMap<String, AdviceBinding> result = super.getBindingsInternal();
+            LinkedHashMap<String, AdviceBinding> parentResult = 
+               inheritsBindings ?
+                  parent.getBindingCollection().getBindingsInternal() : UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+            LinkedHashMap<String, AdviceBinding> overall = unifyMaps(result, parentResult, parentFirst);
+            if (overall == result || overall == parentResult)
+            {
+               return new LinkedHashMap<String, AdviceBinding>(overall);
+            }
+            return overall;
+         }
+         finally
+         {
+            unlockRead(true);
+         }
+
+      }  
+      
       @Override
       public Collection<AdviceBinding> getFieldReadBindings()
       {
@@ -1112,8 +1116,9 @@ public class Domain extends AspectManager
          try
          {
             Collection<AdviceBinding> result = super.getFieldReadBindings();
-            Collection<AdviceBinding> parentResult = parent.getBindingCollection().
-               getFieldReadBindings();
+            Collection<AdviceBinding> parentResult = 
+               inheritsBindings ?
+                     parent.getBindingCollection().getFieldReadBindings() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
             return unifyCollections(result, parentResult, parentFirst);
          }
          finally
@@ -1129,8 +1134,9 @@ public class Domain extends AspectManager
          try
          {
             Collection<AdviceBinding> result = super.getFieldWriteBindings();
-            Collection<AdviceBinding> parentResult = parent.getBindingCollection().
-               getFieldWriteBindings();
+            Collection<AdviceBinding> parentResult = 
+               inheritsBindings ?
+                  parent.getBindingCollection().getFieldWriteBindings() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
             return unifyCollections(result, parentResult, parentFirst);
          }
          finally
@@ -1146,8 +1152,9 @@ public class Domain extends AspectManager
          try
          {
             Collection<AdviceBinding> result = super.getConstructionBindings();
-            Collection<AdviceBinding> parentResult = parent.getBindingCollection().
-               getConstructionBindings();
+            Collection<AdviceBinding> parentResult = 
+               inheritsBindings ?
+                     parent.getBindingCollection().getConstructionBindings() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
             return unifyCollections(result, parentResult, parentFirst);
          }
          finally
@@ -1163,8 +1170,9 @@ public class Domain extends AspectManager
          try
          {
             Collection<AdviceBinding> result = super.getConstructorExecutionBindings();
-            Collection<AdviceBinding> parentResult = parent.getBindingCollection().
-               getConstructorExecutionBindings();
+            Collection<AdviceBinding> parentResult = 
+               inheritsBindings ?
+                     parent.getBindingCollection().getConstructorExecutionBindings() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
             return unifyCollections(result, parentResult, parentFirst);
          }
          finally
@@ -1180,8 +1188,9 @@ public class Domain extends AspectManager
          try
          {
             Collection<AdviceBinding> result = super.getMethodExecutionBindings();
-            Collection<AdviceBinding> parentResult = parent.getBindingCollection().
-               getMethodExecutionBindings();
+            Collection<AdviceBinding> parentResult = 
+               inheritsBindings ?
+                     parent.getBindingCollection().getMethodExecutionBindings() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
             return unifyCollections(result, parentResult, parentFirst);
          }
          finally
@@ -1197,8 +1206,9 @@ public class Domain extends AspectManager
          try
          {
             Collection<AdviceBinding> result = super.getConstructorCallBindings();
-            Collection<AdviceBinding> parentResult = parent.getBindingCollection().
-               getConstructorCallBindings();
+            Collection<AdviceBinding> parentResult = 
+               inheritsBindings ?
+                     parent.getBindingCollection().getConstructorCallBindings() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
             return unifyCollections(result, parentResult, parentFirst);
          }
          finally
@@ -1214,8 +1224,9 @@ public class Domain extends AspectManager
          try
          {
             Collection<AdviceBinding> result = super.getMethodCallBindings();
-            Collection<AdviceBinding> parentResult = parent.getBindingCollection().
-               getMethodCallBindings();
+            Collection<AdviceBinding> parentResult = 
+               inheritsBindings ? 
+                     parent.getBindingCollection().getMethodCallBindings() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
             return unifyCollections(result, parentResult, parentFirst);
          }
          finally
@@ -1223,7 +1234,53 @@ public class Domain extends AspectManager
             unlockRead(true);
          }
       }
-      
+
+      @Override
+      public LinkedHashMap<String, Pointcut> getPointcuts()
+      {
+         lockRead(true);
+         try
+         {
+            LinkedHashMap<String, Pointcut> result = super.getPointcutsInternal();
+            LinkedHashMap<String, Pointcut> parentResult = 
+               inheritsBindings ? 
+                     parent.getBindingCollection().getPointcutsInternal() : UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+            LinkedHashMap<String, Pointcut> overall = unifyMaps(result, parentResult, parentFirst);
+            if (overall == result || overall == parentResult)
+            {
+               return new LinkedHashMap<String, Pointcut>(overall);
+            }
+            return overall;
+         }
+         finally
+         {
+            unlockRead(true);
+         }
+      }
+
+      @Override
+      public LinkedHashMap<String, PointcutInfo> getPointcutInfos()
+      {
+         lockRead(true);
+         try
+         {
+            LinkedHashMap<String, PointcutInfo> result = super.getPointcutInfosInternal();
+            LinkedHashMap<String, PointcutInfo> parentResult = 
+               inheritsBindings ?
+                     parent.getBindingCollection().getPointcutInfosInternal() : UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+            LinkedHashMap<String, PointcutInfo> overall = unifyMaps(result, parentResult, parentFirst);
+            if (overall == result || overall == parentResult)
+            {
+               return new LinkedHashMap<String, PointcutInfo>(overall);
+            }
+            return overall;
+         }
+         finally
+         {
+            unlockRead(true);
+         }
+      }
+
       private <T> Collection<T> unifyCollections(Collection<T> collection1,
             Collection<T> collection2, boolean prioritizeFirst)
       {
@@ -1247,6 +1304,31 @@ public class Domain extends AspectManager
             collection1.addAll(temp);
          }
          return collection1;
+      }
+
+      private <T, K> LinkedHashMap<T, K> unifyMaps(LinkedHashMap<T, K> map1,
+            LinkedHashMap<T, K> map2, boolean prioritizeFirst)
+      {
+         if (map1.isEmpty())
+         {
+            return new UnmodifiableLinkedHashMap<T, K>(map2);
+         }
+         if (map2.isEmpty())
+         {
+            return new UnmodifiableLinkedHashMap<T, K>(map1);
+         }
+         if (prioritizeFirst)
+         {
+            map1 = new LinkedHashMap<T, K>(map1);
+            map1.putAll(map2);
+         }
+         else
+         {
+            LinkedHashMap<T, K> temp = map1;
+            map1 = new LinkedHashMap<T, K>(map2);
+            map1.putAll(temp);
+         }
+         return map1;
       }
 
       @Override
