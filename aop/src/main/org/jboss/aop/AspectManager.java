@@ -76,7 +76,6 @@ import org.jboss.aop.pointcut.CFlowStack;
 import org.jboss.aop.pointcut.DeclareDef;
 import org.jboss.aop.pointcut.DynamicCFlow;
 import org.jboss.aop.pointcut.Pointcut;
-import org.jboss.aop.pointcut.PointcutExpression;
 import org.jboss.aop.pointcut.PointcutInfo;
 import org.jboss.aop.pointcut.PointcutStats;
 import org.jboss.aop.pointcut.Typedef;
@@ -164,13 +163,13 @@ public class AspectManager
 
    // these fields represent whether there are certain pointcut types.
    // for performance reasons the transformers and binders can make a lot of us of this.
-   protected boolean execution = false;
-   protected boolean construction = false;
-   protected boolean call = false;
-   protected boolean within = false;
-   protected boolean get = false;
-   protected boolean set = false;
-   protected boolean withincode = false;
+//   protected boolean execution = false;
+//   protected boolean construction = false;
+//   protected boolean call = false;
+//   protected boolean within = false;
+//   protected boolean get = false;
+//   protected boolean set = false;
+//   protected boolean withincode = false;
    public static boolean classicOrder = false;
 
    protected volatile LinkedHashMap<String, ClassMetaDataBinding> classMetaData = UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
@@ -1288,103 +1287,42 @@ public class AspectManager
     */
    public synchronized void addPointcut(Pointcut pointcut)
    {
-      bindingCollection.add(pointcut);
-      updatePointcutStats(pointcut);
-   }
-
-   /**
-    * THis method is used for performance reasons.
-    *
-    * @param pointcut
-    */
-   protected void updatePointcutStats(Pointcut pointcut)
-   {
-      synchronized(bindingCollection)
-      {
-         // the following is for performance reasons.
-         if (pointcut instanceof PointcutExpression)
-         {
-            PointcutExpression expr = (PointcutExpression) pointcut;
-            expr.setManager(this);
-            PointcutStats stats = expr.getStats();
-            updateStats(stats);
-         }
-         else
-         {
-            // can't be sure so set all
-            execution = true;
-            construction = true;
-            call = true;
-            within = true;
-            get = true;
-            set = true;
-            withincode = true;
-         }
-      }
-   }
-
-   protected synchronized void updateStats(PointcutStats stats)
-   {
-      synchronized(bindingCollection)
-      {
-         if (stats != null)
-         {
-            construction |= stats.isConstruction();
-            execution |= stats.isExecution();
-            call |= stats.isCall();
-            within |= stats.isWithin();
-            get |= stats.isGet();
-            set |= stats.isSet();
-            withincode |= stats.isWithincode();
-         }
-         else
-         {
-            if (verbose && logger.isDebugEnabled()) logger.debug("Setting all pointcut stats to true");
-            // can't be sure so set all
-            execution = true;
-            construction = true;
-            call = true;
-            within = true;
-            get = true;
-            set = true;
-            withincode = true;
-         }
-      }
+      bindingCollection.add(pointcut, this);
    }
 
    public boolean isExecution()
    {
-      return execution;
+      return bindingCollection.isExecution();
    }
 
    public boolean isConstruction()
    {
-      return construction;
+      return bindingCollection.isConstruction();
    }
 
    public boolean isCall()
    {
-      return call;
+      return bindingCollection.isCall();
    }
 
    public boolean isWithin()
    {
-      return within;
+      return bindingCollection.isWithin();
    }
 
    public boolean isWithincode()
    {
-      return withincode;
+      return bindingCollection.isWithincode();
    }
 
    public boolean isGet()
    {
-      return get;
+      return bindingCollection.isGet();
    }
 
    public boolean isSet()
    {
-      return set;
+      return bindingCollection.isSet();
    }
 
    /**
@@ -1463,8 +1401,7 @@ public class AspectManager
       {
          removedBinding = internalRemoveBinding(binding.getName());
          affectedAdvisors = removedBinding == null ? null : new HashSet<Advisor>(removedBinding.getAdvisors());         
-         bindingCollection.add(binding);
-         updatePointcutStats(binding.getPointcut());
+         bindingCollection.add(binding, this);
       }
       synchronized (advisors)
       {
@@ -1775,7 +1712,7 @@ public class AspectManager
          PointcutStats stats;
          stats = new PointcutStats(declare.getAst(), manager);
          stats.matches();
-         updateStats(stats);
+         bindingCollection.updateStats(stats);
       }
    }
 

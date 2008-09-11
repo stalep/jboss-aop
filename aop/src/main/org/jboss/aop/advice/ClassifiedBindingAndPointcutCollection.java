@@ -29,7 +29,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.pointcut.Pointcut;
+import org.jboss.aop.pointcut.PointcutExpression;
 import org.jboss.aop.pointcut.PointcutInfo;
+import org.jboss.aop.pointcut.PointcutStats;
 import org.jboss.aop.util.BindingClassifier;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.aop.util.UnmodifiableLinkedHashMap;
@@ -67,14 +69,13 @@ public class ClassifiedBindingAndPointcutCollection
    private volatile LinkedHashMap<String, PointcutInfo> pointcutInfos;
    
    //Pointcut stats 
-   protected boolean execution = false;
-   protected boolean construction = false;
-   protected boolean call = false;
-   protected boolean within = false;
-   protected boolean get = false;
-   protected boolean set = false;
-   protected boolean withincode = false;
-   public static boolean classicOrder = false;
+   private boolean execution = false;
+   private boolean construction = false;
+   private boolean call = false;
+   private boolean within = false;
+   private boolean get = false;
+   private boolean set = false;
+   private boolean withincode = false;
 
    /**
     * Constructor.<p>
@@ -376,7 +377,7 @@ public class ClassifiedBindingAndPointcutCollection
    /**
     * Adds a binding to this collection.
     */
-   public void add(AdviceBinding binding)
+   public void add(AdviceBinding binding, AspectManager manager)
    {
       lockWrite();
       try
@@ -389,6 +390,7 @@ public class ClassifiedBindingAndPointcutCollection
          addMethodExecution(binding);
          addConstructorCall(binding);
          addMethodCall(binding);
+         updatePointcutStats(binding.getPointcut(), manager);
       }
       finally
       {
@@ -399,13 +401,14 @@ public class ClassifiedBindingAndPointcutCollection
    /**
     * Adds a pointcut to this collection
     */
-   public void add(Pointcut pointcut)
+   public void add(Pointcut pointcut, AspectManager manager)
    {
       lockWrite();
       try
       {
          removePointcut(pointcut.getName());
          addPointcut(pointcut);
+         updatePointcutStats(pointcut, manager);
       }
       finally
       {
@@ -722,4 +725,62 @@ public class ClassifiedBindingAndPointcutCollection
       }
       pointcutInfos.put(pointcut.getName(), new PointcutInfo(pointcut, AspectManager.hasTransformationStarted()));
    }
+   
+   private void updatePointcutStats(Pointcut pointcut, AspectManager manager)
+   {
+      // the following is for performance reasons.
+      if (pointcut instanceof PointcutExpression)
+      {
+         PointcutExpression expr = (PointcutExpression) pointcut;
+         expr.setManager(manager);
+         PointcutStats stats = expr.getStats();
+         updateStats(stats);
+      }
+      else
+      {
+         // can't be sure so set all
+         execution = true;
+         construction = true;
+         call = true;
+         within = true;
+         get = true;
+         set = true;
+         withincode = true;
+      }
+   }
+
+   public void updateStats(PointcutStats stats)
+   {
+      lockWrite();
+      try
+      {
+         if (stats != null)
+         {
+            construction |= stats.isConstruction();
+            execution |= stats.isExecution();
+            call |= stats.isCall();
+            within |= stats.isWithin();
+            get |= stats.isGet();
+            set |= stats.isSet();
+            withincode |= stats.isWithincode();
+         }
+         else
+         {
+            if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Setting all pointcut stats to true");
+            // can't be sure so set all
+            execution = true;
+            construction = true;
+            call = true;
+            within = true;
+            get = true;
+            set = true;
+            withincode = true;
+         }
+      }
+      finally
+      {
+         unlockWrite();
+      }
+   }
+
 }

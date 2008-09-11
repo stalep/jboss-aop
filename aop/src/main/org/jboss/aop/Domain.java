@@ -49,7 +49,6 @@ import org.jboss.aop.pointcut.CFlowStack;
 import org.jboss.aop.pointcut.DynamicCFlow;
 import org.jboss.aop.pointcut.Pointcut;
 import org.jboss.aop.pointcut.PointcutInfo;
-import org.jboss.aop.pointcut.PointcutStats;
 import org.jboss.aop.pointcut.Typedef;
 import org.jboss.aop.pointcut.ast.ClassExpression;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
@@ -1029,17 +1028,17 @@ public class Domain extends AspectManager
       parent.setDynamicAOPStrategy(strategy);
    }
 
-   @Override
-   protected void updatePointcutStats(Pointcut pointcut)
-   {
-      parent.updatePointcutStats(pointcut);
-   }
-
-   @Override
-   protected void updateStats(PointcutStats stats)
-   {
-      parent.updateStats(stats);
-   }
+//   @Override
+//   protected void updatePointcutStats(Pointcut pointcut)
+//   {
+//      parent.updatePointcutStats(pointcut);
+//   }
+//
+//   @Override
+//   protected void updateStats(PointcutStats stats)
+//   {
+//      parent.updateStats(stats);
+//   }
 
    @Override
    public boolean isExecution()
@@ -1281,6 +1280,104 @@ public class Domain extends AspectManager
          }
       }
 
+      @Override
+      public boolean isExecution()
+      {
+         if (super.isExecution())
+         {
+            return true;
+         }
+         if (inheritsBindings)
+         {
+            return parent.isExecution();
+         }
+         return false;
+      }
+
+      @Override
+      public boolean isConstruction()
+      {
+         if (super.isConstruction())
+         {
+            return true;
+         }
+         if (inheritsBindings)
+         {
+            return parent.isConstruction();
+         }
+         return false;
+      }
+
+      @Override
+      public boolean isCall()
+      {
+         if (super.isCall())
+         {
+            return true;
+         }
+         if (inheritsBindings)
+         {
+            return parent.isCall();
+         }
+         return false;
+      }
+
+      @Override
+      public boolean isWithin()
+      {
+         if (super.isWithin())
+         {
+            return true;
+         }
+         if (inheritsBindings)
+         {
+            return parent.isWithin();
+         }
+         return false;
+      }
+
+      @Override
+      public boolean isWithincode()
+      {
+         if (super.isWithincode())
+         {
+            return true;
+         }
+         if (inheritsBindings)
+         {
+            return parent.isWithincode();
+         }
+         return false;
+      }
+
+      @Override
+      public boolean isGet()
+      {
+         if (super.isGet())
+         {
+            return true;
+         }
+         if (inheritsBindings)
+         {
+            return parent.isGet();
+         }
+         return false;
+      }
+
+      @Override
+      public boolean isSet()
+      {
+         if (super.isSet())
+         {
+            return true;
+         }
+         if (inheritsBindings)
+         {
+            return parent.isSet();
+         }
+         return false;
+      }
+      
       private <T> Collection<T> unifyCollections(Collection<T> collection1,
             Collection<T> collection2, boolean prioritizeFirst)
       {
