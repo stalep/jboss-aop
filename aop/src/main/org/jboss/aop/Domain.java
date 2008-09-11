@@ -1027,60 +1027,6 @@ public class Domain extends AspectManager
       parent.setDynamicAOPStrategy(strategy);
    }
 
-//   @Override
-//   protected void updatePointcutStats(Pointcut pointcut)
-//   {
-//      parent.updatePointcutStats(pointcut);
-//   }
-//
-//   @Override
-//   protected void updateStats(PointcutStats stats)
-//   {
-//      parent.updateStats(stats);
-//   }
-
-   @Override
-   public boolean isExecution()
-   {
-      return parent.isExecution();
-   }
-
-   @Override
-   public boolean isConstruction()
-   {
-      return parent.isConstruction();
-   }
-
-   @Override
-   public boolean isCall()
-   {
-      return parent.isCall();
-   }
-
-   @Override
-   public boolean isWithin()
-   {
-      return parent.isWithin();
-   }
-
-   @Override
-   public boolean isWithincode()
-   {
-      return parent.isWithincode();
-   }
-
-   @Override
-   public boolean isGet()
-   {
-      return parent.isGet();
-   }
-
-   @Override
-   public boolean isSet()
-   {
-      return parent.isSet();
-   }
-   
    private class DomainClassifiedBindingAndPointcutCollection extends ClassifiedBindingAndPointcutCollection
    {
       
