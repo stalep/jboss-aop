@@ -28,9 +28,7 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.Domain;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.AOPClassPoolRepository;
-import org.jboss.aop.domain.DomainInitializer;
 import org.jboss.aop.domain.ScopedRepositoryClassLoaderDomain;
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
 import org.jboss.mx.loading.RepositoryClassLoader;
@@ -40,22 +38,12 @@ import org.jboss.mx.loading.RepositoryClassLoader;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class RepositoryClassLoaderScopingPolicy implements AOPClassLoaderScopingPolicy, DomainInitializer
+public class RepositoryClassLoaderScopingPolicy implements AOPClassLoaderScopingPolicy
 {
    Logger log = Logger.getLogger(RepositoryClassLoaderScopingPolicy.class);
    
    /** A map of domains by loader repository, maintaned by the top level AspectManager */
    private Map<Object, Domain> scopedClassLoaderDomains = new WeakHashMap<Object, Domain>();
-
-   public Domain initializeDomain(VFSDeploymentUnit unit)
-   {
-      ClassLoader loader = unit.getClassLoader();
-      Domain domain = getDomain(loader, AspectManager.getTopLevelAspectManager());
-      
-      AspectManager.instance().registerClassLoader(loader); //Ends up in classpool factory create method
-
-      return domain;
-   }
 
    public synchronized Domain getDomain(ClassLoader classLoader, AspectManager parent)
    {
