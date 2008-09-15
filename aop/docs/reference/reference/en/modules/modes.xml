@@ -1,0 +1,220 @@
+<chapter id="insrumentation-modes">
+
+   <title>Instrumentation Modes</title>
+
+   <!-- *********************************** Intro ******************************** -->
+
+   <para>
+         Since it's inception JBoss AOP has introduced different modes of weaving. While
+         the base functionality is the same, the weaving mode introduced in JBoss AOP 2.0.0 allows
+         for more functionality. This chapter will explain a bit about the pros and cons of 
+         the different weaving modes, and what functionalities are offered.
+   </para>
+   <!-- *********************************** Aspect ******************************** -->
+
+   <sect1 id="instrumention-modes-classic" revision="1">
+      <title>Classic Weaving</title>
+      <para>
+         This original weaving mode offers the full basic functionality, and comes in two
+         flavours: 'non-optimized' and 'optimized'.
+      </para>
+      <sect2 id="instrumentation-modes-classic-not-optimized" revision="1">
+         <title>Non-optimized</title>
+         <para>
+            This is the original weaving mode. It generates a minimum amount of woven code, only 
+            modyfying the target joinpoints. However, the the invocation classes end up calling
+            the target joinpoint using reflection. Hence it will have minimum overhead at weaving
+          time, but incur the extra cost of calling via reflection at runtime. 
+         </para>
+         <para>
+            To use not-optimized classic weaving at compile-time, you need to specify the following 
+            parameters to the <literal>aopc</literal> ant task.
+         </para>
+         <itemizedlist>
+            <listitem><literal>optimized</literal> - false</listitem>
+            <listitem><literal>jboss.aop.instrumentor</literal> - org.jboss.aop.instrument.ClassicInstrumentor</listitem>
+         </itemizedlist>
+         <para>
+            An example is shown in the following build.xml snippet. Only the relevant parts are shown.
+         </para>
+         <programlisting><![CDATA[
+   <aopc optimized="false" compilerclasspathref="...">
+      <sysproperty key="jboss.aop.instrumentor" \
+         value="org.jboss.aop.instrument.ClassicInstrumentor"/>
+      ...
+   </aopc>
+         ]]>         
+         </programlisting>
+         <para>
+            To turn this weaving mode on when using load-time weaving, you need to specify the same flags
+            as system properties when running your woven application. Here is an example:
+         </para>
+         <programlisting>
+   java -Djboss.aop.optimized=false \
+      -Djboss.aop.instrumentor=org.jboss.aop.instrument.ClassicInstrumentor \
+      [other aop and classpath settings] MyClass
+         </programlisting>
+      </sect2>          
+      <sect2 id="instrumentation-modes-classic-optimized" revision="1">
+         <title>Optimized</title>
+         <para>
+            This is a development of the original weaving mode. Like the non-optimized flavour, it 
+            modifies the target joinpoints, but in addition it generates an invocation class per woven
+            joinpoint, which calls the target joinpoint normally, avoiding the cost of calling via 
+            reflection. 
+         </para>
+         <para>
+            To use optimized classic weaving at compile-time, you need to specify the following 
+            parameters to the <literal>aopc</literal> ant task.
+         </para>
+         <itemizedlist>
+            <listitem><literal>optimized</literal> - true</listitem>
+            <listitem><literal>jboss.aop.instrumentor</literal> - org.jboss.aop.instrument.ClassicInstrumentor</listitem>
+         </itemizedlist>
+         <para>
+            An example is shown in the following build.xml snippet. Only the relevant parts are shown.
+         </para>
+         <programlisting><![CDATA[
+   <aopc optimized="true" compilerclasspathref="...">
+      <sysproperty key="jboss.aop.instrumentor" \
+         value="org.jboss.aop.instrument.ClassicInstrumentor"/>
+      ...
+   </aopc>
+         ]]>         
+         </programlisting>
+         <para>
+            To turn this weaving mode on when using load-time weaving, you need to specify the same flags
+            as system properties when running your woven application. Here is an example:
+         </para>
+         <programlisting>
+   java -Djboss.aop.optimized=true \
+      -Djboss.aop.instrumentor=org.jboss.aop.instrument.ClassicInstrumentor \
+      [other aop and classpath settings] MyClass
+         </programlisting>
+      </sect2>          
+   </sect1>
+   <sect1 id="instrumention-modes-generated-advisor" revision="1">
+      <title>Generated Advisor Weaving</title>
+      <para>
+         This is the weaving mode that is used by default in JBoss AOP 2.0.x. In addition to generating
+         the invocation classes, it also generates the 'advisors'. These contain the internal 
+         book-keeping code that keeps track of the advice chains for the varoius woven joinpoints). 
+         At runtime, this means that there is less overhead of looking things up. This mode also allows
+         for some new features in JBoss AOP 2.0.x. 
+      </para>
+      <para>
+         This weaving mode is used by default, so you don't have to specify any extra parameters. This may
+         change in future, so for completeness the parameter you would to pass in to the <literal>aopc</literal> 
+         ant task is.
+      </para>
+      <itemizedlist>
+         <listitem><literal>jboss.aop.instrumentor</literal> - org.jboss.aop.instrument.GeneratedAdvisorInstrumentor</listitem>
+      </itemizedlist>
+      <para>
+         An example is shown in the following build.xml snippet. Only the relevant parts are shown.
+      </para>
+      <programlisting><![CDATA[
+   <aopc optimized="true" compilerclasspathref="...">
+      <sysproperty key="jboss.aop.instrumentor" \
+         value="org.jboss.aop.instrument.GeneratedAdvisorInstrumentor"/>
+      ...
+   </aopc>
+         ]]>         
+      </programlisting>
+      <para>
+         Similarly, for load-time weaving, the default is to use this weaving mode. If you were to need
+         to turn it one you would pass in the <literal>GeneratedAdvisorInstrumentor</literal> when
+         starting the JVM:
+      </para>
+      <programlisting>
+   java -Djboss.aop.instrumentor=org.jboss.aop.instrument.GeneratedAdvisorInstrumentor \
+      [other aop and classpath settings] MyClass
+      </programlisting>
+      <para>
+      Now we will look at some of the features that are available using this weaving mode.
+      </para>      
+      <sect2 id="instrumention-modes-generated-advisor-batf" revision="1">
+         <title>Lightweight Aspects</title>
+         <para>
+            The use of the before, after, after-throwing and finally advices as mentioned in the 
+            <link linkend="adv-batf">Advices</link> chapter is only supported in this weaving mode.
+         </para>
+      </sect2>
+      <sect2 id="instrumention-modes-generated-advisor-instance-api" revision="1">
+         <title>Improved Instance API</title>
+         <para>
+            The <link linkend="dyn-4">Improved Instance API</link> is only available in this weaving mode.
+         </para>
+      </sect2>
+      <sect2 id="instrumention-modes-generated-advisor-chain-overriding" revision="1">
+         <title>Chain Overriding of Inherited Methods</title>
+         <para>
+            This will be explained with an example. Consider the following case:
+         </para>
+         <programlisting><![CDATA[
+   public class Base{
+      void test(){}
+   }
+
+   public class Child{
+   }
+
+   public class ChildTest{
+      void test(){}
+   }
+      ]]>         
+         </programlisting>
+         <programlisting><![CDATA[
+   <aop>
+      <prepare expr="execution(* POJO->test())"/>
+      <bind pointcut="execution(* Base->test())">
+         <interceptor class="BaseInterceptor"/>
+      </bind>
+      <bind pointcut="execution(* Child*->test())">
+         <interceptor class="ChildInterceptor"/>
+      </bind>
+   </aop>
+   ]]>
+         </programlisting>
+         <programlisting><![CDATA[
+
+Base base = new Base();                  //1
+Child child = new Child();               //2
+ChildTest childTest = new ChildTest();   //3
+
+base.test();                             //4
+child.test();                            //5
+childTest.test();                        //6
+]]>
+         </programlisting>
+         <para>
+            With the "old" weaving we needed an exact match on methods for advices to get bound, meaning that:
+            <itemizedlist>
+               <listitem>Call 4 would get intercepted by BaseInterceptor</listitem>
+               <listitem>Call 5 would get intercepted by BaseInterceptor</listitem>
+               <listitem>Call 6 would get intercepted by ChildInterceptor</listitem>
+            </itemizedlist>
+            The discrepancy is between calls 5 and 6, we get different behaviour depending on if we have overridden 
+            the method or are just inheriting it, which in turn means we have to have some in-depth knowledge about 
+            our hierarchy of classes and who overrides/inherits what in order to have predictable interception.
+         </para>
+         <para>
+            The new weaving model matches differently, and treats inherited methods the same as overridden methods, so:
+            <itemizedlist>
+               <listitem>Call 4 would get intercepted by BaseInterceptor</listitem>
+               <listitem>Call 5 would get intercepted by ChildInterceptor</listitem>
+               <listitem>Call 6 would get intercepted by ChildInterceptor</listitem>
+            </itemizedlist>
+         </para>
+         <para>
+            Note that for this to work, the parent method <emphasis>MUST</emphasis> be woven. In the previous example
+            <literal>Base.test()</literal> has been prepared.
+         </para>
+      </sect2>
+   </sect1>
+
+</chapter>
+
+
+
+

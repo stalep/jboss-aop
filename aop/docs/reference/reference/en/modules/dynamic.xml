@@ -2,8 +2,8 @@
 
    <title>Dynamic AOP</title>
 
-   <sect1 id="dyn-2" revision="1">
-      <title>Hot Deploment</title>
+   <sect1 id="dyn-1" revision="1">
+      <title>Hot Deployment</title>
       <para>
          With JBoss AOP you can change advice and interceptor bindings at runtime.  You can unregister
          existing bindings, and hot deploy new bindings if the given joinpoints have been instrumented.
@@ -16,7 +16,8 @@
          There is also a runtime API for adding advice bindings at runtime.  Getting an instance of
          <literal>org.jboss.aop.AspectManager.instance()</literal>, you can add your binding.
       </para>
-      <programlisting>      org.jboss.aop.advice.AdviceBinding binding = new AdviceBinding("execution(POJO->new(..))", null);
+      <programlisting>      org.jboss.aop.advice.AdviceBinding binding = 
+                              new AdviceBinding("execution(POJO->new(..))", null);
       binding.addInterceptor(SimpleInterceptor.class);
       AspectManager.instance().addBinding(binding);</programlisting>
       <para>
@@ -28,7 +29,7 @@
       </para>
    </sect1>
 
-   <sect1 id="dyn-3" revision="1">
+   <sect1 id="dyn-2" revision="1">
       <title>Per Instance AOP</title>
       <para>
           Any class that is instrumented by JBoss AOP, is forced to implement the
@@ -66,8 +67,7 @@ public interface Advised extends InstanceAdvised
          interceptors that are added with the
          <literal>insertInterceptor()</literal> method for the given object
          instance are executed first.  Next, those advices/interceptors that were bound using regular
-         <literal>bind</literal>s
-         .  Finally, those interceptors added with the
+         <literal>bind</literal>s.  Finally, those interceptors added with the
          <literal>appendInterceptor()</literal> method to the object
          instance are executed.  You can also reference
          <literal>stack</literal>s and insert/append full stacks
@@ -79,7 +79,7 @@ public interface Advised extends InstanceAdvised
       </para>
    </sect1>
 
-   <sect1 id="dyn-1" revision="1">
+   <sect1 id="dyn-3" revision="1">
       <title>Preparation</title>
       <para>
          Dynamic AOP cannot be used unless the particular joinpoint has been instrumented.  You can force intrumentation
@@ -87,7 +87,108 @@ public interface Advised extends InstanceAdvised
          <literal>prepare</literal> functionality
       </para>
    </sect1>
+   
    <sect1 id="dyn-4" revision="1">
+      <title>Improved Instance API</title>
+      <para>
+         As mentioned, you can add more aspects to a woven class using the 
+         <literal>org.jboss.aop.InstanceAdvisor</literal>. This API is limited to adding
+         interceptors to the existing intereptor chains, so it is a bit limited.
+      </para>
+      <para>
+         The new default weaving mode introduced in JBoss AOP 2.0.0 still allows you access to the 
+         <literal>InstanceAdvisor</literal> interface, but also offers a fuller instance API, which allows you to add bindings,
+         annotation overrides etc. via the normal dynamic AOP API. This is underdocumented,
+         but for a full overview of the capabilites take a look at how 
+         <literal>org.jboss.aop.AspectXmlLoader</literal> interacts with 
+         <literal>org.jboss.aop.AspectManager</literal>. We are working on a new tidier API for 
+         the next version of JBoss AOP. Normally, for dynamic AOP you add 
+         things to the top level <literal>AspectManager</literal>, which means that all instances
+         of all woven classes can be affected.
+      </para>
+      <para>
+         In JBoss AOP 2.0.0, each aspectized class has its own Domain. A domain is a sub-AspectManager. 
+         What is deployed in the main AspectManager is visible to the class's domain, but not vice versa. 
+         Furthermore each advised instance has its own Domain again which is a child of the class's domain. 
+         The Domain class is a sub-class of the AspectManager, meaning you can add ANYTHING supported by 
+         JBoss AOP to it, you are not limited to just interceptors. In the following example we prepare
+         all joinpoints of the POJO class and declare an aspect called <literal>MyAspect</literal>
+      </para>
+      <programlisting><![CDATA[
+   <!-- Weave in the hooks into our POJO class and add the interceptors -->
+   <aop>
+      <aspect class="MyAspect"/>
+      <prepare expr="all(POJO)"/>
+   </aop>
+   ]]>
+         </programlisting>
+         <programlisting><![CDATA[
+   POJO pojo1 = new POJO();
+   POJO pojo2 = new POJO();
+   ]]>
+      </programlisting>
+      <programlisting><![CDATA[
+   pojo1.someMethod();
+   ]]>
+      </programlisting>
+      <para>
+         At this stage, our <literal>POJO</literal> has the hooks woven in for AOP, but now bindings are deployed, so our call 
+         to <literal>POJO.someMethod()</literal> is not intercepted. Next let us add a binding to <literal>POJO</literal>'s class domain.
+      </para>
+      <programlisting><![CDATA[
+   //All woven classes implement the Advised interface
+   Advised classAdvisor = ((Advised)pojo1);
+   //Get the domain used by all instances of POJO
+   AspectManager pojoDomain = classAdvisor._getAdvisor().getManager();
+   //Add a binding with an aspect for that class this is similar to
+   AdviceBinding binding1 = new AdviceBinding("execution(* POJO->someMethod*(..))", null);
+   AspectDefinition myAspect = AspectManager.instance().getAspectDefinition("MyAspect");
+   binding1.addInterceptorFactory(new AdviceFactory(myAspect, "intercept"));
+
+   //Add the binding to POJO's domain
+   pojoDomain.addBinding(binding1);
+
+   pojo1.someMethod();
+   pojo2.someMethod();
+      ]]>
+      </programlisting>
+      <para>
+         Now we have added a binding to <literal>POJO</literal>'s class Domain. Both calls to 
+         <literal>someMethod()</literal> get intercepted by MyAspect
+      </para>
+      <programlisting><![CDATA[
+   //Create an annotation introduction
+   AnnotationIntroduction intro = AnnotationIntroduction.createMethodAnnotationIntroduction(
+         "* POJO->someMethod()",
+         "@MyAnnotation",
+         true);
+
+   //Create another binding
+   AdviceBinding binding2 = new AdviceBinding("execution(* POJO->@MyAnnotation)", null);
+   binding2.addInterceptor(MyInterceptor.class);
+
+   //All woven instances have an instance advisor
+   InstanceAdvisor instanceAdvisor1 = ((Advised)pojo1)._getInstanceAdvisor();
+
+   //The instance advisor has its own domain
+   Domain pojo1Domain = instanceAdvisor1.getDomain();
+
+   //Add the annotation override and binding to the domain
+   pojo1Domain.addAnnotationOverride(intro);
+   pojo1Domain.addBinding(binding2);
+
+   pojo1.someMethod();
+   pojo2.someMethod();
+   ]]>
+      </programlisting>
+      <para>
+         We have added an annotation override and a new binding matching on that annotaton to <literal>pojo1</literal>'s domain, so 
+         when calling <literal>pojo1.someMethod()</literal> this gets intercecpted by <literal>MyAspect</literal>
+         AND <literal>MyInterceptor</literal>. <literal>pojo2.someMethod()</literal> still gets intercepted by MyAspect only.
+      </para>
+   </sect1>
+   
+   <sect1 id="dyn-5" revision="1">
       <title>DynamicAOP with HotSwap</title>
       <para>
 			When running JBoss AOP with HotSwap, the dynamic AOP operations may result in the weaving of
