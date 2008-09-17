@@ -1397,27 +1397,43 @@ public class AspectManager
    {
       Set<Advisor> affectedAdvisors = null;
       AdviceBinding removedBinding = null;
-      synchronized(this)
+      // this locked variable is used in order to avoid breaking the try finally block in two pieces
+      boolean locked = false;
+      try
       {
-         removedBinding = internalRemoveBinding(binding.getName());
-         affectedAdvisors = removedBinding == null ? null : new HashSet<Advisor>(removedBinding.getAdvisors());         
-         bindingCollection.add(binding, this);
-      }
-      synchronized (advisors)
-      {
-         Set<Advisor> handledAdvisors = new HashSet<Advisor>();
-         updateAdvisorsForAddedBinding(binding, handledAdvisors);
-
-         if (affectedAdvisors != null && affectedAdvisors.size() > 0)
+         // EXTREMELY IMPORTANT: get this' lock before the bindingCollection's, or
+         // we will end up with a deadlock
+         synchronized(this)
          {
-            for (Advisor advisor : affectedAdvisors)
+            bindingCollection.lockWrite();
+            locked = true;
+            removedBinding = internalRemoveBinding(binding.getName());
+            affectedAdvisors = removedBinding == null ? null : new HashSet<Advisor>(removedBinding.getAdvisors());         
+            bindingCollection.add(binding, this);
+         }
+         synchronized (advisors)
+         {
+            Set<Advisor> handledAdvisors = new HashSet<Advisor>();
+            updateAdvisorsForAddedBinding(binding, handledAdvisors);
+
+            if (affectedAdvisors != null && affectedAdvisors.size() > 0)
             {
-               if (isAdvisorRegistered(advisor))
-                  advisor.removeAdviceBinding(removedBinding);
+               for (Advisor advisor : affectedAdvisors)
+               {
+                  if (isAdvisorRegistered(advisor))
+                     advisor.removeAdviceBinding(removedBinding);
+               }
             }
          }
+         this.dynamicStrategy.interceptorChainsUpdated();
       }
-      this.dynamicStrategy.interceptorChainsUpdated();
+      finally
+      {
+         if (locked)
+         {
+            bindingCollection.unlockWrite();
+         }
+      }
    }
 
 
