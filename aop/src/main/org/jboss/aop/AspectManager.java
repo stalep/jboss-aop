@@ -707,18 +707,30 @@ public class AspectManager
 
    public synchronized void initialiseClassAdvisor(Class<?> clazz, ClassAdvisor advisor)
    {
-      synchronized (advisors)
+      // avoiding deadlock. Other threads first get the bindignCollection lock
+      // and then the advisors
+      // as we know that the bindingCollection lock will be needed during the 
+      // Advisor.attachClass method execution, we get the lock at this point
+      // making sure we are avoiding the deadlock.
+      bindingCollection.lockRead();
+      try
       {
-         advisors.put(clazz, new WeakReference<Advisor>(advisor));
+         synchronized (advisors)
+         {
+            advisors.put(clazz, new WeakReference<Advisor>(advisor));
+            registerClass(clazz);
+            advisor.attachClass(clazz);
+            InterceptorChainObserver observer = dynamicStrategy.getInterceptorChainObserver(clazz);
+            advisor.setInterceptorChainObserver(observer);
+            if (notificationHandler != null)
+            {
+               notificationHandler.attachClass(clazz.getName());
+            }
+         }
       }
-
-      registerClass(clazz);
-      advisor.attachClass(clazz);
-      InterceptorChainObserver observer = dynamicStrategy.getInterceptorChainObserver(clazz);
-      advisor.setInterceptorChainObserver(observer);
-      if (notificationHandler != null)
+      finally
       {
-         notificationHandler.attachClass(clazz.getName());
+         bindingCollection.unlockRead(false);
       }
    }
 
@@ -1330,11 +1342,19 @@ public class AspectManager
     */
    public synchronized void removeBinding(String name)
    {
-      AdviceBinding binding = internalRemoveBinding(name);
-      if (binding != null)
+      bindingCollection.lockWrite();
+      try
       {
-         binding.clearAdvisors();
-         dynamicStrategy.interceptorChainsUpdated();
+         AdviceBinding binding = internalRemoveBinding(name);
+         if (binding != null)
+         {
+            binding.clearAdvisors();
+            dynamicStrategy.interceptorChainsUpdated();
+         }
+      }
+      finally
+      {
+         bindingCollection.unlockWrite();
       }
    }
 
@@ -2039,22 +2059,14 @@ public class AspectManager
     */
    private synchronized AdviceBinding internalRemoveBinding(String name)
    {
-      bindingCollection.lockWrite();
-      try
+      AdviceBinding binding = bindingCollection.removeBinding(name);
+      if (binding == null)
       {
-         AdviceBinding binding = bindingCollection.removeBinding(name);
-         if (binding == null)
-         {
-            return null;
-         }
-         Pointcut pointcut = binding.getPointcut();
-         this.removePointcut(pointcut.getName());
-         return binding;
+         return null;
       }
-      finally
-      {
-         bindingCollection.unlockWrite();
-      }
+      Pointcut pointcut = binding.getPointcut();
+      this.removePointcut(pointcut.getName());
+      return binding;
    }
 
 //   public void setBindings(LinkedHashMap bindings)
