@@ -1029,440 +1029,263 @@ public class Domain extends AspectManager
 
    private class DomainClassifiedBindingAndPointcutCollection extends ClassifiedBindingAndPointcutCollection
    {
-      
+
       @Override
       public LinkedHashMap<String, AdviceBinding> getBindings()
       {
-         lockRead(true);
-         try
+         LinkedHashMap<String, AdviceBinding> result = super.getBindingsInternal();
+         LinkedHashMap<String, AdviceBinding> parentResult = 
+            inheritsBindings ? parent.getBindingCollection().getBindingsInternal() :
+               UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+         LinkedHashMap<String, AdviceBinding> overall = unifyMaps(result, parentResult, parentFirst);
+         if (overall == result || overall == parentResult)
          {
-            LinkedHashMap<String, AdviceBinding> result = super.getBindingsInternal();
-            LinkedHashMap<String, AdviceBinding> parentResult = 
-               inheritsBindings ?
-                  parent.getBindingCollection().getBindingsInternal() : UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-            LinkedHashMap<String, AdviceBinding> overall = unifyMaps(result, parentResult, parentFirst);
-            if (overall == result || overall == parentResult)
-            {
-               return new LinkedHashMap<String, AdviceBinding>(overall);
-            }
-            return overall;
+            return new LinkedHashMap<String, AdviceBinding>(overall);
          }
-         finally
-         {
-            unlockRead(true);
-         }
-
+         return overall;
       }  
 
       @Override
       public LinkedHashMap<String, Pointcut> getPointcuts()
       {
-         lockRead(true);
-         try
-         {
-            LinkedHashMap<String, Pointcut> result = super.getPointcutsInternal();
-            LinkedHashMap<String, Pointcut> parentResult = 
+         LinkedHashMap<String, Pointcut> result = super.getPointcutsInternal();
+         LinkedHashMap<String, Pointcut> parentResult = 
                inheritsBindings ? 
                      parent.getBindingCollection().getPointcutsInternal() : UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-            LinkedHashMap<String, Pointcut> overall = unifyMaps(result, parentResult, parentFirst);
-            if (overall == result || overall == parentResult)
-            {
-               return new LinkedHashMap<String, Pointcut>(overall);
-            }
-            return overall;
-         }
-         finally
+         LinkedHashMap<String, Pointcut> overall = unifyMaps(result, parentResult, parentFirst);
+         if (overall == result || overall == parentResult)
          {
-            unlockRead(true);
+            return new LinkedHashMap<String, Pointcut>(overall);
          }
+         return overall;
       }
 
       @Override
       public LinkedHashMap<String, PointcutInfo> getPointcutInfos()
       {
-         lockRead(true);
-         try
+         LinkedHashMap<String, PointcutInfo> result = super.getPointcutInfosInternal();
+         LinkedHashMap<String, PointcutInfo> parentResult = 
+            inheritsBindings ?
+                  parent.getBindingCollection().getPointcutInfosInternal() : UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
+         LinkedHashMap<String, PointcutInfo> overall = unifyMaps(result, parentResult, parentFirst);
+         if (overall == result || overall == parentResult)
          {
-            LinkedHashMap<String, PointcutInfo> result = super.getPointcutInfosInternal();
-            LinkedHashMap<String, PointcutInfo> parentResult = 
-               inheritsBindings ?
-                     parent.getBindingCollection().getPointcutInfosInternal() : UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP;
-            LinkedHashMap<String, PointcutInfo> overall = unifyMaps(result, parentResult, parentFirst);
-            if (overall == result || overall == parentResult)
-            {
-               return new LinkedHashMap<String, PointcutInfo>(overall);
-            }
-            return overall;
+            return new LinkedHashMap<String, PointcutInfo>(overall);
          }
-         finally
-         {
-            unlockRead(true);
-         }
+         return overall;
       }
 
 
       @Override
       public Collection<AdviceBinding> getFieldReadBindings()
       {
-         lockRead(true);
-         try
-         {
-            Collection<AdviceBinding> result = super.getFieldReadBindings();
-            Collection<AdviceBinding> parentResult = 
+         Collection<AdviceBinding> result = super.getFieldReadBindings();
+         Collection<AdviceBinding> parentResult = 
                inheritsBindings ?
                      parent.getBindingCollection().getFieldReadBindings() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-            return unifyCollections(result, parentResult, parentFirst);
-         }
-         finally
-         {
-            unlockRead(true);
-         }
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       @Override
       public Collection<AdviceBinding> getFieldWriteBindings()
       {
-         lockRead(true);
-         try
-         {
-            Collection<AdviceBinding> result = super.getFieldWriteBindings();
-            Collection<AdviceBinding> parentResult = 
-               inheritsBindings ?
-                  parent.getBindingCollection().getFieldWriteBindings() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-            return unifyCollections(result, parentResult, parentFirst);
-         }
-         finally
-         {
-            unlockRead(true);
-         }
+         Collection<AdviceBinding> result = super.getFieldWriteBindings();
+         Collection<AdviceBinding> parentResult = 
+            inheritsBindings ? parent.getBindingCollection().getFieldWriteBindings():
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       @Override
       public Collection<AdviceBinding> getConstructionBindings()
       {
-         lockRead(true);
-         try
-         {
-            Collection<AdviceBinding> result = super.getConstructionBindings();
-            Collection<AdviceBinding> parentResult = 
-               inheritsBindings ?
-                     parent.getBindingCollection().getConstructionBindings() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-            return unifyCollections(result, parentResult, parentFirst);
-         }
-         finally
-         {
-            unlockRead(true);
-         }
+         Collection<AdviceBinding> result = super.getConstructionBindings();
+         Collection<AdviceBinding> parentResult = 
+            inheritsBindings ? parent.getBindingCollection().getConstructionBindings() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       @Override
       public Collection<AdviceBinding> getConstructorExecutionBindings()
       {
-         lockRead(true);
-         try
-         {
-            Collection<AdviceBinding> result = super.getConstructorExecutionBindings();
+         Collection<AdviceBinding> result = super.getConstructorExecutionBindings();
             Collection<AdviceBinding> parentResult = 
                inheritsBindings ?
                      parent.getBindingCollection().getConstructorExecutionBindings() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
             return unifyCollections(result, parentResult, parentFirst);
-         }
-         finally
-         {
-            unlockRead(true);
-         }
       }
       
       @Override
       public Collection<AdviceBinding> getMethodExecutionBindings()
       {
-         lockRead(true);
-         try
-         {
-            Collection<AdviceBinding> result = super.getMethodExecutionBindings();
-            Collection<AdviceBinding> parentResult = 
-               inheritsBindings ?
-                     parent.getBindingCollection().getMethodExecutionBindings() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-            return unifyCollections(result, parentResult, parentFirst);
-         }
-         finally
-         { 
-            unlockRead(true);
-         }
+         Collection<AdviceBinding> result = super.getMethodExecutionBindings();
+         Collection<AdviceBinding> parentResult = 
+            inheritsBindings ?
+            parent.getBindingCollection().getMethodExecutionBindings() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       @Override
       public Collection<AdviceBinding> getConstructorCallBindings()
       {
-         lockRead(true);
-         try
-         {
-            Collection<AdviceBinding> result = super.getConstructorCallBindings();
-            Collection<AdviceBinding> parentResult = 
-               inheritsBindings ?
-                     parent.getBindingCollection().getConstructorCallBindings() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-            return unifyCollections(result, parentResult, parentFirst);
-         }
-         finally
-         {
-            unlockRead(true);
-         }
+         Collection<AdviceBinding> result = super.getConstructorCallBindings();
+         Collection<AdviceBinding> parentResult = 
+            inheritsBindings ?
+            parent.getBindingCollection().getConstructorCallBindings() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       @Override
       public Collection<AdviceBinding> getMethodCallBindings()
       {
-         lockRead(true);
-         try
-         {
-            Collection<AdviceBinding> result = super.getMethodCallBindings();
-            Collection<AdviceBinding> parentResult = 
-               inheritsBindings ? 
-                     parent.getBindingCollection().getMethodCallBindings() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-            return unifyCollections(result, parentResult, parentFirst);
-         }
-         finally
-         {
-            unlockRead(true);
-         }
+         Collection<AdviceBinding> result = super.getMethodCallBindings();
+         Collection<AdviceBinding> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getMethodCallBindings() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
 
       public Collection<Pointcut> getFieldReadPointcuts()
       {
-            lockRead(true);
-            try
-            {
-               Collection<Pointcut> result = super.getFieldReadPointcuts();
-               Collection<Pointcut> parentResult = 
-                  inheritsBindings ?
-                        parent.getBindingCollection().getFieldReadPointcuts() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-               return unifyCollections(result, parentResult, parentFirst);
-            }
-            finally
-            { 
-               unlockRead(true);
-            }
+         Collection<Pointcut> result = super.getFieldReadPointcuts();
+         Collection<Pointcut> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getFieldReadPointcuts() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       public Collection<Pointcut> getFieldWritePointcuts()
       {
-            lockRead(true);
-            try
-            {
-               Collection<Pointcut> result = super.getFieldWritePointcuts();
-               Collection<Pointcut> parentResult = 
-                  inheritsBindings ?
-                        parent.getBindingCollection().getFieldWritePointcuts() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-               return unifyCollections(result, parentResult, parentFirst);
-            }
-            finally
-            { 
-               unlockRead(true);
-            }
+         Collection<Pointcut> result = super.getFieldWritePointcuts();
+         Collection<Pointcut> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getFieldWritePointcuts() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       public Collection<Pointcut> getConstructionPointcuts()
       {
-            lockRead(true);
-            try
-            {
-               Collection<Pointcut> result = super.getConstructionPointcuts();
-               Collection<Pointcut> parentResult = 
-                  inheritsBindings ?
-                        parent.getBindingCollection().getConstructionPointcuts() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-               return unifyCollections(result, parentResult, parentFirst);
-            }
-            finally
-            { 
-               unlockRead(true);
-            }
+         Collection<Pointcut> result = super.getConstructionPointcuts();
+         Collection<Pointcut> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getConstructionPointcuts() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       public Collection<Pointcut> getConstructorExecutionPointcuts()
       {
-            lockRead(true);
-            try
-            {
-               Collection<Pointcut> result = super.getConstructorExecutionPointcuts();
-               Collection<Pointcut> parentResult = 
-                  inheritsBindings ?
-                        parent.getBindingCollection().getConstructorExecutionPointcuts() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-               return unifyCollections(result, parentResult, parentFirst);
-            }
-            finally
-            { 
-               unlockRead(true);
-            }
+         Collection<Pointcut> result = super.getConstructorExecutionPointcuts();
+         Collection<Pointcut> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getConstructorExecutionPointcuts() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       public Collection<Pointcut> getMethodExecutionPointcuts()
       {
-            lockRead(true);
-            try
-            {
-               Collection<Pointcut> result = super.getMethodExecutionPointcuts();
-               Collection<Pointcut> parentResult = 
-                  inheritsBindings ?
-                        parent.getBindingCollection().getMethodExecutionPointcuts() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-               return unifyCollections(result, parentResult, parentFirst);
-            }
-            finally
-            { 
-               unlockRead(true);
-            }
+         Collection<Pointcut> result = super.getMethodExecutionPointcuts();
+         Collection<Pointcut> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getMethodExecutionPointcuts() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       public Collection<Pointcut> getConstructorCallPointcuts()
       {
-            lockRead(true);
-            try
-            {
-               Collection<Pointcut> result = super.getConstructorCallPointcuts();
-               Collection<Pointcut> parentResult = 
-                  inheritsBindings ?
-                        parent.getBindingCollection().getConstructorCallPointcuts() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-               return unifyCollections(result, parentResult, parentFirst);
-            }
-            finally
-            { 
-               unlockRead(true);
-            }
+         Collection<Pointcut> result = super.getConstructorCallPointcuts();
+         Collection<Pointcut> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getConstructorCallPointcuts() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       public Collection<Pointcut> getMethodCallPointcuts()
       {
-            lockRead(true);
-            try
-            {
-               Collection<Pointcut> result = super.getMethodCallPointcuts();
-               Collection<Pointcut> parentResult = 
-                  inheritsBindings ?
-                        parent.getBindingCollection().getMethodCallPointcuts() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-               return unifyCollections(result, parentResult, parentFirst);
-            }
-            finally
-            { 
-               unlockRead(true);
-            }
+         Collection<Pointcut> result = super.getMethodCallPointcuts();
+         Collection<Pointcut> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getMethodCallPointcuts() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       public Collection<PointcutInfo> getFieldReadPointcutInfos()
       {
-            lockRead(true);
-            try
-            {
-               Collection<PointcutInfo> result = super.getFieldReadPointcutInfos();
-               Collection<PointcutInfo> parentResult = 
-                  inheritsBindings ?
-                        parent.getBindingCollection().getFieldReadPointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-               return unifyCollections(result, parentResult, parentFirst);
-            }
-            finally
-            { 
-               unlockRead(true);
-            }
+         Collection<PointcutInfo> result = super.getFieldReadPointcutInfos();
+         Collection<PointcutInfo> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getFieldReadPointcutInfos() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       public Collection<PointcutInfo> getFieldWritePointcutInfos()
       {
-            lockRead(true);
-            try
-            {
-               Collection<PointcutInfo> result = super.getFieldWritePointcutInfos();
-               Collection<PointcutInfo> parentResult = 
-                  inheritsBindings ?
-                        parent.getBindingCollection().getFieldWritePointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-               return unifyCollections(result, parentResult, parentFirst);
-            }
-            finally
-            { 
-               unlockRead(true);
-            }
+         Collection<PointcutInfo> result = super.getFieldWritePointcutInfos();
+         Collection<PointcutInfo> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getFieldWritePointcutInfos() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       public Collection<PointcutInfo> getConstructionPointcutInfos()
       {
-            lockRead(true);
-            try
-            {
-               Collection<PointcutInfo> result = super.getConstructionPointcutInfos();
-               Collection<PointcutInfo> parentResult = 
-                  inheritsBindings ?
-                        parent.getBindingCollection().getConstructionPointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-               return unifyCollections(result, parentResult, parentFirst);
-            }
-            finally
-            { 
-               unlockRead(true);
-            }
+         Collection<PointcutInfo> result = super.getConstructionPointcutInfos();
+         Collection<PointcutInfo> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getConstructionPointcutInfos() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       public Collection<PointcutInfo> getConstructorExecutionPointcutInfos()
       {
-            lockRead(true);
-            try
-            {
-               Collection<PointcutInfo> result = super.getConstructorExecutionPointcutInfos();
-               Collection<PointcutInfo> parentResult = 
-                  inheritsBindings ?
-                        parent.getBindingCollection().getConstructorExecutionPointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-               return unifyCollections(result, parentResult, parentFirst);
-            }
-            finally
-            { 
-               unlockRead(true);
-            }
+         Collection<PointcutInfo> result = super.getConstructorExecutionPointcutInfos();
+         Collection<PointcutInfo> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getConstructorExecutionPointcutInfos() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       public Collection<PointcutInfo> getMethodExecutionPointcutInfos()
       {
-            lockRead(true);
-            try
-            {
-               Collection<PointcutInfo> result = super.getMethodExecutionPointcutInfos();
-               Collection<PointcutInfo> parentResult = 
-                  inheritsBindings ?
-                        parent.getBindingCollection().getMethodExecutionPointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-               return unifyCollections(result, parentResult, parentFirst);
-            }
-            finally
-            { 
-               unlockRead(true);
-            }
+         Collection<PointcutInfo> result = super.getMethodExecutionPointcutInfos();
+         Collection<PointcutInfo> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getMethodExecutionPointcutInfos() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       public Collection<PointcutInfo> getConstructorCallPointcutInfos()
       {
-            lockRead(true);
-            try
-            {
-               Collection<PointcutInfo> result = super.getConstructorCallPointcutInfos();
-               Collection<PointcutInfo> parentResult = 
-                  inheritsBindings ?
-                        parent.getBindingCollection().getConstructorCallPointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-               return unifyCollections(result, parentResult, parentFirst);
-            }
-            finally
-            { 
-               unlockRead(true);
-            }
+         Collection<PointcutInfo> result = super.getConstructorCallPointcutInfos();
+         Collection<PointcutInfo> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getConstructorCallPointcutInfos() :
+            UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
       
       public Collection<PointcutInfo> getMethodCallPointcutInfos()
       {
-            lockRead(true);
-            try
-            {
-               Collection<PointcutInfo> result = super.getMethodCallPointcutInfos();
-               Collection<PointcutInfo> parentResult = 
-                  inheritsBindings ?
-                        parent.getBindingCollection().getMethodCallPointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
-               return unifyCollections(result, parentResult, parentFirst);
-            }
-            finally
-            { 
-               unlockRead(true);
-            }
+         Collection<PointcutInfo> result = super.getMethodCallPointcutInfos();
+         Collection<PointcutInfo> parentResult =
+            inheritsBindings ?
+            parent.getBindingCollection().getMethodCallPointcutInfos() : UnmodifiableEmptyCollections.EMPTY_ARRAYLIST;
+         return unifyCollections(result, parentResult, parentFirst);
       }
 
       @Override

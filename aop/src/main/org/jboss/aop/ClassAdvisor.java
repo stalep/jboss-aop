@@ -620,58 +620,50 @@ public class ClassAdvisor extends Advisor
    private void resolveBindings(AspectManager manager)
    {
       ClassifiedBindingAndPointcutCollection bindingCol = manager.getBindingCollection();
-      bindingCol.lockRead(true);
-      try
+      for (AdviceBinding binding: bindingCol.getFieldReadBindings())
       {
-         for (AdviceBinding binding: bindingCol.getFieldReadBindings())
+         if (AspectManager.verbose && logger.isDebugEnabled())
          {
-            if (AspectManager.verbose && logger.isDebugEnabled())
-            {
-               logger.debug("iterate binding " + binding.getName() + " " +
-                     binding.getPointcut().getExpr());
-            }
-            resolveFieldPointcut(fieldReadInfos, fieldReadInterceptors, binding, false);
+            logger.debug("iterate binding " + binding.getName() + " " +
+                  binding.getPointcut().getExpr());
          }
-         for (AdviceBinding binding: bindingCol.getFieldWriteBindings())
-         {
-            if (AspectManager.verbose && logger.isDebugEnabled())
-            {
-               logger.debug("iterate binding " + binding.getName() + " " +
-                     binding.getPointcut().getExpr());
-            }
-            resolveFieldPointcut(fieldWriteInfos, fieldWriteInterceptors, binding, true);
-         }
-         for (AdviceBinding binding: bindingCol.getConstructionBindings())
-         {
-            if (AspectManager.verbose && logger.isDebugEnabled())
-            {
-               logger.debug("iterate binding " + binding.getName() + " " +
-                     binding.getPointcut().getExpr());
-            }
-            resolveConstructionPointcut(binding);
-         }
-         for (AdviceBinding binding: bindingCol.getConstructorExecutionBindings())
-         {
-            if (AspectManager.verbose && logger.isDebugEnabled())
-            {
-               logger.debug("iterate binding " + binding.getName() + " " +
-                     binding.getPointcut().getExpr());
-            }
-            resolveConstructorPointcut(binding);
-         }
-         for (AdviceBinding binding: bindingCol.getMethodExecutionBindings())
-         {
-            if (AspectManager.verbose && logger.isDebugEnabled())
-            {
-               logger.debug("iterate binding " + binding.getName() + " " +
-                     binding.getPointcut().getExpr());
-            }
-            resolveMethodPointcut(binding);
-         }
+         resolveFieldPointcut(fieldReadInfos, fieldReadInterceptors, binding, false);
       }
-      finally
+      for (AdviceBinding binding: bindingCol.getFieldWriteBindings())
       {
-         bindingCol.unlockRead(true);
+         if (AspectManager.verbose && logger.isDebugEnabled())
+         {
+            logger.debug("iterate binding " + binding.getName() + " " +
+                  binding.getPointcut().getExpr());
+         }
+         resolveFieldPointcut(fieldWriteInfos, fieldWriteInterceptors, binding, true);
+      }
+      for (AdviceBinding binding: bindingCol.getConstructionBindings())
+      {
+         if (AspectManager.verbose && logger.isDebugEnabled())
+         {
+            logger.debug("iterate binding " + binding.getName() + " " +
+                  binding.getPointcut().getExpr());
+         }
+         resolveConstructionPointcut(binding);
+      }
+      for (AdviceBinding binding: bindingCol.getConstructorExecutionBindings())
+      {
+         if (AspectManager.verbose && logger.isDebugEnabled())
+         {
+            logger.debug("iterate binding " + binding.getName() + " " +
+                  binding.getPointcut().getExpr());
+         }
+         resolveConstructorPointcut(binding);
+      }
+      for (AdviceBinding binding: bindingCol.getMethodExecutionBindings())
+      {
+         if (AspectManager.verbose && logger.isDebugEnabled())
+         {
+            logger.debug("iterate binding " + binding.getName() + " " +
+                  binding.getPointcut().getExpr());
+         }
+         resolveMethodPointcut(binding);
       }
    }
    

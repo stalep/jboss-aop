@@ -1010,7 +1010,7 @@ public class AspectManager
     * @return
     * @throws Exception
     */
-   public synchronized byte[] translate(String className, ClassLoader loader, byte[] classfileBuffer) throws Exception
+   public byte[] translate(String className, ClassLoader loader, byte[] classfileBuffer) throws Exception
    {
       try
       {
@@ -1018,6 +1018,10 @@ public class AspectManager
          {
             return null;
          }
+         this.bindingCollection.lockRead();
+         try
+         {
+            synchronized(this){
          if (weavingStrategy == null)
          {
             if (TransformerCommon.isCompileTime() || classicOrder)
@@ -1036,6 +1040,11 @@ public class AspectManager
          }
 
          return weavingStrategy.translate(this, className, loader, classfileBuffer);
+         }}
+         finally
+         {
+            this.bindingCollection.unlockRead(false);
+         }
       }
       catch (Exception e)
       {

@@ -145,15 +145,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<AdviceBinding> getFieldReadBindings()
    {
-      lockRead();
-      try
-      {
-         return this.fieldReadBindings;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.fieldReadBindings;
    }
    
    /**
@@ -166,15 +158,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<AdviceBinding> getFieldWriteBindings()
    {
-      lockRead();
-      try
-      {
-         return this.fieldWriteBindings;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.fieldWriteBindings;
    }
    
    /**
@@ -187,15 +171,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<AdviceBinding> getConstructionBindings()
    {
-      lockRead();
-      try
-      {
-         return this.constructionBindings;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.constructionBindings;
    }
    
    /**
@@ -208,15 +184,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<AdviceBinding> getConstructorExecutionBindings()
    {
-      lockRead();
-      try
-      {
-         return this.constructorExecutionBindings;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.constructorExecutionBindings;
    }
    
    /**
@@ -229,15 +197,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<AdviceBinding> getMethodExecutionBindings()
    {
-      lockRead();
-      try
-      {
-         return this.methodExecutionBindings;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.methodExecutionBindings;
    }
    
    /**
@@ -251,15 +211,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<AdviceBinding> getConstructorCallBindings()
    {
-      lockRead();
-      try
-      {
-         return this.constructorCallBindings;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.constructorCallBindings;
    }
    
    /**
@@ -272,15 +224,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<AdviceBinding> getMethodCallBindings()
    {
-      lockRead();
-      try
-      {
-         return this.methodCallBindings;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.methodCallBindings;
    }
 
    /**
@@ -293,15 +237,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<Pointcut> getFieldReadPointcuts()
    {
-      lockRead();
-      try
-      {
-         return this.fieldReadPointcuts;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.fieldReadPointcuts;
    }
    
    /**
@@ -314,15 +250,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<Pointcut> getFieldWritePointcuts()
    {
-      lockRead();
-      try
-      {
-         return this.fieldWritePointcuts;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.fieldWritePointcuts;
    }
    
    /**
@@ -335,15 +263,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<Pointcut> getConstructionPointcuts()
    {
-      lockRead();
-      try
-      {
-         return this.constructionPointcuts;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.constructionPointcuts;
    }
    
    /**
@@ -356,15 +276,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<Pointcut> getConstructorExecutionPointcuts()
    {
-      lockRead();
-      try
-      {
-         return this.constructorExecutionPointcuts;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.constructorExecutionPointcuts;
    }
    
    /**
@@ -377,15 +289,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<Pointcut> getMethodExecutionPointcuts()
    {
-      lockRead();
-      try
-      {
-         return this.methodExecutionPointcuts;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.methodExecutionPointcuts;
    }
    
    /**
@@ -399,15 +303,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<Pointcut> getConstructorCallPointcuts()
    {
-      lockRead();
-      try
-      {
-         return this.constructorCallPointcuts;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.constructorCallPointcuts;
    }
    
    /**
@@ -420,15 +316,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<Pointcut> getMethodCallPointcuts()
    {
-      lockRead();
-      try
-      {
-         return this.methodCallPointcuts;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.methodCallPointcuts;
    }
    
    /**
@@ -441,15 +329,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<PointcutInfo> getFieldReadPointcutInfos()
    {
-      lockRead();
-      try
-      {
-         return this.fieldReadPointcutInfos;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.fieldReadPointcutInfos;
    }
    
    /**
@@ -462,15 +342,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<PointcutInfo> getFieldWritePointcutInfos()
    {
-      lockRead();
-      try
-      {
-         return this.fieldWritePointcutInfos;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.fieldWritePointcutInfos;
    }
    
    /**
@@ -483,15 +355,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<PointcutInfo> getConstructionPointcutInfos()
    {
-      lockRead();
-      try
-      {
-         return this.constructionPointcutInfos;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.constructionPointcutInfos;
    }
    
    /**
@@ -504,15 +368,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<PointcutInfo> getConstructorExecutionPointcutInfos()
    {
-      lockRead();
-      try
-      {
-         return this.constructorExecutionPointcutInfos;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.constructorExecutionPointcutInfos;
    }
    
    /**
@@ -525,15 +381,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<PointcutInfo> getMethodExecutionPointcutInfos()
    {
-      lockRead();
-      try
-      {
-         return this.methodExecutionPointcutInfos;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.methodExecutionPointcutInfos;
    }
    
    /**
@@ -547,15 +395,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<PointcutInfo> getConstructorCallPointcutInfos()
    {
-      lockRead();
-      try
-      {
-         return this.constructorCallPointcutInfos;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.constructorCallPointcutInfos;
    }
    
    /**
@@ -568,15 +408,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Collection<PointcutInfo> getMethodCallPointcutInfos()
    {
-      lockRead();
-      try
-      {
-         return this.methodCallPointcutInfos;
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.methodCallPointcutInfos;
    }
 
    /**
@@ -584,15 +416,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public boolean isEmpty()
    {
-      lockRead();
-      try
-      {
-         return this.bindings.isEmpty();
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return this.bindings.isEmpty();
    }
    
    /**
@@ -601,15 +425,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public LinkedHashMap<String, AdviceBinding> getBindings()
    {
-      lockRead();
-      try
-      {
-         return new UnmodifiableLinkedHashMap<String, AdviceBinding>(bindings);
-      }
-      finally
-      { 
-         unlockRead();
-      }
+      return new UnmodifiableLinkedHashMap<String, AdviceBinding>(bindings);
    }
    
    /**
@@ -619,15 +435,7 @@ public class ClassifiedBindingAndPointcutCollection
    @Deprecated
    public LinkedHashMap<String, AdviceBinding> getBindingsInternal()
    {
-      lockRead();
-      try
-      {
-         return new UnmodifiableLinkedHashMap<String, AdviceBinding>(bindings);
-      }
-      finally
-      { 
-         unlockRead();
-      }
+      return new UnmodifiableLinkedHashMap<String, AdviceBinding>(bindings);
    }
    
    /**
@@ -636,15 +444,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public LinkedHashMap<String, Pointcut> getPointcuts()
    {
-      lockRead();
-      try
-      {
-         return pointcuts;
-      }
-      finally
-      { 
-         unlockRead();
-      }
+      return pointcuts;
    }
    
    /**
@@ -654,15 +454,7 @@ public class ClassifiedBindingAndPointcutCollection
    @Deprecated
    public LinkedHashMap<String, Pointcut> getPointcutsInternal()
    {
-      lockRead();
-      try
-      {
-         return pointcuts;
-      }
-      finally
-      { 
-         unlockRead();
-      }
+      return pointcuts;
    }
    
    /**
@@ -671,15 +463,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public LinkedHashMap<String, PointcutInfo> getPointcutInfos()
    {
-      lockRead();
-      try
-      {
-         return new UnmodifiableLinkedHashMap<String, PointcutInfo>(pointcutInfos);
-      }
-      finally
-      { 
-         unlockRead();
-      }
+      return new UnmodifiableLinkedHashMap<String, PointcutInfo>(pointcutInfos);
    }
    
    /**
@@ -689,15 +473,7 @@ public class ClassifiedBindingAndPointcutCollection
    @Deprecated
    public LinkedHashMap<String, PointcutInfo> getPointcutInfosInternal()
    {
-      lockRead();
-      try
-      {
-         return pointcutInfos;
-      }
-      finally
-      { 
-         unlockRead();
-      }
+      return pointcutInfos;
    }
    
    /**
@@ -705,23 +481,15 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public void add(AdviceBinding binding, AspectManager manager)
    {
-      lockWrite();
-      try
-      {
-         addBinding(binding);
-         addGet(binding);
-         addSet(binding);
-         addConstruction(binding);
-         addConstructorExecution(binding);
-         addMethodExecution(binding);
-         addConstructorCall(binding);
-         addMethodCall(binding);
-         updatePointcutStats(binding.getPointcut(), manager);
-      }
-      finally
-      {
-         unlockWrite();
-      }
+      addBinding(binding);
+      addGet(binding);
+      addSet(binding);
+      addConstruction(binding);
+      addConstructorExecution(binding);
+      addMethodExecution(binding);
+      addConstructorCall(binding);
+      addMethodCall(binding);
+      updatePointcutStats(binding.getPointcut(), manager);
    }
 
    /**
@@ -729,18 +497,10 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public void add(Pointcut pointcut, AspectManager manager)
    {
-      lockWrite();
-      try
-      {
-         removePointcut(pointcut.getName());
-         addPointcut(pointcut);
+      removePointcut(pointcut.getName());
+      addPointcut(pointcut);
 
-         updatePointcutStats(pointcut, manager);
-      }
-      finally
-      {
-         unlockWrite();
-      }
+      updatePointcutStats(pointcut, manager);
    }
    
    /**
@@ -752,44 +512,28 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public AdviceBinding removeBinding(String name)
    {
-      lockWrite();
-      try
+      AdviceBinding binding = bindings.remove(name);
+      if (binding != null)
       {
-         AdviceBinding binding = bindings.remove(name);
-         if (binding != null)
-         {
-            this.fieldReadBindings.remove(binding);
-            this.fieldWriteBindings.remove(binding);
-            this.constructionBindings.remove(binding);
-            this.constructorExecutionBindings.remove(binding);
-            this.methodExecutionBindings.remove(binding);
-            this.constructorCallBindings.remove(binding);
-            this.methodCallBindings.remove(binding);
-         }
-         return binding;
+         this.fieldReadBindings.remove(binding);
+         this.fieldWriteBindings.remove(binding);
+         this.constructionBindings.remove(binding);
+         this.constructorExecutionBindings.remove(binding);
+         this.methodExecutionBindings.remove(binding);
+         this.constructorCallBindings.remove(binding);
+         this.methodCallBindings.remove(binding);
       }
-      finally
-      {
-         unlockWrite();
-      }
+      return binding;
    }
-   
+      
    /**
     * Removes the pointcut and pointcutInfo named {@code name}
     * @param name the name of the pointcut to be removed
     */
    public void removePointcut(String name)
    {
-      lockWrite();
-      try
-      {
-         pointcuts.remove(name);
-         pointcutInfos.remove(name);
-      }
-      finally
-      {
-         unlockWrite();
-      }
+      pointcuts.remove(name);
+      pointcutInfos.remove(name);
    }
    
    /**
@@ -799,15 +543,7 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public Pointcut getPointcut(String name)
    {
-      lockRead();
-      try
-      {
-         return pointcuts.get(name);
-      }
-      finally
-      {
-         unlockRead();
-      }
+      return pointcuts.get(name);
    }
    
    /**
@@ -818,26 +554,18 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public ArrayList<AdviceBinding> removeBindings(ArrayList<String> names)
    {
-      lockWrite();
-      try
+      ArrayList<AdviceBinding> removedBindings = new ArrayList<AdviceBinding>();
+      for (String name: names)
       {
-         ArrayList<AdviceBinding> removedBindings = new ArrayList<AdviceBinding>();
-         for (String name: names)
+         AdviceBinding binding = this.removeBinding(name);
+         if (binding == null)
          {
-            AdviceBinding binding = this.removeBinding(name);
-            if (binding == null)
-            {
-               logger.debug("ClassifiedBindingCollection.removeBindings() no binding found with name " + name);
-               continue;
-            }
-            removedBindings.add(binding);
+            logger.debug("ClassifiedBindingCollection.removeBindings() no binding found with name " + name);
+            continue;
          }
-         return removedBindings;
+         removedBindings.add(binding);
       }
-      finally
-      {
-         unlockWrite();
-      }
+      return removedBindings;
    }
 
    public boolean isExecution()
