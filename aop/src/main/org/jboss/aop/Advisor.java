@@ -1407,6 +1407,7 @@ public abstract class Advisor
                if ((!write && ab.getPointcut().matchesGet(this, field))
                      || (write && ab.getPointcut().matchesSet(this, field)))
                {    
+                  ab.addAdvisor(this);
                   pointcutResolved(fieldInfos[i], ab, new FieldJoinpoint(field));
                }
             }
@@ -1437,6 +1438,7 @@ public abstract class Advisor
                {
                   if (ab.getPointcut().matchesExecution(this, constructor))
                   {
+                     ab.addAdvisor(this);
                      pointcutResolved(constructorInfos[i], ab, new ConstructorJoinpoint(constructor));
                   }
                }
@@ -1467,6 +1469,7 @@ public abstract class Advisor
                {
                   if (binding.getPointcut().matchesConstruction(this, constructor))
                   {
+                     ab.addAdvisor(this);
                      pointcutResolved(constructionInfos[i], ab, new ConstructorJoinpoint(constructor));
                   }
                }
