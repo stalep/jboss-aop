@@ -321,23 +321,4 @@ public class AbstractAspectManagerService
    {
       delegate.setInstrumentor(instrumentor);
    }
-
-//   @Override
-//   public void postRegister(Boolean done)
-//   {
-//      super.postRegister(done);
-//      if (registerHappensAfterStart)
-//      {
-//         try
-//         {
-//            super.create();
-//            super.start();
-//         }
-//         catch (Exception e)
-//         {
-//            throw new RuntimeException(e);
-//         }
-//      }
-//   }
-   
 }
