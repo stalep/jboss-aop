@@ -19,22 +19,31 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.deployment;
+package org.jboss.aop.asintegration.core;
 
-import org.jboss.aop.asintegration.core.AspectManagerServiceDelegate;
-import org.jboss.aop.asintegration.core.AspectManagerServiceDelegateJRockit;
+import org.jboss.aop.standalone.AOPTransformer;
+import org.jboss.aop.standalone.PluggableInstrumentor;
 
 /**
- * AspectManager service meant for use with JRockit or JDK 1.4
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
- * @version $Revision$
+ * @version $Revision: 1.1 $
  */
-public class AspectManagerService extends AbstractAspectManagerService
+public class AspectManagerServiceDelegateJDK5 extends AspectManagerServiceDelegate
 {
-   protected AspectManagerServiceDelegate createDelegate()
+   protected AOPTransformer transformer = new AOPTransformer();
+
+   public AspectManagerServiceDelegateJDK5()
    {
-      return new AspectManagerServiceDelegateJRockit();
    }
 
+   protected void attachTranslator()
+   {
+      PluggableInstrumentor.getInstrumentor().addTransformer(transformer);
+   }
+
+   protected void detachTranslator()
+   {
+      PluggableInstrumentor.getInstrumentor().removeTransformer(transformer);
+   }
 }

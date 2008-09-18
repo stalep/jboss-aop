@@ -21,7 +21,8 @@
 */ 
 package org.jboss.aop.deployers;
 
-import org.jboss.aop.deployment.AspectManagerServiceJDK5;
+import org.jboss.aop.asintegration.core.AspectManagerServiceDelegate;
+import org.jboss.aop.asintegration.core.AspectManagerServiceDelegateJDK5;
 
 /**
  * AspectManager service to be used with JDK 5 and the -javaagent:pluggable-instrumentor.jar switch
@@ -34,6 +35,11 @@ public class AspectManagerJDK5 extends AbstractAspectManager
    public AspectManagerJDK5(String bootstrapXml)
    {
       super(bootstrapXml);
-      super.delegate = new AspectManagerServiceJDK5(null);
+   }
+
+   @Override
+   protected AspectManagerServiceDelegate createDelegate()
+   {
+      return new AspectManagerServiceDelegateJDK5();
    }
 }

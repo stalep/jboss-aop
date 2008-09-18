@@ -23,25 +23,28 @@ package org.jboss.aop.asintegration.jboss4;
 
 import java.io.File;
 
+import javassist.ClassPool;
+import javassist.scopedpool.ScopedClassPool;
+import javassist.scopedpool.ScopedClassPoolFactory;
+import javassist.scopedpool.ScopedClassPoolRepository;
+
 import javax.management.Attribute;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.InvalidAttributeValueException;
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
-import javassist.ClassPool;
-import javassist.scopedpool.ScopedClassPool;
-import javassist.scopedpool.ScopedClassPoolFactory;
-import javassist.scopedpool.ScopedClassPoolRepository;
-
 import org.jboss.aop.AspectManager;
-import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
-import org.jboss.aop.deployment.AspectManagerService;
 import org.jboss.aop.asintegration.JBossIntegration;
+import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
+import org.jboss.aop.domain.ScopedRepositoryClassLoaderDomain;
 import org.jboss.mx.loading.RepositoryClassLoader;
+import org.jboss.mx.server.ServerConstants;
 import org.jboss.mx.util.MBeanServerLocator;
+import org.jboss.mx.util.ObjectNameFactory;
 
 /**
  * JBoss4Integration.<p>
@@ -65,6 +68,8 @@ import org.jboss.mx.util.MBeanServerLocator;
  */
 public class JBoss4Integration implements JBossIntegration, ScopedClassPoolFactory
 {
+   static final ObjectName DEFAULT_LOADER_REPOSITORY = ObjectNameFactory.create(ServerConstants.DEFAULT_LOADER_NAME);
+   
    /** The delegate classpool factory */
    private ScopedClassPoolFactory delegateClassPoolFactory;
    
@@ -101,7 +106,7 @@ public class JBoss4Integration implements JBossIntegration, ScopedClassPoolFacto
       MBeanServer server = MBeanServerLocator.locateJBoss();
       try
       {
-         server.setAttribute(AspectManagerService.DEFAULT_LOADER_REPOSITORY, new Attribute("Translator", mgr));
+         server.setAttribute(DEFAULT_LOADER_REPOSITORY, new Attribute("Translator", mgr));
       }
       catch (InstanceNotFoundException e)
       {
@@ -130,7 +135,7 @@ public class JBoss4Integration implements JBossIntegration, ScopedClassPoolFacto
       MBeanServer server = MBeanServerLocator.locateJBoss();
       try
       {
-         server.setAttribute(AspectManagerService.DEFAULT_LOADER_REPOSITORY, new Attribute("Translator", null));
+         server.setAttribute(DEFAULT_LOADER_REPOSITORY, new Attribute("Translator", null));
       }
       catch (InstanceNotFoundException e)
       {

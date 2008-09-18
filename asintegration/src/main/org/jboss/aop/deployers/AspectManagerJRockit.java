@@ -21,7 +21,8 @@
 */ 
 package org.jboss.aop.deployers;
 
-import org.jboss.aop.deployment.AspectManagerService;
+import org.jboss.aop.asintegration.core.AspectManagerServiceDelegate;
+import org.jboss.aop.asintegration.core.AspectManagerServiceDelegateJRockit;
 
 /**
  * AspectManager service to be used with JRockit and the -Xmanagement:class=org.jboss.aop.hook.JRockitPluggableClassPreProcessor switch
@@ -35,6 +36,11 @@ public class AspectManagerJRockit extends AbstractAspectManager
    public AspectManagerJRockit(String bootstrapXml)
    {
       super(bootstrapXml);
-      super.delegate = new AspectManagerService(null);
+   }
+
+   @Override
+   protected AspectManagerServiceDelegate createDelegate()
+   {
+      return new AspectManagerServiceDelegateJRockit();
    }
 }

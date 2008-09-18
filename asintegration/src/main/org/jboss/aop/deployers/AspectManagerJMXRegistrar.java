@@ -25,7 +25,8 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.StandardMBean;
 
-import org.jboss.aop.deployment.AspectManagerServiceMBean;
+import org.jboss.aop.deployment.AbstractAspectManagerService;
+import org.jboss.aop.deployment.AbstractAspectManagerServiceMBean;
 import org.jboss.logging.Logger;
 
 /**
@@ -56,7 +57,7 @@ public class AspectManagerJMXRegistrar
       try
       {
          log.debug("Registering AspectManagerService in JMX under: " + ASPECTMANAGER_OBJECTNAME);
-         server.registerMBean(new StandardMBean(aspectManager.delegate, AspectManagerServiceMBean.class), new ObjectName(ASPECTMANAGER_OBJECTNAME));
+         server.registerMBean(new StandardMBean(new AbstractAspectManagerService(aspectManager.getDelegate()), AbstractAspectManagerServiceMBean.class), new ObjectName(ASPECTMANAGER_OBJECTNAME));
       }
       catch (Exception e)
       {

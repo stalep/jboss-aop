@@ -19,22 +19,14 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.deployment;
-
-import org.jboss.aop.asintegration.core.AspectManagerServiceDelegate;
-import org.jboss.aop.asintegration.core.AspectManagerServiceDelegateJRockit;
+package org.jboss.aop.asintegration.core;
 
 /**
- * AspectManager service meant for use with JRockit or JDK 1.4
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
- * @version $Revision$
+ * @version $Revision: 1.1 $
  */
-public class AspectManagerService extends AbstractAspectManagerService
+public class AspectManagerServiceDelegateJRockit extends AspectManagerServiceDelegate
 {
-   protected AspectManagerServiceDelegate createDelegate()
-   {
-      return new AspectManagerServiceDelegateJRockit();
-   }
 
 }

@@ -21,34 +21,21 @@
   */
 package org.jboss.aop.deployment;
 
-import org.jboss.aop.standalone.AOPTransformer;
-import org.jboss.aop.standalone.PluggableInstrumentor;
+import org.jboss.aop.asintegration.core.AspectManagerServiceDelegate;
+import org.jboss.aop.asintegration.core.AspectManagerServiceDelegateJDK5;
 
 /**
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision: 57692 $
  */
-public class AspectManagerServiceJDK5 extends AspectManagerService
+public class AspectManagerServiceJDK5 extends AbstractAspectManagerService
 {
    public AspectManagerServiceJDK5()
    {
    }
 
-   public AspectManagerServiceJDK5(String baseXml)
+   protected AspectManagerServiceDelegate createDelegate()
    {
-      super(baseXml);
+      return new AspectManagerServiceDelegateJDK5();
    }
-   
-   protected AOPTransformer transformer = new AOPTransformer();
-
-   protected void attachTranslator()
-   {
-      PluggableInstrumentor.getInstrumentor().addTransformer(transformer);
-   }
-
-   protected void detachTranslator()
-   {
-      PluggableInstrumentor.getInstrumentor().removeTransformer(transformer);
-   }
-
 }
