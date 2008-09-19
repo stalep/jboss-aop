@@ -80,7 +80,8 @@
 
       <!-- Configure modules -->
       <path id="dependentmodule.classpath">
-         <path refid="jboss.aop.classpath"/>
+        <path refid="jboss.aop.classpath"/>
+        <path refid="jboss.pluggable.instrumentor.classpath"/>
       </path>
 
       <!-- ===== -->

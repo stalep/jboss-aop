@@ -1,5 +1,5 @@
 <assembly>
-  <id>jdk50-single</id>
+  <id>single</id>
   <formats>
     <format>jar</format>
   </formats>

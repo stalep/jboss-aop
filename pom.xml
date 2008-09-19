@@ -511,6 +511,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>pluggable-instrumentor</module>
         <module>aop</module>
         <module>aspects</module>
         <module>asintegration</module>
@@ -519,6 +520,7 @@
     <profile>
       <id>ant-integration-build</id>
       <modules>
+        <module>pluggable-instrumentor</module>
         <module>aop</module>
       </modules>
     </profile>

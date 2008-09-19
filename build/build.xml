@@ -277,6 +277,7 @@
   
   <!-- Define a macro for calling maven -->
   <macrodef name="maven">
+      <attribute name="options"/>
       <attribute name="goal" />
       <attribute name="basedir" />
       <element name="args" implicit="true" optional="true" />
@@ -297,7 +298,7 @@
               </classpath>
               <sysproperty key="classworlds.conf" value="${maven.dir}/bin/m2.conf" />
               <sysproperty key="maven.home" value="${maven.dir}" />
-              <arg line="--batch-mode -Pant-integration-build ${thirdparty.maven.opts} @{goal}" />
+              <arg line="--batch-mode -Pant-integration-build @{options} @{goal}" />
           </java>
       </sequential>
   </macrodef> 
@@ -311,7 +312,7 @@
       <property name="maven.dir" value="${basedir}/../tools/maven"/>
       <property name="thirdparty.maven.opts" value=""/>
       
-      <maven basedir="${basedir}/../thirdparty" goal="generate-resources"/>
+      <maven basedir="${basedir}/../thirdparty" options="${thirdparty.maven.opts}" goal="generate-resources"/>
       
       <fail message="Unable to build thirdparty directory.  See maven output for details.">
         <condition>
@@ -327,9 +328,9 @@
    <target name="maven-build-install" depends="createthirdparty">
      
       <property name="maven.dir" value="${basedir}/../tools/maven"/>
-      <property name="thirdparty.maven.opts" value=""/>
+      <property name="build.maven.opts" value=""/>
       
-      <maven basedir="${basedir}/../" goal="install"/>
+      <maven basedir="${basedir}/../" options="${build.maven.opts}" goal="install"/>
       
       <fail message="Unable to build maven modules.  See maven output for details.">
         <condition>
@@ -345,9 +346,9 @@
    <target name="maven-build-clean" depends="createthirdparty">
      
       <property name="maven.dir" value="${basedir}/../tools/maven"/>
-      <property name="thirdparty.maven.opts" value=""/>
+      <property name="build.maven.opts" value=""/>
       
-      <maven basedir="${basedir}/../" goal="clean"/>
+      <maven basedir="${basedir}/../" options="${build.maven.opts}" goal="clean"/>
       
       <fail message="Unable to clean maven modules.  See maven output for details.">
         <condition>

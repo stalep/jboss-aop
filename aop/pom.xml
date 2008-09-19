@@ -8,7 +8,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.aop</groupId>
-  <artifactId>jboss-aop</artifactId>
+  <artifactId>jboss-aop-jdk50</artifactId>
   <packaging>jar</packaging>
   <name>JBoss AOP Framework</name>
   <description>JBoss AOP Framework</description>
@@ -35,6 +35,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
@@ -79,29 +80,6 @@
         <version>2.2-beta-2</version>
         <executions>
           <execution>
-            <id>jdk50</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attached</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/assembly/jdk50.xml</descriptor>
-              </descriptors>
-              <archive>
-                <manifest>
-                  <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                  <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                </manifest>
-                <manifestEntries>
-                  <Implementation-URL>${pom.url}</Implementation-URL>
-                  <Premain-Class>org.jboss.aop.standalone.Agent</Premain-Class>
-                  <Can-Redefine-Classes>true</Can-Redefine-Classes>
-                </manifestEntries>
-              </archive>
-            </configuration>
-          </execution>
-          <execution>
             <id>jdk50-client</id>
             <phase>package</phase>
             <goals>
@@ -109,7 +87,7 @@
             </goals>
             <configuration>
               <descriptors>
-                <descriptor>src/assembly/jdk50-client.xml</descriptor>
+                <descriptor>src/assembly/client.xml</descriptor>
               </descriptors>
               <archive>
                 <manifest>
@@ -125,14 +103,14 @@
             </configuration>
           </execution>
           <execution>
-            <id>pluggable-instrumentor</id>
+            <id>client-sources</id>
             <phase>package</phase>
             <goals>
               <goal>attached</goal>
             </goals>
             <configuration>
               <descriptors>
-                <descriptor>src/assembly/pluggable-instrumentor.xml</descriptor>
+                <descriptor>src/assembly/client-sources.xml</descriptor>
               </descriptors>
               <archive>
                 <manifest>
@@ -141,21 +119,19 @@
                 </manifest>
                 <manifestEntries>
                   <Implementation-URL>${pom.url}</Implementation-URL>
-                  <Premain-Class>org.jboss.aop.standalone.PluggableInstrumentor</Premain-Class>
-                  <Can-Redefine-Classes>true</Can-Redefine-Classes>
                 </manifestEntries>
               </archive>
             </configuration>
           </execution>
           <execution>
-            <id>jdk50-single</id>
+            <id>single</id>
             <phase>package</phase>
             <goals>
               <goal>attached</goal>
             </goals>
             <configuration>
               <descriptors>
-                <descriptor>src/assembly/jdk50-single.xml</descriptor>
+                <descriptor>src/assembly/single.xml</descriptor>
               </descriptors>
               <archive>
                 <manifest>
@@ -190,14 +166,16 @@
                 <copy todir="${basedir}/output/etc">
                   <fileset dir="${basedir}/src/etc"/>
                 </copy>
-                <copy file="${project.build.directory}/jboss-aop-${project.version}-jdk50.jar"
+                <copy file="${project.build.directory}/${project.artifactId}-${project.version}.jar"
                       tofile="${basedir}/output/lib/jboss-aop-jdk50.jar"/>
-                <copy file="${project.build.directory}/jboss-aop-${project.version}-jdk50-client.jar"
+                <copy file="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar"
+                      tofile="${basedir}/output/lib/jboss-aop-jdk50-sources.jar"/>
+                <copy file="${project.build.directory}/${project.artifactId}-${project.version}-client.jar"
                       tofile="${basedir}/output/lib/jboss-aop-jdk50-client.jar"/>
-                <copy file="${project.build.directory}/jboss-aop-${project.version}-jdk50-single.jar"
+                <copy file="${project.build.directory}/${project.artifactId}-${project.version}-client-sources.jar"
+                      tofile="${basedir}/output/lib/jboss-aop-jdk50-client-sources.jar"/>
+                <copy file="${project.build.directory}/${project.artifactId}-${project.version}-single.jar"
                       tofile="${basedir}/output/lib/jboss-aop-jdk50-single.jar"/>
-                <copy file="${project.build.directory}/jboss-aop-${project.version}-pluggable-instrumentor.jar"
-                      tofile="${basedir}/output/lib/pluggable-instrumentor.jar"/>
               </tasks>
             </configuration>
           </execution>
@@ -293,57 +271,75 @@
   </dependencies>
   
   <profiles>
-
-  <!-- The test profiles are currently not working until some maven issues are fixed.
-    -  For now the ant scripts can be used to run the tests.
-    -->
     <profile>
-      <id>javaagent-genadvisor-tests</id>
+      <id>jrockit-build</id>
       <activation>
         <property>
-          <name>all-tests</name>
+          <name>JROCKIT_HOME</name>
         </property>
       </activation>
       <build>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.3</version>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.2</version>
             <executions>
               <execution>
-                <id>javaagent-genadvisor-tests</id>
+                <id>jrockit-compile</id>
                 <goals>
-                  <goal>test</goal>
+                  <goal>run</goal>
                 </goals>
+                <phase>compile</phase>
                 <configuration>
-                  <skip>false</skip>
-                  <includes>
-                    <include>org/jboss/test/aop/**/GenAdvisorOverrideTestCase.java</include>
-                  </includes>
-                  <excludes>
-                    <exclude>org/jboss/test/aop/reflection/ReflectionAspectTester.java</exclude>
-                    <exclude>org/jboss/test/aop/basic/POJOAspectTester.java</exclude>
-                  </excludes>
-                  <argLine>-javaagent:target/jboss-aop-jdk50.jar</argLine>
-                  <systemProperties>
-                    <property>
-                      <name>jboss.aop.path</name>
-                      <value>src/resources/test/override/jboss-aop.xml</value>
-                    </property>
-                    <property>
-                      <name>jboss.aop.class.path</name>
-                      <value></value>
-                    </property>
-                    <property>
-                      <name>jboss.aop.instrumentor</name>
-                      <value>org.jboss.aop.instrument.GeneratedAdvisorInstrumentor</value>
-                    </property>
-                    <property>
-                      <name>jboss-junit-configuration</name>
-                      <value>javaagent-genadvisor-tests</value>
-                    </property>
-                  </systemProperties>
+                  <tasks>
+                    <echo message="${JROCKIT_HOME}"/>
+                    <!-- in older versions of jrockit the weaving stuff lives in managementapi.jar, in newer in management-agent.jar -->
+                    <available file="${JROCKIT_HOME}/jre/lib/managementapi.jar" property="OLD_JROCKIT" value="managementapi.jar"/>
+                    <available file="${JROCKIT_HOME}/jre/lib/management-agent.jar" property="NEW_JROCKIT" value="rt.jar"/>
+                    <condition property="JROCKIT_API_AVAILABLE" value="${OLD_JROCKIT}">
+                      <and>
+                        <isset property="OLD_JROCKIT"/>
+                        <not>
+                          <isset property="NEW_JROCKIT"/>
+                        </not>
+                      </and>
+                    </condition>
+                    <condition property="JROCKIT_API_AVAILABLE" value="${NEW_JROCKIT}">
+                      <and>
+                        <isset property="NEW_JROCKIT"/>
+                        <not>
+                          <isset property="OLD_JROCKIT"/>
+                        </not>
+                      </and>
+                    </condition>
+                    <path id="javac.jrockit.classpath">
+                      <path refid="maven.compile.classpath"/>
+                      <path path="${JROCKIT_HOME}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
+                    </path>
+    
+                    <property name="build.compiler" value="extJavac"/>
+                    <fail unless="JROCKIT_API_AVAILABLE"> 
+                      JRockit API Not Available.  Skipping JRockit compile. 
+                    </fail>
+                    <javac destdir="${project.build.outputDirectory}"
+                       target="1.4"
+                       source="1.4">
+                       <src path="${project.build.sourceDirectory}"/>
+                       <include name="org/jboss/aop/hook/JRockit*"/>
+                       <classpath refid="javac.jrockit.classpath"/>
+                    </javac>
+                    <mkdir dir="${basedir}/output"/>
+                    <mkdir dir="${basedir}/output/lib"/>
+                    <jar jarfile="${basedir}/output/lib/jrockit-pluggable-instrumentor.jar"
+                         manifest="${basedir}/src/etc/default.mf">
+                       <fileset dir="${project.build.outputDirectory}">
+                          <include name="org/jboss/aop/hook/JRockitPluggableClassPreProcessor.class"/>
+                          <include name="org/jboss/aop/hook/JDK14*.class"/>
+                       </fileset>
+                       <fileset file ="${basedir}/src/etc/jbossorg-eula.txt"/>
+                    </jar>
+                  </tasks>
                 </configuration>
               </execution>
             </executions>
@@ -351,5 +347,7 @@
         </plugins>
       </build>
     </profile>
+    
   </profiles>
+  
 </project>

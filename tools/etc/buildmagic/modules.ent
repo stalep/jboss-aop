@@ -8,5 +8,9 @@
 </path>
 <path id="jboss.aop.classpath">
   <pathelement path="${jboss.aop.lib}/jboss-aop-jdk50.jar"/>
-  <pathelement path="${jboss.aop.lib}/pluggable-instrumentor.jar"/>
+</path>
+<!-- Pluggable Instrumentor -->
+<property name="jboss.pluggable.instrumentor.lib" value="${project.root}/pluggable-instrumentor/target"/>
+<path id="jboss.pluggable.instrumentor.classpath">
+  <pathelement path="${jboss.pluggable.instrumentor.lib}/pluggable-instrumentor.jar"/>
 </path>
