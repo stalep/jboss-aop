@@ -15,8 +15,6 @@
   
   <build>
     
-    <sourceDirectory>src/main</sourceDirectory>
-    
     <plugins>
       <plugin>
         <groupId>org.jboss.maven.plugins</groupId>
@@ -36,7 +34,7 @@
                 <scope>compile</scope>
                 <scope>test</scope>
               </includedScopes>
-              <copySources>${copySourceJars}</copySources>
+              <copySources>true</copySources>
             </configuration>
           </execution>
         </executions>
@@ -597,19 +595,15 @@
                 <goals>
                   <goal>sources</goal>
                 </goals>
+                <configuration>
+                  <silent>true</silent>
+                </configuration>
               </execution>
             </executions>
           </plugin>
         </plugins>
       </build>
-      <properties>
-        <copySourceJars>true</copySourceJars>
-      </properties>
     </profile>
   </profiles>
-  
-  <properties>
-    <copySourceJars>false</copySourceJars>
-  </properties>
   
 </project>

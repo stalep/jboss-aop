@@ -36,6 +36,34 @@
     <version.xdoclet>1.2.3</version.xdoclet>
   </properties>
   
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.0-alpha-3</version>
+        <executions>
+          <execution>
+            <id>enforce-versions</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>2.0.9</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>1.5</version>
+                </requireJavaVersion>           
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -349,11 +377,23 @@
         <groupId>org.jboss.jbossas</groupId>
         <artifactId>jboss-as-jmx</artifactId>
         <version>${version.org.jboss.jbossas}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.jboss.test</groupId>
+            <artifactId>jboss-test</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.jboss.jbossas</groupId>
         <artifactId>jboss-as-system-jmx</artifactId>
         <version>${version.org.jboss.jbossas}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.jboss.aop</groupId>
+            <artifactId>jboss-aop-jdk50</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.jboss.logging</groupId>
@@ -466,7 +506,7 @@
   
   <profiles>
     <profile>
-      <id>default-modules</id>
+      <id>default-build</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -477,9 +517,9 @@
       </modules>
     </profile>
     <profile>
-      <id>ant-integration-modules</id>
+      <id>ant-integration-build</id>
       <modules>
-        <module>thirdparty</module>
+        <module>aop</module>
       </modules>
     </profile>
   </profiles>

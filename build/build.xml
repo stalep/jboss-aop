@@ -79,7 +79,7 @@
     <moduleconfig property="modules" selected="${groups}">
 
       <!-- Modules -->
-      <module name="aop"/>
+      <!--<module name="aop"/>-->
       <module name="asintegration"/>
       <module name="aspects"/>
 
@@ -93,7 +93,7 @@
       </group>
 
       <group name="core">
-         <include modules="aop"/>
+         <!--<include modules="aop"/>-->
          <include modules="asintegration"/>
          <include modules="aspects"/>
       </group>
@@ -250,7 +250,7 @@
   <!-- ================================================================== -->
 
   <!-- Clean up all build output -->
-  <target name="clean" depends="createthirdparty,_buildmagic:clean, modules-clean"
+  <target name="clean" depends="createthirdparty,maven-build-clean,_buildmagic:clean, modules-clean"
 	  description="Cleans up most generated files.">
      <delete dir="output"/>
   </target>
@@ -269,15 +269,13 @@
   <target name="main" depends="most"
 	  description="Executes the default target (most)."/>
 
-  <target name="most" depends="createthirdparty, modules-most, install"
+  <target name="most" depends="createthirdparty, maven-build-install, modules-most, install"
 	  description="Executes all modules and builds most everything."/>
 
   <target name="help" depends="_buildmagic:help:build"
           description="Show this help message."/>
-   <!-- create the thirdparty folder from items in the repository -->
-   <!-- then generate a new libraries.ent file and include it in  -->
-   <!-- the build                                                 -->
   
+  <!-- Define a macro for calling maven -->
   <macrodef name="maven">
       <attribute name="goal" />
       <attribute name="basedir" />
@@ -299,20 +297,59 @@
               </classpath>
               <sysproperty key="classworlds.conf" value="${maven.dir}/bin/m2.conf" />
               <sysproperty key="maven.home" value="${maven.dir}" />
-              <arg line="--batch-mode ${thirdparty.maven.opts} @{goal}" />
+              <arg line="--batch-mode -Pant-integration-build ${thirdparty.maven.opts} @{goal}" />
           </java>
       </sequential>
   </macrodef> 
 
+   <!-- create the thirdparty folder from items in the repository -->
+   <!-- then generate a new libraries.ent file and include it in  -->
+   <!-- the build                                                 -->
    <target name="createthirdparty" unless="inhibit.downloads"
       depends="check.inhibit.downloads, set.proxy">
      
       <property name="maven.dir" value="${basedir}/../tools/maven"/>
       <property name="thirdparty.maven.opts" value=""/>
       
-      <maven basedir="${basedir}/../thirdparty" goal="package"/>
+      <maven basedir="${basedir}/../thirdparty" goal="generate-resources"/>
       
       <fail message="Unable to build thirdparty directory.  See maven output for details.">
+        <condition>
+          <not>
+            <equals arg1="${maven.result}" arg2="0"/>
+          </not>
+        </condition>
+      </fail>
+      
+   </target>
+
+   <!-- Run the maven part of the build -->
+   <target name="maven-build-install" depends="createthirdparty">
+     
+      <property name="maven.dir" value="${basedir}/../tools/maven"/>
+      <property name="thirdparty.maven.opts" value=""/>
+      
+      <maven basedir="${basedir}/../" goal="install"/>
+      
+      <fail message="Unable to build maven modules.  See maven output for details.">
+        <condition>
+          <not>
+            <equals arg1="${maven.result}" arg2="0"/>
+          </not>
+        </condition>
+      </fail>
+      
+   </target>
+
+   <!-- Clean the maven part of the build -->
+   <target name="maven-build-clean" depends="createthirdparty">
+     
+      <property name="maven.dir" value="${basedir}/../tools/maven"/>
+      <property name="thirdparty.maven.opts" value=""/>
+      
+      <maven basedir="${basedir}/../" goal="clean"/>
+      
+      <fail message="Unable to clean maven modules.  See maven output for details.">
         <condition>
           <not>
             <equals arg1="${maven.result}" arg2="0"/>
