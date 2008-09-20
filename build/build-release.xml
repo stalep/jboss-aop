@@ -132,7 +132,7 @@
       <!-- TODO I would like to call this  jboss-aop-deployer.jar instead, and update name in appserver trunk -->
       <property name="aop.as5-deployer.location" value="${project.root}/asintegration/output/lib/jboss-aop-deployer-jdk50.jar"/>
       <property name="aop.jrockit-pluggable-instrumentor.location" value="${project.root}/aop/output/lib/jrockit-pluggable-instrumentor.jar"/>
-      <property name="aop.pluggable-instrumentor.location" value="${project.root}/aop/output/lib/pluggable-instrumentor.jar"/>
+      <property name="aop.pluggable-instrumentor.location" value="${project.root}/pluggable-instrumentor/target/pluggable-instrumentor.jar"/>
       <property name="aop.readme-as4.location" value="${project.root}/asintegration/src/etc/ReadMe-AS4.txt"/>
       <property name="aop.readme-as5.location" value="${project.root}/asintegration/src/etc/ReadMe-AS5.txt"/>
       <property name="aop.jboss-service.location" value="${project.root}/asintegration/src/resources/META-INF/jboss-service.xml"/>

@@ -215,7 +215,7 @@
 
    <target name="release"
       description="Builds the default release structure."
-      depends="init, clean, modules-release, aop.reference.docs"
+      depends="init, clean, maven-build-install, modules-release, aop.reference.docs"
       >
       <ant antfile="build-release.xml" target="release-no-reference-docs"/>
       <ant antfile="build-release.xml" target="release-reference-docs"/>
