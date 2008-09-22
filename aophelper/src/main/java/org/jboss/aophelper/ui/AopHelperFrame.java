@@ -24,14 +24,16 @@ package org.jboss.aophelper.ui;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import org.jboss.aophelper.ui.compile.CompileMediator;
 import org.jboss.aophelper.ui.compile.CompilerPane;
+import org.jboss.aophelper.ui.run.RunPane;
 
 /**
  * A AopHelperFrame.
@@ -45,36 +47,46 @@ public class AopHelperFrame extends JFrame
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
    private JFileChooser fc;
+   private CompilerPane compilerPane;
+   private RunPane runPane;
+   
    
    public AopHelperFrame()
    {
-      super("AopHelper");
+      super("JBoss AOP Helper");
+      AopHelperMediator.instance().setMainPane(this);
+      
       setup();
    }
    
    private void setup()
    {
-      // set an icon on the main widget
-//    setIconImage(Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/gicon.jpg")));
+      // override the default, and call mediator's quit()
+      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+      addWindowListener(new WindowAdapter() {
+         @Override
+         public void windowClosing(WindowEvent e) {
+            AopHelperMediator.instance().quit();
+         }
+      });
 
-      setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-//      getContentPane().setLayout(new FlowLayout());
-//      getContentPane().add(new CompilerPane());
-      setContentPane(new CompilerPane());
+      compilerPane = new CompilerPane();
+      runPane = new RunPane();
+//      setContentPane(compilerPane);
+      AopHelperMediator.instance().setMenuBar(new AopHelperMenuBar());
+      setJMenuBar(AopHelperMediator.instance().getMenuBar());
       
       setSize(1024, 768);
-//      setSize(600, 400);
       
       setLocation();
       setVisible(true);
 
-      CompileMediator.instance().setHelperFrame(this);
+      AopHelperMediator.instance().setMainPane(this);
       fc = new JFileChooser();
       fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
       fc.setMultiSelectionEnabled(true);
       
-      
+      setCompilerMode();
    }
    
    public void setLocation() {
@@ -112,8 +124,6 @@ public class AopHelperFrame extends JFrame
        if (returnVal == JFileChooser.APPROVE_OPTION) 
        {
            File[] files = fc.getSelectedFiles();
-           //This is where a real application would save the file.
-          System.out.println("Saving: " + files[0].getAbsolutePath());
           return files;
        } 
        else 
@@ -123,6 +133,20 @@ public class AopHelperFrame extends JFrame
        }
     }
 
+    public void setRunMode()
+    {
+       setContentPane(runPane);
+       AopHelperMediator.instance().getMenuBar().setRunMode();
+       pack();
+    }
+    
+    public void setCompilerMode()
+    {
+       setContentPane(compilerPane);
+       AopHelperMediator.instance().getMenuBar().setCompileMode();
+       pack();
+    }
+    
     public static void main(String[] args)
     {
        new AopHelperFrame();

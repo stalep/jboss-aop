@@ -19,58 +19,72 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.aophelper.ui.compile;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+package org.jboss.aophelper.ui;
 
 /**
- * A OutputPane.
+ * A AopHelperMediator.
  * 
  * @author <a href="stalep@gmail.com">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-public class OutputPane extends JPanel
+public class AopHelperMediator
 {
-   
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 1L;
 
-   private JTextArea outputArea;
-   public OutputPane()
+   private static final AopHelperMediator mediator = new AopHelperMediator();
+   private AopHelperMenuBar menuBar;
+   private AopHelperFrame mainPane;
+   
+   private AopHelperMediator()
    {
-      init();
    }
    
-   private void init()
+   public static AopHelperMediator instance()
    {
-      CompileMediator.instance().setOutputPane(this);
-      
-      setBackground(Color.white);
-      setLayout(new FlowLayout());
-      
-      outputArea = new JTextArea();
-      outputArea.setText("logs from the aopcompile will be seen here");
-      outputArea.setLineWrap(true);
-      outputArea.setWrapStyleWord(true);
-      outputArea.setEditable(false);
-      JScrollPane longScroll = new JScrollPane(outputArea);
-      longScroll.setVisible(true);
-      longScroll.setPreferredSize(new Dimension(1020, 270));
-      
-      add(longScroll, BorderLayout.CENTER);
-
+      return mediator;
    }
    
-   public void setText(String text)
+   public void quit()
    {
-      outputArea.setText(text);
+      System.exit(0);
    }
 
+   /**
+    * Get the menuBar.
+    * 
+    * @return the menuBar.
+    */
+   public AopHelperMenuBar getMenuBar()
+   {
+      return menuBar;
+   }
+
+   /**
+    * Set the menuBar.
+    * 
+    * @param menuBar The menuBar to set.
+    */
+   public void setMenuBar(AopHelperMenuBar menuBar)
+   {
+      this.menuBar = menuBar;
+   }
+
+   /**
+    * Get the mainPane.
+    * 
+    * @return the mainPane.
+    */
+   public AopHelperFrame getMainPane()
+   {
+      return mainPane;
+   }
+
+   /**
+    * Set the mainPane.
+    * 
+    * @param mainPane The mainPane to set.
+    */
+   public void setMainPane(AopHelperFrame mainPane)
+   {
+      this.mainPane = mainPane;
+   }
 }

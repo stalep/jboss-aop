@@ -21,6 +21,10 @@
   */
 package org.jboss.aophelper.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 /**
  * A CommandUtil.
  * 
@@ -61,5 +65,48 @@ public class CommandUtil
       
       return aopPaths.toString();
    }
+   
+
+   public static String analyzeProcess(Process process)
+   {
+      BufferedReader br = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
+
+      String line; 
+
+      StringBuffer output = new StringBuffer();
+
+      try
+      {
+         while ( ( line = br.readLine() ) != null )
+         {
+            System.out.println("line: "+line);
+            output.append("\n").append(line);
+         }
+      }
+      catch (IOException e)
+      {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      }
+      
+      BufferedReader errorBr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+      try
+      {
+         while(( line = errorBr.readLine()) != null)
+         {
+            System.out.println("ERROR: "+line);
+         }
+      }
+      catch(IOException e)
+      {
+         e.printStackTrace();
+      }
+      
+      System.out.println("INPUTSTREAM: "+output.toString());
+
+      return output.toString();
+   }
+      
+    
 
 }

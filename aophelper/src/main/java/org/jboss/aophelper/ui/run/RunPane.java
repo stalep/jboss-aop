@@ -19,7 +19,7 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.aophelper.ui.compile;
+package org.jboss.aophelper.ui.run;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -28,24 +28,28 @@ import java.awt.FlowLayout;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import org.jboss.aophelper.ui.compile.classpath.ClasspathPane;
-import org.jboss.aophelper.ui.compile.options.CompileOptionsPane;
-import org.jboss.aophelper.ui.compile.xml.XmlPane;
+import org.jboss.aophelper.ui.run.classpath.RunClasspathPane;
+import org.jboss.aophelper.ui.run.options.RunOptionsPane;
+import org.jboss.aophelper.ui.run.xml.RunXmlPane;
 
 /**
- * A CompilerFrame.
+ * A RunPane.
  * 
- * @author <a href="stale.pedersen@jboss.org">Stale W. Pedersen</a>
+ * @author <a href="stalep@gmail.com">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-public class CompilerPane extends JPanel
+public class RunPane extends JPanel
 {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
-   
-   public CompilerPane()
+
+   public RunPane()
    {
+//      Dimension size = new Dimension(1024, 768);
+//      this.setPreferredSize(size);
+//      this.setLayout(new FlowLayout());
+
       Dimension size = new Dimension(1024, 768);
       this.setPreferredSize(size);
       this.setLayout(new FlowLayout());
@@ -54,19 +58,18 @@ public class CompilerPane extends JPanel
       setupPanel.setPreferredSize(new Dimension(1024,450));
       
     
-      JSplitPane mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, setupPanel, new OutputPane());
+      JSplitPane mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, setupPanel, new RunOutputPane());
       mainSplitPane.setPreferredSize(size);
       
       //setupPanel
       JPanel tablePane = new JPanel(new BorderLayout());
-      JSplitPane setupSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePane, new CompileOptionsPane());
+      JSplitPane setupSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePane, new RunOptionsPane());
       setupPanel.add(setupSplit, BorderLayout.NORTH);
       setupSplit.setPreferredSize(new Dimension(1024, 450));
-      JSplitPane tableSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new ClasspathPane(), new XmlPane());
+      JSplitPane tableSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new RunClasspathPane(), new RunXmlPane());
       tablePane.add(tableSplit, BorderLayout.NORTH);
       tableSplit.setPreferredSize(new Dimension(500, 450));
       
       add(mainSplitPane);
    }
-
 }

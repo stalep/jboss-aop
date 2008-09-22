@@ -19,58 +19,42 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.aophelper.ui.compile;
+package org.jboss.aophelper.ui.run.xml;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 /**
- * A OutputPane.
+ * A RunXmlPane.
  * 
  * @author <a href="stalep@gmail.com">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-public class OutputPane extends JPanel
+public class RunXmlPane extends JPanel
 {
-   
+
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
-
-   private JTextArea outputArea;
-   public OutputPane()
+   
+   public RunXmlPane()
    {
       init();
    }
    
    private void init()
    {
-      CompileMediator.instance().setOutputPane(this);
+      setLayout(new BorderLayout());
       
-      setBackground(Color.white);
-      setLayout(new FlowLayout());
+      RunXmlTablePane xmlTable = new RunXmlTablePane();
+      RunXmlEditPane xmlEditPane = new RunXmlEditPane();
       
-      outputArea = new JTextArea();
-      outputArea.setText("logs from the aopcompile will be seen here");
-      outputArea.setLineWrap(true);
-      outputArea.setWrapStyleWord(true);
-      outputArea.setEditable(false);
-      JScrollPane longScroll = new JScrollPane(outputArea);
-      longScroll.setVisible(true);
-      longScroll.setPreferredSize(new Dimension(1020, 270));
-      
-      add(longScroll, BorderLayout.CENTER);
+      add(xmlEditPane, BorderLayout.NORTH);
+      add(xmlTable, BorderLayout.CENTER);
 
-   }
-   
-   public void setText(String text)
-   {
-      outputArea.setText(text);
+      Dimension size = new Dimension(500, 200);
+      setPreferredSize(size);
    }
 
 }

@@ -19,7 +19,7 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.aophelper.ui.compile.options;
+package org.jboss.aophelper.ui.run.options;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -41,30 +41,30 @@ import org.jboss.aophelper.annotation.AopHelperAction;
 import org.jboss.aophelper.core.Action;
 import org.jboss.aophelper.core.AopOption;
 import org.jboss.aophelper.core.AopState;
-import org.jboss.aophelper.ui.compile.CompileMediator;
+import org.jboss.aophelper.ui.run.RunMediator;
 
 /**
- * A CompileOptionsPane.
+ * A RunOptionsPane.
  * 
  * @author <a href="stalep@gmail.com">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-public class CompileOptionsPane extends JPanel
+public class RunOptionsPane extends JPanel
 {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
 
-   private JCheckBox verbose, suppress, noopt;
-   private JTextField workingdir;
-   public CompileOptionsPane()
+   private JCheckBox verbose, suppress, noopt, loadtime;
+   private JTextField workingdir, executionClass;
+   public RunOptionsPane()
    {
       init();
    }
    
    private void init()
    {
-      CompileMediator.instance().setCompileOptionsPane(this);
+      RunMediator.instance().setRunOptionsPane(this);
       setLayout(new BorderLayout());
       
 //      JLabel heading = new JLabel("Settings");
@@ -75,6 +75,7 @@ public class CompileOptionsPane extends JPanel
       verbose.setSelected(true);
       suppress = new JCheckBox("Suppress");
       noopt = new JCheckBox("Not optimize");
+      loadtime = new JCheckBox("Instrument classes loadtime");
       verbose.addItemListener(new ItemListener() {
          public void itemStateChanged(ItemEvent ie)
          {
@@ -105,6 +106,16 @@ public class CompileOptionsPane extends JPanel
          }
       });
       
+      loadtime.addItemListener(new ItemListener() {
+         public void itemStateChanged(ItemEvent ie)
+         {
+            if(ie.getStateChange() == ItemEvent.SELECTED)
+               setLoadtime();
+            else
+               clearLoadtime();
+         }
+      });
+      
      JPanel checkBoxPanel = new JPanel(new GridLayout(0,1));
      JLabel checkHeading = new JLabel("Optional Settings:");
      checkBoxPanel.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -112,24 +123,25 @@ public class CompileOptionsPane extends JPanel
      checkBoxPanel.add(verbose);
      checkBoxPanel.add(suppress);
      checkBoxPanel.add(noopt);
+     checkBoxPanel.add(loadtime);
       
      add(checkBoxPanel, BorderLayout.NORTH);
 //     Dimension minSize = new Dimension(300, 300);
 //     setMinimumSize(minSize);
      
-     JButton compile = new JButton("Compile!");
+     JButton compile = new JButton("Run!");
      compile.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent event) 
         {
-           System.out.println("COMPILING!");
-           compile();
+           System.out.println("RUNNING!");
+           run();
         }
      });
      
      JPanel workingdirPanel = new JPanel(new FlowLayout());
-     workingdir = new JTextField("must select the working director", 20);
+     workingdir = new JTextField("must set the working directory", 20);
      workingdir.setEditable(false);
-     JLabel workingLabel = new JLabel("Set the working directory");
+     JLabel workingLabel = new JLabel("Set the working directory ");
      workingLabel.setLabelFor(workingdir);
      workingdirPanel.add(workingLabel);
      workingdirPanel.add(workingdir);
@@ -142,7 +154,27 @@ public class CompileOptionsPane extends JPanel
      });
      workingdirPanel.add(workingdirButton);
      
-     add(workingdirPanel, BorderLayout.CENTER);
+     JPanel exeClassPanel = new JPanel(new FlowLayout());
+     executionClass = new JTextField("must set the execution class", 20);
+     executionClass.setEditable(false);
+     JLabel executionLabel = new JLabel("Set the execution class");
+     executionLabel.setLabelFor(executionClass);
+     exeClassPanel.add(executionLabel);
+     exeClassPanel.add(executionClass);
+     JButton executionButton = new JButton("Set execution class");
+     executionButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent event)
+        {
+           setExecutionClass();
+        }
+     });
+     exeClassPanel.add(executionButton);
+     
+     JPanel settingPanel = new JPanel(new FlowLayout());
+     settingPanel.add(workingdirPanel);
+     settingPanel.add(exeClassPanel);
+     
+     add(settingPanel, BorderLayout.CENTER);
      
      
      add(compile, BorderLayout.SOUTH);
@@ -150,7 +182,7 @@ public class CompileOptionsPane extends JPanel
    
    @AopHelperAction(
          action=Action.ADD, 
-         state=AopState.COMPILE, 
+         state=AopState.RUN, 
          option=AopOption.VERBOSE)
    private void addVerbose()
    {
@@ -158,7 +190,7 @@ public class CompileOptionsPane extends JPanel
    
    @AopHelperAction(
          action=Action.REMOVE, 
-         state=AopState.COMPILE, 
+         state=AopState.RUN, 
          option=AopOption.VERBOSE)
    private void removeVerbose()
    {
@@ -166,7 +198,7 @@ public class CompileOptionsPane extends JPanel
    
    @AopHelperAction(
          action=Action.ADD, 
-         state=AopState.COMPILE, 
+         state=AopState.RUN, 
          option=AopOption.SUPPRESS)
    private void addSuppress()
    {
@@ -174,7 +206,7 @@ public class CompileOptionsPane extends JPanel
    
    @AopHelperAction(
          action=Action.REMOVE, 
-         state=AopState.COMPILE, 
+         state=AopState.RUN, 
          option=AopOption.SUPPRESS)
    private void removeSuppress()
    {
@@ -182,7 +214,7 @@ public class CompileOptionsPane extends JPanel
    
    @AopHelperAction(
          action=Action.ADD, 
-         state=AopState.COMPILE, 
+         state=AopState.RUN, 
          option=AopOption.NOOPT)
    private void addNoopt()
    {
@@ -190,15 +222,32 @@ public class CompileOptionsPane extends JPanel
    
    @AopHelperAction(
          action=Action.REMOVE, 
-         state=AopState.COMPILE, 
+         state=AopState.RUN, 
          option=AopOption.NOOPT)
    private void removeNoopt()
    {
    }
    
+
+   @AopHelperAction(
+         action=Action.ADD, 
+         state=AopState.RUN, 
+         option=AopOption.LOADTIME)
+   private void setLoadtime()
+   {
+   }
+   
+   @AopHelperAction(
+         action=Action.REMOVE, 
+         state=AopState.RUN, 
+         option=AopOption.LOADTIME)
+   private void clearLoadtime()
+   {
+   }
+   
    @AopHelperAction(
          action=Action.SET, 
-         state=AopState.COMPILE, 
+         state=AopState.RUN, 
          option=AopOption.WORKINGDIR)
    private void setWorkingDir()
    {
@@ -206,15 +255,28 @@ public class CompileOptionsPane extends JPanel
    
    @AopHelperAction(
          action=Action.RUN, 
-         state=AopState.COMPILE,
+         state=AopState.RUN,
          option=AopOption.UNSPECIFIED)
-   private void compile()
+   private void run()
+   {
+   }
+   
+   @AopHelperAction(
+         action=Action.SET, 
+         state=AopState.RUN, 
+         option=AopOption.EXECLASS)
+   private void setExecutionClass()
    {
    }
    
    public void setWorkingDir(String dir)
    {
       workingdir.setText(dir);
+   }
+   
+   public void setExecutionClass(String exeClass)
+   {
+      executionClass.setText(exeClass);
    }
 
 }

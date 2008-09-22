@@ -19,7 +19,7 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.aophelper.ui.compile;
+package org.jboss.aophelper.ui.run;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -30,33 +30,35 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import org.jboss.aophelper.ui.run.RunMediator;
+
 /**
- * A OutputPane.
+ * A RunOutputPane.
  * 
  * @author <a href="stalep@gmail.com">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-public class OutputPane extends JPanel
+public class RunOutputPane extends JPanel
 {
    
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
 
    private JTextArea outputArea;
-   public OutputPane()
+   public RunOutputPane()
    {
       init();
    }
    
    private void init()
    {
-      CompileMediator.instance().setOutputPane(this);
+      RunMediator.instance().setRunOutputPane(this);
       
       setBackground(Color.white);
       setLayout(new FlowLayout());
       
       outputArea = new JTextArea();
-      outputArea.setText("logs from the aopcompile will be seen here");
+      outputArea.setText("logs from the execution will be seen here");
       outputArea.setLineWrap(true);
       outputArea.setWrapStyleWord(true);
       outputArea.setEditable(false);
@@ -72,5 +74,6 @@ public class OutputPane extends JPanel
    {
       outputArea.setText(text);
    }
+
 
 }

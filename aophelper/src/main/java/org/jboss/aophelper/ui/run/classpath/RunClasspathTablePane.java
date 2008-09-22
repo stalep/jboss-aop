@@ -19,58 +19,62 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.aophelper.ui.compile;
+package org.jboss.aophelper.ui.run.classpath;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import org.jboss.aophelper.annotation.AopHelperAction;
+import org.jboss.aophelper.core.Action;
+import org.jboss.aophelper.core.AopOption;
+import org.jboss.aophelper.core.AopState;
+import org.jboss.aophelper.ui.GenericEditTableModel;
+import org.jboss.aophelper.ui.GenericEditTablePane;
+import org.jboss.aophelper.ui.run.RunMediator;
 
 /**
- * A OutputPane.
+ * A RunClasspathTablePane.
  * 
  * @author <a href="stalep@gmail.com">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-public class OutputPane extends JPanel
+public class RunClasspathTablePane extends GenericEditTablePane
 {
-   
+
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
 
-   private JTextArea outputArea;
-   public OutputPane()
+   private RunClasspathTableModel tableModel;
+
+   public RunClasspathTablePane()
    {
       init();
    }
-   
-   private void init()
-   {
-      CompileMediator.instance().setOutputPane(this);
-      
-      setBackground(Color.white);
-      setLayout(new FlowLayout());
-      
-      outputArea = new JTextArea();
-      outputArea.setText("logs from the aopcompile will be seen here");
-      outputArea.setLineWrap(true);
-      outputArea.setWrapStyleWord(true);
-      outputArea.setEditable(false);
-      JScrollPane longScroll = new JScrollPane(outputArea);
-      longScroll.setVisible(true);
-      longScroll.setPreferredSize(new Dimension(1020, 270));
-      
-      add(longScroll, BorderLayout.CENTER);
 
+   
+   @Override
+   public void setMediatorTableModel()
+   {
+      if(tableModel == null)
+         tableModel = new RunClasspathTableModel();
+      System.out.println("setting tablemodel to the mediator: "+tableModel.getClass().getName());
+      RunMediator.instance().setRunClasspathModel(tableModel);
    }
    
-   public void setText(String text)
+   @Override
+   public void setMediatorJPanel()
    {
-      outputArea.setText(text);
+      RunMediator.instance().setRunClasspathTable(this);
+   }
+   
+   @Override
+   public GenericEditTableModel getTableModel()
+   {
+      return tableModel;
+   }
+   
+   @Override
+   @AopHelperAction(action=Action.SET, state=AopState.RUN, option=AopOption.CLASSPATH)
+   public void notifyAction()
+   {
+      
    }
 
 }

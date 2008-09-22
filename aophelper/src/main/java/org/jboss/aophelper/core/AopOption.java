@@ -35,6 +35,8 @@ public enum AopOption
    VERBOSE,
    SUPPRESS,
    NOOPT,
+   LOADTIME,
    REPORT,
+   EXECLASS,
    UNSPECIFIED;
 }

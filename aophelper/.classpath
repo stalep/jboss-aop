@@ -29,5 +29,6 @@
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-logging-spi/2.0.3.GA/jboss-logging-spi-2.0.3.GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-common-logging-spi/2.0.4.GA/jboss-common-logging-spi-2.0.4.GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/trove/trove/2.1.1/trove-2.1.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/aop"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

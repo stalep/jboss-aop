@@ -58,6 +58,7 @@ public class AopCompile implements Serializable
       classpath =  new ArrayList<String>();
       transformPath =  new ArrayList<String>();
       aopClasspath =  new ArrayList<String>();
+      setVerbose(true);
    }
  
    /**

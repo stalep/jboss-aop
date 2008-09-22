@@ -21,7 +21,6 @@
   */
 package org.jboss.aophelper.ui.compile;
 
-import org.jboss.aophelper.ui.AopHelperFrame;
 import org.jboss.aophelper.ui.compile.classpath.ClasspathTableModel;
 import org.jboss.aophelper.ui.compile.classpath.ClasspathTablePane;
 import org.jboss.aophelper.ui.compile.options.CompileOptionsPane;
@@ -40,12 +39,12 @@ public class CompileMediator
    
    private ClasspathTablePane classpathTable;
    private ClasspathTableModel classpathModel;
+  
    private XmlTablePane xmlTable;
    private XmlTableModel xmlModel;
+   
    private CompileOptionsPane compileOptionsPane;
    private OutputPane outputPane;
-
-   private AopHelperFrame helperFrame;
    
    private CompileMediator()
    {
@@ -65,18 +64,6 @@ public class CompileMediator
    public ClasspathTablePane getClasspathTable()
    {
       return classpathTable;
-   }
-   
-   
-   
-   public void setHelperFrame(AopHelperFrame ahf)
-   {
-      helperFrame = ahf;
-   }
-   
-   public AopHelperFrame getHelperFrame()
-   {
-      return helperFrame;
    }
 
    /**
@@ -100,7 +87,6 @@ public class CompileMediator
    }
 
    /**
-    * FIXME Comment this
     * 
     * @param tableModel
     */
@@ -163,5 +149,7 @@ public class CompileMediator
    {
       this.outputPane = outputPane;
    }
+
+
 
 }

@@ -24,26 +24,26 @@ package org.jboss.aophelper.util;
 import java.io.File;
 import java.io.IOException;
 
-import org.jboss.aophelper.core.AopCompile;
 import org.jboss.aophelper.core.AopHandler;
+import org.jboss.aophelper.core.AopRun;
 
 /**
- * A AopCompileCommand.
+ * A AopRunCommand.
  * 
  * @author <a href="stalep@gmail.com">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-public class AopCompileCommand
+public class AopRunCommand
 {
-   
+
+
    public String execute()
    {
       String execute = setup();
       try
       {
-
          String[] emptyArray = new String[0];
-         Process process = Runtime.getRuntime().exec( execute, emptyArray,  new File(AopHandler.instance().getCompile().getWorkingdir()));
+         Process process = Runtime.getRuntime().exec( execute, emptyArray,  new File(AopHandler.instance().getRun().getWorkingdir()));
 
          return CommandUtil.analyzeProcess(process);
       }
@@ -56,27 +56,31 @@ public class AopCompileCommand
       }
    }
    
-   
+
    private String setup()
    {
-      AopCompile compileOptions = AopHandler.instance().getCompile();
+      AopRun runOptions = AopHandler.instance().getRun();
       
       StringBuilder execute = new StringBuilder();
-      execute.append("java -cp ").append(CommandUtil.getAopPaths());
-      execute.append(" org.jboss.aop.standalone.Compiler ");
-      if(compileOptions.isVerbose())
-         execute.append("-verbose ");
-      if(compileOptions.isNoopt())
-         execute.append("-noopt ");
-      if(compileOptions.isSuppress())
-         execute.append("-suppress ");
+      execute.append("java ");
+      if(runOptions.isLoadtime())
+         execute.append(getLoadtimePath());
+      execute.append(" -cp ").append(CommandUtil.getAopPaths());
+//      execute.append(" org.jboss.aop.standalone.Compiler ");
+      execute.append(" ");
+      if(runOptions.isVerbose())
+         execute.append("-Djboss.aop.verbose=true ");
+      if(runOptions.isNoopt())
+         execute.append("-Djboss.aop.noopt=true ");
+      if(runOptions.isSuppress())
+         execute.append("-Djboss.aop.suppress=true ");
       
-      if(compileOptions.getAopXml().size() > 0)
+      if(runOptions.getAopXml().size() > 0)
       {
-         execute.append("-aoppath ");
+         execute.append("-Djboss.aop.path=");
          String pathSep = System.getProperty("path.separator");
          StringBuffer xmlPaths = new StringBuffer();
-         for(String xml : compileOptions.getAopXml())
+         for(String xml : runOptions.getAopXml())
          {
             if(xmlPaths.length() > 0)
                xmlPaths.append(pathSep);
@@ -86,7 +90,7 @@ public class AopCompileCommand
          execute.append(xmlPaths.toString()).append(" ");
       }
       
-      execute.append(compileOptions.getWorkingdir());
+      execute.append(calculateCorrectExecutionClass(runOptions));
       
 //      execute.append("\"");
       System.out.println("EXECUTING: "+execute.toString());
@@ -95,5 +99,38 @@ public class AopCompileCommand
       return execute.toString();
       
    }
+   
+   private String calculateCorrectExecutionClass(AopRun runOptions)
+   {
+      String workingdir = runOptions.getWorkingdir();
+      String exeClass = runOptions.getExecutionClass();
+      
+      if(exeClass.startsWith(workingdir))
+      {
+        String rest = exeClass.split(workingdir)[1];
+        if(rest.startsWith("/"))
+          rest = rest.substring(1);
+        rest = rest.replaceAll("/",".");
+        int index = rest.lastIndexOf(".class");
+        rest = rest.substring(0,index);
+        System.out.println("rest="+rest);
 
+        return rest;
+      }
+      else
+         return null;
+      
+   }
+   
+   private String getLoadtimePath()
+   {
+      String pathSeparator = System.getProperty("path.separator");
+      String[] paths = System.getProperty("java.class.path").split(pathSeparator);
+      for(String p : paths)
+      {
+         if(p.contains("jboss-aop-"))
+            return "-javaagent:"+p;
+      }
+      return null;
+   }
 }

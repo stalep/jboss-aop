@@ -24,7 +24,8 @@ package org.jboss.aophelper.core;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aophelper.annotation.AopHelperAction;
-import org.jboss.aophelper.compile.CompileManager;
+import org.jboss.aophelper.manager.CompileManager;
+import org.jboss.aophelper.manager.RunManager;
 
 /**
  * A ClasspathInterceptor.
@@ -51,6 +52,10 @@ public class SettingInterceptor implements Interceptor
       if(helperAction.state().equals(AopState.COMPILE))
       {
          new CompileManager().performAction(helperAction.action(), helperAction.option());
+      }
+      if(helperAction.state().equals(AopState.RUN))
+      {
+         new RunManager().performAction(helperAction.action(), helperAction.option());
       }
       
       return invocation.invokeNext();
