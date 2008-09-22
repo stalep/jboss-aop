@@ -26,6 +26,7 @@ import java.io.File;
 import org.jboss.aophelper.core.Action;
 import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopOption;
+import org.jboss.aophelper.ui.AopHelperMediator;
 import org.jboss.aophelper.ui.compile.CompileMediator;
 import org.jboss.aophelper.util.AopCompileCommand;
 
@@ -86,7 +87,7 @@ public class CompileManager
    
    private void addClasspath()
    {
-      File[] files = mediator.getHelperFrame().createFileCooser();
+      File[] files = AopHelperMediator.instance().getMainPane().createFileCooser();
       
       System.out.println("got "+files.length+" number of files");
       
@@ -110,7 +111,7 @@ public class CompileManager
 
    private void addXml()
    {
-      File[] files = mediator.getHelperFrame().createFileCooser();
+      File[] files = AopHelperMediator.instance().getMainPane().createFileCooser();
       
       System.out.println("got "+files.length+" number of files");
       
@@ -149,7 +150,7 @@ public class CompileManager
    
    private void setWorkingdir()
    {
-      File[] files = mediator.getHelperFrame().createFileCooser();
+      File[] files = AopHelperMediator.instance().getMainPane().createFileCooser();
       for(File f : files)
       {
          AopHandler.instance().getCompile().setWorkingdir(f.getAbsolutePath());
