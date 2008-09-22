@@ -15,7 +15,6 @@
   <url>http://labs.jboss.org/jbossaop</url>
   <build>
     <sourceDirectory>src/main/</sourceDirectory>
-    <testSourceDirectory>src/test/</testSourceDirectory>
     <resources>
       <resource>
         <directory>docs</directory>
