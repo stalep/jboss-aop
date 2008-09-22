@@ -95,7 +95,6 @@ public class AnnotationIntroduction
       originalExpression = expr;
       try
       {
-         //TODO: Remove once jboss-mdr > 2.0.0.CR1 is out
          if (AspectManager.verbose && logger.isTraceEnabled())
          {
             logger.trace("Creating annotation from " + originalAnnotationExpr);
