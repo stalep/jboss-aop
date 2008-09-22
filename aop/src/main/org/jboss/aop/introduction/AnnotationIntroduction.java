@@ -26,12 +26,15 @@ import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
 import org.jboss.aop.Advisor;
+import org.jboss.aop.AspectManager;
 import org.jboss.annotation.factory.ast.ASTAnnotation;
 import org.jboss.annotation.factory.ast.AnnotationParser;
 import org.jboss.annotation.factory.ast.ParseException;
 import org.jboss.aop.pointcut.AnnotationMatcher;
 import org.jboss.aop.pointcut.ast.ASTStart;
 import org.jboss.aop.pointcut.ast.TypeExpressionParser;
+import org.jboss.aop.util.logging.AOPLogger;
+import org.jboss.util.StringPropertyReplacer;
 
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
@@ -46,6 +49,8 @@ import java.lang.reflect.Method;
  */
 public class AnnotationIntroduction
 {
+   final static AOPLogger logger = AOPLogger.getLogger(AnnotationIntroduction.class);
+   
    public static AnnotationIntroduction createMethodAnnotationIntroduction(String methodExpr, String annotationExpr, boolean invisible)
    {
       String expr = "method(" + methodExpr + ")";
@@ -85,11 +90,17 @@ public class AnnotationIntroduction
    private AnnotationIntroduction(String expr, String annotationExpr, boolean invisible)
    {
       this.invisible = invisible;
-      originalAnnotationExpr = annotationExpr;
+      //TODO: Remove property replacement once jboss-mdr > 2.0.0.CR1 is out
+      originalAnnotationExpr = StringPropertyReplacer.replaceProperties(annotationExpr);
       originalExpression = expr;
       try
       {
-         AnnotationParser parser = new AnnotationParser(new StringReader(annotationExpr));
+         //TODO: Remove once jboss-mdr > 2.0.0.CR1 is out
+         if (AspectManager.verbose && logger.isTraceEnabled())
+         {
+            logger.trace("Creating annotation from " + originalAnnotationExpr);
+         }
+         AnnotationParser parser = new AnnotationParser(new StringReader(originalAnnotationExpr));
          org.jboss.annotation.factory.ast.ASTStart start = parser.Start();
          annotation = (ASTAnnotation) start.jjtGetChild(0);
       }

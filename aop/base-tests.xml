@@ -111,6 +111,11 @@
          <param name="test" value="introduction"/>
          <param name="aop.xml" value="${source.res}/test/introduction/introduction-aop.xml"/>
       </antcall>
+      <antcall target="${test-target}" inheritRefs="true">
+         <param name="test" value="annotationproperty"/>
+         <param name="no.xml" value="true"/>
+         <param name="use.annotations" value="false"/>
+      </antcall>
    </target>
 
    <target name="help">
