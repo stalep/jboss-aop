@@ -264,6 +264,11 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.jboss.aop</groupId>
+        <artifactId>pluggable-instrumentor</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.jboss.cl</groupId>
         <artifactId>jboss-classloader</artifactId>
         <version>${version.org.jboss.cl}</version>
@@ -404,6 +409,12 @@
         <groupId>org.jboss.logging</groupId>
         <artifactId>jboss-logging-log4j</artifactId>
         <version>${version.org.jboss.logging}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>apache-log4j</groupId>
+            <artifactId>log4j</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.jboss.man</groupId>
@@ -428,6 +439,10 @@
           <exclusion>
             <groupId>apache-log4j</groupId>
             <artifactId>log4j</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jboss</groupId>
+            <artifactId>jboss-logging-spi</artifactId>
           </exclusion>
         </exclusions>
       </dependency>

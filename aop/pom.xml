@@ -8,13 +8,14 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.aop</groupId>
-  <artifactId>jboss-aop-jdk50</artifactId>
+  <artifactId>jboss-aop</artifactId>
   <packaging>jar</packaging>
   <name>JBoss AOP Framework</name>
   <description>JBoss AOP Framework</description>
-  <url>http://labs.jboss.org/jbossaop</url>
+  <url>http://www.jboss.org/jbossaop</url>
   <build>
     <sourceDirectory>src/main/</sourceDirectory>
+    <!--<testSourceDirectory>src/test/</testSourceDirectory>-->
     <resources>
       <resource>
         <directory>docs</directory>
@@ -71,8 +72,6 @@
           </archive>
         </configuration>
       </plugin>
-      <!-- When assembly plugin 2.2-beta-2 is released, we should be able to use
-        -  this configuration instead of the antrun config -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -197,6 +196,10 @@
   </build>
 
   <dependencies>
+    <dependency>
+      <groupId>apache-xerces</groupId>
+      <artifactId>xml-apis</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>

@@ -9,7 +9,7 @@
   <artifactId>jboss-aop-aspects</artifactId>
   <name>JBoss AOP Aspects</name>
   <description>JBoss AOP Aspects</description>
-  <url>http://labs.jboss.com/portal/jbossaop</url>
+
   <build>
     <sourceDirectory>src/main/</sourceDirectory>
     <!--<testSourceDirectory>src/test/</testSourceDirectory>-->
@@ -29,17 +29,18 @@
     </resources>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
-          <excludes>
-            <exclude>org/jboss/aop/hook/JRockit*</exclude>
-          </excludes>
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.4.3</version>
         <configuration>
           <testFailureIgnore>true</testFailureIgnore>
           <forkMode>always</forkMode>
@@ -47,15 +48,40 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.1</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.2</version>
+        <executions>
+          <execution>
+            <id>copy-output-jars</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <tasks>
+                <mkdir dir="${basedir}/output"/>
+                <mkdir dir="${basedir}/output/lib"/>
+                <copy file="${project.build.directory}/${project.artifactId}-${project.version}.jar"
+                      tofile="${basedir}/output/lib/jboss-standalone-aspect-library-jdk50.jar"/>
+                <copy file="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar"
+                      tofile="${basedir}/output/lib/jboss-standalone-aspect-library-sources.jar"/>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Clean the output directory created by the antrun plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.2</version>
         <configuration>
-          <archive>
-            <manifestEntries>
-              <Premain-Class>org.jboss.aop.standalone.Agent</Premain-Class>
-              <Can-Redefine-Classes>true</Can-Redefine-Classes>
-            </manifestEntries>
-          </archive>
+          <filesets>
+            <fileset>
+              <directory>${basedir}/output</directory>
+            </fileset>
+          </filesets>
         </configuration>
       </plugin>
     </plugins>
