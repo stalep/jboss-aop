@@ -277,7 +277,7 @@
       <id>jrockit-build</id>
       <activation>
         <property>
-          <name>JROCKIT_HOME</name>
+          <name>jrockit.home</name>
         </property>
       </activation>
       <build>
@@ -295,10 +295,10 @@
                 <phase>compile</phase>
                 <configuration>
                   <tasks>
-                    <echo message="${JROCKIT_HOME}"/>
+                    <echo message="jrockit.home=${jrockit.home}"/>
                     <!-- in older versions of jrockit the weaving stuff lives in managementapi.jar, in newer in management-agent.jar -->
-                    <available file="${JROCKIT_HOME}/jre/lib/managementapi.jar" property="OLD_JROCKIT" value="managementapi.jar"/>
-                    <available file="${JROCKIT_HOME}/jre/lib/management-agent.jar" property="NEW_JROCKIT" value="rt.jar"/>
+                    <available file="${jrockit.home}/jre/lib/managementapi.jar" property="OLD_JROCKIT" value="managementapi.jar"/>
+                    <available file="${jrockit.home}/jre/lib/management-agent.jar" property="NEW_JROCKIT" value="rt.jar"/>
                     <condition property="JROCKIT_API_AVAILABLE" value="${OLD_JROCKIT}">
                       <and>
                         <isset property="OLD_JROCKIT"/>
@@ -317,7 +317,7 @@
                     </condition>
                     <path id="javac.jrockit.classpath">
                       <path refid="maven.compile.classpath"/>
-                      <path path="${JROCKIT_HOME}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
+                      <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
                     </path>
     
                     <property name="build.compiler" value="extJavac"/>

@@ -40,6 +40,7 @@
    -->
 
   <target name="init" unless="init.disable" depends="_buildmagic:init">
+    <property file="local.properties"/>
   </target>
 
 
@@ -269,7 +270,7 @@
   <target name="main" depends="most"
 	  description="Executes the default target (most)."/>
 
-  <target name="most" depends="createthirdparty, maven-build-install, modules-most, install"
+  <target name="most" depends="init, createthirdparty, maven-build-install, modules-most, install"
 	  description="Executes all modules and builds most everything."/>
 
   <target name="help" depends="_buildmagic:help:build"
@@ -325,12 +326,13 @@
    </target>
 
    <!-- Run the maven part of the build -->
-   <target name="maven-build-install" depends="createthirdparty">
+   <target name="maven-build-install" depends="createthirdparty, set-jrockit">
      
       <property name="maven.dir" value="${basedir}/../tools/maven"/>
       <property name="build.maven.opts" value=""/>
+      <property name="jrockit.build.param" value=""/>
       
-      <maven basedir="${basedir}/../" options="${build.maven.opts}" goal="install"/>
+      <maven basedir="${basedir}/../" options="${jrockit.build.param} ${build.maven.opts}" goal="install"/>
       
       <fail message="Unable to build maven modules.  See maven output for details.">
         <condition>
@@ -340,6 +342,10 @@
         </condition>
       </fail>
       
+   </target>
+  
+   <target name="set-jrockit" if="jrockit.home">
+     <property name="jrockit.build.param" value="-Djrockit.home=${jrockit.home}"/>
    </target>
 
    <!-- Clean the maven part of the build -->
