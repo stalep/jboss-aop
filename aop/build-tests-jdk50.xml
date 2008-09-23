@@ -367,6 +367,13 @@
          <param name="caller" value="javaagent-tests"/>
       </antcall>
 
+      <!-- Only run this with loadtime weaving -->
+      <antcall target="_run-javaagent-test" inheritRefs="true">
+         <param name="test" value="annotationproperty"/>
+         <param name="no.xml" value="true"/>
+         <param name="caller" value="javaagent-tests"/>
+      </antcall>
+
       <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-jdk50-tests" inheritRefs="true">
          <param name="caller" value="javaagent-tests"/>
@@ -430,7 +437,12 @@
          <param name="no.xml" value="true"/>
          <param name="use.annotations" value="true"/>
       </antcall>
-
+      <!-- Only run this with loadtime weaving -->
+      <antcall target="_run-javaagent-test" inheritRefs="true">
+         <param name="test" value="annotationproperty"/>
+         <param name="no.xml" value="true"/>
+         <param name="caller" value="javaagent-genadvisor-tests"/>
+      </antcall>
 
 
       <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
