@@ -303,7 +303,7 @@
 
    <target name="tests" depends="main">
 
-      <delete dir="${build.tests.classes}"/>
+      <!--<delete dir="${build.tests.classes}"/>-->
       <antcall target="javaagent-genadvisor-tests" inheritRefs="true"/>
       <antcall target="javaagent-tests" inheritRefs="true"/>
 
