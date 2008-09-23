@@ -64,6 +64,13 @@
     </plugins>
   </build>
   
+  <modules>
+    <module>pluggable-instrumentor</module>
+    <module>aop</module>
+    <module>aspects</module>
+    <module>asintegration</module>
+  </modules>
+  
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -518,27 +525,5 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
-  <profiles>
-    <profile>
-      <id>default-build</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>pluggable-instrumentor</module>
-        <module>aop</module>
-        <module>aspects</module>
-        <module>asintegration</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>ant-integration-build</id>
-      <modules>
-        <module>pluggable-instrumentor</module>
-        <module>aop</module>
-      </modules>
-    </profile>
-  </profiles>
-  
+    
 </project>

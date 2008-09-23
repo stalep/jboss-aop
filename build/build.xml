@@ -40,7 +40,6 @@
    -->
 
   <target name="init" unless="init.disable" depends="_buildmagic:init">
-    <property file="local.properties"/>
   </target>
 
 
@@ -75,47 +74,6 @@
 
     <!-- The group to use by default -->
     <property name="groups" value="default"/>
-
-    <!-- Sets up the module configuration. -->
-    <moduleconfig property="modules" selected="${groups}">
-
-      <!-- Modules -->
-      <!--<module name="aop"/>-->
-      <module name="asintegration"/>
-      <module name="aspects"/>
-
-      <!-- Module groups -->
-
-      <!--this lets you recompile a single module using a command line like
-./build.sh -emacs -Dgroups=single -Dsingle-module=server
-      -->
-      <group name="single">
-        <include modules="${single-module}"/>
-      </group>
-
-      <group name="core">
-         <!--<include modules="aop"/>-->
-         <include modules="asintegration"/>
-         <include modules="aspects"/>
-      </group>
-
-      <group name="default">
-        <include groups="core"/>
-      </group>
-
-      <group name="most">
-        <include groups="core"/>
-      </group>
-
-    </moduleconfig>
-
-    <!-- Show the module configuration -->
-    <echo>groups:  ${groups}</echo>
-    <echo>modules: ${modules}</echo>
-
-    <!-- The combined dependent module classpath -->
-    <path id="dependentmodule.classpath">
-    </path>
 
     <!-- ===== -->
     <!-- Tasks -->
@@ -216,7 +174,7 @@
 
    <target name="release"
       description="Builds the default release structure."
-      depends="init, clean, maven-build-install, modules-release, aop.reference.docs"
+      depends="init, clean, maven-build-install, aop.reference.docs"
       >
       <ant antfile="build-release.xml" target="release-no-reference-docs"/>
       <ant antfile="build-release.xml" target="release-reference-docs"/>
@@ -251,7 +209,7 @@
   <!-- ================================================================== -->
 
   <!-- Clean up all build output -->
-  <target name="clean" depends="createthirdparty,maven-build-clean,_buildmagic:clean, modules-clean"
+  <target name="clean" depends="createthirdparty,maven-build-clean"
 	  description="Cleans up most generated files.">
      <delete dir="output"/>
   </target>
@@ -270,7 +228,7 @@
   <target name="main" depends="most"
 	  description="Executes the default target (most)."/>
 
-  <target name="most" depends="init, createthirdparty, maven-build-install, modules-most, install"
+  <target name="most" depends="createthirdparty, maven-build-install, install"
 	  description="Executes all modules and builds most everything."/>
 
   <target name="help" depends="_buildmagic:help:build"
