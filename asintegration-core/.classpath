@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main"/>
-	<classpathentry kind="src" path="src/tests"/>
-	<classpathentry kind="lib" path="src/resources/tests"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/aop"/>
 	<classpathentry kind="lib" path="/thirdparty/javassist/lib/javassist.jar" sourcepath="/javassist"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/common-core/lib/jboss-common-core.jar" sourcepath="/thirdparty/jboss/common-core/lib/jboss-common-core-sources.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/jboss/test/lib/jboss-test.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/junit/lib/junit.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/common-logging-spi/lib/jboss-logging-spi.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jbossas/core-libs/lib/jboss-system.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/jboss/jboss-vfs/lib/jboss-vfs.jar" sourcepath="/thirdparty/jboss/jboss-vfs/lib/jboss-vfs-sources.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/jboss/jboss-mdr/lib/jboss-mdr.jar"/>
-	<classpathentry kind="lib" path="/thirdparty/jboss/jboss-managed/lib/jboss-managed.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pluggable-instrumentor"/>
 	<classpathentry kind="output" path="output/eclipse-classes"/>
 </classpath>
