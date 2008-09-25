@@ -156,10 +156,10 @@
   </build>
   
   <dependencies>
-    <dependency>
+    <!-- dependency>
       <groupId>apache-xerces</groupId>
       <artifactId>xml-apis</artifactId>
-    </dependency>
+    </dependency -->
     <dependency>
       <groupId>javassist</groupId>
       <artifactId>javassist</artifactId>
@@ -171,6 +171,10 @@
     <dependency>
       <groupId>org.jboss.aop</groupId>
       <artifactId>pluggable-instrumentor</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.aop</groupId>
+      <artifactId>jboss-asintegration-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
@@ -191,24 +195,6 @@
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-spi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.cl</groupId>
-      <artifactId>jboss-classloader</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss</groupId>
-      <artifactId>jboss-mdr</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>jboss</groupId>
-      <artifactId>jboss-test</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>compile</scope>
     </dependency>
   </dependencies>
   
