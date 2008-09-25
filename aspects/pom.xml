@@ -12,7 +12,7 @@
 
   <build>
     <sourceDirectory>src/main</sourceDirectory>
-    <testSourceDirectory>src/test</testSourceDirectory>
+    <!--<testSourceDirectory>src/test</testSourceDirectory>-->
     <resources>
       <resource>
         <directory>docs</directory>
@@ -132,12 +132,12 @@
       <artifactId>jboss-servlet-api</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>org.jboss.aop</groupId>
       <artifactId>jboss-aop</artifactId>
       <classifier>tests</classifier>
       <scope>test</scope>
-    </dependency>
+    </dependency>-->
   </dependencies>
 </project>
 
