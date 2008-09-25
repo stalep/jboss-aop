@@ -31,6 +31,7 @@ import org.jboss.aop.deployment.AbstractAspectManagerServiceMBean;
 import org.jboss.logging.Logger;
 
 /**
+ * MC Bean to register and unregister the AspectManagerService MBean in JMX
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
