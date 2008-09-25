@@ -257,7 +257,7 @@
               </classpath>
               <sysproperty key="classworlds.conf" value="${maven.dir}/bin/m2.conf" />
               <sysproperty key="maven.home" value="${maven.dir}" />
-              <arg line="--batch-mode -Pant-integration-build @{options} @{goal}" />
+              <arg line="--batch-mode @{options} @{goal}" />
           </java>
       </sequential>
   </macrodef> 
@@ -284,12 +284,12 @@
    </target>
 
    <!-- Run the maven part of the build -->
-   <target name="maven-build-install" depends="createthirdparty, set-jrockit">
+   <target name="maven-build-install" depends="init, createthirdparty, set-jrockit">
      
       <property name="maven.dir" value="${basedir}/../tools/maven"/>
       <property name="build.maven.opts" value=""/>
       <property name="jrockit.build.param" value=""/>
-      
+      <echo message="jrockit: ${jrockit.build.param}"/>
       <maven basedir="${basedir}/../" options="${jrockit.build.param} ${build.maven.opts}" goal="install"/>
       
       <fail message="Unable to build maven modules.  See maven output for details.">

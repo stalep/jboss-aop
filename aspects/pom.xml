@@ -11,8 +11,8 @@
   <description>JBoss AOP Aspects</description>
 
   <build>
-    <sourceDirectory>src/main/</sourceDirectory>
-    <!--<testSourceDirectory>src/test/</testSourceDirectory>-->
+    <sourceDirectory>src/main</sourceDirectory>
+    <testSourceDirectory>src/test</testSourceDirectory>
     <resources>
       <resource>
         <directory>docs</directory>
@@ -35,6 +35,10 @@
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
+          <testExcludes>
+            <testExclude>org/jboss/test/asynch/**</testExclude>
+            <testExclude>org/jboss/test/proxyfactory/**</testExclude>
+          </testExcludes>
         </configuration>
       </plugin>
       <plugin>
@@ -86,6 +90,7 @@
       </plugin>
     </plugins>
   </build>
+  
   <dependencies>
     <dependency>
       <groupId>bsh</groupId>
@@ -114,6 +119,24 @@
     <dependency>
       <groupId>jboss</groupId>
       <artifactId>jboss-test</artifactId>
+    </dependency>
+    
+    <!-- Test scope dependencies -->
+    <dependency>
+      <groupId>org.jboss.javaee</groupId>
+      <artifactId>jboss-jca-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.javaee</groupId>
+      <artifactId>jboss-servlet-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.aop</groupId>
+      <artifactId>jboss-aop</artifactId>
+      <classifier>tests</classifier>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

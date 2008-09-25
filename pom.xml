@@ -65,8 +65,8 @@
   </build>
   
   <modules>
-    <module>pluggable-instrumentor</module>
     <module>aop</module>
+    <module>pluggable-instrumentor</module>
     <module>aspects</module>
     <module>asintegration</module>
   </modules>
@@ -269,6 +269,13 @@
         <groupId>org.jboss.aop</groupId>
         <artifactId>jboss-aop</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.aop</groupId>
+        <artifactId>jboss-aop</artifactId>
+        <version>${project.version}</version>
+        <classifier>tests</classifier>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.aop</groupId>
@@ -525,5 +532,19 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-    
+  
+  <profiles>
+    <profile>
+      <id>jrockit-module</id>
+      <activation>
+        <property>
+          <name>jrockit.home</name>
+        </property>
+      </activation>
+      <modules>
+        <module>jrockit-pluggable-instrumentor</module>
+      </modules>
+    </profile>
+  </profiles>
+  
 </project>

@@ -1,0 +1,131 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jboss.aop</groupId>
+    <artifactId>jboss-aop-parent</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>jrockit-pluggable-instrumentor</artifactId>
+  <packaging>jar</packaging>
+  <name>JBoss AOP JRockit Pluggable Instrumentor</name>
+
+  <build>
+    <finalName>${artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.0-alpha-4</version>
+        <executions>
+          <execution>
+            <id>enforce-versions</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireProperty>
+                  <property>jrockit.home</property>
+                  <message>You must define the property "jrockit.home"</message>
+                </requireProperty>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <excludes>
+            <!-- Everything is excluded because the source is compiled by ant.-->
+            <exclude>**</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+            <manifestEntries>
+              <Implementation-URL>${pom.url}</Implementation-URL>
+              <Premain-Class>org.jboss.aop.standalone.PluggableInstrumentor</Premain-Class>
+              <Can-Redefine-Classes>true</Can-Redefine-Classes>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.2</version>
+        <executions>
+          <execution>
+            <id>jrockit-compile</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>compile</phase>
+            <configuration>
+              <tasks>
+                <echo message="jrockit.home=${jrockit.home}"/>
+                <!-- in older versions of jrockit the weaving stuff lives in managementapi.jar, in newer in management-agent.jar -->
+                <available file="${jrockit.home}/jre/lib/managementapi.jar" property="OLD_JROCKIT" value="managementapi.jar"/>
+                <available file="${jrockit.home}/jre/lib/management-agent.jar" property="NEW_JROCKIT" value="rt.jar"/>
+                <condition property="JROCKIT_API_AVAILABLE" value="${OLD_JROCKIT}">
+                  <and>
+                    <isset property="OLD_JROCKIT"/>
+                    <not>
+                      <isset property="NEW_JROCKIT"/>
+                    </not>
+                  </and>
+                </condition>
+                <condition property="JROCKIT_API_AVAILABLE" value="${NEW_JROCKIT}">
+                  <and>
+                    <isset property="NEW_JROCKIT"/>
+                    <not>
+                      <isset property="OLD_JROCKIT"/>
+                    </not>
+                  </and>
+                </condition>
+                <path id="javac.jrockit.classpath">
+                  <path refid="maven.compile.classpath"/>
+                  <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
+                </path>
+
+                <property name="build.compiler" value="extJavac"/>
+                <fail unless="JROCKIT_API_AVAILABLE"> 
+                  JRockit API Not Available.  Skipping JRockit compile. 
+                </fail>
+                <mkdir dir="${project.build.outputDirectory}"/>
+                <javac destdir="${project.build.outputDirectory}"
+                   target="1.4"
+                   source="1.4">
+                   <src path="${project.build.sourceDirectory}"/>
+                   <include name="org/jboss/aop/hook/JRockit*"/>
+                   <classpath refid="javac.jrockit.classpath"/>
+                </javac>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.aop</groupId>
+      <artifactId>jboss-aop</artifactId>
+    </dependency>
+  </dependencies>
+
+</project>
