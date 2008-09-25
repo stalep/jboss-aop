@@ -36,7 +36,6 @@ import java.util.StringTokenizer;
 import javassist.ClassPool;
 import javassist.scopedpool.ScopedClassPoolFactory;
 
-import javax.management.ObjectName;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jboss.aop.AspectManager;
@@ -51,16 +50,12 @@ import org.jboss.aop.advice.AspectDefinition;
 import org.jboss.aop.advice.InterceptorFactory;
 import org.jboss.aop.annotation.PortableAnnotationElement;
 import org.jboss.aop.asintegration.JBossIntegration;
-import org.jboss.aop.asintegration.jboss4.JBoss4Integration;
 import org.jboss.aop.hook.JDK14Transformer;
 import org.jboss.aop.hook.JDK14TransformerManager;
 import org.jboss.aop.instrument.InstrumentorFactory;
 import org.jboss.aop.instrument.TransformerCommon;
 import org.jboss.aop.introduction.InterfaceIntroduction;
 import org.jboss.logging.Logger;
-import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
-import org.jboss.mx.server.ServerConstants;
-import org.jboss.mx.util.ObjectNameFactory;
 import org.jboss.system.server.ServerConfig;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -82,10 +77,15 @@ public abstract class AspectManagerServiceDelegate
       Class<?> clazz = TransformerCommon.class;
       clazz = SuperClassesFirstWeavingStrategy.class;
       clazz = ClassicWeavingStrategy.class;
-      clazz = HeirarchicalLoaderRepository3.class;
+      try
+      {
+         //FIXME Move out to where the RepositoryClassLoader is initialised 
+         clazz = Class.forName("org.jboss.mx.loading.HeirarchicalLoaderRepository3");
+      }
+      catch (ClassNotFoundException e)
+      {
+      }
    }
-
-   public static final ObjectName DEFAULT_LOADER_REPOSITORY = ObjectNameFactory.create(ServerConstants.DEFAULT_LOADER_NAME);
 
    // Attributes ---------------------------------------------------
 
@@ -213,9 +213,10 @@ public abstract class AspectManagerServiceDelegate
     */
    protected JBossIntegration initIntegration()
    {
-      // Default to old JBoss4 integration when not configured
       if (integration == null)
-         integration = new JBoss4Integration();
+      {
+         throw new IllegalStateException("Integration was not set");
+      }
       return integration;
    }
    
