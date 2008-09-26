@@ -80,14 +80,42 @@
       <!-- Add the files from 'asintegration'                  -->
       <!-- ==================================================  -->
 
-      <copy todir="${project.release}/docs/aspect-deployer" filtering="no">
-         <fileset dir="${project.root}/asintegration/output">
+      <copy todir="${project.release}/docs/asintegration-core" filtering="no">
+         <fileset dir="${project.root}/asintegration-core/output">
+            <include name="api/**"/>
+         </fileset>
+      </copy>
+      <copy todir="${project.release}/docs/asintegration-jmx" filtering="no">
+         <fileset dir="${project.root}/asintegration-jmx/output">
+            <include name="api/**"/>
+         </fileset>
+      </copy>
+      <copy todir="${project.release}/docs/asintegration-mc" filtering="no">
+         <fileset dir="${project.root}/asintegration-mc/output">
             <include name="api/**"/>
          </fileset>
       </copy>
 
-      <copy todir="${project.release}/src/aspect-deployer" filtering="no">
-         <fileset dir="${project.root}/asintegration/src">
+      <copy todir="${project.release}/src/asintegration-core" filtering="no">
+         <fileset dir="${project.root}/asintegration-core/src">
+            <include name="main/**/*.java"/>
+            <include name="etc/**"/>
+            <include name="resources/**"/>
+            <exclude name="**/.svn/**"/>
+            <exclude name="**/CVS/**"/>
+         </fileset>
+      </copy>
+      <copy todir="${project.release}/src/asintegration-jmx" filtering="no">
+         <fileset dir="${project.root}/asintegration-jmx/src">
+            <include name="main/**/*.java"/>
+            <include name="etc/**"/>
+            <include name="resources/**"/>
+            <exclude name="**/.svn/**"/>
+            <exclude name="**/CVS/**"/>
+         </fileset>
+      </copy>
+      <copy todir="${project.release}/src/asintegration-mc" filtering="no">
+         <fileset dir="${project.root}/asintegration-mc/src">
             <include name="main/**/*.java"/>
             <include name="etc/**"/>
             <include name="resources/**"/>
@@ -127,15 +155,14 @@
       <property name="aop.50.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50.jar"/>
       <property name="aop.50.single.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50-single.jar"/>
       <property name="aop.aspect-library50.location" value="${project.root}/aspects/output/lib/jboss-standalone-aspect-library-jdk50.jar"/>
-      <property name="aop.as4-deployer.location" value="${project.root}/asintegration/output/lib/jboss-aop-as4-deployer.jar"/>
-      <property name="aop.jboss4.jdk50.location" value="${project.root}/asintegration/output/lib/jboss-aop-jboss4-jdk50.jar"/>
-      <!-- TODO I would like to call this  jboss-aop-deployer.jar instead, and update name in appserver trunk -->
-      <property name="aop.as5-deployer.location" value="${project.root}/asintegration/output/lib/jboss-aop-deployer-jdk50.jar"/>
+      <property name="aop.asintegration-core.location" value="${project.root}/asintegration-core/output/lib/jboss-asintegration-core.jar"/>
+      <property name="aop.asintegration-jmx.location" value="${project.root}/asintegration-jmx/output/lib/jboss-asintegration-jmx.jar"/>
+      <property name="aop.asintegration-mc.location" value="${project.root}/asintegration-mc/output/lib/jboss-asintegration-mc.jar"/>      
       <property name="aop.jrockit-pluggable-instrumentor.location" value="${project.root}/jrockit-pluggable-instrumentor/target/jrockit-pluggable-instrumentor.jar"/>
       <property name="aop.pluggable-instrumentor.location" value="${project.root}/pluggable-instrumentor/target/pluggable-instrumentor.jar"/>
-      <property name="aop.readme-as4.location" value="${project.root}/asintegration/src/etc/ReadMe-AS4.txt"/>
-      <property name="aop.readme-as5.location" value="${project.root}/asintegration/src/etc/ReadMe-AS5.txt"/>
-      <property name="aop.jboss-service.location" value="${project.root}/asintegration/src/resources/META-INF/jboss-service.xml"/>
+      <property name="aop.readme-as4.location" value="${project.root}/asintegration-core/src/etc/ReadMe-AS4.txt"/>
+      <property name="aop.readme-as5.location" value="${project.root}/asintegration-core/src/etc/ReadMe-AS5.txt"/>
+      <property name="aop.jboss-service.location" value="${project.root}/asintegration-jmx/src/resources/META-INF/jboss-service.xml"/>
 
       <property name="javassist.location" value="${javassist.javassist.lib}/javassist.jar"/>
       <property name="jboss-backport-concurrent.location" value="${jboss.backport.concurrent.lib}/jboss-backport-concurrent.jar"/>
@@ -177,18 +204,14 @@
             <filter token="SERVICE_NAME" value="org.jboss.aop.deployment.AspectManagerServiceJDK5"/>
          </filterset>
       </copy>
-      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/build_jboss4.0.xml" file="../asintegration/src/etc/jboss-40-install-jboss-aop-jdk50-build.xml"/>
-      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/build.xml" file="../asintegration/src/etc/jboss-42-install-jboss-aop-jdk50-build.xml"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="../asintegration/src/etc/jboss.properties"/>
+      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/build_jboss4.0.xml" file="../asintegration-core/src/etc/jboss-40-install-jboss-aop-jdk50-build.xml"/>
+      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/build.xml" file="../asintegration-core/src/etc/jboss-42-install-jboss-aop-jdk50-build.xml"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="../asintegration-core/src/etc/jboss.properties"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.50.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.aspect-library50.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.as4-deployer.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.jboss4.jdk50.location}"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.asintegration-core.location}"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.asintegration-jmx.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/" file="${aop.readme-as4.location}"/>
-      <!--
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-container-metadata-spi.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-container-annotation.location}"/>
-      -->
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-reflect.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-mdr.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-common-core.location}"/>
@@ -198,8 +221,10 @@
 
       <!-- The JBoss 5 libs for JDK 5 (JBoss 5 needs JDK 5) -->
       <copy todir="${project.release}/jboss-50-install/lib" file="${aop.50.location}"/>
-      <copy todir="${project.release}/jboss-50-install/lib" file="${aop.as5-deployer.location}"/>
-      <copy todir="${project.release}/jboss-50-install" file="${aop.readme-as4.location}"/>
+      <copy todir="${project.release}/jboss-50-install/lib" file="${aop.asintegration-core.location}"/>
+      <copy todir="${project.release}/jboss-50-install/lib" file="${aop.asintegration-mc.location}"/>
+      <copy todir="${project.release}/jboss-50-install/lib" file="${aop.asintegration-jmx.location}"/>
+      <copy todir="${project.release}/jboss-50-install" file="${aop.readme-as5.location}"/>
       <copy todir="${project.release}/jboss-50-install/lib" file="${javassist.location}"/>
       <copy todir="${project.release}/jboss-50-install/lib" file="${trove.location}"/>
       <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer" file="${aop.aspect-library50.location}"/>

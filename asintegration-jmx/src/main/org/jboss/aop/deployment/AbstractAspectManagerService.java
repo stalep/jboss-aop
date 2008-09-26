@@ -90,24 +90,10 @@ public class AbstractAspectManagerService
 
    // Public -------------------------------------------------------
 
-   /**
-    * Get the integration
-    * 
-    * @return the integration
-    */
-   public JBossIntegration getJBossIntegration()
+   public void setJBossIntegrationWrapper(JBossIntegrationWrapperMBean integration)
    {
-      return delegate.getJBossIntegration();
-   }
-   
-   /**
-    * Set the integration
-    * 
-    * @param integration the integration 
-    */
-   public void setJBossIntegration(JBossIntegration integration)
-   {
-      delegate.setJBossIntegration(integration);
+      JBossIntegration intgr = integration != null ? integration.getIntegration() : null;
+      delegate.setJBossIntegration(intgr);
    }
 
    protected ScopedClassPoolFactory createFactory() throws Exception

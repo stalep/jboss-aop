@@ -44,12 +44,6 @@
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <excludes>
-            <exclude>org/jboss/aop/junit/**</exclude>
-            <exclude>org/jboss/aop/asintegration/jboss4/**</exclude>
-          </excludes>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -80,7 +74,7 @@
                   <fileset dir="${basedir}/src/etc"/>
                 </copy>
                 <copy file="${project.build.directory}/${project.artifactId}-${project.version}.jar"
-                      tofile="${basedir}/output/lib/jboss-aop-deployer-jdk50.jar"/>
+                      tofile="${basedir}/output/lib/${project.artifactId}.jar"/>
               </tasks>
             </configuration>
           </execution>

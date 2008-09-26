@@ -136,4 +136,9 @@ public interface AbstractAspectManagerServiceMBean extends org.jboss.system.Serv
     * Whether or not tu use base-aop.xml
     */
    void setUseBaseXml(boolean useBaseXml);
+   
+   /**
+    * Sets the MBean containing the JBossIntegration implementation
+    */
+   void setJBossIntegrationWrapper(JBossIntegrationWrapperMBean integration);
 }

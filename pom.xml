@@ -68,7 +68,9 @@
     <module>aop</module>
     <module>pluggable-instrumentor</module>
     <module>aspects</module>
-    <module>asintegration</module>
+    <module>asintegration-core</module>
+    <module>asintegration-jmx</module>
+    <module>asintegration-mc</module>
   </modules>
   
   <dependencyManagement>
@@ -280,6 +282,21 @@
       <dependency>
         <groupId>org.jboss.aop</groupId>
         <artifactId>pluggable-instrumentor</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.aop</groupId>
+        <artifactId>jboss-asintegration-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.aop</groupId>
+        <artifactId>jboss-asintegration-jmx</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.aop</groupId>
+        <artifactId>jboss-asintegration-mc</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

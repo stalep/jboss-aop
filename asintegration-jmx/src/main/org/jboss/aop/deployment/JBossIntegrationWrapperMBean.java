@@ -21,20 +21,14 @@
 */ 
 package org.jboss.aop.deployment;
 
-import org.jboss.aop.asintegration.core.AspectManagerServiceDelegate;
-import org.jboss.aop.asintegration.core.AspectManagerServiceDelegateJRockit;
+import org.jboss.aop.asintegration.JBossIntegration;
 
 /**
- * AspectManager service meant for use with JRockit or JDK 1.4
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
- * @version $Revision$
+ * @version $Revision: 1.1 $
  */
-public class AspectManagerService extends AbstractAspectManagerService
+public interface JBossIntegrationWrapperMBean
 {
-   protected AspectManagerServiceDelegate createDelegate()
-   {
-      return new AspectManagerServiceDelegateJRockit();
-   }
-
+   JBossIntegration getIntegration();
 }

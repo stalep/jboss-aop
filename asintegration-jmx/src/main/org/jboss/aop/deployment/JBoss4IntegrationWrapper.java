@@ -1,8 +1,8 @@
 /*
-* JBoss, Home of Professional Open Source
-* Copyright 2006, JBoss Inc., and individual contributors as indicated
-* by the @authors tag. See the copyright.txt in the distribution for a
-* full listing of individual contributors.
+* JBoss, Home of Professional Open Source.
+* Copyright 2006, Red Hat Middleware LLC, and individual contributors
+* as indicated by the @author tags. See the copyright.txt file in the
+* distribution for a full listing of individual contributors. 
 *
 * This is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as
@@ -18,27 +18,24 @@
 * License along with this software; if not, write to the Free
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-*/
-package org.jboss.test.aop.integration.simple.support.a;
+*/ 
+package org.jboss.aop.deployment;
 
-import org.jboss.test.aop.integration.simple.support.TestIntercepted;
-import org.jboss.test.aop.integration.simple.support.TestInterceptor;
+import org.jboss.aop.asintegration.JBossIntegration;
+import org.jboss.aop.asintegration.jboss4.JBoss4Integration;
 
 /**
- * A.
  * 
- * @author <a href="adrian@jboss.com">Adrian Brock</a>
+ * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class A
+public class JBoss4IntegrationWrapper implements JBoss4IntegrationWrapperMBean
 {
-   public A()
+   JBoss4Integration integration = new JBoss4Integration();
+   
+   public JBossIntegration getIntegration()
    {
-      TestIntercepted test = new TestIntercepted();
-      if (TestInterceptor.intercepted)
-         throw new RuntimeException("Should not be intercepted yet!");
-      test.doSomething();
-      if (TestInterceptor.intercepted == false)
-         throw new RuntimeException("Not intercepted!");
+      return integration;
    }
+
 }

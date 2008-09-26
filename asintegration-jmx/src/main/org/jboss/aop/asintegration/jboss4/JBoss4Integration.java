@@ -41,6 +41,7 @@ import org.jboss.aop.AspectManager;
 import org.jboss.aop.asintegration.JBossIntegration;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.domain.ScopedRepositoryClassLoaderDomain;
+import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
 import org.jboss.mx.loading.RepositoryClassLoader;
 import org.jboss.mx.server.ServerConstants;
 import org.jboss.mx.util.MBeanServerLocator;
@@ -68,6 +69,14 @@ import org.jboss.mx.util.ObjectNameFactory;
  */
 public class JBoss4Integration implements JBossIntegration, ScopedClassPoolFactory
 {
+   static {
+      //pre-load necessary classes so that we avoid NoClassDefFoundErrors on JRockit when using the RepositoryClassloader hook
+      //When AspectManager.translate() is called the first time, these classes have not been loaded yet, and this is what causes
+      //JRockit to get confused
+      @SuppressWarnings("unused")
+      Class<?> clazz = HeirarchicalLoaderRepository3.class;
+   }
+
    static final ObjectName DEFAULT_LOADER_REPOSITORY = ObjectNameFactory.create(ServerConstants.DEFAULT_LOADER_NAME);
    
    /** The delegate classpool factory */

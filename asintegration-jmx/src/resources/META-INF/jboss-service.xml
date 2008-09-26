@@ -7,6 +7,8 @@
 
 <server>
 
+   <mbean code="org.jboss.aop.deployment.JBoss4IntegrationWrapper" name="jboss.aop:service=JBoss4IntegrationWrapper"/>
+
    <!-- The code for the service is different for the different run scenarios
       *** JBoss 4.0 
           * JDK 1.4 - org.jboss.aop.deployment.AspectManagerService
@@ -36,6 +38,7 @@
       <attribute name="Ignore">*$$EnhancerByCGLIB$$*</attribute> -->
       <attribute name="Optimized">true</attribute>
       <attribute name="Verbose">false</attribute>
+      <depends optional-attribute-name="JBossIntegrationWrapper" proxy-type="attribute">jboss.aop:service=JBoss4IntegrationWrapper</depends>
       <!-- 
          Available choices for this attribute are:
             org.jboss.aop.instrument.ClassicInstrumentor (default)
