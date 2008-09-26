@@ -174,7 +174,7 @@
 
    <target name="release"
       description="Builds the default release structure."
-      depends="init, clean, maven-build-install, aop.reference.docs"
+      depends="init, clean, most, aop.reference.docs"
       >
       <ant antfile="build-release.xml" target="release-no-reference-docs"/>
       <ant antfile="build-release.xml" target="release-reference-docs"/>
@@ -209,7 +209,7 @@
   <!-- ================================================================== -->
 
   <!-- Clean up all build output -->
-  <target name="clean" depends="createthirdparty,maven-build-clean"
+  <target name="clean" depends="maven-build-clean"
 	  description="Cleans up most generated files.">
      <delete dir="output"/>
   </target>
@@ -228,7 +228,7 @@
   <target name="main" depends="most"
 	  description="Executes the default target (most)."/>
 
-  <target name="most" depends="createthirdparty, maven-build-install, install"
+  <target name="most" depends="maven-build-install, createthirdparty, install"
 	  description="Executes all modules and builds most everything."/>
 
   <target name="help" depends="_buildmagic:help:build"
@@ -284,7 +284,7 @@
    </target>
 
    <!-- Run the maven part of the build -->
-   <target name="maven-build-install" depends="init, createthirdparty, set-jrockit">
+   <target name="maven-build-install" depends="set-jrockit">
      
       <property name="maven.dir" value="${basedir}/../tools/maven"/>
       <property name="build.maven.opts" value=""/>
@@ -302,17 +302,18 @@
       
    </target>
   
-   <target name="set-jrockit" if="jrockit.home">
+   <target name="set-jrockit" depends="init" if="jrockit.home">
      <property name="jrockit.build.param" value="-Djrockit.home=${jrockit.home}"/>
    </target>
 
    <!-- Clean the maven part of the build -->
-   <target name="maven-build-clean" depends="createthirdparty">
+   <target name="maven-build-clean" depends="set-jrockit">
      
       <property name="maven.dir" value="${basedir}/../tools/maven"/>
       <property name="build.maven.opts" value=""/>
+      <property name="jrockit.build.param" value=""/>
       
-      <maven basedir="${basedir}/../" options="${build.maven.opts}" goal="clean"/>
+      <maven basedir="${basedir}/../" options="${jrockit.build.param} ${build.maven.opts}" goal="clean"/>
       
       <fail message="Unable to clean maven modules.  See maven output for details.">
         <condition>
