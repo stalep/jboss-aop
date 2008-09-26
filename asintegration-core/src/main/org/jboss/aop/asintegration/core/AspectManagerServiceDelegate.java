@@ -77,14 +77,6 @@ public abstract class AspectManagerServiceDelegate
       Class<?> clazz = TransformerCommon.class;
       clazz = SuperClassesFirstWeavingStrategy.class;
       clazz = ClassicWeavingStrategy.class;
-      try
-      {
-         //FIXME Move out to where the RepositoryClassLoader is initialised 
-         clazz = Class.forName("org.jboss.mx.loading.HeirarchicalLoaderRepository3");
-      }
-      catch (ClassNotFoundException e)
-      {
-      }
    }
 
    // Attributes ---------------------------------------------------
@@ -599,16 +591,19 @@ public abstract class AspectManagerServiceDelegate
     */
    public synchronized void setUseBaseXml(boolean useBaseXml)
    {
-      if (started && useBaseXml != this.useBaseXml)
+      if (useBaseXml != this.useBaseXml)
       {
          this.useBaseXml = useBaseXml;
-         if (useBaseXml)
+         if (started)
          {
-            deployBaseXml();
-         }
-         else
-         {
-            undeployBaseXml();
+            if (useBaseXml)
+            {
+               deployBaseXml();
+            }
+            else
+            {
+               undeployBaseXml();
+            }
          }
       }
    }
