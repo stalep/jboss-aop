@@ -92,6 +92,8 @@ public interface AbstractAspectManagerServiceMBean extends org.jboss.system.Serv
     */
   java.lang.String bindings() ;
 
+  java.lang.String pointcuts();
+  
    /**
     * The temporary directory to which dyn class files are written
     */

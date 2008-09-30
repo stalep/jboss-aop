@@ -287,6 +287,11 @@ public class AbstractAspectManagerService
       return delegate.bindings();
    }
 
+   public String pointcuts()
+   {
+      return delegate.pointcuts();
+   }
+
    public String registeredClassLoaders()
    {
       return delegate.registeredClassLoaders();

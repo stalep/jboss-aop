@@ -55,6 +55,7 @@ import org.jboss.aop.hook.JDK14TransformerManager;
 import org.jboss.aop.instrument.InstrumentorFactory;
 import org.jboss.aop.instrument.TransformerCommon;
 import org.jboss.aop.introduction.InterfaceIntroduction;
+import org.jboss.aop.pointcut.Pointcut;
 import org.jboss.logging.Logger;
 import org.jboss.system.server.ServerConfig;
 import org.w3c.dom.Document;
@@ -694,7 +695,32 @@ public abstract class AspectManagerServiceDelegate
       StringBuffer buffer = new StringBuffer("");
       for (String name : factories.keySet())
       {
-         buffer.append(name + "<br>");
+         AdviceBinding binding = factories.get(name);
+         StringBuilder detail = new StringBuilder();
+         if (binding != null)
+         {
+            detail.append(binding.getPointcut());
+            detail.append("{");
+            InterceptorFactory[] ifactories = binding.getInterceptorFactories();
+            for (InterceptorFactory ifactory : ifactories)
+            {
+               detail.append(ifactory.getName());
+            }
+            detail.append("}");
+         }
+         buffer.append("<b>" + name + "</b> - " + detail.toString() + "<br>");
+      }
+      return buffer.toString();
+   }
+
+   public String pointcuts()
+   {
+      Map<String, Pointcut> pointcuts = manager.getPointcuts();
+      StringBuffer buffer = new StringBuffer("");
+      for (String name : pointcuts.keySet())
+      {
+         Pointcut pointcut = pointcuts.get(name);
+         buffer.append("<b>" + name + "</b> - " + pointcut + "<br>");
       }
       return buffer.toString();
    }

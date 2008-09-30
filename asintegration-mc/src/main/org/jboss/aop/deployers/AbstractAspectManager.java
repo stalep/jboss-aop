@@ -56,10 +56,12 @@ public abstract class AbstractAspectManager
    
    protected abstract AspectManagerServiceDelegate createDelegate();
    
-   AspectManagerServiceDelegate getDelegate()
+   public AspectManagerServiceDelegate getDelegate()
    {
       return delegate;
    }
+   
+   
    /**
     * @return
     * @see org.jboss.aop.asintegration.core.AspectManagerServiceDelegate#aspectDefinitions()
