@@ -31,17 +31,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class AOPLock
 {
    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-   AOPLock parent;
-   
-   public AOPLock()
-   {
-      
-   }
-   
-   public AOPLock(AOPLock parent)
-   {
-      this.parent = parent;
-   }
    
    /**
     * Read-lock just this level
@@ -54,7 +43,7 @@ public class AOPLock
    /**
     * Read-unlock just this level
     */
-   protected final void unlockRead()
+   public final void unlockRead()
    {
       lock.readLock().unlock();
    }
@@ -74,58 +63,4 @@ public class AOPLock
    {
       lock.writeLock().unlock();
    }
-
-   /**
-    * Read-lock this level
-    * @param if true, parent levels will be locked too
-    */
-   public void lockRead(boolean lockParents)
-   {
-      if (lockParents && parent != null)
-      {
-         parent.lockRead(lockParents);
-      }
-      lockRead();
-   }
-   
-   /**
-    * Read-unlock this level
-    * @param if true, parent levels will be unlocked too
-    */
-   public void unlockRead(boolean lockParents)
-   {
-      unlockRead();
-      if (lockParents && parent != null)
-      {
-         parent.unlockRead(lockParents);
-      }
-   }
-   
-   /**
-    * Write-lock this level
-    * @param if true, parent levels will be locked too
-    */
-   public void lockWrite(boolean lockParents)
-   {
-      if (lockParents && parent != null)
-      {
-         parent.lockWrite(lockParents);
-      }
-      lockWrite();
-   }
-   
-   /**
-    * Write-unlock this level
-    * @param if true, parent levels will be unlocked too
-    */
-   public void unlockWrite(boolean lockParents)
-   {
-      unlockWrite();
-      if (lockParents && parent != null)
-      {
-         parent.unlockWrite(lockParents);
-      }
-   }
-
-
 }

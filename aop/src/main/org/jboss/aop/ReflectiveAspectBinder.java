@@ -93,7 +93,7 @@ public class ReflectiveAspectBinder
       if (!initialisedAspects)
       {
          ClassifiedBindingAndPointcutCollection bindingCol = advisor.getManager().getBindingCollection();
-         bindingCol.lockRead(true);
+         AspectManager.lock.lockRead();
          try
          {
             bindMethodAdvices(clazz, bindingCol);
@@ -102,7 +102,7 @@ public class ReflectiveAspectBinder
          }
          finally
          {
-            bindingCol.unlockRead(true);
+            AspectManager.lock.unlockRead();
          }
       }
       return aspects;

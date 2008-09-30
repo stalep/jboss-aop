@@ -80,6 +80,7 @@ import org.jboss.aop.pointcut.PointcutInfo;
 import org.jboss.aop.pointcut.PointcutStats;
 import org.jboss.aop.pointcut.Typedef;
 import org.jboss.aop.pointcut.ast.ClassExpression;
+import org.jboss.aop.util.AOPLock;
 import org.jboss.aop.util.UnmodifiableEmptyCollections;
 import org.jboss.aop.util.logging.AOPLogger;
 import org.jboss.util.collection.WeakValueHashMap;
@@ -160,6 +161,7 @@ public class AspectManager
    /** ClassExpressions built from ignore. Maintained by top-level AspectManager */
    protected ClassExpression[] ignoreExpressions = new ClassExpression[0];
 
+   protected static AOPLock lock = new AOPLock();
 
    // these fields represent whether there are certain pointcut types.
    // for performance reasons the transformers and binders can make a lot of us of this.
@@ -712,7 +714,7 @@ public class AspectManager
       // as we know that the bindingCollection lock will be needed during the 
       // Advisor.attachClass method execution, we get the lock at this point
       // making sure we are avoiding the deadlock.
-      bindingCollection.lockRead();
+      lock.lockRead();
       try
       {
          synchronized (advisors)
@@ -730,7 +732,7 @@ public class AspectManager
       }
       finally
       {
-         bindingCollection.unlockRead(false);
+         lock.unlockRead();
       }
    }
 
@@ -1018,32 +1020,33 @@ public class AspectManager
          {
             return null;
          }
-         this.bindingCollection.lockRead();
+         lock.lockRead();
          try
          {
             synchronized(this){
-         if (weavingStrategy == null)
-         {
-            if (TransformerCommon.isCompileTime() || classicOrder)
-            {
-               weavingStrategy = new ClassicWeavingStrategy();
-            }
-            else if(InstrumentorFactory.getInstrumentor(this,dynamicStrategy.getJoinpointClassifier())
-                  instanceof GeneratedAdvisorInstrumentor)
-            {
-               weavingStrategy = new SuperClassesFirstWeavingStrategy();
-            }
-            else
-            {
-               weavingStrategy = new ClassicWeavingStrategy();
+               if (weavingStrategy == null)
+               {
+                  if (TransformerCommon.isCompileTime() || classicOrder)
+                  {
+                     weavingStrategy = new ClassicWeavingStrategy();
+                  }
+                  else if(InstrumentorFactory.getInstrumentor(this,dynamicStrategy.getJoinpointClassifier())
+                        instanceof GeneratedAdvisorInstrumentor)
+                  {
+                     weavingStrategy = new SuperClassesFirstWeavingStrategy();
+                  }
+                  else
+                  {
+                     weavingStrategy = new ClassicWeavingStrategy();
+                  }
+               }
+      
+               return weavingStrategy.translate(this, className, loader, classfileBuffer);
             }
          }
-
-         return weavingStrategy.translate(this, className, loader, classfileBuffer);
-         }}
          finally
          {
-            this.bindingCollection.unlockRead(false);
+            lock.unlockRead();
          }
       }
       catch (Exception e)
@@ -1351,7 +1354,7 @@ public class AspectManager
     */
    public synchronized void removeBinding(String name)
    {
-      bindingCollection.lockWrite();
+      lock.lockWrite();
       try
       {
          AdviceBinding binding = internalRemoveBinding(name);
@@ -1363,7 +1366,7 @@ public class AspectManager
       }
       finally
       {
-         bindingCollection.unlockWrite();
+         lock.unlockWrite();
       }
    }
 
@@ -1374,7 +1377,7 @@ public class AspectManager
       HashSet<Advisor> bindingAdvisors = new HashSet<Advisor>();
       ArrayList<AdviceBinding> removedBindings = null;
       
-      bindingCollection.lockWrite();
+      lock.lockWrite();
       try
       {
          removedBindings = this.bindingCollection.removeBindings(binds);
@@ -1388,7 +1391,7 @@ public class AspectManager
       }
       finally
       {
-         bindingCollection.unlockWrite();
+         lock.unlockWrite();
       }
       
       Iterator<Advisor> it = bindingAdvisors.iterator();
@@ -1434,7 +1437,7 @@ public class AspectManager
          // we will end up with a deadlock
          synchronized(this)
          {
-            bindingCollection.lockWrite();
+            lock.lockWrite();
             locked = true;
             removedBinding = internalRemoveBinding(binding.getName());
             affectedAdvisors = removedBinding == null ? null : new HashSet<Advisor>(removedBinding.getAdvisors());         
@@ -1460,7 +1463,7 @@ public class AspectManager
       {
          if (locked)
          {
-            bindingCollection.unlockWrite();
+            lock.unlockWrite();
          }
       }
    }

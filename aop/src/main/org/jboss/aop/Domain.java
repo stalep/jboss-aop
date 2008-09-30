@@ -193,25 +193,49 @@ public class Domain extends AspectManager
    @Override
    public synchronized void addBinding(AdviceBinding binding)
    {
-      hasOwnPointcuts = true;
-      hasOwnBindings = true;
-      super.addBinding(binding);
+      lock.lockWrite();
+      try
+      {
+         hasOwnPointcuts = true;
+         hasOwnBindings = true;
+         super.addBinding(binding);
+      }
+      finally
+      {
+         lock.unlockWrite();
+      }
    }
    
    @Override
    public synchronized void removeBinding(String name)
    {
-      super.removeBinding(name);
-      hasOwnBindings = !bindingCollection.isEmpty();
-      hasOwnPointcuts = !bindingCollection.hasPointcuts();
+      lock.lockWrite();
+      try
+      {
+         super.removeBinding(name);
+         hasOwnBindings = !bindingCollection.isEmpty();
+         hasOwnPointcuts = !bindingCollection.hasPointcuts();
+      }
+      finally
+      {
+         lock.unlockWrite();
+      }
    }
    
    @Override
    public synchronized void removeBindings(ArrayList<String> binds)
    {
-      super.removeBindings(binds);
-      hasOwnBindings = !bindingCollection.isEmpty();
-      hasOwnPointcuts = !bindingCollection.hasPointcuts();
+      lock.lockWrite();
+      try
+      {
+         super.removeBindings(binds);
+         hasOwnBindings = !bindingCollection.isEmpty();
+         hasOwnPointcuts = !bindingCollection.hasPointcuts();
+      }
+      finally
+      {
+         lock.unlockWrite();
+      }
    }
    
    @Override
@@ -1434,46 +1458,6 @@ public class Domain extends AspectManager
             map1.putAll(temp);
          }
          return map1;
-      }
-
-      @Override
-      public void lockRead(boolean lockParents)
-      {
-         if (lockParents)
-         {
-            parent.getBindingCollection().lockRead(lockParents);
-         }
-         super.lockRead();
-      }
-
-      @Override
-      public void lockWrite(boolean lockParents)
-      {
-         if (lockParents)
-         {
-            parent.getBindingCollection().lockWrite(lockParents);
-         }
-         super.lockWrite();
-      }
-
-      @Override
-      public void unlockRead(boolean lockParents)
-      {
-         super.unlockRead();
-         if (lockParents)
-         {
-            parent.getBindingCollection().unlockRead(lockParents);
-         }
-      }
-
-      @Override
-      public void unlockWrite(boolean lockParents)
-      {
-         super.unlockWrite();
-         if (lockParents)
-         {
-            parent.getBindingCollection().unlockWrite(lockParents);
-         }
       }
    }
 }

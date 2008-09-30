@@ -323,7 +323,7 @@ public class ClassContainer extends Advisor
    private void makeInterceptorChains()
    {
       ClassifiedBindingAndPointcutCollection bindingCol = manager.getBindingCollection();
-      bindingCol.lockRead(true);
+      AspectManager.lock.lockRead();
       try
       {
          Collection<AdviceBinding> bindings = bindingCol.getConstructorExecutionBindings(); 
@@ -341,7 +341,7 @@ public class ClassContainer extends Advisor
       }
       finally
       {
-         bindingCol.unlockRead(true);
+         AspectManager.lock.unlockRead();
       }
       finalizeChain(constructorInfos);
       finalizeMethodChain();

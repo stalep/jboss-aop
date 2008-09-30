@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.pointcut.Pointcut;
@@ -51,7 +50,7 @@ public class ClassifiedBindingAndPointcutCollection
 {
    private static final AOPLogger logger = AOPLogger.getLogger(AspectManager.class);
    
-   private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+   //private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
   
    //Collections of bindings
    private volatile LinkedHashMap<String, AdviceBinding> bindings;
@@ -440,7 +439,7 @@ public class ClassifiedBindingAndPointcutCollection
    
    /**
     * Returns the pointcuts map.
-    * @return an unmodifiable map containing all the pointcuts
+    * @return an modifiable map containing all the pointcuts
     */
    public LinkedHashMap<String, Pointcut> getPointcuts()
    {
@@ -601,74 +600,6 @@ public class ClassifiedBindingAndPointcutCollection
    public boolean isSet()
    {
       return set;
-   }
-
-   /**
-    * Read-lock just this collection
-    */
-   public final void lockRead()
-   {
-      lock.readLock().lock();
-   }
-   
-   /**
-    * Read-unlock just this collection
-    */
-   protected final void unlockRead()
-   {
-      lock.readLock().unlock();
-   }
-   
-   /**
-    * Write-lock just this collection
-    */
-   public final void lockWrite()
-   {
-      lock.writeLock().lock();
-   }
-   
-   /**
-    * Write-unlock this collection
-    */
-   public final void unlockWrite()
-   {
-      lock.writeLock().unlock();
-   }
-
-   /**
-    * Read-lock this collection
-    * @param if true, parent collections will be locked too
-    */
-   public void lockRead(boolean lockParents)
-   {
-      lockRead();
-   }
-   
-   /**
-    * Read-unlock this collection
-    * @param if true, parent collections will be unlocked too
-    */
-   public void unlockRead(boolean lockParents)
-   {
-      unlockRead();
-   }
-   
-   /**
-    * Write-lock this collection
-    * @param if true, parent collections will be locked too
-    */
-   public void lockWrite(boolean lockParents)
-   {
-      lockWrite();
-   }
-   
-   /**
-    * Write-unlock this collection
-    * @param if true, parent collections will be unlocked too
-    */
-   public void unlockWrite(boolean lockParents)
-   {
-      unlockWrite();
    }
    
    private void addBinding(AdviceBinding binding)
@@ -920,35 +851,27 @@ public class ClassifiedBindingAndPointcutCollection
 
    public void updateStats(PointcutStats stats)
    {
-      lockWrite();
-      try
+      if (stats != null)
       {
-         if (stats != null)
-         {
-            construction |= stats.isConstruction();
-            execution |= stats.isExecution();
-            call |= stats.isCall();
-            within |= stats.isWithin();
-            get |= stats.isGet();
-            set |= stats.isSet();
-            withincode |= stats.isWithincode();
-         }
-         else
-         {
-            if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Setting all pointcut stats to true");
-            // can't be sure so set all
-            execution = true;
-            construction = true;
-            call = true;
-            within = true;
-            get = true;
-            set = true;
-            withincode = true;
-         }
+         construction |= stats.isConstruction();
+         execution |= stats.isExecution();
+         call |= stats.isCall();
+         within |= stats.isWithin();
+         get |= stats.isGet();
+         set |= stats.isSet();
+         withincode |= stats.isWithincode();
       }
-      finally
+      else
       {
-         unlockWrite();
+         if (AspectManager.verbose && logger.isDebugEnabled()) logger.debug("Setting all pointcut stats to true");
+         // can't be sure so set all
+         execution = true;
+         construction = true;
+         call = true;
+         within = true;
+         get = true;
+         set = true;
+         withincode = true;
       }
    }
 
