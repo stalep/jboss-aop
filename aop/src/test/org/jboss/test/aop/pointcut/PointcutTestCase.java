@@ -27,11 +27,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.jboss.aop.AspectManager;
+import org.jboss.aop.advice.AdviceBinding;
 import org.jboss.aop.pointcut.PointcutExpression;
 import org.jboss.aop.pointcut.PointcutStats;
 import org.jboss.aop.pointcut.ast.ASTStart;
 import org.jboss.aop.pointcut.ast.PointcutExpressionParser;
 import org.jboss.aop.pointcut.ast.PointcutExpressionParserVisitor;
+import org.jboss.aop.util.BindingClassifier;
 import org.jboss.test.aop.AOPTestWithSetup;
 
 import junit.framework.Test;
@@ -428,14 +430,41 @@ public class PointcutTestCase extends AOPTestWithSetup
       PointcutExpression pointcut = new PointcutExpression("TEST", expression);
       manager.addPointcut(pointcut);
       PointcutStats stats = pointcut.getStats(); 
+      AdviceBinding binding = new AdviceBinding(expression, null);
+      manager.addBinding(binding);
+      
       assertEquals(methodExecution, stats.isMethodExecution());
+      assertEquals(methodExecution, BindingClassifier.isMethodExecution(binding));
+      assertEquals(methodExecution, BindingClassifier.isMethodExecution(pointcut));
+      
+      
       assertEquals(constructorExecution, stats.isConstructorExecution());
+      assertEquals(constructorExecution, BindingClassifier.isConstructorExecution(binding));
+      assertEquals(constructorExecution, BindingClassifier.isConstructorExecution(pointcut));
+      
       assertEquals(get, stats.isGet());
+      assertEquals(get, BindingClassifier.isGet(binding));
+      assertEquals(get, BindingClassifier.isGet(pointcut));
+      
       assertEquals(set, stats.isSet());
+      assertEquals(set, BindingClassifier.isSet(binding));
+      assertEquals(set, BindingClassifier.isSet(pointcut));
+      
       assertEquals(construction, stats.isConstruction());
+      assertEquals(construction, BindingClassifier.isConstruction(binding));
+      assertEquals(construction, BindingClassifier.isConstruction(pointcut));
+      
       assertEquals(methodCall, stats.isMethodCall());
+      assertEquals(methodCall, BindingClassifier.isMethodCall(binding));
+      assertEquals(methodCall, BindingClassifier.isMethodCall(pointcut));
+      
       assertEquals(constructorCall, stats.isConstructorCall());
+      assertEquals(constructorCall, BindingClassifier.isConstructorCall(binding));
+      assertEquals(constructorCall, BindingClassifier.isConstructorCall(pointcut));
+      
       assertEquals(withincode, stats.isWithincode());
+      assertEquals(withincode, BindingClassifier.isWithincode(binding));
+      assertEquals(withincode, BindingClassifier.isWithincode(pointcut));
       
       if (methodExecution || constructorExecution)
       {

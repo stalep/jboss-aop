@@ -35,17 +35,27 @@ public class BindingClassifier
 {
    public static boolean isExecution(AdviceBinding binding)
    {
-      PointcutStats stats = getPointcutStats(binding);
+      return isExecution(binding.getPointcut());
+   }
+
+   public static boolean isExecution(Pointcut pc)
+   {
+      PointcutStats stats = getPointcutStats(pc);
       if (stats != null)
       {
          return stats.isExecution();
       }
       return true;
    }
-
+   
    public static boolean isMethodExecution(AdviceBinding binding)
    {
-      PointcutStats stats = getPointcutStats(binding);
+      return isMethodExecution(binding.getPointcut());
+   }
+
+   public static boolean isMethodExecution(Pointcut pc)
+   {
+      PointcutStats stats = getPointcutStats(pc);
       if (stats != null)
       {
          return stats.isMethodExecution();
@@ -55,7 +65,12 @@ public class BindingClassifier
 
    public static boolean isConstructorExecution(AdviceBinding binding)
    {
-      PointcutStats stats = getPointcutStats(binding);
+      return isConstructorExecution(binding.getPointcut());
+   }
+
+   public static boolean isConstructorExecution(Pointcut pc)
+   {
+      PointcutStats stats = getPointcutStats(pc);
       if (stats != null)
       {
          return stats.isConstructorExecution();
@@ -65,7 +80,12 @@ public class BindingClassifier
 
    public static boolean isConstruction(AdviceBinding binding)
    {
-      PointcutStats stats = getPointcutStats(binding);
+      return isConstruction(binding.getPointcut());
+   }
+
+   public static boolean isConstruction(Pointcut pc)
+   {
+      PointcutStats stats = getPointcutStats(pc);
       if (stats != null)
       {
          return stats.isConstruction();
@@ -75,7 +95,12 @@ public class BindingClassifier
 
    public static boolean isCall(AdviceBinding binding)
    {
-      PointcutStats stats = getPointcutStats(binding);
+      return isCall(binding.getPointcut());
+   }
+   
+   public static boolean isCall(Pointcut pc)
+   {
+      PointcutStats stats = getPointcutStats(pc);
       if (stats != null)
       {
          return stats.isCall();
@@ -85,7 +110,12 @@ public class BindingClassifier
    
    public static boolean isMethodCall(AdviceBinding binding)
    {
-      PointcutStats stats = getPointcutStats(binding);
+      return isMethodCall(binding.getPointcut());
+   }
+
+   public static boolean isMethodCall(Pointcut pc)
+   {
+      PointcutStats stats = getPointcutStats(pc);
       if (stats != null)
       {
          return stats.isMethodCall();
@@ -95,7 +125,12 @@ public class BindingClassifier
 
    public static boolean isConstructorCall(AdviceBinding binding)
    {
-      PointcutStats stats = getPointcutStats(binding);
+      return isConstructorCall(binding.getPointcut());
+   }
+
+   public static boolean isConstructorCall(Pointcut pc)
+   {
+      PointcutStats stats = getPointcutStats(pc);
       if (stats != null)
       {
          return stats.isConstructorCall();
@@ -105,7 +140,12 @@ public class BindingClassifier
 
    public static boolean isWithin(AdviceBinding binding)
    {
-      PointcutStats stats = getPointcutStats(binding);
+      return isWithin(binding.getPointcut());
+   }
+
+   public static boolean isWithin(Pointcut pc)
+   {
+      PointcutStats stats = getPointcutStats(pc);
       if (stats != null)
       {
          return stats.isWithin();
@@ -115,7 +155,12 @@ public class BindingClassifier
 
    public static boolean isGet(AdviceBinding binding)
    {
-      PointcutStats stats = getPointcutStats(binding);
+      return isGet(binding.getPointcut());
+   }
+
+   public static boolean isGet(Pointcut pc)
+   {
+      PointcutStats stats = getPointcutStats(pc);
       if (stats != null)
       {
          return stats.isGet();
@@ -125,7 +170,12 @@ public class BindingClassifier
 
    public static boolean isSet(AdviceBinding binding)
    {
-      PointcutStats stats = getPointcutStats(binding);
+      return isSet(binding.getPointcut());
+   }
+
+   public static boolean isSet(Pointcut pc)
+   {
+      PointcutStats stats = getPointcutStats(pc);
       if (stats != null)
       {
          return stats.isSet();
@@ -135,7 +185,12 @@ public class BindingClassifier
 
    public static boolean isWithincode(AdviceBinding binding)
    {
-      PointcutStats stats = getPointcutStats(binding);
+      return isWithincode(binding.getPointcut());
+   }
+
+   public static boolean isWithincode(Pointcut pc)
+   {
+      PointcutStats stats = getPointcutStats(pc);
       if (stats != null)
       {
          return stats.isWithincode();
@@ -143,9 +198,8 @@ public class BindingClassifier
       return true;
    }
 
-   private static PointcutStats getPointcutStats(AdviceBinding binding)
+   private static PointcutStats getPointcutStats(Pointcut pointcut)
    {
-      Pointcut pointcut = binding.getPointcut();
       if (pointcut instanceof PointcutExpression)
       {
          PointcutExpression expr =  (PointcutExpression)pointcut;

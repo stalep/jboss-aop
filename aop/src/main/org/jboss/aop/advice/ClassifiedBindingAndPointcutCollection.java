@@ -531,8 +531,29 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public void removePointcut(String name)
    {
-      pointcuts.remove(name);
-      pointcutInfos.remove(name);
+      Pointcut pc = pointcuts.remove(name);
+      if (pc != null)
+      {
+         this.fieldReadPointcuts.remove(pc);
+         this.fieldWritePointcuts.remove(pc);
+         this.constructionPointcuts.remove(pc);
+         this.constructorExecutionPointcuts.remove(pc);
+         this.methodExecutionPointcuts.remove(pc);
+         this.constructorCallPointcuts.remove(pc);
+         this.methodCallPointcuts.remove(pc);
+      }
+      
+      PointcutInfo info = pointcutInfos.remove(name);
+      if (info != null)
+      {
+         this.fieldReadPointcutInfos.remove(info);
+         this.fieldWritePointcutInfos.remove(info);
+         this.constructionPointcutInfos.remove(info);
+         this.constructorExecutionPointcutInfos.remove(info);
+         this.methodExecutionPointcutInfos.remove(info);
+         this.constructorCallPointcutInfos.remove(info);
+         this.methodCallPointcutInfos.remove(info);
+      }
    }
    
    /**
@@ -723,107 +744,128 @@ public class ClassifiedBindingAndPointcutCollection
 
    private void addFieldReadPointcut(Pointcut pointcut, PointcutInfo info)
    {
-      if (fieldReadPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      if (BindingClassifier.isGet(pointcut))
       {
-         fieldReadPointcuts = new CopyOnWriteArrayList<Pointcut>();
+         if (fieldReadPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            fieldReadPointcuts = new CopyOnWriteArrayList<Pointcut>();
+         }
+         fieldReadPointcuts.add(pointcut);
+   
+         if (fieldReadPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            fieldReadPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
+         }
+         fieldReadPointcutInfos.add(info);
       }
-      fieldReadPointcuts.add(pointcut);
-
-      if (fieldReadPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
-      {
-         fieldReadPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
-      }
-      fieldReadPointcutInfos.add(info);
    }
    
    private void addFieldWritePointcut(Pointcut pointcut, PointcutInfo info)
    {
-      if (fieldWritePointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      if (BindingClassifier.isSet(pointcut))
       {
-         fieldWritePointcuts = new CopyOnWriteArrayList<Pointcut>();
+         if (fieldWritePointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            fieldWritePointcuts = new CopyOnWriteArrayList<Pointcut>();
+         }
+         fieldWritePointcuts.add(pointcut);
+   
+         if (fieldWritePointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            fieldWritePointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
+         }
+         fieldWritePointcutInfos.add(info);
       }
-      fieldWritePointcuts.add(pointcut);
-
-      if (fieldWritePointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
-      {
-         fieldWritePointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
-      }
-      fieldWritePointcutInfos.add(info);
    }
    
    private void addConstructionPointcut(Pointcut pointcut, PointcutInfo info)
    {
-      if (constructionPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      if (BindingClassifier.isConstruction(pointcut))
       {
-         constructionPointcuts = new CopyOnWriteArrayList<Pointcut>();
+         if (constructionPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            constructionPointcuts = new CopyOnWriteArrayList<Pointcut>();
+         }
+         constructionPointcuts.add(pointcut);
+   
+         if (constructionPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            constructionPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
+         }
+         constructionPointcutInfos.add(info);
       }
-      constructionPointcuts.add(pointcut);
-
-      if (constructionPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
-      {
-         constructionPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
-      }
-      constructionPointcutInfos.add(info);
    }
 
    private void addConstructorExecutionPointcut(Pointcut pointcut, PointcutInfo info)
    {
-      if (constructorExecutionPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      if (BindingClassifier.isConstructorExecution(pointcut))
       {
-         constructorExecutionPointcuts = new CopyOnWriteArrayList<Pointcut>();
+         if (constructorExecutionPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            constructorExecutionPointcuts = new CopyOnWriteArrayList<Pointcut>();
+         }
+         constructorExecutionPointcuts.add(pointcut);
+   
+         if (constructorExecutionPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            constructorExecutionPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
+         }
+         constructorExecutionPointcutInfos.add(info);
       }
-      constructorExecutionPointcuts.add(pointcut);
-
-      if (constructorExecutionPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
-      {
-         constructorExecutionPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
-      }
-      constructorExecutionPointcutInfos.add(info);
    }
 
    private void addMethodExecutionPointcut(Pointcut pointcut, PointcutInfo info)
    {
-      if (methodExecutionPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      if (BindingClassifier.isMethodExecution(pointcut))
       {
-         methodExecutionPointcuts = new CopyOnWriteArrayList<Pointcut>();
+         if (methodExecutionPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            methodExecutionPointcuts = new CopyOnWriteArrayList<Pointcut>();
+         }
+         methodExecutionPointcuts.add(pointcut);
+   
+         if (methodExecutionPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            methodExecutionPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
+         }
+         methodExecutionPointcutInfos.add(info);
       }
-      methodExecutionPointcuts.add(pointcut);
-
-      if (methodExecutionPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
-      {
-         methodExecutionPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
-      }
-      methodExecutionPointcutInfos.add(info);
    }
 
    private void addConstructorCallPointcut(Pointcut pointcut, PointcutInfo info)
    {
-      if (constructorCallPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      if (BindingClassifier.isConstructorCall(pointcut))
       {
-         constructorCallPointcuts = new CopyOnWriteArrayList<Pointcut>();
+         if (constructorCallPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            constructorCallPointcuts = new CopyOnWriteArrayList<Pointcut>();
+         }
+         constructorCallPointcuts.add(pointcut);
+   
+         if (constructorCallPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            constructorCallPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
+         }
+         constructorCallPointcutInfos.add(info);
       }
-      constructorCallPointcuts.add(pointcut);
-
-      if (constructorCallPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
-      {
-         constructorCallPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
-      }
-      constructorCallPointcutInfos.add(info);
    }
 
    private void addMethodCallPointcut(Pointcut pointcut, PointcutInfo info)
    {
-      if (methodCallPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+      if (BindingClassifier.isMethodCall(pointcut))
       {
-         methodCallPointcuts = new CopyOnWriteArrayList<Pointcut>();
+         if (methodCallPointcuts == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            methodCallPointcuts = new CopyOnWriteArrayList<Pointcut>();
+         }
+         methodCallPointcuts.add(pointcut);
+   
+         if (methodCallPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
+         {
+            methodCallPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
+         }
+         methodCallPointcutInfos.add(info);
       }
-      methodCallPointcuts.add(pointcut);
-
-      if (methodCallPointcutInfos == UnmodifiableEmptyCollections.EMPTY_ARRAYLIST)
-      {
-         methodCallPointcutInfos = new CopyOnWriteArrayList<PointcutInfo>();
-      }
-      methodCallPointcutInfos.add(info);
    }
 
    private void updatePointcutStats(Pointcut pointcut, AspectManager manager)
