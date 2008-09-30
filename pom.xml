@@ -475,6 +475,10 @@
             <groupId>jboss</groupId>
             <artifactId>jboss-logging-spi</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>jboss</groupId>
+            <artifactId>jboss-logging-log4j</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
