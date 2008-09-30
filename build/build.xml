@@ -236,8 +236,8 @@
   
   <!-- Define a macro for calling maven -->
   <macrodef name="maven">
-      <attribute name="options"/>
-      <attribute name="goal" />
+      <attribute name="options" default=""/>
+      <attribute name="goal"/>
       <attribute name="basedir" />
       <element name="args" implicit="true" optional="true" />
       <sequential>
@@ -250,9 +250,6 @@
                   </fileset>
                   <fileset dir="${maven.dir}/lib">
                       <include name="*.jar" />
-                  </fileset>
-                  <fileset dir="${maven.dir}/bin">
-                      <include name="*.*" />
                   </fileset>
               </classpath>
               <sysproperty key="classworlds.conf" value="${maven.dir}/bin/m2.conf" />

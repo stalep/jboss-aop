@@ -479,6 +479,12 @@
             <groupId>jboss</groupId>
             <artifactId>jboss-logging-log4j</artifactId>
           </exclusion>
+          <!-- ant-junit should be excluded because it causes tests to 
+            -  run twice in the ant test scripts -->
+          <exclusion>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-junit</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>

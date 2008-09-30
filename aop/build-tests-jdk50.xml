@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE project [
    <!ENTITY buildmagic SYSTEM "../tools/etc/buildmagic/buildmagic.ent">
-   <!ENTITY libraries SYSTEM "../thirdparty/libraries.ent">
-   <!ENTITY modules SYSTEM "../tools/etc/buildmagic/modules.ent">
 ]>
 
 <!-- ====================================================================== -->
@@ -42,10 +40,48 @@
       | Other targets should depend on 'init' or things will mysteriously fail.
     -->
 
-   <target name="init" unless="init.disable" depends="_buildmagic:init">
+   <target name="init" unless="init.disable" depends=" _buildmagic:init">
+      <!-- Note: tasks in this target will not run because _buildmagic:init 
+        -  sets "init.disable" to true" -->
    </target>
 
+   
+   <target name="maven-ant-tasks" unless="maven.tasks.complete" xmlns:maven="urn:maven-artifact-ant">
+      
+      <!-- Maven Ant Tasks Setup                                              -->
+      <!-- ================================================================== -->
 
+      <path id="maven-ant-tasks.classpath" path="../tools/lib/maven-ant-tasks.jar" />
+      <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
+               classpathref="maven-ant-tasks.classpath" />
+      <maven:pom id="maven.project" file="pom.xml" />
+      <maven:remoteRepository id="repository.jboss.org" url="http://repository.jboss.org/maven2" />
+      <maven:remoteRepository id="snapshots.jboss.org" url="http://snapshots.jboss.org/maven2" />
+	
+      <!-- Maven dependencies -->
+      <maven:dependencies pathId="maven.dependencies.compileClasspath" useScope="compile">
+         <pom refid="maven.project"/>
+      </maven:dependencies>
+      <maven:dependencies pathId="maven.dependencies.testClasspath" useScope="test">
+         <pom refid="maven.project"/>
+      </maven:dependencies>
+      <maven:dependencies pathId="jboss.test.classpath">
+         <dependency groupId="jboss" artifactId="jboss-test" version="1.0.3.GA"/>
+      </maven:dependencies>
+      <maven:dependencies pathId="junit.junit.classpath">
+         <dependency groupId="junit" artifactId="junit" version="3.8.1"/>
+      </maven:dependencies>
+      
+      <property name="build.directory" value="${maven.project.build.directory}"/>
+      <property name="build.artifact.name" value="${maven.project.build.finalName}.jar"/>
+      <property name="build.artifact" value="${build.directory}/${build.artifact.name}"/>
+      <path id="jboss.aop.classpath">
+        <pathelement location="${build.artifact}"/>
+      </path>
+      
+      <property name="maven.tasks.complete" value="true"/>
+   </target>
+   
    <!-- ================================================================== -->
    <!-- Configuration                                                      -->
    <!-- ================================================================== -->
@@ -57,7 +93,7 @@
       | should contain module specific configuration elements.
     -->
 
-   <target name="configure" unless="configure.disable">
+   <target name="configure" unless="configure.disable" depends="maven-ant-tasks">
       <property name="aop.version" value="jboss-aop-1.5.0.GA"/>
       <property name="aop.title" value="JBoss AOP Framework"/>
 
@@ -74,27 +110,9 @@
       <!-- Libraries -->
       <!-- ========= -->
 
-      &libraries;
-      &modules;
       <!-- The combined library classpath -->
       <path id="library.classpath">
-         <path refid="apache.ant.classpath"/>
-         <path refid="apache.log4j.classpath"/>
-         <path refid="javassist.classpath"/>
-         <path refid="jboss.profiler.jvmti.classpath"/>
-         <path refid="jboss.common.core.classpath"/>
-         <path refid="jboss.common.logging.log4j.classpath"/>
-         <!--
-         <path refid="jboss.common.logging.jdk.classpath"/>
-         -->
-         <path refid="jboss.common.logging.spi.classpath"/>
-         <path refid="jboss.jboss.reflect.classpath"/>
-         <path refid="jboss.jboss.mdr.classpath"/>
-         <path refid="jboss.test.classpath"/>
-         <path refid="junit.junit.classpath"/>
-         <path refid="qdox.classpath"/>
-         <path refid="trove.classpath"/>
-         <path refid="xdoclet.xdoclet.classpath"/>
+         <path refid="maven.dependencies.testClasspath"/>
       </path>
 
       <!--
@@ -163,7 +181,7 @@
          <pathelement path="${classpath}"/>
          <pathelement path="${local.classpath}"/>
          <path refid="thirdparty.classpath"/>
-         <pathelement path="${build.lib}/jboss-aop-jdk50.jar"/>
+         <pathelement path="${build.artifact}"/>
       </path>
 
       <path id="javac.jrockit.classpath">
@@ -173,7 +191,7 @@
 
       <path id="test.classpath">
          <path refid="thirdparty.classpath"/>
-         <pathelement path="${build.lib}/jboss-aop-jdk50.jar"/>
+         <pathelement path="${build.artifact}"/>
       </path>
 
       <path id="compatibility15.test.classpath">
@@ -502,7 +520,7 @@
 
       <mkdir dir="${build.reports}"/>
       <junit printsummary="yes" fork="yes" haltonfailure="no">
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
+         <jvmarg value="-javaagent:${build.artifact}"/>
          <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
@@ -935,7 +953,7 @@
          <sysproperty key="java5Agent" value="true"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
+         <jvmarg value="-javaagent:${build.artifact}"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -953,7 +971,7 @@
          <sysproperty key="java5Agent" value="true"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
+         <jvmarg value="-javaagent:${build.artifact}"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -970,7 +988,7 @@
          <sysproperty key="java5Agent" value="true"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
+         <jvmarg value="-javaagent:${build.artifact}"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -986,7 +1004,7 @@
          <sysproperty key="java5Agent" value="true"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
+         <jvmarg value="-javaagent:${build.artifact}"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -1002,7 +1020,7 @@
          <sysproperty key="java5Agent" value="true"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
+         <jvmarg value="-javaagent:${build.artifact}"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -1018,7 +1036,7 @@
          <sysproperty key="java5Agent" value="true"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
+         <jvmarg value="-javaagent:${build.artifact}"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -1034,7 +1052,7 @@
          <sysproperty key="java5Agent" value="true"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
+         <jvmarg value="-javaagent:${build.artifact}"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -1278,7 +1296,7 @@
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <!-- don't prune it so that we can inspect the bytecodes state during tests execution -->
          <sysproperty key="jboss.aop.prune" value="false"/>
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar=-hotSwap"/>
+         <jvmarg value="-javaagent:${build.artifact}=-hotSwap"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -1293,7 +1311,7 @@
          <sysproperty key="scenario.jar" value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar=-hotSwap"/>
+         <jvmarg value="-javaagent:${build.artifact}=-hotSwap"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -1308,7 +1326,7 @@
          <sysproperty key="scenario.jar" value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar=-hotSwap"/>
+         <jvmarg value="-javaagent:${build.artifact}=-hotSwap"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -1323,7 +1341,7 @@
          <sysproperty key="scenario.jar" value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar=-hotSwap"/>
+         <jvmarg value="-javaagent:${build.artifact}=-hotSwap"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -1338,7 +1356,7 @@
          <sysproperty key="scenario.jar" value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar=-hotSwap"/>
+         <jvmarg value="-javaagent:${build.artifact}=-hotSwap"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
@@ -1353,7 +1371,7 @@
          <sysproperty key="scenario.jar" value="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"/>
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="jboss.aop.prune" value="false"/>
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar=-hotSwap"/>
+         <jvmarg value="-javaagent:${build.artifact}=-hotSwap"/>
          <classpath>
             <path refid="test.classpath"/>
             <pathelement location="${build.tests.classes}"/>
