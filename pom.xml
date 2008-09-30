@@ -286,17 +286,17 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.aop</groupId>
-        <artifactId>jboss-asintegration-core</artifactId>
+        <artifactId>jboss-aop-asintegration-core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.aop</groupId>
-        <artifactId>jboss-asintegration-jmx</artifactId>
+        <artifactId>jboss-aop-asintegration-jmx</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.aop</groupId>
-        <artifactId>jboss-asintegration-mc</artifactId>
+        <artifactId>jboss-aop-asintegration-mc</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
