@@ -262,14 +262,23 @@ public abstract class Instrumentor
       
       //TODO remove this hack once we have a version of javassist that makes the _added_m$ methods synthetic 
       //The following depends on javassist internals
-      ClassFile cf = clazz.getClassFile();
-      List<MethodInfo> infos = cf.getMethods();
-      MethodInfo info = infos.get(infos.size() - 2);
-      if (info.getName().startsWith("_added_m$"))
+      try
       {
-         addSyntheticAttribute(info);
+         ClassFile cf = clazz.getClassFile();
+         List<MethodInfo> infos = cf.getMethods();
+         MethodInfo info = infos.get(infos.size() - 2);
+         if (info.getName().startsWith("_added_m$"))
+         {
+            addSyntheticAttribute(info);
+         }
       }
-      
+      catch(Exception e)
+      {
+         if (AspectManager.verbose)
+         {
+            logger.warn("Could not find wrapper method for " + method.getName());
+         }
+      }
       return newMethod;
    }
 
