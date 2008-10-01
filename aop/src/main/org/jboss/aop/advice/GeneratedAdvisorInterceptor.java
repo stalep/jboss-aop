@@ -505,7 +505,7 @@ public class GeneratedAdvisorInterceptor implements Interceptor
       throw new RuntimeException("Invocation type not handled " + invocation);
    }
    
-   String adviceString;
+   volatile String adviceString;
    public String getAdviceString()
    {
       if (adviceString == null)
