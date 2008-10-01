@@ -63,6 +63,12 @@
          </fileset>
       </copy>
 
+      <copy todir="${project.release}/docs/aspect-framework" filtering="no">
+         <fileset dir="${project.root}/aop/target/site">
+            <include name="apidocs/**"/>
+         </fileset>
+      </copy>
+
 
       <copy todir="${project.release}/src/aspect-framework" filtering="no">
          <fileset dir="${project.root}/aop/src">
@@ -81,18 +87,18 @@
       <!-- ==================================================  -->
 
       <copy todir="${project.release}/docs/asintegration-core" filtering="no">
-         <fileset dir="${project.root}/asintegration-core/output">
-            <include name="api/**"/>
+         <fileset dir="${project.root}/asintegration-core/target/site">
+            <include name="apidocs/**"/>
          </fileset>
       </copy>
       <copy todir="${project.release}/docs/asintegration-jmx" filtering="no">
-         <fileset dir="${project.root}/asintegration-jmx/output">
-            <include name="api/**"/>
+         <fileset dir="${project.root}/asintegration-jmx/target/site">
+            <include name="apidocs/**"/>
          </fileset>
       </copy>
       <copy todir="${project.release}/docs/asintegration-mc" filtering="no">
-         <fileset dir="${project.root}/asintegration-mc/output">
-            <include name="api/**"/>
+         <fileset dir="${project.root}/asintegration-mc/target/site">
+            <include name="apidocs/**"/>
          </fileset>
       </copy>
 
@@ -129,8 +135,8 @@
       <!-- ==================================================  -->
 
       <copy todir="${project.release}/docs/aspects" filtering="no">
-         <fileset dir="${project.root}/aspects/output">
-            <include name="api/**"/>
+         <fileset dir="${project.root}/aspects/target/site">
+            <include name="apidocs/**"/>
          </fileset>
       </copy>
 
@@ -155,9 +161,9 @@
       <property name="aop.50.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50.jar"/>
       <property name="aop.50.single.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50-single.jar"/>
       <property name="aop.aspect-library50.location" value="${project.root}/aspects/output/lib/jboss-standalone-aspect-library-jdk50.jar"/>
-      <property name="aop.asintegration-core.location" value="${project.root}/asintegration-core/output/lib/jboss-asintegration-core.jar"/>
-      <property name="aop.asintegration-jmx.location" value="${project.root}/asintegration-jmx/output/lib/jboss-asintegration-jmx.jar"/>
-      <property name="aop.asintegration-mc.location" value="${project.root}/asintegration-mc/output/lib/jboss-asintegration-mc.jar"/>      
+      <property name="aop.asintegration-core.location" value="${project.root}/asintegration-core/target/jboss-aop-asintegration-core.jar"/>
+      <property name="aop.asintegration-jmx.location" value="${project.root}/asintegration-jmx/target/jboss-aop-asintegration-jmx.jar"/>
+      <property name="aop.asintegration-mc.location" value="${project.root}/asintegration-mc/target/jboss-aop-asintegration-mc.jar"/>      
       <property name="aop.jrockit-pluggable-instrumentor.location" value="${project.root}/jrockit-pluggable-instrumentor/target/jrockit-pluggable-instrumentor.jar"/>
       <property name="aop.pluggable-instrumentor.location" value="${project.root}/pluggable-instrumentor/target/pluggable-instrumentor.jar"/>
       <property name="aop.readme-as4.location" value="${project.root}/asintegration-core/src/etc/ReadMe-AS4.txt"/>

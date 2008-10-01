@@ -174,7 +174,7 @@
 
    <target name="release"
       description="Builds the default release structure."
-      depends="init, clean, most, aop.reference.docs"
+      depends="init, clean, most, maven-site, aop.reference.docs"
       >
       <ant antfile="build-release.xml" target="release-no-reference-docs"/>
       <ant antfile="build-release.xml" target="release-reference-docs"/>
@@ -259,11 +259,9 @@
       </sequential>
   </macrodef> 
 
-   <!-- create the thirdparty folder from items in the repository -->
-   <!-- then generate a new libraries.ent file and include it in  -->
-   <!-- the build                                                 -->
    <target name="createthirdparty" unless="inhibit.downloads"
-      depends="check.inhibit.downloads, set.proxy">
+      depends="check.inhibit.downloads, set.proxy"
+      description="Call maven to generate the thirdparty directory">
      
       <property name="maven.dir" value="${basedir}/../tools/maven"/>
       <property name="thirdparty.maven.opts" value=""/>
@@ -277,11 +275,9 @@
           </not>
         </condition>
       </fail>
-      
    </target>
 
-   <!-- Run the maven part of the build -->
-   <target name="maven-build-install" depends="set-jrockit">
+   <target name="maven-build-install" depends="set-jrockit" description="Call maven install">
      
       <property name="maven.dir" value="${basedir}/../tools/maven"/>
       <property name="build.maven.opts" value=""/>
@@ -296,13 +292,25 @@
           </not>
         </condition>
       </fail>
-      
    </target>
   
-   <target name="set-jrockit" depends="init" if="jrockit.home">
-     <property name="jrockit.build.param" value="-Djrockit.home=${jrockit.home}"/>
+   <target name="maven-site" depends="set-jrockit" description="Generate the maven site">
+     
+      <property name="maven.dir" value="${basedir}/../tools/maven"/>
+      <property name="build.maven.opts" value=""/>
+      <property name="jrockit.build.param" value=""/>
+      <echo message="jrockit: ${jrockit.build.param}"/>
+      <maven basedir="${basedir}/../" options="${jrockit.build.param} ${build.maven.opts}" goal="site"/>
+      
+      <fail message="Unable to complete maven build.  See maven output for details.">
+        <condition>
+          <not>
+            <equals arg1="${maven.result}" arg2="0"/>
+          </not>
+        </condition>
+      </fail>
    </target>
-
+   
    <!-- Clean the maven part of the build -->
    <target name="maven-build-clean" depends="set-jrockit">
      
@@ -319,7 +327,10 @@
           </not>
         </condition>
       </fail>
-      
+   </target>
+
+   <target name="set-jrockit" depends="init" if="jrockit.home">
+     <property name="jrockit.build.param" value="-Djrockit.home=${jrockit.home}"/>
    </target>
 
    <!-- check if thirdparty libraries are to be downloaded -->

@@ -13,6 +13,7 @@
   <description>JBoss AOP AS Integrationi Core</description>
   
   <build>
+    <finalName>${artifactId}</finalName>
     <sourceDirectory>src/main/</sourceDirectory>
     <testSourceDirectory>src/tests/</testSourceDirectory>
     <resources>
@@ -53,44 +54,6 @@
           <testFailureIgnore>true</testFailureIgnore>
           <forkMode>always</forkMode>
           <skip>true</skip>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.2</version>
-        <executions>
-          <execution>
-            <id>copy-output-jars</id>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <tasks>
-                <mkdir dir="${basedir}/output"/>
-                <mkdir dir="${basedir}/output/lib"/>
-                <copy todir="${basedir}/output/etc">
-                  <fileset dir="${basedir}/src/etc"/>
-                </copy>
-                <copy file="${project.build.directory}/${project.artifactId}-${project.version}.jar"
-                      tofile="${basedir}/output/lib/${project.artifactId}.jar"/>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- Clean the output directory created by the antrun plugin -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>${basedir}/output</directory>
-            </fileset>
-          </filesets>
         </configuration>
       </plugin>
     </plugins>
