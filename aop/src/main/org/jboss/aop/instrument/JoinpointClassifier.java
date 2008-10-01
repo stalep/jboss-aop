@@ -163,12 +163,12 @@ public abstract class JoinpointClassifier
    {
       public Collection<PointcutInfo> getPointcutInfos(Advisor advisor)
       {
-         return advisor.getManager().getBindingCollection().getConstructorExecutionPointcutInfos();
+         return advisor.getManager().getBindingCollection().getMethodExecutionPointcutInfos();
       }
 
       public Collection<Pointcut> getPointcuts(Advisor advisor)
       {
-         return advisor.getManager().getBindingCollection().getConstructorExecutionPointcuts();
+         return advisor.getManager().getBindingCollection().getMethodExecutionPointcuts();
       }
    };
    
