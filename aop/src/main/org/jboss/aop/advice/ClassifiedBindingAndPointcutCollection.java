@@ -480,14 +480,22 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public void add(AdviceBinding binding, AspectManager manager)
    {
-      addBinding(binding);
-      addGet(binding);
-      addSet(binding);
-      addConstruction(binding);
-      addConstructorExecution(binding);
-      addMethodExecution(binding);
-      addConstructorCall(binding);
-      addMethodCall(binding);
+      if (bindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         bindings = new LinkedHashMap<String, AdviceBinding>();
+      }
+      bindings.put(binding.getName(), binding);
+      // create the pointcutinfo outside of methods to avoid duplicate creation
+      // of pointcut infos
+      PointcutInfo pointcutInfo = new PointcutInfo(binding.getPointcut(), binding,
+            AspectManager.hasTransformationStarted());
+      addGet(binding, pointcutInfo);
+      addSet(binding, pointcutInfo);
+      addConstruction(binding, pointcutInfo);
+      addConstructorExecution(binding, pointcutInfo);
+      addMethodExecution(binding, pointcutInfo);
+      addConstructorCall(binding, pointcutInfo);
+      addMethodCall(binding, pointcutInfo);
       updatePointcutStats(binding.getPointcut(), manager);
    }
 
@@ -623,18 +631,7 @@ public class ClassifiedBindingAndPointcutCollection
       return set;
    }
    
-   private void addBinding(AdviceBinding binding)
-   {
-      if (bindings == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
-      {
-         bindings = new LinkedHashMap<String, AdviceBinding>();
-      }
-      bindings.put(binding.getName(), binding);
-      
-      addPointcut(binding.getPointcut());
-   }
-   
-   private void addGet(AdviceBinding binding)
+   private void addGet(AdviceBinding binding, PointcutInfo pointcutInfo)
    {
       if (BindingClassifier.isGet(binding))
       {
@@ -643,10 +640,11 @@ public class ClassifiedBindingAndPointcutCollection
             fieldReadBindings = new CopyOnWriteArraySet<AdviceBinding>();
          }
          this.fieldReadBindings.add(binding);
+         this.addFieldReadPointcut(pointcutInfo.getPointcut(), pointcutInfo);
       }
    }
    
-   private void addSet(AdviceBinding binding)
+   private void addSet(AdviceBinding binding, PointcutInfo pointcutInfo)
    {
       if (BindingClassifier.isSet(binding))
       {
@@ -655,10 +653,11 @@ public class ClassifiedBindingAndPointcutCollection
             fieldWriteBindings = new CopyOnWriteArraySet<AdviceBinding>();
          }
          this.fieldWriteBindings.add(binding);
+         this.addFieldWritePointcut(pointcutInfo.getPointcut(), pointcutInfo);
       }
    }
    
-   private void addConstruction(AdviceBinding binding)
+   private void addConstruction(AdviceBinding binding, PointcutInfo pointcutInfo)
    {
       if (BindingClassifier.isConstruction(binding))
       {
@@ -667,10 +666,11 @@ public class ClassifiedBindingAndPointcutCollection
             constructionBindings = new CopyOnWriteArraySet<AdviceBinding>();
          }
          this.constructionBindings.add(binding);
+         this.addConstructionPointcut(pointcutInfo.getPointcut(), pointcutInfo);
       }
    }
    
-   private void addConstructorExecution(AdviceBinding binding)
+   private void addConstructorExecution(AdviceBinding binding, PointcutInfo pointcutInfo)
    {
       if (BindingClassifier.isConstructorExecution(binding))
       {
@@ -679,10 +679,11 @@ public class ClassifiedBindingAndPointcutCollection
             constructorExecutionBindings = new CopyOnWriteArraySet<AdviceBinding>();
          }
          this.constructorExecutionBindings.add(binding);
+         this.addConstructorExecutionPointcut(pointcutInfo.getPointcut(), pointcutInfo);
       }
    }
    
-   private void addMethodExecution(AdviceBinding binding)
+   private void addMethodExecution(AdviceBinding binding, PointcutInfo pointcutInfo)
    {
       if (BindingClassifier.isMethodExecution(binding))
       {
@@ -691,10 +692,11 @@ public class ClassifiedBindingAndPointcutCollection
             methodExecutionBindings = new CopyOnWriteArraySet<AdviceBinding>();
          }
          this.methodExecutionBindings.add(binding);
+         this.addMethodExecutionPointcut(pointcutInfo.getPointcut(), pointcutInfo);
       }
    }
    
-   private void addMethodCall(AdviceBinding binding)
+   private void addMethodCall(AdviceBinding binding, PointcutInfo pointcutInfo)
    {
       if (BindingClassifier.isMethodCall(binding))
       {
@@ -703,10 +705,11 @@ public class ClassifiedBindingAndPointcutCollection
             methodCallBindings = new CopyOnWriteArraySet<AdviceBinding>();
          }
          this.methodCallBindings.add(binding);
+         this.addMethodCallPointcut(pointcutInfo.getPointcut(), pointcutInfo);
       }
    }
    
-   private void addConstructorCall(AdviceBinding binding)
+   private void addConstructorCall(AdviceBinding binding, PointcutInfo pointcutInfo)
    {
       if (BindingClassifier.isConstructorCall(binding))
       {
@@ -715,6 +718,7 @@ public class ClassifiedBindingAndPointcutCollection
             constructorCallBindings = new CopyOnWriteArraySet<AdviceBinding>();
          }
          this.constructorCallBindings.add(binding);
+         this.addConstructorCallPointcut(pointcutInfo.getPointcut(), pointcutInfo);
       }
    }
    
