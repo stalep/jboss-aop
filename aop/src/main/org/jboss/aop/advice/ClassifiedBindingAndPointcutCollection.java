@@ -489,6 +489,11 @@ public class ClassifiedBindingAndPointcutCollection
       // of pointcut infos
       PointcutInfo pointcutInfo = new PointcutInfo(binding.getPointcut(), binding,
             AspectManager.hasTransformationStarted());
+      if (pointcutInfos == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         pointcutInfos = new LinkedHashMap<String, PointcutInfo>();
+      }
+      pointcutInfos.put(pointcutInfo.getPointcut().getName(), pointcutInfo);
       addGet(binding, pointcutInfo);
       addSet(binding, pointcutInfo);
       addConstruction(binding, pointcutInfo);
@@ -522,6 +527,7 @@ public class ClassifiedBindingAndPointcutCollection
       AdviceBinding binding = bindings.remove(name);
       if (binding != null)
       {
+         this.removePointcut(binding.getPointcut());
          this.fieldReadBindings.remove(binding);
          this.fieldWriteBindings.remove(binding);
          this.constructionBindings.remove(binding);
@@ -539,28 +545,10 @@ public class ClassifiedBindingAndPointcutCollection
     */
    public void removePointcut(String name)
    {
-      Pointcut pc = pointcuts.remove(name);
+      Pointcut pc = pointcuts.get(name);
       if (pc != null)
       {
-         this.fieldReadPointcuts.remove(pc);
-         this.fieldWritePointcuts.remove(pc);
-         this.constructionPointcuts.remove(pc);
-         this.constructorExecutionPointcuts.remove(pc);
-         this.methodExecutionPointcuts.remove(pc);
-         this.constructorCallPointcuts.remove(pc);
-         this.methodCallPointcuts.remove(pc);
-      }
-      
-      PointcutInfo info = pointcutInfos.remove(name);
-      if (info != null)
-      {
-         this.fieldReadPointcutInfos.remove(info);
-         this.fieldWritePointcutInfos.remove(info);
-         this.constructionPointcutInfos.remove(info);
-         this.constructorExecutionPointcutInfos.remove(info);
-         this.methodExecutionPointcutInfos.remove(info);
-         this.constructorCallPointcutInfos.remove(info);
-         this.methodCallPointcutInfos.remove(info);
+         this.removePointcut(pc);
       }
    }
    
@@ -870,6 +858,31 @@ public class ClassifiedBindingAndPointcutCollection
          }
          methodCallPointcutInfos.add(info);
       }
+   }
+   
+   /**
+    * Removes the pointcut and the equivalent pointcutInfo.
+    * @param pc the pointcut to be removed
+    */
+   public void removePointcut(Pointcut pc)
+   {
+      this.pointcuts.remove(pc.getName());
+      this.fieldReadPointcuts.remove(pc);
+      this.fieldWritePointcuts.remove(pc);
+      this.constructionPointcuts.remove(pc);
+      this.constructorExecutionPointcuts.remove(pc);
+      this.methodExecutionPointcuts.remove(pc);
+      this.constructorCallPointcuts.remove(pc);
+      this.methodCallPointcuts.remove(pc);
+      
+      PointcutInfo info = pointcutInfos.remove(pc.getName());
+      this.fieldReadPointcutInfos.remove(info);
+      this.fieldWritePointcutInfos.remove(info);
+      this.constructionPointcutInfos.remove(info);
+      this.constructorExecutionPointcutInfos.remove(info);
+      this.methodExecutionPointcutInfos.remove(info);
+      this.constructorCallPointcutInfos.remove(info);
+      this.methodCallPointcutInfos.remove(info);
    }
 
    private void updatePointcutStats(Pointcut pointcut, AspectManager manager)
