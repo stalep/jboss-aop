@@ -181,7 +181,8 @@ public class JBossAOPMojo  extends AbstractMojo
       {
          if(a.getGroupId().startsWith("org.jboss") 
                || a.getGroupId().startsWith("jboss") 
-               || a.getGroupId().startsWith("trove"))
+               || a.getGroupId().startsWith("trove")
+               || a.getGroupId().startsWith("javassist"))
          sb.append(a.getFile().toString()).append(File.pathSeparator);
       }
 
