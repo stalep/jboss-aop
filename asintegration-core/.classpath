@@ -8,5 +8,5 @@
 	<classpathentry kind="lib" path="/thirdparty/jboss/common-logging-spi/lib/jboss-logging-spi.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jbossas/core-libs/lib/jboss-system.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pluggable-instrumentor"/>
-	<classpathentry kind="output" path="output/eclipse-classes"/>
+	<classpathentry kind="output" path="eclipse-output"/>
 </classpath>

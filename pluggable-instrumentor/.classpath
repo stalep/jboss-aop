@@ -4,5 +4,5 @@
 	<classpathentry kind="lib" path="target/pluggable-instrumentor-sources.jar"/>
 	<classpathentry kind="lib" path="target/pluggable-instrumentor.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="output" path="target/classes"/>
+	<classpathentry kind="output" path="eclipse-output"/>
 </classpath>

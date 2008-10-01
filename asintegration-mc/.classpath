@@ -23,5 +23,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/pluggable-instrumentor"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/asintegration-core"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/jboss-cl/lib/jboss-classloading.jar"/>
-	<classpathentry kind="output" path="output/eclipse-classes"/>
+	<classpathentry kind="output" path="eclipse-output"/>
 </classpath>
