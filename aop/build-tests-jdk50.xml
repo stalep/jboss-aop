@@ -339,6 +339,9 @@
       <delete dir="${build.tests.classes}"/>
       <antcall target="precompiled-compatibility-tests" inheritRefs="true"/>
 
+      <delete dir="${build.tests.classes}"/>
+      <antcall target="jdk15-hotswap-tests" inheritRefs="true"/>
+
       <!--      
       <antcall target="jrockit-tests" inheritRefs="true"/>
       <antcall target="jrockit-genadvisor-tests" inheritRefs="true"/>
