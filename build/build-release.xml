@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE project [
-   <!ENTITY libraries SYSTEM "../thirdparty/libraries.ent">
-]>
 
-<project name="JBoss AOP/Build">
+<project name="JBoss AOP/Build Release" default="release-no-reference-docs">
    <target name="release-no-reference-docs"
-	   description="Builds the default release structure, minus the reference documentation">
+	       description="Builds the default release structure, minus the reference documentation"
+         depends="init-dependency-properties">
       <delete dir="output/temp"/>
       <mkdir dir="output/temp"/>
 
@@ -29,18 +27,13 @@
       </copy>
 
       <!-- needed to build the source/tests from the dist package -->
-      <copy todir="${project.release}/lib-test" filtering="no">
-         <fileset dir="${project.root}/thirdparty/jboss/test/lib">
-            <include name="jboss-test.jar"/>
-         </fileset>
-         <fileset dir="${project.root}/thirdparty/junit/lib">
-            <include name="junit.jar"/>
-         </fileset>
-         <fileset dir="${project.root}/thirdparty/jboss/profiler/jvmti/lib">
-            <include name="jboss-profiler-jvmti.jar"/>
-         </fileset>
-      </copy>
-
+      <copy file="${jboss:jboss-test:jar}"
+            tofile="${project.release}/lib-test/jboss-test.jar"/> 
+      <copy file="${junit:junit:jar}"
+            tofile="${project.release}/lib-test/junit.jar"/>
+      <copy file="${jboss.profiler.jvmti:jboss-profiler-jvmti:jar}"
+            tofile="${project.release}/lib-test/jboss-profiler-jvmti.jar"/>
+      
       <copy todir="${project.release}/bin" filtering="no">
          <fileset dir="${project.root}/aop/src/resources/bin">
             <include name="**/*"/>
@@ -155,9 +148,6 @@
       <!-- Now pull everything together                        -->
       <!-- ==================================================  -->
 
-
-      &libraries;
-
       <property name="aop.50.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50.jar"/>
       <property name="aop.50.single.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50-single.jar"/>
       <property name="aop.aspect-library50.location" value="${project.root}/aspects/output/lib/jboss-standalone-aspect-library-jdk50.jar"/>
@@ -170,19 +160,6 @@
       <property name="aop.readme-as5.location" value="${project.root}/asintegration-core/src/etc/ReadMe-AS5.txt"/>
       <property name="aop.jboss-service.location" value="${project.root}/asintegration-jmx/src/resources/META-INF/jboss-service.xml"/>
 
-      <property name="javassist.location" value="${javassist.javassist.lib}/javassist.jar"/>
-      <property name="jboss-backport-concurrent.location" value="${jboss.backport.concurrent.lib}/jboss-backport-concurrent.jar"/>
-      <property name="jboss-common-core.location" value="${jboss.common.core.lib}/jboss-common-core.jar"/>
-      <property name="jboss-logging-log4j.location" value="${jboss.common.logging.log4j.lib}/jboss-logging-log4j.jar"/>
-      <property name="jboss-logging-spi.location" value="${jboss.common.logging.spi.lib}/jboss-logging-spi.jar"/>
-
-      <property name="jboss-reflect.location" value="${project.thirdparty}/jboss/jboss-reflect/lib/jboss-reflect.jar"/>
-      <property name="jboss-mdr.location" value="${project.thirdparty}/jboss/jboss-mdr/lib/jboss-mdr.jar"/>
-
-      <property name="log4j.location" value="${apache.log4j.lib}/log4j.jar"/>
-      <property name="qdox.location" value="${qdox.qdox.lib}/qdox.jar"/>
-      <property name="trove.location" value="${trove.trove.lib}/trove.jar"/>
-
       <!-- Copy across the eula -->
       <copy todir="${project.release}" file="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
 
@@ -193,16 +170,16 @@
       <copy todir="${project.release}/lib-50" file="${aop.aspect-library50.location}"/>
       <copy todir="${project.release}/lib-50" file="${aop.jrockit-pluggable-instrumentor.location}"/>
       <copy todir="${project.release}/lib-50" file="${aop.pluggable-instrumentor.location}"/>
-      <copy todir="${project.release}/lib-50" file="${javassist.location}"/>
-      <copy todir="${project.release}/lib-50" file="${jboss-common-core.location}"/>
+      <copy tofile="${project.release}/lib-50/javassist.jar" file="${javassist:javassist:jar}"/>
+      <copy tofile="${project.release}/lib-50/jboss-common-core.jar" file="${org.jboss:jboss-common-core:jar}"/>
 
-      <copy todir="${project.release}/lib-50" file="${jboss-reflect.location}"/>
-      <copy todir="${project.release}/lib-50" file="${jboss-mdr.location}"/>
+      <copy tofile="${project.release}/lib-50/jboss-reflect.jar" file="${org.jboss:jboss-reflect:jar}"/>
+      <copy tofile="${project.release}/lib-50/jboss-mdr.jar" file="${org.jboss:jboss-mdr:jar}"/>
 
-      <copy todir="${project.release}/lib-50" file="${jboss-logging-log4j.location}"/>
-      <copy todir="${project.release}/lib-50" file="${jboss-logging-spi.location}"/>
-      <copy todir="${project.release}/lib-50" file="${log4j.location}"/>
-      <copy todir="${project.release}/lib-50" file="${trove.location}"/>
+      <copy tofile="${project.release}/lib-50/jboss-logging-log4j.jar" file="${org.jboss.logging:jboss-logging-log4j:jar}"/>
+      <copy tofile="${project.release}/lib-50/jboss-logging-spi.jar" file="${org.jboss.logging:jboss-logging-spi:jar}"/>
+      <copy tofile="${project.release}/lib-50/log4j.jar" file="${log4j:log4j:jar}"/>
+      <copy tofile="${project.release}/lib-50/trove.jar" file="${trove:trove:jar}"/>
 
       <!-- The JBoss 4.0.x and 4.2.x libs for JDK 5 -->
       <copy file="${aop.jboss-service.location}" tofile="output/temp/jboss-service-jdk50.xml" filtering="true">
@@ -217,12 +194,12 @@
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.aspect-library50.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.asintegration-core.location}"/>
       <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.asintegration-jmx.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/" file="${aop.readme-as4.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-reflect.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-mdr.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${jboss-common-core.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${javassist.location}"/>
-      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${trove.location}"/>
+      <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.readme-as4.location}"/>
+      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/jboss-reflect.jar" file="${org.jboss:jboss-reflect:jar}"/>
+      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/jboss-mdr.jar" file="${org.jboss:jboss-mdr:jar}"/>
+      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/jboss-common-core.jar" file="${org.jboss:jboss-common-core:jar}"/>
+      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/javassist.jar" file="${javassist:javassist:jar}"/>
+      <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/trove.jar" file="${trove:trove:jar}"/>
       <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/META-INF/jboss-service.xml" file="output/temp/jboss-service-jdk50.xml"/>
 
       <!-- The JBoss 5 libs for JDK 5 (JBoss 5 needs JDK 5) -->
@@ -231,8 +208,8 @@
       <copy todir="${project.release}/jboss-50-install/lib" file="${aop.asintegration-mc.location}"/>
       <copy todir="${project.release}/jboss-50-install/lib" file="${aop.asintegration-jmx.location}"/>
       <copy todir="${project.release}/jboss-50-install" file="${aop.readme-as5.location}"/>
-      <copy todir="${project.release}/jboss-50-install/lib" file="${javassist.location}"/>
-      <copy todir="${project.release}/jboss-50-install/lib" file="${trove.location}"/>
+      <copy tofile="${project.release}/jboss-50-install/lib/javassist.jar" file="${javassist:javassist:jar}"/>
+      <copy tofile="${project.release}/jboss-50-install/lib/trove.jar" file="${trove:trove:jar}"/>
       <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer" file="${aop.aspect-library50.location}"/>
 
 
@@ -253,5 +230,24 @@
 
   </target>
 
-
+  <target name="init-dependency-properties"
+     description="Initialize properties for accessing maven dependencies"
+     xmlns:maven="urn:maven-artifact-ant">
+     
+    <path id="maven-ant-tasks.classpath" path="../tools/lib/maven-ant-tasks.jar" />
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
+             classpathref="maven-ant-tasks.classpath"/>
+     
+    <maven:pom id="aop.framework.pom" file="../aop/pom.xml" />
+     
+     <!-- This tasks resolves maven dependencies and creates a property of the
+       -  form groupId:artifactId:type that points to the dependency jar file.
+       -->
+    <maven:dependencies pathId="dist.dependencies.classpath" 
+          versionsId="maven.dependency.versions">
+       <pom refid="aop.framework.pom"/>
+    </maven:dependencies>
+     
+  </target>
+   
 </project>

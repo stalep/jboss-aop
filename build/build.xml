@@ -228,7 +228,7 @@
   <target name="main" depends="most"
 	  description="Executes the default target (most)."/>
 
-  <target name="most" depends="maven-build-install, createthirdparty, install"
+  <target name="most" depends="maven-build-install, install"
 	  description="Executes all modules and builds most everything."/>
 
   <target name="help" depends="_buildmagic:help:build"
@@ -258,24 +258,6 @@
           </java>
       </sequential>
   </macrodef> 
-
-   <target name="createthirdparty" unless="inhibit.downloads"
-      depends="check.inhibit.downloads, set.proxy"
-      description="Call maven to generate the thirdparty directory">
-     
-      <property name="maven.dir" value="${basedir}/../tools/maven"/>
-      <property name="thirdparty.maven.opts" value=""/>
-      
-      <maven basedir="${basedir}/../thirdparty" options="${thirdparty.maven.opts}" goal="generate-resources"/>
-      
-      <fail message="Unable to build thirdparty directory.  See maven output for details.">
-        <condition>
-          <not>
-            <equals arg1="${maven.result}" arg2="0"/>
-          </not>
-        </condition>
-      </fail>
-   </target>
 
    <target name="maven-build-install" depends="set-jrockit" description="Call maven install">
      
@@ -333,7 +315,7 @@
      <property name="jrockit.build.param" value="-Djrockit.home=${jrockit.home}"/>
    </target>
 
-   <!-- check if thirdparty libraries are to be downloaded -->
+   <!-- TODO: Maybe this can be set up to control offline maven builds. -->
    <target name="check.inhibit.downloads">
       <condition property="inhibit.downloads">
         <istrue value="${nodownload}"/>
