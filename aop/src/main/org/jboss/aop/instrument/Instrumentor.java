@@ -688,12 +688,6 @@ public abstract class Instrumentor
             
             final ClassLoader refCl = ctRef.getClassPool().getClassLoader();
 
-            //DELETE
-            if (clazz.getName().contains("SecurityTester") && ref.contains("SecuredPOJO"))
-            {
-               System.out.println("=================> " + manager.getInterceptionMarkers(refCl).shouldSkipFieldAccess(ref));
-            }
-            
             if (!manager.getInterceptionMarkers(refCl).shouldSkipFieldAccess(ref) && !ref.equals(clazz.getName()))
             {
                List<CtField> fields = getAdvisableFields(ctRef);
