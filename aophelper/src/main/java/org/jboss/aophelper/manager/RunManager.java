@@ -95,9 +95,6 @@ public class RunManager
    private void addClasspath()
    {
       File[] files = AopHelperMediator.instance().getMainPane().createFileCooser();
-      
-      System.out.println("got "+files.length+" number of files");
-      
       for(File f : files)
       {
          AopHandler.instance().getRun().addClasspath(f.getAbsolutePath());
@@ -118,10 +115,7 @@ public class RunManager
 
    private void addXml()
    {
-      File[] files = AopHelperMediator.instance().getMainPane().createFileCooser();
-      
-      System.out.println("got "+files.length+" number of files");
-      
+      File[] files = AopHelperMediator.instance().getMainPane().createFileCooser(); 
       for(File f : files)
       {
          AopHandler.instance().getRun().addXml(f.getAbsolutePath());
@@ -183,25 +177,17 @@ public class RunManager
    
    private void run()
    {
-      System.out.println("LETS RUN!");
+      if(AopHandler.instance().getRun().getWorkingdir() == null)
+         AopHelperMediator.instance().getMainPane().displayMessageDialog("Must set working directory");
+      else if(AopHandler.instance().getRun().getExecutionClass() == null)
+         AopHelperMediator.instance().getMainPane().displayMessageDialog("Must set execution class");
+      else
+      {
       AopRunCommand run = new AopRunCommand();
-      String output = run.execute();
-      runMediator.getRunOutputPane().setText(output);
-      System.out.println("output: "+output);
-      
-//      AopCompileCommand compile = new AopCompileCommand();
-//      String output = compile.execute();
-//      runMediator.getRunOutputPane().setText(output);
-//      System.out.println("output: "+output);
-//      
-//      java.util.Properties props = System.getProperties();
-//      java.util.Enumeration<?> e = props.propertyNames();
-//      
-//      while(e.hasMoreElements())
-//         System.out.println(e.toString());
-      
-      System.out.println("CLASSPATH: "+System.getProperty("java.class.path"));
-
+      String[] out = run.execute();
+      runMediator.getRunOutputPane().setText(out[0]);
+      runMediator.getRunOutputPane().setError(out[1]);
+      }
    }
    
    

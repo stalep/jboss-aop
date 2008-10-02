@@ -36,7 +36,7 @@ import org.jboss.aophelper.core.AopHandler;
 public class AopCompileCommand
 {
    
-   public String execute()
+   public String[] execute()
    {
       String execute = setup();
       try
@@ -62,7 +62,7 @@ public class AopCompileCommand
       AopCompile compileOptions = AopHandler.instance().getCompile();
       
       StringBuilder execute = new StringBuilder();
-      execute.append("java -cp ").append(CommandUtil.getAopPaths());
+      execute.append("java -cp ").append(getClasspath());
       execute.append(" org.jboss.aop.standalone.Compiler ");
       if(compileOptions.isVerbose())
          execute.append("-verbose ");
@@ -94,6 +94,23 @@ public class AopCompileCommand
       
       return execute.toString();
       
+   }
+   
+   private String getClasspath()
+   {
+      StringBuilder sb = new StringBuilder();
+      String pathSeparator = System.getProperty("path.separator");
+      for(String path : AopHandler.instance().getCompile().getClasspath())
+      {
+         if(sb.length() > 0)
+            sb.append(pathSeparator);
+         sb.append(path);
+      }
+      if(sb.length() > 0)
+         sb.append(pathSeparator);
+      sb.append(AopHandler.instance().getCompile().getWorkingdir());
+      
+      return sb.toString();
    }
 
 }

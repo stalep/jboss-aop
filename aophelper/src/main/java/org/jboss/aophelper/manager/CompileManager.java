@@ -87,10 +87,7 @@ public class CompileManager
    
    private void addClasspath()
    {
-      File[] files = AopHelperMediator.instance().getMainPane().createFileCooser();
-      
-      System.out.println("got "+files.length+" number of files");
-      
+      File[] files = AopHelperMediator.instance().getMainPane().createFileCooser();   
       for(File f : files)
       {
          AopHandler.instance().getCompile().addClasspath(f.getAbsolutePath());
@@ -112,9 +109,6 @@ public class CompileManager
    private void addXml()
    {
       File[] files = AopHelperMediator.instance().getMainPane().createFileCooser();
-      
-      System.out.println("got "+files.length+" number of files");
-      
       for(File f : files)
       {
          AopHandler.instance().getCompile().addXml(f.getAbsolutePath());
@@ -157,24 +151,23 @@ public class CompileManager
          mediator.getCompileOptionsPane().setWorkingDir(f.getAbsolutePath());
       }
    }
-   
+
    private void compile()
    {
-      System.out.println("LETS COMPILE!");
-      AopCompileCommand compile = new AopCompileCommand();
-      String output = compile.execute();
-      mediator.getOutputPane().setText(output);
-      System.out.println("output: "+output);
-//      
-//      java.util.Properties props = System.getProperties();
-//      java.util.Enumeration<?> e = props.propertyNames();
-//      
-//      while(e.hasMoreElements())
-//         System.out.println(e.toString());
-      
-      System.out.println("CLASSPATH: "+System.getProperty("java.class.path"));
-
+      if(AopHandler.instance().getCompile().getWorkingdir() == null)
+         AopHelperMediator.instance().getMainPane().displayMessageDialog("Must set working directory");
+      else
+      {
+         AopCompileCommand compile = new AopCompileCommand();
+         String[] out = compile.execute();
+         mediator.getOutputPane().setText(out[0]);
+         mediator.getOutputPane().setError(out[1]);
+         System.out.println("output: "+out[0]);
+      }
    }
+   
+   
+   
    
    
 }

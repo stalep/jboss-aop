@@ -61,19 +61,21 @@ public class CommandUtil
             aopPaths.append(p).append(pathSeparator);
          
       }
-      aopPaths.append(".");
+//      aopPaths.append(".");
       
       return aopPaths.toString();
    }
    
 
-   public static String analyzeProcess(Process process)
+   public static String[] analyzeProcess(Process process)
    {
       BufferedReader br = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
 
       String line; 
 
       StringBuffer output = new StringBuffer();
+      StringBuffer error = new StringBuffer();
+      
 
       try
       {
@@ -95,6 +97,7 @@ public class CommandUtil
          while(( line = errorBr.readLine()) != null)
          {
             System.out.println("ERROR: "+line);
+            error.append("\n").append(line);
          }
       }
       catch(IOException e)
@@ -104,7 +107,12 @@ public class CommandUtil
       
       System.out.println("INPUTSTREAM: "+output.toString());
 
-      return output.toString();
+      String[] out = new String[2];
+      out[0] = output.toString();
+      out[1] = error.toString();
+      
+      return out;
+      
    }
       
     

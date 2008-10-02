@@ -22,12 +22,12 @@
 package org.jboss.aophelper.ui.compile;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
 /**
@@ -43,6 +43,7 @@ public class OutputPane extends JPanel
    private static final long serialVersionUID = 1L;
 
    private JTextArea outputArea;
+   private JTextArea errorArea;
    public OutputPane()
    {
       init();
@@ -52,7 +53,7 @@ public class OutputPane extends JPanel
    {
       CompileMediator.instance().setOutputPane(this);
       
-      setBackground(Color.white);
+//      setBackground(Color.white);
       setLayout(new FlowLayout());
       
       outputArea = new JTextArea();
@@ -60,17 +61,35 @@ public class OutputPane extends JPanel
       outputArea.setLineWrap(true);
       outputArea.setWrapStyleWord(true);
       outputArea.setEditable(false);
-      JScrollPane longScroll = new JScrollPane(outputArea);
-      longScroll.setVisible(true);
-      longScroll.setPreferredSize(new Dimension(1020, 270));
+      JScrollPane outputScroll = new JScrollPane(outputArea);
+      outputScroll.setVisible(true);
       
-      add(longScroll, BorderLayout.CENTER);
+      errorArea = new JTextArea();
+      errorArea.setText("errors from the aopcompile will be seen here");
+      errorArea.setLineWrap(true);
+      errorArea.setWrapStyleWord(true);
+      errorArea.setEditable(false);
+      JScrollPane errorScroll = new JScrollPane(errorArea);
+      errorScroll.setVisible(true);
+      
+      JTabbedPane tPane = new JTabbedPane();
+      tPane.addTab("Output", outputScroll);
+      tPane.addTab("Error", errorScroll);
+      tPane.setPreferredSize(new Dimension(1020, 270));
+      
+      add(tPane, BorderLayout.CENTER);
 
+      
    }
    
    public void setText(String text)
    {
       outputArea.setText(text);
+   }
+   
+   public void setError(String error)
+   {
+      errorArea.setText(error);
    }
 
 }

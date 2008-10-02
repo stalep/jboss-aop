@@ -86,7 +86,7 @@ public class AopHelperMenuBar extends JMenuBar
    
    private void showDialog()
    {
-      JOptionPane.showConfirmDialog(this, "more info will come....", "JBoss AOP Helper", JOptionPane.OK_OPTION);
+      JOptionPane.showMessageDialog(this, "more info will come....");
    }
 
    private JMenu createFileMenu()

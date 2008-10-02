@@ -22,12 +22,12 @@
 package org.jboss.aophelper.ui.run;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
 import org.jboss.aophelper.ui.run.RunMediator;
@@ -45,6 +45,8 @@ public class RunOutputPane extends JPanel
    private static final long serialVersionUID = 1L;
 
    private JTextArea outputArea;
+   private JTextArea errorArea;
+   
    public RunOutputPane()
    {
       init();
@@ -54,7 +56,6 @@ public class RunOutputPane extends JPanel
    {
       RunMediator.instance().setRunOutputPane(this);
       
-      setBackground(Color.white);
       setLayout(new FlowLayout());
       
       outputArea = new JTextArea();
@@ -62,11 +63,23 @@ public class RunOutputPane extends JPanel
       outputArea.setLineWrap(true);
       outputArea.setWrapStyleWord(true);
       outputArea.setEditable(false);
-      JScrollPane longScroll = new JScrollPane(outputArea);
-      longScroll.setVisible(true);
-      longScroll.setPreferredSize(new Dimension(1020, 270));
+      JScrollPane outputScroll = new JScrollPane(outputArea);
+      outputScroll.setVisible(true);
       
-      add(longScroll, BorderLayout.CENTER);
+      errorArea = new JTextArea();
+      errorArea.setText("errors from the execution will be seen here");
+      errorArea.setLineWrap(true);
+      errorArea.setWrapStyleWord(true);
+      errorArea.setEditable(false);
+      JScrollPane errorScroll = new JScrollPane(errorArea);
+      errorScroll.setVisible(true);
+      
+      JTabbedPane tPane = new JTabbedPane();
+      tPane.addTab("Output", outputScroll);
+      tPane.addTab("Error", errorScroll);
+      tPane.setPreferredSize(new Dimension(1020, 270));
+      
+      add(tPane, BorderLayout.CENTER);
 
    }
    
@@ -75,5 +88,9 @@ public class RunOutputPane extends JPanel
       outputArea.setText(text);
    }
 
+   public void setError(String error)
+   {
+      errorArea.setText(error);
+   }
 
 }

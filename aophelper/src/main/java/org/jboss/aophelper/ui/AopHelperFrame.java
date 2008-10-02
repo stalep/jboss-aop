@@ -30,6 +30,7 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
 import org.jboss.aophelper.ui.compile.CompilerPane;
@@ -145,6 +146,11 @@ public class AopHelperFrame extends JFrame
        setContentPane(compilerPane);
        AopHelperMediator.instance().getMenuBar().setCompileMode();
        pack();
+    }
+    
+    public void displayMessageDialog(String msg)
+    {
+       JOptionPane.showMessageDialog(this, msg);
     }
     
     public static void main(String[] args)

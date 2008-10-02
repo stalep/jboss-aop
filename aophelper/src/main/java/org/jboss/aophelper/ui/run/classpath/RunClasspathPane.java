@@ -25,6 +25,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import org.jboss.aophelper.util.CommandUtil;
 
 /**
  * A RunClasspathPane.
@@ -48,11 +51,12 @@ public class RunClasspathPane extends JPanel
    {
       setLayout(new BorderLayout());
       
-      RunClasspathTablePane classpathTable = new RunClasspathTablePane();
+      RunClasspathTablePane classpathTable = new RunClasspathTablePane(CommandUtil.getAopPaths());
       RunClasspathEditPane classpathEditPane = new RunClasspathEditPane();
+      JScrollPane scrollPane = new JScrollPane(classpathTable);
       
       add(classpathEditPane, BorderLayout.NORTH);
-      add(classpathTable, BorderLayout.CENTER);
+      add(scrollPane, BorderLayout.CENTER);
       
       Dimension size = new Dimension(500, 200);
       setPreferredSize(size);

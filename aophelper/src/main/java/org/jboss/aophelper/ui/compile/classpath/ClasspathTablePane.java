@@ -23,6 +23,7 @@ package org.jboss.aophelper.ui.compile.classpath;
 
 import org.jboss.aophelper.annotation.AopHelperAction;
 import org.jboss.aophelper.core.Action;
+import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopOption;
 import org.jboss.aophelper.core.AopState;
 import org.jboss.aophelper.ui.GenericEditTableModel;
@@ -44,9 +45,10 @@ public class ClasspathTablePane extends GenericEditTablePane
 
    private ClasspathTableModel tableModel;
 
-   public ClasspathTablePane()
+   public ClasspathTablePane(String classpaths)
    {
       init();
+      insertClasspaths(classpaths);
    }
 
    
@@ -55,7 +57,6 @@ public class ClasspathTablePane extends GenericEditTablePane
    {
       if(tableModel == null)
          tableModel = new ClasspathTableModel();
-      System.out.println("setting tablemodel to the mediator: "+tableModel.getClass().getName());
       CompileMediator.instance().setClasspathModel(tableModel);
    }
    
@@ -75,6 +76,17 @@ public class ClasspathTablePane extends GenericEditTablePane
    @AopHelperAction(action=Action.SET, state=AopState.UNSPECIFIED, option=AopOption.CLASSPATH)
    public void notifyAction()
    {
+      
+   }
+   
+   private void insertClasspaths(String classpaths)
+   {
+      String[] cp = classpaths.split(System.getProperty("path.separator"));
+      for(String path : cp)
+      {
+         tableModel.addRow(path);
+         AopHandler.instance().getCompile().addClasspath(path);
+      }
       
    }
 }

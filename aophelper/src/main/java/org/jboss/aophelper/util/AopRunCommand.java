@@ -37,7 +37,7 @@ public class AopRunCommand
 {
 
 
-   public String execute()
+   public String[] execute()
    {
       String execute = setup();
       try
@@ -65,7 +65,7 @@ public class AopRunCommand
       execute.append("java ");
       if(runOptions.isLoadtime())
          execute.append(getLoadtimePath());
-      execute.append(" -cp ").append(CommandUtil.getAopPaths());
+      execute.append(" -cp ").append(getClasspath());
 //      execute.append(" org.jboss.aop.standalone.Compiler ");
       execute.append(" ");
       if(runOptions.isVerbose())
@@ -132,5 +132,24 @@ public class AopRunCommand
             return "-javaagent:"+p;
       }
       return null;
+   }
+   
+
+   private String getClasspath()
+   {
+      StringBuilder sb = new StringBuilder();
+      String pathSeparator = System.getProperty("path.separator");
+      for(String path : AopHandler.instance().getRun().getClasspath())
+      {
+         if(sb.length() > 0)
+            sb.append(pathSeparator);
+         sb.append(path);
+      }
+      if(sb.length() > 0)
+         sb.append(pathSeparator);
+      sb.append(AopHandler.instance().getRun().getWorkingdir());
+      
+      System.out.println("cp: "+sb);
+      return sb.toString();
    }
 }
