@@ -485,6 +485,13 @@ public class ClassifiedBindingAndPointcutCollection
          bindings = new LinkedHashMap<String, AdviceBinding>();
       }
       bindings.put(binding.getName(), binding);
+      
+      if (pointcuts == UnmodifiableEmptyCollections.EMPTY_LINKED_HASHMAP)
+      {
+         pointcuts = new LinkedHashMap<String, Pointcut>();
+      }
+      pointcuts.put(binding.getPointcut().getName(), binding.getPointcut());
+      
       // create the pointcutinfo outside of methods to avoid duplicate creation
       // of pointcut infos
       PointcutInfo pointcutInfo = new PointcutInfo(binding.getPointcut(), binding,
@@ -494,6 +501,7 @@ public class ClassifiedBindingAndPointcutCollection
          pointcutInfos = new LinkedHashMap<String, PointcutInfo>();
       }
       pointcutInfos.put(pointcutInfo.getPointcut().getName(), pointcutInfo);
+      
       addGet(binding, pointcutInfo);
       addSet(binding, pointcutInfo);
       addConstruction(binding, pointcutInfo);

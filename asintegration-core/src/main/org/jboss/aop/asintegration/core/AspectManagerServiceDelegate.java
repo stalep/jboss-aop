@@ -298,7 +298,13 @@ public abstract class AspectManagerServiceDelegate
             if (base != null)
             {
                log.debug("Deploying base aspects " + base);
+
+//DELETE THIS               
+System.out.println("=========> Deploying base aspects " + base);
+               
                AspectXmlLoader.deployXML(base);
+//DELETE THIS
+System.out.println("=========> pointcuts " + AspectManager.getTopLevelAspectManager().getPointcuts().values());
                deployedBaseXml = true;
             }
          }
@@ -319,12 +325,16 @@ public abstract class AspectManagerServiceDelegate
             if (base != null)
             {
                log.debug("Undeploying base aspects " + base);
+ //DELETE THIS               
+System.out.println("=========> UnDeploying base aspects " + base);
                AspectXmlLoader.undeployXML(base);
+ //DELETE THIS
+System.out.println("=========> pointcuts " + AspectManager.getTopLevelAspectManager().getPointcuts().values());
             }
          }
          catch (Exception e)
          {
-            log.warn("Error loading " + baseXml + " file" + e);
+            log.warn("Error undeploying " + baseXml + " file" + e);
          }
          deployedBaseXml = false;
       }
