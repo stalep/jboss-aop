@@ -992,9 +992,9 @@ public class Domain extends AspectManager
    //Methods that should delegate to the top AspectManager
 
    @Override
-   public InterceptionMarkers getInterceptionMarkers()
+   public InterceptionMarkers getInterceptionMarkers(ClassLoader loader)
    {
-      return parent.getInterceptionMarkers();
+      return parent.getInterceptionMarkers(loader);
    }
 
    /** Managed by the top-level aspect manager */

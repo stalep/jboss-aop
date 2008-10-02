@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
@@ -180,7 +182,8 @@ public class AspectManager
    private static AOPClassLoaderScopingPolicy classLoaderScopingPolicy;
 
    //Keeps track of if we need to convert references etc for a given class. Domains for scoped classloaders will have their own version of this
-   protected static InterceptionMarkers interceptionMarkers = new InterceptionMarkers();
+   protected static Map<ClassLoader, InterceptionMarkers> interceptionMarkers = new WeakHashMap<ClassLoader, InterceptionMarkers>();
+   private final static ClassLoader NULL_CLASSLOADER = new URLClassLoader(new URL[0]);
    
    // Static -------------------------------------------------------
 
@@ -380,9 +383,22 @@ public class AspectManager
       AspectManager.classLoaderScopingPolicy = classLoaderScopingPolicy;
    }
 
-   public InterceptionMarkers getInterceptionMarkers()
+   public InterceptionMarkers getInterceptionMarkers(ClassLoader loader)
    {
-      return interceptionMarkers;
+      if (loader == null)
+      {
+         loader = NULL_CLASSLOADER;
+      }
+      synchronized(interceptionMarkers)
+      {
+         InterceptionMarkers markers = interceptionMarkers.get(loader);
+         if (markers == null)
+         {
+            markers = new InterceptionMarkers();
+            interceptionMarkers.put(loader, markers);
+         }
+         return markers;
+      }
    }
 
    public LinkedHashMap<String, Pointcut> getPointcuts()

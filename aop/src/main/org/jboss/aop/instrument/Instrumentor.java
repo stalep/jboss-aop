@@ -645,7 +645,7 @@ public abstract class Instrumentor
          for (ReferenceClassIterator it = new ReferenceClassIterator(clazz.getRefClasses()) ; it.hasNext() ; )
          {
             ref = it.next();
-            if (!manager.getInterceptionMarkers().convertReference(ref)
+            if (!manager.getInterceptionMarkers(clazz.getClassPool().getClassLoader()).convertReference(ref)
                 || manager.isNonAdvisableClassName(ref)
                 || ref.startsWith("java.")
                 || ref.startsWith("javax.")
@@ -686,35 +686,43 @@ public abstract class Instrumentor
             it.addSuperClass(ctRef);
             //converted = false;
             
-            if (!manager.getInterceptionMarkers().shouldSkipFieldAccess(ref) && !ref.equals(clazz.getName()))
+            final ClassLoader refCl = ctRef.getClassPool().getClassLoader();
+
+            //DELETE
+            if (clazz.getName().contains("SecurityTester") && ref.contains("SecuredPOJO"))
+            {
+               System.out.println("=================> " + manager.getInterceptionMarkers(refCl).shouldSkipFieldAccess(ref));
+            }
+            
+            if (!manager.getInterceptionMarkers(refCl).shouldSkipFieldAccess(ref) && !ref.equals(clazz.getName()))
             {
                List<CtField> fields = getAdvisableFields(ctRef);
                if (fieldAccessTransformer.replaceFieldAccess(fields, ctRef, advisor))
                {
-                  manager.getInterceptionMarkers().addFieldInterceptionMarker(ref);
+                  manager.getInterceptionMarkers(refCl).addFieldInterceptionMarker(ref);
                   converted = true;
                }
                else
                {
-                  manager.getInterceptionMarkers().skipFieldAccess(ref);
+                  manager.getInterceptionMarkers(refCl).skipFieldAccess(ref);
                }
             }
-            if (!manager.getInterceptionMarkers().shouldSkipConstruction(ref))
+            if (!manager.getInterceptionMarkers(refCl).shouldSkipConstruction(ref))
             {
                if (constructorExecutionTransformer.replaceConstructorAccess(advisor, ctRef))
                {
-                  manager.getInterceptionMarkers().addConstructionInterceptionMarker(ref);
+                  manager.getInterceptionMarkers(refCl).addConstructionInterceptionMarker(ref);
                   converted = true;
                }
                else
                {
-                  manager.getInterceptionMarkers().skipConstruction(ref);
+                  manager.getInterceptionMarkers(refCl).skipConstruction(ref);
                }
             }
 
             if (!converted)
             {
-               manager.getInterceptionMarkers().skipReference(ref);
+               manager.getInterceptionMarkers(refCl).skipReference(ref);
             }
             ref = null;
          }
@@ -764,13 +772,15 @@ public abstract class Instrumentor
          boolean constructionTransformation = constructionTransformer.insertConstructionInterception(clazz, advisor);
          constructorAccessConverted = constructorExecutionTransformer.transform(clazz, advisor);
          String classname = clazz.getName();
+
+         final ClassLoader cl = clazz.getClassPool().getClassLoader();
          if (constructorAccessConverted)
          {
-            manager.getInterceptionMarkers().addConstructionInterceptionMarker(classname);
+            manager.getInterceptionMarkers(cl).addConstructionInterceptionMarker(classname);
          }
          else
          {
-            manager.getInterceptionMarkers().skipConstruction(classname);
+            manager.getInterceptionMarkers(cl).skipConstruction(classname);
          }
          converted = converted || constructorAccessConverted;
 
@@ -798,9 +808,9 @@ public abstract class Instrumentor
          }
          else
          {
-            if (manager.getInterceptionMarkers().shouldSkipFieldAccess(classname))
+            if (manager.getInterceptionMarkers(cl).shouldSkipFieldAccess(classname))
             {
-               manager.getInterceptionMarkers().skipReference(classname);
+               manager.getInterceptionMarkers(cl).skipReference(classname);
             }
          }
 

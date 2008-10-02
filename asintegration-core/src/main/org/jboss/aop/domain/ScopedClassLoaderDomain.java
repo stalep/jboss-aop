@@ -89,11 +89,12 @@ public abstract class ScopedClassLoaderDomain extends Domain
       return getPerVMAspect(def.getName());
    }
 
-   @Override
-   public InterceptionMarkers getInterceptionMarkers()
-   {
-      return interceptionMarkers;
-   }
+// These are indexed by classloader now, so no need to manage them explicitly here
+//   @Override
+//   public InterceptionMarkers getInterceptionMarkers(ClassLoader loader)
+//   {
+//      return interceptionMarkers;
+//   }
 
    @Override
    public Object getPerVMAspect(String def)
