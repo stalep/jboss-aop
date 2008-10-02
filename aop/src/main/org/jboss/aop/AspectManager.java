@@ -1050,37 +1050,7 @@ public class AspectManager
                   }
                }
       
-               byte[] bytes = weavingStrategy.translate(this, className, loader, classfileBuffer);
-               
-               if (bytes != null && (className.contains("SecurityTester") || className.contains("SecuredPOJO")))
-               {
-                  try
-                  {
-                     System.out.println("!!!!!!!!!!!!!!!! outputting");
-                     String filename = "." + File.separatorChar
-                         + className.replace('.', File.separatorChar) + ".class";
-                     System.out.println("!!!!!!!!!!!!!!!! OUTPUTTING " + className);
-                     int pos = filename.lastIndexOf(File.separatorChar);
-                     if (pos > 0) {
-                         String dir = filename.substring(0, pos);
-                         if (!dir.equals("."))
-                             new File(dir).mkdirs();
-                     }
-
-                     FileOutputStream out = new FileOutputStream(filename);
-                     try {
-                        out.write(bytes);
-                     }
-                     finally {
-                         out.close();
-                     }
-                  }
-                  catch(Exception e)
-                  {
-                     System.out.println("!!!!!!!!!! COULD NOT OUTPUT FILE");
-                  }
-               }
-               return bytes;
+               return weavingStrategy.translate(this, className, loader, classfileBuffer);
             }
          }
          finally
