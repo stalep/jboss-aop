@@ -340,7 +340,7 @@
       <antcall target="precompiled-compatibility-tests" inheritRefs="true"/>
 
       <delete dir="${build.tests.classes}"/>
-      <antcall target="jdk15-hotswap-tests" inheritRefs="true"/>
+      <antcall target="hotswap-tests" inheritRefs="true"/>
 
       <!--      
       <antcall target="jrockit-tests" inheritRefs="true"/>
@@ -1288,9 +1288,9 @@
          <test todir="${report.dir}" name="org.jboss.test.aop.jdk15.dynamic.prepareMethod.HotSwapDisabledTester" />
       </junit>
    </target>
-   <target name="jdk15-hotswap-tests" depends="compile">
+   <target name="hotswap-tests" depends="compile">
 
-      <property name="report.dir" value="${build.reports}/jdk15-hotswap-tests"/>
+      <property name="report.dir" value="${build.reports}"/>
       <mkdir dir="${report.dir}"/>
 
       <junit printsummary="yes" fork="yes" haltonfailure="no">
