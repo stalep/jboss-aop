@@ -1,8 +1,64 @@
 <html>
 <head>
-<title>Release Notes - JBoss AOP - Version 2.0.0.CR17</title>
+<title>Release Notes - JBoss AOP - Version 2.0.0.CR18</title>
 </head>
 <body>
+
+<h2>Release Notes - JBoss AOP - Version 2.0.0.CR18</h2>
+    
+<h3>Bug</h3>
+<ul>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-629'>JBAOP-629</a>] -         Synchronize addBinding and removeBinding to avoid duplicate operations
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-646'>JBAOP-646</a>] -         Advisor.updateXXXPoitncutAfterRemove methods don't add the advisor to binding's advisor list
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-655'>JBAOP-655</a>] -         ClassifiedBindingAndPointcutCollection creates PointcutInfos with null bindings
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-656'>JBAOP-656</a>] -         JoinPointClassifier.methodAccessor returns constructor execution pointcuts
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-657'>JBAOP-657</a>] -         The pointcut contained in a binding is not being removed when the binding gets removed
+</li>
+</ul>
+        
+<h3>Feature Request</h3>
+<ul>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-574'>JBAOP-574</a>] -         Doc requirement to write ClassLoaders that return class files as resources
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-603'>JBAOP-603</a>] -         Use Pointcut Classification during Instrumentation
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-644'>JBAOP-644</a>] -         Remove dependency of AOP on VFSDeploymentUnit
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-645'>JBAOP-645</a>] -         Remove dependency of AOP on ServiceMBeanSupport
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-647'>JBAOP-647</a>] -         Make deployment of base-aspects.xml configurable and undeploy on shutdown of aspectmanager service
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-650'>JBAOP-650</a>] -         Support use of system properties in created annotations
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-652'>JBAOP-652</a>] -         Break up asintegration module
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-653'>JBAOP-653</a>] -         Replace ClassifiedBindingAndPointcutCollection lock by AOPLock
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-658'>JBAOP-658</a>] -         Index InterceptionMarkers by classloader
+</li>
+</ul>
+                    
+<h3>Task</h3>
+<ul>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-383'>JBAOP-383</a>] -         Document instrumentation modes
+</li>
+</ul>
+            
+<h3>Sub-task</h3>
+<ul>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-638'>JBAOP-638</a>] -         Move pointcuts and pointcutInfos into ClassifiedBindingCollection, and rename to ClassifiedBindingAndPointcutCollection
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-639'>JBAOP-639</a>] -         Move AM.transformationStarted into WeaverStrategySupport
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-640'>JBAOP-640</a>] -         Honour inheritsBindings in DomainClassifiedBindingCollection, and rename to DomainClassifiedBindingAndPointcutCollection
+</li>
+<li>[<a href='https://jira.jboss.org/jira/browse/JBAOP-641'>JBAOP-641</a>] -         Move the pointcutStats into ClassifiedBindingAndPointcutCollection
+</li>
+</ul>
 
 
 <h2>Release Notes - JBoss AOP - Version 2.0.0.CR17</h2>
