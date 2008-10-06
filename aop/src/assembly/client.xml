@@ -41,6 +41,7 @@
         <include>org/jboss/aop/metadata/MetaDataResolver.class</include>
         <include>org/jboss/aop/metadata/ThreadMetaData.class</include>
         <include>org/jboss/aop/pointcut/PointcutStats.class</include>
+        <include>org/jboss/aop/pointcut/ast/PointcutExpressionParserVisitor.class</include>
         <include>org/jboss/aop/proxy/MarshalledInterfaceProxy.class</include>
         <include>org/jboss/aop/proxy/MethodMapped.class</include>
         <include>org/jboss/aop/proxy/Proxy.class</include>
