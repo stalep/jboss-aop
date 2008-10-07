@@ -49,6 +49,7 @@ public class InheritanceAcrossPackagesTestCase extends AOPTestWithSetup
    public void testChildClass() throws Exception
    {
       Child child = new Child();
+      ((org.jboss.aop.Advised)child)._getInstanceAdvisor();
       TestInterceptor.intercepted = false;
       child.base();
       assertTrue(TestInterceptor.intercepted);
