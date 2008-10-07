@@ -1,0 +1,11 @@
+<aop>
+   <interceptor class="org.jboss.test.aop.inheritanceacrosspackages.TestInterceptor"/>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.inheritanceacrosspackages.base.Base->*(..))">
+      <interceptor-ref name="org.jboss.test.aop.inheritanceacrosspackages.TestInterceptor"/>
+   </bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.inheritanceacrosspackages.child.Child->*(..))">
+      <interceptor-ref name="org.jboss.test.aop.inheritanceacrosspackages.TestInterceptor"/>
+   </bind>
+</aop>
