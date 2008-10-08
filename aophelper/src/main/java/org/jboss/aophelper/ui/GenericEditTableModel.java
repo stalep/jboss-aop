@@ -113,6 +113,21 @@ public abstract class GenericEditTableModel extends AbstractTableModel
          fireTableDataChanged();
       }
    }
+   
+   public void addRows(List<String> newRows)
+   {
+      for(String row : newRows)
+      {
+         addRow(row);
+      }
+   }
+   
+   public void clearRows()
+   {
+      getData().clear();
+      rows = 0;
+      fireTableDataChanged();
+   }
 
 
 }

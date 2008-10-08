@@ -39,6 +39,7 @@ import javax.swing.JTextField;
 
 import org.jboss.aophelper.annotation.AopHelperAction;
 import org.jboss.aophelper.core.Action;
+import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopOption;
 import org.jboss.aophelper.core.AopState;
 import org.jboss.aophelper.ui.run.RunMediator;
@@ -277,6 +278,16 @@ public class RunOptionsPane extends JPanel
    public void setExecutionClass(String exeClass)
    {
       executionClass.setText(exeClass);
+   }
+   
+   public void refresh()
+   {
+      setWorkingDir(AopHandler.instance().getRun().getWorkingdir());
+      setExecutionClass(AopHandler.instance().getRun().getExecutionClass());
+      verbose.setSelected(AopHandler.instance().getRun().isVerbose());
+      noopt.setSelected(AopHandler.instance().getRun().isNoopt());
+      suppress.setSelected(AopHandler.instance().getRun().isSuppress());
+      loadtime.setSelected(AopHandler.instance().getRun().isLoadtime());
    }
 
 }

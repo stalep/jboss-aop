@@ -165,4 +165,11 @@ public class RunMediator
    {
       this.runOutputPane = runOutputPane;
    }
+   
+   public void refresh()
+   {
+      runClasspathTable.refresh();
+      runXmlTable.refresh();
+      runOptionsPane.refresh();
+   }
 }

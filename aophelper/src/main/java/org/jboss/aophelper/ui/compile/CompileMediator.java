@@ -149,6 +149,13 @@ public class CompileMediator
    {
       this.outputPane = outputPane;
    }
+   
+   public void refresh()
+   {
+      classpathTable.refresh();
+      xmlTable.refresh();
+      compileOptionsPane.refresh();
+   }
 
 
 

@@ -23,6 +23,7 @@ package org.jboss.aophelper.ui.run.xml;
 
 import org.jboss.aophelper.annotation.AopHelperAction;
 import org.jboss.aophelper.core.Action;
+import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopOption;
 import org.jboss.aophelper.core.AopState;
 import org.jboss.aophelper.ui.GenericEditTableModel;
@@ -76,6 +77,12 @@ public class RunXmlTablePane extends GenericEditTablePane
    public void notifyAction()
    {
       
+   }
+
+   public void refresh()
+   {
+      tableModel.clearRows();
+      tableModel.addRows(AopHandler.instance().getRun().getAopXml());
    }
 
 

@@ -44,7 +44,6 @@ public abstract class GenericEditTablePane extends JPanel
    private static final long serialVersionUID = 1L;
 
    private JTable table;
-//   private ClasspathTableModel tableModel;
    private JScrollPane scrollPane;
    private int selectedRow;
    private String selected;

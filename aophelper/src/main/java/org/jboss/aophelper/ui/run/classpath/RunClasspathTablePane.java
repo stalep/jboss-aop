@@ -89,5 +89,11 @@ public class RunClasspathTablePane extends GenericEditTablePane
       }
       
    }
+   
+   public void refresh()
+   {
+      tableModel.clearRows();
+      tableModel.addRows(AopHandler.instance().getRun().getClasspath());
+   }
 
 }

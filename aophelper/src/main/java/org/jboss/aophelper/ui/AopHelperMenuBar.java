@@ -54,6 +54,7 @@ public class AopHelperMenuBar extends JMenuBar
    private void init()
    {
       add(createFileMenu());
+      add(createEditMenu());
       add(Box.createHorizontalGlue());
       add(createHelpMenu());
       
@@ -137,6 +138,36 @@ public class AopHelperMenuBar extends JMenuBar
       exit.addActionListener(menuListener);
       
       return fileMenu;
+   }
+   
+   private JMenu createEditMenu()
+   {
+      JMenu editMenu = new JMenu("Edit");
+      editMenu.setMnemonic('E');
+
+      JMenuItem save = new JMenuItem("Save settings", 'S');
+      save.setAccelerator(KeyStroke.getKeyStroke('S',
+            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+      save.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent event)
+         {
+            AopHelperMediator.instance().saveSettings();
+         }
+      });
+      editMenu.add(save);
+
+      JMenuItem load = new JMenuItem( "Load settings", 'L');
+      load.setAccelerator(KeyStroke.getKeyStroke('L',
+            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+      load.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent event)
+         {
+            AopHelperMediator.instance().loadSettings();
+         }
+      });
+      editMenu.add(load);
+      
+      return editMenu;
    }
    
    public void setCompileMode()

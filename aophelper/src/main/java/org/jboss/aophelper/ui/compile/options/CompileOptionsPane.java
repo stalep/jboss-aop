@@ -39,6 +39,7 @@ import javax.swing.JTextField;
 
 import org.jboss.aophelper.annotation.AopHelperAction;
 import org.jboss.aophelper.core.Action;
+import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopOption;
 import org.jboss.aophelper.core.AopState;
 import org.jboss.aophelper.ui.compile.CompileMediator;
@@ -216,5 +217,15 @@ public class CompileOptionsPane extends JPanel
    {
       workingdir.setText(dir);
    }
+   
+   
+   public void refresh()
+   {
+      setWorkingDir(AopHandler.instance().getCompile().getWorkingdir());
+      verbose.setSelected(AopHandler.instance().getCompile().isVerbose());
+      noopt.setSelected(AopHandler.instance().getCompile().isNoopt());
+      suppress.setSelected(AopHandler.instance().getCompile().isSuppress());
+   }
+
 
 }

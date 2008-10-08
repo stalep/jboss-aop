@@ -21,6 +21,15 @@
   */
 package org.jboss.aophelper.ui;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.jboss.aophelper.ui.compile.CompileMediator;
+import org.jboss.aophelper.ui.run.RunMediator;
+import org.jboss.aophelper.util.xml.BaseConfigParser;
+
 /**
  * A AopHelperMediator.
  * 
@@ -86,5 +95,43 @@ public class AopHelperMediator
    public void setMainPane(AopHelperFrame mainPane)
    {
       this.mainPane = mainPane;
+   }
+
+   /**
+    * 
+    * 
+    */
+   public void loadSettings()
+   {
+     File[] file = mainPane.createFileCooser();
+     
+     if(file[0] != null)
+     {
+        BaseConfigParser.parse(file[0]);
+        CompileMediator.instance().refresh();
+        RunMediator.instance().refresh();
+     }
+      
+   }
+
+   /**
+    * 
+    * 
+    */
+   public void saveSettings()
+   {
+     
+      File[] file = mainPane.createFileCooser();
+      if(file[0] != null && !file[0].isDirectory())
+      {
+      System.out.println("saving to file: "+file[0].getAbsoluteFile());
+      String output = BaseConfigParser.getDOMAsString();
+      try {
+         BufferedWriter out = new BufferedWriter(new FileWriter(file[0].getAbsoluteFile()));
+         out.write(output);
+         out.close();
+     } catch (IOException e) {
+     }
+      }
    }
 }

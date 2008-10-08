@@ -87,6 +87,11 @@ public class ClasspathTablePane extends GenericEditTablePane
          tableModel.addRow(path);
          AopHandler.instance().getCompile().addClasspath(path);
       }
-      
+   }
+   
+   public void refresh()
+   {
+      tableModel.clearRows();
+      tableModel.addRows(AopHandler.instance().getCompile().getClasspath());
    }
 }
