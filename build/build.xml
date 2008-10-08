@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE project [
-   <!ENTITY buildmagic SYSTEM "../tools/etc/buildmagic/buildmagic.ent">
-]>
 
 <!-- ====================================================================== -->
 <!--                                                                        -->
@@ -17,29 +14,117 @@
 <project default="main" name="JBossAOP/Build">
 
   <!-- ================================================================== -->
-  <!-- Setup                                                              -->
-  <!-- ================================================================== -->
-
-  <!--
-     | Include the common Buildmagic elements.
-     |
-     | This defines several different targets, properties and paths.
-     | It also sets up the basic extention tasks amoung other things.
-   -->
-
-  &buildmagic;
-
-
-  <!-- ================================================================== -->
   <!-- Initialization                                                     -->
   <!-- ================================================================== -->
 
   <!--
-     | Initialize the build system.  Must depend on '_buildmagic:init'.
-     | Other targets should depend on 'init' or things will mysteriously fail.
+     | Initialize the build system.
+     | .
    -->
 
-  <target name="init" unless="init.disable" depends="_buildmagic:init">
+  <target name="init" unless="init.disable" >
+    <!-- Make sure we have the right version of Ant -->
+    <property name="buildmagic.ant15.baseversion" value="1.5"/>
+    <property name="buildmagic.ant16.baseversion" value="1.6"/>
+
+    <!-- Set the version of the release here -->
+    <property name="aop.version" value="jboss-aop-2.0.0.CR18"/>
+    <property name="aop.title" value="JBoss AOP Framework"/>
+    <property name="module.version" value="j${aop.version}"/>
+
+    <!--
+       | Add new conditions for other supported Ant versions when they
+       | become avaialble.
+     -->
+
+    <condition property="buildmagic.ant.compatible">
+      <or>
+        <contains string="${ant.version}"
+          substring="Ant version ${buildmagic.ant15.baseversion}"/>
+        <contains string="${ant.version}"
+          substring="Ant version ${buildmagic.ant16.baseversion}"/>
+      </or>
+    </condition>
+
+    <fail unless="buildmagic.ant.compatible">
+
+    Unsupported Ant version:
+
+      ${ant.version}
+
+    Please install a version which is compatible with Ant ${buildmagic.ant15.baseversion} or ${buildmagic.ant16.baseversion}.
+
+    </fail>
+
+    <!-- JDK Detection -->
+    <available classname="java.lang.StackTraceElement" property="HAVE_JDK_1.4"/>
+    <available classname="java.lang.Enum" property="HAVE_JDK_1.5"/>
+
+    <!-- Setup the project environment. -->
+    <dirname property="project.root" file="${basedir}"/>
+    <property name="project.build" value="${project.root}/build"/>
+    <property name="project.tools" value="${project.root}/tools"/>
+    <property name="project.thirdparty" value="${project.root}/thirdparty"/>
+    <property name="project.output" value="${project.build}/output"/>
+    <property name="project.release" value="${project.output}/${aop.version}"/>
+
+    <!-- Include user and project property overrides. -->
+    <property file="${project.build}/local.properties"/>
+    <property file="${user.home}/.buildmagic.properties"/>
+    <property file="${user.home}/.ant.properties"/>
+
+    <!-- Setup the build.log -->
+    <property name="buildlog.level" value="info"/>
+    <record name="${basedir}/build.log" append="no" loglevel="${buildlog.level}"/>
+    <property name="init-buildlog.disable" value="true"/>
+
+    <!-- Setup the build timestamp & build identifer properties -->
+    <tstamp>
+      <format property="build.number" pattern="yyyyMMddHHmm"/>
+      <format property="YEAR" pattern="yyyy"/>
+    </tstamp>
+    <property name="build.id" value="${build.number}"/>
+
+    <!-- Version identifiers for the server. -->
+    <property name="version.major" value="5"/>
+    <property name="version.minor" value="0"/>
+    <property name="version.revision" value="0"/>
+    <property name="version.tag" value="Beta"/>
+    <property name="version.name" value="Morpheus"/>
+    <!-- This must be set to the CVS tag for any release -->
+    <property name="version.cvstag" value="HEAD"/>
+
+    <!-- Manifest version info -->
+    <property name="specification.title" value="JBoss"/>
+    <property name="specification.version" value="${version.major}.${version.minor}.${version.revision}.${version.tag}"/>
+    <property name="specification.vendor" value="JBoss (http://www.jboss.org/)"/>
+
+    <property name="implementation.title" value="JBoss [${version.name}]"/>
+    <property name="implementation.url" value="http://www.jboss.org/"/>
+    <property name="implementation.version"
+      value="${version.major}.${version.minor}.${version.revision}.${version.tag} (build: CVSTag=${version.cvstag} date=${build.id})"/>
+    <property name="implementation.vendor" value="JBoss.org"/>
+    <property name="implementation.vendor.id" value="${implementation.url}"/>
+
+    <!-- Invoke the configure task -->
+    <antcall target="configure"/>
+
+    <!-- Load common task properties -->
+    <property file="${project.tools}/etc/buildmagic/task.properties"/>
+
+    <!-- Marker to disable build -->
+    <!--<property name="build-bypass.marker" value="${module.output}/build-marker"/>-->
+
+    <!-- Marker to disable mbeans -->
+    <!--<property name="mbean-bypass.marker" value="${module.output}/mbean-marker"/>-->
+
+    <!-- Install filters -->
+    <!--<propertyfilter all="${buildmagic.propertyfilter.all}"/>-->
+
+    <!--<call target="_buildmagic:init:show-environment" if="init.verbose"/>-->
+
+    <!-- Finish up -->
+    <property name="init.disable" value="true"/>
   </target>
 
 
@@ -68,92 +153,12 @@
     <!-- Defines repository.home -->
     <property file="local.properties"/>
 
-    <!-- ============== -->
-    <!-- Modules/Groups -->
-    <!-- ============== -->
-
-    <!-- The group to use by default -->
-    <property name="groups" value="default"/>
-
-    <!-- ===== -->
-    <!-- Tasks -->
-    <!-- ===== -->
-
-    <!-- Skip any missing modules and issue a warning -->
-    <property name="executemodules.skipmissing" value="true"/>
-
-    <!-- The header and footer displayed during each module execution -->
-    <property name="executemodules.header"><![CDATA[
-    ======================================================================
-    ==  Executing '${target}' in module '${module}'...
-    ==]]></property>
-
-    <property name="executemodules.footer"><![CDATA[
-    ==
-    ==  Finished with '${target}' in module '${module}'.
-    ======================================================================
-    ]]></property>
-
-    <property name="executemodules.exportproperties">
-       version.major,
-       version.minor,
-       version.revision,
-       version.tag,
-       version.name,
-       version.cvstag,
-
-       specification.title,
-       specification.version,
-       specification.vendor,
-
-       implementation.title,
-       implementation.version,
-       implementation.vendor,
-       implementation.vendor.id,
-       implementation.url
-    </property>
-
     <!-- Bits for building source archives -->
     <patternset id="source.ignore">
       <exclude name="**/output/**"/>
       <exclude name="**/CVS/**" />
     </patternset>
 </target>
-
-  <!-- ================================================================== -->
-  <!-- Module Pass-through Targets                                        -->
-  <!-- ================================================================== -->
-
-  <!--
-     | These targets will execute all configured modules with the specified
-     | target.
-   -->
-  <target name="modules-most" depends="_buildmagic:modules:most" />
-  <target name="modules-main" depends="_buildmagic:modules:main"/>
-  <target name="modules-release" depends="_buildmagic:modules:release"/>
-  <target name="modules-tests" depends="_buildmagic:modules:tests"/>
-  <target name="modules-clean" depends="_buildmagic:modules:clean"/>
-  <target name="modules-clobber" depends="_buildmagic:modules:clobber"/>
-  <target name="modules-docs" depends="_buildmagic:modules:docs"/>
-
-  <!-- ================================================================== -->
-  <!-- Module Pass-through Hooks                                          -->
-  <!-- ================================================================== -->
-
-  <!--
-     | These hooks are executed after the above pass-through targets have
-     | finished with a given module.
-   -->
-
-   <!-- ======== -->
-   <!-- Test     -->
-   <!-- ======== -->
-
-   <target name="_module-test-most">
-     <property name="_module.name" value="test" override="true"/>
-     <property name="_module.output" override="true"
-           value="${project.root}/${_module.name}/output"/>
-   </target>
 
    <!-- ================================================================== -->
    <!-- Install & Release                                                  -->
@@ -181,7 +186,7 @@
          	<include name="${aop.version}/**"/>
    		</fileset>
       </zip>
-   	<move file="${project.release}.zip" todir="${module.output}/lib"/>
+   	<move file="${project.release}.zip" todir="${project.output}/lib"/>
   </target>
 
   <target name="release-dryrun"
@@ -210,13 +215,6 @@
      <delete dir="output"/>
   </target>
 
-  <!-- Clean up all generated files -->
-  <target name="clobber" depends="_buildmagic:clobber, clean, modules-clobber"
-	  description="Cleans up all generated files.">
-    <delete file="${module.root}/*_run.log"/>
-  </target>
-
-
   <!-- ================================================================== -->
   <!-- Misc.                                                              -->
   <!-- ================================================================== -->
@@ -226,9 +224,6 @@
 
   <target name="most" depends="maven-build-install, install"
 	  description="Executes all modules and builds most everything."/>
-
-  <target name="help" depends="_buildmagic:help:build"
-          description="Show this help message."/>
   
   <!-- Define a macro for calling maven -->
   <macrodef name="maven">
