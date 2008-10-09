@@ -17,7 +17,7 @@
   <build>
     <finalName>${artifactId}</finalName>
     <sourceDirectory>src/main/</sourceDirectory>
-    <!--<testSourceDirectory>src/test/</testSourceDirectory>-->
+    <testSourceDirectory>src/test/</testSourceDirectory>
     <resources>
       <resource>
         <directory>docs</directory>
@@ -65,6 +65,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.2</version>
+        <executions>
+          <execution>
+            <id>create-test-jar</id>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
           <archive>
             <manifestEntries>

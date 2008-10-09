@@ -1,0 +1,110 @@
+
+<!-- ================================================================== -->
+<!-- Common ant tasks and macros shared by the builds                   -->
+<!-- ================================================================== -->
+<project name="common-tasks">
+
+  <target name="init-maven-environment" unless="maven.init.complete"
+      description="Initialize properties for accessing maven configuration" xmlns:maven="urn:maven-artifact-ant">
+
+    <path id="maven-ant-tasks.classpath" path="../tools/lib/maven-ant-tasks.jar" />
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpathref="maven-ant-tasks.classpath" />
+
+    <maven:pom id="maven.project" file="pom.xml" />
+
+    <!-- This tasks resolves maven dependencies and creates a property of the
+      -  form groupId:artifactId:type that points to the dependency jar file.
+      -->
+    <maven:dependencies pathId="maven.dependencies.compile.classpath" useScope="compile">
+      <pom refid="maven.project" />
+    </maven:dependencies>
+
+    <maven:dependencies pathId="maven.dependencies.test.classpath" useScope="test">
+      <pom refid="maven.project" />
+    </maven:dependencies>
+    
+    <property name="maven.init.complete" value="true"/>
+
+  </target>
+
+  <target name="verify-environment" description="Check that the build environment is set up correctly">
+    <verify-ant />
+    <verify-java supported-versions="1.5, 1.6" />
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- Define ant macros used in the build                                -->
+  <!-- ================================================================== -->
+
+  <macrodef name="verify-ant">
+    <attribute name="supported-versions" default="1.6" />
+    <sequential>
+
+      <echo message="${ant.version}" />
+
+      <!-- Make sure we have the right version of Ant -->
+      <property name="ant16.baseversion" value="1.6" />
+      <property name="ant17.baseversion" value="1.7" />
+
+      <!--
+         | Add new conditions for other supported Ant versions when they
+         | become avaialble.
+       -->
+
+      <condition property="ant.version.ok">
+        <or>
+          <contains string="${ant.version}" substring="Ant version ${ant16.baseversion}" />
+          <contains string="${ant.version}" substring="Ant version ${ant17.baseversion}" />
+        </or>
+      </condition>
+
+      <fail unless="ant.version.ok">
+        
+        Unsupported Ant version: ${ant.version}.  Please install a version which is compatible with Ant ${ant16.baseversion} or ${ant17.baseversion}.
+      
+      </fail>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="verify-java">
+    <attribute name="supported-versions" default="1.5" />
+    <sequential>
+      <echo message="Java version ${ant.java.version}" />
+      <condition property="java.version.ok">
+        <contains string="@{supported-versions}" substring="${ant.java.version}" />
+      </condition>
+
+      <fail unless="java.version.ok">
+        
+        Unsupported Java version: ${ant.java.version}.  Please install a version which is compatible with @{supported-versions}.
+      
+      </fail>
+    </sequential>
+  </macrodef>
+
+  <!-- Define a macro for calling maven -->
+  <macrodef name="maven">
+    <attribute name="options" default="" />
+    <attribute name="goal" />
+    <attribute name="basedir" />
+    <attribute name="resultproperty" default="maven.result" />
+    <element name="args" implicit="true" optional="true" />
+    <sequential>
+      <echo message="Calling mvn command located in ${maven.home}" />
+      <java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
+        <classpath>
+          <fileset dir="${maven.home}/boot">
+            <include name="*.jar" />
+          </fileset>
+          <fileset dir="${maven.home}/lib">
+            <include name="*.jar" />
+          </fileset>
+        </classpath>
+        <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+        <sysproperty key="maven.home" value="${maven.home}" />
+        <arg line="--batch-mode @{options} @{goal}" />
+      </java>
+    </sequential>
+  </macrodef>
+
+</project>

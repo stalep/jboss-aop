@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE project [
-   <!ENTITY buildmagic SYSTEM "../tools/etc/buildmagic/buildmagic.ent">
-]>
 
 <!-- ====================================================================== -->
 <!--                                                                        -->
@@ -21,15 +18,12 @@
    <!-- ================================================================== -->
 
    <!--
-      | Include the common Buildmagic elements.
-      |
-      | This defines several different targets, properties and paths.
-      | It also sets up the basic extention tasks amoung other things.
+      | Include some common ant tasks and macro definitions.
     -->
 
-   &buildmagic;
-
-   <import file="base-tests.xml"/>
+  <import file="../tools/etc/ant/common-tasks.xml"/>
+  
+  <import file="base-tests.xml"/>
 
    <!-- ================================================================== -->
    <!-- Initialization                                                     -->
@@ -40,202 +34,183 @@
       | Other targets should depend on 'init' or things will mysteriously fail.
     -->
 
-   <target name="init" unless="init.disable" depends=" _buildmagic:init">
-      <!-- Note: tasks in this target will not run because _buildmagic:init 
-        -  sets "init.disable" to true" -->
-   </target>
+   <target name="init" depends="init-maven-environment">
 
-   
-   <target name="maven-ant-tasks" unless="maven.tasks.complete" xmlns:maven="urn:maven-artifact-ant">
-      
-      <!-- Maven Ant Tasks Setup                                              -->
-      <!-- ================================================================== -->
+     <!-- Defines repository.home -->
+     <property file="local.properties"/>
 
-      <path id="maven-ant-tasks.classpath" path="../tools/lib/maven-ant-tasks.jar" />
-      <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
-               classpathref="maven-ant-tasks.classpath" />
-      <maven:pom id="maven.project" file="pom.xml" />
-      <maven:remoteRepository id="repository.jboss.org" url="http://repository.jboss.org/maven2" />
-      <maven:remoteRepository id="snapshots.jboss.org" url="http://snapshots.jboss.org/maven2" />
-	
-      <!-- Maven dependencies -->
-      <maven:dependencies pathId="maven.dependencies.compileClasspath" useScope="compile">
-         <pom refid="maven.project"/>
-      </maven:dependencies>
-      <maven:dependencies pathId="maven.dependencies.testClasspath" useScope="test">
-         <pom refid="maven.project"/>
-      </maven:dependencies>
-      <maven:dependencies pathId="jboss.test.classpath">
-         <dependency groupId="jboss" artifactId="jboss-test" version="1.0.3.GA"/>
-      </maven:dependencies>
-      <maven:dependencies pathId="junit.junit.classpath">
-         <dependency groupId="junit" artifactId="junit" version="3.8.1"/>
-      </maven:dependencies>
-      
-      <property name="build.directory" value="${maven.project.build.directory}"/>
-      <property name="build.artifact.name" value="${maven.project.build.finalName}.jar"/>
-      <property name="build.artifact" value="${build.directory}/${build.artifact.name}"/>
-      <path id="jboss.aop.classpath">
-        <pathelement location="${build.artifact}"/>
-      </path>
-      
-      <property name="maven.tasks.complete" value="true"/>
-   </target>
-   
-   <!-- ================================================================== -->
-   <!-- Configuration                                                      -->
-   <!-- ================================================================== -->
+     <!-- Bits for building source archives -->
+     <patternset id="source.ignore">
+       <exclude name="**/output/**"/>
+       <exclude name="**/target/**"/>
+       <exclude name="**/.svn/**" />
+     </patternset>
+     
+     <!-- Set the version of the release here -->
+     <property name="project.name" value="${maven.project.artifactId}"/>
+     <property name="project.version" value="${maven.project.version}"/>
+     <property name="project.build.name" value="${project.name}-${project.version}"/>
+     <property name="project.title" value="${maven.project.name}"/>
+     <echo message="Project: ${project.build.name}"/>
+     <echo message="Title: ${project.title}"/>
 
-   <!--
-      | Configure the build system.
-      |
-      | This target is invoked by the Buildmagic initialization logic and
-      | should contain module specific configuration elements.
-    -->
+     <!-- Setup the project environment. -->
+     <dirname property="project.root" file="${basedir}"/>
+     <property name="project.build" value="${project.root}/build"/>
+     <property name="project.tools" value="${project.root}/tools"/>
+     <property name="project.output" value="${project.build}/output"/>
+     <property name="project.release" value="${project.output}/${project.build.name}"/>
 
-   <target name="configure" unless="configure.disable" depends="maven-ant-tasks">
-      <property name="aop.version" value="jboss-aop-1.5.0.GA"/>
-      <property name="aop.title" value="JBoss AOP Framework"/>
+     <!-- Setup the module environment. -->
+     <property name="module.root" value="${basedir}"/>
+     <property file="${module.root}/local.properties"/>
+     <property name="module.source" value="${module.root}/src"/>
+     <property name="module.output" value="${module.root}/output"/>
+     <property name="module.tools" value="${module.root}/tools"/>
 
-      <!-- =================== -->
-      <!-- Basic Configuration -->
-      <!-- =================== -->
+     <!-- Include user and project property overrides. -->
+     <property file="${project.build}/local.properties"/>
+     <property file="${user.home}/.buildmagic.properties"/>
+     <property file="${user.home}/.ant.properties"/>
 
-      <!-- Module name(s) & version -->
-      <property name="module.name" value="aop"/>
-      <property name="module.Name" value="JBoss AOP"/>
-      <property name="module.version" value="1.5.0.GA"/>
+     <!-- Setup the build.log -->
+     <property name="buildlog.level" value="info"/>
+     <record name="${basedir}/build.log" append="no" loglevel="${buildlog.level}"/>
+     <property name="init-buildlog.disable" value="true"/>
 
-      <!-- ========= -->
-      <!-- Libraries -->
-      <!-- ========= -->
+     <!-- Setup the build timestamp & build identifer properties -->
+     <tstamp>
+       <format property="build.number" pattern="yyyyMMddHHmm"/>
+       <format property="YEAR" pattern="yyyy"/>
+     </tstamp>
+     <property name="build.id" value="${build.number}"/>
 
-      <!-- The combined library classpath -->
-      <path id="library.classpath">
-         <path refid="maven.dependencies.testClasspath"/>
-      </path>
+     <!-- The combined library classpath -->
+     <path id="library.classpath">
+        <path refid="maven.dependencies.test.classpath"/>
+     </path>
 
-      <!--
-            Settable in local.properties:
-               -jrockit.home: location of JRockit JVM
-               -jdk14.executable: Full path to a JDK 1.4 java.exe (Needed for the JDK 1.4 tests)
-               -repository.home: Location of local copy of repository (for the "update-repository" target
-               -debug: if set, -Djboss.aop.debug.classes=true for the tests; otherwise it is false
-       -->
-      <property file="local.properties"/>
+     <path id="jboss.test.classpath">
+       <pathelement location="${jboss:jboss-test:jar}"/>
+     </path>
+     <path id="junit.junit.classpath">
+       <pathelement location="${junit:junit:jar}"/>
+     </path>
+     <property name="build.directory" value="${maven.project.build.directory}"/>
+     <property name="build.artifact.name" value="${maven.project.build.finalName}.jar"/>
+     <property name="build.artifact" value="${build.directory}/${build.artifact.name}"/>
+     <path id="jboss.aop.classpath">
+       <pathelement location="${build.artifact}"/>
+     </path>
+     
 
-      <available file="${jrockit.home}/jre/lib/managementapi.jar" property="JROCKIT_API_AVAILABLE" value="managementapi.jar"/>
-      <available file="${jrockit.home}/jre/lib/management-agent.jar" property="JROCKIT_API_AVAILABLE" value="rt.jar"/>
-      <condition property="jboss.aop.debug.classes" value="true">
-         <isset property="debug"/>
-      </condition>
-      <condition property="jboss.aop.debug.classes" value="false">
-         <not>
-            <isset property="debug"/>
-         </not>
-      </condition>
+     <!--
+           Settable in local.properties:
+              -jrockit.home: location of JRockit JVM
+              -jdk14.executable: Full path to a JDK 1.4 java.exe (Needed for the JDK 1.4 tests)
+              -repository.home: Location of local copy of repository (for the "update-repository" target
+              -debug: if set, -Djboss.aop.debug.classes=true for the tests; otherwise it is false
+      -->
+     <property file="local.properties"/>
 
-		<echo>Debug: ${debug}</echo>
+     <available file="${jrockit.home}/jre/lib/managementapi.jar" property="JROCKIT_API_AVAILABLE" value="managementapi.jar"/>
+     <available file="${jrockit.home}/jre/lib/management-agent.jar" property="JROCKIT_API_AVAILABLE" value="rt.jar"/>
+     <condition property="jboss.aop.debug.classes" value="true">
+        <isset property="debug"/>
+     </condition>
+     <condition property="jboss.aop.debug.classes" value="false">
+        <not>
+           <isset property="debug"/>
+        </not>
+     </condition>
 
-      <!-- ======= -->
-      <!-- Modules -->
-      <!-- ======= -->
+     <!-- Where source files live -->
+     <property name="source.tests.java" value="${module.source}/test"/>
+     <property name="source.etc" value="${module.source}/etc"/>
+     <property name="source.res" value="${module.source}/resources"/>
+     <property name="source.stylesheets" value="src/stylesheets"/>
+     <echo message="${source.tests.java}"/>
+    
+     <!-- Where build generated files will go -->
+     <property name="build.reports" value="output/reports"/>
+     <property name="build.stylesheets" value="${module.output}/stylesheets"/>
+     <property name="build.tests.classes" value="${module.output}/tests.classes"/>
+     <property name="build.lib" value="${module.output}/lib"/>
 
-      <!-- The combined dependent module classpath -->
-      <path id="dependentmodule.classpath">
-      </path>
+     <!-- Install/Release structure -->
+     <property name="install.id" value="${module.name}-${module.version}"/>
+     <property name="release.id" value="${install.id}"/>
+     <property name="install.root" value="${module.output}/${install.id}"/>
 
-      <!-- ===== -->
-      <!-- Tasks -->
-      <!-- ===== -->
+     <!-- classpath and local.classpath must have a value using with a path -->
+     <property name="classpath" value=""/>
+     <property name="local.classpath" value=""/>
 
-      <!-- Where source files live -->
-      <property name="source.tests.java" value="${module.source}/test"/>
-      <property name="source.etc" value="${module.source}/etc"/>
-      <property name="source.res" value="${module.source}/resources"/>
-      <property name="source.stylesheets" value="src/stylesheets"/>
+     <!-- The classpath required to build classes. -->
+     <path id="javac.classpath">
+        <pathelement path="${classpath}"/>
+        <pathelement path="${local.classpath}"/>
+        <path refid="library.classpath"/>
+        <pathelement path="${build.artifact}"/>
+     </path>
 
-      <!-- Where build generated files will go -->
-      <property name="build.reports" value="output/reports"/>
-      <property name="build.stylesheets" value="${module.output}/stylesheets"/>
-      <property name="build.tests.classes" value="${module.output}/tests.classes"/>
-      <property name="build.lib" value="${module.output}/lib"/>
+     <path id="javac.jrockit.classpath">
+        <path refid="javac.classpath"/>
+        <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
+     </path>
 
-      <!-- Install/Release structure -->
-      <property name="install.id" value="${module.name}-${module.version}"/>
-      <property name="release.id" value="${install.id}"/>
-      <property name="install.root" value="${module.output}/${install.id}"/>
+     <path id="test.classpath">
+        <path refid="library.classpath"/>
+        <pathelement path="${build.artifact}"/>
+     </path>
 
-      <!-- The combined thirdparty classpath -->
-      <path id="thirdparty.classpath">
-         <path refid="library.classpath"/>
-         <path refid="dependentmodule.classpath"/>
-      </path>
+     <path id="compatibility15.test.classpath">
+        <pathelement path="1.5.x.lib/concurrent.jar"/>
+        <pathelement path="1.5.x.lib/javassist.jar"/>
+        <pathelement path="1.5.x.lib/jboss-aop-jdk50.jar"/>
+        <pathelement path="1.5.x.lib/jboss-common.jar"/>
+        <pathelement path="1.5.x.lib/qdox.jar"/>
+        <pathelement path="1.5.x.lib/trove.jar"/>
 
-      <!-- classpath and local.classpath must have a value using with a path -->
-      <property name="classpath" value=""/>
-      <property name="local.classpath" value=""/>
+        <path refid="jboss.test.classpath"/>
+        <path refid="junit.junit.classpath"/>
+     </path>
 
-      <!-- The classpath required to build classes. -->
-      <path id="javac.classpath">
-         <pathelement path="${classpath}"/>
-         <pathelement path="${local.classpath}"/>
-         <path refid="thirdparty.classpath"/>
-         <pathelement path="${build.artifact}"/>
-      </path>
+     <path id="aopc.task.classpath">
+        <path refid="library.classpath"/>
+        <path refid="dependentmodule.classpath"/>
+        <path refid="jboss.aop.classpath"/>
+     </path>
 
-      <path id="javac.jrockit.classpath">
-         <path refid="javac.classpath"/>
-         <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
-      </path>
+     <path id="test.jrockit.classpath">
+        <path refid="test.classpath"/>
+        <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
+     </path>
 
-      <path id="test.classpath">
-         <path refid="thirdparty.classpath"/>
-         <pathelement path="${build.artifact}"/>
-      </path>
+     <!-- The classpath required to build javadocs. -->
+     <path id="javadoc.classpath">
+        <path refid="javac.classpath"/>
+     </path>
 
-      <path id="compatibility15.test.classpath">
-         <pathelement path="1.5.x.lib/concurrent.jar"/>
-         <pathelement path="1.5.x.lib/javassist.jar"/>
-         <pathelement path="1.5.x.lib/jboss-aop-jdk50.jar"/>
-         <pathelement path="1.5.x.lib/jboss-common.jar"/>
-         <pathelement path="1.5.x.lib/qdox.jar"/>
-         <pathelement path="1.5.x.lib/trove.jar"/>
+     <!-- The temp folder for aopc -->
+     <property name="aopc.tmpdir" value="output/aopctmp"/>
+     <delete dir="${aopc.tmpdir}" failonerror="true" deleteonexit="true"/>
+  	<mkdir dir="${aopc.tmpdir}"/>
 
-         <path refid="jboss.test.classpath"/>
-         <path refid="junit.junit.classpath"/>
-      </path>
+     <!-- Packages to include when generating api documentation -->
+     <property name="javadoc.packages" value="org.jbos.aop.*"/>
 
-      <path id="aopc.task.classpath">
-         <path refid="library.classpath"/>
-         <path refid="dependentmodule.classpath"/>
-         <path refid="jboss.aop.classpath"/>
-      </path>
+     <!-- Override JUnit defaults -->
+     <property name="junit.timeout" value="240000"/> <!-- 4 minutes -->
+     <property name="junit.batchtest.todir" value="${build.reports}"/>
+     <property name="junit.jvm.options" value="-Ddummy"/>
 
-      <path id="test.jrockit.classpath">
-         <path refid="test.classpath"/>
-         <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
-      </path>
+     <!-- Load common task properties -->
+     <property file="${project.tools}/etc/ant/task.properties"/>
 
-      <!-- The classpath required to build javadocs. -->
-      <path id="javadoc.classpath">
-         <path refid="javac.classpath"/>
-      </path>
-
-      <!-- The temp folder for aopc -->
-      <property name="aopc.tmpdir" value="output/aopctmp"/>
-      <delete dir="${aopc.tmpdir}" failonerror="true" deleteonexit="true"/>
-   	<mkdir dir="${aopc.tmpdir}"/>
-
-      <!-- Packages to include when generating api documentation -->
-      <property name="javadoc.packages" value="org.jbos.aop.*"/>
-
-      <!-- Override JUnit defaults -->
-      <property name="junit.timeout" value="240000"/> <!-- 4 minutes -->
-      <property name="junit.batchtest.todir" value="${build.reports}"/>
-      <property name="junit.jvm.options" value="-Ddummy"/>
-   </target>
-
+     <!-- Set the default maven.home directory -->
+     <property name="maven.home" value="${basedir}/../tools/maven"/>
+   </target>   
 
    <!-- ================================================================== -->
    <!-- Compile                                                            -->
@@ -291,13 +266,6 @@
       <delete dir="${build.tests.classes}"/>
    </target>
 
-   <!-- Clean up all generated files -->
-   <target name="clobber"
-      description="Cleans up all generated files."
-      depends="_buildmagic:clobber, clean">
-   </target>
-
-
    <!-- ===============================================================p=== -->
    <!-- Misc.                                                              -->
    <!-- ================================================================== -->
@@ -310,10 +278,6 @@
 
    <target name="most" depends="compile"
       description="Builds almost everything."/>
-
-   <target name="help"
-      description="Show this help message."
-      depends="_buildmagic:help:standard"/>
 
    <!-- ==================================================================================== -->
    <!-- JDK 5.0 TESTS                                                                        -->
@@ -1758,7 +1722,7 @@
       </junit>
    </target>
 
-   <target name="compile-stylesheets" depends="configure">
+   <target name="compile-stylesheets" depends="init">
       <mkdir dir="${build.stylesheets}"/>
       <copy todir="${build.stylesheets}" filtering="yes">
          <fileset dir="${source.stylesheets}">

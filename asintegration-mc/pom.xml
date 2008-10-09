@@ -24,7 +24,12 @@
           <include>jbossorg-eula.txt</include>
         </includes>
       </resource>
-     </resources>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>src/resources/tests</directory>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -59,7 +64,16 @@
         <configuration>
           <testFailureIgnore>true</testFailureIgnore>
           <forkMode>always</forkMode>
-          <skip>true</skip>
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
+          <includes>
+            <include>org/jboss/test/**/*UnitTestCase.class</include>
+          </includes>
+          <systemProperties>
+            <property>
+              <name>build.testlog</name>
+              <value>target/surefire-reports/tests.log</value>
+            </property>
+          </systemProperties>
         </configuration>
       </plugin>
     </plugins>

@@ -13,52 +13,34 @@
 
 <project default="main" name="JBossAOP/Build">
 
+  <import file="../tools/etc/ant/common-tasks.xml"/>
+  
   <!-- ================================================================== -->
   <!-- Initialization                                                     -->
   <!-- ================================================================== -->
-
+  
   <!--
      | Initialize the build system.
      | .
    -->
 
-  <target name="init" unless="init.disable" >
-    <!-- Make sure we have the right version of Ant -->
-    <property name="buildmagic.ant15.baseversion" value="1.5"/>
-    <property name="buildmagic.ant16.baseversion" value="1.6"/>
+  <target name="init" depends="verify-environment, init-maven-environment">
 
+    <!-- Defines repository.home -->
+    <property file="local.properties"/>
+
+    <!-- Bits for building source archives -->
+    <patternset id="source.ignore">
+      <exclude name="**/output/**"/>
+      <exclude name="**/target/**"/>
+      <exclude name="**/.svn/**" />
+    </patternset>
+    
     <!-- Set the version of the release here -->
-    <property name="aop.version" value="jboss-aop-2.0.0.CR18"/>
-    <property name="aop.title" value="JBoss AOP Framework"/>
-    <property name="module.version" value="j${aop.version}"/>
-
-    <!--
-       | Add new conditions for other supported Ant versions when they
-       | become avaialble.
-     -->
-
-    <condition property="buildmagic.ant.compatible">
-      <or>
-        <contains string="${ant.version}"
-          substring="Ant version ${buildmagic.ant15.baseversion}"/>
-        <contains string="${ant.version}"
-          substring="Ant version ${buildmagic.ant16.baseversion}"/>
-      </or>
-    </condition>
-
-    <fail unless="buildmagic.ant.compatible">
-
-    Unsupported Ant version:
-
-      ${ant.version}
-
-    Please install a version which is compatible with Ant ${buildmagic.ant15.baseversion} or ${buildmagic.ant16.baseversion}.
-
-    </fail>
-
-    <!-- JDK Detection -->
-    <available classname="java.lang.StackTraceElement" property="HAVE_JDK_1.4"/>
-    <available classname="java.lang.Enum" property="HAVE_JDK_1.5"/>
+    <property name="project.name" value="jboss-aop"/>
+    <property name="project.version" value="${maven.project.version}"/>
+    <property name="project.build.name" value="${project.name}-${project.version}"/>
+    <property name="project.title" value="JBoss AOP Framework"/>
 
     <!-- Setup the project environment. -->
     <dirname property="project.root" file="${basedir}"/>
@@ -66,7 +48,7 @@
     <property name="project.tools" value="${project.root}/tools"/>
     <property name="project.thirdparty" value="${project.root}/thirdparty"/>
     <property name="project.output" value="${project.build}/output"/>
-    <property name="project.release" value="${project.output}/${aop.version}"/>
+    <property name="project.release" value="${project.output}/${project.build.name}"/>
 
     <!-- Include user and project property overrides. -->
     <property file="${project.build}/local.properties"/>
@@ -85,108 +67,35 @@
     </tstamp>
     <property name="build.id" value="${build.number}"/>
 
-    <!-- Version identifiers for the server. -->
-    <property name="version.major" value="5"/>
-    <property name="version.minor" value="0"/>
-    <property name="version.revision" value="0"/>
-    <property name="version.tag" value="Beta"/>
-    <property name="version.name" value="Morpheus"/>
-    <!-- This must be set to the CVS tag for any release -->
-    <property name="version.cvstag" value="HEAD"/>
-
-    <!-- Manifest version info -->
-    <property name="specification.title" value="JBoss"/>
-    <property name="specification.version" value="${version.major}.${version.minor}.${version.revision}.${version.tag}"/>
-    <property name="specification.vendor" value="JBoss (http://www.jboss.org/)"/>
-
-    <property name="implementation.title" value="JBoss [${version.name}]"/>
-    <property name="implementation.url" value="http://www.jboss.org/"/>
-    <property name="implementation.version"
-      value="${version.major}.${version.minor}.${version.revision}.${version.tag} (build: CVSTag=${version.cvstag} date=${build.id})"/>
-    <property name="implementation.vendor" value="JBoss.org"/>
-    <property name="implementation.vendor.id" value="${implementation.url}"/>
-
-    <!-- Invoke the configure task -->
-    <antcall target="configure"/>
-
     <!-- Load common task properties -->
-    <property file="${project.tools}/etc/buildmagic/task.properties"/>
+    <property file="${project.tools}/etc/ant/task.properties"/>
 
-    <!-- Marker to disable build -->
-    <!--<property name="build-bypass.marker" value="${module.output}/build-marker"/>-->
+    <!-- Set the default maven.home directory -->
+    <property name="maven.home" value="${basedir}/../tools/maven"/>
 
-    <!-- Marker to disable mbeans -->
-    <!--<property name="mbean-bypass.marker" value="${module.output}/mbean-marker"/>-->
-
-    <!-- Install filters -->
-    <!--<propertyfilter all="${buildmagic.propertyfilter.all}"/>-->
-
-    <!--<call target="_buildmagic:init:show-environment" if="init.verbose"/>-->
-
-    <!-- Finish up -->
-    <property name="init.disable" value="true"/>
   </target>
 
-
   <!-- ================================================================== -->
-  <!-- Configuration                                                      -->
+  <!-- Install & Release                                                  -->
   <!-- ================================================================== -->
 
-  <!--
-     | Configure the build system.
-     |
-     | This target is invoked by the Buildmagic initialization logic and
-     | should contain module specific configuration elements.
-   -->
-
-  <target name="configure" unless="configure.disable">
-
-    <!-- =================== -->
-    <!-- Basic Configuration -->
-    <!-- =================== -->
-
-    <!-- Module name(s) & version -->
-    <property name="module.name" value="jboss"/>
-    <property name="module.Name" value="JBoss AOP Build"/>
-    <property name="module.version" value="${version.major}.${version.minor}.${version.revision}${version.tag}"/>
-
-    <!-- Defines repository.home -->
-    <property file="local.properties"/>
-
-    <!-- Bits for building source archives -->
-    <patternset id="source.ignore">
-      <exclude name="**/output/**"/>
-      <exclude name="**/CVS/**" />
-    </patternset>
-</target>
-
-   <!-- ================================================================== -->
-   <!-- Install & Release                                                  -->
-   <!-- ================================================================== -->
-
-   <target name="install"
-	  description="Install the structure for a release."
-     depends="init"
-     >
-   </target>
-
-   <target name="release-output"
+  <target name="release-output"
       description="Builds the default release structure."
       depends="init, most, release-no-reference-docs"
       >
-   </target>
+  </target>
 
-   <target name="release"
+  <target name="release"
       description="Builds the default release structure."
       depends="init, clean, most, maven-site, aop.reference.docs, release-no-reference-docs, release-reference-docs"
       >
 
-   	<zip destfile="${project.release}.zip">
-         <fileset dir="${project.output}">
-         	<include name="${aop.version}/**"/>
-   		</fileset>
-      </zip>
-   	<move file="${project.release}.zip" todir="${project.output}/lib"/>
+    <zip destfile="${project.release}.zip">
+      <fileset dir="${project.output}">
+        <include name="${project.build.name}/**"/>
+      </fileset>
+    </zip>
+    <move file="${project.release}.zip" todir="${project.output}/lib"/>
   </target>
 
   <target name="release-dryrun"
@@ -194,7 +103,7 @@
       depends="init, release-no-reference-docs, release-reference-docs">
 
   </target>
-	
+
   <!-- ================================================================== -->
   <!-- Source Archives                                                    -->
   <!-- ================================================================== -->
@@ -212,7 +121,7 @@
   <!-- Clean up all build output -->
   <target name="clean" depends="maven-build-clean"
 	  description="Cleans up most generated files.">
-     <delete dir="output"/>
+    <delete dir="output"/>
   </target>
 
   <!-- ================================================================== -->
@@ -222,110 +131,84 @@
   <target name="main" depends="most"
 	  description="Executes the default target (most)."/>
 
-  <target name="most" depends="maven-build-install, install"
+  <target name="most" depends="maven-build-install"
 	  description="Executes all modules and builds most everything."/>
-  
-  <!-- Define a macro for calling maven -->
-  <macrodef name="maven">
-      <attribute name="options" default=""/>
-      <attribute name="goal"/>
-      <attribute name="basedir" />
-      <element name="args" implicit="true" optional="true" />
-      <sequential>
-          <echo message="Calling mvn command located in ${maven.dir}"/>
-          <java classname="org.codehaus.classworlds.Launcher" fork="true" 
-                dir="@{basedir}" resultproperty="maven.result">
-              <classpath>
-                  <fileset dir="${maven.dir}/boot">
-                      <include name="*.jar" />
-                  </fileset>
-                  <fileset dir="${maven.dir}/lib">
-                      <include name="*.jar" />
-                  </fileset>
-              </classpath>
-              <sysproperty key="classworlds.conf" value="${maven.dir}/bin/m2.conf" />
-              <sysproperty key="maven.home" value="${maven.dir}" />
-              <arg line="--batch-mode @{options} @{goal}" />
-          </java>
-      </sequential>
-  </macrodef> 
 
-   <target name="maven-build-install" depends="set-jrockit" description="Call maven install">
-     
-      <property name="maven.dir" value="${basedir}/../tools/maven"/>
-      <property name="build.maven.opts" value=""/>
-      <property name="jrockit.build.param" value=""/>
-      <echo message="jrockit: ${jrockit.build.param}"/>
-      <maven basedir="${basedir}/../" options="${jrockit.build.param} ${build.maven.opts}" goal="install"/>
-      
-      <fail message="Unable to build maven modules.  See maven output for details.">
-        <condition>
-          <not>
-            <equals arg1="${maven.result}" arg2="0"/>
-          </not>
-        </condition>
-      </fail>
-   </target>
-  
-   <target name="maven-site" depends="set-jrockit" description="Generate the maven site">
-     
-      <property name="maven.dir" value="${basedir}/../tools/maven"/>
-      <property name="build.maven.opts" value=""/>
-      <property name="jrockit.build.param" value=""/>
-      <echo message="jrockit: ${jrockit.build.param}"/>
-      <maven basedir="${basedir}/../" options="${jrockit.build.param} ${build.maven.opts}" goal="site"/>
-      
-      <fail message="Unable to complete maven build.  See maven output for details.">
-        <condition>
-          <not>
-            <equals arg1="${maven.result}" arg2="0"/>
-          </not>
-        </condition>
-      </fail>
-   </target>
-   
-   <!-- Clean the maven part of the build -->
-   <target name="maven-build-clean" depends="set-jrockit">
-     
-      <property name="maven.dir" value="${basedir}/../tools/maven"/>
-      <property name="build.maven.opts" value=""/>
-      <property name="jrockit.build.param" value=""/>
-      
-      <maven basedir="${basedir}/../" options="${jrockit.build.param} ${build.maven.opts}" goal="clean"/>
-      
-      <fail message="Unable to clean maven modules.  See maven output for details.">
-        <condition>
-          <not>
-            <equals arg1="${maven.result}" arg2="0"/>
-          </not>
-        </condition>
-      </fail>
-   </target>
+  <target name="maven-build-install" depends="init, set-jrockit" description="Call maven install">
 
-   <target name="set-jrockit" depends="init" if="jrockit.home">
-     <property name="jrockit.build.param" value="-Djrockit.home=${jrockit.home}"/>
-   </target>
+    <property name="build.maven.opts" value=""/>
+    <property name="jrockit.build.param" value=""/>
+    <echo message="jrockit: ${jrockit.build.param}"/>
+    <maven basedir="${basedir}/../" options="${jrockit.build.param} ${build.maven.opts}" 
+        goal="install" resultproperty="maven.install.result"/>
 
-   <!-- TODO: Maybe this can be set up to control offline maven builds. -->
-   <target name="check.inhibit.downloads">
-      <condition property="inhibit.downloads">
-        <istrue value="${nodownload}"/>
+    <fail message="Unable to build maven modules.  See maven output for details.">
+      <condition>
+        <not>
+          <equals arg1="${maven.install.result}" arg2="0"/>
+        </not>
       </condition>
+    </fail>
+  </target>
+
+  <target name="maven-site" depends="init, set-jrockit" description="Generate the maven site">
+
+    <property name="build.maven.opts" value=""/>
+    <property name="jrockit.build.param" value=""/>
+    <echo message="jrockit: ${jrockit.build.param}"/>
+    <maven basedir="${basedir}/../" options="${jrockit.build.param} ${build.maven.opts}" goal="site"/>
+
+    <fail message="Unable to complete maven build.  See maven output for details.">
+      <condition>
+        <not>
+          <equals arg1="${maven.result}" arg2="0"/>
+        </not>
+      </condition>
+    </fail>
+  </target>
+
+  <!-- Clean the maven part of the build -->
+  <target name="maven-build-clean" depends="init, set-jrockit">
+
+    <property name="build.maven.opts" value=""/>
+    <property name="jrockit.build.param" value=""/>
+
+    <maven basedir="${basedir}/../" options="${jrockit.build.param} ${build.maven.opts}" 
+        goal="clean" resultproperty="maven.clean.result"/>
+
+    <fail message="Unable to clean maven modules.  See maven output for details.">
+      <condition>
+        <not>
+          <equals arg1="${maven.clean.result}" arg2="0"/>
+        </not>
+      </condition>
+    </fail>
+  </target>
+
+  <target name="set-jrockit" depends="init" if="jrockit.home">
+    <property name="jrockit.build.param" value="-Djrockit.home=${jrockit.home}"/>
+  </target>
+
+  <!-- TODO: Maybe this can be set up to control offline maven builds. -->
+  <target name="check.inhibit.downloads">
+    <condition property="inhibit.downloads">
+      <istrue value="${nodownload}"/>
+    </condition>
   </target>
 
   <!-- check if the the user has specied proxy settings -->
   <target name="check.proxy">
     <condition property="hasproxy">
-        <and>
-            <isset property="proxy.host"/>
-            <isset property="proxy.port"/>
-            <not>
-                <equals arg1="" arg2="${proxy.host}" trim="true"/>
-            </not>
-            <not>
-                <equals arg1="" arg2="${proxy.port}" trim="true"/>
-            </not>
-        </and>
+      <and>
+        <isset property="proxy.host"/>
+        <isset property="proxy.port"/>
+        <not>
+          <equals arg1="" arg2="${proxy.host}" trim="true"/>
+        </not>
+        <not>
+          <equals arg1="" arg2="${proxy.port}" trim="true"/>
+        </not>
+      </and>
     </condition>
   </target>
 
@@ -336,60 +219,60 @@
   </target>
 
   <target name="aop.reference.docs" depends="init" description="Builds the reference manual for JBoss AOP that should be part of ths distribution">
-     <ant antfile="build.xml" dir="../aop/docs/reference"/>
+    <ant antfile="build.xml" dir="../aop/docs/reference"/>
   </target>
 
-   <target name="update-repository"
+  <target name="update-repository"
       description="Copies the jars to the snapshot in the repository. The version can be overridden with the -Dversion=1.2.3 property">
-      <property file="local.properties"/>
-      <fail unless="repository.home">repository.home must be set in a local.properties file</fail>
+    <property file="local.properties"/>
+    <fail unless="repository.home">repository.home must be set in a local.properties file</fail>
 
-      <condition property="ver" value="snapshot" else="${version}">
-         <not>
-            <isset property="version"/>
-         </not>
-      </condition>
-      <echo>${ver}</echo>
+    <condition property="ver" value="snapshot" else="${version}">
+      <not>
+        <isset property="version"/>
+      </not>
+    </condition>
+    <echo>${ver}</echo>
 
-      <property name="aop15.dir" value="${repository.home}/jboss/aop/${ver}/lib"/>
-      <property name="aop15.resources.dir" value="${repository.home}/jboss/aop/${ver}/resources"/>  
-      <!--
+    <property name="aop15.dir" value="${repository.home}/jboss/aop/${ver}/lib"/>
+    <property name="aop15.resources.dir" value="${repository.home}/jboss/aop/${ver}/resources"/>
+    <!--
       <property name="aop14.dir" value="${repository.home}/jboss/aop14/${ver}/lib"/>
       -->
 
-      <mkdir dir="${aop15.dir}"/>
-      <mkdir dir="${aop15.resources.dir}"/>
-      <!--
+    <mkdir dir="${aop15.dir}"/>
+    <mkdir dir="${aop15.resources.dir}"/>
+    <!--
       <mkdir dir="${aop14.dir}"/>
       -->
 
-      <copy todir="${aop15.dir}">
-         <fileset dir="../aop/output/lib">
-            <include name="jboss-aop-jdk50-client.jar"/>
-            <include name="jboss-aop-jdk50.jar"/>
-            <include name="jboss-aop-src.zip"/>
-            <include name="jrockit-pluggable-instrumentor.jar"/>
-            <include name="pluggable-instrumentor.jar"/>
-            <include name="jboss-aop-src.zip"/>
-         </fileset>
-         <fileset dir="../asintegration/output/lib">
-            <include name="jboss-aop-as4-deployer.jar"/>
-            <include name="jboss-aop-deployer-jdk50.jar"/>
-         	<include name="jboss-aop-jboss4-jdk50.jar"/>
-            <include name="jboss-asintegration-src.zip"/>
-         </fileset>
-         <fileset dir="../aspects/output/lib">
-            <include name="jboss-standalone-aspect-library-jdk50.jar"/>
-            <include name="jboss-standalone-aspects-src.zip"/>
-         </fileset>
-      </copy>
-      <copy todir="${aop15.resources.dir}">
-         <fileset dir="../asintegration/src/resources/META-INF">
-            <include name="aspect-deployer-beans.xml"/>
-            <include name="jboss-aspect-library-beans.xml"/>
-         </fileset>  
-      </copy>  
-      <!--
+    <copy todir="${aop15.dir}">
+      <fileset dir="../aop/output/lib">
+        <include name="jboss-aop-jdk50-client.jar"/>
+        <include name="jboss-aop-jdk50.jar"/>
+        <include name="jboss-aop-src.zip"/>
+        <include name="jrockit-pluggable-instrumentor.jar"/>
+        <include name="pluggable-instrumentor.jar"/>
+        <include name="jboss-aop-src.zip"/>
+      </fileset>
+      <fileset dir="../asintegration/output/lib">
+        <include name="jboss-aop-as4-deployer.jar"/>
+        <include name="jboss-aop-deployer-jdk50.jar"/>
+        <include name="jboss-aop-jboss4-jdk50.jar"/>
+        <include name="jboss-asintegration-src.zip"/>
+      </fileset>
+      <fileset dir="../aspects/output/lib">
+        <include name="jboss-standalone-aspect-library-jdk50.jar"/>
+        <include name="jboss-standalone-aspects-src.zip"/>
+      </fileset>
+    </copy>
+    <copy todir="${aop15.resources.dir}">
+      <fileset dir="../asintegration/src/resources/META-INF">
+        <include name="aspect-deployer-beans.xml"/>
+        <include name="jboss-aspect-library-beans.xml"/>
+      </fileset>
+    </copy>
+    <!--
       <copy todir="${aop14.dir}">
          <fileset dir="../aop/output/lib">
             <include name="jboss-aop.jar"/>
@@ -408,255 +291,235 @@
          </fileset>
       </copy>
       -->
-   </target>
+  </target>
 
   <target name="release-no-reference-docs"
 	       description="Builds the default release structure, minus the reference documentation"
-        depends="init-dependency-properties">
-     <delete dir="output/temp"/>
-     <mkdir dir="output/temp"/>
+        depends="init">
+    <delete dir="output/temp"/>
+    <mkdir dir="output/temp"/>
 
-     <!-- ==================================================  -->
-     <!--           Add the files from 'aop'                  -->
-     <!-- ==================================================  -->
+    <!-- ==================================================  -->
+    <!--           Add the files from 'aop'                  -->
+    <!-- ==================================================  -->
 
-     <!-- build.xml that will compile src/tests and run tests from the dist package -->
-     <copy todir="${project.release}" filtering="no">
-        <fileset dir="${project.root}/build/build_for_dist">
-           <include name="build.xml"/>
-        </fileset>
-     </copy>
+    <!-- build.xml that will compile src/tests and run tests from the dist package -->
+    <copy todir="${project.release}" filtering="no">
+      <fileset dir="${project.root}/build/build_for_dist">
+        <include name="build.xml"/>
+      </fileset>
+    </copy>
 
-     <copy todir="${project.release}/etc" filtering="no">
-        <fileset dir="${project.root}/aop/src/etc">
-           <include name="default.mf"/>
-           <include name="jbossorg-eula.txt"/>
-           <include name="pluggable-instrumentor.mf"/>
-        </fileset>
-     </copy>
+    <copy todir="${project.release}/etc" filtering="no">
+      <fileset dir="${project.root}/aop/src/etc">
+        <include name="default.mf"/>
+        <include name="jbossorg-eula.txt"/>
+        <include name="pluggable-instrumentor.mf"/>
+      </fileset>
+    </copy>
 
-     <!-- needed to build the source/tests from the dist package -->
-     <copy file="${jboss:jboss-test:jar}"
-           tofile="${project.release}/lib-test/jboss-test.jar"/> 
-     <copy file="${junit:junit:jar}"
+    <!-- needed to build the source/tests from the dist package -->
+    <copy file="${jboss:jboss-test:jar}"
+           tofile="${project.release}/lib-test/jboss-test.jar"/>
+    <copy file="${junit:junit:jar}"
            tofile="${project.release}/lib-test/junit.jar"/>
-     <copy file="${jboss.profiler.jvmti:jboss-profiler-jvmti:jar}"
+    <copy file="${jboss.profiler.jvmti:jboss-profiler-jvmti:jar}"
            tofile="${project.release}/lib-test/jboss-profiler-jvmti.jar"/>
-     
-     <copy todir="${project.release}/bin" filtering="no">
-        <fileset dir="${project.root}/aop/src/resources/bin">
-           <include name="**/*"/>
-        </fileset>
-     </copy>
 
-     <copy todir="${project.release}/docs/aspect-framework" filtering="no">
-        <fileset dir="${project.root}/aop/docs">
-           <include name="api/**"/>
-           <include name="**/*.html"/>
-           <include name="**/*.pdf"/>
-           <include name="**/*.jpg"/>
-           <include name="**/*.pdf"/>
-           <include name="**/*.css"/>
-           <include name="examples/**"/>
-           <exclude name="**/CVS/**"/>
-           <exclude name="**/.svn/**"/>
-           <exclude name="**/*.wiki"/>
-           <exclude name="reference/**"/>
-        </fileset>
-     </copy>
+    <copy todir="${project.release}/bin" filtering="no">
+      <fileset dir="${project.root}/aop/src/resources/bin">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
 
-     <copy todir="${project.release}/docs/aspect-framework" filtering="no">
-        <fileset dir="${project.root}/aop/target/site">
-           <include name="apidocs/**"/>
-        </fileset>
-     </copy>
+    <copy todir="${project.release}/docs/aspect-framework" filtering="no">
+      <fileset dir="${project.root}/aop/docs">
+        <include name="api/**"/>
+        <include name="**/*.html"/>
+        <include name="**/*.pdf"/>
+        <include name="**/*.jpg"/>
+        <include name="**/*.pdf"/>
+        <include name="**/*.css"/>
+        <include name="examples/**"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/*.wiki"/>
+        <exclude name="reference/**"/>
+      </fileset>
+    </copy>
 
-
-     <copy todir="${project.release}/src/aspect-framework" filtering="no">
-        <fileset dir="${project.root}/aop/src">
-           <include name="main/**/*.java"/>
-           <include name="main/**/*.jjt"/>
-           <include name="test/**/*.java"/>
-           <include name="resources/test/**/*.xml"/>
-           <include name="resources/bin/**/*"/>
-           <exclude name="**/.svn/**"/>
-           <exclude name="**/CVS/**"/>
-        </fileset>
-     </copy>
-
-     <!-- ==================================================  -->
-     <!-- Add the files from 'asintegration'                  -->
-     <!-- ==================================================  -->
-
-     <copy todir="${project.release}/docs/asintegration-core" filtering="no">
-        <fileset dir="${project.root}/asintegration-core/target/site">
-           <include name="apidocs/**"/>
-        </fileset>
-     </copy>
-     <copy todir="${project.release}/docs/asintegration-jmx" filtering="no">
-        <fileset dir="${project.root}/asintegration-jmx/target/site">
-           <include name="apidocs/**"/>
-        </fileset>
-     </copy>
-     <copy todir="${project.release}/docs/asintegration-mc" filtering="no">
-        <fileset dir="${project.root}/asintegration-mc/target/site">
-           <include name="apidocs/**"/>
-        </fileset>
-     </copy>
-
-     <copy todir="${project.release}/src/asintegration-core" filtering="no">
-        <fileset dir="${project.root}/asintegration-core/src">
-           <include name="main/**/*.java"/>
-           <include name="etc/**"/>
-           <include name="resources/**"/>
-           <exclude name="**/.svn/**"/>
-           <exclude name="**/CVS/**"/>
-        </fileset>
-     </copy>
-     <copy todir="${project.release}/src/asintegration-jmx" filtering="no">
-        <fileset dir="${project.root}/asintegration-jmx/src">
-           <include name="main/**/*.java"/>
-           <include name="etc/**"/>
-           <include name="resources/**"/>
-           <exclude name="**/.svn/**"/>
-           <exclude name="**/CVS/**"/>
-        </fileset>
-     </copy>
-     <copy todir="${project.release}/src/asintegration-mc" filtering="no">
-        <fileset dir="${project.root}/asintegration-mc/src">
-           <include name="main/**/*.java"/>
-           <include name="etc/**"/>
-           <include name="resources/**"/>
-           <exclude name="**/.svn/**"/>
-           <exclude name="**/CVS/**"/>
-        </fileset>
-     </copy>
-
-     <!-- ==================================================  -->
-     <!-- Add the files from 'aspects'                        -->
-     <!-- ==================================================  -->
-
-     <copy todir="${project.release}/docs/aspects" filtering="no">
-        <fileset dir="${project.root}/aspects/target/site">
-           <include name="apidocs/**"/>
-        </fileset>
-     </copy>
-
-     <copy todir="${project.release}/src/aspects" filtering="no">
-        <fileset dir="${project.root}/aspects/src">
-           <include name="main/**/*.java"/>
-           <include name="test/**/*.java"/>
-           <include name="resources/**"/>
-           <exclude name="**/.svn/**"/>
-           <exclude name="**/CVS/**"/>
-        </fileset>
-     </copy>
+    <copy todir="${project.release}/docs/aspect-framework" filtering="no">
+      <fileset dir="${project.root}/aop/target/site">
+        <include name="apidocs/**"/>
+      </fileset>
+    </copy>
 
 
-     <!-- ==================================================  -->
-     <!-- Now pull everything together                        -->
-     <!-- ==================================================  -->
+    <copy todir="${project.release}/src/aspect-framework" filtering="no">
+      <fileset dir="${project.root}/aop/src">
+        <include name="main/**/*.java"/>
+        <include name="main/**/*.jjt"/>
+        <include name="test/**/*.java"/>
+        <include name="resources/test/**/*.xml"/>
+        <include name="resources/bin/**/*"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/CVS/**"/>
+      </fileset>
+    </copy>
 
-     <property name="aop.50.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50.jar"/>
-     <property name="aop.50.single.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50-single.jar"/>
-     <property name="aop.aspect-library50.location" value="${project.root}/aspects/output/lib/jboss-standalone-aspect-library-jdk50.jar"/>
-     <property name="aop.asintegration-core.location" value="${project.root}/asintegration-core/target/jboss-aop-asintegration-core.jar"/>
-     <property name="aop.asintegration-jmx.location" value="${project.root}/asintegration-jmx/target/jboss-aop-asintegration-jmx.jar"/>
-     <property name="aop.asintegration-mc.location" value="${project.root}/asintegration-mc/target/jboss-aop-asintegration-mc.jar"/>      
-     <property name="aop.jrockit-pluggable-instrumentor.location" value="${project.root}/jrockit-pluggable-instrumentor/target/jrockit-pluggable-instrumentor.jar"/>
-     <property name="aop.pluggable-instrumentor.location" value="${project.root}/pluggable-instrumentor/target/pluggable-instrumentor.jar"/>
-     <property name="aop.readme-as4.location" value="${project.root}/asintegration-core/src/etc/ReadMe-AS4.txt"/>
-     <property name="aop.readme-as5.location" value="${project.root}/asintegration-core/src/etc/ReadMe-AS5.txt"/>
-     <property name="aop.jboss-service.location" value="${project.root}/asintegration-jmx/src/resources/META-INF/jboss-service.xml"/>
+    <!-- ==================================================  -->
+    <!-- Add the files from 'asintegration'                  -->
+    <!-- ==================================================  -->
 
-     <!-- Copy across the eula -->
-     <copy todir="${project.release}" file="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
+    <copy todir="${project.release}/docs/asintegration-core" filtering="no">
+      <fileset dir="${project.root}/asintegration-core/target/site">
+        <include name="apidocs/**"/>
+      </fileset>
+    </copy>
+    <copy todir="${project.release}/docs/asintegration-jmx" filtering="no">
+      <fileset dir="${project.root}/asintegration-jmx/target/site">
+        <include name="apidocs/**"/>
+      </fileset>
+    </copy>
+    <copy todir="${project.release}/docs/asintegration-mc" filtering="no">
+      <fileset dir="${project.root}/asintegration-mc/target/site">
+        <include name="apidocs/**"/>
+      </fileset>
+    </copy>
 
-     <!-- The JDK 5 libs -->
-     <copy todir="${project.release}/lib-50" file="${aop.50.location}"/>
-     <copy todir="${project.release}/lib-50" file="${aop.50.single.location}"/>
-     <copy todir="${project.release}/lib-50" file="${project.root}/aop/output/lib/jboss-aop-jdk50-client.jar"/>
-     <copy todir="${project.release}/lib-50" file="${aop.aspect-library50.location}"/>
-     <copy todir="${project.release}/lib-50" file="${aop.jrockit-pluggable-instrumentor.location}"/>
-     <copy todir="${project.release}/lib-50" file="${aop.pluggable-instrumentor.location}"/>
-     <copy tofile="${project.release}/lib-50/javassist.jar" file="${javassist:javassist:jar}"/>
-     <copy tofile="${project.release}/lib-50/jboss-common-core.jar" file="${org.jboss:jboss-common-core:jar}"/>
+    <copy todir="${project.release}/src/asintegration-core" filtering="no">
+      <fileset dir="${project.root}/asintegration-core/src">
+        <include name="main/**/*.java"/>
+        <include name="etc/**"/>
+        <include name="resources/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/CVS/**"/>
+      </fileset>
+    </copy>
+    <copy todir="${project.release}/src/asintegration-jmx" filtering="no">
+      <fileset dir="${project.root}/asintegration-jmx/src">
+        <include name="main/**/*.java"/>
+        <include name="etc/**"/>
+        <include name="resources/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/CVS/**"/>
+      </fileset>
+    </copy>
+    <copy todir="${project.release}/src/asintegration-mc" filtering="no">
+      <fileset dir="${project.root}/asintegration-mc/src">
+        <include name="main/**/*.java"/>
+        <include name="etc/**"/>
+        <include name="resources/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/CVS/**"/>
+      </fileset>
+    </copy>
 
-     <copy tofile="${project.release}/lib-50/jboss-reflect.jar" file="${org.jboss:jboss-reflect:jar}"/>
-     <copy tofile="${project.release}/lib-50/jboss-mdr.jar" file="${org.jboss:jboss-mdr:jar}"/>
+    <!-- ==================================================  -->
+    <!-- Add the files from 'aspects'                        -->
+    <!-- ==================================================  -->
 
-     <copy tofile="${project.release}/lib-50/jboss-logging-log4j.jar" file="${org.jboss.logging:jboss-logging-log4j:jar}"/>
-     <copy tofile="${project.release}/lib-50/jboss-logging-spi.jar" file="${org.jboss.logging:jboss-logging-spi:jar}"/>
-     <copy tofile="${project.release}/lib-50/log4j.jar" file="${log4j:log4j:jar}"/>
-     <copy tofile="${project.release}/lib-50/trove.jar" file="${trove:trove:jar}"/>
+    <copy todir="${project.release}/docs/aspects" filtering="no">
+      <fileset dir="${project.root}/aspects/target/site">
+        <include name="apidocs/**"/>
+      </fileset>
+    </copy>
 
-     <!-- The JBoss 4.0.x and 4.2.x libs for JDK 5 -->
-     <copy file="${aop.jboss-service.location}" tofile="output/temp/jboss-service-jdk50.xml" filtering="true">
-        <filterset>
-           <filter token="SERVICE_NAME" value="org.jboss.aop.deployment.AspectManagerServiceJDK5"/>
-        </filterset>
-     </copy>
-     <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/build_jboss4.0.xml" file="../asintegration-core/src/etc/jboss-40-install-jboss-aop-jdk50-build.xml"/>
-     <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/build.xml" file="../asintegration-core/src/etc/jboss-42-install-jboss-aop-jdk50-build.xml"/>
-     <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="../asintegration-core/src/etc/jboss.properties"/>
-     <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.50.location}"/>
-     <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.aspect-library50.location}"/>
-     <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.asintegration-core.location}"/>
-     <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.asintegration-jmx.location}"/>
-     <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.readme-as4.location}"/>
-     <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/jboss-reflect.jar" file="${org.jboss:jboss-reflect:jar}"/>
-     <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/jboss-mdr.jar" file="${org.jboss:jboss-mdr:jar}"/>
-     <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/jboss-common-core.jar" file="${org.jboss:jboss-common-core:jar}"/>
-     <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/javassist.jar" file="${javassist:javassist:jar}"/>
-     <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/trove.jar" file="${trove:trove:jar}"/>
-     <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/META-INF/jboss-service.xml" file="output/temp/jboss-service-jdk50.xml"/>
-
-     <!-- The JBoss 5 libs for JDK 5 (JBoss 5 needs JDK 5) -->
-     <copy todir="${project.release}/jboss-50-install/lib" file="${aop.50.location}"/>
-     <copy todir="${project.release}/jboss-50-install/lib" file="${aop.asintegration-core.location}"/>
-     <copy todir="${project.release}/jboss-50-install/lib" file="${aop.asintegration-mc.location}"/>
-     <copy todir="${project.release}/jboss-50-install/lib" file="${aop.asintegration-jmx.location}"/>
-     <copy todir="${project.release}/jboss-50-install" file="${aop.readme-as5.location}"/>
-     <copy tofile="${project.release}/jboss-50-install/lib/javassist.jar" file="${javassist:javassist:jar}"/>
-     <copy tofile="${project.release}/jboss-50-install/lib/trove.jar" file="${trove:trove:jar}"/>
-     <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer" file="${aop.aspect-library50.location}"/>
+    <copy todir="${project.release}/src/aspects" filtering="no">
+      <fileset dir="${project.root}/aspects/src">
+        <include name="main/**/*.java"/>
+        <include name="test/**/*.java"/>
+        <include name="resources/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/CVS/**"/>
+      </fileset>
+    </copy>
 
 
-     <copy todir="${project.release}" file="RELEASE_NOTES.html"/>
+    <!-- ==================================================  -->
+    <!-- Now pull everything together                        -->
+    <!-- ==================================================  -->
 
-<!--      <delete dir="output/temp"/>  -->
+    <property name="aop.50.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50.jar"/>
+    <property name="aop.50.single.location" value="${project.root}/aop/output/lib/jboss-aop-jdk50-single.jar"/>
+    <property name="aop.aspect-library50.location" value="${project.root}/aspects/output/lib/jboss-standalone-aspect-library-jdk50.jar"/>
+    <property name="aop.asintegration-core.location" value="${project.root}/asintegration-core/target/jboss-aop-asintegration-core.jar"/>
+    <property name="aop.asintegration-jmx.location" value="${project.root}/asintegration-jmx/target/jboss-aop-asintegration-jmx.jar"/>
+    <property name="aop.asintegration-mc.location" value="${project.root}/asintegration-mc/target/jboss-aop-asintegration-mc.jar"/>
+    <property name="aop.jrockit-pluggable-instrumentor.location" value="${project.root}/jrockit-pluggable-instrumentor/target/jrockit-pluggable-instrumentor.jar"/>
+    <property name="aop.pluggable-instrumentor.location" value="${project.root}/pluggable-instrumentor/target/pluggable-instrumentor.jar"/>
+    <property name="aop.readme-as4.location" value="${project.root}/asintegration-core/src/etc/ReadMe-AS4.txt"/>
+    <property name="aop.readme-as5.location" value="${project.root}/asintegration-core/src/etc/ReadMe-AS5.txt"/>
+    <property name="aop.jboss-service.location" value="${project.root}/asintegration-jmx/src/resources/META-INF/jboss-service.xml"/>
 
- </target>
+    <!-- Copy across the eula -->
+    <copy todir="${project.release}" file="${project.root}/aop/src/etc/jbossorg-eula.txt"/>
 
- <target name="release-reference-docs"
+    <!-- The JDK 5 libs -->
+    <copy todir="${project.release}/lib-50" file="${aop.50.location}"/>
+    <copy todir="${project.release}/lib-50" file="${aop.50.single.location}"/>
+    <copy todir="${project.release}/lib-50" file="${project.root}/aop/output/lib/jboss-aop-jdk50-client.jar"/>
+    <copy todir="${project.release}/lib-50" file="${aop.aspect-library50.location}"/>
+    <copy todir="${project.release}/lib-50" file="${aop.jrockit-pluggable-instrumentor.location}"/>
+    <copy todir="${project.release}/lib-50" file="${aop.pluggable-instrumentor.location}"/>
+    <copy tofile="${project.release}/lib-50/javassist.jar" file="${javassist:javassist:jar}"/>
+    <copy tofile="${project.release}/lib-50/jboss-common-core.jar" file="${org.jboss:jboss-common-core:jar}"/>
+
+    <copy tofile="${project.release}/lib-50/jboss-reflect.jar" file="${org.jboss:jboss-reflect:jar}"/>
+    <copy tofile="${project.release}/lib-50/jboss-mdr.jar" file="${org.jboss:jboss-mdr:jar}"/>
+
+    <copy tofile="${project.release}/lib-50/jboss-logging-log4j.jar" file="${org.jboss.logging:jboss-logging-log4j:jar}"/>
+    <copy tofile="${project.release}/lib-50/jboss-logging-spi.jar" file="${org.jboss.logging:jboss-logging-spi:jar}"/>
+    <copy tofile="${project.release}/lib-50/log4j.jar" file="${log4j:log4j:jar}"/>
+    <copy tofile="${project.release}/lib-50/trove.jar" file="${trove:trove:jar}"/>
+
+    <!-- The JBoss 4.0.x and 4.2.x libs for JDK 5 -->
+    <copy file="${aop.jboss-service.location}" tofile="output/temp/jboss-service-jdk50.xml" filtering="true">
+      <filterset>
+        <filter token="SERVICE_NAME" value="org.jboss.aop.deployment.AspectManagerServiceJDK5"/>
+      </filterset>
+    </copy>
+    <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/build_jboss4.0.xml" file="../asintegration-core/src/etc/jboss-40-install-jboss-aop-jdk50-build.xml"/>
+    <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/build.xml" file="../asintegration-core/src/etc/jboss-42-install-jboss-aop-jdk50-build.xml"/>
+    <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="../asintegration-core/src/etc/jboss.properties"/>
+    <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.50.location}"/>
+    <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.aspect-library50.location}"/>
+    <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.asintegration-core.location}"/>
+    <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.asintegration-jmx.location}"/>
+    <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="${aop.readme-as4.location}"/>
+    <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/jboss-reflect.jar" file="${org.jboss:jboss-reflect:jar}"/>
+    <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/jboss-mdr.jar" file="${org.jboss:jboss-mdr:jar}"/>
+    <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/jboss-common-core.jar" file="${org.jboss:jboss-common-core:jar}"/>
+    <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/javassist.jar" file="${javassist:javassist:jar}"/>
+    <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/trove.jar" file="${trove:trove:jar}"/>
+    <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/META-INF/jboss-service.xml" file="output/temp/jboss-service-jdk50.xml"/>
+
+    <!-- The JBoss 5 libs for JDK 5 (JBoss 5 needs JDK 5) -->
+    <copy todir="${project.release}/jboss-50-install/lib" file="${aop.50.location}"/>
+    <copy todir="${project.release}/jboss-50-install/lib" file="${aop.asintegration-core.location}"/>
+    <copy todir="${project.release}/jboss-50-install/lib" file="${aop.asintegration-mc.location}"/>
+    <copy todir="${project.release}/jboss-50-install/lib" file="${aop.asintegration-jmx.location}"/>
+    <copy todir="${project.release}/jboss-50-install" file="${aop.readme-as5.location}"/>
+    <copy tofile="${project.release}/jboss-50-install/lib/javassist.jar" file="${javassist:javassist:jar}"/>
+    <copy tofile="${project.release}/jboss-50-install/lib/trove.jar" file="${trove:trove:jar}"/>
+    <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer" file="${aop.aspect-library50.location}"/>
+
+
+    <copy todir="${project.release}" file="RELEASE_NOTES.html"/>
+
+  </target>
+
+  <target name="release-reference-docs"
+    depends="init"
     description="Builds the default release structure, minus the reference documentation">
 
-     <copy todir="${project.release}/docs/aspect-framework" filtering="no">
-        <fileset dir="${project.root}/aop/docs/reference/build">
-           <include name="**"/>
-        </fileset>
-     </copy>
+    <copy todir="${project.release}/docs/aspect-framework" filtering="no">
+      <fileset dir="${project.root}/aop/docs/reference/build">
+        <include name="**"/>
+      </fileset>
+    </copy>
 
- </target>
+  </target>
 
- <target name="init-dependency-properties"
-    description="Initialize properties for accessing maven dependencies"
-    xmlns:maven="urn:maven-artifact-ant">
-    
-   <path id="maven-ant-tasks.classpath" path="../tools/lib/maven-ant-tasks.jar" />
-   <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
-            classpathref="maven-ant-tasks.classpath"/>
-    
-   <maven:pom id="aop.framework.pom" file="../aop/pom.xml" />
-    
-    <!-- This tasks resolves maven dependencies and creates a property of the
-      -  form groupId:artifactId:type that points to the dependency jar file.
-      -->
-   <maven:dependencies pathId="dist.dependencies.classpath" 
-         versionsId="maven.dependency.versions">
-      <pom refid="aop.framework.pom"/>
-   </maven:dependencies>
-    
- </target>
 </project>
 

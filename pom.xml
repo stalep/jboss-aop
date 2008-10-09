@@ -72,6 +72,7 @@
     <module>asintegration-core</module>
     <module>asintegration-jmx</module>
     <module>asintegration-mc</module>
+    <module>build</module>
   </modules>
   
   <dependencyManagement>
@@ -277,12 +278,16 @@
         <groupId>org.jboss.aop</groupId>
         <artifactId>jboss-aop</artifactId>
         <version>${project.version}</version>
-        <classifier>tests</classifier>
-        <scope>test</scope>
+        <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.jboss.aop</groupId>
         <artifactId>pluggable-instrumentor</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.aop</groupId>
+        <artifactId>jrockit-pluggable-instrumentor</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
