@@ -28,6 +28,12 @@ package org.jboss.test.aop.inheritanceacrosspackages.base;
  */
 public class Base
 {
+   public int field;
+   
+   public Base(){}
+   
+   public Base(int arg){}
+   
    public void base()
    {
       

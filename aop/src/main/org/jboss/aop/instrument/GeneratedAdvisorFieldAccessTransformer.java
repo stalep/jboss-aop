@@ -111,7 +111,7 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
    {
       CtClass genadvisor = getGenadvisor();
       String finame = addFieldReadInfoFieldWithAccessors(
-            Modifier.PROTECTED,
+            Modifier.PUBLIC,
             genadvisor,
             field);
 
@@ -161,7 +161,7 @@ public class GeneratedAdvisorFieldAccessTransformer extends FieldAccessTransform
       CtClass genadvisor = getGenadvisor();
 
       String finame = addFieldWriteInfoField(
-            Modifier.PROTECTED,
+            Modifier.PUBLIC,
             genadvisor,
             field);
 

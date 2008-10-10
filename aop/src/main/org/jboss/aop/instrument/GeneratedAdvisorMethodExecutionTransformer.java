@@ -51,7 +51,7 @@ public class GeneratedAdvisorMethodExecutionTransformer extends
       GeneratedAdvisorInstrumentor instrumentor = (GeneratedAdvisorInstrumentor)trans.getInstrumentor();
       CtClass genadvisor = instrumentor.getGenadvisor();
       String miname = addMethodInfoField(
-            Modifier.PROTECTED,
+            Modifier.PUBLIC,
             genadvisor,
             trans);
 

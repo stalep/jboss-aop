@@ -40,7 +40,15 @@ public class InheritanceAcrossPackagesTestCase extends AOPTestWithSetup
 
    public void testBaseClass() throws Exception
    {
+      TestInterceptor.intercepted = false;
       Base base = new Base();
+      assertTrue(TestInterceptor.intercepted);
+      TestInterceptor.intercepted = false;
+      base.field = 0;
+      assertTrue(TestInterceptor.intercepted);
+      TestInterceptor.intercepted = false;
+      base.field = base.field -1;
+      assertTrue(TestInterceptor.intercepted);
       TestInterceptor.intercepted = false;
       base.base();
       assertTrue(TestInterceptor.intercepted);
@@ -48,8 +56,22 @@ public class InheritanceAcrossPackagesTestCase extends AOPTestWithSetup
 
    public void testChildClass() throws Exception
    {
+      TestInterceptor.intercepted = false;
       Child child = new Child();
+      assertTrue(TestInterceptor.intercepted);
       ((org.jboss.aop.Advised)child)._getInstanceAdvisor();
+      TestInterceptor.intercepted = false;
+      child.field = 20;
+      assertTrue(TestInterceptor.intercepted);
+      TestInterceptor.intercepted = false;
+      child.field = child.field * 5;
+      assertTrue(TestInterceptor.intercepted);
+      TestInterceptor.intercepted = false;
+      child.field2 = 40;
+      assertTrue(TestInterceptor.intercepted);
+      TestInterceptor.intercepted = false;
+      child.field2 = child.field2 * 10;
+      assertTrue(TestInterceptor.intercepted);
       TestInterceptor.intercepted = false;
       child.base();
       assertTrue(TestInterceptor.intercepted);

@@ -30,6 +30,15 @@ import org.jboss.test.aop.inheritanceacrosspackages.base.Base;
  */
 public class Child extends Base
 {
+   public int field2;
+   
+   public Child() {}
+   
+   public Child(int arg)
+   {
+      super(arg);
+   }   
+   
    public void child()
    {
       
