@@ -178,7 +178,6 @@
 
      <path id="aopc.task.classpath">
         <path refid="library.classpath"/>
-        <path refid="dependentmodule.classpath"/>
         <path refid="jboss.aop.classpath"/>
      </path>
 
