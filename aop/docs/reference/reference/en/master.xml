@@ -13,6 +13,7 @@
 <!ENTITY compiling              SYSTEM "modules/compiling.xml">
 <!ENTITY running                SYSTEM "modules/running.xml">
 <!ENTITY reflection             SYSTEM "modules/reflection.xml">
+<!ENTITY array                  SYSTEM "modules/array.xml">
 <!ENTITY modes                  SYSTEM "modules/modes.xml">
 <!ENTITY maven                  SYSTEM "modules/maven.xml">
 ]>
@@ -107,6 +108,8 @@
    &running;
 
    &reflection;
+   
+   &array;
    
    &modes;
 

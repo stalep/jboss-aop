@@ -1,0 +1,163 @@
+<chapter id="arrays">
+
+   <title>Interception of Array Element Access</title>
+
+   <!-- *********************************** Intro ******************************** -->
+
+   <para>
+         This chapter will show you how to intercept access to the individual elements of
+         an array. The concepts are similar to the interception we have seen previously,
+         but a few configuration options are introduced. Array interception can currently
+         only be configured via xml. There are three steps involved.
+         <itemizedlist>
+            <listitem>Specifying which classes we want to replace access to arrays in</listitem>
+            <listitem>Preparing the array fields in the target class</listitem>
+            <listitem>Binding advices to array access</listitem>
+         </itemizedlist>         
+   </para>
+   <!-- *********************************** Aspect ******************************** -->
+
+   <sect1 id="array-replacement" revision="1">
+      <title>Replacing Array Access</title>
+      <para>
+         To achieve array interception we need to replace all access to arrays within
+         a selected set of classes. The <literal>arrayreplacement</literal> element is 
+         used for this. You can either specify a particular class using the
+         <literal>class</literal> attribute or a class expression using the 
+         <literal>expr</literal> attribute: 
+      </para>
+      <para>
+         <programlisting>
+<![CDATA[    
+   <arrayreplacement class="org.acme.POJOWithArray"/>
+   <arrayreplacement expr="class(org.acme.*)"/>
+]]>
+         </programlisting>
+      </para>
+   </sect1>
+
+   <sect1 id="array-preparing" revision="1">
+      <title>Preparing Array Fields</title>
+      <para>
+         If we want to intercept an array's elements, that array field needs to be woven, using either a 
+         <literal>prepare</literal> or a <literal>bind</literal> expression. If that field is within a
+         class picked out by an <literal>arrayreplacement</literal> expression it gets all the hooks for 
+         arrayreplacement to take place. The following xml along with the previous <literal>arrayreplacement</literal>
+         weaves <literal>org.acme.POJOWithArray.ints</literal> for array element interception.    
+      </para>
+      <para>
+         <programlisting>
+<![CDATA[    
+   <prepare expr="field(int[] org.acme.POJOWithArray->ints)"/>
+]]>
+         </programlisting>
+      </para>
+   </sect1>
+   
+   <sect1 id="array-binding" revision="1">
+      <title>Binding Advices to array element access</title>
+      <para>
+         To bind advices to the access of array elements, you use a <literal>arraybind</literal> element.
+         It binds advices to all arrays woven for array access. You can use the <literal>type</literal>
+         attribute to specify if you want the interception to take place when setting elements in the array, 
+         getting elements from the array, or both. Valid values for the <literal>type</literal> attribute are:
+         <literal>READ_WRITE</literal>, <literal>READ_ONLY</literal> and <literal>WRITE_ONLY</literal>. An 
+         example is shown below:
+      </para>
+      <para>
+         <programlisting>
+<![CDATA[    
+   <interceptor class="org.acme.TestInterceptor"/>
+   <arraybind type="READ_ONLY">
+      <interceptor-ref name="org.acme.TestInterceptor"/>
+   </arraybind>
+]]>
+         </programlisting>
+      </para>
+      <para>
+         <literal>arraybind</literal> currently only supports <literal>interceptor-ref</literal> and
+         <literal>advice</literal> as child elements. <literal>before</literal>, <literal>after</literal>, 
+         <literal>throwing</literal> and <literal>finally</literal> are not yet supported for array interception.
+         for arrays.
+      </para>
+   </sect1>
+
+   <sect1 id="array-invocations" revision="1">
+      <title>Invocation types for array element access interception</title>
+      <para>
+         Writing aspects for array element interception is more or less the same as for any other joinpoint.
+         However, array element interception comes with its own hierarchy of <literal>Invocation</literal> clases.
+         Which one of these is used depends on what is being itercepted. The hierarchy is shown below (all the
+         classes live in the <literal>org.jboss.aop.array</literal> package):
+      </para>
+      <para>
+         <programlisting>
+<![CDATA[    
+ArrayElementInvocation
+-ArrayElementReadInvocation
+--BooleanArrayElementReadInvocation  -Element read from a boolean[]
+--ByteArrayElementReadInvocation     -Element read from a byte[]
+--CharArrayElementReadInvocation     -Element read from a char[]
+--DoubleArrayElementReadInvocation   -Element read from a double[]
+--FloatArrayElementReadInvocation    -Element read from a float[]
+--IntArrayElementReadInvocation      -Element read from a int[]
+--LongArrayElementReadInvocation     -Element read from a long[]
+--ObjectArrayElementReadInvocation   -Element read from a Object[], String[] etc.
+--ShortArrayElementReadInvocation    -Element read from a shore[]
+-ArrayElementWriteInvocation
+--BooleanArrayElementWriteInvocation -Element written to a boolean[]
+--ByteArrayElementWriteInvocation    -Element written to a byte[]
+--CharArrayElementWriteInvocation    -Element written to a char[]
+--DoubleArrayElementWriteInvocation  -Element written to a double[]
+--FloatArrayElementWriteInvocation   -Element written to a float[]
+--IntArrayElementWriteInvocation     -Element written to a int[]
+--LongArrayElementWriteInvocation    -Element written to a long[]
+--ObjectArrayElementWriteInvocation  -Element written to a Object[], String[] etc.
+--ShortArrayElementWriteInvocation   -Element written to a short[]
+]]>
+         </programlisting>
+      </para>
+      <para>
+         The write invocation classes allow you access to the value the element is being set to.
+         <literal>ArrayElementReadInvocation</literal> defines a method to get hold of the value being
+         set:
+      </para>
+      <para>
+         <programlisting>
+<![CDATA[
+   public abstract Object getValue();    
+]]>
+         </programlisting>
+      </para>
+      <para>
+         The sub-classes override this value, and also define a more fine-grained value to avoid using the
+         wrapper classes where appropriate, as shown in the following methods from 
+         <literal>DoubleArrayElementWriteInvocation</literal>:
+      </para>
+      <para>
+         <programlisting>
+<![CDATA[
+   public Object getValue()
+   {
+      return new Double(value);
+   }
+
+   public double getDoubleValue()
+   {
+      return value;
+   }
+]]>
+         </programlisting>
+      </para>
+      <para>
+         When reading an array element the invocation's return value contains the value read. For all 
+         array invocations you can get the index of the element being accessed by calling
+         <literal>ArrayElementInvocation.getIndex()</literal>. 
+      </para>
+   </sect1>
+
+</chapter>
+
+
+
+
