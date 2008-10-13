@@ -22,7 +22,7 @@
   </scm>
   
   <properties>
-    <version.javassist.javassist>3.8.1.GA</version.javassist.javassist>
+    <version.javassist.javassist>3.9.0.GA</version.javassist.javassist>
     <version.jboss.jbossas.core-libs>4.0.4.GA</version.jboss.jbossas.core-libs>
     <version.org.jboss.jbossas>5.0.0.CR2</version.org.jboss.jbossas>
     <version.org.jboss.jboss-common-core>2.2.8.GA</version.org.jboss.jboss-common-core>
