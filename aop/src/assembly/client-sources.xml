@@ -11,46 +11,120 @@
       <includes>
         <include>org/jboss/lang/**</include>
         <include>org/jboss/aop/Advisor.java</include>
+        <include>org/jboss/aop/Advisor$*.java</include>
+        <include>org/jboss/aop/AdvisorFactory.java</include>
         <include>org/jboss/aop/AspectManager.java</include>
         <include>org/jboss/aop/AspectManager$*.java</include>
+        <include>org/jboss/aop/AspectXmlLoader.java</include>
+        <include>org/jboss/aop/CallerConstructorInfo.java</include>
+        <include>org/jboss/aop/CallerMethodInfo.java</include>
         <include>org/jboss/aop/ClassAdvisor.java</include>
+        <include>org/jboss/aop/ClassAdvisor$*.java</include>
         <include>org/jboss/aop/ClassInstanceAdvisor.java</include>
+        <include>org/jboss/aop/ConByConInfo.java</include>
+        <include>org/jboss/aop/ConByMethodInfo.java</include>
+        <include>org/jboss/aop/ConstructionInfo.java</include>
+        <include>org/jboss/aop/ConstructorInfo.java</include>
         <include>org/jboss/aop/DynamicAOPStrategy.java</include>
+        <include>org/jboss/aop/Deployment.java</include>
         <include>org/jboss/aop/InstanceAdvisorDelegate.java</include>
         <include>org/jboss/aop/Domain.java</include>
         <include>org/jboss/aop/InstanceAdvisor.java</include>
         <include>org/jboss/aop/MethodInfo.java</include>
+        <include>org/jboss/aop/MethodByConInfo.java</include>
+        <include>org/jboss/aop/MethodByMethodInfo.java</include>
+        <include>org/jboss/aop/FieldInfo.java</include>
         <include>org/jboss/aop/InterceptorChainObserver.java</include>
         <include>org/jboss/aop/JoinPoint.java</include>
         <include>org/jboss/aop/JoinPointInfo.java</include>
+        <include>org/jboss/aop/LoadInterceptedClassesStrategy.java</include>
+        <include>org/jboss/aop/LoadInterceptedClassesStrategy$*.java</include>
         <include>org/jboss/aop/MethodJoinPoint.java</include>
+        <include>org/jboss/aop/MethodMatchInfo.java</include>
+        <include>org/jboss/aop/MethodInterceptors.java</include>
         <include>org/jboss/aop/*Dispatcher*.java</include>
         <include>org/jboss/aop/*Advised.java</include>
+        <include>org/jboss/aop/SecurityActions*.java</include>
         <include>org/jboss/aop/WeavingStrategy.java</include>
+        <include>org/jboss/aop/XmlLoader.java</include>
         <include>org/jboss/aop/advice/AspectDefinition.java</include>
+        <include>org/jboss/aop/advice/AspectFactory.java</include>
+        <include>org/jboss/aop/advice/AspectFactoryDelegator.java</include>
+        <include>org/jboss/aop/advice/AspectFactoryWithClassLoader.java</include>
+        <include>org/jboss/aop/advice/AspectFactoryWithClassLoaderSupport.java</include>
+        <include>org/jboss/aop/advice/ClassifiedBindingAndPointcutCollection.java</include>
+        <include>org/jboss/aop/advice/GenericAspectFactory.java</include>
         <include>org/jboss/aop/advice/Interceptor.java</include>
+        <include>org/jboss/aop/advice/InterceptorFactory.java</include>
+        <include>org/jboss/aop/annotation/AnnotationRepository.java</include>
+        <include>org/jboss/aop/classpool/AOPClassPool.java</include>
+        <include>org/jboss/aop/classpool/AOPClassPoolFactory.java</include>
+        <include>org/jboss/aop/classpool/AOPClassPoolRepository.java</include>
+        <include>org/jboss/aop/instrument/CodeConversionObserver.java</include>
+        <include>org/jboss/aop/instrument/DynamicTransformationObserver.java</include>
+        <include>org/jboss/aop/instrument/ClassicInstrumentor.java</include>
+        <include>org/jboss/aop/instrument/ConstructionTransformer.java</include>
+        <include>org/jboss/aop/instrument/ConstructorExecutionTransformer.java</include>
+        <include>org/jboss/aop/instrument/FieldAccessTransformer.java</include>
+        <include>org/jboss/aop/instrument/GeneratedAdvisorInstrumentor.java</include>
+        <include>org/jboss/aop/instrument/Instrumentor.java</include>
+        <include>org/jboss/aop/instrument/InstrumentorEnum.java</include>
+        <include>org/jboss/aop/instrument/InstrumentorFactory.java</include>
+        <include>org/jboss/aop/instrument/JoinpointClassifier.java</include>
+        <include>org/jboss/aop/instrument/JoinpointClassifier$*.java</include>
+        <include>org/jboss/aop/instrument/JoinpointSimpleClassifier.java</include>
+        <include>org/jboss/aop/instrument/MethodExecutionTransformer.java</include>
         <include>org/jboss/aop/instrument/Untransformable.java</include>
+        <include>org/jboss/aop/instrument/WrapperTransformer.java</include>
+        <include>org/jboss/aop/joinpoint/Construction.java</include>
+        <include>org/jboss/aop/joinpoint/ConstructorCall.java</include>
+        <include>org/jboss/aop/joinpoint/ConstructorCallByConstructor.java</include>
+        <include>org/jboss/aop/joinpoint/ConstructorCallByMethod.java</include>
+        <include>org/jboss/aop/joinpoint/ConstructorExecution.java</include>
+        <include>org/jboss/aop/joinpoint/FieldAccess.java</include>
         <include>org/jboss/aop/joinpoint/Invocation*.java</include>
         <include>org/jboss/aop/joinpoint/Joinpoint.java</include>
         <include>org/jboss/aop/joinpoint/JoinPointBean.java</include>
+        <include>org/jboss/aop/joinpoint/MethodCall.java</include>
+        <include>org/jboss/aop/joinpoint/MethodCallByConstructor.java</include>
+        <include>org/jboss/aop/joinpoint/MethodCallByMethod.java</include>
         <include>org/jboss/aop/joinpoint/MethodExecution.java</include>
         <include>org/jboss/aop/joinpoint/MethodInvocation*.java</include>
         <include>org/jboss/aop/joinpoint/MethodJoinpoint.java</include>
+        <include>org/jboss/aop/metadata/ClassMetaDataLoader.java</include>
         <include>org/jboss/aop/metadata/SimpleMetaData.java</include>
+        <include>org/jboss/aop/metadata/ConstructorMetaData.java</include>
+        <include>org/jboss/aop/metadata/FieldMetaData.java</include>
+        <include>org/jboss/aop/metadata/MethodMetaData.java</include>
         <include>org/jboss/aop/metadata/SimpleMetaData$MetaDataValue.java</include>
         <include>org/jboss/aop/metadata/MetaDataResolver.java</include>
         <include>org/jboss/aop/metadata/ThreadMetaData.java</include>
+        <include>org/jboss/aop/microcontainer/lifecycle/LifecycleManager.java</include>
+        <include>org/jboss/aop/pointcut/Pointcut.java</include>
         <include>org/jboss/aop/pointcut/PointcutStats.java</include>
+        <include>org/jboss/aop/pointcut/Typedef.java</include>
+        <include>org/jboss/aop/pointcut/ast/ClassExpression.java</include>
+        <include>org/jboss/aop/pointcut/ast/ParseException.java</include>
+        <include>org/jboss/aop/pointcut/ast/PointcutExpressionParserVisitor.java</include>
         <include>org/jboss/aop/proxy/MarshalledInterfaceProxy.java</include>
         <include>org/jboss/aop/proxy/MethodMapped.java</include>
         <include>org/jboss/aop/proxy/Proxy.java</include>
         <include>org/jboss/aop/proxy/ProxyFactory.java</include>
         <include>org/jboss/aop/proxy/ProxyMixin.java</include>
         <include>org/jboss/aop/proxy/container/*.java</include>
+        <include>org/jboss/aop/util/Advisable.java</include>
+        <include>org/jboss/aop/util/AOPLock.java</include>
+        <include>org/jboss/aop/util/ConstructorComparator.java</include>
+        <include>org/jboss/aop/util/FieldComparator.java</include>
         <include>org/jboss/aop/util/SecurityActions*.java</include>
         <include>org/jboss/aop/util/Marshalled*.java</include>
         <include>org/jboss/aop/util/MethodHashing*.java</include>
         <include>org/jboss/aop/util/PayloadKey*.java</include>
+        <include>org/jboss/aop/util/ReflectUtils.java</include>
+        <include>org/jboss/aop/util/UnmodifiableEmptyCollections*.java</include>
+        <include>org/jboss/aop/util/UnmodifiableEmptyCollections$*.java</include>
+        <include>org/jboss/aop/util/UnmodifiableLinkedHashMap.java</include>
+        <include>org/jboss/aop/util/logging/AOPLogger.java</include>
       </includes>
     </fileSet>
     <fileSet>
