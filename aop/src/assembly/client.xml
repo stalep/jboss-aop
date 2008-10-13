@@ -11,36 +11,100 @@
       <includes>
         <include>org/jboss/lang/**</include>
         <include>org/jboss/aop/Advisor.class</include>
+        <include>org/jboss/aop/Advisor$*.class</include>
+        <include>org/jboss/aop/AdvisorFactory.class</include>
         <include>org/jboss/aop/AspectManager.class</include>
         <include>org/jboss/aop/AspectManager$*.class</include>
+        <include>org/jboss/aop/AspectXmlLoader.class</include>
+        <include>org/jboss/aop/CallerConstructorInfo.class</include>
+        <include>org/jboss/aop/CallerMethodInfo.class</include>
         <include>org/jboss/aop/ClassAdvisor.class</include>
+        <include>org/jboss/aop/ClassAdvisor$*.class</include>
         <include>org/jboss/aop/ClassInstanceAdvisor.class</include>
+        <include>org/jboss/aop/ConByConInfo.class</include>
+        <include>org/jboss/aop/ConByMethodInfo.class</include>
+        <include>org/jboss/aop/ConstructionInfo.class</include>
+        <include>org/jboss/aop/ConstructorInfo.class</include>
         <include>org/jboss/aop/DynamicAOPStrategy.class</include>
+        <include>org/jboss/aop/Deployment.class</include>
         <include>org/jboss/aop/InstanceAdvisorDelegate.class</include>
         <include>org/jboss/aop/Domain.class</include>
         <include>org/jboss/aop/InstanceAdvisor.class</include>
         <include>org/jboss/aop/MethodInfo.class</include>
+        <include>org/jboss/aop/MethodByConInfo.class</include>
+        <include>org/jboss/aop/MethodByMethodInfo.class</include>
+        <include>org/jboss/aop/FieldInfo.class</include>
         <include>org/jboss/aop/InterceptorChainObserver.class</include>
         <include>org/jboss/aop/JoinPoint.class</include>
         <include>org/jboss/aop/JoinPointInfo.class</include>
+        <include>org/jboss/aop/LoadInterceptedClassesStrategy.class</include>
+        <include>org/jboss/aop/LoadInterceptedClassesStrategy$*.class</include>
         <include>org/jboss/aop/MethodJoinPoint.class</include>
+        <include>org/jboss/aop/MethodMatchInfo.class</include>
+        <include>org/jboss/aop/MethodInterceptors.class</include>
         <include>org/jboss/aop/*Dispatcher*.class</include>
         <include>org/jboss/aop/*Advised.class</include>
+        <include>org/jboss/aop/SecurityActions*.class</include>
         <include>org/jboss/aop/WeavingStrategy.class</include>
+        <include>org/jboss/aop/XmlLoader.class</include>
         <include>org/jboss/aop/advice/AspectDefinition.class</include>
+        <include>org/jboss/aop/advice/AspectFactory.class</include>
+        <include>org/jboss/aop/advice/AspectFactoryDelegator.class</include>
+        <include>org/jboss/aop/advice/AspectFactoryWithClassLoader.class</include>
+        <include>org/jboss/aop/advice/AspectFactoryWithClassLoaderSupport.class</include>
+        <include>org/jboss/aop/advice/ClassifiedBindingAndPointcutCollection.class</include>
+        <include>org/jboss/aop/advice/GenericAspectFactory.class</include>
         <include>org/jboss/aop/advice/Interceptor.class</include>
+        <include>org/jboss/aop/advice/InterceptorFactory.class</include>
+        <include>org/jboss/aop/annotation/AnnotationRepository.class</include>
+        <include>org/jboss/aop/classpool/AOPClassPool.class</include>
+        <include>org/jboss/aop/classpool/AOPClassPoolFactory.class</include>
+        <include>org/jboss/aop/classpool/AOPClassPoolRepository.class</include>
+        <include>org/jboss/aop/instrument/CodeConversionObserver.class</include>
+        <include>org/jboss/aop/instrument/DynamicTransformationObserver.class</include>
+        <include>org/jboss/aop/instrument/ClassicInstrumentor.class</include>
+        <include>org/jboss/aop/instrument/ConstructionTransformer.class</include>
+        <include>org/jboss/aop/instrument/ConstructorExecutionTransformer.class</include>
+        <include>org/jboss/aop/instrument/FieldAccessTransformer.class</include>
+        <include>org/jboss/aop/instrument/GeneratedAdvisorInstrumentor.class</include>
+        <include>org/jboss/aop/instrument/Instrumentor.class</include>
+        <include>org/jboss/aop/instrument/InstrumentorEnum.class</include>
+        <include>org/jboss/aop/instrument/InstrumentorFactory.class</include>
+        <include>org/jboss/aop/instrument/JoinpointClassifier.class</include>
+        <include>org/jboss/aop/instrument/JoinpointClassifier$*.class</include>
+        <include>org/jboss/aop/instrument/JoinpointSimpleClassifier.class</include>
+        <include>org/jboss/aop/instrument/MethodExecutionTransformer.class</include>
         <include>org/jboss/aop/instrument/Untransformable.class</include>
+        <include>org/jboss/aop/instrument/WrapperTransformer.class</include>
+        <include>org/jboss/aop/joinpoint/Construction.class</include>
+        <include>org/jboss/aop/joinpoint/ConstructorCall.class</include>
+        <include>org/jboss/aop/joinpoint/ConstructorCallByConstructor.class</include>
+        <include>org/jboss/aop/joinpoint/ConstructorCallByMethod.class</include>
+        <include>org/jboss/aop/joinpoint/ConstructorExecution.class</include>
+        <include>org/jboss/aop/joinpoint/FieldAccess.class</include>
         <include>org/jboss/aop/joinpoint/Invocation*.class</include>
         <include>org/jboss/aop/joinpoint/Joinpoint.class</include>
         <include>org/jboss/aop/joinpoint/JoinPointBean.class</include>
+        <include>org/jboss/aop/joinpoint/MethodCall.class</include>
+        <include>org/jboss/aop/joinpoint/MethodCallByConstructor.class</include>
+        <include>org/jboss/aop/joinpoint/MethodCallByMethod.class</include>
         <include>org/jboss/aop/joinpoint/MethodExecution.class</include>
         <include>org/jboss/aop/joinpoint/MethodInvocation*.class</include>
         <include>org/jboss/aop/joinpoint/MethodJoinpoint.class</include>
+        <include>org/jboss/aop/metadata/ClassMetaDataLoader.class</include>
         <include>org/jboss/aop/metadata/SimpleMetaData.class</include>
+        <include>org/jboss/aop/metadata/ConstructorMetaData.class</include>
+        <include>org/jboss/aop/metadata/FieldMetaData.class</include>
+        <include>org/jboss/aop/metadata/MethodMetaData.class</include>
         <include>org/jboss/aop/metadata/SimpleMetaData$MetaDataValue.class</include>
         <include>org/jboss/aop/metadata/MetaDataResolver.class</include>
         <include>org/jboss/aop/metadata/ThreadMetaData.class</include>
+        <include>org/jboss/aop/microcontainer/lifecycle/LifecycleManager.class</include>
+        <include>org/jboss/aop/pointcut/Pointcut.class</include>
         <include>org/jboss/aop/pointcut/PointcutStats.class</include>
+        <include>org/jboss/aop/pointcut/Typedef.class</include>
+        <include>org/jboss/aop/pointcut/ast/ClassExpression.class</include>
+        <include>org/jboss/aop/pointcut/ast/ParseException.class</include>
         <include>org/jboss/aop/pointcut/ast/PointcutExpressionParserVisitor.class</include>
         <include>org/jboss/aop/proxy/MarshalledInterfaceProxy.class</include>
         <include>org/jboss/aop/proxy/MethodMapped.class</include>
@@ -48,10 +112,19 @@
         <include>org/jboss/aop/proxy/ProxyFactory.class</include>
         <include>org/jboss/aop/proxy/ProxyMixin.class</include>
         <include>org/jboss/aop/proxy/container/*.class</include>
+        <include>org/jboss/aop/util/Advisable.class</include>
+        <include>org/jboss/aop/util/AOPLock.class</include>
+        <include>org/jboss/aop/util/ConstructorComparator.class</include>
+        <include>org/jboss/aop/util/FieldComparator.class</include>
         <include>org/jboss/aop/util/SecurityActions*.class</include>
         <include>org/jboss/aop/util/Marshalled*.class</include>
         <include>org/jboss/aop/util/MethodHashing*.class</include>
         <include>org/jboss/aop/util/PayloadKey*.class</include>
+        <include>org/jboss/aop/util/ReflectUtils.class</include>
+        <include>org/jboss/aop/util/UnmodifiableEmptyCollections*.class</include>
+        <include>org/jboss/aop/util/UnmodifiableEmptyCollections$*.class</include>
+        <include>org/jboss/aop/util/UnmodifiableLinkedHashMap.class</include>
+        <include>org/jboss/aop/util/logging/AOPLogger.class</include>
       </includes>
     </fileSet>
     <fileSet>
