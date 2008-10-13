@@ -18,6 +18,7 @@
       <outputDirectory>/</outputDirectory>
       <includes>
         <include>jboss-aop_1_0.dtd</include>
+        <include>jboss-aop_2_0.xsd</include>
       </includes>
     </fileSet>
     <fileSet>
