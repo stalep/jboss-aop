@@ -161,11 +161,16 @@ public class AOPClassPool extends ScopedClassPool
       {
          return isLocal.booleanValue();
       }
-      boolean localResource = getClassLoader().getResource(classResourceName) != null;
+      boolean localResource = isLocalClassLoaderResource(classResourceName);
       localResources.put(classResourceName, localResource ? Boolean.TRUE : Boolean.FALSE);
       return localResource;
    }
 
+   public boolean isLocalClassLoaderResource(String classResourceName)
+   {
+      return getClassLoader().getResource(classResourceName) != null;
+   }
+   
    public synchronized CtClass getLocally(String classname)
            throws NotFoundException
    {
@@ -211,6 +216,6 @@ public class AOPClassPool extends ScopedClassPool
       catch(IllegalStateException ignore)
       {
       }
-      return this.getClass().getName() + "@" + System.identityHashCode(this) + " " + super.toString() + " - dcl " + cl;
+      return this.getClass().getName() + "@" + System.identityHashCode(this) + " " + super.toString() + " - dcl:" + cl;
    }
 }
