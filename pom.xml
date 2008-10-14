@@ -26,14 +26,14 @@
     <version.jboss.jbossas.core-libs>4.0.4.GA</version.jboss.jbossas.core-libs>
     <version.org.jboss.jbossas>5.0.0.CR2</version.org.jboss.jbossas>
     <version.org.jboss.jboss-common-core>2.2.8.GA</version.org.jboss.jboss-common-core>
-    <version.org.jboss.cl>2.0.0.Beta13</version.org.jboss.cl>
-    <version.org.jboss.deployers>2.0.0.Beta21</version.org.jboss.deployers>
+    <version.org.jboss.cl>2.0.0.CR3</version.org.jboss.cl>
+    <version.org.jboss.deployers>2.0.0.CR2</version.org.jboss.deployers>
     <version.org.jboss.integration>5.0.0.CR2</version.org.jboss.integration>
     <version.org.jboss.jboss-reflect>2.0.0.CR1</version.org.jboss.jboss-reflect>
     <version.org.jboss.jboss-vfs>2.0.0.CR1</version.org.jboss.jboss-vfs>
     <version.org.jboss.logging>2.0.5.GA</version.org.jboss.logging>
     <version.org.jboss.man>2.0.0.CR1</version.org.jboss.man>
-    <version.org.jboss.mdr>2.0.0.CR1</version.org.jboss.mdr>
+    <version.org.jboss.mdr>2.0.0.CR3</version.org.jboss.mdr>
     <version.xdoclet>1.2.3</version.xdoclet>
   </properties>
   
