@@ -84,17 +84,11 @@
     <property name="release.id" value="${install.id}" />
     <!--<property name="install.root" value="${project.output}/${install.id}"/>-->
 
-    <!-- This module is based on Java 1.2 -->
-    <property name="javac.target" value="1.2" />
-
-    <!-- classpath and local.classpath must have a value using with a path -->
-    <property name="classpath" value="" />
-    <property name="local.classpath" value="" />
+    <!-- By default run all the tests -->
+    <property name="test" value="**" />
 
     <!-- The classpath required to build classes. -->
     <path id="javac.classpath">
-      <pathelement path="${classpath}" />
-      <pathelement path="${local.classpath}" />
       <path refid="maven.dependencies.test.classpath" />
     </path>
 
