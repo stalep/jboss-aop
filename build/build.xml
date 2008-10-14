@@ -310,13 +310,17 @@
       </fileset>
     </copy>
 
-    <copy todir="${project.release}/etc" filtering="no">
+     <copy todir="${project.release}/etc" filtering="no">
       <fileset dir="${project.root}/aop/src/etc">
-        <include name="default.mf"/>
-        <include name="jbossorg-eula.txt"/>
-        <include name="pluggable-instrumentor.mf"/>
+         <include name="default.mf"/> 
+         <include name="jbossorg-eula.txt"/>
+         <include name="pluggable-instrumentor.mf"/>
       </fileset>
-    </copy>
+      <fileset dir="${project.root}/aop/docs">
+         <include name="jboss-aop_1_0.dtd"/>
+         <include name="jboss-aop_2_0.xsd"/>
+      </fileset>
+     </copy>
 
     <!-- needed to build the source/tests from the dist package -->
     <copy file="${jboss:jboss-test:jar}"
