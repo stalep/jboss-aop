@@ -92,6 +92,7 @@
     <sequential>
       <echo message="Calling mvn command located in ${maven.home}" />
       <java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
+        <jvmarg value="-Xmx512m"/>
         <classpath>
           <fileset dir="${maven.home}/boot">
             <include name="*.jar" />
