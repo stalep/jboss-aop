@@ -21,7 +21,10 @@
 */ 
 package org.jboss.test.proxyfactory.support;
 
+import org.jboss.aop.proxy.container.ContainerProxyCacheKey;
 import org.jboss.aop.proxy.container.Delegate;
+import org.jboss.aop.proxy.container.MarshalledContainerProxy;
+import org.jboss.aop.proxy.container.MarshalledProxyAdvisor;
 
 /**
  * If using a constructor and passing "this" as the parameters, the proxy gets used. The delegate (instance wrapped by proxy) is not 
@@ -54,5 +57,17 @@ public class SimpleMixinWithConstructorAndDelegate implements Simple, Delegate
    public void setDelegate(Object delegate)
    {
       SimpleMixinWithConstructorAndDelegate.delegate = delegate;
+   }
+
+   public void localUnmarshal(MarshalledContainerProxy proxy)
+   {
+   }
+
+   public void remoteUnmarshal(MarshalledContainerProxy proxy, MarshalledProxyAdvisor advisor)
+   {
+   }
+
+   public void setContainerProxyCacheKey(ContainerProxyCacheKey key)
+   {
    }
 }
