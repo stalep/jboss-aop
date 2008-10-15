@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src/main"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/aop"/>
-	<classpathentry kind="lib" path="/thirdparty/javassist/lib/javassist.jar" sourcepath="/javassist"/>
+	<classpathentry kind="lib" path="/thirdparty/javassist/lib/javassist.jar" sourcepath="/thirdparty/javassist/lib/javassist-sources.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/common-core/lib/jboss-common-core.jar" sourcepath="/thirdparty/jboss/common-core/lib/jboss-common-core-sources.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jboss/common-logging-spi/lib/jboss-logging-spi.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jbossas/core-libs/lib/jboss-jmx.jar"/>

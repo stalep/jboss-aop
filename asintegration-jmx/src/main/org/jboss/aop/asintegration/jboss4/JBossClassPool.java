@@ -118,6 +118,7 @@ public class JBossClassPool extends AOPClassPool
       return dynClass;
    }
 
+   @Override
    protected boolean isLocalResource(String resourceName)
    {
       if (super.isLocalResource(resourceName))
