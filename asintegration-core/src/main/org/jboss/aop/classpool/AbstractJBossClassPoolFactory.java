@@ -21,6 +21,8 @@
 */ 
 package org.jboss.aop.classpool;
 
+import org.jboss.logging.Logger;
+
 import javassist.ClassPool;
 import javassist.scopedpool.ScopedClassPool;
 import javassist.scopedpool.ScopedClassPoolRepository;
@@ -32,6 +34,8 @@ import javassist.scopedpool.ScopedClassPoolRepository;
  */
 public abstract class AbstractJBossClassPoolFactory
 {
+   protected final Logger log = Logger.getLogger(this.getClass().getName());
+   
    protected ClassPool getCreateParentClassPools(final ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
    {
       //Make sure that we get classpools for all the parent classloaders

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main"/>
+   <classpathentry excluding="org/jboss/test/aop/classpool/support/a/|org/jboss/test/aop/classpool/support/b/B.java" kind="src" path="src/tests"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/aop"/>
 	<classpathentry kind="lib" path="/thirdparty/javassist/lib/javassist.jar" sourcepath="/javassist"/>
@@ -8,5 +9,7 @@
 	<classpathentry kind="lib" path="/thirdparty/jboss/common-logging-spi/lib/jboss-logging-spi.jar"/>
 	<classpathentry kind="lib" path="/thirdparty/jbossas/core-libs/lib/jboss-system.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pluggable-instrumentor"/>
+	<classpathentry kind="lib" path="/thirdparty/junit/lib/junit.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/test/lib/jboss-test.jar" sourcepath="/thirdparty/jboss/test/lib/jboss-test-sources.jar"/>
 	<classpathentry kind="output" path="eclipse-output"/>
 </classpath>

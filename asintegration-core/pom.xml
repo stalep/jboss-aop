@@ -46,6 +46,23 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <excludes>
+            <exclude>org/jboss/test/aop/classpool/support/a/A.class</exclude>
+            <exclude>org/jboss/test/aop/classpool/support/b/B.class</exclude>
+          </excludes>
+        </configuration>
+        <!-- fileSets>
+          <fileSet>
+            <directory>target/test-classes</directory>
+            <outputDirectory>/</outputDirectory>
+            <excludes>
+              <exclude>org/jboss/test/aop/classpool/support/a/A.class</exclude>
+              <exclude>org/jboss/test/aop/classpool/support/b/B.class</exclude>
+            </excludes>
+          </fileSet>
+        </fileSets -->
+        
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -84,6 +101,16 @@
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-spi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jboss</groupId>
+      <artifactId>jboss-test</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
   
