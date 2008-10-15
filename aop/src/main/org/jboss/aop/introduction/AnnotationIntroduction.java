@@ -90,7 +90,7 @@ public class AnnotationIntroduction
    private AnnotationIntroduction(String expr, String annotationExpr, boolean invisible)
    {
       this.invisible = invisible;
-      //TODO: Remove property replacement once jboss-mdr > 2.0.0.CR1 is out
+
       originalAnnotationExpr = StringPropertyReplacer.replaceProperties(annotationExpr);
       originalExpression = expr;
       try
