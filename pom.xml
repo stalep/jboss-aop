@@ -70,6 +70,7 @@
         <configuration>
           <tagBase>https://svn.jboss.org/repos/jbossas/projects/aop/tags</tagBase>
           <autoVersionSubmodules>true</autoVersionSubmodules>
+          <arguments></arguments>
         </configuration>
       </plugin>
     </plugins>
