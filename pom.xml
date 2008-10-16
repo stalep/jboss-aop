@@ -285,12 +285,12 @@
         <artifactId>jboss-aop</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <dependency>
+      <!--<dependency>
         <groupId>org.jboss.aop</groupId>
         <artifactId>jboss-aop</artifactId>
         <version>${project.version}</version>
         <type>test-jar</type>
-      </dependency>
+      </dependency>-->
       <dependency>
         <groupId>org.jboss.aop</groupId>
         <artifactId>pluggable-instrumentor</artifactId>
