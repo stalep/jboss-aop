@@ -1,11 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.jboss.aop</groupId>
     <artifactId>jboss-aop-parent</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.0.CR20</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.aop</groupId>
@@ -172,21 +169,16 @@
             <phase>package</phase>
             <configuration>
               <tasks>
-                <mkdir dir="${basedir}/output"/>
-                <mkdir dir="${basedir}/output/lib"/>
+                <mkdir dir="${basedir}/output" />
+                <mkdir dir="${basedir}/output/lib" />
                 <copy todir="${basedir}/output/etc">
-                  <fileset dir="${basedir}/src/etc"/>
+                  <fileset dir="${basedir}/src/etc" />
                 </copy>
-                <copy file="${project.build.directory}/${project.artifactId}.jar"
-                      tofile="${basedir}/output/lib/jboss-aop-jdk50.jar"/>
-                <copy file="${project.build.directory}/${project.artifactId}-sources.jar"
-                      tofile="${basedir}/output/lib/jboss-aop-jdk50-sources.jar"/>
-                <copy file="${project.build.directory}/${project.artifactId}-client.jar"
-                      tofile="${basedir}/output/lib/jboss-aop-jdk50-client.jar"/>
-                <copy file="${project.build.directory}/${project.artifactId}-client-sources.jar"
-                      tofile="${basedir}/output/lib/jboss-aop-jdk50-client-sources.jar"/>
-                <copy file="${project.build.directory}/${project.artifactId}-single.jar"
-                      tofile="${basedir}/output/lib/jboss-aop-jdk50-single.jar"/>
+                <copy file="${project.build.directory}/${project.artifactId}.jar" tofile="${basedir}/output/lib/jboss-aop-jdk50.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}-sources.jar" tofile="${basedir}/output/lib/jboss-aop-jdk50-sources.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}-client.jar" tofile="${basedir}/output/lib/jboss-aop-jdk50-client.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}-client-sources.jar" tofile="${basedir}/output/lib/jboss-aop-jdk50-client-sources.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}-single.jar" tofile="${basedir}/output/lib/jboss-aop-jdk50-single.jar" />
               </tasks>
             </configuration>
           </execution>
@@ -198,12 +190,9 @@
             <phase>site</phase>
             <configuration>
               <tasks>
-                <property name="source.java" value="${project.build.sourceDirectory}"/>
+                <property name="source.java" value="${project.build.sourceDirectory}" />
 
-                <javadoc sourcepath="${project.build.sourceDirectory}"
-                      destdir="${project.build.directory}/site/public-apidocs"
-                      classpathref="maven.compile.classpath"
-                      verbose="false">
+                <javadoc sourcepath="${project.build.sourceDirectory}" destdir="${project.build.directory}/site/public-apidocs" classpathref="maven.compile.classpath" verbose="false">
                   <doctitle><![CDATA[<h1>${project.name} Final User API Documentation</h1>]]></doctitle>
                   <bottom><![CDATA[
                     <i>
@@ -212,83 +201,83 @@
                     </div>
                     </i>
                   ]]></bottom>
-                  <source file="${source.java}/org/jboss/aop/AdviceType.java"/>
-                  <source file="${source.java}/org/jboss/aop/Advised.java"/>
-                  <source file="${source.java}/org/jboss/aop/Advisor.java"/>
-                  <source file="${source.java}/org/jboss/aop/AnnotationIntroductionDef.java"/>
-                  <source file="${source.java}/org/jboss/aop/Aspect.java"/>
-                  <source file="${source.java}/org/jboss/aop/AspectManager.java"/>
-                  <source file="${source.java}/org/jboss/aop/CallerConstructorInfo.java"/>
-                  <source file="${source.java}/org/jboss/aop/CallerMethodInfo.java"/>
-                  <source file="${source.java}/org/jboss/aop/CFlowDef.java"/>
-                  <source file="${source.java}/org/jboss/aop/CFlowStackDef.java"/>
-                  <source file="${source.java}/org/jboss/aop/ClassAdvisor.java"/><!--?? Keep this one??? -->
-                  <source file="${source.java}/org/jboss/aop/ConByConInfo.java"/>
-                  <source file="${source.java}/org/jboss/aop/ConByMethodInfo.java"/>
-                  <source file="${source.java}/org/jboss/aop/ConstructionInfo.java"/>
-                  <source file="${source.java}/org/jboss/aop/ConstructorInfo.java"/>
-                  <source file="${source.java}/org/jboss/aop/DeclareError.java"/>
-                  <source file="${source.java}/org/jboss/aop/DeclareWarning.java"/>
-                  <source file="${source.java}/org/jboss/aop/Domain.java"/>
-                  <source file="${source.java}/org/jboss/aop/DomainDefinition.java"/> <!-- Keep this one?? -->
-                  <source file="${source.java}/org/jboss/aop/DynamicCFlowDef.java"/>
-                  <source file="${source.java}/org/jboss/aop/FieldInfo.java"/>
-                  <source file="${source.java}/org/jboss/aop/MethodByConInfo.java"/>
-                  <source file="${source.java}/org/jboss/aop/MethodByMethodInfo.java"/>
-                  <source file="${source.java}/org/jboss/aop/MethodInfo.java"/>
-                  <source file="${source.java}/org/jboss/aop/InstanceAdvised.java"/>
-                  <source file="${source.java}/org/jboss/aop/InstanceAdvisor.java"/>
-                  <source file="${source.java}/org/jboss/aop/InstanceDomain.java"/> <!--?? Keep this one here?? -->
-                  <source file="${source.java}/org/jboss/aop/Introduction.java"/>
-                  <source file="${source.java}/org/jboss/aop/Mixin.java"/>
-                  <source file="${source.java}/org/jboss/aop/PointcutDef.java"/>
-                  <source file="${source.java}/org/jboss/aop/Precedence.java"/>
-                  <source file="${source.java}/org/jboss/aop/PrecedenceAdvice.java"/>
-                  <source file="${source.java}/org/jboss/aop/PrecedenceInterceptor.java"/>
-                  <source file="${source.java}/org/jboss/aop/Prepare.java"/>
-                  <source file="${source.java}/org/jboss/aop/TypeDef.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/AdviceBinding.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/AdviceFactory.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/AspectDefinition.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/AspectFactory.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/GenericAspectFactory.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/GenericInterceptorFactory.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/Interceptor.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/InterceptorFactory.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/InvalidAdviceException.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/NoMatchingAdviceException.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/Scope.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/annotation/Arg.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/annotation/Args.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/annotation/Caller.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/annotation/JoinPoint.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/annotation/Return.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/annotation/Target.java"/>
-                  <source file="${source.java}/org/jboss/aop/advice/annotation/Thrown.java"/>
-                  <source file="${source.java}/org/jboss/aop/annotation/compiler/AnnotationCompiler.java"/> <!-- ?? Investigate more on this package before decide what to keep here -->
-                  <source file="${source.java}/org/jboss/aop/ant/AnnotationC.java"/>
-                  <source file="${source.java}/org/jboss/aop/ant/AopC.java"/>
-                  <source file="${source.java}/org/jboss/aop/joinpoint/CallerInvocation.java"/>
-                  <source file="${source.java}/org/jboss/aop/joinpoint/ConstructionInvocation.java"/>
-                  <source file="${source.java}/org/jboss/aop/joinpoint/ConstructorCalledByConstructorInvocation.java"/>
-                  <source file="${source.java}/org/jboss/aop/joinpoint/ConstructorCalledByMethodInvocation.java"/>
-                  <source file="${source.java}/org/jboss/aop/joinpoint/ConstructorInvocation.java"/>
-                  <source file="${source.java}/org/jboss/aop/joinpoint/CurrentInvocation.java"/>
-                  <source file="${source.java}/org/jboss/aop/joinpoint/FieldInvocation.java"/>
-                  <source file="${source.java}/org/jboss/aop/joinpoint/FieldReadInvocation.java"/>
-                  <source file="${source.java}/org/jboss/aop/joinpoint/FieldWriteInvocation.java"/>
-                  <source file="${source.java}/org/jboss/aop/joinpoint/Invocation.java"/>
-                  <source file="${source.java}/org/jboss/aop/joinpoint/Joinpoint.java"/>
-                  <source file="${source.java}/org/jboss/aop/joinpoint/MethodCalledByConstructorInvocation.java"/>
-                  <source file="${source.java}/org/jboss/aop/joinpoint/MethodCalledByMethodInvocation.java"/>
-                  <source file="${source.java}/org/jboss/aop/joinpoint/MethodInvocation.java"/>
-                  <source file="${source.java}/org/jboss/aop/metadata/SimpleMetaData.java"/>
+                  <source file="${source.java}/org/jboss/aop/AdviceType.java" />
+                  <source file="${source.java}/org/jboss/aop/Advised.java" />
+                  <source file="${source.java}/org/jboss/aop/Advisor.java" />
+                  <source file="${source.java}/org/jboss/aop/AnnotationIntroductionDef.java" />
+                  <source file="${source.java}/org/jboss/aop/Aspect.java" />
+                  <source file="${source.java}/org/jboss/aop/AspectManager.java" />
+                  <source file="${source.java}/org/jboss/aop/CallerConstructorInfo.java" />
+                  <source file="${source.java}/org/jboss/aop/CallerMethodInfo.java" />
+                  <source file="${source.java}/org/jboss/aop/CFlowDef.java" />
+                  <source file="${source.java}/org/jboss/aop/CFlowStackDef.java" />
+                  <source file="${source.java}/org/jboss/aop/ClassAdvisor.java" /><!--?? Keep this one??? -->
+                  <source file="${source.java}/org/jboss/aop/ConByConInfo.java" />
+                  <source file="${source.java}/org/jboss/aop/ConByMethodInfo.java" />
+                  <source file="${source.java}/org/jboss/aop/ConstructionInfo.java" />
+                  <source file="${source.java}/org/jboss/aop/ConstructorInfo.java" />
+                  <source file="${source.java}/org/jboss/aop/DeclareError.java" />
+                  <source file="${source.java}/org/jboss/aop/DeclareWarning.java" />
+                  <source file="${source.java}/org/jboss/aop/Domain.java" />
+                  <source file="${source.java}/org/jboss/aop/DomainDefinition.java" /> <!-- Keep this one?? -->
+                  <source file="${source.java}/org/jboss/aop/DynamicCFlowDef.java" />
+                  <source file="${source.java}/org/jboss/aop/FieldInfo.java" />
+                  <source file="${source.java}/org/jboss/aop/MethodByConInfo.java" />
+                  <source file="${source.java}/org/jboss/aop/MethodByMethodInfo.java" />
+                  <source file="${source.java}/org/jboss/aop/MethodInfo.java" />
+                  <source file="${source.java}/org/jboss/aop/InstanceAdvised.java" />
+                  <source file="${source.java}/org/jboss/aop/InstanceAdvisor.java" />
+                  <source file="${source.java}/org/jboss/aop/InstanceDomain.java" /> <!--?? Keep this one here?? -->
+                  <source file="${source.java}/org/jboss/aop/Introduction.java" />
+                  <source file="${source.java}/org/jboss/aop/Mixin.java" />
+                  <source file="${source.java}/org/jboss/aop/PointcutDef.java" />
+                  <source file="${source.java}/org/jboss/aop/Precedence.java" />
+                  <source file="${source.java}/org/jboss/aop/PrecedenceAdvice.java" />
+                  <source file="${source.java}/org/jboss/aop/PrecedenceInterceptor.java" />
+                  <source file="${source.java}/org/jboss/aop/Prepare.java" />
+                  <source file="${source.java}/org/jboss/aop/TypeDef.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/AdviceBinding.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/AdviceFactory.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/AspectDefinition.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/AspectFactory.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/GenericAspectFactory.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/GenericInterceptorFactory.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/Interceptor.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/InterceptorFactory.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/InvalidAdviceException.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/NoMatchingAdviceException.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/Scope.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/annotation/Arg.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/annotation/Args.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/annotation/Caller.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/annotation/JoinPoint.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/annotation/Return.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/annotation/Target.java" />
+                  <source file="${source.java}/org/jboss/aop/advice/annotation/Thrown.java" />
+                  <source file="${source.java}/org/jboss/aop/annotation/compiler/AnnotationCompiler.java" /> <!-- ?? Investigate more on this package before decide what to keep here -->
+                  <source file="${source.java}/org/jboss/aop/ant/AnnotationC.java" />
+                  <source file="${source.java}/org/jboss/aop/ant/AopC.java" />
+                  <source file="${source.java}/org/jboss/aop/joinpoint/CallerInvocation.java" />
+                  <source file="${source.java}/org/jboss/aop/joinpoint/ConstructionInvocation.java" />
+                  <source file="${source.java}/org/jboss/aop/joinpoint/ConstructorCalledByConstructorInvocation.java" />
+                  <source file="${source.java}/org/jboss/aop/joinpoint/ConstructorCalledByMethodInvocation.java" />
+                  <source file="${source.java}/org/jboss/aop/joinpoint/ConstructorInvocation.java" />
+                  <source file="${source.java}/org/jboss/aop/joinpoint/CurrentInvocation.java" />
+                  <source file="${source.java}/org/jboss/aop/joinpoint/FieldInvocation.java" />
+                  <source file="${source.java}/org/jboss/aop/joinpoint/FieldReadInvocation.java" />
+                  <source file="${source.java}/org/jboss/aop/joinpoint/FieldWriteInvocation.java" />
+                  <source file="${source.java}/org/jboss/aop/joinpoint/Invocation.java" />
+                  <source file="${source.java}/org/jboss/aop/joinpoint/Joinpoint.java" />
+                  <source file="${source.java}/org/jboss/aop/joinpoint/MethodCalledByConstructorInvocation.java" />
+                  <source file="${source.java}/org/jboss/aop/joinpoint/MethodCalledByMethodInvocation.java" />
+                  <source file="${source.java}/org/jboss/aop/joinpoint/MethodInvocation.java" />
+                  <source file="${source.java}/org/jboss/aop/metadata/SimpleMetaData.java" />
                   <!-- TODO add metadata binding here -->
-                  <source file="${source.java}/org/jboss/aop/pointcut/DynamicCFlow.java"/>
-                  <source file="${source.java}/org/jboss/aop/pointcut/Pointcut.java"/>
-                  <source file="${source.java}/org/jboss/aop/pointcut/ast/ParseException.java"/>
+                  <source file="${source.java}/org/jboss/aop/pointcut/DynamicCFlow.java" />
+                  <source file="${source.java}/org/jboss/aop/pointcut/Pointcut.java" />
+                  <source file="${source.java}/org/jboss/aop/pointcut/ast/ParseException.java" />
                   
-                  <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+                  <link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
                 </javadoc>
               </tasks>
             </configuration>
@@ -411,51 +400,48 @@
                 <phase>compile</phase>
                 <configuration>
                   <tasks>
-                    <echo message="jrockit.home=${jrockit.home}"/>
+                    <echo message="jrockit.home=${jrockit.home}" />
                     <!-- in older versions of jrockit the weaving stuff lives in managementapi.jar, in newer in management-agent.jar -->
-                    <available file="${jrockit.home}/jre/lib/managementapi.jar" property="OLD_JROCKIT" value="managementapi.jar"/>
-                    <available file="${jrockit.home}/jre/lib/management-agent.jar" property="NEW_JROCKIT" value="rt.jar"/>
+                    <available file="${jrockit.home}/jre/lib/managementapi.jar" property="OLD_JROCKIT" value="managementapi.jar" />
+                    <available file="${jrockit.home}/jre/lib/management-agent.jar" property="NEW_JROCKIT" value="rt.jar" />
                     <condition property="JROCKIT_API_AVAILABLE" value="${OLD_JROCKIT}">
                       <and>
-                        <isset property="OLD_JROCKIT"/>
+                        <isset property="OLD_JROCKIT" />
                         <not>
-                          <isset property="NEW_JROCKIT"/>
+                          <isset property="NEW_JROCKIT" />
                         </not>
                       </and>
                     </condition>
                     <condition property="JROCKIT_API_AVAILABLE" value="${NEW_JROCKIT}">
                       <and>
-                        <isset property="NEW_JROCKIT"/>
+                        <isset property="NEW_JROCKIT" />
                         <not>
-                          <isset property="OLD_JROCKIT"/>
+                          <isset property="OLD_JROCKIT" />
                         </not>
                       </and>
                     </condition>
                     <path id="javac.jrockit.classpath">
-                      <path refid="maven.compile.classpath"/>
-                      <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
+                      <path refid="maven.compile.classpath" />
+                      <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}" />
                     </path>
     
-                    <property name="build.compiler" value="extJavac"/>
+                    <property name="build.compiler" value="extJavac" />
                     <fail unless="JROCKIT_API_AVAILABLE"> 
                       JRockit API Not Available.  Skipping JRockit compile. 
                     </fail>
-                    <javac destdir="${project.build.outputDirectory}"
-                       target="1.4"
-                       source="1.4">
-                       <src path="${project.build.sourceDirectory}"/>
-                       <include name="org/jboss/aop/hook/JRockit*"/>
-                       <classpath refid="javac.jrockit.classpath"/>
+                    <javac destdir="${project.build.outputDirectory}" target="1.4" source="1.4">
+                       <src path="${project.build.sourceDirectory}" />
+                       <include name="org/jboss/aop/hook/JRockit*" />
+                       <classpath refid="javac.jrockit.classpath" />
                     </javac>
-                    <mkdir dir="${basedir}/output"/>
-                    <mkdir dir="${basedir}/output/lib"/>
-                    <jar jarfile="${basedir}/output/lib/jrockit-pluggable-instrumentor.jar"
-                         manifest="${basedir}/src/etc/default.mf">
+                    <mkdir dir="${basedir}/output" />
+                    <mkdir dir="${basedir}/output/lib" />
+                    <jar jarfile="${basedir}/output/lib/jrockit-pluggable-instrumentor.jar" manifest="${basedir}/src/etc/default.mf">
                        <fileset dir="${project.build.outputDirectory}">
-                          <include name="org/jboss/aop/hook/JRockitPluggableClassPreProcessor.class"/>
-                          <include name="org/jboss/aop/hook/JDK14*.class"/>
+                          <include name="org/jboss/aop/hook/JRockitPluggableClassPreProcessor.class" />
+                          <include name="org/jboss/aop/hook/JDK14*.class" />
                        </fileset>
-                       <fileset file ="${basedir}/src/etc/jbossorg-eula.txt"/>
+                       <fileset file="${basedir}/src/etc/jbossorg-eula.txt" />
                     </jar>
                   </tasks>
                 </configuration>

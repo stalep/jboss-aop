@@ -1,11 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jboss.aop</groupId>
     <artifactId>jboss-aop-parent</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.0.CR20</version>
   </parent>
   <artifactId>jrockit-pluggable-instrumentor</artifactId>
   <packaging>jar</packaging>
@@ -77,42 +75,40 @@
             <phase>compile</phase>
             <configuration>
               <tasks>
-                <echo message="jrockit.home=${jrockit.home}"/>
+                <echo message="jrockit.home=${jrockit.home}" />
                 <!-- in older versions of jrockit the weaving stuff lives in managementapi.jar, in newer in management-agent.jar -->
-                <available file="${jrockit.home}/jre/lib/managementapi.jar" property="OLD_JROCKIT" value="managementapi.jar"/>
-                <available file="${jrockit.home}/jre/lib/management-agent.jar" property="NEW_JROCKIT" value="rt.jar"/>
+                <available file="${jrockit.home}/jre/lib/managementapi.jar" property="OLD_JROCKIT" value="managementapi.jar" />
+                <available file="${jrockit.home}/jre/lib/management-agent.jar" property="NEW_JROCKIT" value="rt.jar" />
                 <condition property="JROCKIT_API_AVAILABLE" value="${OLD_JROCKIT}">
                   <and>
-                    <isset property="OLD_JROCKIT"/>
+                    <isset property="OLD_JROCKIT" />
                     <not>
-                      <isset property="NEW_JROCKIT"/>
+                      <isset property="NEW_JROCKIT" />
                     </not>
                   </and>
                 </condition>
                 <condition property="JROCKIT_API_AVAILABLE" value="${NEW_JROCKIT}">
                   <and>
-                    <isset property="NEW_JROCKIT"/>
+                    <isset property="NEW_JROCKIT" />
                     <not>
-                      <isset property="OLD_JROCKIT"/>
+                      <isset property="OLD_JROCKIT" />
                     </not>
                   </and>
                 </condition>
                 <path id="javac.jrockit.classpath">
-                  <path refid="maven.compile.classpath"/>
-                  <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
+                  <path refid="maven.compile.classpath" />
+                  <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}" />
                 </path>
 
-                <property name="build.compiler" value="extJavac"/>
+                <property name="build.compiler" value="extJavac" />
                 <fail unless="JROCKIT_API_AVAILABLE"> 
                   JRockit API Not Available.  Skipping JRockit compile. 
                 </fail>
-                <mkdir dir="${project.build.outputDirectory}"/>
-                <javac destdir="${project.build.outputDirectory}"
-                   target="1.4"
-                   source="1.4">
-                   <src path="${project.build.sourceDirectory}"/>
-                   <include name="org/jboss/aop/hook/JRockit*"/>
-                   <classpath refid="javac.jrockit.classpath"/>
+                <mkdir dir="${project.build.outputDirectory}" />
+                <javac destdir="${project.build.outputDirectory}" target="1.4" source="1.4">
+                   <src path="${project.build.sourceDirectory}" />
+                   <include name="org/jboss/aop/hook/JRockit*" />
+                   <classpath refid="javac.jrockit.classpath" />
                 </javac>
               </tasks>
             </configuration>
