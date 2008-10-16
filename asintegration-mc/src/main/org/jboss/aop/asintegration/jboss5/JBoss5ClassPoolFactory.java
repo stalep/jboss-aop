@@ -28,6 +28,8 @@ import javassist.ClassPool;
 import javassist.scopedpool.ScopedClassPool;
 import javassist.scopedpool.ScopedClassPoolFactory;
 import javassist.scopedpool.ScopedClassPoolRepository;
+
+import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.aop.classpool.AbstractJBossClassPoolFactory;
 import org.jboss.aop.classpool.ExtraClassPoolFactoryParameters;
@@ -45,28 +47,53 @@ import org.jboss.classloading.spi.dependency.Module;
  **/
 public class JBoss5ClassPoolFactory extends AbstractJBossClassPoolFactory implements ScopedClassPoolFactory
 {
+   private DomainRegistry registry;
+   
+   public JBoss5ClassPoolFactory(DomainRegistry registry)
+   {
+      this.registry = registry;
+   }
+   
    public ScopedClassPool create(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
    {      
       ClassPool parent = getCreateParentClassPools(cl, src, repository);
-      Map<Object, Object> props = ExtraClassPoolFactoryParameters.peekThreadProperties();
-      boolean isWebCl = props == null ? false : ((Boolean)props.get("IsWebCl")).booleanValue();
-      if (!isWebCl && cl instanceof RealClassLoader)
+
+      ScopedClassPool pool = null;
+      
+      if (cl instanceof RealClassLoader)
       {
-         Module module = props == null ? null : (Module)props.get(Module.class);
+         Module module = registry.getModule(cl);
          if (module != null && module.getDeterminedParentDomainName() != null)
          {
             //It is scoped
             ClassLoaderSystem sys = ClassLoaderSystem.getInstance();
             ClassLoaderDomain domain = sys.getDomain(module.getDeterminedDomainName());
             boolean parentFirst = module.isJ2seClassLoadingCompliance();
-            
-            return new ScopedJBoss5ClassPool(cl, parent, repository, getTempURL(module), parentFirst, domain);
+            ClassPool parentDomainPool = getParentUnitClassPool(cl); 
+            pool = new ScopedJBoss5ClassPool(cl, parent, parentDomainPool, repository, getTempURL(module), parentFirst, domain);
          }
-         return new JBoss5ClassPool(cl, parent, repository, getTempURL(module));
+         else
+         {
+            pool =  new JBoss5ClassPool(cl, parent, repository, getTempURL(module));
+         }
       }
-      return new AOPClassPool(cl, parent, repository);
+      
+      if (pool == null)
+      {
+         pool = new AOPClassPool(cl, parent, repository);
+      }
+      log.debug("Created pool " + pool + " for loader " + cl);
+      
+      return pool;
+   }
+
+   private ClassPool getParentUnitClassPool(ClassLoader cl)
+   {
+      ClassLoader parent = registry.getParentUnitLoader(cl);
+      return AspectManager.instance().registerClassLoader(parent);
    }
    
+
    private URL getTempURL(Module module)
    {
       if (module == null)

@@ -50,13 +50,18 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
    
    ThreadLocal<ClassPool> lastPool = new ThreadLocal<ClassPool>();
    WeakReference<ClassLoaderDomain> domainRef;
+   /** The classpool representing the parent domain of this one */
+   ClassPool parentDomainPool;
 
-   public ScopedJBoss5ClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, 
+   public ScopedJBoss5ClassPool(ClassLoader cl, ClassPool src, ClassPool parentDomainPool, ScopedClassPoolRepository repository, 
          URL tmpURL, boolean parentFirst, ClassLoaderDomain domain)
    {
       super(cl, src, repository, tmpURL);
       super.childFirstLookup = !parentFirst;
+      this.parentDomainPool = parentDomainPool;
       this.domainRef = new WeakReference<ClassLoaderDomain>(domain);
+      
+      log.debug("Created new ScopedJBoss5ClasPool for " + cl + ", with parent: " + src + ", parentDomain: " + parentDomainPool + ", parentFirst: " + parentFirst);
    }
 
    private URL getResourceUrlForClass(String resourcename)
@@ -88,6 +93,93 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
       
       return false;
    }
+   
+
+   @Override
+   protected synchronized CtClass get0(String classname, boolean useCache) throws NotFoundException
+   {
+      CtClass clazz = null;
+      if (useCache)
+      {
+         clazz = getCached(classname);
+         if (clazz != null)
+            return clazz;
+      }
+
+      if (!childFirstLookup)
+      {
+         if (parentDomainPool != null)
+         {
+            clazz = performGet(parentDomainPool, classname);
+            if (clazz != null)
+            {
+               return clazz;
+            }
+         }
+         if (parent != null)
+         {
+            clazz = performGet(parent, classname);
+            if (clazz != null)
+            {
+               return clazz;
+            }
+         }
+      }
+
+      clazz = createCtClass(classname, useCache);
+      if (clazz != null)
+      {
+         // clazz.getName() != classname if classname is "[L<name>;".
+         if (useCache)
+            cacheCtClass(clazz.getName(), clazz, false);
+
+         return clazz;
+      }
+
+      if (childFirstLookup)
+      {
+         if (parent != null)
+         {
+            clazz = clazz = performGet(parent, classname);
+            if (clazz != null)
+            {
+               return clazz;
+            }
+         }
+         if (parentDomainPool != null)
+         {
+            clazz = clazz = performGet(parentDomainPool, classname);
+            if (clazz != null)
+            {
+               return clazz;
+            }
+         }
+      }
+
+      return clazz;
+   }
+
+   private CtClass performGet(ClassPool pool, String classname)
+   {
+      try
+      {
+         //Want to avoid calling get() if possible since that creates NotFoundExceptions
+         //on misses which is expensive
+         if (pool instanceof AOPClassPool)
+         {
+            return ((AOPClassPool)pool).internalGet0(classname, true);
+         }
+         else
+         {
+            return pool.get(classname);
+         }
+      }
+      catch (NotFoundException e)
+      {
+         return null;
+      }
+   }
+   
    
    public CtClass getCached(String classname)
    {
@@ -293,6 +385,10 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
     */
    private boolean isInstanceOfNoAnnotationURLClassLoader(ClassLoader loader)
    {
+      if (loader == null)
+      {
+         return false;
+      }
       Class<?> parent = loader.getClass();
       while (parent != null)
       {

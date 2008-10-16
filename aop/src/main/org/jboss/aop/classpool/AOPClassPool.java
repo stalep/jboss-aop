@@ -218,4 +218,11 @@ public class AOPClassPool extends ScopedClassPool
       }
       return this.getClass().getName() + "@" + System.identityHashCode(this) + " " + super.toString() + " - dcl:" + cl;
    }
+
+   public CtClass internalGet0(String classname, boolean useCache) throws NotFoundException
+   {
+      return super.get0(classname, useCache);
+   }
+   
+   
 }

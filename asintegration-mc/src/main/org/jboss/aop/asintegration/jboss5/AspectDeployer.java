@@ -104,6 +104,7 @@ public class AspectDeployer extends AbstractVFSRealDeployer
    public void deploy(VFSDeploymentUnit unit) throws DeploymentException
    {
       AspectManager manager = getCorrectManager(unit);
+      unit.addAttachment(AspectManager.class, manager);
       
       List<VirtualFile> files = unit.getMetaDataFiles(null, AOP_DD_SUFFIX);
 
@@ -122,7 +123,8 @@ public class AspectDeployer extends AbstractVFSRealDeployer
    {
       try
       {
-         AspectManager manager = getCorrectManager(unit);
+         AspectManager manager = unit.getAttachment(AspectManager.class);
+
          List<VirtualFile> files = unit.getMetaDataFiles(null, AOP_DD_SUFFIX);
    
          if (isAopArchiveOrFolder(unit))
@@ -137,10 +139,7 @@ public class AspectDeployer extends AbstractVFSRealDeployer
       }
       finally
       {
-         if (unit.getTopLevel() == unit)
-         {
-            aspectManager.unregisterClassLoader(unit.getClassLoader());
-         }
+         AOPClassLoaderInitializer.unregisterLoaders(aspectManager, unit);
       }
    }
 
@@ -355,18 +354,7 @@ public class AspectDeployer extends AbstractVFSRealDeployer
    {
       //Scoped AOP deployments are only available when deployed as part of a scoped sar, ear etc.
       //It can contain an aop.xml file, or it can be part of a .aop file
-      //Linking a standalone -aop.xml file onto a scoped deployment is not possible at the moment
-      VFSClassLoaderScopingPolicy policy = null;
-      try
-      {
-         policy = (VFSClassLoaderScopingPolicy)AspectManager.getClassLoaderScopingPolicy();
-      }
-      catch(ClassCastException e)
-      {
-         throw new RuntimeException("Wrong policy configured " + policy);
-      }
-      
-      Domain domain = initializeDomain(policy, unit);
+      Domain domain = AOPClassLoaderInitializer.initializeForUnit(unit); 
       if (domain != null)
       {
          return domain;
@@ -390,55 +378,4 @@ public class AspectDeployer extends AbstractVFSRealDeployer
       }
    }
 
-   private Domain initializeDomain(VFSClassLoaderScopingPolicy policy, VFSDeploymentUnit unit)
-   {
-      Module module = unit.getTopLevel().getAttachment(Module.class);
-      ClassLoader loader = unit.getClassLoader();
-      ClassLoader topLoader = unit.getTopLevel().getClassLoader();
-      
-      VFSClassLoaderDomainRegistry registry = policy.getRegistry();
-      
-      boolean isWar = unit.isAttachmentPresent("org.jboss.metadata.web.jboss.JBossWebMetaData");
-
-      if (isWar && loader != topLoader)
-      {
-         ScopedVFSClassLoaderDomain scopedDomain = (ScopedVFSClassLoaderDomain)registry.getRegisteredDomain(loader);
-         if (scopedDomain == null) 
-         {
-            scopedDomain = (ScopedVFSClassLoaderDomain)registry.getRegisteredDomain(topLoader);
-         }
-         
-         if (scopedDomain != null)
-         {
-            registry.initMapsForLoader(loader, module, scopedDomain);
-         }
-
-         policy.registerClassLoader(module, isWar, loader);
-         
-         return scopedDomain;
-      }
-      else
-      {
-         ScopedVFSClassLoaderDomain scopedDomain = (ScopedVFSClassLoaderDomain)registry.getRegisteredDomain(loader);
-         if (scopedDomain == null)
-         {
-            if (!module.getDeterminedDomainName().equals(ClassLoaderSystem.DEFAULT_DOMAIN_NAME))
-            {
-               ClassLoaderSystem system = ClassLoaderSystem.getInstance();
-               String domainName = module.getDeterminedDomainName();
-               ClassLoaderDomain domain = system.getDomain(domainName);
-      
-               boolean parentDelegation = module.isJ2seClassLoadingCompliance();
-               String name = String.valueOf(System.identityHashCode(loader));
-               
-               scopedDomain = new ScopedVFSClassLoaderDomain(loader, name, parentDelegation, AspectManager.getTopLevelAspectManager(), false, domain, registry);
-            }
-      
-            registry.initMapsForLoader(loader, module, scopedDomain);
-            
-            policy.registerClassLoader(module, isWar, loader);
-         }
-         return scopedDomain;
-      }      
-   }
 }

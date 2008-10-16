@@ -40,10 +40,10 @@ import org.jboss.classloader.spi.ClassLoaderDomain;
 public class ScopedVFSClassLoaderDomain extends ScopedClassLoaderDomain
 {
    WeakReference<ClassLoaderDomain> classLoaderDomainRef;
-   VFSClassLoaderDomainRegistry registry;
+   DomainRegistry registry;
    
    public ScopedVFSClassLoaderDomain(ClassLoader loader, String name, boolean parentDelegation, AspectManager manager, boolean parentFirst, 
-         ClassLoaderDomain classLoaderDomain, VFSClassLoaderDomainRegistry registry)
+         ClassLoaderDomain classLoaderDomain, DomainRegistry registry)
    {
       super(loader, name, parentDelegation, manager, parentFirst);
       classLoaderDomainRef = new WeakReference<ClassLoaderDomain>(classLoaderDomain);

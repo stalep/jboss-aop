@@ -35,7 +35,7 @@ import org.jboss.classloading.spi.dependency.Module;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class VFSClassLoaderDomainRegistry
+public class VFSClassLoaderDomainRegistry implements DomainRegistry
 {
    final static ClassLoaderDomain domain = new ClassLoaderDomain("NOT_USED_PLACEHOLDER");
    
@@ -44,22 +44,73 @@ public class VFSClassLoaderDomainRegistry
 
    /** aopDomains by classloader domain */
    private Map<ClassLoaderDomain, ScopedVFSClassLoaderDomain> aopDomainsByClassLoaderDomain = new WeakHashMap<ClassLoaderDomain, ScopedVFSClassLoaderDomain>();
+   
+   /** parent deployment unit classloaders indexed by children */
+   private Map<ClassLoader, WeakReference<ClassLoader>> classLoaderUnitParents = new WeakHashMap<ClassLoader, WeakReference<ClassLoader>>(); 
+   
+   /** Modules by classloader */
+   private Map<ClassLoader, WeakReference<Module>> classLoaderModules = new WeakHashMap<ClassLoader, WeakReference<Module>>();
+   
+   private Map<ClassLoaderDomain, Integer> classLoaderDomainReferenceCounts = new WeakHashMap<ClassLoaderDomain, Integer>(); 
 
-   synchronized void initMapsForLoader(ClassLoader loader, Module module, ScopedVFSClassLoaderDomain domain)
+   public synchronized boolean initMapsForLoader(ClassLoader loader, Module module, ScopedVFSClassLoaderDomain domain, ClassLoader parentUnitLoader)
    {
+      if (loader == parentUnitLoader)
+      {
+         throw new IllegalArgumentException("initMapsForLoader() should only be called if parentUnitLoader is different from loader");
+      }
       ClassLoaderSystem system = ClassLoaderSystem.getInstance();
       
       String domainName = module.getDeterminedDomainName();
       ClassLoaderDomain clDomain = system.getDomain(domainName);
-      classLoaderDomainsByLoader.put(loader, new WeakReference<ClassLoaderDomain>(clDomain));
+      boolean ret = false;
+      if (!classLoaderDomainsByLoader.containsKey(loader))
+      {
+         Integer count = classLoaderDomainReferenceCounts.get(clDomain);
+         int cnt = count == null ? 0 : count.intValue();
+         classLoaderDomainReferenceCounts.put(clDomain, ++cnt);
+         
+         classLoaderDomainsByLoader.put(loader, new WeakReference<ClassLoaderDomain>(clDomain));
+         classLoaderUnitParents.put(loader, new WeakReference<ClassLoader>(parentUnitLoader));
+         classLoaderModules.put(loader, new WeakReference<Module>(module));
+         ret = true;
+      }
       
       if (domain != null)
       {
          aopDomainsByClassLoaderDomain.put(clDomain, domain);
       }
+      
+      return ret;
+   }
+   
+   public synchronized void cleanupLoader(ClassLoader loader)
+   {
+      WeakReference<ClassLoaderDomain> clDomainRef = classLoaderDomainsByLoader.remove(loader);
+      ClassLoaderDomain clDomain = clDomainRef == null ? null : clDomainRef.get();
+      if (clDomain != null)
+      {
+         Integer count =  classLoaderDomainReferenceCounts.get(clDomain);
+         int cnt = count == null ? 0 : count.intValue();
+         if (cnt > 0)
+         {
+            cnt--;
+         }
+         if (cnt == 0)
+         {
+            aopDomainsByClassLoaderDomain.remove(clDomain);
+            classLoaderDomainReferenceCounts.remove(clDomain);
+         }
+         else
+         {
+            classLoaderDomainReferenceCounts.put(clDomain, ++cnt);
+         }
+         classLoaderUnitParents.remove(loader);
+         classLoaderModules.remove(loader);
+      }
    }
 
-   synchronized Domain getRegisteredDomain(ClassLoader cl)
+   public synchronized Domain getRegisteredDomain(ClassLoader cl)
    {
       ClassLoaderDomain clDomain = getClassLoaderDomainForLoader(cl);
       if (clDomain != null)
@@ -69,7 +120,7 @@ public class VFSClassLoaderDomainRegistry
       return null;
    }
    
-   synchronized ClassLoaderDomain getClassLoaderDomainForLoader(ClassLoader cl)
+   public synchronized ClassLoaderDomain getClassLoaderDomainForLoader(ClassLoader cl)
    {
       WeakReference<ClassLoaderDomain> clDomainRef = classLoaderDomainsByLoader.get(cl);
       if (clDomainRef != null)
@@ -86,6 +137,26 @@ public class VFSClassLoaderDomainRegistry
             classLoaderDomainsByLoader.put(parent, new WeakReference<ClassLoaderDomain>(domain));
             return domain;
          }
+      }
+      return null;
+   }
+   
+   public synchronized ClassLoader getParentUnitLoader(ClassLoader loader)
+   {
+      WeakReference<ClassLoader> parentRef = classLoaderUnitParents.get(loader);
+      if (parentRef != null)
+      {
+         return parentRef.get();
+      }
+      return null;
+   }
+   
+   public synchronized Module getModule(ClassLoader loader)
+   {
+      WeakReference<Module> moduleRef = classLoaderModules.get(loader);
+      if (moduleRef != null)
+      {
+         return moduleRef.get();
       }
       return null;
    }

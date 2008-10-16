@@ -49,6 +49,7 @@ public class JBoss5Integration implements JBossIntegration, ScopedClassPoolFacto
    /** The delegate classpool factory */
    private ScopedClassPoolFactory delegateClassPoolFactory;
    private AOPClassLoaderScopingPolicy policy = new VFSClassLoaderScopingPolicy();
+ 
    
    private static final Set<ClassLoader> bootstrapLoaders;
    static 
@@ -107,12 +108,18 @@ public class JBoss5Integration implements JBossIntegration, ScopedClassPoolFacto
    {
       return policy;
    }
+   
+   public void setClassPoolFactory(ScopedClassPoolFactory factory)
+   {
+      this.delegateClassPoolFactory = factory;
+   }
 
    public synchronized ScopedClassPoolFactory createScopedClassPoolFactory(File tmpDir) throws Exception
    {
       if (delegateClassPoolFactory == null)
       {
-         delegateClassPoolFactory = new JBoss5ClassPoolFactory();
+         DomainRegistry registry = ((VFSClassLoaderScopingPolicy)policy).getRegistry();
+         delegateClassPoolFactory = new JBoss5ClassPoolFactory(registry);
       }
       return this;
    }

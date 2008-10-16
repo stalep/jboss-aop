@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.Domain;
-import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
 import org.jboss.aop.classpool.ExtraClassPoolFactoryParameters;
 import org.jboss.classloading.spi.dependency.Module;
 import org.jboss.logging.Logger;
@@ -36,23 +35,22 @@ import org.jboss.logging.Logger;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class VFSClassLoaderScopingPolicy implements AOPClassLoaderScopingPolicy
+public class VFSClassLoaderScopingPolicy implements AOPClassLoaderScopingPolicyWithRegistry
 {
    static Logger log = Logger.getLogger(VFSClassLoaderScopingPolicy.class);
-   VFSClassLoaderDomainRegistry registry = new VFSClassLoaderDomainRegistry();
+   DomainRegistry registry = new VFSClassLoaderDomainRegistry();
    
-   VFSClassLoaderDomainRegistry getRegistry()
+   public DomainRegistry getRegistry()
    {
       return registry;
    }
 
-   void registerClassLoader(Module module, boolean isWar, ClassLoader loader)
+   public void registerClassLoader(Module module, ClassLoader loader)
    {
       //Need to pass some data through to the classpoolfactory here
       Map<Object, Object> properties = new HashMap<Object, Object>();
       //The module is needed by the JBoss5ClassPoolFactory, the legacy JBossClassPoolFactory will ignore this
       properties.put(Module.class, module);
-      properties.put("IsWebCl", isWar ? Boolean.TRUE : Boolean.FALSE);
       ExtraClassPoolFactoryParameters.pushThreadProperties(properties);
       try
       {

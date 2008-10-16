@@ -39,6 +39,10 @@ public abstract class AbstractJBossClassPoolFactory
    protected ClassPool getCreateParentClassPools(final ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
    {
       //Make sure that we get classpools for all the parent classloaders
+      if (cl == null)
+      {
+         return ClassPool.getDefault();
+      }
       ClassLoader parent = SecurityActions.getParent(cl);
 
       if (parent != null)
