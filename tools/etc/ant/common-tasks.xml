@@ -4,12 +4,27 @@
 <!-- ================================================================== -->
 <project name="common-tasks">
 
-  <target name="init-maven-environment" unless="maven.init.complete"
-      description="Initialize properties for accessing maven configuration" xmlns:maven="urn:maven-artifact-ant">
+  <target name="init-maven-environment" xmlns:maven="urn:maven-artifact-ant"
+      description="Initialize properties for accessing maven configuration">
 
     <path id="maven-ant-tasks.classpath" path="../tools/lib/maven-ant-tasks.jar" />
     <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpathref="maven-ant-tasks.classpath" />
 
+    <maven:remoteRepository id="repository.jboss.org" url="http://repository.jboss.org/maven2">
+      <releases enabled="true"/>
+    </maven:remoteRepository>
+    
+    <maven:remoteRepository id="snapshots.jboss.org" url="http://snapshots.jboss.org/maven2">
+      <releases enabled="false"/>
+      <snapshots enabled="true"/>
+    </maven:remoteRepository>
+    
+    <maven:pom id="aop.parent.pom" file="../pom.xml">
+      <remoteRepository refid="repository.jboss.org" />
+      <remoteRepository refid="snapshots.jboss.org" />
+    </maven:pom>
+    <maven:install pomRefId="aop.parent.pom" />
+    
     <maven:pom id="maven.project" file="pom.xml" />
 
     <!-- This tasks resolves maven dependencies and creates a property of the
