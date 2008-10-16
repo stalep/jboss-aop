@@ -22,7 +22,6 @@
 package org.jboss.aop.asintegration.jboss5;
 
 import java.net.URL;
-import java.util.Map;
 
 import javassist.ClassPool;
 import javassist.scopedpool.ScopedClassPool;
@@ -32,7 +31,6 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.aop.classpool.AbstractJBossClassPoolFactory;
-import org.jboss.aop.classpool.ExtraClassPoolFactoryParameters;
 import org.jboss.classloader.spi.ClassLoaderDomain;
 import org.jboss.classloader.spi.ClassLoaderSystem;
 import org.jboss.classloading.spi.RealClassLoader;

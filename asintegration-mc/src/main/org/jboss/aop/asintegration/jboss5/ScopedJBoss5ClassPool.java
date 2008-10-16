@@ -140,7 +140,7 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
       {
          if (parent != null)
          {
-            clazz = clazz = performGet(parent, classname);
+            clazz = performGet(parent, classname);
             if (clazz != null)
             {
                return clazz;
@@ -148,7 +148,7 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
          }
          if (parentDomainPool != null)
          {
-            clazz = clazz = performGet(parentDomainPool, classname);
+            clazz = performGet(parentDomainPool, classname);
             if (clazz != null)
             {
                return clazz;
