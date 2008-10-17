@@ -4,22 +4,22 @@
    <import file="../examples-build.xml"/>
 	
    <target name="usage_">
-      <echo>Run one of the following targets (use JDK 5):</echo>
-      <echo> ant run.loadtime.50.nologging            Run with loadtime weaving and no logging</echo>
-      <echo> ant run.loadtime.50.system.out.logging   Run with loadtime weaving and logging via System.out</echo>
-      <echo> ant run.loadtime.50.log4j.logging        Run with loadtime weaving and logging via log4j</echo>
-      <echo> ant run.aopc.50.nologging                Run with compile-time weaving and no logging</echo>
-      <echo> ant run.aopc.50.system.out.logging       Run with compile-time weaving and logging via System.out</echo>
-      <echo> ant run.aopc.50.log4j.logging            Run with compile-time weaving and logging via log4j</echo>
+      <echo>Run one of the following targets:</echo>
+      <echo> ant run.loadtime.nologging            Run with loadtime weaving and no logging</echo>
+      <echo> ant run.loadtime.system.out.logging   Run with loadtime weaving and logging via System.out</echo>
+      <echo> ant run.loadtime.log4j.logging        Run with loadtime weaving and logging via log4j</echo>
+      <echo> ant run.aopc.nologging                Run with compile-time weaving and no logging</echo>
+      <echo> ant run.aopc.system.out.logging       Run with compile-time weaving and logging via System.out</echo>
+      <echo> ant run.aopc.log4j.logging            Run with compile-time weaving and logging via log4j</echo>
    </target>
    
-   <target name="run.loadtime.50.nologging" depends="_compile50">
+   <target name="run.loadtime.nologging" depends="_compile">
       <!-- 
          We exclude log4j.jar and jboss-logging-log4j.jar, which does not make a difference
          since we do not use logging anyway
       -->
       <path id="aop.classpath">
-         <fileset dir="${jboss.aop.lib50}">
+         <fileset dir="${jboss.aop.lib}">
             <include name="*.jar"/>
             <exclude name="log4j.jar"/>
             <exclude name="jboss-logging-log4j.jar"/>
@@ -34,18 +34,18 @@
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
          <!-- Include this for clarity, the default is false -->
          <sysproperty key="jboss.aop.verbose" value="false"/>
-         <jvmarg value="-javaagent:${aop50jar}"/>
+         <jvmarg value="-javaagent:${aopjar}"/>
          <classpath refid="run.classpath"/>
       </java>
    </target>
 
-   <target name="run.loadtime.50.system.out.logging" depends="_compile50">
+   <target name="run.loadtime.system.out.logging" depends="_compile">
       <!-- 
          We exclude log4j.jar and jboss-logging-log4j.jar, so when we turn on logging 
          we will just write to System.out
       -->
       <path id="aop.classpath">
-         <fileset dir="${jboss.aop.lib50}">
+         <fileset dir="${jboss.aop.lib}">
             <include name="*.jar"/>
             <exclude name="log4j.jar"/>
             <exclude name="jboss-logging-log4j.jar"/>
@@ -60,18 +60,18 @@
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
          <!-- Turn logging on -->
          <sysproperty key="jboss.aop.verbose" value="true"/>
-         <jvmarg value="-javaagent:${aop50jar}"/>
+         <jvmarg value="-javaagent:${aopjar}"/>
          <classpath refid="run.classpath"/>
       </java>
    </target>
 
-   <target name="run.loadtime.50.log4j.logging" depends="_compile50">
+   <target name="run.loadtime.log4j.logging" depends="_compile">
       <!-- 
          We include log4j.jar and jboss-logging-log4j.jar, so when we turn on logging the 
          we will use log4j configured with a log4j.properties file
       -->
       <path id="aop.classpath">
-         <fileset dir="${jboss.aop.lib50}">
+         <fileset dir="${jboss.aop.lib}">
             <include name="*.jar"/>
          </fileset>
          <!-- We need a log4j.properties on the classpath -->
@@ -86,18 +86,18 @@
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
          <!-- Turn logging on -->
          <sysproperty key="jboss.aop.verbose" value="true"/>
-         <jvmarg value="-javaagent:${aop50jar}"/>
+         <jvmarg value="-javaagent:${aopjar}"/>
          <classpath refid="run.classpath"/>
       </java>
    </target>
 
-   <target name="aopc.no.logging" depends="_compile50">
+   <target name="aopc.no.logging" depends="_compile">
       <!-- 
          We exclude log4j.jar and jboss-logging-log4j.jar, which does not make a difference
          since we do not use logging anyway
       -->
       <path id="aop.classpath">
-         <fileset dir="${jboss.aop.lib50}">
+         <fileset dir="${jboss.aop.lib}">
             <include name="*.jar"/>
             <exclude name="log4j.jar"/>
             <exclude name="jboss-logging-log4j.jar"/>
@@ -119,20 +119,20 @@
       </aopc>   
    </target>  
    
-   <target name="run.aopc.50.nologging" depends="aopc.no.logging">
+   <target name="run.aopc.nologging" depends="aopc.no.logging">
       <java fork="yes" failOnError="true" className="Driver">
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
          <classpath refid="run.classpath"/>
       </java>
    </target>
    
-   <target name="aopc.system.out.logging" depends="_compile50">
+   <target name="aopc.system.out.logging" depends="_compile">
       <!-- 
          We exclude log4j.jar and jboss-logging-log4j.jar, so when we turn on logging 
          we will just write to System.out
       -->
       <path id="aop.classpath">
-         <fileset dir="${jboss.aop.lib50}">
+         <fileset dir="${jboss.aop.lib}">
             <include name="*.jar"/>
             <exclude name="log4j.jar"/>
             <exclude name="jboss-logging-log4j.jar"/>
@@ -154,7 +154,7 @@
       </aopc>
    </target>
   
-   <target name="run.aopc.50.system.out.logging" depends="aopc.system.out.logging">
+   <target name="run.aopc.system.out.logging" depends="aopc.system.out.logging">
    
       <java fork="yes" failOnError="true" className="Driver">
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
@@ -164,13 +164,13 @@
       </java>
    </target>
 
-   <target name="aopc.log4j.logging" depends="_compile50">
+   <target name="aopc.log4j.logging" depends="_compile">
       <!-- 
          We include log4j.jar and jboss-logging-log4j.jar, so when we turn on logging the 
          we will use log4j configured with a log4j.properties file
       -->
       <path id="aop.classpath">
-         <fileset dir="${jboss.aop.lib50}">
+         <fileset dir="${jboss.aop.lib}">
             <include name="*.jar"/>
          </fileset>
          <!-- We need a log4j.properties on the classpath -->
@@ -192,7 +192,7 @@
       </aopc>
    </target>
 
-   <target name="run.aopc.50.log4j.logging" depends="aopc.log4j.logging">
+   <target name="run.aopc.log4j.logging" depends="aopc.log4j.logging">
       <java fork="yes" failOnError="true" className="Driver">
          <sysproperty key="jboss.aop.path" value="jboss-aop.xml"/>
          <!-- Turn on logging although nothing is really being woven at runtime -->  

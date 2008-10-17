@@ -3,8 +3,8 @@
 <project default="usage" name="JBoss/AOP">
    <import file="../examples-build.xml"/>
 
-   <target name="run.aopc.50" depends="_run.aopc.50"/>
+   <target name="run.aopc" depends="_run.aopc"/>
 
-   <target name="run.loadtime.50" depends="_run.loadtime.50"/>
+   <target name="run.loadtime" depends="_run.loadtime"/>
 </project>
 

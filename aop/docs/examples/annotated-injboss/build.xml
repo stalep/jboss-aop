@@ -67,7 +67,7 @@
       </path>
 
       <path id="classpath">
-         <path refid="jboss.aop.classpath50"/>
+         <path refid="jboss.aop.classpath"/>
          <path refid="jboss.classpath"/>
          <pathelement path="."/>
       </path>
@@ -79,7 +79,7 @@
       <mkdir dir="${lib.dir}"/>
       <mkdir dir="${basic.web.out.dir}"/>
       <mkdir dir="${ear.web.out.dir}"/>
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath50"/>
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
    </target>
 
    <target name="compile" depends="prepare">

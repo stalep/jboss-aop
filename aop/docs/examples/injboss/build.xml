@@ -9,7 +9,7 @@
 
    <target name="prepare" depends="_prepare">
       <!-- Set jboss.dir property to root of your JBoss distribution -->
-      <property name="jboss.dir" value="C:/temp/jboss-4.0.5.GA"/>
+      <property name="jboss.dir" value="C:/temp/jboss-4.2.3.GA"/>
         <!--
            Set jboss.server.config property to either default or all.
               if you set this to default, JBoss should be started with
@@ -67,7 +67,7 @@
       </path>
 
       <path id="classpath">
-         <path refid="jboss.aop.classpath50"/>
+         <path refid="jboss.aop.classpath"/>
          <path refid="jboss.classpath"/>
          <pathelement path="."/>
       </path>
@@ -79,7 +79,7 @@
       <mkdir dir="${lib.dir}"/>
       <mkdir dir="${basic.web.out.dir}"/>
       <mkdir dir="${ear.web.out.dir}"/>
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath50"/>
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
    </target>
 
    <target name="compile" depends="prepare">

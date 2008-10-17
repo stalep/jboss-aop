@@ -4,10 +4,10 @@
 
    <import file="../examples-build.xml"/>
 
-   <target name="aopc50" depends="_compile50">
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath50"/>
+   <target name="aopc" depends="_compile">
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
 
-      <aopc compilerclasspathref="classpath50" classpathref="classpath50" verbose="true">
+      <aopc compilerclasspathref="classpath" classpathref="classpath" verbose="true">
          <classpath path="."/>
          <src path="."/>
          <aoppath>
@@ -18,18 +18,18 @@
 
    </target>
 
-   <target name="run.aopc.50" depends="aopc50">
+   <target name="run.aopc" depends="aopc">
       <java fork="yes" failOnError="true" className="Driver">
          <sysproperty key="jboss.aop.path" value="metadata-aop.xml${path.separator}jboss-aop.xml"/>
-         <classpath refid="classpath50"/>
+         <classpath refid="classpath"/>
       </java>
    </target>
 
-   <target name="run.loadtime.50" depends="_compile50">
+   <target name="run.loadtime" depends="_compile">
       <java fork="yes" failOnError="true" className="Driver">
          <sysproperty key="jboss.aop.path" value="metadata-aop.xml${path.separator}jboss-aop.xml"/>
-         <classpath refid="classpath50"/>
-         <jvmarg value="-javaagent:${aop50jar}"/>
+         <classpath refid="classpath"/>
+         <jvmarg value="-javaagent:${aopjar}"/>
       </java>
    </target>
 
