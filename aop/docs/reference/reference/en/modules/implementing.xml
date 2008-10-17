@@ -184,7 +184,7 @@
    }
 }]]></programlisting> -->
       <para>
-          JBoss AOP provides five types of advice: before, around, after and after-throwing.
+          JBoss AOP provides five types of advice: before, around, after, finally and after-throwing.
          The advice sginature above is the default one for an around advice. Advices types,
          signature rules and overloading will be covered in <xref linkend="advices"/>.
       </para>
@@ -204,7 +204,8 @@
       <para>
          The method <literal>invoke(Invocation)</literal> is the unique advice contained in an interceptor.
          The method <literal>getName()</literal> is used for identification in the JBoss AOP framework.
-         So, this method must return a name that is unique in the whole system (per instance?).
+         So, this method must return a name that is unique in the whole system. It is only really used for
+         aspects added to the <literal>InstanceAdvisor</literal> as shown in <xref linkend="dyn-2"/>.
       </para>
    </sect1>
    <sect1 id="impl-invocation3" revision="1">
