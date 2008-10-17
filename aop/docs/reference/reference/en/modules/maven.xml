@@ -274,7 +274,9 @@
     <para>
       To run it loadtime we only need to add the javaagent option to argLine. Like this:
       <programlisting><![CDATA[
-    <argLine>-javaagent:${settings.localRepository}/org/jboss/jboss-aop/2.0.0.CR3/jboss-aop-2.0.0.CR3.jar -Djboss.aop.path=src/main/resources/jboss-aop_testcase.xml</argLine> ]]></programlisting>
+    <argLine>-javaagent:${settings.localRepository}/org/jboss/jboss-aop/2.0.0.CR3/\
+    jboss-aop-2.0.0.CR3.jar \
+    -Djboss.aop.path=src/main/resources/jboss-aop_testcase.xml</argLine> ]]></programlisting>
     - big thanks to henrik and finn for figuring out how to do this :)
     Note again that the versions used here are just for a reference and to provide as examples. Check the JBoss AOP
     homepage for the up-to-date versions.
