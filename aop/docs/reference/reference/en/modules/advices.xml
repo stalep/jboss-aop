@@ -4,7 +4,7 @@
       Advices are aspect methods that are invoked during specific joinpoint executions.
    </para>
    <para>
-      JBoss AOP provides four types of advice.
+      JBoss AOP provides five types of advice.
    </para>
    <para>
       The default one is the around advice, and it can be used on all execution modes.
