@@ -400,12 +400,9 @@ public Enumeration&lt;URL&gt; getResourceAsStream(String name) throws IOExceptio
       <para>
          JBoss AOP is integrated with JBoss 4.0.1+ application server.  The integration steps are different
          depending on what version of JBoss AS you are using and what JDK version you are using.  It is also dependent
-         on whether you want to use loadtime or compiletime instrumentation.
-      </para>
-      <para>
-         If you wish to use JBoss AS 4.0.0 you will need to use JBoss AOP 1.0 Final since later releases of JBoss AOP leverage
-         improvements in JBoss's deployement architecture. If you do this please consult the docs for JBoss AOP 1.0 Final. It is
-         recommended though that you use the latest versions of JBoss AOP and AS.
+         on whether you want to use loadtime or compiletime instrumentation. JBoss 4.x comes with previous versions of JBoss
+         AOP, which can be upgraded to AOP 2.0.x by using the ant scripts as explained in <xref linkend="installing-jboss40-jdk50"/>.
+         JBoss 5 comes with AOP 2.0.x.
       </para>
       <para>
          Based on what JDK you are on and what loadtime weaving option you want to you, you must configure JBoss AS differently.
@@ -422,6 +419,17 @@ public Enumeration&lt;URL&gt; getResourceAsStream(String name) throws IOExceptio
             it must have the file extension .aop and a jboss-aop.xml file must be contained
             in a META-INF directory, i.e.
             <literal>META-INF/jboss-aop.xml</literal>.
+         </para>
+         <para>
+            Note that in JBoss 5, you MUST specify the schema used, otherwise your information will not be
+            parsed correctly. You do this by adding the <literal>xmlns="urn:jboss:aop-beans:1:0</literal> 
+            attribute to the root <literal>aop</literal> element, as shown here: 
+            <programlisting><![CDATA[
+<aop xmlns="urn:jboss:aop-beans:1.0">
+<!--  The exact contents will be explained below -->
+</aop>
+            ]]>
+            </programlisting>
          </para>
          <para>
             If you want to create anything more than a non-trivial example, using the .aop jar
@@ -512,7 +520,7 @@ public Enumeration&lt;URL&gt; getResourceAsStream(String name) throws IOExceptio
          needed because sometimes a JBoss deployment will not have all the classes a class references.
       </para>
          <para>
-            The next step is to copy the pluggable-instrumentor.jar from the lib-50/ directory of your JBoss AOP
+            The next step is to copy the pluggable-instrumentor.jar from the lib/ directory of your JBoss AOP
             distribution to the bin/ directory of your JBoss AOP application server installation.  Next edit
             run.sh or run.bat (depending on what OS you're on) and add the following to the JAVA_OPTS environment
             variable
@@ -570,7 +578,7 @@ set JAVA_OPTS=%JAVA_OPTS% -Dprogram.name=%PROGNAME% -javaagent:pluggable-instrum
          needed because sometimes a JBoss deployment will not have all the classes a class references.
       </para>
          <para>
-            The next step is to copy the jrockit-pluggable-instrumentor.jar from the lib-50/ directory of your JBoss AOP
+            The next step is to copy the jrockit-pluggable-instrumentor.jar from the lib/ directory of your JBoss AOP
             distribution to the bin/ directory of your JBoss AOP application server installation.  Next edit
             run.sh or run.bat (depending on what OS you're on) and add the following to the JAVA_OPTS and
             JBOSS_CLASSPATH environment variables
