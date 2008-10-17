@@ -249,7 +249,7 @@
          </listitem>
          <listitem>
             <literal>aopclasspath</literal> - This should mirror your class path and contain all JARs/directories
-               that may have annotated aspects (Ses Chapter "Annotated Bindings").  The AOPC compiler will browser
+               that may have annotated aspects (Ses Chapter "Annotated Bindings").  The AOPC compiler will browse
                each class file in this path to determine if any of them are annotationed with
             <literal>@Aspect</literal>.
                This gets used for the

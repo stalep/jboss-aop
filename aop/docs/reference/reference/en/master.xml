@@ -103,9 +103,9 @@
 
    &compiling;
 
-   &maven;
-
    &running;
+
+   &maven;
 
    &reflection;
    
