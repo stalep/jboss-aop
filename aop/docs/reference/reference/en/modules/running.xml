@@ -55,24 +55,8 @@
          <para>
              Running a precompiled aop application is quite similar to running a normal java
              application. In addition to the classpath required for your application you need
-             to specify the files required for aop:
-            <itemizedlist>
-               <listitem>
-                  <literal>javassist.jar</literal>
-               </listitem>
-               <listitem>
-                  <literal>trove.jar</literal>
-               </listitem>
-               <listitem>
-                  <literal>concurrent.jar</literal>
-               </listitem>
-               <listitem>
-                  <literal>jboss-common.jar</literal>
-               </listitem>
-               <listitem>
-                  <literal>jboss-aop-jdk50.jar</literal>
-               </listitem>
-            </itemizedlist>
+             to specify the files required for aop, which are the files in the distribution's
+             <literal>lib/</literal> folder.
          </para>
          <para>
             As an alternative, you can replace all those jars by
@@ -157,11 +141,8 @@ $ run-precompiled classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_an
             package.  JBoss AOP uses this mechanism to weave aspects at class load time with JDK 5.
             Using loadtime with JDK 5 is really easy.  All you have to do is define an additional standard switch
             on the Java command line.
-               <literal>-javaagent:jboss-aop-jdk50.jar</literal>. For these examples make sure that
-            you use
-               <literal>jboss-aop-jdk50.jar</literal> and not
-               <literal>jboss-aop.jar</literal> in your classpath.
-            Here's how run an AOP application in JDK 5.0 with loadtime instrumentation,
+               <literal>-javaagent:jboss-aop.jar</literal>. 
+            Here's how run an AOP application with loadtime instrumentation,
             where your jboss-aop.xml file is not part of a jar:
                <programlisting>
 $ java -cp=&lt;classpath as described above&gt; -Djboss.aop.path=&lt;path to jboss-aop.xml&gt; \
@@ -169,7 +150,7 @@ $ java -cp=&lt;classpath as described above&gt; -Djboss.aop.path=&lt;path to jbo
                </programlisting>
             </para>
             <para>
-            And to run an AOP application in JDK 5.0 with loadtime instrumentation,
+            And to run an AOP application with loadtime instrumentation,
             where your application contains a jar with a META-INF/jboss-aop.xml file:
                <programlisting>
 $ java -cp=&lt;classpath as described above&gt; -javaagent:jboss-aop-jdk50.jar \
@@ -179,7 +160,7 @@ $ java -cp=&lt;classpath as described above&gt; -javaagent:jboss-aop-jdk50.jar \
             <para>
             In the /bin folder of the distribution we have provided batch/script files to make
             this easier. It includes all the aop libs for you, so you just have to worry
-            about your files. The usage for JDK 5 is:
+            about your files. The usage:
                <programlisting>
 $ run-load classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] \
       com.blah.MyMainClass [args...]
@@ -291,12 +272,9 @@ $ run-load classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated
                   <para>
                      To increase overall runtime performance, JBoss AOP has to dynamically create a lot of extra code.
                      If you turn off these optimizations, JBoss AOP can weave a bit quicker.  There is a good chance, depending on your application
-                     that you will not even notice that these optimizations are turned off.  The <literal>jboss.aop.optimized</literal>
-                     system property can be set to turn off optimizations.
+                     that you will not even notice that these optimizations are turned off.  See <xref linkend="insrumentation-modes"/>
+                     for how to switch between weaving modes.
                   </para>
-                  <programlisting>
-                     java -Djboss.aop.optimized=false ...
-                  </programlisting>
                </listitem>
             </varlistentry>
             <varlistentry>
@@ -321,14 +299,14 @@ $ run-load classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated
                      </para>
                   </listitem>
                </varlistentry>
-               <varlistentry>
+               <!-- varlistentry>
                   <term>bootclasspath Vs. -javaagent</term>
                   <listitem>
                      <para>
                         It is significantly slower to use the -javaagent vs. the bootclasspath approach. 
                      </para>
                   </listitem>
-               </varlistentry>
+               </varlistentry -->
                <varlistentry>
                   <term>Ignore</term>
                   <listitem>
