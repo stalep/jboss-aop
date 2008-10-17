@@ -46,7 +46,7 @@ public class ScenarioPropertyReaderFactory
       URL url = this.getClass().getProtectionDomain().getCodeSource().getLocation();
       System.out.println("class url: " + url);
       String location = url.toString();
-      int index = location.indexOf("/output/");
+      int index = location.indexOf("/target/");
       location = location.substring(0, index);
       
       baseDirectory = location + "/src/resources/test/stress/";     

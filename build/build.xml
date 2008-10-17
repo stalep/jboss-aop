@@ -374,9 +374,9 @@
     <!-- Now pull everything together                        -->
     <!-- ==================================================  -->
 
-    <property name="aop.50.location" value="${project.root}/aop/output/lib/jboss-aop.jar"/>
-    <property name="aop.50.single.location" value="${project.root}/aop/output/lib/jboss-aop-single.jar"/>
-    <property name="aop.aspect-library50.location" value="${project.root}/aspects/output/lib/jboss-standalone-aspect-library.jar"/>
+    <property name="aop.50.location" value="${project.root}/aop/target/lib/jboss-aop.jar"/>
+    <property name="aop.50.single.location" value="${project.root}/aop/target/lib/jboss-aop-single.jar"/>
+    <property name="aop.aspect-library50.location" value="${project.root}/aspects/target/jboss-aop-aspects.jar"/>
     <property name="aop.asintegration-core.location" value="${project.root}/asintegration-core/target/jboss-aop-asintegration-core.jar"/>
     <property name="aop.asintegration-jmx.location" value="${project.root}/asintegration-jmx/target/jboss-aop-asintegration-jmx.jar"/>
     <property name="aop.asintegration-mc.location" value="${project.root}/asintegration-mc/target/jboss-aop-asintegration-mc.jar"/>
@@ -392,7 +392,7 @@
     <!-- The JDK 5 libs -->
     <copy todir="${project.release}/lib" file="${aop.50.location}"/>
     <copy todir="${project.release}/lib" file="${aop.50.single.location}"/>
-    <copy todir="${project.release}/lib" file="${project.root}/aop/output/lib/jboss-aop-client.jar"/>
+    <copy todir="${project.release}/lib" file="${project.root}/aop/target/lib/jboss-aop-client.jar"/>
     <copy todir="${project.release}/lib" file="${aop.aspect-library50.location}"/>
     <copy todir="${project.release}/lib" file="${aop.jrockit-pluggable-instrumentor.location}"/>
     <copy todir="${project.release}/lib" file="${aop.pluggable-instrumentor.location}"/>
@@ -436,7 +436,7 @@
     <copy todir="${project.release}/jboss-50-install" file="${aop.readme-as5.location}"/>
     <copy tofile="${project.release}/jboss-50-install/lib/javassist.jar" file="${javassist:javassist:jar}"/>
     <copy tofile="${project.release}/jboss-50-install/lib/trove.jar" file="${trove:trove:jar}"/>
-    <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer" file="${aop.aspect-library50.location}"/>
+    <copy tofile="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer/jboss-standalone-aspect-library.jar" file="${aop.aspect-library50.location}"/>
 
 
     <copy todir="${project.release}" file="RELEASE_NOTES.html"/>

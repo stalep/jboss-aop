@@ -62,7 +62,7 @@ public class TypeDefRedeployTestCase extends AOPTestWithSetup
       URL url = this.getClass().getProtectionDomain().getCodeSource().getLocation();
       System.out.println("class url: " + url);
       String location = url.toString();
-      int index = location.indexOf("/output/");
+      int index = location.indexOf("/target/");
       location = location.substring(0, index);
       
       location = location + "/src/resources/test/regression/jboss-aop.xml";

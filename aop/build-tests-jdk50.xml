@@ -29,24 +29,12 @@
    <!-- Initialization                                                     -->
    <!-- ================================================================== -->
 
-   <!--
-      | Initialize the build system.  Must depend on '_buildmagic:init'.
-      | Other targets should depend on 'init' or things will mysteriously fail.
-    -->
-
    <target name="init" depends="init-maven-environment">
 
-     <!-- Defines repository.home -->
+     <!-- Defines property overrides -->
      <property file="local.properties"/>
 
-     <!-- Bits for building source archives -->
-     <patternset id="source.ignore">
-       <exclude name="**/output/**"/>
-       <exclude name="**/target/**"/>
-       <exclude name="**/.svn/**" />
-     </patternset>
-     
-     <!-- Set the version of the release here -->
+     <!-- Set the name and version of the project here -->
      <property name="project.name" value="${maven.project.artifactId}"/>
      <property name="project.version" value="${maven.project.version}"/>
      <property name="project.build.name" value="${project.name}-${project.version}"/>
@@ -55,40 +43,21 @@
      <echo message="Title: ${project.title}"/>
 
      <!-- Setup the project environment. -->
-     <dirname property="project.root" file="${basedir}"/>
-     <property name="project.build" value="${project.root}/build"/>
-     <property name="project.tools" value="${project.root}/tools"/>
-     <property name="project.output" value="${project.build}/output"/>
-     <property name="project.release" value="${project.output}/${project.build.name}"/>
-
-     <!-- Setup the module environment. -->
-     <property name="module.root" value="${basedir}"/>
-     <property file="${module.root}/local.properties"/>
-     <property name="module.source" value="${module.root}/src"/>
-     <property name="module.output" value="${module.root}/output"/>
-     <property name="module.tools" value="${module.root}/tools"/>
+     <dirname property="project.parent.root" file="${basedir}"/>
+     <property name="project.root" value="${basedir}"/>
+     <property name="project.build" value="${project.parent.root}/build"/>
+     <property name="project.tools" value="${project.parent.root}/tools"/>
+     <property name="project.source" value="${project.root}/src"/>
+     <property name="project.output" value="${maven.project.build.directory}"/>
 
      <!-- Include user and project property overrides. -->
      <property file="${project.build}/local.properties"/>
-     <property file="${user.home}/.buildmagic.properties"/>
      <property file="${user.home}/.ant.properties"/>
 
      <!-- Setup the build.log -->
      <property name="buildlog.level" value="info"/>
-     <record name="${basedir}/build.log" append="no" loglevel="${buildlog.level}"/>
+     <record name="${project.output}/build.log" append="no" loglevel="${buildlog.level}"/>
      <property name="init-buildlog.disable" value="true"/>
-
-     <!-- Setup the build timestamp & build identifer properties -->
-     <tstamp>
-       <format property="build.number" pattern="yyyyMMddHHmm"/>
-       <format property="YEAR" pattern="yyyy"/>
-     </tstamp>
-     <property name="build.id" value="${build.number}"/>
-
-     <!-- The combined library classpath -->
-     <path id="library.classpath">
-        <path refid="maven.dependencies.test.classpath"/>
-     </path>
 
      <path id="jboss.test.classpath">
        <pathelement location="${jboss:jboss-test:jar}"/>
@@ -96,9 +65,8 @@
      <path id="junit.junit.classpath">
        <pathelement location="${junit:junit:jar}"/>
      </path>
-     <property name="build.directory" value="${maven.project.build.directory}"/>
      <property name="build.artifact.name" value="${maven.project.build.finalName}.jar"/>
-     <property name="build.artifact" value="${build.directory}/${build.artifact.name}"/>
+     <property name="build.artifact" value="${maven.project.build.directory}/${build.artifact.name}"/>
      <path id="jboss.aop.classpath">
        <pathelement location="${build.artifact}"/>
      </path>
@@ -125,22 +93,17 @@
      </condition>
 
      <!-- Where source files live -->
-     <property name="source.tests.java" value="${module.source}/test"/>
-     <property name="source.etc" value="${module.source}/etc"/>
-     <property name="source.res" value="${module.source}/resources"/>
+     <property name="source.tests.java" value="${project.source}/test"/>
+     <property name="source.etc" value="${project.source}/etc"/>
+     <property name="source.res" value="${project.source}/resources"/>
      <property name="source.stylesheets" value="src/stylesheets"/>
      <echo message="${source.tests.java}"/>
     
      <!-- Where build generated files will go -->
-     <property name="build.reports" value="output/reports"/>
-     <property name="build.stylesheets" value="${module.output}/stylesheets"/>
-     <property name="build.tests.classes" value="${module.output}/tests.classes"/>
-     <property name="build.lib" value="${module.output}/lib"/>
-
-     <!-- Install/Release structure -->
-     <property name="install.id" value="${module.name}-${module.version}"/>
-     <property name="release.id" value="${install.id}"/>
-     <property name="install.root" value="${module.output}/${install.id}"/>
+     <property name="build.reports" value="${project.output}/reports"/>
+     <property name="build.stylesheets" value="${project.output}/stylesheets"/>
+     <property name="build.tests.classes" value="${project.output}/test-classes"/>
+     <property name="build.lib" value="${project.output}/lib"/>
 
      <!-- classpath and local.classpath must have a value using with a path -->
      <property name="classpath" value=""/>
@@ -150,7 +113,7 @@
      <path id="javac.classpath">
         <pathelement path="${classpath}"/>
         <pathelement path="${local.classpath}"/>
-        <path refid="library.classpath"/>
+        <path refid="maven.dependencies.test.classpath"/>
         <pathelement path="${build.artifact}"/>
      </path>
 
@@ -160,7 +123,7 @@
      </path>
 
      <path id="test.classpath">
-        <path refid="library.classpath"/>
+        <path refid="maven.dependencies.test.classpath"/>
         <pathelement path="${build.artifact}"/>
      </path>
 
@@ -177,7 +140,7 @@
      </path>
 
      <path id="aopc.task.classpath">
-        <path refid="library.classpath"/>
+        <path refid="maven.dependencies.test.classpath"/>
         <path refid="jboss.aop.classpath"/>
      </path>
 
@@ -186,18 +149,10 @@
         <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
      </path>
 
-     <!-- The classpath required to build javadocs. -->
-     <path id="javadoc.classpath">
-        <path refid="javac.classpath"/>
-     </path>
-
      <!-- The temp folder for aopc -->
-     <property name="aopc.tmpdir" value="output/aopctmp"/>
+     <property name="aopc.tmpdir" value="${maven.project.build.directory}/aopctmp"/>
      <delete dir="${aopc.tmpdir}" failonerror="true" deleteonexit="true"/>
   	<mkdir dir="${aopc.tmpdir}"/>
-
-     <!-- Packages to include when generating api documentation -->
-     <property name="javadoc.packages" value="org.jbos.aop.*"/>
 
      <!-- Override JUnit defaults -->
      <property name="junit.timeout" value="240000"/> <!-- 4 minutes -->

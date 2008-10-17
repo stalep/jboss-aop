@@ -96,7 +96,7 @@ public class PostWeavingMixinsTestCase extends AOPTestWithSetup
       URL url = this.getClass().getProtectionDomain().getCodeSource().getLocation();
       System.out.println("class url: " + url);
       String location = url.toString();
-      int index = location.indexOf("/output/tests.classes");
+      int index = location.indexOf("/target/test-classes");
       location = location.substring(0, index);
 
       location = location + "/src/resources/test/postweavingmixins/mixins-aop.xml";

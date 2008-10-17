@@ -10,6 +10,7 @@
   <description>JBoss AOP Aspects</description>
 
   <build>
+    <finalName>${artifactId}</finalName>
     <sourceDirectory>src/main</sourceDirectory>
     <!--<testSourceDirectory>src/test</testSourceDirectory>-->
     <resources>
@@ -54,41 +55,6 @@
           <forkMode>always</forkMode>
           <redirectTestOutputToFile>true</redirectTestOutputToFile>
           <skip>true</skip>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.2</version>
-        <executions>
-          <execution>
-            <id>copy-output-jars</id>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <tasks>
-                <mkdir dir="${basedir}/output" />
-                <mkdir dir="${basedir}/output/lib" />
-                <copy file="${project.build.directory}/${project.artifactId}-${project.version}.jar" tofile="${basedir}/output/lib/jboss-standalone-aspect-library.jar" />
-                <copy file="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" tofile="${basedir}/output/lib/jboss-standalone-aspect-library-sources.jar" />
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- Clean the output directory created by the antrun plugin -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>${basedir}/output</directory>
-            </fileset>
-          </filesets>
         </configuration>
       </plugin>
     </plugins>

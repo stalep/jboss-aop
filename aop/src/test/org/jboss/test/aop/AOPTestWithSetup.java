@@ -63,7 +63,7 @@ public class AOPTestWithSetup extends AbstractTestCaseWithSetup
    {
       URL url = this.getClass().getProtectionDomain().getCodeSource().getLocation();
       String location = url.toString();
-      int index = location.indexOf("/output/");
+      int index = location.indexOf("/target/");
       location = location.substring(0, index);
       
       location = location + relativePath;

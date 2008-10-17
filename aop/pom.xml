@@ -169,16 +169,15 @@
             <phase>package</phase>
             <configuration>
               <tasks>
-                <mkdir dir="${basedir}/output" />
-                <mkdir dir="${basedir}/output/lib" />
-                <copy todir="${basedir}/output/etc">
+                <mkdir dir="${project.build.directory}/lib" />
+                <copy todir="${project.build.directory}/etc">
                   <fileset dir="${basedir}/src/etc" />
                 </copy>
-                <copy file="${project.build.directory}/${project.artifactId}.jar" tofile="${basedir}/output/lib/jboss-aop.jar" />
-                <copy file="${project.build.directory}/${project.artifactId}-sources.jar" tofile="${basedir}/output/lib/jboss-aop-sources.jar" />
-                <copy file="${project.build.directory}/${project.artifactId}-client.jar" tofile="${basedir}/output/lib/jboss-aop-client.jar" />
-                <copy file="${project.build.directory}/${project.artifactId}-client-sources.jar" tofile="${basedir}/output/lib/jboss-aop-client-sources.jar" />
-                <copy file="${project.build.directory}/${project.artifactId}-single.jar" tofile="${basedir}/output/lib/jboss-aop-single.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}.jar" tofile="${project.build.directory}/lib/jboss-aop.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}-sources.jar" tofile="${project.build.directory}/lib/jboss-aop-sources.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}-client.jar" tofile="${project.build.directory}/lib/jboss-aop-client.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}-client-sources.jar" tofile="${project.build.directory}/lib/jboss-aop-client-sources.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}-single.jar" tofile="${project.build.directory}/lib/jboss-aop-single.jar" />
               </tasks>
             </configuration>
           </execution>
@@ -283,19 +282,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <!-- Clean the output directory created by the antrun plugin -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>${basedir}/output</directory>
-            </fileset>
-          </filesets>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -434,9 +420,8 @@
                        <include name="org/jboss/aop/hook/JRockit*" />
                        <classpath refid="javac.jrockit.classpath" />
                     </javac>
-                    <mkdir dir="${basedir}/output" />
-                    <mkdir dir="${basedir}/output/lib" />
-                    <jar jarfile="${basedir}/output/lib/jrockit-pluggable-instrumentor.jar" manifest="${basedir}/src/etc/default.mf">
+                    <mkdir dir="${project.build.directory}/lib" />
+                    <jar jarfile="${project.build.directory}/lib/jrockit-pluggable-instrumentor.jar" manifest="${basedir}/src/etc/default.mf">
                        <fileset dir="${project.build.outputDirectory}">
                           <include name="org/jboss/aop/hook/JRockitPluggableClassPreProcessor.class" />
                           <include name="org/jboss/aop/hook/JDK14*.class" />
