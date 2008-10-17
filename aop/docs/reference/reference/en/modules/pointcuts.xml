@@ -404,7 +404,7 @@ hasfield(public java.lang.String *->*)</programlisting>
                <literal>OR</literal>  logical or.
             </listitem>
             <listitem>
-               Parathesis can be used for grouping expressions.
+               Paranthesis can be used for grouping expressions.
             </listitem>
          </itemizedlist>
       </para>
@@ -418,7 +418,7 @@ execution(* *->@SomeAnnotation(..)) OR field(* *->@SomeAnnotation)</programlisti
    <sect1 id="pointcuts-ref" revision="1">
       <title>Pointcut References</title>
       <para>
-         Pointcuts can be named in XML or annotation bindings (See in later chapters).  They can be referenced directly
+         Pointcuts can be named in XML (<xref linkend="xml"/>) or annotation (<xref linkend="annotated"/>) bindings.  They can be referenced directly
          within a pointcut expression.
       </para>
       <programlisting>some.named.pointcut OR call(void Foo->someMethod())</programlisting>
