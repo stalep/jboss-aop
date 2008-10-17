@@ -52,10 +52,21 @@
             <literal>.aop</literal> and placed within the deploy/
             directory or embedded as a nested archive.
          </para>
+         <para>
+            Note that in JBoss 5, you MUST specify the schema used, otherwise your information will not be
+            parsed correctly. You do this by adding the <literal>xmlns="urn:jboss:aop-beans:1:0</literal> 
+            attribute to the root <literal>aop</literal> element, as shown here: 
+            <programlisting><![CDATA[
+<aop xmlns="urn:jboss:aop-beans:1.0">
+<!--  The exact contents will be explained below -->
+</aop>
+            ]]>
+            </programlisting>
+         </para>
       </sect2>
    </sect1>
 
-   <sect1 id="xml-dtd" revision="1">
+   <sect1 id="xml-schema" revision="1">
       <title>XML Schema</title>
       <para>
          The xml schema can be found in the distribution's <literal>etc/</literal>literal> folder.
@@ -462,7 +473,7 @@
             <varlistentry>
                <term>interfaces</term>
                <listitem>
-                  <para>defines the list of interfaces you are introduction</para>
+                  <para>defines the list of interfaces you are introducing</para>
                </listitem>
             </varlistentry>
             <varlistentry>
@@ -493,7 +504,9 @@
         introduce an annotation to a class, method, field, or constructor.
       </para>
       <programlisting><![CDATA[<annotation-introduction expr="constructor(POJO->new())">
-      @org.jboss.complex (ch='a', string="hello world", flt=5.5, dbl=6.6, shrt=5, lng=6, integer=7, bool=true, annotation=@single("hello"), array={"hello", "world"}, clazz=java.lang.String)
+      @org.jboss.complex (ch='a', string="hello world", flt=5.5, dbl=6.6, shrt=5, lng=6, \
+      integer=7, bool=true, annotation=@single("hello"), array={"hello", "world"}, \
+      clazz=java.lang.String)
 </annotation-introduction>]]></programlisting>
       <para>
          The
@@ -553,8 +566,8 @@
    <sect1 id="xml-typedef" revision="1">
       <title>typedef</title>
       <programlisting><![CDATA[
-<typedef name="jmx" expr="class(@org.jboss.jmx.@MBean) OR
-                          has(* *->org.jboss.jmx.@ManagedOperation) OR
+<typedef name="jmx" expr="class(@org.jboss.jmx.@MBean) OR \
+                          has(* *->org.jboss.jmx.@ManagedOperation) OR \
                           has(* *->org.jboss.jmx.@ManagedAttribute)"/>]]></programlisting>
       <para>
          <literal>typedef</literal>s allow you to define complex type expressions and then use then pointcut expressions.
@@ -571,10 +584,28 @@
       <title>dynamic-cflow</title>
       <para>
          <literal>dynamic-cflow</literal> allows you to define code that will be executed that must be resolved true to trigger
-         positive on a cflow test on an advice binding. (See Dynamic CFlow for more information).
-         The test happens dynamically at runtime and when combined with a pointcut expression allows you to
-         do runtime checks on whether a advice binding should run or not.  Create a dynamic cflow class, then you
-         must declare it with XML so that it can be used in bind expressions.
+         positive on a cflow test on an advice binding. The test happens dynamically at runtime and when combined with a pointcut expression allows you to
+         do runtime checks on whether a advice binding should run or not.  Create a dynamic cflow class, by implementing the following interface.
+         <programlisting>
+package org.jboss.aop.pointcut;
+
+import org.jboss.aop.joinpoint.Invocation;
+
+/**
+ * Dynamic cflow allows you to programmatically check to see if
+ * you want to execute a given advice binding.
+ *
+ * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
+ * @version $Revision$
+ *
+ **/
+public interface DynamicCFlow
+{
+   boolean shouldExecute(Invocation invocation);
+}
+         </programlisting>
+         
+         You must declare it with XML so that it can be used in bind expressions.
       </para>
       <programlisting><![CDATA[<dynamic-cflow name="simple" class="org.jboss.SimpleDynamicCFlow"/>]]></programlisting>
       <para>
@@ -651,10 +682,12 @@
                                               String tag, String classExpr) throws Exception;
 
    public void bind(ClassAdvisor advisor, ClassMetaDataBinding data,
-                    CtMethod[] methods, CtField[] fields, CtConstructor[] constructors) throws Exception;
+                    CtMethod[] methods, CtField[] fields, CtConstructor[] constructors) \
+                    throws Exception;
 
    public void bind(ClassAdvisor advisor, ClassMetaDataBinding data,
-                    Method[] methods, Field[] fields, Constructor[] constructors) throws Exception;
+                    Method[] methods, Field[] fields, Constructor[] constructors) \ 
+                    throws Exception;
 }</programlisting>
       <para>
           Any arbitrary XML can be in the
