@@ -259,13 +259,21 @@ package org.jboss.aop;
 @Target({ElementType.METHOD, ElementType.TYPE}) @Retention(RetentionPolicy.RUNTIME)
 public @interface Bind
 {
+  AdviceType type() default AdviceType.AROUND;
   String pointcut();
   String cflow() default "";
 }
          </programlisting>
          The
-         <literal>@Bind</literal> annotation takes two parameters:
+         <literal>@Bind</literal> annotation takes three parameters:
          <itemizedlist>
+            <listitem>
+               <literal>type</literal>, valid values are <literal>AdviceType.AROUND</literal>,
+               <literal>AdviceType.BEFORE</literal>, <literal>AdviceType.AFTER</literal>,
+               <literal>AdviceType.THROWING</literal> and <literal>AdviceType.FINALLY</literal>.
+               See <xref linkend="advices"/> for a description of the different advice types.
+               If omitted, the default is an around advice.
+            </listitem>
             <listitem>
                <literal>pointcut</literal>, which is a pointcut expression resolving to the
                joinpoints you want to bind an aspect/interceptor to
