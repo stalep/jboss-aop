@@ -174,11 +174,11 @@
                 <copy todir="${basedir}/output/etc">
                   <fileset dir="${basedir}/src/etc" />
                 </copy>
-                <copy file="${project.build.directory}/${project.artifactId}.jar" tofile="${basedir}/output/lib/jboss-aop-jdk50.jar" />
-                <copy file="${project.build.directory}/${project.artifactId}-sources.jar" tofile="${basedir}/output/lib/jboss-aop-jdk50-sources.jar" />
-                <copy file="${project.build.directory}/${project.artifactId}-client.jar" tofile="${basedir}/output/lib/jboss-aop-jdk50-client.jar" />
-                <copy file="${project.build.directory}/${project.artifactId}-client-sources.jar" tofile="${basedir}/output/lib/jboss-aop-jdk50-client-sources.jar" />
-                <copy file="${project.build.directory}/${project.artifactId}-single.jar" tofile="${basedir}/output/lib/jboss-aop-jdk50-single.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}.jar" tofile="${basedir}/output/lib/jboss-aop.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}-sources.jar" tofile="${basedir}/output/lib/jboss-aop-sources.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}-client.jar" tofile="${basedir}/output/lib/jboss-aop-client.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}-client-sources.jar" tofile="${basedir}/output/lib/jboss-aop-client-sources.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}-single.jar" tofile="${basedir}/output/lib/jboss-aop-single.jar" />
               </tasks>
             </configuration>
           </execution>

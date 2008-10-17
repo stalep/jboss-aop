@@ -125,7 +125,7 @@ $ java -cp=&lt;classpath as described above&gt; com.blah.MyMainClass
             this easier. It includes all the aop libs for you, so you just have to worry
             about your files. The usage:
             <programlisting>
-$ run-precompiled15 classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] \
+$ run-precompiled classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] \
       com.blah.MyMainClass [args...]
             </programlisting>
             If your application is not in a jar with a META-INF/jboss-aop.xml file, you must
@@ -181,7 +181,7 @@ $ java -cp=&lt;classpath as described above&gt; -javaagent:jboss-aop-jdk50.jar \
             this easier. It includes all the aop libs for you, so you just have to worry
             about your files. The usage for JDK 5 is:
                <programlisting>
-$ run-load15 classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] \
+$ run-load classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] \
       com.blah.MyMainClass [args...]
                </programlisting>
             The parameters have the same meaning as for the run-precompiled scripts.
@@ -378,11 +378,11 @@ $ java -cp=&lt;classpath as described above&gt; -javaagent:jboss-aop-jdk50.jar=-
             </programlisting>
          </para>
          <para>
-            The <literal>run-load15HotSwap</literal> batch/script files contained in the /bin folder of the distribution are similar to the
-            <literal>run-load15</literal> ones, described in the previous subsection. All aop libs are included in these script files.
+            The <literal>run-loadHotSwap</literal> batch/script files contained in the /bin folder of the distribution are similar to the
+            <literal>run-load</literal> ones, described in the previous subsection. All aop libs are included in these script files.
             To use them, run:
             <programlisting>
-$ run-load15 classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] \
+$ run-load classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] \
 		com.blah.MyMainClass [args...]
             </programlisting>
          </para>

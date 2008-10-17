@@ -20,8 +20,7 @@
       <title>Installing Standalone</title>
 
       <para>
-         There's nothing really to install if you're running outside the JBoss application server.
-         If you're using JDK 5.0, use the libraries under <literal>lib-50/</literal>.
+         There's nothing really to install if you're running outside the JBoss application server. Just use the libraries under <literal>lib/</literal>.
       </para>
    </sect1>
 

@@ -2,17 +2,22 @@
 
 
 usage(){
-   echo Script file for running loadtime instrumented aop applications for JDK 1.5
+   echo Batch file for running the aop precopiler
    echo Usage:
-   echo run-load-15.sh classpath [-aoppath path_to_aop.xml [-aopclasspath path_to_annotated] Main.class [args...]
+   echo aopc.sh [-aoppath path_to_aop.xml [-aopclasspath path_to_annotated] [-report] [-verbose]  dir_or_file+
    echo 
    echo    classpath:        Classpath of your sourcefiles and all required libraries
    echo 
    echo    path_to_.aop.xml: Path to your *-aop.xml files. Use colon as separator  if you have more than one
    echo 
    echo    path_to_annotated Path to jars/directories that have annotated aspects. Use colon as separator if you have more than one.
-   echo
-   echo    Main.class:       Your main class
+   echo 
+   echo    dir_or_file:      Directory containing files to be aop precompiled
+   echo 
+   echo    -verbose:         Specify if you want verbose output
+   echo 
+   echo    -report:          If specified, classes do not get instrumented. Instead you get an xml file containing the bindings applied.
+   
    exit 1
 }
 
@@ -68,21 +73,19 @@ fi
 
 
 
-
-AOPC_CLASSPATH=../lib-50/javassist.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-aop-jdk50-client.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-reflect.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-mdr.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-logging-log4j.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-logging-spi.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-standalone-aspect-library-jdk50.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/log4j.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/pluggable-instrumentor.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-aop-jdk50.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/jboss-common-core.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib-50/trove.jar
+AOPC_CLASSPATH=../lib/javassist.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/jboss-aop-client.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/jboss-reflect.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/jboss-mdr.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/jboss-logging-log4j.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/jboss-logging-spi.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/jboss-standalone-aspect-library.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/log4j.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/pluggable-instrumentor.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/jboss-aop.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/jboss-common-core.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:../lib/trove.jar
 AOPC_CLASSPATH=$AOPC_CLASSPATH:$USER_CLASSPATH
-
 
 CTR=0
 
@@ -90,10 +93,9 @@ for param in $*; do
    
    CTR=`expr $CTR + 1`
    if [ $CTR -gt $FILESTART ]; then
-      MAINCLASS_AND_ARGS=$MAINCLASS_AND_ARGS" "$param
+      ARGS_AND_FILES=$ARGS_AND_FILES" "$param
    fi
 done
-
 
 #Check for cygwin and convert path if necessary
 if (cygpath --version) >/dev/null 2>/dev/null; then
@@ -101,6 +103,5 @@ if (cygpath --version) >/dev/null 2>/dev/null; then
 fi
 
 
-java -javaagent:../lib-50/jboss-aop-jdk50.jar -classpath $AOPC_CLASSPATH $AOPPATH $AOPCLASSPATH $MAINCLASS_AND_ARGS
-
+java -classpath $AOPC_CLASSPATH $AOPPATH $AOPCLASSPATH org.jboss.aop.standalone.Compiler $ARGS_AND_FILES
 

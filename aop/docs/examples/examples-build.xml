@@ -16,15 +16,15 @@
       description="Set up the common paths and properties needed later">
 
       <property name="jboss.aop.root" value="../../../.."/>
-      <property name="jboss.aop.lib50" value="${jboss.aop.root}/lib-50"/>
+      <property name="jboss.aop.lib" value="${jboss.aop.root}/lib"/>
 
       <path id="jboss.aop.classpath50">
-         <fileset dir="${jboss.aop.lib50}">
+         <fileset dir="${jboss.aop.lib}">
             <include name="*.jar"/>
          </fileset>
       </path>
 
-      <property name="aop50jar" value="${jboss.aop.lib50}/jboss-aop-jdk50.jar"/>
+      <property name="aop50jar" value="${jboss.aop.lib}/jboss-aop.jar"/>
 
       <path id="classpath50">
          <path refid="jboss.aop.classpath50"/>

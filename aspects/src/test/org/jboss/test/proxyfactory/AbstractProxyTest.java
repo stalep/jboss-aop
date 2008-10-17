@@ -38,6 +38,7 @@ import org.jboss.test.AbstractTestDelegate;
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision$
  */
+@SuppressWarnings("unchecked")
 public abstract class AbstractProxyTest extends AbstractTestCaseWithSetup
 {
    /** The proxy factory */

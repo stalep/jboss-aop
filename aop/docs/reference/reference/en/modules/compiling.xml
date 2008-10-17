@@ -85,7 +85,7 @@
       <!--            JDK version 1.5                                 -->
 
       <path id="jboss.aop.classpath">
-         <pathelement path="../../../jboss-aop-jdk50.jar"/>
+         <pathelement path="../../../jboss-aop.jar"/>
       </path>
 
       <!--            JDK version 1.5 - END                           -->]]>
@@ -108,7 +108,7 @@
       <!--            JDK version 1.5                                 -->
 
       <path id="jboss.aop.classpath">
-         <pathelement path="../../../jboss-aop-jdk50.jar"/>
+         <pathelement path="../../../jboss-aop.jar"/>
       </path>
       
       <!--            JDK version 1.5 - END                           -->
@@ -316,7 +316,7 @@ $java -classpath ... [-Djboss.aop.path=...] [-Djboss.aop.class.path=...] \
          this easier. It includes all the aop libs for you, so you just have to worry
          about your files. The usage:
          <programlisting>
-$ aopc15 &lt;classpath&gt; [-aoppath ...] [-aopclasspath ...] [-report] [-verbose] \
+$ aopc &lt;classpath&gt; [-aoppath ...] [-aopclasspath ...] [-report] [-verbose] \
       &lt;class files or directories&gt;+
          </programlisting>
       </para>

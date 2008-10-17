@@ -42,29 +42,30 @@ goto setupArgs
 
 
 REM Setup AOP classpath
-SET AOPC_CLASSPATH=..\lib-50\javassist.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-aop-jdk50-client.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-reflect.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-mdr.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-logging-log4j.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-logging-spi.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-standalone-aspect-library-jdk50.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\log4j.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\pluggable-instrumentor.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-aop-jdk50.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\jboss-common-core.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib-50\trove.jar
+SET AOPC_CLASSPATH=..\lib\javassist.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-aop-client.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-reflect.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-mdr.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-logging-log4j.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-logging-spi.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-standalone-aspect-library.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\log4j.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\pluggable-instrumentor.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-aop.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-aspect-library.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-common-core.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\trove.jar
 SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%USER_CLASSPATH%
 
 
-java -javaagent:../lib-50/jboss-aop-jdk50.jar=-hotSwap -classpath %AOPC_CLASSPATH% %AOPPATH% %AOPCLASSPATH% %MAINCLASS_AND_ARGS%
+java -classpath %AOPC_CLASSPATH% %AOPPATH% %AOPCLASSPATH% org.jboss.aop.standalone.Compiler %ARGS_AND_FILES%
 
 goto end
 
 :display_usage
-echo Script file for running loadtime instrumented aop applications for JDK 1.5
+echo Batch file for running the aop precopiler
 echo Usage:
-echo run-load15.bat classpath [-aoppath path_to_aop.xml [-aopclasspath path_to_annotated] [-report] [-verbose]  dir_or_file+
+echo aopc.bat classpath [-aoppath path_to_aop.xml [-aopclasspath path_to_annotated] [-report] [-verbose]  dir_or_file+
    echo    classpath:        Classpath of your sourcefiles and all required libraries
    echo    path_to_.aop.xml: Path to your *-aop.xml files. Use colon as separator  if you have more than one
    echo    path_to_annotated Path to jars/directories that have annotated aspects. Use colon as separator if you have more than one.

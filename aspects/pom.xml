@@ -71,7 +71,7 @@
               <tasks>
                 <mkdir dir="${basedir}/output" />
                 <mkdir dir="${basedir}/output/lib" />
-                <copy file="${project.build.directory}/${project.artifactId}-${project.version}.jar" tofile="${basedir}/output/lib/jboss-standalone-aspect-library-jdk50.jar" />
+                <copy file="${project.build.directory}/${project.artifactId}-${project.version}.jar" tofile="${basedir}/output/lib/jboss-standalone-aspect-library.jar" />
                 <copy file="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" tofile="${basedir}/output/lib/jboss-standalone-aspect-library-sources.jar" />
               </tasks>
             </configuration>
