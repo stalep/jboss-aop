@@ -100,7 +100,7 @@
    
    <target name="install.bin" depends="init">
       <copy todir="${jboss.bin.dir}">
-         <fileset dir="../../lib-50">
+         <fileset dir="../../lib">
             <include name="pluggable-instrumentor.jar"/>
             <include name="jrockit-pluggable-instrumentor.jar"/>
          </fileset>
