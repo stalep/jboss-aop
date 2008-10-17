@@ -5,6 +5,7 @@
 <project name="common-tasks">
 
   <target name="init-maven-environment" xmlns:maven="urn:maven-artifact-ant"
+      unless="maven.init.complete"
       description="Initialize properties for accessing maven configuration">
 
     <path id="maven-ant-tasks.classpath" path="../tools/lib/maven-ant-tasks.jar" />
