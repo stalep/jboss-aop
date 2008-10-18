@@ -31,39 +31,35 @@
 
 
       <path id="javassist.classpath">
-         <pathelement path="lib-50/javassist.jar"/>
+         <pathelement path="lib/javassist.jar"/>
       </path>
 
       <path id="trove.classpath">
-         <pathelement path="lib-50/trove.jar"/>
+         <pathelement path="lib/trove.jar"/>
       </path>
 
       <path id="apache.log4j.classpath">
-         <pathelement path="lib-50/log4j.jar"/>
-      </path>
-
-      <path id="qdox.classpath">
-         <pathelement path="lib-14/qdox.jar"/>  <!-- needs to be added -->
+         <pathelement path="lib/log4j.jar"/>
       </path>
 
       <path id="jboss.core.classpath">
-         <pathelement path="lib-50/jboss-common-core.jar"/>
+         <pathelement path="lib/jboss-common-core.jar"/>
       </path>
 
       <path id="jboss.reflect.classpath">
-         <pathelement path="lib-50/jboss-reflect.jar"/>
+         <pathelement path="lib/jboss-reflect.jar"/>
       </path>
 
       <path id="jboss.mdr.classpath">
-         <pathelement path="lib-50/jboss-mdr.jar"/>
+         <pathelement path="lib/jboss-mdr.jar"/>
       </path>
 
       <path id="jboss.logging.log4j.classpath">
-         <pathelement path="lib-50/jboss-logging-log4j.jar"/>
+         <pathelement path="lib/jboss-logging-log4j.jar"/>
       </path>
 
       <path id="jboss.logging.classpath">
-         <pathelement path="lib-50/jboss-logging-spi.jar"/>
+         <pathelement path="lib/jboss-logging-spi.jar"/>
       </path>
 
       <path id="library.classpath">
@@ -93,7 +89,7 @@
 
       <path id="test.classpath">
          <path refid="library.classpath"/>
-         <pathelement path="${build.lib}/jboss-aop-jdk50.jar"/>
+         <pathelement path="${build.lib}/jboss-aop.jar"/>
          <pathelement path="${build.classes}"/>
          <pathelement path="lib-test/jboss-test.jar"/>  <!-- needs to be added -->
          <pathelement path="lib-test/junit.jar"/>  <!-- needs to be added -->
@@ -142,8 +138,8 @@
 
       <mkdir dir="${build.lib}"/>
 
-      <!-- Build the jboss-aop-jdk50.jar -->
-      <jar jarfile="${build.lib}/jboss-aop-jdk50.jar"
+      <!-- Build the jboss-aop.jar -->
+      <jar jarfile="${build.lib}/jboss-aop.jar"
          manifest="${build.etc}/default.mf">
          <fileset dir="${build.classes}">
             <exclude name="org/jboss/aop/standalone/PluggableInstrumentor.class"/>
@@ -159,8 +155,8 @@
          </fileset>
          <fileset file ="${build.etc}/jbossorg-eula.txt"/>
       </jar>
-      <!-- Build the jboss-aop-jdk50-client.jar needed for EJB 3-->
-      <jar jarfile="${build.lib}/jboss-aop-jdk50-client.jar"
+      <!-- Build the jboss-aop-client.jar needed for EJB 3-->
+      <jar jarfile="${build.lib}/jboss-aop-client.jar"
          manifest="${build.etc}/default.mf">
          <fileset dir="${build.classes}">
             <!-- Include everything else -->
@@ -326,7 +322,7 @@
 
       <mkdir dir="${build.reports}"/>
       <junit printsummary="yes" fork="yes" haltonfailure="no">
-         <jvmarg value="-javaagent:${build.lib}/jboss-aop-jdk50.jar"/>
+         <jvmarg value="-javaagent:${build.lib}/jboss-aop.jar"/>
          <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
          <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
