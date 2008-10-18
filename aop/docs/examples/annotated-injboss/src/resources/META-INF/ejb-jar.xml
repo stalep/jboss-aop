@@ -7,8 +7,8 @@
          <home>org.jboss.injbossaop.ejb.ExampleSessionHome</home>
          <remote>org.jboss.injbossaop.ejb.ExampleSession</remote>
          <ejb-class>org.jboss.injbossaop.ejb.ExampleSessionBean</ejb-class>
-         <transaction-type>Container</transaction-type>
          <session-type>Stateless</session-type>
+         <transaction-type>Container</transaction-type>
       </session>
     </enterprise-beans>
     <assembly-descriptor>

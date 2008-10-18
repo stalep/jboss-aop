@@ -7,20 +7,10 @@
 This example is exactly the same as the <a href="../injboss/aopInJbossPackaging.html">XML</a> example. Please see that for a description of the application, and how the different examples are built up. The differences are outlined below
 </p><p>
 <b>To run these examples you must edit build.xml and set the jboss.dir to where JBoss is. The server configuration used in this example is 'all', so you must start JBoss with 'run -c all'. </b>
-</p><p>
-<h3> JDK 5</h3>
 
-JDK 5 must be used for this example, this involves:
-<ul>
-<li>deleting JBOSS_HOME/server/all/jboss-aop.deployer</li>
-<li>copying jboss-40-install/jboss-aop-jdk50.deployer from the AOP distribution into the JBOSS_HOME/server/all/ folder</li>
-<li>using JDK 5.0 when you run JBoss</li>
-<li>building the example with JDK 5</li>
-</ul>
-</p><p>
 <h3>Interceptors and bindings</h3>
 
-Instead of defining out interceptors and bindings via XML, they are defined via annotations in the <tt>SimpleInterceptor</tt> class. (For the long @Bind annotation newlines have been added to the pointcut string for readability)
+Instead of defining our interceptors and bindings via XML, they are defined via annotations in the <tt>SimpleInterceptor</tt> class. (For the long @Bind annotation newlines have been added to the pointcut string for readability)
 </p><p>
 <pre>
 @InterceptorDef
@@ -71,7 +61,8 @@ For JBoss AOP to look for annotations in a deployed application, it must be pack
 </p><p>
 Please see the original example for details of how these are packaged. The other configurations in the original example did not use <tt>.aop</tt> files, and they had a standalone XML file containing the bind info, which is not what we are demonstrating in this example.
 </p><p>
-One quirk of the <tt>.aop</tt> format is that the file must contain a <tt>META-INF/jboss-aop.xml</tt> file in order to be valid. So this file is used for the examples, although it is empty and so contains no binding information.
+One quirk of the <tt>.aop</tt> format in AS 4.x is that the file must contain a <tt>META-INF/jboss-aop.xml</tt> file in order to be valid. So this file is used for the examples, although it is empty and so contains no binding information.
+For AS 5.x this empty jboss-aop.xml file is not needed.
 </p><p>
 </p>
 </body>
