@@ -426,7 +426,8 @@ public Enumeration&lt;URL&gt; getResourceAsStream(String name) throws IOExceptio
             attribute to the root <literal>aop</literal> element, as shown here: 
             <programlisting><![CDATA[
 <aop xmlns="urn:jboss:aop-beans:1.0">
-<!--  The exact contents will be explained below -->
+
+
 </aop>
             ]]>
             </programlisting>

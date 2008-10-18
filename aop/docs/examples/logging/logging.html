@@ -31,7 +31,7 @@ system property when running the application with the classloader hooks. The def
 &lt;java ...&gt;
    ...
      &lt;!-- Include this for clarity, the default is false --&gt;
-     &lt;sysproperty key="jboss.aop.verbose" value="false"/%gt;
+     &lt;sysproperty key="jboss.aop.verbose" value="false"/&gt;
    ...     
 &lt;/java&gt;
 </pre>
@@ -59,7 +59,7 @@ run.loadtime.50.nologging:
 &lt;java ...&gt;
    ...
      &lt;!-- Include this for clarity, the default is false --&gt;
-     &lt;sysproperty key="jboss.aop.verbose" value="true"/%gt;
+     &lt;sysproperty key="jboss.aop.verbose" value="true"/&gt;
    ...     
 &lt;/java&gt;
 </pre>
@@ -99,7 +99,7 @@ in out jboss-aop.xml: <tt>execution(public void POJO->boundMethod()</tt>. The ot
 &lt;java ...&gt;
    ...
      &lt;!-- Include this for clarity, the default is false --&gt;
-     &lt;sysproperty key="jboss.aop.verbose" value="true"/%gt;
+     &lt;sysproperty key="jboss.aop.verbose" value="true"/&gt;
    ...     
 &lt;/java&gt;
 </pre>
@@ -148,7 +148,7 @@ system property when running the aopc post-compiler. The default value (i.e. if 
 <pre>
 &lt;aopc ...&gt;
      &lt;!-- Include this for clarity, the default is false --&gt;
-     &lt;sysproperty key="jboss.aop.verbose" value="false"/%gt;
+     &lt;sysproperty key="jboss.aop.verbose" value="false"/&gt;
 &lt;/aopc&gt;
 </pre>
 when aopc'ing, so we have turned off logging. If left out the result would have been exactly the same, it is 
@@ -169,7 +169,7 @@ aopc.no.logging:
 <pre>
 &lt;aopc ...&gt;
      &lt;!-- Turn on logging --&gt; 
-     &lt;sysproperty key="jboss.aop.verbose" value="false"/%gt;
+     &lt;sysproperty key="jboss.aop.verbose" value="false"/&gt;
 &lt;/aopc&gt;
 </pre>
 <p>since neither <tt>jboss-logging-log4j.jar</tt> nor <tt>log4j.jar</tt> are on the classpath, JBoss AOP
@@ -218,7 +218,7 @@ run.aopc.50.system.out.logging:
 <pre>
 &lt;aopc ...&gt;
      &lt;!-- Turn on logging --&gt; 
-     &lt;sysproperty key="jboss.aop.verbose" value="false"/%gt;
+     &lt;sysproperty key="jboss.aop.verbose" value="false"/&gt;
 &lt;/aopc&gt;
 </pre>
 when running the aopc post-compiler, so logging of the weaving is now turned on. In this case both <tt>jboss-logging-log4j.jar</tt> and 

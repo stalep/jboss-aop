@@ -9,7 +9,7 @@
 
    <target name="prepare" depends="_prepare">
       <!-- Set jboss.dir property to root of your JBoss distribution -->
-      <property name="jboss.dir" value="C:/temp/jboss-4.2.3.GA"/>
+      <property name="jboss.dir" value="/Users/kabir/sourcecontrol/JBoss_4_2_2_GA/build/output/jboss-4.2.2.GA"/>
    	  <!--
    	     Set jboss.server.config property to either default or all.
    	        if you set this to default, JBoss should be started with
