@@ -121,6 +121,8 @@ $Id: aop-beans_1_0.xsd 71751 2008-04-06 21:46:33Z kabir.khan@jboss.com $
          </xsd:documentation>
       </xsd:annotation>
       <xsd:choice minOccurs="1" maxOccurs="unbounded">
+         <!--  interceptor nested within bind is only valid in standalone jboss aop. When running within
+               AS 5, declare the interceptor at the top level, and reference via interceptor-ref instead -->
          <xsd:element name="interceptor" type="aspectOrInterceptorType" minOccurs="0" maxOccurs="unbounded"/>
          <xsd:element name="interceptor-ref" type="interceptorRefType" minOccurs="0" maxOccurs="unbounded"/>
          <xsd:element name="stack-ref" type="stackRefType" minOccurs="0" maxOccurs="unbounded"/>
