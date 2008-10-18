@@ -41,86 +41,44 @@
       </para>
       <para>
          Define the source directory, and the directory to compile classes to.
-         If you're not fussy, they can point to the same directory.
          <programlisting><![CDATA[
          <property name="src.dir" value="PATH TO YOUR SOURCE DIR">
          <property name="classes.dir" value="PATH TO YOUR DIR FOR COMPILED CLASSES">]]>
          </programlisting>
       </para>
       <para>
-         Include the jars AOP depends on.
+         Define also the path of your JBoss AOP installation, as well as the path to
+         the lib directory:
          <programlisting><![CDATA[
-      <path id="javassist.classpath">
-         <pathelement path="../../../javassist.jar"/>
-      </path>
-
-      <path id="trove.classpath">
-         <pathelement path="../../../trove.jar"/>
-      </path>
-
-      <path id="concurrent.classpath">
-         <pathelement path="../../../concurrent.jar"/>
-      </path>
-
-      <path refid="jboss.common.core.classpath"/>
-      <path refid="jboss.common.logging.spi.classpath"/>
-      <path refid="jboss.common.logging.log4j.classpath"/>
-         <pathelement path="../../../jboss-common.jar"/>
-      </path>
-
-      <path id="lib.classpath">
-         <path refid="javassist.classpath"/>
-         <path refid="trove.classpath"/>
-         <path refid="jboss.aop.classpath"/>
-         <path refid="jboss.common.core.classpath"/>
-         <path refid="jboss.common.logging.spi.classpath"/>
-         <path refid="jboss.common.logging.log4j.classpath"/>
-         <path refid="concurrent.classpath"/>
+          <property name="jboss.aop.root" value="PATH TO JBOSS AOP HOME"/>
+          <property name="jboss.aop.lib" value="${jboss.aop.root}/lib"/>]]>
+         </programlisting>
+      </para>
+      <para>
+         Include the jboss-aop.jar and the jars it depends on in the classpath:
+         <programlisting><![CDATA[
+      <path id="classpath">
+         <pathelement path="${jboss.aop.lib}/jboss-aop.jar"/>
+         <pathelement path="${jboss.aop.lib}/javassist.jar"/>
+         <pathelement path="${jboss.aop.lib}/trove.jar"/>
+         <pathelement path="${jboss.aop.lib}/jboss-common-core.jar"/>
+         <pathelement path="${jboss.aop.lib}/jboss-logging-spi.jar"/>
+         <pathelement path="${jboss.aop.lib}/jboss-logging-log4j.jar"/>
       </path>]]>
          </programlisting>
       </para>
      <para>
-         This snippet shows what to do if you are using JDK 5.0 annotations:
-         <programlisting><![CDATA[
-      <!--            JDK version 1.5                                 -->
-
-      <path id="jboss.aop.classpath">
-         <pathelement path="../../../jboss-aop.jar"/>
-      </path>
-
-      <!--            JDK version 1.5 - END                           -->]]>
-         </programlisting>
-      </para>
-      <para>
-         Now we set up the full classpath of all the needed libraries:
-         <programlisting><![CDATA[
-      <path id="classpath">
-         <path refid="lib.classpath"/>
-         <path refid="jboss.aop.classpath"/>
-      </path id="classpath">]]>
-         </programlisting>
-      </para>
-      <para>
-         As an alternative, we can use the single jar provided with JBoss AOP. This
+         As an alternative, you can use the single jar provided with JBoss AOP. This
          jar bundles all the libraries used by JBoss AOP in a single unit. To use this
          jar, just define:
          <programlisting><![CDATA[
-      <!--            JDK version 1.5                                 -->
-
-      <path id="jboss.aop.classpath">
-         <pathelement path="../../../jboss-aop.jar"/>
-      </path>
-      
-      <!--            JDK version 1.5 - END                           -->
-      
       <path id="classpath">
-         <path refid="jboss.aop.classpath"/>
-      </path id="classpath">]]>
-      <!--            JDK version 1.5 - END                           -->
+         <pathelement path="${jboss.aop.lib}/jboss-aop-single.jar"/>
+      </path>]]>
          </programlisting>
       </para>
       <para>
-         Define the
+         Now, define the
          <literal>org.jboss.aop.ant.AopC</literal> ant aop precompiler task:
          <programlisting><![CDATA[
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC"
@@ -134,7 +92,7 @@
          </programlisting>
       </para>
       <para>
-         Compile the files (from the source directory to the compiled classes directory:
+         Compile the files (from the source directory to the compiled classes directory):
          <programlisting><![CDATA[
       <javac srcdir="${src.dir}"
          destdir="${classes.dir}"
@@ -147,22 +105,26 @@
          </programlisting>
       </para>
       <para>
-         Now use the ant aop precompiler task, it reads the files from the
+         Now use the ant aop precompiler task, it reads the files from the classes directory and weaves those classes,
+         ovewriting them with the corresponding weaved version.
          <programlisting><![CDATA[
       <aopc compilerclasspathref="classpath" verbose="true">
          <classpath path="${classes.dir}"/>
          <src path="${classes.dir}"/>
          <include name="**/*.class"/>
          <aoppath path="jboss-aop.xml"/>
-         <aopclasspath path="aspects.jar"/>
+         <aopclasspath path="${classes.dir}"/>
       </aopc>
    </target>
 </project>]]>
          </programlisting>
       </para>
       <para>
-         The
-         <literal>org.jboss.aop.ant.AopC</literal> ant task takes several parameters.
+         The last tag, <literal>aopclasspath</literal>, must be used only if you used annotations to configure aspects, bindings,
+         and the like. If this is the case and you are not using a jboss-aop.xml file, you can ommit the <literal>aoppath</literal>
+         tag. You can also use both annotations and XML to configure aspects. In this case, you must declare both tags.
+         The complete list of the parameters that 
+         <literal>org.jboss.aop.ant.AopC</literal> ant task takes follows:
       </para>
 
       <itemizedlist>
