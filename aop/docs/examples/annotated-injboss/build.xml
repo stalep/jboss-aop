@@ -351,10 +351,7 @@
 
    <target name="usage" depends="">
         <echo>
-         Run 'ant deploy-basic-lt-war',
-         'ant deploy-basic-lt-war-in-sar',
-         'ant deploy-basic-lt-war-in-jar',
-         'ant deploy-ear' or
+         Run 'ant deploy-basic-lt-war-in-sar',
          'ant deploy-ear-aop' or
          'ant deploy-example-lt-sar'
          to deploy to JBoss for loadtime AOP</echo>
