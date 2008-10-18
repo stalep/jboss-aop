@@ -136,14 +136,14 @@
       <sect2 id="instrumention-modes-generated-advisor-batf" revision="1">
          <title>Lightweight Aspects</title>
          <para>
-            The use of the before, after, after-throwing and finally advices as mentioned in the 
-            <link linkend="adv-batf">Advices</link> chapter is only supported in this weaving mode.
+            The use of the before, after, after-throwing and finally advices as mentioned in 
+            <xref linkend="adv-batf"/> is only supported in this weaving mode.
          </para>
       </sect2>
       <sect2 id="instrumention-modes-generated-advisor-instance-api" revision="1">
          <title>Improved Instance API</title>
          <para>
-            The <link linkend="dyn-4">Improved Instance API</link> is only available in this weaving mode.
+            The improved instance api mentioned in <xref linkend="dyn-4"/> is only available in this weaving mode.
          </para>
       </sect2>
       <sect2 id="instrumention-modes-generated-advisor-chain-overriding" revision="1">

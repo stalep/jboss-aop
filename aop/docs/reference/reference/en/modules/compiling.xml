@@ -28,8 +28,7 @@
       <para>
          JBoss AOP comes with an ant task that you can use for precompiling your
          classes with the aop precompiler. An example build.xml file is the basis
-         for the explanation. (It is quite similar to the one used in the previous
-         chapter.) 
+         for the explanation.
       </para>
       <para>
          <programlisting><![CDATA[
@@ -64,6 +63,9 @@
          <pathelement path="${jboss.aop.lib}/jboss-common-core.jar"/>
          <pathelement path="${jboss.aop.lib}/jboss-logging-spi.jar"/>
          <pathelement path="${jboss.aop.lib}/jboss-logging-log4j.jar"/>
+         <pathelement path="${jboss.aop.lib}/jboss-mdr.jar"/>
+         <pathelement path="${jboss.aop.lib}/jboss-reflect.jar"/>
+         <pathelement path="${jboss.aop.lib}/log4j.jar"/>
       </path>]]>
          </programlisting>
       </para>
@@ -83,7 +85,7 @@
          <programlisting><![CDATA[
       <taskdef name="aopc" classname="org.jboss.aop.ant.AopC"
          classpathref="jboss.aop.classpath"/>
-   </target>]]>
+      </target>]]>
          </programlisting>
       </para>
       <para>
