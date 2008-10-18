@@ -9,7 +9,7 @@
 
    <target name="prepare" depends="_prepare">
       <!-- Set jboss.dir property to root of your JBoss distribution -->
-      <property name="jboss.dir" value="/Users/kabir/sourcecontrol/jboss-4.2.2.GA/build/output/jboss-4.2.2.GA"/>
+      <property name="jboss.dir" value="/Users/kabir/sourcecontrol/jboss-head/build/output/jboss-5.0.0.GA"/>
         <!--
            Set jboss.server.config property to either default or all.
               if you set this to default, JBoss should be started with
@@ -63,7 +63,7 @@
 
       <path id="jboss.classpath">
          <pathelement path="${jboss.dir}/server/default/lib/servlet-api.jar"/>
-         <pathelement path="${jboss.dir}/server/default/lib/jboss-j2ee.jar"/>
+         <pathelement path="${jboss.dir}/server/default/lib/jboss-javaee.jar"/>
       </path>
 
       <path id="classpath">

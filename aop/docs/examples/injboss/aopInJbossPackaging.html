@@ -4,7 +4,11 @@
 <h2> Running and packaging in JBoss</h2>
 
 <b>To run these examples you must edit build.xml and set the jboss.dir to where JBoss is. The server configuration used in this example is 'all', so you must start JBoss with 'run -c all'. </b>
-You can change the server configuration used by modifying the jboss.server.config property in build.xml. If you use the 'default' server configuration, you will get error messages on startup. They are not "harmful", more info about these can be found <a href="http://www.jboss.org/index.html?module=bb&op=viewtopic&p=3846940#3846940">here</a>
+You can change the server configuration used by modifying the jboss.server.config property in build.xml. 
+</p><p>
+This example assumes you are running against JBoss 4.2.x.. If you want to run against other jboss versions, you might have to edit the 
+<code>jboss.classpath</code> settings. If you want to run against JBoss 5.x, we have provided an alternative ant script, to run this instead 
+of merely running <code>ant deployXXX</code>, you need to run <code>ant -f build-jboss5.xml deployXXX</code>
 </p><p>
 There are several ways to package classes to be run with AOP in JBoss, and this page takes you through a few of the options available to you.
 </p><p>
