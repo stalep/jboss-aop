@@ -402,7 +402,7 @@ public Enumeration&lt;URL&gt; getResourceAsStream(String name) throws IOExceptio
          depending on what version of JBoss AS you are using and what JDK version you are using.  It is also dependent
          on whether you want to use loadtime or compiletime instrumentation. JBoss 4.x comes with previous versions of JBoss
          AOP, which can be upgraded to AOP 2.0.x by using the ant scripts as explained in <xref linkend="installing-jboss40-jdk50"/>.
-         JBoss 5 comes with AOP 2.0.x.
+         JBoss 5 comes with AOP 2.0.x built in.
       </para>
       <para>
          Based on what JDK you are on and what loadtime weaving option you want to you, you must configure JBoss AS differently.
@@ -477,126 +477,191 @@ public Enumeration&lt;URL&gt; getResourceAsStream(String name) throws IOExceptio
 			</para>
       </sect2>
       <sect2>
-         <title>JBoss 4.x and JDK 5</title>
+         <title>The JBoss AspectManager Service</title>
+         <para>
+            The AspectManager Service is installed in both JBoss 5 and JBoss 4.x. It can be managed at run time
+            using the JMX console which is found at <literal>http://localhost:8080/jmx-console</literal>. It is
+            registered under the ObjectName <literal>jboss.aop:service=AspectManager</literal>. If you want to configure
+            it on startup you need to edit some configuration files, which are different on JBoss 5 and JBoss 4.x, although
+            the concepts are the same.
+          </para>
+          <sect3>
+            <title>JBoss 5 AspectManager Service</title>
+            <para>
+               In JBoss 5 the AspectManager Service is configured using a JBoss Microcontainer bean. The configuration file
+               is <literal>jboss-5.x.x.GA/server/xxx/conf/aop.xml</literal>. The AspectManager Service is deployed with
+               the following xml:
+            </para>
+            <programlisting>
+<![CDATA[
+   <bean name="AspectManager" class="org.jboss.aop.deployers.AspectManagerJDK5">
+      ...
+      
+      <property name="jbossIntegration"><inject bean="AOPJBossIntegration"/></property>
+
+      <property name="enableLoadtimeWeaving">false</property>
+      <!-- only relevant when EnableLoadtimeWeaving is true.
+           When transformer is on, every loaded class gets
+           transformed.  If AOP can't find the class, then it
+           throws an exception.  Sometimes, classes may not have
+           all the classes they reference.  So, the Suppressing
+           is needed.  (i.e. Jboss cache in the default configuration -->
+      <property name="suppressTransformationErrors">true</property>
+      <property name="prune">true</property>
+      <property name="include">org.jboss.test., org.jboss.injbossaop.</property>
+      <property name="exclude">org.jboss.</property>
+      <!-- This avoids instrumentation of hibernate cglib enhanced proxies
+      <property name="ignore">*$$EnhancerByCGLIB$$*</property> -->
+      <property name="optimized">true</property>
+      <property name="verbose">false</property>
+      <!--
+         Available choices for this attribute are:
+            org.jboss.aop.instrument.ClassicInstrumentor (default)
+            org.jboss.aop.instrument.GeneratedAdvisorInstrumentor
+       <property name="instrumentor">org.jboss.aop.instrument.ClassicInstrumentor</property>
+      -->
+          <!-- 
+                By default the deployment of the aspects contained in 
+                ../deployers/jboss-aop-jboss5.deployer/base-aspects.xml
+                are not deployed. To turn on deployment uncomment this property
+          <property name="useBaseXml">true</property>
+          -->
+   </bean>
+
+]]>               
+            </programlisting>
+            <para>
+               In later sections we will talk about changing the class of the AspectManager Service, to
+               do this replace the contents of the <literal>class</literal> attribute of the 
+               <literal>bean</literal> element.
+            </para>
+          </sect3>
+          <sect3>
+            <title>JBoss 4.x AspectManager Service</title>
+            <para>
+               In JBoss 4.x the AspectManager Service is configured using a JBoss Microcontainer bean. The configuration file
+               is <literal>jboss-5.x.x.GA/server/default/deploy/jboss-aop-jdk50.deployer/META-INF/jboss-service.xml</literal>. 
+               The AspectManager Service is deployed with
+               the following xml:
+            </para>
+            <programlisting>
+<![CDATA[
+   <mbean code="org.jboss.aop.deployment.AspectManagerServiceJDK5"
+      name="jboss.aop:service=AspectManager">
+      <attribute name="EnableLoadtimeWeaving">false</attribute>
+      <!-- only relevant when EnableLoadtimeWeaving is true.  
+           When transformer is on, every loaded class gets 
+           transformed.  If AOP can't find the class, then it 
+           throws an exception.  Sometimes, classes may not have 
+           all the classes they reference.  So, the Suppressing 
+           is needed.  (i.e. Jboss cache in the default configuration -->
+      <attribute name="SuppressTransformationErrors">true</attribute>
+      <attribute name="Prune">true</attribute>
+      <attribute name="Include">org.jboss.test, org.jboss.injbossaop</attribute>
+      <attribute name="Exclude">org.jboss.</attribute>
+      <!-- This avoids instrumentation of hibernate cglib enhanced proxies
+      <attribute name="Ignore">*$$EnhancerByCGLIB$$*</attribute> -->
+      <attribute name="Optimized">true</attribute>
+      <attribute name="Verbose">false</attribute>
+      <depends optional-attribute-name="JBossIntegrationWrapper" proxy-type="attribute">jboss.aop:service=JBoss4IntegrationWrapper</depends>
+      <!-- 
+         Available choices for this attribute are:
+            org.jboss.aop.instrument.ClassicInstrumentor (default)
+            org.jboss.aop.instrument.GeneratedAdvisorInstrumentor
+       <attribute name="Instrumentor">org.jboss.aop.instrument.ClassicInstrumentor</attribute>
+      -->
+   </mbean>
+
+]]>               
+            </programlisting>
+            <para>
+               In later sections we will talk about changing the class of the AspectManager Service, to
+               do this replace the contents of the <literal>code</literal> attribute of the 
+               <literal>mbean</literal> element.
+            </para>
+          </sect3>
+      </sect2>
+      <sect2 id="running-as-sun-jdk">
+         <title>Loadtime transformation in JBoss AS Using Sun JDK 5</title>
          <para>
             JBoss AS has special integration with JDK 5.0 to do loadtime transformations.  This section explains how to use it.
          </para>
-      <para>
-         JBoss AOP comes distributed with the JBoss 4.x Application Server.  The version that comes with JBoss 4.x does
-         not take advantage of JDK 5.0 features.
-         It is best to install the jboss-aop-jdk50.deployer/
-         distribution into your JBoss Application Server install base. See the "Installing" chapter for more details.
-      </para>
-      <para>
-         If you want to do load-time
-         transformations with JBoss 4 and JDK 5, there are two steps you must take.
-      </para>
-      <para>
-         The
-         <literal>jboss-aop-jdk50.deployer</literal> file contains some MBeans that deploy and manage
-         the AOP framework.
-         <programlisting>
-            <![CDATA[      <mbean code="org.jboss.aop.deployment.AspectManagerServiceJDK5"
-         name="jboss.aop:service=AspectManager">
-         <attribute name="EnableLoadtimeWeaving">true</attribute>
-         <!-- only relevant when EnableLoadtimeWeaving is true -->
-         <attribute name="SuppressTransformationErrors">true</attribute>
-         <attribute name="Prune">true</attribute>
-         <attribute name="Include">org.jboss.test</attribute>
-         <attribute name="Exclude">org.jboss.</attribute>
-         <attribute name="Optimized">true</attribute>
-         <attribute name="Verbose">false</attribute>
-      </mbean>
-
-      <mbean code="org.jboss.aop.deployment.AspectDeployer"
-         name="jboss.aop:service=AspectDeployer">
-      </mbean>
-            ]]>   </programlisting>
-      </para>
-      <para>
-         By default, JBoss application server will not do load-time bytecode manipulation
-         of AOP files. You can turn load-time on by
-         setting the EnableLoadtimeWeaving attribute to true. If SuppressTransformationErrors is
-         true failed bytecode transformation will only give an error warning. This flag is
-         needed because sometimes a JBoss deployment will not have all the classes a class references.
-      </para>
          <para>
-            The next step is to copy the pluggable-instrumentor.jar from the lib/ directory of your JBoss AOP
-            distribution to the bin/ directory of your JBoss AOP application server installation.  Next edit
-            run.sh or run.bat (depending on what OS you're on) and add the following to the JAVA_OPTS environment
-            variable
+            If you want to do load-time
+            transformations with JBoss 5 and Sun JDK 5, these are the steps you must take.
          </para>
-         <programlisting>
+         <itemizedlist>
+            <listitem>
+               Set the <literal>enableLoadtimeWeaving</literal> attribute/property to true.  
+               By default, JBoss application server will not do load-time bytecode manipulation
+               of AOP files unless this is set. If <literal>suppressTransformationErrors</literal>
+               is <literal>true</literal> failed bytecode transformation will only give an error warning. This flag is
+               needed because sometimes a JBoss deployment will not have all the classes a class references.
+		        </listitem>
+		        <listitem>
+		         Copy the <literal>pluggable-instrumentor.jar</literal> from the <literal>lib/</literal> 
+		         directory of your JBoss AOP distribution to the <literal>bin/</literal> directory of your 
+		         JBoss AOP application server installation.  
+		       </listitem>
+		       <listitem>
+		         Next edit <literal>run.sh</literal> or 
+		         <literal>run.bat</literal> (depending on what OS you're on) and add the following to the JAVA_OPTS environment
+		         variable:
+		            <programlisting>
 set JAVA_OPTS=%JAVA_OPTS% -Dprogram.name=%PROGNAME% -javaagent:pluggable-instrumentor.jar
-         </programlisting>
+		            </programlisting>
+		        </listitem>
+         </itemizedlist>
          <para>
-            After modifying JAVA_OPTS and setting the EnableLoadtimeWeaving to true, then you should be ready to go.
-         </para>
-         <para>
-            Note that the <literal>code</literal> attribute of the AspectManager mbean must be <literal>org.jboss.aop.deployment.AspectManagerServiceJDK5</literal>
-            as that is what works with the -javaagent weaver.
+            Note that the class of the AspectManager Service must be <literal>org.jboss.aop.deployers.AspectManagerJDK5</literal>
+            on JBoss 5, or <literal>org.jboss.aop.deployment.AspectManagerServiceJDK5</literal> as these are what work with the -javaagent weaver.
          </para>
       </sect2>
 
    <!-- 4.0 and jrockit -->
       <sect2>
-         <title>JBoss 4.x and JRockit</title>
+         <title>JBoss 5 and JRockit</title>
       <para>
-         If you are using JRockit 5.0 and you wish to use the JDK 5 features of JBoss AOP, you should replace jboss-aop.deployer
-         with jboss-aop-jdk50.deployer as mentioned in "JBoss 4.x and JDK 5.0".
+         JRockit also supports the -javaagent switch mentioned in <xref linkend="running-as-sun-jdk"/>. If you wish to 
+         use that, then the steps in <xref linkend="running-as-sun-jdk"/> are sufficient. However, JRockit also comes
+         with its own framework for intercepting when classes are loaded, which might be faster than the -javaagent switch.
+         If you wish to use this, there are three steps you must take.
       </para>
-      <para>
-         If you want to do load-time
-         transformations with JBoss 4 and JRockit, there are two steps you must take.
-      </para>
-      <para>
-         The
-         <literal>jboss-aop.deployer</literal> or <literal>jboss-aop-jdk50.deployer</literal> file (depending on which you are using)
-         contains some MBeans that deploy and manage the AOP framework.
-         <programlisting>
-            <![CDATA[      <mbean code="org.jboss.aop.deployment.AspectManagerService"
-         name="jboss.aop:service=AspectManager">
-         <attribute name="EnableLoadtimeWeaving">true</attribute>
-         <!-- only relevant when EnableLoadtimeWeaving is true -->
-         <attribute name="SuppressTransformationErrors">true</attribute>
-         <attribute name="Prune">true</attribute>
-         <attribute name="Include">org.jboss.test</attribute>
-         <attribute name="Exclude">org.jboss.</attribute>
-         <attribute name="Optimized">true</attribute>
-         <attribute name="Verbose">false</attribute>
-      </mbean>
 
-      <mbean code="org.jboss.aop.deployment.AspectDeployer"
-         name="jboss.aop:service=AspectDeployer">
-      </mbean>
-            ]]>   </programlisting>
-      </para>
-      <para>
-         By default, JBoss application server will not do load-time bytecode manipulation
-         of AOP files. You can turn load-time on by
-         setting the EnableLoadtimeWeaving attribute to true. If SuppressTransformationErrors is
-         true failed bytecode transformation will only give an error warning. This flag is
-         needed because sometimes a JBoss deployment will not have all the classes a class references.
-      </para>
          <para>
-            The next step is to copy the jrockit-pluggable-instrumentor.jar from the lib/ directory of your JBoss AOP
-            distribution to the bin/ directory of your JBoss AOP application server installation.  Next edit
-            run.sh or run.bat (depending on what OS you're on) and add the following to the JAVA_OPTS and
-            JBOSS_CLASSPATH environment variables
+            If you want to do load-time
+            transformations with JBoss 5 and JRockit using the special JRockit hooks, these are the steps you must take.
          </para>
-         <programlisting>
+         <itemizedlist>
+            <listitem>
+               Set the <literal>enableLoadtimeWeaving</literal> attribute/property to true.  
+               By default, JBoss application server will not do load-time bytecode manipulation
+               of AOP files unless this is set. If <literal>suppressTransformationErrors</literal>
+               is <literal>true</literal> failed bytecode transformation will only give an error warning. This flag is
+               needed because sometimes a JBoss deployment will not have all the classes a class references.
+              </listitem>
+              <listitem>
+               Copy the <literal>jrockit-pluggable-instrumentor.jar</literal> from the <literal>lib/</literal> 
+               directory of your JBoss AOP distribution to the <literal>bin/</literal> directory of your 
+               JBoss AOP application server installation.  
+             </listitem>
+             <listitem>
+               Next edit <literal>run.sh</literal> or 
+               <literal>run.bat</literal> (depending on what OS you're on) and add the following to the JAVA_OPTS 
+                and JBOSS_CLASSPATH environment variables:
+                  <programlisting>
 # Setup JBoss sepecific properties
 JAVA_OPTS="$JAVA_OPTS -Dprogram.name=$PROGNAME \
-	-Xmanagement:class=org.jboss.aop.hook.JRockitPluggableClassPreProcessor"
+   -Xmanagement:class=org.jboss.aop.hook.JRockitPluggableClassPreProcessor"
 JBOSS_CLASSPATH="$JBOSS_CLASSPATH:jrockit-pluggable-instrumentor.jar"
-         </programlisting>
-         <para>
-            After modifying JAVA_OPTS, JBOSS_CLASSPATH and setting the EnableLoadtimeWeaving to true, then you should be ready to go.
-         </para>
-         <para>
-            Note that the <literal>code</literal> attribute of the AspectManager mbean must be <literal>org.jboss.aop.deployment.AspectManagerService</literal>
-            as that is what works with the JRockit special hooks.
-         </para>
+                  </programlisting>
+              </listitem>
+              <listitem>
+               Set the class of the AspectManager Service to be <literal>org.jboss.aop.deployers.AspectManagerJRockit</literal>
+               on JBoss 5, or <literal>org.jboss.aop.deployment.AspectManagerService</literal> as these are what work with 
+               special hooks in JRockit.
+              </listitem>
+         </itemizedlist>
       </sect2>
 
    <!-- 4.0 and jrockit - end -->
