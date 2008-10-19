@@ -199,7 +199,18 @@ public class Compiler
          for (int i = 0; i < files.size(); i++)
          {
             File f = files.get(i);
-            loadFile(f);
+            if (f.isDirectory())
+            {
+               loadDirectory(f);
+            }
+            else if (classFileFilter.accept(f))
+            {
+               loadFile(f);
+            }
+            else
+            {
+               if (verbose) System.out.println("[aopc] " + f + " is neither a java class or a directory");
+            }
          }
          FileOutputStream reportFile = new FileOutputStream("aop-report.xml");
          reportFile.write(XmlReport.toXml().getBytes());
@@ -248,7 +259,20 @@ public class Compiler
       {
           addDirectory(directories[i]);
       }
-      
+   }
+   
+   private void loadDirectory(File dir) throws Exception
+   {
+      File[] directories = dir.listFiles(directoryFilter);
+      File[] classFiles = dir.listFiles(classFileFilter);
+      for (int i = 0; i < classFiles.length; i++)
+      {
+         loadFile(classFiles[i]);
+      }
+      for (int i = 0; i < directories.length; i++)
+      {
+          loadDirectory(directories[i]);
+      }
    }
    
    private void addFile(File file)throws Exception
