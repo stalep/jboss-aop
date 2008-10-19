@@ -69,7 +69,7 @@ public class AOPClassPoolRepository implements ScopedClassPoolRepository
    private AOPClassPoolRepository()
    {
       this.delegate = ScopedClassPoolRepositoryImpl.getInstance();
-      //This was needed when jboss-aop-jdk50.jar was deployed in the jboss/lib directory since the AspectManager bean had no chance to initialise it
+      //This was needed when jboss-aop.jar was deployed in the jboss/lib directory since the AspectManager bean had no chance to initialise it
       delegate.setClassPoolFactory(new AOPClassPoolFactory());
 //      if (!setJBossSpecificStartupVariables())
 //      {
