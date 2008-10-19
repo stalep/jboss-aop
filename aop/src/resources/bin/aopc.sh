@@ -4,19 +4,19 @@
 usage(){
    echo Batch file for running the aop precompiler
    echo Usage:
-   echo aopc.sh [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] [-report] [-verbose]  dir_or_file+
+   echo aopc.sh [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] [-report] [-verbose] dir_or_file+
    echo 
-   echo    classpath:        Classpath of your sourcefiles and all required libraries
+   echo    classpath:         Classpath of your sourcefiles and all required libraries
    echo 
-   echo    path_to_.aop.xml: Path to your *-aop.xml files. Use colon as separator if you have more than one
+   echo    path_to_.aop.xml:  Path to your *-aop.xml files. Use colon as separator if you have more than one
    echo 
-   echo    path_to_annotated Path to jars/directories that have annotated aspects. Use colon as separator if you have more than one
+   echo    path_to_annotated: Path to jars/directories that have annotated aspects. Use colon as separator if you have more than one
    echo 
-   echo    dir_or_file:      Directory containing files to be aop precompiled
+   echo    dir_or_file:       Directory containing files to be aop precompiled
    echo 
-   echo    -verbose:         Specify if you want verbose output
+   echo    -verbose:          Specify if you want verbose output
    echo 
-   echo    -report:          If specified, classes do not get instrumented. Instead you get an xml file containing the bindings applied
+   echo    -report:           If specified, classes do not get instrumented. Instead you get an xml file containing the bindings applied
    
    exit 1
 }
@@ -68,28 +68,25 @@ fi
 
 
 
-CURRENT_DIR=$(dirname $(which $0));
+SCRIPT_DIR=$(dirname $(which $0));
 
-AOPC_CLASSPATH=$CURRENT_DIR/../lib/javassist.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:$CURRENT_DIR/../lib/jboss-aop-client.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:$CURRENT_DIR/../lib/jboss-reflect.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:$CURRENT_DIR/../lib/jboss-mdr.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:$CURRENT_DIR/../lib/jboss-logging-log4j.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:$CURRENT_DIR/../lib/jboss-logging-spi.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:$CURRENT_DIR/../lib/jboss-standalone-aspect-library.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:$CURRENT_DIR/../lib/log4j.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:$CURRENT_DIR/../lib/pluggable-instrumentor.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:$CURRENT_DIR/../lib/jboss-aop.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:$CURRENT_DIR/../lib/jboss-common-core.jar
-AOPC_CLASSPATH=$AOPC_CLASSPATH:$CURRENT_DIR/../lib/trove.jar
+AOPC_CLASSPATH=$SCRIPT_DIR/../lib/javassist.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:$SCRIPT_DIR/../lib/jboss-aop-client.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:$SCRIPT_DIR/../lib/jboss-reflect.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:$SCRIPT_DIR/../lib/jboss-mdr.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:$SCRIPT_DIR/../lib/jboss-logging-log4j.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:$SCRIPT_DIR/../lib/jboss-logging-spi.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:$SCRIPT_DIR/../lib/jboss-standalone-aspect-library.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:$SCRIPT_DIR/../lib/log4j.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:$SCRIPT_DIR/../lib/pluggable-instrumentor.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:$SCRIPT_DIR/../lib/jboss-aop.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:$SCRIPT_DIR/../lib/jboss-common-core.jar
+AOPC_CLASSPATH=$AOPC_CLASSPATH:$SCRIPT_DIR/../lib/trove.jar
 
-echo $AOP_CLASSPATH
 
 CTR=0
 
 for param in $*; do
-   echo $param
-   echo $CTR
    CTR=`expr $CTR + 1`
    if [ $CTR -gt $FILESTART ]; then
       ARGS_AND_FILES=$ARGS_AND_FILES" "$param
@@ -102,6 +99,5 @@ if (cygpath --version) >/dev/null 2>/dev/null; then
    AOPC_CLASSPATH=`cygpath --path --windows $AOPC_CLASSPATH`
 fi
 
-echo $java -classpath $AOPC_CLASSPATH $AOPPATH $AOPCLASSPATH org.jboss.aop.standalone.Compiler $ARGS_AND_FILES
 java -classpath $AOPC_CLASSPATH $AOPPATH $AOPCLASSPATH org.jboss.aop.standalone.Compiler $ARGS_AND_FILES
 
