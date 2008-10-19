@@ -44,11 +44,11 @@ Most of this makes sense, but what is the &lt;construction&gt; element?  Wheneve
 The <i>class</i> attribute of the introduction can only handle a single class expression.  If you want a boolean expression, you can instead use the <i>expr</i> XML attribute.  You can have any scoped boolean expression.  The <i>class(..)</i> keyword will have a class expression within it.  You can also specify a <i>has</i> or <i>hasField</i> expression as well.  The example shows how to use the <i>expr</i> XML attribute.
 </p><p>
 <pre>
-   &lt;metadata tag="test" class="POJO3"&gt;
+   &lt;metadata tag="Test" class="POJO3"&gt;
       &lt;method expr="void method()"/&gt;
    &lt;/metadata&gt;
 
-   &lt;metadata tag="test2" class="POJO4"&gt;
+   &lt;metadata tag="Test2" class="POJO4"&gt;
       &lt;class/&gt;
    &lt;/metadata&gt;
 </pre>
@@ -56,14 +56,14 @@ The <i>class</i> attribute of the introduction can only handle a single class ex
 First we add some metadata to POJO3 and POJO4.  Then we use these tags in our introduction expression:
 </p><p>
 <pre>
-   &lt;introduction expr="has(* *-&gt;@test(..)) OR class(@test2)"&gt;
+   &lt;introduction expr="has(* *-&gt;@Test(..)) OR class(@Test2)"&gt;
       &lt;interfaces&gt;
          java.io.Serializable
       &lt;/interfaces&gt;
    &lt;/introduction&gt;
 </pre>
 </p><p>
-The <i>expr</i> states:  Any class that has a method tagged as <i>@test</i> or any class that is itself tagged <i>@test2</i>.
+The <i>expr</i> states:  Any class that has a method tagged as <i>@Test</i> or any class that is itself tagged <i>@Test2</i>.
 </p><p>
 <h4>Running the example</h4>
 
@@ -90,14 +90,13 @@ Exception in thread "main" java.io.NotSerializableException: POJO
 </p><p>
 This is expected because POJO is not serializable.  Now run it with introductions.
 </p><p>
-<b>THIS EXAMPLE REQUIRES JDK 5!! For other options, please look at the
-<a href="../valid_targets_not_annotated.html"/>non-annotated examples guide</a></b> To compile and run:</p>
+To compile and run (for further detail, refer to our <a href="../running_examples.html"/>Compiling and Running Examples Guide</a>):</p>
 <pre>
-  $ run.aopc.50
+  $ ant run.aopc
 </pre>
 <p>It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:</p>
 <pre>
-_run.aopc.50:
+_run.aopc:
 
      [java] --- POJO ---
      [java] deserialized pojo.stuff: hello world

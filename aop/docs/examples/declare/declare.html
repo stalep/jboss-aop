@@ -42,17 +42,14 @@ For pointcut expressions, only caller side pointcut expressions will work (so yo
 
 </p><p>
 Now if you run the example:
-</p><p>
-To compile and run with JDK 5:
+</p>
 <pre>
-  $ ant run.aopc.50
+  $ ant run.aopc
 </pre>
 </p><p>
-(To run with JDK 1.4 use $ ant run.aopc.14 as shown in the <a href="../valid_targets_not_annotated.html"/>non-annotated examples guide</a>.)
-</p><p>
-It will generate the following output
+It will generate the following output:
 <pre>
-_aopc50:
+_aopc:
      [aopc] WARNING: declare-warning condition
      [aopc]     'call(Driver-&gt;new(..)) AND within(*DAO)'
      [aopc] was broken for constructor call: CarDAO.save()V calls Driver.new()V
@@ -69,7 +66,7 @@ _aopc50:
      [aopc]     All VehicleDAO subclasses must override the save() method.
 
 
-_run.aopc.50:
+_run.aopc:
      [java] ---- Start ----
      [java] Car DAO save
 
@@ -84,17 +81,14 @@ Note that when using compile time instrumentation the warnings are generated dur
 
 </p
 <p>
-To run with JDK 5:
+To run:
 </p><p>
 <pre>
-  $ ant run.loadtime.50
+  $ ant run.loadtime
 </pre>
-<p>
-(To run with JDK 1.4 use $ ant run.loadtime.14 as shown in the <a href="../valid_targets_not_annotated.html"/>non-annotated examples guide</a>.)
-</p>
 </p>
 <pre>
-_run.loadtime.50:
+_run.loadtime:
      [java] ---- Start ----
      [java] WARNING: declare-warning condition
      [java]     'call(Driver->new(..)) AND within(*DAO)'
@@ -137,9 +131,9 @@ If we replace all the <tt>declare-warning</tt> occurances with <tt>declare-error
 
 When running precompiled we get:
 <pre>
-$ ant run.aopc.50
+$ ant run.aopc
 ....
-_aopc50:
+_aopc:
      [aopc] ERROR: declare-error condition
      [aopc]     'call(Driver-&gt;new(..)) AND within(*DAO)'
      [aopc] was broken for constructor call: CarDAO.save()V calls Driver.new()V
@@ -169,11 +163,11 @@ See how the compiler stops at the first error and execution stops. (To run with 
 
 When running with loadtime transformations we get:
 <pre>
-$ ant run.loadtime.50
+$ ant run.loadtime
 
 ...
 
-_run.loadtime.50:
+_run.loadtime:
      [java] ---- Start ----
      [java] ERROR: declare-error condition
      [java]     'call(Driver-&gt;new(..)) AND within(*DAO)'

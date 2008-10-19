@@ -13,7 +13,7 @@ XML metadata expressions.  This metadata is different than regular JDK annotatio
 </p><p>
 <h4>Example code</h4>
 
-The example code applies 2 separate interceptors via tags supplied in a Java source file.  One of the interceptors is a tracing interceptor that is trigger by a @trace annotation, the other is B2B functionality that will bill/charge a user for each access of the api.  This is also triggered by an annotation.
+The example code applies 2 separate interceptors via tags supplied in a Java source file.  One of the interceptors is a tracing interceptor that is trigger by a @Trace annotation, the other is B2B functionality that will bill/charge a user for each access of the api.  This is also triggered by an annotation.
 </p><p>
 <h4>Declaring Metadata</h4>
 
@@ -23,33 +23,33 @@ This file is composed of a list of <code>metadata</code> tags. Each such tag mus
 <code>class</code> attribute must contain a class expression. Every class matching that expression will be bound to the metadata.
 Take a look at the two first tags of <code>metadata-aop.xml</code>:
 <pre>
-    &lt;metadata tag="trace" class="POJO"&gt;
+    &lt;metadata tag="Trace" class="POJO"&gt;
       &lt;constructor expr="POJO()"/&gt;
    &lt;/metadata&gt;
-   &lt;metadata tag="billable" class="POJO"&gt;
+   &lt;metadata tag="Billable" class="POJO"&gt;
       &lt;constructor expr="POJO()"&gt;
          &lt;amount&gt;0.01&lt;/amount&gt;
       &lt;/constructor&gt;
    &lt;/metadata&gt;
 </pre>
 </p><p>
-The first one represents a metadata <code>@trace</code> and the second
-one represents the metadata <code>@billable</code>. Both metadata will be applied to class <code>POJO</code>,
+The first one represents a metadata <code>@Trace</code> and the second
+one represents the metadata <code>@Billable</code>. Both metadata will be applied to class <code>POJO</code>,
 as specified in the <code>class</code> attribute.
 The contents of a <code>metadata</code> tag indicate to which elements of
-<code>POJO</code> class this metadata should be applied. In the example, the metadata <code>@trace</code> will be applied to the
-default constructor of POJO(). The metada <code>@billable</code> will be also applied to the same constructor, and has an attribute,
+<code>POJO</code> class this metadata should be applied. In the example, the metadata <code>@Trace</code> will be applied to the
+default constructor of POJO(). The metada <code>@Billable</code> will be also applied to the same constructor, and has an attribute,
 <code>amount</code>, whose value is <code>0.01</code>. Following this same format you can define as many attributes and values you
 need.
 In similar ways, a metadata can be applied to the fields, methods and to the class itself, just like Java annotations. The next
 <code>metadata</code> tags apply metadata to constructors, methods and fields:
 <pre>
-   &lt;metadata tag="trace" class="POJO"&gt;
+   &lt;metadata tag="Trace" class="POJO"&gt;
       &lt;field name="field"/&gt;
       &lt;constructor expr="POJO(int)"/&gt;
       &lt;method expr="void someMethod()"/&gt;
    &lt;/metadata&gt;
-   &lt;metadata tag="billable" class="POJO"&gt;
+   &lt;metadata tag="Billable" class="POJO"&gt;
       &lt;constructor expr="POJO(int)"&gt;
          &lt;amount&gt;0.01&lt;/amount&gt;
       &lt;/constructor&gt;
@@ -59,17 +59,17 @@ In similar ways, a metadata can be applied to the fields, methods and to the cla
    &lt;/metadata&gt;
 </pre>
 
-If we wanted to apply <code>@trace</code> to <code>POJO</code> class, we could have added an empty <code>class</code>
+If we wanted to apply <code>@Trace</code> to <code>POJO</code> class, we could have added an empty <code>class</code>
 XML tag to a <code>metadata</code> element:
 <pre>
-   &lt;metadata tag="trace" class="POJO"&gt;
+   &lt;metadata tag="Trace" class="POJO"&gt;
       &lt;class/&gt;
    &lt;/metadata&gt;
 </pre>
 The example bellow states that every constructor, field, and method of <code>POJO</code> class will be bound to the
-<code>@trace</code> metadata:
+<code>@Trace</code> metadata:
 <pre>
-   &lt;metadata tag="trace" class="POJO"&gt;
+   &lt;metadata tag="Trace" class="POJO"&gt;
       &lt;default/&gt;
    &lt;/metadata&gt;
 </pre>
@@ -80,25 +80,25 @@ The example bellow states that every constructor, field, and method of <code>POJ
 Annotations can be referenced by an '@' sign in pointcut expressions.  They can only be used in the class expressions for a method, field, or constructor for execution and caller pointcuts.  They can also be used in substitute for 'new' in constructor land, and for a method or field name.  Take a look at jboss-aop.xml
 </p><p>
 <pre>
-   &lt;bind pointcut="execution(POJO-&gt;@billable(..))"&gt;
+   &lt;bind pointcut="execution(POJO-&gt;@Billable(..))"&gt;
        &lt;interceptor class="BillingInterceptor"/&gt;
    &lt;/bind&gt;
 
-   &lt;bind pointcut="execution(* POJO-&gt;@billable(..))"&gt;
+   &lt;bind pointcut="execution(* POJO-&gt;@Billable(..))"&gt;
        &lt;interceptor class="BillingInterceptor"/&gt;
    &lt;/bind&gt;
 
 </pre>
 </p><p>
-The first binding above says that for every constructor tagged as <code>@billable</code> apply the <code>BillingInterceptor</code>.  The second binding states that for any method tagged as <code>@billable</code> apply the <code>BillingInterceptor</code>.  Let's now take a look at applying the tracing advice.
+The first binding above says that for every constructor tagged as <code>@Billable</code> apply the <code>BillingInterceptor</code>.  The second binding states that for any method tagged as <code>@Billable</code> apply the <code>BillingInterceptor</code>.  Let's now take a look at applying the tracing advice.
 </p><p>
 <pre>
-   &lt;bind pointcut="all(@trace)"&gt;
+   &lt;bind pointcut="all(@Trace)"&gt;
        &lt;interceptor class="TraceInterceptor"/&gt;
    &lt;/bind&gt;
 </pre>
 </p><p>
-The above states that for any field, constructor, or method tagged as <code>@trace</code>, apply the <code>TraceInterceptor</code>.
+The above states that for any field, constructor, or method tagged as <code>@Trace</code>, apply the <code>TraceInterceptor</code>.
 </p><p>
 <h4>Accessing metadata at runtime</h4>
 
@@ -107,21 +107,21 @@ You can access metadata through the <tt>org.jboss.aop.Advised</tt> interface thr
 <pre>
    public Object invoke(Invocation invocation) throws Throwable
    {
-      System.out.println("billing amount: $" + invocation.getMetaData("billable", "amount"));
+      System.out.println("billing amount: $" + invocation.getMetaData("Billable", "amount"));
    }
 </pre>
 </p><p>
 <h4>Running</h4>
 
-<b>THIS EXAMPLE REQUIRES JDK 5!! For other options, please look at the
-<a href="../valid_targets_not_annotated.html"/>non-annotated examples guide</a></b> To compile and run:</p>
+<p>
+To compile and run (for further detail, refer to our <a href="../running_examples.html"/>Compiling and Running Examples Guide</a>):</p>
 <pre>
-  $ run.aopc.50
+  $ ant run.aopc
 </pre>
 It will run the annotationc compiler on the source files to generate metadata in metadata-aop.xml, then javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example. Note that there are two XML aop deployment descriptors: metadata-aop.xml and jboss-aop.xml.  The System Property jboss.aop.path can accept a list of files delimited by the platform classpath separator. ';' on windows ':' on unix. Running the example should produce:
 </p><p>
 <pre>
-run.aopc.50:
+run.aopc:
      [java] --- new POJO(); ---
      [java] billing amount: $0.01
      [java] &lt;&lt;&lt; Trace : executing constructor public POJO()

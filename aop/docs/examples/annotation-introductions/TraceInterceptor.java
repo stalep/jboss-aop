@@ -36,14 +36,14 @@ public class TraceInterceptor implements Interceptor
 {
    public String getName() { return "TraceInterceptor"; }
 
-   private void printSingle(single s)
+   private void printSingle(Single s)
    {
-      System.out.println("@single (\"" + s.value() + "\")");
+      System.out.println("@Single (\"" + s.value() + "\")");
    }
 
-   private void printComplex(complex c)
+   private void printComplex(Complex c)
    {
-      System.out.print("@complex (ch='" + c.ch() + "', ");
+      System.out.print("@Complex (ch='" + c.ch() + "', ");
       System.out.print("\"" + c.string() + "\", ");
       System.out.print("flt=" + c.flt() + ", ");
       System.out.println("dbl=" + c.dbl() + ", ...blah blah blah YOU GET THE IDEA...");
@@ -56,33 +56,33 @@ public class TraceInterceptor implements Interceptor
       if (invocation instanceof MethodInvocation)
       {
          msg = "executing method " + ((MethodInvocation)invocation).getMethod().toString();
-         single s = (single)AnnotationElement.getAnyAnnotation(((MethodInvocation)invocation).getMethod(), single.class);
+         Single s = (Single)AnnotationElement.getAnyAnnotation(((MethodInvocation)invocation).getMethod(), Single.class);
          printSingle(s);
-         complex c = (complex)AnnotationElement.getAnyAnnotation(((MethodInvocation)invocation).getMethod(), complex.class);
+         Complex c = (Complex)AnnotationElement.getAnyAnnotation(((MethodInvocation)invocation).getMethod(), Complex.class);
          printComplex(c);
       }
       else if (invocation instanceof ConstructorInvocation)
       {
          msg = "executing constructor " + ((ConstructorInvocation)invocation).getConstructor();
-         single s = (single)AnnotationElement.getAnyAnnotation(((ConstructorInvocation)invocation).getConstructor(), single.class);
+         Single s = (Single)AnnotationElement.getAnyAnnotation(((ConstructorInvocation)invocation).getConstructor(), Single.class);
          printSingle(s);
-         complex c = (complex)AnnotationElement.getAnyAnnotation(((ConstructorInvocation)invocation).getConstructor(), complex.class);
+         Complex c = (Complex)AnnotationElement.getAnyAnnotation(((ConstructorInvocation)invocation).getConstructor(), Complex.class);
          printComplex(c);
       }
       else if (invocation instanceof FieldReadInvocation)
       {
          msg = "read field name: " + ((FieldReadInvocation)invocation).getField();
-         single s = (single)AnnotationElement.getAnyAnnotation(((FieldInvocation)invocation).getField(), single.class);
+         Single s = (Single)AnnotationElement.getAnyAnnotation(((FieldInvocation)invocation).getField(), Single.class);
          printSingle(s);
-         complex c = (complex)AnnotationElement.getAnyAnnotation(((FieldInvocation)invocation).getField(), complex.class);
+         Complex c = (Complex)AnnotationElement.getAnyAnnotation(((FieldInvocation)invocation).getField(), Complex.class);
          printComplex(c);
       }
       else if (invocation instanceof FieldWriteInvocation)
       {
          msg = "write field name: " + ((FieldWriteInvocation)invocation).getField();
-         single s = (single)AnnotationElement.getAnyAnnotation(((FieldInvocation)invocation).getField(), single.class);
+         Single s = (Single)AnnotationElement.getAnyAnnotation(((FieldInvocation)invocation).getField(), Single.class);
          printSingle(s);
-         complex c = (complex)AnnotationElement.getAnyAnnotation(((FieldInvocation)invocation).getField(), complex.class);
+         Complex c = (Complex)AnnotationElement.getAnyAnnotation(((FieldInvocation)invocation).getField(), Complex.class);
          printComplex(c);
       }
 

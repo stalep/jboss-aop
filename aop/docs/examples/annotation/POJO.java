@@ -21,25 +21,25 @@
 */
 public class POJO
 {
-   @trace @billable
+   @Trace @Billable
    public POJO() 
    {
       System.out.println("empty constructor");
    }
 
-   @trace
+   @Trace
    public POJO(int i)
    {
       System.out.println("int constructor");
    }
 
-   @trace @billable
+   @Trace @Billable
    public void someMethod()
    {
       System.out.println("someMethod");
    }
 
-   @trace
+   @Trace
    public int field;
 }
 

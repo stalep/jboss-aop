@@ -33,7 +33,7 @@ public class BillingInterceptor implements Interceptor
 
    public Object invoke(Invocation invocation) throws Throwable
    {
-      System.out.println("billing amount: $" + invocation.getMetaData("billable", "amount"));
+      System.out.println("billing amount: $" + invocation.getMetaData("Billable", "amount"));
       return invocation.invokeNext();
    }
 }

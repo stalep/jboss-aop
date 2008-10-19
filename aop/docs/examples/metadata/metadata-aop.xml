@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aop>
-   <metadata tag="trace" class="POJO">
+   <metadata tag="Trace" class="POJO">
       <constructor expr="POJO()"/>
    </metadata>
-   <metadata tag="billable" class="POJO">
+   <metadata tag="Billable" class="POJO">
       <constructor expr="POJO()">
          <amount>0.01</amount>
       </constructor>
    </metadata>
-   <metadata tag="trace" class="POJO">
+   <metadata tag="Trace" class="POJO">
       <field name="field"/>
       <constructor expr="POJO(int)"/>
       <method expr="void someMethod()"/>
    </metadata>
-   <metadata tag="billable" class="POJO">
+   <metadata tag="Billable" class="POJO">
       <constructor expr="POJO(int)">
          <amount>0.01</amount>
       </constructor>

@@ -23,7 +23,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface complex
+public @interface Complex
 {
    char ch();
    String string();
@@ -33,7 +33,7 @@ public @interface complex
    long lng();
    int integer();
    boolean bool();
-   single annotation();
+   Single annotation();
    String[] array();
    Class clazz();
 

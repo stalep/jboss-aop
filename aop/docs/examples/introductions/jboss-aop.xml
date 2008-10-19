@@ -16,16 +16,16 @@
       </mixin>
    </introduction>
 
-   <metadata tag="test" class="POJO3">
+   <metadata tag="Test" class="POJO3">
       <method expr="void method()"/>
    </metadata>
 
-   <metadata tag="test2" class="POJO4">
+   <metadata tag="Test2" class="POJO4">
       <class/>
    </metadata>
 
    <!-- introduce serializable to any class that is tagged @test2 or has a method tagged @test -->
-   <introduction expr="has(* *->@test(..)) OR class(@test2)">
+   <introduction expr="has(* *->@Test(..)) OR class(@Test2)">
       <interfaces>
          java.io.Serializable
       </interfaces>

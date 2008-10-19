@@ -18,8 +18,6 @@ System.out logging or log4j logging. We will see later how, once logging is turn
 Application server, both <tt>jboss-logging-log4j.jar</tt> and <tt>log4j.jar</tt> will be available, so if logging is enabled
 it will happen via log4j.</p>
 
-<p>All the examples in this lesson use JDK 5, but hopefully by now you have the knowledge to set this up using JDK 1.4!</p>
-
 <h3>Loadtime weaving</h3>
 <p>With loadtime weaving, classes are woven while the class is first loaded, so to see the logging of the weaving process we need 
 to turn on logging when the class is being loaded. We turn this on by passing in the value <tt>true</tt> for the <tt>jboss.aop.verbose</tt> 
@@ -39,12 +37,12 @@ when running the application, so we have turned off logging. If left out the res
 just there for clarity.</p>
 <p>To run the example with loadtime weaving and no logging turned on, you can run</P>
 <pre>
-$ ant  run.loadtime.50.nologging
+$ ant  run.loadtime.nologging
 </pre>
 <p>This will run the application with no logging:</p>
 <pre>
 ...
-run.loadtime.50.nologging:
+run.loadtime.nologging:
      [java] --- pojo.notwoven(); ---
      [java] notwoven()
      [java] --- pojo.boundMethod(); ---
@@ -68,11 +66,11 @@ when running the application, so logging is now turned on. In this case neither 
 
 <p>To run the example with System.out logging, you  should run:</p>
 <pre>
-$ ant  run.loadtime.50.system.out.logging
+$ ant  run.loadtime.system.out.logging
 </pre>
 <p> This will generate quite a lot of output during the 'run' stage, the most important of which are outlined here:</p>
 <pre>
-run.loadtime.50.system.out.logging:
+run.loadtime.system.out.logging:
 ...
      [java] [aop-debug] org.jboss.aop.instrument.Instrumentor trying to transform POJO
      [java] [aop-debug] org.jboss.aop.instrument.CallerTransformer There are no caller pointcuts!
@@ -110,11 +108,11 @@ can get more fine-grained control of logging levels for different classes during
 well as control of the output formats etc. See the Apache log4j documentation for more information about log4j.</p>
 <p>To run the example with log4j logging, run:</p>
 <pre>
-$ ant  run.loadtime.50.log4j.logging
+$ ant  run.loadtime.log4j.logging
 </pre>
 <p>Again, this will generate quite a lot of logging for each woven class during the weaving process, the most important bits show below:</p>
 <pre>
-run.loadtime.50.log4j.logging:
+run.loadtime.log4j.logging:
 ...
      [java] 2007-05-15 23:38:23,625 DEBUG org.jboss.aop.instrument.Instrumentor - trying to transform POJO
      [java] 2007-05-15 23:38:23,625 DEBUG org.jboss.aop.instrument.CallerTransformer - There are no caller pointcuts!
@@ -155,7 +153,7 @@ when aopc'ing, so we have turned off logging. If left out the result would have 
 just there for clarity.</p>
 <p>To run the example:</p>
 <pre>
-$ ant  run.aopc.50.nologging
+$ ant  run.aopc.nologging
 </pre>
 <p>This will aopc the application without logging enabled, and then run the application. As expected, we get no
 logging during the aopc process</p>
@@ -175,7 +173,7 @@ aopc.no.logging:
 <p>since neither <tt>jboss-logging-log4j.jar</tt> nor <tt>log4j.jar</tt> are on the classpath, JBoss AOP
 defaults to the System.out logger. To run:</p>
 <pre>
-$ ant  run.aopc.50.system.out.logging
+$ ant  run.aopc.system.out.logging
 </pre>
 <p>The output looks much the same as during the loadtime weaving, but this time
 it happens during the <tt>aopc</tt> stage:</p>
@@ -194,7 +192,7 @@ aopc.system.out.logging:
 <p>We also get some lugging when running the application, showing what happens when the aop information is processed at 
 runtime when running the application:</p>
 <pre>
-run.aopc.50.system.out.logging:
+run.aopc.system.out.logging:
 ...
      [java] [aop-debug] org.jboss.aop.ClassAdvisor Creating chains for class POJO sun.misc.Launcher$AppClassLoader@a39137
      [java] [aop-debug] org.jboss.aop.ClassAdvisor iterate binding file:/C:/cygwin/home/Kabir/sourcecontrol/jboss-aop/build/output/jboss-aop-snapshot/docs/aspect-framework/examples/logging/jboss-aop.xml0 execution(public void POJO->boundMethod())
@@ -225,7 +223,7 @@ when running the aopc post-compiler, so logging of the weaving is now turned on.
 <tt>log4j.jar</tt> are on the classpath, so JBoss AOP will now use the log4j logging mechanism. To get any meaningful
 output, you need a <a href="log4j.properties">log4j.properties</a> on the classpath as was the case when using loadtime weaving. To run:
 <pre>
-$ ant  run.aopc.50.log4j.logging
+$ ant  run.aopc.log4j.logging
 </pre>
 <p>We get much the same output as we did in the <i>Compile-time logging with System.out logging</i> case, but this time formatted and 
 controllable using log4j. Here is the output from aopc:</p>
@@ -243,7 +241,7 @@ aopc.log4j.logging:
 </pre>
 <p>and here is the output from the runtime applicatiin of the aop information</p>
 <pre>
-run.aopc.50.log4j.logging:
+run.aopc.log4j.logging:
 ...
      [java] 2007-05-16 00:03:59,343 DEBUG org.jboss.aop.ClassAdvisor - Creating chains for class POJO sun.misc.Launcher$AppClassLoader@92e78c
      [java] 2007-05-16 00:03:59,343 DEBUG org.jboss.aop.ClassAdvisor - iterate binding file:/C:/cygwin/home/Kabir/sourcecontrol/jboss-aop/build/output/jboss-aop-snapshot/docs/aspect-framework/examples/logging/jboss-aop.xml0 execution(public void POJO->boundMethod())

@@ -61,15 +61,13 @@ You declare an error in the same way as a warning, but you use the <tt>@DeclareE
 
 </p><p>
 Now if you run the example:
-</p><p>
-To compile and run with JDK 5:
 <pre>
-  $ ant run.aopc.50
+  $ ant run.aopc
 </pre>
 </p><p>
-It will generate the following output
+It will generate the following output:
 <pre>
-_aopc50.annotated:
+_aopc.annotated:
      [aopc] WARNING: declare-warning condition
      [aopc]     'call(Driver->new(..)) AND within(*DAO)'
      [aopc] was broken for constructor call: CarDAO.save()V calls Driver.new()V
@@ -87,28 +85,27 @@ _aopc50.annotated:
 
      [aopc] Build Successful: 438 ms
 
-_run.aopc.50.annotated:
+_run.aopc.annotated:
      [java] ---- Start ----
      [java] Car DAO save
 </pre>
 </p><p>
 Note that when using compile time instrumentation the warnings are generated during the aopc phase. <p>
-(To run with JDK 1.4 use $ ant run.aopc.14 as shown in the <a href="../valid_targets_annotated.html"/>annotated examples guide</a>.)
 </p>
-</p><p>
+<p>
 <h4>Run the example load-time instrumented</h4>
 
 </p><p>
-Run the example with JDK 5:
+Run the example:
 </p>
 <pre>
-  $ ant run.loadtime.50
+  $ ant run.loadtime
 </pre>
 </p><p>
 It will generate the following output
 </p>
 <pre>
-_run.loadtime.50.annotated:
+_run.loadtime.annotated:
      [java] ---- Start ----
      [java] WARNING: declare-warning condition
      [java]     'call(Driver->new(..)) AND within(*DAO)'
@@ -128,7 +125,6 @@ _run.loadtime.50.annotated:
 
 </pre>
 Note that now the warnings are displayed when running the application, as the classes are transformed when loaded.
-(To run with JDK 1.4 use $ ant run.aopc.14 as shown in the <a href="../valid_targets_annotated.html"/>annotated examples guide</a>.)
 </p><p>
 <h3>Declaring errors</h3>
 
@@ -153,14 +149,14 @@ public class DeclareAspect
 </p><p>
 <h3>declare-error precompiled</h3>
 
-When running precompiled with JDK 5 we get:
+When running precompiled we get:
 <pre>
-$ ant run.aopc.50
+$ ant run.aopc
 Buildfile: build.xml
 
 ...
 
-_aopc50.annotated:
+_aopc.annotated:
      [aopc] ERROR: declare-error condition
      [aopc]     'call(Driver-&gt;new(..)) AND within(*DAO)'
      [aopc] was broken for constructor call: CarDAO.save()V calls Driver.new()V
@@ -208,16 +204,15 @@ _aopc50.annotated:
 </pre>
 </p><p>
 See how the compiler stops at the first error and execution stops.
-(To run with JDK 1.4 use $ ant run.aopc.14 as shown in the <a href="../valid_targets_annotated.html"/>annotated examples guide</a>.)
 </p><p>
 <h3>DeclareError loadtime</h3>
 
-When running with loadtime transformations with JDK 5 we get:
+When running with loadtime transformations we get:
 <pre>
-$ ant run.loadtime.50
+$ ant run.loadtime
 ...
 
-_run.loadtime.50.annotated:
+_run.loadtime.annotated:
      [java] ---- Start ----
      [java] ERROR: declare-error condition
      [java]     'call(Driver-&gt;new(..)) AND within(*DAO)'
@@ -262,7 +257,6 @@ _run.loadtime.50.annotated:
 
 </pre>
 Again you can see how the first broken condition causes execution to stop.
-(To run with JDK 1.4 use $ ant run.aopc.14 as shown in the <a href="../valid_targets_annotated.html"/>annotated examples guide</a>.)
 </p>
 </body>
 </html>
