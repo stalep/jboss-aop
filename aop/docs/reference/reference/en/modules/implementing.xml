@@ -211,7 +211,7 @@
    <sect1 id="impl-invocation3" revision="1">
       <title>Resolving Annotations</title>
       <para>
-         JBoss AOP provides an abstraction for resolving JDK 5.0 annotations. 
+         JBoss AOP provides an abstraction for resolving annotations. 
          In future versions of JBoss AOP, there will be a way to override annotation values on a
          per thread basis, or via XML overrides, or even provide VM and cluster wide defaults for annotation values.
          Also if you want to write a truly generic advice that takes the base Invocation type, you can still get the

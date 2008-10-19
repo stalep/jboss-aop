@@ -23,7 +23,7 @@
       </para>
       <para>
       Loadtime weaving offers the ultimate flexibility.  JBoss AOP does not require a special classloader to do loadtime weaving, but there
-      are some issues that you need to think about. JDK5 actually has a simple standard mechanism of hooking in a class transformer
+      are some issues that you need to think about. The Java Virtual Machine actually has a simple standard mechanism of hooking in a class transformer
          through the <literal>-javaagent</literal>.  JBoss AOP an additional load-time transformer that can hook into classloading via this standard mechanism.
       </para>
        <para>
@@ -60,7 +60,7 @@
          </para>
          <para>
             As an alternative, you can replace all those jars by
-            <literal>jboss-aop-jdk50-single.jar</literal>, that bundles the 
+            <literal>jboss-aop-single.jar</literal>, that bundles the 
             libraries used by JBoss AOP with JBoss AOP class files in a single jar.
          </para>
          <para>
@@ -133,54 +133,51 @@ $ run-precompiled classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_an
             would omit the
             <literal>-Djboss.aop.path</literal> system property.
          </para>
-         <sect3>
-            <title>Loadtime with JDK 5</title>
-            <para>
-               JDK 5.0 has a pluggable way of defining a class transformer via the
+         <para>
+            The JVM has a pluggable way of defining a class transformer via the
                <literal>java.lang.instrument</literal>
-            package.  JBoss AOP uses this mechanism to weave aspects at class load time with JDK 5.
-            Using loadtime with JDK 5 is really easy.  All you have to do is define an additional standard switch
+            package.  JBoss AOP uses this mechanism to weave aspects at class load time.
+            Using loadtime weaving is really easy.  All you have to do is define an additional standard switch
             on the Java command line.
-               <literal>-javaagent:jboss-aop.jar</literal>. 
+            <literal>-javaagent:jboss-aop.jar</literal>. 
             Here's how run an AOP application with loadtime instrumentation,
             where your jboss-aop.xml file is not part of a jar:
-               <programlisting>
+            <programlisting>
 $ java -cp=&lt;classpath as described above&gt; -Djboss.aop.path=&lt;path to jboss-aop.xml&gt; \
-      -javaagent:jboss-aop-jdk50.jar com.blah.MyMainClass
-               </programlisting>
-            </para>
-            <para>
+      -javaagent:jboss-aop.jar com.blah.MyMainClass
+            </programlisting>
+         </para>
+         <para>
             And to run an AOP application with loadtime instrumentation,
             where your application contains a jar with a META-INF/jboss-aop.xml file:
-               <programlisting>
-$ java -cp=&lt;classpath as described above&gt; -javaagent:jboss-aop-jdk50.jar \
+            <programlisting>
+$ java -cp=&lt;classpath as described above&gt; -javaagent:jboss-aop.jar \
       com.blah.MyMainClass
-               </programlisting>
-            </para>
-            <para>
+            </programlisting>
+         </para>
+         <para>
             In the /bin folder of the distribution we have provided batch/script files to make
             this easier. It includes all the aop libs for you, so you just have to worry
             about your files. The usage:
-               <programlisting>
+            <programlisting>
 $ run-load classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] \
       com.blah.MyMainClass [args...]
-               </programlisting>
+            </programlisting>
             The parameters have the same meaning as for the run-precompiled scripts.
-            </para>
-            <para>
+         </para>
+         <para>
             If you invoke the previous
-               <literal>java</literal> examples with ant, by using
+            <literal>java</literal> examples with ant, by using
             the ant
-               <literal>java</literal> task, make sure that you set
-               <literal>fork="true"</literal> in the ant
-               <literal>java</literal> task. Failure
+            <literal>java</literal> task, make sure that you set
+            <literal>fork="true"</literal> in the ant
+            <literal>java</literal> task. Failure
             to do so, causes the
-               <literal>java</literal> task to execute in the same VM
+            <literal>java</literal> task to execute in the same VM
             as ant which is already running. This means that the special classloader used to
             do the loadtime transformations does not replace the standard one, so no
             instrumentation takes place.
-            </para>
-         </sect3>
+         </para>
          <sect3>
             <title>Loadtime using JRockit</title>
             <para>
@@ -190,7 +187,7 @@ $ run-load classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated
          <sect3>
             <title>Improving Loadtime Performance</title>
             <para>
-               Boss AOP needs to do the same kinds of things that any standard Java
+               JBoss AOP needs to do the same kinds of things that any standard Java
                profiling product needs to do.  It needs to be able to process bytecode at runtime before a class is loaded.
               JBoss AOP has to do a lot of work before a class can be loaded.  This means that boot time can end up being significantly slowed down.
                Once all classes are loaded though, load-time weaving has zero effect on the speed
@@ -333,25 +330,25 @@ $ run-load classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated
          </para>
          <para>
             This mode is currently provided through the <literal>java.lang.instrument.Instrumentation</literal> hot swap functionality,
-            which is part of the JVMTI (Java Virtual Machine Tool Interface) added in JDK5. So, you cannot run JBoss AOP in this mode when
+            which is part of the JVMTI (Java Virtual Machine Tool Interface). So, you cannot run JBoss AOP in this mode when
             using a previous JDK version.
          </para>
          <para>
-            To enable HotSwap, you have to add an argument to the Java command line in a very similar way to the "Loadtime with JDK5" mode:
-            <literal>-javaagent:jboss-aop-jdk50.jar=-hotSwap</literal>.
+            To enable HotSwap, you have to add an argument to the Java command line in a very similar way to the Loadtime mode:
+            <literal>-javaagent:jboss-aop.jar=-hotSwap</literal>.
             The difference is that the <literal>-hotSwap</literal> argument was added to the agent parameter list.
          </para>
 			<para>
             This way, if your jboss-aop.xml file is contained in a jar file, run:
             <programlisting>
 $ java -cp=&lt;classpath as described above&gt; -Djboss.aop.path=&lt;path to jboss-aop.xml&gt; \
-		-javaagent:jboss-aop-jdk50.jar=-hotSwap com.blah.MyMainClass
+		-javaagent:jboss-aop.jar=-hotSwap com.blah.MyMainClass
             </programlisting>
          </para>
          <para>
             And if your jboss-aop.xml file is contained in a jar, run the following command line:
             <programlisting>
-$ java -cp=&lt;classpath as described above&gt; -javaagent:jboss-aop-jdk50.jar=-hotSwap \
+$ java -cp=&lt;classpath as described above&gt; -javaagent:jboss-aop.jar=-hotSwap \
 		com.blah.MyMainClass
             </programlisting>
          </para>
@@ -369,7 +366,7 @@ $ run-load classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated
                <literal> true</literal>, this setup will be ignored.
          </para>
          <para>
-            As with the "Loadtime with JDK5" mode, the HotSwap mode results in a boot time delay. Besides this drawback, the execution of some dynamic aop operations
+            As with the Loadtime mode, the HotSwap mode results in a boot time delay. Besides this drawback, the execution of some dynamic aop operations
             may be slower than in the other modes, when classes need to be hot swapped. The available options to tune performance are the same as described
             in the "Improving Loadtime Performance" subsection, except the pruning of classes.
          </para>
@@ -540,7 +537,7 @@ public Enumeration&lt;URL&gt; getResourceAsStream(String name) throws IOExceptio
             <title>JBoss 4.x AspectManager Service</title>
             <para>
                In JBoss 4.x the AspectManager Service is configured using a JBoss Microcontainer bean. The configuration file
-               is <literal>jboss-5.x.x.GA/server/default/deploy/jboss-aop-jdk50.deployer/META-INF/jboss-service.xml</literal>. 
+               is <literal>jboss-4.x.x.GA/server/default/deploy/jboss-aop-jdk50.deployer/META-INF/jboss-service.xml</literal>. 
                The AspectManager Service is deployed with
                the following xml:
             </para>
@@ -582,13 +579,13 @@ public Enumeration&lt;URL&gt; getResourceAsStream(String name) throws IOExceptio
           </sect3>
       </sect2>
       <sect2 id="running-as-sun-jdk">
-         <title>Loadtime transformation in JBoss AS Using Sun JDK 5</title>
+         <title>Loadtime transformation in JBoss AS Using Sun JDK</title>
          <para>
-            JBoss AS has special integration with JDK 5.0 to do loadtime transformations.  This section explains how to use it.
+            JBoss AS has special integration with JDK (from version 5.0 on) to do loadtime transformations.  This section explains how to use it.
          </para>
          <para>
             If you want to do load-time
-            transformations with JBoss 5 and Sun JDK 5, these are the steps you must take.
+            transformations with JBoss 5 and Sun JDK, these are the steps you must take.
          </para>
          <itemizedlist>
             <listitem>

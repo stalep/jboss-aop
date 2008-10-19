@@ -38,7 +38,7 @@
             so that you can have a more layered design.  AOP allows you to intercept any event in a Java
             program and trigger functionality based on those events.  Mixins allow you to introduce
             multiple inheritance to Java so that you can provide APIs for your aspects.  Combined with 
-            JDK 5.0 annotations, it allows you to extend the Java language with new syntax.
+            annotations, it allows you to extend the Java language with new syntax.
       </para>
 
       <para>

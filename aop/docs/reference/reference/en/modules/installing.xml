@@ -25,7 +25,7 @@
    </sect1>
 
    <sect1 id="installing-jboss40-jdk50" revision="1">
-      <title>Installing with JBoss 4.0.x amd JBoss 4.2.x Application Server for JDK 5</title>
+      <title>Installing with JBoss 4.0.x and JBoss 4.2.x Application Server for JDK 5</title>
 
       <para>
          To install JBoss AOP in JBoss 4.0.x or JBoss 4.2.x Application Server: with JDK 5, there is an ant build script to
