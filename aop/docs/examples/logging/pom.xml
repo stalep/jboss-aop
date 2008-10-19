@@ -30,6 +30,21 @@
 
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>log4j.configuration</name>
+              <value>log4j.properties</value>
+              <name>log4j.debug</name>
+              <value>true</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <source>${jdkVersion}</source>
@@ -51,6 +66,7 @@
               <aoppaths>
                 <aoppath>jboss-aop.xml</aoppath>
               </aoppaths>
+              <verbose>true</verbose>
             </configuration>
             <goals>
               <goal>compile</goal>
@@ -62,6 +78,7 @@
               <aoppaths>
                 <aoppath>jboss-aop.xml</aoppath>
               </aoppaths>
+              <verbose>true</verbose>
               <executable>Driver</executable>
               <loadtime>true</loadtime>
             </configuration>
