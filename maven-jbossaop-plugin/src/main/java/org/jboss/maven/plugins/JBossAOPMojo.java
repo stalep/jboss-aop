@@ -49,6 +49,13 @@ import org.codehaus.plexus.util.cli.Commandline;
 public class JBossAOPMojo  extends AbstractMojo
 {
 
+   /**
+    * Set the verbose level of the compiler
+    *
+    * @parameter expression="${verbose}" default-value="false"
+    */
+   private boolean verbose;
+
    /** 
     * If it is set to true all project dependencies will also be included to the aop classpath
     * 
@@ -145,6 +152,8 @@ public class JBossAOPMojo  extends AbstractMojo
       String aoppath = getAoppath();
       if(aoppath != null && aoppath.length() > 0)
          cl.addArguments(new String[] { "-Djboss.aop.path="+ aoppath});
+
+      cl.addArguments(new String[] { "-Djboss.aop.verbose="+ Boolean.toString(verbose)});
       
       if(aopClassPath != null && aopClassPath.length() > 0)
          cl.addArguments(new String[] { "-Djboss.aop.class.path="+ aopClassPath});
