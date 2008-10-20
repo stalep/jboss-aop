@@ -1,5 +1,7 @@
 @echo off
 
+set LIB_DIR=%~dp0..\lib\
+
 IF %1a==a goto display_usage
 IF %2a==a goto display_usage
 IF %3a==a goto display_usage
@@ -43,19 +45,19 @@ goto setupArgs
 
 
 REM Setup AOP classpath
-SET AOPC_CLASSPATH=..\lib\javassist.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-aop-client.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-reflect.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-mdr.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-logging-log4j.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-logging-spi.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-standalone-aspect-library.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\log4j.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\pluggable-instrumentor.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-aop.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-aspect-library.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\jboss-common-core.jar
-SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;..\lib\trove.jar
+SET AOPC_CLASSPATH=%LIB_DIR%javassist.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%LIB_DIR%jboss-aop-client.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%LIB_DIR%jboss-reflect.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%LIB_DIR%jboss-mdr.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%LIB_DIR%jboss-logging-log4j.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%LIB_DIR%jboss-logging-spi.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%LIB_DIR%jboss-standalone-aspect-library.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%LIB_DIR%log4j.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%LIB_DIR%pluggable-instrumentor.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%LIB_DIR%jboss-aop.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%LIB_DIR%jboss-aspect-library.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%LIB_DIR%jboss-common-core.jar
+SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%LIB_DIR%trove.jar
 SET AOPC_CLASSPATH=%AOPC_CLASSPATH%;%USER_CLASSPATH%
 
 
@@ -66,13 +68,14 @@ goto end
 :display_usage
 echo Script file for running compile time instrumented aop applications
 echo Usage:
-echo run-precompiled.bat classpath [-aoppath path_to_aop.xml [-aopclasspath path_to_annotated] [-report] [-verbose]  dir_or_file+
-   echo    classpath:        Classpath of your sourcefiles and all required libraries
-   echo    path_to_.aop.xml: Path to your *-aop.xml files. Use colon as separator  if you have more than one
-   echo    path_to_annotated Path to jars/directories that have annotated aspects. Use colon as separator if you have more than one.
-   echo    dir_or_file:      Directory containing files to be aop precompiled
-   echo    -verbose:         Specify if you want verbose output
-   echo    -report:          If specified, classes do not get instrumented. Instead you get an xml file containing the bindings applied.
+echo run-precompiled.bat classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] [-verbose]  Main.class [args]
+   echo    classpath:         Classpath of your sourcefiles and all required libraries
+   echo    path_to_.aop.xml:  Path to your *-aop.xml files (separated by colon)
+   echo    path_to_annotated: Path to jars/directories that have annotated aspects (separated by colon)
+   echo    -verbose:          Specify if you want verbose output
+   echo    Main.class:        Your main class
+   echo    args:              The args to Main.class
+
 
 :end
 
