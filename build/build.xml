@@ -442,6 +442,14 @@
     <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer/" file="${aop.pluggable-instrumentor.location}"/>
     <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer/" file="${aop.jrockit-pluggable-instrumentor.location}"/>
 
+    <!-- Copy aophelper to the dist -->
+    <mkdir dir="${project.release}/aophelper"/>
+    <mkdir dir="${project.release}/aophelper/resources"/>
+    <mkdir dir="${project.release}/aophelper/lib"/>
+    <copy todir="${project.release}/aophelper/lib" file="${project.root}/aophelper/target/aophelper.jar"/>
+    <copy todir="${project.release}/aophelper/resources" file="${project.root}/aophelper/src/main/resources/jboss-aop.xml"/>
+    <copy todir="${project.release}/aophelper" file="${project.root}/aophelper/bin/aophelper.sh"/>
+    <copy todir="${project.release}/aophelper" file="${project.root}/aophelper/bin/aophelper.bat"/>
 
     <copy todir="${project.release}" file="RELEASE_NOTES.html"/>
 
