@@ -298,7 +298,12 @@ public [return type] [advice name]([annotated parameter], [annotated parameter],
                <row>
                   <entry><literal>@Thrown</literal></entry>
                   <entry>Joinpoint thrown exception</entry>
-                  <entry><literal>Throwable</literal></entry>
+                  <entry align="left"><literal>java.lang.Throwable</literal>
+                         <para>If used on an after-throwing advice, this parameter can also be:</para>
+                         <para>- assignable from any exception declared to be thrown by the joinpoint</para>
+                         <para>- <literal>java.lang.RuntimeException</literal> or any subtype of this class</para>
+                  </entry>
+                  
                   <entry align="left">Yes:
                      <para>- for after-throwing advices</para>
                      <para>- for finally advices only if <literal>@Return</literal> is present</para>
@@ -335,7 +340,7 @@ public [return type] [advice name]([annotated parameter], [annotated parameter],
                <row>
                   <entry><literal>@Args</literal></entry>
                   <entry>All joinpoint arguments</entry>
-                  <entry><literal>Object[]</literal></entry>
+                  <entry><literal>java.lang.Object[]</literal></entry>
                   <entry>No</entry>
                   <entry>Yes</entry>
                   <entry>Yes</entry>
@@ -376,7 +381,7 @@ public [return type] [advice name]([annotated parameter], [annotated parameter],
          </para>
          <programlisting><![CDATA[public class Aspect
 {
-   public void throwing1(@Thrown Throwable thrownException)
+   public void throwing1(@Thrown RuntimeException thrownException)
    {
       ...
    }
@@ -470,7 +475,9 @@ public [return type] [advice name]([annotated parameter], [annotated parameter],
    </bind>
 </aop>]]></programlisting>
          <para>
-            This example binds four finally advices to the execution of all public methods that return an int value.
+            This example binds four finally advices to the execution of all public methods that return an int value. Take note on the
+            type of the <literal>@Thrown</literal>-annotated parameters, which must be <literal>Throwable</literal> for this type of
+            advice.
          </para>
          <para>
             The presence of <literal>@Thrown</literal> is not mandatory in advices <literal>finally1()</literal>
