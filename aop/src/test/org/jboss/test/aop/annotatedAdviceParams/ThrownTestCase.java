@@ -122,12 +122,9 @@ public class ThrownTestCase extends AOPTestWithSetup
          thrown = true;
          assertEquals(37, pojoException.number);
          
-         assertNull(ThrownAspect.throwingAdvice);
-         assertNull(ThrownAspect.throwingThrown);
-         assertEquals(0, ThrownAspect.throwingNumber);
-         /*assertEquals("throwing3", ThrownAspect.advice);
-         assertSame(pojoException, ThrownAspect.thrown);
-         assertEquals(37, ThrownAspect.thrownNumber);*/
+         assertEquals("throwing3", ThrownAspect.throwingAdvice);
+         assertSame(pojoException, ThrownAspect.throwingThrown);
+         assertEquals(37, ThrownAspect.throwingNumber);
          
          assertNull(ThrownAspect.finallyAdvice);
          assertNull(ThrownAspect.finallyThrown);
@@ -148,14 +145,9 @@ public class ThrownTestCase extends AOPTestWithSetup
          thrown = true;
          assertEquals(43, pojoException.number);
          
-         assertNull(ThrownAspect.throwingAdvice);
-         assertNull(ThrownAspect.throwingThrown);
-         assertEquals(0, ThrownAspect.throwingNumber);
-         /*assertEquals("throwing4", ThrownAspect.advice);
-         assertSame(pojoException, ThrownAspect.thrown);
-         assertEquals(43, ThrownAspect.thrownNumber);*/
-         
-
+         assertEquals("throwing4", ThrownAspect.throwingAdvice);
+         assertSame(pojoException, ThrownAspect.throwingThrown);
+         assertEquals(43, ThrownAspect.throwingNumber);
       }
       assertTrue(thrown);
    }
@@ -218,6 +210,69 @@ public class ThrownTestCase extends AOPTestWithSetup
          assertEquals(6, pojoException.number);
          assertNull(ThrownAspect.throwingAdvice);
          assertNull(ThrownAspect.throwingThrown);
+         assertEquals(0, ThrownAspect.throwingNumber);
+         
+         assertNull(ThrownAspect.finallyAdvice);
+         assertNull(ThrownAspect.finallyThrown);
+         assertEquals(0, ThrownAspect.finallyNumber);
+      }
+      assertTrue(thrown);
+   }
+   
+   public void test8() throws POJOException
+   {
+      boolean thrown = false;
+      try
+      {
+         pojo.method8();
+      }
+      catch(RuntimeException exception)
+      {
+         thrown = true;
+         assertEquals("throwing10", ThrownAspect.throwingAdvice);
+         assertSame(exception, ThrownAspect.throwingThrown);
+         assertEquals(0, ThrownAspect.throwingNumber);
+         
+         assertNull(ThrownAspect.finallyAdvice);
+         assertNull(ThrownAspect.finallyThrown);
+         assertEquals(0, ThrownAspect.finallyNumber);
+      }
+      assertTrue(thrown);
+   }
+   
+   public void test9() throws POJOException
+   {
+      boolean thrown = false;
+      try
+      {
+         pojo.method9();
+      }
+      catch(RuntimeException exception)
+      {
+         thrown = true;
+         assertEquals("throwing6", ThrownAspect.throwingAdvice);
+         assertSame(exception, ThrownAspect.throwingThrown);
+         assertEquals(0, ThrownAspect.throwingNumber);
+         
+         assertNull(ThrownAspect.finallyAdvice);
+         assertNull(ThrownAspect.finallyThrown);
+         assertEquals(0, ThrownAspect.finallyNumber);
+      }
+      assertTrue(thrown);
+   }
+   
+   public void test10() throws POJOException
+   {
+      boolean thrown = false;
+      try
+      {
+         pojo.method10();
+      }
+      catch(RuntimeException exception)
+      {
+         thrown = true;
+         assertEquals("throwing11", ThrownAspect.throwingAdvice);
+         assertSame(exception, ThrownAspect.throwingThrown);
          assertEquals(0, ThrownAspect.throwingNumber);
          
          assertNull(ThrownAspect.finallyAdvice);

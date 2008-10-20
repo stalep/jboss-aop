@@ -1434,10 +1434,13 @@
 	</bind>
 
 	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ThrownPOJO->method3(..))">
+      <throwing name="throwing3" aspect="org.jboss.test.aop.annotatedAdviceParams.ThrownAspect"/>
+      <throwing name="throwing10" aspect="org.jboss.test.aop.annotatedAdviceParams.ThrownAspect"/>
+      <throwing name="throwing11" aspect="org.jboss.test.aop.annotatedAdviceParams.ThrownAspect"/>
 	</bind>
 
    <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ThrownInvalidPOJO->method3Throwing3(..))">
-		<throwing name="throwing3" aspect="org.jboss.test.aop.annotatedAdviceParams.ThrownAspect"/>
+		<throwing name="throwing9" aspect="org.jboss.test.aop.annotatedAdviceParams.ThrownAspect"/>
 	</bind>
 
    <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ThrownInvalidPOJO->method3Finally3(..))">
@@ -1445,11 +1448,12 @@
 	</bind>
 
 	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ThrownPOJO->method4(..))">
+      <throwing name="throwing4" aspect="org.jboss.test.aop.annotatedAdviceParams.ThrownAspect"/>
       <finally name="finally4" aspect="org.jboss.test.aop.annotatedAdviceParams.ThrownAspect"/>
 	</bind>
 
    <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ThrownInvalidPOJO->method4Throwing4(..))">
-		<throwing name="throwing4" aspect="org.jboss.test.aop.annotatedAdviceParams.ThrownAspect"/>
+		<throwing name="throwing9" aspect="org.jboss.test.aop.annotatedAdviceParams.ThrownAspect"/>
 	</bind>
 
 	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ThrownPOJO->method5(..))">
@@ -1470,6 +1474,18 @@
 
 	<bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ThrownInvalidPOJO->method7Throwing8(..))">
 		<throwing name="throwing8" aspect="org.jboss.test.aop.annotatedAdviceParams.ThrownAspect"/>
+	</bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ThrownPOJO->method8(..))">
+      <throwing name="throwing10" aspect="org.jboss.test.aop.annotatedAdviceParams.ThrownAspect"/>
+	</bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ThrownPOJO->method9(..))">
+      <throwing name="throwing6" aspect="org.jboss.test.aop.annotatedAdviceParams.ThrownAspect"/>
+	</bind>
+   
+   <bind pointcut="execution(* org.jboss.test.aop.annotatedAdviceParams.ThrownPOJO->method10(..))">
+      <throwing name="throwing11" aspect="org.jboss.test.aop.annotatedAdviceParams.ThrownAspect"/>
 	</bind>
 
    <!-- overloaded advices test -->

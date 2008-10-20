@@ -21,6 +21,9 @@
  */
 package org.jboss.test.aop.annotatedAdviceParams;
 
+import java.io.IOException;
+import java.rmi.AccessException;
+
 import junit.framework.Assert;
 
 import org.jboss.aop.advice.annotation.Arg;
@@ -81,20 +84,37 @@ public class ThrownAspect
       throwingThrown = pojoException;
    }
    
-   public void throwing5(@Thrown RuntimeException runtimeException)
+   public void throwing5(@Thrown IOException runtimeException)
    {
       Assert.fail("This advice should never be executed");
    }
    
    public void throwing6(@Thrown Throwable throwable)
    {
-      // exception isn't thrown by joinpoint
-      Assert.fail("This advice should never be executed");
+      throwingAdvice = "throwing6";
+      throwingThrown = throwable;
    }
    
    public void throwing8(@Arg int i)
    {
       Assert.fail("This advice should never be executed");
+   }
+   
+   public void throwing9(@Thrown AccessException throwable)
+   {
+      Assert.fail("This advice should never be executed");
+   }
+   
+   public void throwing10(@Thrown RuntimeException throwable)
+   {
+      throwingAdvice = "throwing10";
+      throwingThrown = throwable;
+   }
+   
+   public void throwing11(@Thrown NullPointerException throwable)
+   {
+      throwingAdvice = "throwing11";
+      throwingThrown = throwable;
    }
    
    public void finally1(@Thrown Throwable throwable)

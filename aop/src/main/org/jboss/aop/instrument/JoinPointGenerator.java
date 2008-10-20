@@ -682,6 +682,7 @@ public abstract class JoinPointGenerator
          AdviceSetups setups, CtClass[] declaredExceptions, CtClass[] parameterTypes, JoinPointInfo info)throws NotFoundException
    {
       AdviceCallStrategy defaultCall = DefaultAdviceCallStrategy.getInstance();
+      AdviceCallStrategy afterThrowingCall = AfterThrowingAdviceCallStrategy.getInstance();
       AdviceCallStrategy afterCall = AfterAdviceCallStrategy.getInstance();
       
       StringBuffer code = new StringBuffer();
@@ -729,7 +730,7 @@ public abstract class JoinPointGenerator
       afterCode.append("   {");
       // store throwable in THROWABLE variable
       afterCode.append(THROWABLE).append(" = ").append("throwable;");
-      argsFoundAfter = defaultCall.addInvokeCode(this,
+      argsFoundAfter = afterThrowingCall.addInvokeCode(this,
             setups.getByType(AdviceType.THROWING), afterCode, info) || argsFoundAfter;
       afterCode.append("throw t;");
       //addHandleExceptionCode(afterCode, declaredExceptions);
@@ -1755,6 +1756,7 @@ public abstract class JoinPointGenerator
       }
       
       protected abstract String generateKey(JoinPointGenerator generator);
+      
       /**
        * 
        * @param setup represents an advice that should be invoked (i.e.,
@@ -1826,6 +1828,7 @@ public abstract class JoinPointGenerator
             call.append(RETURN_VALUE);
             break;
          case AdviceMethodProperties.THROWABLE_ARG:
+            call.append('(').append(adviceParam.getName()).append(')');
             call.append(THROWABLE);
             break;
          case AdviceMethodProperties.TARGET_ARG:
@@ -1861,9 +1864,9 @@ public abstract class JoinPointGenerator
             
             // make typed argument consistent, if that is the case
             Set<Integer> inconsistentTypeArgs = generator.inconsistentTypeArgs.get();
-            int argIndex = arg + generator.parameters.getFirstArgIndex();
             if (inconsistentTypeArgs.contains(arg))
             {
+               int argIndex = arg + generator.parameters.getFirstArgIndex();
                beforeCall.append("$").append(argIndex).append(" = ");
                beforeCall.append(ReflectToJavassist.castInvocationValueToTypeString(
                properties.getJoinpointParameterClassTypes()[arg], ARGUMENTS + '[' + arg + ']'));
@@ -2049,6 +2052,50 @@ public abstract class JoinPointGenerator
             call.append(key);
          }
          return super.appendAdviceCall(setup, beforeCall, call, generator);
+      }
+   }
+   
+   private static class AfterThrowingAdviceCallStrategy extends AdviceCallStrategy
+   {
+      private static AfterThrowingAdviceCallStrategy INSTANCE = new AfterThrowingAdviceCallStrategy();
+      
+      public static final AfterThrowingAdviceCallStrategy getInstance()
+      {
+         return INSTANCE;
+      }
+      
+      public boolean appendAdviceCall(AdviceSetup setup, String key,
+            StringBuffer beforeCall, StringBuffer call, JoinPointGenerator generator, JoinPointInfo info)
+      {
+         int[] args = setup.getAdviceMethodProperties().getArgs();
+         int throwableIndex = -1;
+         for (int i = 0; i < args.length; i++)
+         {
+            if (args[i] == AdviceMethodProperties.THROWABLE_ARG)
+            {
+               throwableIndex = i;
+            }
+         }
+         if (throwableIndex != -1)
+         {
+            Class<?> throwableType = setup.getAdviceMethodProperties().
+               getAdviceMethod().getParameterTypes()[throwableIndex];
+            if (throwableType != Throwable.class)
+            {
+               call.append("if (").append(THROWABLE).append(" instanceof ");
+               call.append(throwableType.getName()).append(") {");
+               boolean result = super.appendAdviceCall(setup, beforeCall, call, generator);
+               call.append("}");
+               return result;
+            }
+         }
+         return super.appendAdviceCall(setup, beforeCall, call, generator);
+      }
+
+      @Override
+      protected String generateKey(JoinPointGenerator generator)
+      {
+         return null;
       }
    }
 

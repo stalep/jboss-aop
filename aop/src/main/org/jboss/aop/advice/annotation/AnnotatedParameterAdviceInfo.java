@@ -428,6 +428,7 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
    class SingleParameterType extends ParameterAnnotationType
    {
       int index;
+      Type assignableFrom;
       
       public SingleParameterType(ParameterAnnotationRule rule)
       {
@@ -455,20 +456,79 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
       
       public final boolean internalValidate(AdviceMethodProperties properties)
       {
-         if (index != -1 && !AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(
-               method.getGenericParameterTypes()[index],
-               (Type)rule.getAssignableFrom(properties), hierarchy))
+         if (index == -1)
          {
+            return true;
+         }
+         Type parameterType = method.getGenericParameterTypes()[index];
+         Object assignableFrom = rule.getAssignableFrom(properties);
+         Class<?> superType = rule.getSuperType();
+         System.out.println(rule + " supertype: " + superType);
+         if (assignableFrom instanceof Type)
+         {
+            if(AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(parameterType,
+               (Type) assignableFrom, hierarchy))
+            {
+               this.assignableFrom = (Type) assignableFrom;
+               return true;
+            }
+            if (superType != null && superType.isAssignableFrom(
+                  method.getParameterTypes()[index]))
+            {
+               System.out.println("SUPER TYPE " + superType  + " is ASSIGNABLE FROM " + parameterType);
+               this.assignableFrom = null;
+               return true;
+            }
+            else
+            {
+               System.out.println("SUPER TYPE: " + superType);
+            }
             AdviceMethodFactory.appendNewMatchingMessage(method, rule);
             AdviceMethodFactory.appendMatchingMessage("-annotated parameter is not assignable from expected type ");
-            AdviceMethodFactory.appendMatchingMessage(((Type) rule.getAssignableFrom(properties)));
+            AdviceMethodFactory.appendMatchingMessage(assignableFrom);
+            if (superType != null)
+            {
+               AdviceMethodFactory.appendMatchingMessage(" nor it is a subtype of ");
+               AdviceMethodFactory.appendMatchingMessage(superType);
+            }
             return false;
          }
-         return  true;
+         for (Type type: (Type[]) assignableFrom)
+         {
+            if (AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(parameterType,
+                  type, hierarchy))
+            {
+               this.assignableFrom = type;
+               return true;
+            }
+         }
+         if (superType != null &&
+               superType.isAssignableFrom(method.getParameterTypes()[index]))
+         {
+            this.assignableFrom = null;
+            return true;
+         }
+         AdviceMethodFactory.appendNewMatchingMessage(method, rule);
+         AdviceMethodFactory.appendMatchingMessage("-annotated parameter is not assignable from any of expected types [");
+         AdviceMethodFactory.appendMatchingMessage(rule.getAssignableFrom(properties));
+         for (Type type: (Type[]) assignableFrom)
+         {
+            AdviceMethodFactory.appendMatchingMessage(", ");
+            AdviceMethodFactory.appendMatchingMessage(type);
+         }
+         AdviceMethodFactory.appendMatchingMessage(']');
+         if (superType != null)
+         {
+            AdviceMethodFactory.appendMatchingMessage(" nor it is a subtype of ");
+            AdviceMethodFactory.appendMatchingMessage(superType);
+         }
+         return false;
       }
 
-      // this class doesn't set any field during validation
-      public final void resetValidation() { }
+      public final void resetValidation()
+      {
+         this.assignableFrom = null;
+      }
 
       public final short getAssignabilityDegree(AdviceMethodProperties properties)
       {
@@ -476,9 +536,12 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          {
             return -1;
          }
+         if (assignableFrom == null)
+         {
+            return 1000;
+         }
          return DEGREE.getAssignabilityDegree(
-               method.getGenericParameterTypes()[this.index],
-               (Type) rule.getAssignableFrom(properties));
+               method.getGenericParameterTypes()[this.index], assignableFrom);
       }
       
       public final void assignParameterInfo(int[] args)

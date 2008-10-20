@@ -62,4 +62,20 @@ public class ThrownPOJO
    {
       throw new POJOException(6);
    }
+   
+   public void method8() throws POJOException
+   {
+      throw new RuntimeException();
+   }
+   
+   public void method9()
+   {
+      throw new RuntimeException();
+   }
+   
+   public void method10()
+   {
+      Object nullObject = null;
+      System.out.println(nullObject.toString());
+   }
 }

@@ -1,6 +1,7 @@
 package org.jboss.aop.advice.annotation;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 
 import org.jboss.aop.advice.AdviceMethodProperties;
 import org.jboss.aop.joinpoint.FieldReadInvocation;
@@ -19,8 +20,8 @@ enum ParameterAnnotationRule
     * Rule for parameter annotation {@link JoinPoint}.
     */
    JOIN_POINT (
-         JoinPoint.class, JoinPointBean.class, AdviceMethodProperties.JOINPOINT_ARG,
-         700, false, true)
+         JoinPoint.class, JoinPointBean.class, null,
+         AdviceMethodProperties.JOINPOINT_ARG, 700, false, true)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
@@ -32,8 +33,8 @@ enum ParameterAnnotationRule
     * Rule for parameter annotation {@link Invocation}.
     */
    INVOCATION (
-         JoinPoint.class, Invocation.class, AdviceMethodProperties.INVOCATION_ARG,
-         700, false, true)
+         JoinPoint.class, Invocation.class, null,
+         AdviceMethodProperties.INVOCATION_ARG, 700, false, true)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
@@ -45,7 +46,7 @@ enum ParameterAnnotationRule
     * Rule for parameter annotation {@link Target}.
     */
    TARGET (
-         Target.class, null, AdviceMethodProperties.TARGET_ARG, 300, false, true)
+         Target.class, null, null, AdviceMethodProperties.TARGET_ARG, 300, false, true)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
@@ -62,7 +63,7 @@ enum ParameterAnnotationRule
     * Rule for parameter annotation {@link Caller}.
     */
    CALLER (
-         Caller.class, null, AdviceMethodProperties.CALLER_ARG, 150, false, true)
+         Caller.class, null, null, AdviceMethodProperties.CALLER_ARG, 150, false, true)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
@@ -79,7 +80,7 @@ enum ParameterAnnotationRule
     * Rule for parameter annotation {@link Return}.
     */
    RETURN (
-         Return.class, null, AdviceMethodProperties.RETURN_ARG, 50, false, true)
+         Return.class, null, null, AdviceMethodProperties.RETURN_ARG, 50, false, true)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
@@ -91,21 +92,32 @@ enum ParameterAnnotationRule
     * Rule for parameter annotation {@link Thrown}.
     */
    OPTIONAL_THROWN (
-         Thrown.class, Throwable.class, AdviceMethodProperties.THROWABLE_ARG, 50,
-         false, true),
+         Thrown.class, Throwable.class, null, AdviceMethodProperties.THROWABLE_ARG,
+         50, false, true),
    
    /**
     * Rule for parameter annotation {@link Thrown}.
     */
    MANDATORY_THROWN (
-         Thrown.class, Throwable.class, AdviceMethodProperties.THROWABLE_ARG, 50,
-         true, true),
+         Thrown.class, Throwable.class, RuntimeException.class,
+         AdviceMethodProperties.THROWABLE_ARG, 50, true, true)
+   {
+      public Object getAssignableFrom(AdviceMethodProperties properties)
+      {
+         Type[] joinpointExceptions = properties.getJoinpointExceptions();
+         if (joinpointExceptions == null || joinpointExceptions.length == 0)
+         {
+            return super.getAssignableFrom(properties);
+         }
+         return joinpointExceptions;
+      }   
+   },
       
    /**
     * Rule for parameter annotation {@link Arg}.
     */
    ARG (
-         Arg.class, null, AdviceMethodProperties.ARG_ARG, 2, false, false)
+         Arg.class, null, null, AdviceMethodProperties.ARG_ARG, 2, false, false)
    {
       public Object getAssignableFrom(AdviceMethodProperties properties)
       {
@@ -117,7 +129,7 @@ enum ParameterAnnotationRule
     * Rule for parameter annotation {@link Args}.
     */
    ARGS (
-         Args.class, Object[].class, AdviceMethodProperties.ARGS_ARG, 1, false, true)
+         Args.class, Object[].class, null, AdviceMethodProperties.ARGS_ARG, 1, false, true)
    {
       public boolean lowerRankGrade(AdviceMethodProperties properties)
       {
@@ -127,6 +139,7 @@ enum ParameterAnnotationRule
    
    private Class<? extends Annotation> annotation;
    private Class<?> assignableFrom;
+   private Class<?> superType;
    private int rankGrade;
    private boolean mandatory;
    private boolean singleEnforced;
@@ -148,11 +161,13 @@ enum ParameterAnnotationRule
     *                        annotation</code> in the advice method parameters is
     *                        forbidden
     */
-   private ParameterAnnotationRule(Class<? extends Annotation> annotation, Class<?> assignableFrom, int property,
+   private ParameterAnnotationRule(Class<? extends Annotation> annotation,
+         Class<?> assignableFrom, Class<?> superType, int property,
          int rankGrade, boolean mandatory, boolean singleEnforced)
    {
       this.annotation = annotation;
       this.assignableFrom = assignableFrom;
+      this.superType = superType;
       this.property = property;
       this.rankGrade = rankGrade;
       this.mandatory = mandatory;
@@ -174,13 +189,28 @@ enum ParameterAnnotationRule
     * @param properties describes the queried advice method
     * 
     * @return the type or types from which the annotated parameter must be assignable.
-    *         If this rule {@link #isSingleEnforced() is single enforced}, the return
-    *         type is <code>java.lang.reflect.Type</code>; otherwise, it is
-    *         <code>java.lang.reflect.Type[]</code>.
+    *         The return type can be <code>java.lang.reflect.Type</code> or
+    *         <code>java.lang.reflect.Type[]</code>. If this rule
+    *         {@link #isSingleEnforced() is not single enforced}, the return type
+    *         must be <code>java.lang.reflect.Type[]</code>.
     */
    public Object getAssignableFrom(AdviceMethodProperties properties)
    {
       return assignableFrom;
+   }
+   
+   /**
+    * Returns the type that can be the super type of the annotated parameter type.
+    * This is an optional rule, and can be applied only if the annotated parameter
+    * type is not assignable from the type(s) defined by {@link
+    * #getAssignableFrom(AdviceMethodProperties)}.
+    * 
+    * @return the type that can be the super type of the annotated parameter type.
+    *         Can be {@code null}.
+    */
+   public Class<?> getSuperType()
+   {
+      return superType;
    }
    
    /**
