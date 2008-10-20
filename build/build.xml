@@ -434,6 +434,8 @@
     <copy todir="${project.release}/jboss-50-install/lib" file="${aop.asintegration-mc.location}"/>
     <copy todir="${project.release}/jboss-50-install/lib" file="${aop.asintegration-jmx.location}"/>
     <copy todir="${project.release}/jboss-50-install" file="${aop.readme-as5.location}"/>
+    <copy tofile="${project.release}/jboss-50-install/build.xml" file="../asintegration-core/src/etc/jboss-50-install-jboss-aop-jdk50-build.xml"/>
+    <copy todir="${project.release}/jboss-50-install" file="../asintegration-core/src/etc/jboss.properties"/>
     <copy tofile="${project.release}/jboss-50-install/lib/javassist.jar" file="${javassist:javassist:jar}"/>
     <copy tofile="${project.release}/jboss-50-install/lib/trove.jar" file="${trove:trove:jar}"/>
     <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer/" file="${aop.aspect-library50.location}"/>

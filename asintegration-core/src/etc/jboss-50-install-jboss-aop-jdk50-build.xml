@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="install" name="JBoss/AOP Application Server installation">
+
+   <target name="init">
+      <!-- ========================================= -->
+      <!-- Set the jboss root and server config here -->
+      <!-- ========================================= -->
+      <property file="jboss.properties"/>
+
+      <!-- The rest are automatic -->
+      <property name="jboss.config.dir" value="${jboss.home}/server/${jboss.config}"/>
+      <property name="jboss.bin.dir" value="${jboss.home}/bin"/>
+      
+      <available file="${jboss.home}" property="jboss.exists" type="dir"/>
+      <fail unless="jboss.exists" message="${jboss.home} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+      
+      <available file="${jboss.bin.dir}" property="bin.exists" type="dir"/>
+      <fail unless="bin.exists" message="${jboss.bin.dir} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+
+      <available file="${jboss.config.dir}" property="config.exists" type="dir"/>
+      <fail unless="config.exists" message="${jboss.config.dir} does not exist. Modify 'jboss.config' in build.xml to be a valid server configuration"/>
+
+      <property name="deployers.dir" value="${jboss.config.dir}/deployers"/>
+
+      <property name="aspect.deployer" value="${deployers.dir}/jboss-aop-jboss5.deployer"/>
+      <available file="${aspect.deployer}" property="deployer.exists" type="dir"/>
+      <fail unless="deployer.exists" message="${aspect.deployer} does not exist."/>
+
+      <property name="jboss.lib" value="${jboss.home}/lib"/>
+      <available file="${jboss.lib}" property="lib.exists" type="dir"/>
+      <fail unless="lib.exists" message="${jboss.lib} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+
+      <tstamp>
+         <format property="tstamp"  pattern="yyyyMMdd-HHmmss"/>
+      </tstamp>
+   </target>
+
+
+   <target name="backup.lib" depends="init" unless="old.lib.exists">
+      <property name="old.lib" value="${jboss.lib}-${tstamp}.bak"/>
+      <echo>Backing up existing lib directory to ${old.lib}</echo>
+      <copy todir="${old.lib}">
+         <fileset dir="${jboss.lib}"/>
+      </copy>
+   </target>
+
+   <target name="backup.deployer" depends="init" unless="old.deployer.exists">
+      <property name="old.deployer" value="${aspect.deployer}-${tstamp}.bak"/>
+      <echo>Backing up existing aop deployer to ${old.deployer}</echo>
+      <copy todir="${old.deployer}">
+         <fileset dir="${aspect.deployer}"/>
+      </copy>
+   </target>
+
+   <target name="install.lib" depends="backup.lib">
+      <copy todir="${jboss.lib}">
+         <fileset dir="lib">
+            <include name="*"/>
+         </fileset>
+      </copy>
+   </target>
+
+   <target name="install.deployer" depends="backup.deployer">
+      <copy todir="${aspect.deployer}">
+         <fileset dir="jboss-aop-jboss5.deployer">
+            <include name="**/*"/>
+         </fileset>
+      </copy>
+   </target>
+
+   <target name="install.bin" depends="init">
+      <copy todir="${jboss.bin.dir}">
+         <fileset dir="../lib">
+            <include name="pluggable-instrumentor.jar"/>
+            <include name="jrockit-pluggable-instrumentor.jar"/>
+         </fileset>
+      </copy>
+   </target>
+
+
+   <target name="install" depends="install.lib,install.deployer,install.bin"/>
+</project>
