@@ -87,7 +87,7 @@ public class AopHelperMenuBar extends JMenuBar
    
    private void showDialog()
    {
-      JOptionPane.showMessageDialog(this, "more info will come....");
+      JOptionPane.showMessageDialog(this, "JBoss AOP Helper is intendend to \n help users easily test and run their aop apps\n  without going through ant/maven.\n\n NOTE: Aophelper is still in beta stage.");
    }
 
    private JMenu createFileMenu()
