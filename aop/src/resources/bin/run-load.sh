@@ -4,13 +4,13 @@
 usage(){
    echo Script file for running loadtime instrumented aop applications
    echo Usage:
-   echo run-load.sh classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] [-verbose] Main.class [args...]
+   echo run-load.sh classpath [-aoppath path_to_aop.xml] [-aopclasspath path_to_annotated] [-verbose] Main.class [args]
    echo 
    echo    classpath:         Classpath of your source files and all required libraries
    echo 
-   echo    path_to_.aop.xml:  Path to your *-aop.xml files. Use colon as separator if you have more than one
+   echo    path_to_.aop.xml:  Path to your *-aop.xml files (separated by colon)
    echo 
-   echo    path_to_annotated: Path to jars/directories that have annotated aspects. Use colon as separator if you have more than one
+   echo    path_to_annotated: Path to jars/directories that have annotated aspects (separated by colon)
    echo
    echo    -verbose:          Specify if you want verbose output
    echo 

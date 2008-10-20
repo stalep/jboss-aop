@@ -8,9 +8,9 @@ usage(){
    echo 
    echo    classpath:         Classpath of your sourcefiles and all required libraries
    echo 
-   echo    path_to_.aop.xml:  Path to your *-aop.xml files. Use colon as separator if you have more than one
+   echo    path_to_.aop.xml:  Path to your *-aop.xml files (separated by colon)
    echo 
-   echo    path_to_annotated: Path to jars/directories that have annotated aspects. Use colon as separator if you have more than one
+   echo    path_to_annotated: Path to jars/directories that have annotated aspects (separated by colon)
    echo 
    echo    dir_or_file:       Directory containing files to be aop precompiled
    echo 
