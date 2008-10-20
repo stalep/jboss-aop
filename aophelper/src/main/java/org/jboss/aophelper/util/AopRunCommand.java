@@ -23,6 +23,7 @@ package org.jboss.aophelper.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopRun;
@@ -125,16 +126,24 @@ public class AopRunCommand
    private String getLoadtimePath()
    {
       String pathSeparator = System.getProperty("path.separator");
+      String fileSeparator = System.getProperty("file.separator");
       String[] paths = System.getProperty("java.class.path").split(pathSeparator);
+      Pattern pattern = Pattern.compile("(\\"+fileSeparator+".*\\"+fileSeparator+")++");
+
       for(String p : paths)
       {
-         if(p.contains("jboss-aop-"))
-            return "-javaagent:"+p;
+         String[] splits = pattern.split(p);
+         for(String s : splits)
+         { 
+            if(s.contains("jboss-aop"))
+            {
+               return "-javaagent:"+p;
+            }
+         }
       }
       return null;
    }
    
-
    private String getClasspath()
    {
       StringBuilder sb = new StringBuilder();

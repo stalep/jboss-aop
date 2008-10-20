@@ -41,23 +41,23 @@ public class CommandUtil
       String[] paths = System.getProperty("java.class.path").split(pathSeparator);
       for(String p : paths)
       {
-         if(p.contains("jboss-aop-"))
+         if(p.contains("jboss-aop"))
             aopPaths.append(p).append(pathSeparator);
-         else if(p.contains("trove-2"))
+         else if(p.contains("trove"))
             aopPaths.append(p).append(pathSeparator);
-         else if(p.contains("javassist-3"))
+         else if(p.contains("javassist"))
             aopPaths.append(p).append(pathSeparator);
-         else if(p.contains("jboss-common-core-2"))
+         else if(p.contains("jboss-common-core"))
             aopPaths.append(p).append(pathSeparator);
-         else if(p.contains("jboss-logging-spi-2"))
+         else if(p.contains("jboss-logging-spi"))
             aopPaths.append(p).append(pathSeparator);
-         else if(p.contains("jboss-container-"))
+         else if(p.contains("jboss-container"))
             aopPaths.append(p).append(pathSeparator);
          else if(p.contains("jboss-common-logging-spi"))
             aopPaths.append(p).append(pathSeparator);
-         else if(p.contains("jboss-mdr-"))
+         else if(p.contains("jboss-mdr"))
             aopPaths.append(p).append(pathSeparator);
-         else if(p.contains("jboss-reflect-"))
+         else if(p.contains("jboss-reflect"))
             aopPaths.append(p).append(pathSeparator);
          
       }
