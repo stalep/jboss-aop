@@ -80,6 +80,7 @@
     <module>asintegration-core</module>
     <module>asintegration-jmx</module>
     <module>asintegration-mc</module>
+    <module>aophelper</module>
     <module>build</module>
   </modules>
   
