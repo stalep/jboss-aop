@@ -26,15 +26,37 @@ public class Driver
    {
       POJO pojo = new POJO();
       
-      System.out.println("\nCalling POJO->throwExceptionMethod()");
+      System.out.println("\nCalling POJO->throwPOJOExceptionMethod()");
       System.out.println("====================================");
       try
       {
-         pojo.throwExceptionMethod("argument");
+         pojo.throwPOJOExceptionMethod("argument");
       }
       catch (Exception exception)
       {
-         System.out.println("Caching Exception " + exception);
+         System.out.println("Catching Exception " + exception);
+      }
+      
+      System.out.println("\nCalling POJO->throwRuntimeExceptionMethod()");
+      System.out.println("====================================");
+      try
+      {
+         pojo.throwRuntimeExceptionMethod("argument");
+      }
+      catch (Exception exception)
+      {
+         System.out.println("Catching Exception " + exception);
+      }
+      
+      System.out.println("\nCalling POJO->throwNullPointerExceptionMethod()");
+      System.out.println("====================================");
+      try
+      {
+         pojo.throwNullPointerExceptionMethod("argument");
+      }
+      catch (Exception exception)
+      {
+         System.out.println("Catching Exception " + exception);
       }
       
       System.out.println("\nCalling POJO->throwNothingMethod()");

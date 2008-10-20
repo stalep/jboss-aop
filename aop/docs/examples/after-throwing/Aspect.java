@@ -33,17 +33,17 @@ public class Aspect
       System.out.println(">>> afterThrowing: " + thrown);
    }
    
-   public void afterThrowingJoinPoint(@JoinPoint MethodExecution methodExecution, @Thrown Throwable thrown)
+   public void afterThrowingJoinPoint(@JoinPoint MethodExecution methodExecution, @Thrown POJOException thrown)
    {
       System.out.println(">>> afterThrowingJoinPoint: " + thrown);
    }
    
-   public void afterThrowingArg(@Thrown Throwable thrown, @Arg String argument)
+   public void afterThrowingArg(@Thrown RuntimeException thrown, @Arg String argument)
    {
       System.out.println(">>> afterThrowingArg: " + thrown);
    }
    
-   public void afterThrowingJoinPointArg(@Thrown Throwable thrown, @JoinPoint MethodExecution methodExecution, @Arg String argument)
+   public void afterThrowingJoinPointArg(@Thrown NullPointerException thrown, @JoinPoint MethodExecution methodExecution, @Arg String argument)
    {
       System.out.println(">>> afterThrowingJoinPointArg: " + thrown);
    }

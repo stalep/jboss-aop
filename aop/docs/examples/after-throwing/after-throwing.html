@@ -21,10 +21,15 @@ The only difference is that these advices feature an additional annotated parame
 So, an after-throwing advice should be of the form:
 </p><p>
 <pre>
-public void &lt;any-method-name&gt;(@&lt;Annotation&gt; &lt;any type&gt; arg0, @&lt;Annotation&gt; &lt;any type&gt; arg1, ... @Thrown Throwable argi, ...  @&lt;Annotation&gt; &lt;any type&gt; argN) throws &lt;Exception1&gt;,&lt;Exception2&gt;,...,&lt;ExceptionN&gt;
+public void &lt;any-method-name&gt;(@&lt;Annotation&gt; &lt;any type&gt; arg0, @&lt;Annotation&gt; &lt;any type&gt; arg1, ... @Thrown &lt;Throwable-Type&gt; argi, ...  @&lt;Annotation&gt; &lt;any type&gt; argN) throws &lt;Exception1&gt;,&lt;Exception2&gt;,...,&lt;ExceptionN&gt;
 </pre>
 </p><p>
-Where 0 &lt;= i &lt;= N.
+Where 0 &lt;= i &lt;= N and <tt>Throwable-Type</tt> can be one of the following:
+<ul>
+<li><code>java.lang.Throwable</code></li>
+<li><code>any runtime exception</code></li>
+<li>an exception declared to be thrown by the joinpoint you are intercepting</li>
+</ul>
 </p><p>
 <h4>Binding After Throwing Advices</h4>
 
@@ -47,34 +52,38 @@ throws an exception, instead of being invoked after all <tt>POJO</tt> methods' e
 <h4>Examples</h4>
 
 </p><p>
-You can find examples of after-throwing advices in the <tt>Aspect.java</tt> file.
+You can find examples of after-throwing advice in the <tt>Aspect.java</tt> file.
 </p><p>
 The following advice signature:
 <pre>
 public void afterThrowing(@Thrown Throwable thrown)
 </pre>
 </p><p>
-Is the simplest you can write, since the <tt>@Thrown Throwable</tt> parameter is mandatory.
+Is the simplest you can write, since the <tt>@Thrown</tt>-annotated parameter is mandatory.
 </p><p>
 But you can also include any other
 <a href="../annotated-parameters/annotated-parameters.html">annotated parameter</a> (except
 <tt>@Return</tt>, which is exclusive of after advices).
 </p><p>
-The following advice signature is valid to intercept a method execution throwing an
-exception:
+The following advice signature is valid to intercept a method execution throwing a
+<code>POJOException</code> exception:
 <pre>
-public void afterThrowingJoinPoint(@JoinPoint MethodExecution methodExecution, @Thrown Throwable thrown)
+public void afterThrowingJoinPoint(@JoinPoint MethodExecution methodExecution, @Thrown POJOException thrown)
 </pre>
 </p><p>
 Notice that you can declare the annotated parameters in any order you wish.
 </p><p>
-If the method being intercepted receives an <tt>String</tt> argument, these after throwing
-signatures are also valid:
+If the method being intercepted receives an <tt>String</tt> argument, and you want to intercept that method
+throwing RuntimeExceptions, these after-throwing signatures are also valid:
 </p><p>
 <pre>
-public void afterThrowingArg(@Thrown Throwable thrown, @Arg String argument)
-public void afterThrowingJoinPointArg(@Thrown Throwable thrown, @JoinPoint MethodExecution methodExecution, @Arg String argument)
+public void afterThrowingArg(@Thrown RuntimeException thrown, @Arg String argument)
+public void afterThrowingJoinPointArg(@Thrown NullPointerException thrown, @JoinPoint MethodExecution methodExecution, @Arg String argument)
 </pre>
+</p><p>
+Note that the first one receives a <tt>RuntimeException</tt> as <tt>@Thrown</tt>-annotated parameter. Thus, this advice is going to be invoked
+only when the intercepted method throws a <tt>RuntimeException</tt>. The second advice is more specific regarding this parameter, and will
+be invoked only when the intercepted method throws a <tt>NullPointerException</tt>.
 </p><p>
 </p><p>
 <h4>Run the example</h4>
@@ -88,18 +97,32 @@ To compile and run (for further detail, refer to our <a href="../running_example
 <p>It will javac the files and then run the AOPC precompiler to manipulate the bytecode, then finally run the example.  The output should be similar to this:</p>
 <pre>
 _run.aopc:
-     [java] Calling POJO-&gt;throwExceptionMethod()
+     [java] 
+     [java] Calling POJO->throwPOJOExceptionMethod()
      [java] ====================================
-     [java] RUNNING POJO-&gt;throwsExceptionMethod("argument")
-     [java] &gt;&gt;&gt; afterThrowing: java.lang.Exception: POJO Exception
-     [java] &gt;&gt;&gt; afterThrowingJoinPoint: java.lang.Exception: POJO Exception
-     [java] &gt;&gt;&gt; afterThrowingArg: java.lang.Exception: POJO Exception
-     [java] &gt;&gt;&gt; afterThrowingJoinPointArg: java.lang.Exception: POJO Exception
-     [java] Caching Exception java.lang.Exception: POJO Exception
-
-     [java] Calling POJO-&gt;throwNothingMethod()
+     [java] RUNNING POJO->throwsPOJOExceptionMethod("argument")
+     [java] >>> afterThrowing: POJOException
+     [java] >>> afterThrowingJoinPoint: POJOException
+     [java] Catching Exception POJOException
+     [java] 
+     [java] Calling POJO->throwRuntimeExceptionMethod()
+     [java] ====================================
+     [java] RUNNING POJO->throwsRuntimeExceptionMethod("argument")
+     [java] >>> afterThrowing: java.lang.ArrayIndexOutOfBoundsException
+     [java] >>> afterThrowingArg: java.lang.ArrayIndexOutOfBoundsException
+     [java] Catching Exception java.lang.ArrayIndexOutOfBoundsException
+     [java] 
+     [java] Calling POJO->throwNullPointerExceptionMethod()
+     [java] ====================================
+     [java] RUNNING POJO->throwsNullPointerExceptionMethod("argument")
+     [java] >>> afterThrowing: java.lang.NullPointerException
+     [java] >>> afterThrowingArg: java.lang.NullPointerException
+     [java] >>> afterThrowingJoinPointArg: java.lang.NullPointerException
+     [java] Catching Exception java.lang.NullPointerException
+     [java] 
+     [java] Calling POJO->throwNothingMethod()
      [java] ==================================
-     [java] RUNNING POJO-&gt;throwNothingMethod()
+     [java] RUNNING POJO->throwNothingMethod()
      [java] No Exception this time
 </pre>
 </p>

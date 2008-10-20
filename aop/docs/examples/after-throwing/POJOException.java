@@ -20,29 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-public class POJO
+public class POJOException extends Exception
 {
-   public void throwPOJOExceptionMethod(String arg) throws POJOException
-   {
-      System.out.println("RUNNING POJO->throwsPOJOExceptionMethod(\"" + arg + "\")");
-      throw new POJOException();
-   }
-   
-   public void throwRuntimeExceptionMethod(String arg) throws POJOException
-   {
-      System.out.println("RUNNING POJO->throwsRuntimeExceptionMethod(\"" + arg + "\")");
-      throw new ArrayIndexOutOfBoundsException();
-   }
-   
-   public void throwNullPointerExceptionMethod(String arg) throws POJOException
-   {
-      System.out.println("RUNNING POJO->throwsNullPointerExceptionMethod(\"" + arg + "\")");
-      String nullText = null;
-      System.out.println(nullText.toString());
-   }
-   
-   public void throwNothingMethod()
-   {
-      System.out.println("RUNNING POJO->throwNothingMethod()");
-   }
+
 }
