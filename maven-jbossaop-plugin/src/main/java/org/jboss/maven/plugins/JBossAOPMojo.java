@@ -25,7 +25,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -95,6 +97,14 @@ public class JBossAOPMojo  extends AbstractMojo
    private boolean loadtime;
    
    /**
+    * List of properties that can be added when running the application
+    *
+    * @parameter
+    */
+   private Properties properties;
+
+   
+   /**
     * The plugin dependencies.
     *
     * @parameter expression="${plugin.artifacts}"
@@ -157,6 +167,22 @@ public class JBossAOPMojo  extends AbstractMojo
       
       if(aopClassPath != null && aopClassPath.length() > 0)
          cl.addArguments(new String[] { "-Djboss.aop.class.path="+ aopClassPath});
+      
+      if(properties != null && !properties.isEmpty())
+      {
+         Iterator iter = properties.keySet().iterator();
+
+         while ( iter.hasNext() )
+         {
+             String key = (String) iter.next();
+             String value = properties.getProperty(key);
+
+             if(key.startsWith("-D"))
+                cl.addArguments(new String[] { key+"="+value});
+             else
+                cl.addArguments(new String[] { "-D"+key+"="+value});
+         }
+      }
          
       cl.addArguments(new String[] { executable});
       
