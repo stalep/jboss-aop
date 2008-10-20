@@ -436,7 +436,9 @@
     <copy todir="${project.release}/jboss-50-install" file="${aop.readme-as5.location}"/>
     <copy tofile="${project.release}/jboss-50-install/lib/javassist.jar" file="${javassist:javassist:jar}"/>
     <copy tofile="${project.release}/jboss-50-install/lib/trove.jar" file="${trove:trove:jar}"/>
-    <copy tofile="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer/jboss-standalone-aspect-library.jar" file="${aop.aspect-library50.location}"/>
+    <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer/" file="${aop.aspect-library50.location}"/>
+    <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer/" file="${aop.pluggable-instrumentor.location}"/>
+    <copy todir="${project.release}/jboss-50-install/jboss-aop-jboss5.deployer/" file="${aop.jrockit-pluggable-instrumentor.location}"/>
 
 
     <copy todir="${project.release}" file="RELEASE_NOTES.html"/>
