@@ -36,26 +36,27 @@
       </para>
       <orderedlist spacing="compact">
          <listitem>
-             Back up the existing <literal>jboss-40-install/jboss-aop-jdk50.deployer</literal> to
-            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer.bak]]></literal>
+             Back up the existing 
+            <literal><![CDATA[${jboss.home}/server/<config-name>/deploy/jboss-aop-jdk50.deployer]]></literal> to
+            <literal><![CDATA[${jboss.home}/server/<config-name>/deploy/jboss-aop-jdk50.deployer.bak]]></literal>
          </listitem>
          <listitem>
              Copy the files from <literal>jboss-40-install/jboss-aop-jdk50.deployer</literal> over the files that already
              exist in your existing JBoss Application Server distribution under
-            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer]]></literal>
+            <literal><![CDATA[${jboss.home}/server/<config-name>/deploy/jboss-aop-jdk50.deployer]]></literal>
          </listitem>
          <listitem>
-            In JBoss 4.0.4.GA and later, move <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/javassist.jar]]></literal>
-            to <literal><![CDATA[server/<config-name>/lib/javassist.jar]]></literal>. Any existing javassist.jar in that location is copied to
-            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer.bak/lib/javassist.bak]]></literal>
+            In JBoss 4.0.4.GA and later, move <literal><![CDATA[${jboss.home}/server/<config-name>/deploy/jboss-aop-jdk50.deployer/javassist.jar]]></literal>
+            to <literal><![CDATA[${jboss.home}/server/<config-name>/lib/javassist.jar]]></literal>. Any existing javassist.jar in that location is copied to
+            <literal><![CDATA[${jboss.home}/server/<config-name>/deploy/jboss-aop-jdk50.deployer.bak/lib/javassist.bak]]></literal>
          </listitem>
          <listitem>
             If you NOT upgrading from a previous AOP 2 distribution, open up
-            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-aspect-library-jdk50.jar]]></literal> and
+            <literal><![CDATA[${jboss.home}/server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-aspect-library-jdk50.jar]]></literal> and
             delete all classes and subpackages under <literal>org.jboss.aop</literal>. In AOP 2.0 we changed the packaging, these
-            classes now exist inside <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-aop-as4-deployer.jar]]></literal>. 
+            classes now exist inside <literal><![CDATA[${jboss.home}/server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-aop-as4-deployer.jar]]></literal>. 
             Also, we delete any files that also exist in 
-            <literal><![CDATA[server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-standalone-aspect-library-jdk14.jar]]></literal>
+            <literal><![CDATA[${jboss.home}/server/<config-name>/deploy/jboss-aop-jdk50.deployer/jboss-standalone-aspect-library.jar]]></literal>
          </listitem>
       </orderedlist>
    </sect1>
@@ -63,11 +64,27 @@
    <sect1 id="installing-jboss5-jdk5" revision="1">
       <title>Installing with JBoss Application Server 5</title>
       <para>
-         JBoss 5 is not released yet, this section will be modified when the packaging is finalised, but all you should need to do is
-         copy the contents of the <literal>jboss-50-install/lib</literal> directory into
-         <literal>$JBOSS_ROOT/lib</literal>, and copy the contents of the <literal>jboss-50-install/jboss-aop-jboss5.deployer</literal>
-         folder into <literal><![CDATA[$JBOSS_ROOT/server/<config-name>/deployers/jboss-aop-jboss5.deployer]]></literal>
+         JBoss AS 5 ships with AOP 2.0.0.GA. To upgrade to a newer AOP version, we have provided am an script to 
+         upgrade the server. It can be found at <literal>jboss-50-install/build.xml</literal>. Modifly 
+         <literal>jboss-50-install</literal> to point to the root of your JBoss installation, and specify the
+         application server configuration you want to upgrade. These are the steps taken by the
+         ant script:
       </para>
+      <orderedlist spacing="compact">
+         <listitem>
+             Back up the existing <literal>${jboss.home}/lib</literal> and 
+             <literal><![CDATA[${jboss.home}/server/<config-name>/deployers/jboss-aop-jboss5.deployer]]></literal> folders.
+         </listitem>
+         <listitem>
+             Overwrite the <literal><![CDATA[${jboss.home}/server/<config-name>/deployers/jboss-aop-jboss5.deployer]]></literal> 
+             folder with the files from <literal>jboss-50-install/jboss-aop-jboss5.deployer</literal>.
+         </listitem>
+         <listitem>
+             Overwrite the <literal>${jboss.home}/lib</literal> folder with the files from 
+             <literal>jboss-50-install/lib</literal>.
+         </listitem>
+      </orderedlist>
+      
    </sect1>
 </chapter>
 
