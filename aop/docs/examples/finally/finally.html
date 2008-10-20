@@ -222,7 +222,10 @@ ___________________________
 The finally advice above intercepts <tt>Bank.getAccount(String)</tt> method, that
 throws a <tt>NoSuchAccountException</tt> if the account name is invalid. It prints a
 message telling whether <tt>Bank.getAccount(String)</tt> threw an exception, which
-happened only if <tt>thrownException</tt> is not null.
+happened only if <tt>thrownException</tt> is not null. Notice that the @Thrown-annotated
+advice parameter above is not of type <tt>NoSuchAccountException</tt>, it is of type
+<tt>Throwable</tt>. The reason for this is that <i>@Thrown-annotated parameters must
+always be of type <tt>Throwable</tt> when declared at a finally advice.</i>
 </p><p>
 A second consideration we need to make is that, <i>if a finally advice receives a
 @Return parameter, the use of @Thrown is compulsory</i>. This is so because the
