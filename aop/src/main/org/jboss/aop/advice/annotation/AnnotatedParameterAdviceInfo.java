@@ -463,7 +463,6 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
          Type parameterType = method.getGenericParameterTypes()[index];
          Object assignableFrom = rule.getAssignableFrom(properties);
          Class<?> superType = rule.getSuperType();
-         System.out.println(rule + " supertype: " + superType);
          if (assignableFrom instanceof Type)
          {
             if(AssignabilityAlgorithm.VARIABLE_TARGET.isAssignable(parameterType,
@@ -475,13 +474,8 @@ class AnnotatedParameterAdviceInfo extends AdviceInfo
             if (superType != null && superType.isAssignableFrom(
                   method.getParameterTypes()[index]))
             {
-               System.out.println("SUPER TYPE " + superType  + " is ASSIGNABLE FROM " + parameterType);
                this.assignableFrom = null;
                return true;
-            }
-            else
-            {
-               System.out.println("SUPER TYPE: " + superType);
             }
             AdviceMethodFactory.appendNewMatchingMessage(method, rule);
             AdviceMethodFactory.appendMatchingMessage("-annotated parameter is not assignable from expected type ");
