@@ -73,6 +73,7 @@ public class ThrownPOJO
       throw new RuntimeException();
    }
    
+   @SuppressWarnings("all")
    public void method10()
    {
       Object nullObject = null;
