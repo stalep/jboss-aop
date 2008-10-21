@@ -450,6 +450,7 @@
     <copy todir="${project.release}/aophelper/resources" file="${project.root}/aophelper/src/main/resources/jboss-aop.xml"/>
     <copy todir="${project.release}/aophelper" file="${project.root}/aophelper/bin/aophelper.sh"/>
     <copy todir="${project.release}/aophelper" file="${project.root}/aophelper/bin/aophelper.bat"/>
+    <copy todir="${project.release}/aophelper" file="${project.root}/aophelper/README"/>
 
     <copy todir="${project.release}" file="RELEASE_NOTES.html"/>
 
