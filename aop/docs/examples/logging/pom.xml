@@ -63,6 +63,20 @@
               </excludes>
             </configuration>
           </plugin>
+        </plugins>
+      </build>
+
+
+  <profiles>
+    <profile>
+      <id>run-loadtime-log4j</id>
+      <activation>
+        <property>
+          <name>run-loadtime-log4j</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
           <plugin>
             <groupId>org.jboss.maven.plugins</groupId>
             <artifactId>maven-jbossaop-plugin</artifactId>
@@ -93,5 +107,40 @@
          </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>run-loadtime</id>
+      <activation>
+        <property>
+          <name>run-loadtime</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jboss.maven.plugins</groupId>
+            <artifactId>maven-jbossaop-plugin</artifactId>
+            <version>${jboss.aop.plugin.version}</version>
+            <executions>
+              <execution>
+                <id>run</id>
+                <configuration>
+                  <aoppaths>
+                    <aoppath>jboss-aop.xml</aoppath>
+                  </aoppaths>
+                  <verbose>true</verbose>
+                  <executable>Driver</executable>
+                  <loadtime>true</loadtime>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+         </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
