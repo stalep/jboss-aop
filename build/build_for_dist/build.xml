@@ -66,7 +66,8 @@
          <path refid="apache.log4j.classpath"/>
          <path refid="javassist.classpath"/>
          <path refid="trove.classpath"/>
-         <path refid="qdox.classpath"/>
+         <!-- required by org.jboss.aop.annotation.compiler/** -->
+         <!-- <path refid="qdox.classpath"/> -->
          <path refid="jboss.core.classpath"/>
          <path refid="jboss.reflect.classpath"/>
          <path refid="jboss.mdr.classpath"/>
@@ -114,6 +115,8 @@
          <src path="${source.java}"/>
          <exclude name="org/jboss/aop/definition/**"/>
          <exclude name="org/jboss/aop/hook/JRockit*"/>
+         <!-- requires qdox.jar -->
+         <exclude name="org/jboss/aop/annotation/compiler/**"/>
          <classpath refid="library.classpath"/>
       </javac>
    </target>
