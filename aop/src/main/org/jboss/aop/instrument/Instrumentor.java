@@ -42,7 +42,6 @@ import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.SerialVersionUID;
 import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
 import javassist.bytecode.FieldInfo;
 import javassist.bytecode.MethodInfo;
