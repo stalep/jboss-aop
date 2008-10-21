@@ -18,6 +18,8 @@ System.out logging or log4j logging. We will see later how, once logging is turn
 Application server, both <tt>jboss-logging-log4j.jar</tt> and <tt>log4j.jar</tt> will be available, so if logging is enabled
 it will happen via log4j.</p>
 
+<p>Example on how to do this with maven is shown on the bottom of this page.</p>
+
 <h3>Loadtime weaving</h3>
 <p>With loadtime weaving, classes are woven while the class is first loaded, so to see the logging of the weaving process we need 
 to turn on logging when the class is being loaded. We turn this on by passing in the value <tt>true</tt> for the <tt>jboss.aop.verbose</tt> 
@@ -261,5 +263,18 @@ run.aopc.log4j.logging:
      [java] >>> Leaving SimpleInterceptor
 
 </pre>
+<h3>Running with Maven</h3>
+<p>Building and running with Maven is similar to Ant. The log4j packages are included with the <pre>&lt;includeProjectDependency&gt;true&lt;/includeProjectDependency&gt;</pre> and it is set up with adding the properties:
+<pre>
+&lt;properties&gt;
+  &lt;property&gt;
+    &lt;name&gt;log4j.configuration&lt;/name&gt;
+    &lt;value&gt;log4j.properties&lt;/value&gt;
+  &lt;/property&gt;
+&lt;/properties&gt;
+</pre>
+To run the example with log4j enabled and loadtime weaving use <pre>mvn clean install -Prun-loadtime-log4j</pre> and with no log4j (just standard output) and loadtime weaving, use: <pre>mvn clean install -Prun-loadtime</pre>
+
+
 
 </html>
