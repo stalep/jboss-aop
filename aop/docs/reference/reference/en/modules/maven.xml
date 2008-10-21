@@ -96,6 +96,20 @@
           just the classes thats specified here will be weaved. Default set to null.
         </para>
       </listitem>
+      <listitem>
+        <para>
+          <literal>properties</literal> - a list of properties (name, value objects) that will be added as JVM properties.
+          A small example:
+          <programlisting><![CDATA[<properties>
+  <property>
+    <name>log4j.configuration</name>
+    <value>log4j.properties</value>
+  </property>
+</properties>]]></programlisting>
+         This will add log4j.configuration as JVM properties like: -Dlog4j.configuration=log4j.properties. 
+        </para>
+      </listitem>
+
     </itemizedlist>
     There are a lot of options that can be set, but noone are mandatory (if they are mandatory 
     they have a default value set). The average user would most likely only change <literal>aoppaths</literal>.
@@ -190,6 +204,19 @@
       <listitem>
         <para>
           <literal>executable</literal> - the java class that will be executed
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>properties</literal> - a list of properties (name, value objects) that will be added as JVM properties.
+          A small example:
+          <programlisting><![CDATA[<properties>
+  <property>
+    <name>log4j.configuration</name>
+    <value>log4j.properties</value>
+  </property>
+</properties>]]></programlisting>
+         This will add log4j.configuration as JVM properties like: -Dlog4j.configuration=log4j.properties. 
         </para>
       </listitem>
     </itemizedlist>
