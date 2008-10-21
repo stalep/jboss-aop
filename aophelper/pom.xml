@@ -5,7 +5,7 @@
   <groupId>org.jboss.aop</groupId>
   <artifactId>aophelper</artifactId>
   <packaging>jar</packaging>
-  <version>2.0.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <name>JBoss AOP Helper</name>
 
    <pluginRepositories>
@@ -23,10 +23,17 @@
    </pluginRepositories>
 
   <dependencies>
-
+    <!--
+    <dependency>
+      <groupId>org.jboss.maven.plugins</groupId>
+      <artifactId>maven-jbossaop-plugin</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    -->
     <dependency>
       <groupId>org.jboss.aop</groupId>
       <artifactId>jboss-aop</artifactId>
+      <version>2.0.0.CR18</version>
     </dependency>
 
 
