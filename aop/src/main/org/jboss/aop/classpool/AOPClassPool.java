@@ -47,14 +47,6 @@ public class AOPClassPool extends ScopedClassPool
    /** Classnames of classes that have been loaded, but were not woven */
    protected ConcurrentHashMap<String, Boolean> loadedButNotWovenClasses = new ConcurrentHashMap<String, Boolean>();
 
-   /** Causes the AOPClassPool.getCached() method to search all ClassPools registered in the repository */
-   public static final Class<SearchAllRegisteredLoadersSearchStrategy> SEARCH_ALL_STRATEGY = SearchAllRegisteredLoadersSearchStrategy.class;
-
-   /** Causes the AOPClassPool.getCached() method to search only itself */
-   public static final Class<SearchLocalLoaderLoaderSearchStrategy> SEARCH_LOCAL_ONLY_STRATEGY = SearchLocalLoaderLoaderSearchStrategy.class;
-   
-   private final AOPCLassPoolSearchStrategy searchStrategy;
-   
    static
    {
       ClassPool.doPruning = false;
@@ -73,43 +65,9 @@ public class AOPClassPool extends ScopedClassPool
 
    private AOPClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, boolean isTemp)
    {
-      this(cl, src, repository, SEARCH_ALL_STRATEGY, isTemp);
+      super(cl, src, repository, isTemp);
    }
 
-   public AOPClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, Class<? extends AOPCLassPoolSearchStrategy> searchStrategy)
-   {
-      this(cl, src, repository, searchStrategy, false);
-   }
-   
-   public AOPClassPool(ClassPool src, ScopedClassPoolRepository repository, Class<? extends AOPCLassPoolSearchStrategy> searchStrategy)
-   {
-      this(null, src, repository, searchStrategy, true);
-   }
-   
-   private AOPClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, Class<? extends AOPCLassPoolSearchStrategy> searchStrategy, boolean isTemp)
-   {
-      super(cl, src, repository, isTemp);
-      if (searchStrategy == SEARCH_ALL_STRATEGY)
-      {
-         this.searchStrategy = new SearchAllRegisteredLoadersSearchStrategy();
-      }
-      else if (searchStrategy == SEARCH_LOCAL_ONLY_STRATEGY)
-      {
-         this.searchStrategy = new SearchLocalLoaderLoaderSearchStrategy();
-      }
-      else
-      {
-         try
-         {
-            this.searchStrategy = searchStrategy.newInstance();
-         }
-         catch (Exception e)
-         {
-            throw new RuntimeException("Error instantiating search strategy class " + searchStrategy, e);
-         }
-      }
-   }
-   
    public void setClassLoader(ClassLoader cl)
    {
       classLoader = new WeakReference<ClassLoader>(cl);
@@ -128,9 +86,55 @@ public class AOPClassPool extends ScopedClassPool
 
    public CtClass getCached(String classname)
    {
-      return searchStrategy.getCached(classname);
+      CtClass clazz = getCachedLocally(classname);
+      if (clazz == null)
+      {
+         boolean isLocal = false;
+
+         ClassLoader cl = getClassLoader0();
+
+         if (cl != null)
+         {
+            isLocal = isLocalResource(classname);
+         }
+
+         if (!isLocal)
+         {
+            Object o = generatedClasses.get(classname);
+            if (o == null)
+            {
+               Map<ClassLoader, ClassPool> registeredCLs = AspectManager.getRegisteredCLs();
+               synchronized (registeredCLs)
+               {
+                  for(ClassPool pl : AspectManager.getRegisteredCLs().values())
+                  {
+                     AOPClassPool pool = (AOPClassPool) pl;
+                     if (pool.isUnloadedClassLoader())
+                     {
+                        AspectManager.instance().unregisterClassLoader(pool.getClassLoader());
+                        continue;
+                     }
+
+                     //Do not check classpools for scoped classloaders
+                     if (!pool.includeInGlobalSearch())
+                     {
+                        continue;
+                     }
+
+                     clazz = pool.getCachedLocally(classname);
+                     if (clazz != null)
+                     {
+                        return clazz;
+                     }
+                  }
+               }
+            }
+         }
+      }
+      // *NOTE* NEED TO TEST WHEN SUPERCLASS IS IN ANOTHER UCL!!!!!!
+      return clazz;
    }
-   
+
    protected boolean includeInGlobalSearch()
    {
       return true;
@@ -220,72 +224,5 @@ public class AOPClassPool extends ScopedClassPool
       return super.get0(classname, useCache);
    }
    
-   /**
-    * Contains the original AOPClassPool.getCached()
-    * 
-    */
-   private class SearchAllRegisteredLoadersSearchStrategy implements AOPCLassPoolSearchStrategy
-   {
-      public CtClass getCached(String classname)
-      {
-         CtClass clazz = getCachedLocally(classname);
-         if (clazz == null)
-         {
-            boolean isLocal = false;
-
-            ClassLoader cl = getClassLoader0();
-
-            if (cl != null)
-            {
-               isLocal = isLocalResource(classname);
-            }
-
-            if (!isLocal)
-            {
-               Object o = generatedClasses.get(classname);
-               if (o == null)
-               {
-                  Map<ClassLoader, ClassPool> registeredCLs = AspectManager.getRegisteredCLs();
-                  synchronized (registeredCLs)
-                  {
-                     for(ClassPool pl : AspectManager.getRegisteredCLs().values())
-                     {
-                        AOPClassPool pool = (AOPClassPool) pl;
-                        if (pool.isUnloadedClassLoader())
-                        {
-                           AspectManager.instance().unregisterClassLoader(pool.getClassLoader());
-                           continue;
-                        }
-
-                        //Do not check classpools for scoped classloaders
-                        if (!pool.includeInGlobalSearch())
-                        {
-                           continue;
-                        }
-
-                        clazz = pool.getCachedLocally(classname);
-                        if (clazz != null)
-                        {
-                           return clazz;
-                        }
-                     }
-                  }
-               }
-            }
-         }
-         // *NOTE* NEED TO TEST WHEN SUPERCLASS IS IN ANOTHER UCL!!!!!!
-         return clazz;
-      }
-   }
    
-   /**
-    * Checks only the AOPClassPool's cache 
-    */
-   private class SearchLocalLoaderLoaderSearchStrategy implements AOPCLassPoolSearchStrategy
-   {
-      public CtClass getCached(String classname)
-      {
-         return getCachedLocally(classname);
-      }
-   }
 }

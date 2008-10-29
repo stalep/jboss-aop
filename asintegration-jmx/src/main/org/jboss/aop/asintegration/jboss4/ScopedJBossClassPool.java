@@ -259,17 +259,14 @@ public class ScopedJBossClassPool extends JBossClassPool
     */
    private boolean isInstanceOfNoAnnotationURLClassLoader(ClassLoader loader)
    {
-      if (loader != null)
+      Class<?> parent = loader.getClass();
+      while (parent != null)
       {
-         Class<?> parent = loader.getClass();
-         while (parent != null)
+         if ("NoAnnotationURLClassLoader".equals(parent.getSimpleName()))
          {
-            if ("NoAnnotationURLClassLoader".equals(parent.getSimpleName()))
-            {
-               return true;
-            }
-            parent = parent.getSuperclass();
+            return true;
          }
+         parent = parent.getSuperclass();
       }
       return false;
    }

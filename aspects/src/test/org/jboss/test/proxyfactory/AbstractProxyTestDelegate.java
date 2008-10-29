@@ -40,7 +40,7 @@ public class AbstractProxyTestDelegate extends AbstractTestDelegate
     * @param clazz the test class
     * @throws Exception for any error
     */
-   public AbstractProxyTestDelegate(Class<?> clazz) throws Exception
+   public AbstractProxyTestDelegate(Class clazz) throws Exception
    {
       super(clazz);
    }
