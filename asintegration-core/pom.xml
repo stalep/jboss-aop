@@ -49,18 +49,40 @@
             <exclude>org/jboss/test/aop/classpool/support/b/B.class</exclude>
           </excludes>
         </configuration>
-        <!-- fileSets>
-          <fileSet>
-            <directory>target/test-classes</directory>
-            <outputDirectory>/</outputDirectory>
-            <excludes>
-              <exclude>org/jboss/test/aop/classpool/support/a/A.class</exclude>
-              <exclude>org/jboss/test/aop/classpool/support/b/B.class</exclude>
-            </excludes>
-          </fileSet>
-        </fileSets -->
-        
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-2</version>
+        <executions>
+          <execution>
+            <id>test-classpool-a</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/test-classpool-a.xml</descriptor>
+              </descriptors>
+              <finalName>${artifactId}</finalName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-classpool-b</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/test-classpool-b.xml</descriptor>
+              </descriptors>
+              <finalName>${artifactId}</finalName>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -68,7 +90,7 @@
         <configuration>
           <testFailureIgnore>true</testFailureIgnore>
           <forkMode>always</forkMode>
-          <skip>true</skip>
+          <skip>false</skip>
         </configuration>
       </plugin>
     </plugins>

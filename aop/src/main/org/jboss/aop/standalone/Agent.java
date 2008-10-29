@@ -35,9 +35,16 @@ import java.lang.instrument.Instrumentation;
  */
 public class Agent
 {
+   private static Instrumentation instrumentation;
+   
+   public static Instrumentation getInstrumentation()
+   {
+      return instrumentation;
+   }
 
    public static void premain(String agentArgs, Instrumentation inst)
    {
+      instrumentation = inst;
       StandaloneClassPoolFactory factory = new StandaloneClassPoolFactory(); 
       AspectManager.setClassPoolFactory(factory);
       // necessary for configuration

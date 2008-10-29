@@ -21,8 +21,7 @@
 */ 
 package org.jboss.aop.classpool;
 
-import java.net.URL;
-
+import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import javassist.scopedpool.ScopedClassPoolRepository;
@@ -30,32 +29,23 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 import org.jboss.logging.Logger;
 
 /**
+ * ClassPool for classloaders backed by a repository/classloading domain
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class DelegatingClassPool extends AOPClassPool //TODO It would be great not to have this redundant code
+public class DelegatingClassPool extends BaseClassPool 
 {
    private final static Logger logger = Logger.getLogger(DelegatingClassPool.class);
    private final ClassPoolDomain domain;
-   
-   private boolean isTemp;
    
    private boolean closed;
    
    private IsLocalResourcePlugin isLocalResourcePlugin;
    
-   public DelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ScopedClassPoolRepository repository, boolean isTemp)
+   public DelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ClassPool parent, ScopedClassPoolRepository repository)
    {
-      super(cl, null, repository);
-      this.domain = domain;
-      domain.addClassPool(this);
-      isLocalResourcePlugin = IsLocalResourcePluginFactoryRegistry.getPluginFactory(cl).create(this);
-   }
-
-   protected DelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ScopedClassPoolRepository repository)
-   {
-      super(cl, null, repository);
+      super(cl, parent, repository);
       this.domain = domain;
       domain.addClassPool(this);
       isLocalResourcePlugin = IsLocalResourcePluginFactoryRegistry.getPluginFactory(cl).create(this);
@@ -72,27 +62,6 @@ public class DelegatingClassPool extends AOPClassPool //TODO It would be great n
    }
 
    
-   /**
-    * Overrides ClassPool.get0() so that we can look up classes without caching them in the initiating pool.
-    * The DelgatingClassPool + DomainClassPool handle the caching in the correct pool + handles the 
-    * parentFirst functionality
-    */
-   @Override
-   protected synchronized CtClass get0(String classname, boolean useCache) throws NotFoundException
-   {
-      CtClass clazz = null;
-      if (useCache) 
-      {
-         clazz = getCached(classname);
-         if (clazz != null)
-         {
-            return clazz;
-         }
-      }
-   
-      return createCtClass(classname, useCache);
-   }
-
 
    
    @Override
@@ -162,7 +131,7 @@ public class DelegatingClassPool extends AOPClassPool //TODO It would be great n
    
 
    @Override
-   protected CtClass createCtClass(String classname, boolean useCache)
+   public CtClass createCtClass(String classname, boolean useCache)
    {
       return createCtClass(true, classname, useCache);
    }
@@ -172,8 +141,7 @@ public class DelegatingClassPool extends AOPClassPool //TODO It would be great n
       CtClass clazz = null;
       if (isLocalResource(classname))
       {
-         URL classUrl = find(classname);
-   
+         
          boolean create = true;
          if (domain.isParentFirst())
          {
@@ -205,13 +173,6 @@ public class DelegatingClassPool extends AOPClassPool //TODO It would be great n
          return domain.createCtClass(this, classname, useCache);
       }
       return clazz;
-   }
-
-   //Lifted from AOPClassPool, also exists in JBossClassPool
-   @Override
-   protected boolean isLocalResource(String resourceName)
-   {
-      return super.isLocalResource(resourceName);
    }
 
    @Override
