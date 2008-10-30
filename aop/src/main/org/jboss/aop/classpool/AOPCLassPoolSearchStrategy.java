@@ -21,16 +21,14 @@
 */ 
 package org.jboss.aop.classpool;
 
+import javassist.CtClass;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class TranslatableClassLoaderIsLocalResourcePluginFactory implements IsLocalResourcePluginFactory
+public interface AOPCLassPoolSearchStrategy
 {
-   public IsLocalResourcePlugin create(BaseClassPool pool)
-   {
-      return new TranslatableClassLoaderIsLocalResourcePlugin(pool);
-   }
-
+   CtClass getCached(String classname);
 }

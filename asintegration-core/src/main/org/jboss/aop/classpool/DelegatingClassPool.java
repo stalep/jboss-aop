@@ -21,8 +21,7 @@
 */ 
 package org.jboss.aop.classpool;
 
-import java.net.URL;
-
+import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import javassist.scopedpool.ScopedClassPoolRepository;
@@ -30,11 +29,12 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 import org.jboss.logging.Logger;
 
 /**
+ * Base class for classpools backed by a domain
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class DelegatingClassPool extends AOPClassPool //TODO It would be great not to have this redundant code
+public class DelegatingClassPool extends BaseClassPool
 {
    private final static Logger logger = Logger.getLogger(DelegatingClassPool.class);
    private final ClassPoolDomain domain;
@@ -43,22 +43,18 @@ public class DelegatingClassPool extends AOPClassPool //TODO It would be great n
    
    private boolean closed;
    
-   private IsLocalResourcePlugin isLocalResourcePlugin;
-   
-   public DelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ScopedClassPoolRepository repository, boolean isTemp)
+   public DelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ClassPool parent, ScopedClassPoolRepository repository, boolean isTemp)
    {
-      super(cl, null, repository);
+      super(cl, parent, repository);
       this.domain = domain;
       domain.addClassPool(this);
-      isLocalResourcePlugin = IsLocalResourcePluginFactoryRegistry.getPluginFactory(cl).create(this);
    }
 
-   protected DelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ScopedClassPoolRepository repository)
+   protected DelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ClassPool parent, ScopedClassPoolRepository repository)
    {
-      super(cl, null, repository);
+      super(cl, parent, repository);
       this.domain = domain;
       domain.addClassPool(this);
-      isLocalResourcePlugin = IsLocalResourcePluginFactoryRegistry.getPluginFactory(cl).create(this);
    }
 
    public CtClass get(String classname) throws NotFoundException 
@@ -152,17 +148,43 @@ public class DelegatingClassPool extends AOPClassPool //TODO It would be great n
             Object o = generatedClasses.get(classname);
             if (o == null && isInitiatingPool)
             {
-               return domain.getCached(this, classname);
+               clazz = domain.getCached(this, classname);
+               if (clazz != null)
+               {
+                  return clazz;
+               }
             }
          }
       }
-      // *NOTE* NEED TO TEST WHEN SUPERCLASS IS IN ANOTHER UCL!!!!!!
+      
+      return getCachedFromParent(classname);
+   }
+
+   private CtClass getCachedFromParent(String classname)
+   {
+      if (parent != null)
+      {
+         if (parent instanceof AOPClassPool)
+         {
+            return ((AOPClassPool)parent).getCached(classname);
+         }
+         else
+         {
+            try
+            {
+               return parent.get(classname);
+            }
+            catch (NotFoundException e)
+            {
+            }
+         }
+      }
+      
       return null;
    }
-   
 
    @Override
-   protected CtClass createCtClass(String classname, boolean useCache)
+   public CtClass createCtClass(String classname, boolean useCache)
    {
       return createCtClass(true, classname, useCache);
    }
@@ -172,8 +194,6 @@ public class DelegatingClassPool extends AOPClassPool //TODO It would be great n
       CtClass clazz = null;
       if (isLocalResource(classname))
       {
-         URL classUrl = find(classname);
-   
          boolean create = true;
          if (domain.isParentFirst())
          {
@@ -202,7 +222,12 @@ public class DelegatingClassPool extends AOPClassPool //TODO It would be great n
       }
       if (clazz == null && isInitiatingPool)
       {
-         return domain.createCtClass(this, classname, useCache);
+         clazz = domain.createCtClass(this, classname, useCache);
+      }
+      
+      if (clazz == null)
+      {
+         clazz = createParentCtClass(classname, useCache);
       }
       return clazz;
    }
@@ -212,17 +237,6 @@ public class DelegatingClassPool extends AOPClassPool //TODO It would be great n
    protected boolean isLocalResource(String resourceName)
    {
       return super.isLocalResource(resourceName);
-   }
-
-   @Override
-   public boolean isLocalClassLoaderResource(String classResourceName)
-   {
-      return isLocalResourcePlugin.isMyResource(classResourceName);
-   }
-
-   public boolean isLocalClassLoaderClass(String classname)
-   {
-      return isLocalResourcePlugin.isMyResource(getResourceName(classname));
    }
 
    @Override

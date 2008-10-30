@@ -19,51 +19,64 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.classpool;
+package org.jboss.test.aop.classpool.ucl.support;
 
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import javassist.ClassPool;
-
 /**
+ * An attempt to emulate the web classloader with parent last search order in AS
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class URLClassLoaderIsLocalResourcePlugin extends AbstractIsLocalResourcePlugin 
+public class ParentLastURLClassLoader extends URLClassLoader
 {
-   public URLClassLoaderIsLocalResourcePlugin(BaseClassPool pool)
+   ClassLoader parent;
+   URLClassLoader delegate;
+
+   public ParentLastURLClassLoader(URL[] urls, ClassLoader parent)
    {
-      super(pool);
+      super(urls, parent);
+      delegate = new URLClassLoader(urls);
+      this.parent = parent;
    }
+
+   @Override
+   public URL findResource(String name)
+   {
+      URL url = delegate.findResource(name);
+      if (url == null && parent instanceof URLClassLoader)
+      {
+         url = ((URLClassLoader)parent).findResource(name);
+      }
+      return url;
+   }
+
+   @Override
+   public URL getResource(String name)
+   {
+      URL url = delegate.getResource(name);
+      if (url == null)
+      {
+         url = parent.getResource(name);
+      }
+      return url;
+   }
+
+   @Override
+   public Class<?> loadClass(String name) throws ClassNotFoundException
+   {
+      try
+      {
+         return delegate.loadClass(name);
+      }
+      catch(ClassNotFoundException e)
+      {
+      }
+      return parent.loadClass(name);
+   }
+
    
-   public boolean isMyResource(String classResourceName)
-   {
-      //TODO This should be moved into URLClassLoaderIsLocalResourcePlugin, and the -core tests should be updated to
-      //not use the same urls
-      ClassLoader myLoader = getPool().getClassLoader();
-      URL myURL = myLoader.getResource(classResourceName); 
-      if (myURL == null)
-      {
-         return false;
-      }
-      
-      ClassPool parent = getPool().getParent();
-      if (parent != null)
-      {
-         ClassLoader parentLoader = parent.getClassLoader();
-         URL parentURL = parentLoader.getResource(classResourceName);
-         if (parentURL == null)
-         {
-            return true;
-         }
-         if (!parentURL.equals(myURL))
-         {
-            return true;
-         }
-      }
-      
-      return false;
-   }
+   
 }

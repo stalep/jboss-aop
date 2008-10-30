@@ -21,6 +21,8 @@
 */ 
 package org.jboss.aop.classpool;
 
+import java.net.URL;
+
 import org.jboss.util.loading.Translatable;
 
 /**
@@ -30,15 +32,9 @@ import org.jboss.util.loading.Translatable;
  */
 public class TranslatableClassLoaderIsLocalResourcePlugin extends AbstractIsLocalResourcePlugin
 {
-   public TranslatableClassLoaderIsLocalResourcePlugin(DelegatingClassPool pool)
+   public TranslatableClassLoaderIsLocalResourcePlugin(BaseClassPool pool)
    {
-      // FIXME TranslatableClassLoaderParentResourcePlugin constructor
       super(pool);
-   }
-
-   @Override
-   protected void initialise()
-   {
    }
 
    public boolean isMyResource(String resourceName)
@@ -48,7 +44,16 @@ public class TranslatableClassLoaderIsLocalResourcePlugin extends AbstractIsLoca
       {
          throw new IllegalStateException("ClassLoader is not instance of Translatable " + loader);
       }
-      return ((Translatable)getPool().getClassLoader()).getResourceLocally(resourceName) != null;
+      URL url = ((Translatable)getPool().getClassLoader()).getResourceLocally(resourceName);
+      if (url == null)
+      {
+         return false;
+      }
+      if (isSameInParent(resourceName, url))
+      {
+         return false;
+      }
+      return true;
    }
 
 }

@@ -28,5 +28,5 @@ package org.jboss.aop.classpool;
  */
 public interface IsLocalResourcePluginFactory
 {
-   IsLocalResourcePlugin create(DelegatingClassPool pool);
+   IsLocalResourcePlugin create(BaseClassPool pool);
 }

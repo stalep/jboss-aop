@@ -21,6 +21,10 @@
 */ 
 package org.jboss.aop.classpool;
 
+import java.net.URL;
+
+import javassist.ClassPool;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
@@ -28,18 +32,46 @@ package org.jboss.aop.classpool;
  */
 public abstract class AbstractIsLocalResourcePlugin implements IsLocalResourcePlugin
 {
-   private final DelegatingClassPool pool;
+   private final BaseClassPool pool;
    
-   public AbstractIsLocalResourcePlugin(DelegatingClassPool pool)
+   public AbstractIsLocalResourcePlugin(BaseClassPool pool)
    {
       this.pool = pool;
       initialise();
    }
 
-   protected abstract void initialise();
+   protected void initialise()
+   {
+      
+   }
    
-   protected DelegatingClassPool getPool()
+   protected BaseClassPool getPool()
    {
       return pool;
+   }
+   
+   /**
+    * Checks if the resource can be found in the parent classpool's loader
+    * and returns true if it either does not exist in the parent or if
+    * the parent has a different URL for the resource 
+    */
+   protected boolean isSameInParent(String classResourceName, URL foundURL)
+   {
+      ClassPool  parent = pool.getParent(); 
+      if (parent != null)
+      {
+         ClassLoader parentLoader = parent.getClassLoader();
+         URL parentURL = parentLoader.getResource(classResourceName);
+         if (parentURL == null)
+         {
+            return false;
+         }
+         if (parentURL.equals(foundURL))
+         {
+            return true;
+         }
+      }
+      
+      return false;
    }
 }

@@ -21,16 +21,33 @@
 */ 
 package org.jboss.aop.classpool;
 
+import java.util.Map;
+import java.util.WeakHashMap;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class TranslatableClassLoaderIsLocalResourcePluginFactory implements IsLocalResourcePluginFactory
+public class ClassPoolDomainRegistry
 {
-   public IsLocalResourcePlugin create(BaseClassPool pool)
+   final static ClassPoolDomainRegistry INSTANCE = new ClassPoolDomainRegistry();
+   
+   final Map<Object, ClassPoolDomain> domains = new WeakHashMap<Object, ClassPoolDomain>();
+   
+   public static ClassPoolDomainRegistry getInstance()
    {
-      return new TranslatableClassLoaderIsLocalResourcePlugin(pool);
+      return INSTANCE;
    }
-
+   
+   public ClassPoolDomain getDomain(Object key)
+   {
+      return domains.get(key);
+   }
+   
+   public void addClassPoolDomain(Object key, ClassPoolDomain domain)
+   {
+      domains.put(key, domain);
+   }
+   
 }

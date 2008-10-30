@@ -27,6 +27,8 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javassist.ClassPool;
+
 import org.jboss.aop.classpool.AOPClassPoolRepository;
 import org.jboss.aop.classpool.ClassPoolDomain;
 import org.jboss.aop.classpool.DelegatingClassPool;
@@ -102,7 +104,7 @@ public class ClassPoolTest extends AbstractTestCaseWithSetup
       //Once all the classes in the loader have been loaded, it seems to clear the URLs. Work around this 
       //by recreating the loader since we need the urls in the URLClassLoaderIsLocalResourcePlugin
       loaders.add(new URLClassLoader(urls));
-      return new DelegatingClassPool(domain, loader, AOPClassPoolRepository.getInstance(), false);
+      return new DelegatingClassPool(domain, loader, ClassPool.getDefault(), AOPClassPoolRepository.getInstance(), false);
    }
 
    @Override

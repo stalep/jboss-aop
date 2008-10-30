@@ -19,18 +19,23 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.classpool;
+package org.jboss.aop.classpool.ucl;
+
+import java.io.File;
+import java.net.URL;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class TranslatableClassLoaderIsLocalResourcePluginFactory implements IsLocalResourcePluginFactory
+public class JBossClassPathHelper
 {
-   public IsLocalResourcePlugin create(BaseClassPool pool)
+   File tmpDir;
+   URL tmpURL;
+   public JBossClassPathHelper(File tmpDir, URL tmpURL)
    {
-      return new TranslatableClassLoaderIsLocalResourcePlugin(pool);
+      this.tmpDir = tmpDir;
+      this.tmpURL = tmpURL;
    }
-
 }

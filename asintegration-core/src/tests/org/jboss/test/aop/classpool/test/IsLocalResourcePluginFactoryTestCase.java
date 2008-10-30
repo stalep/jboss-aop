@@ -25,6 +25,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+import javassist.ClassPool;
+
 import org.jboss.aop.classpool.AOPClassPoolRepository;
 import org.jboss.aop.classpool.ClassPoolDomain;
 import org.jboss.aop.classpool.DefaultClassLoaderIsLocalResourcePlugin;
@@ -76,37 +78,37 @@ public class IsLocalResourcePluginFactoryTestCase extends TestCase
 
    public void testDefaultClassLoader() 
    {
-      DelegatingClassPool pool = new DelegatingClassPool(DOMAIN, new DefaultClassLoader(), AOPClassPoolRepository.getInstance(), false);
+      DelegatingClassPool pool = new DelegatingClassPool(DOMAIN, new DefaultClassLoader(), ClassPool.getDefault(), AOPClassPoolRepository.getInstance(), false);
       assertFactoryAndPlugin(pool, DefaultClassLoaderIsLocalResourcePluginFactory.class, DefaultClassLoaderIsLocalResourcePlugin.class);
    }
    
    public void testURLClassLoaderDirect()
    {
-      DelegatingClassPool pool = new DelegatingClassPool(DOMAIN, new URLClassLoader(URLS), AOPClassPoolRepository.getInstance(), false);
+      DelegatingClassPool pool = new DelegatingClassPool(DOMAIN, new URLClassLoader(URLS), ClassPool.getDefault(), AOPClassPoolRepository.getInstance(), false);
       assertFactoryAndPlugin(pool, URLClassLoaderIsLocalResourcePluginFactory.class, URLClassLoaderIsLocalResourcePlugin.class);
    }
 
    public void testURLClassLoaderSubClass()
    {
-      DelegatingClassPool pool = new DelegatingClassPool(DOMAIN, new URLCLassLoaderSubClass(URLS), AOPClassPoolRepository.getInstance(), false);
+      DelegatingClassPool pool = new DelegatingClassPool(DOMAIN, new URLCLassLoaderSubClass(URLS), ClassPool.getDefault(), AOPClassPoolRepository.getInstance(), false);
       assertFactoryAndPlugin(pool, URLClassLoaderIsLocalResourcePluginFactory.class, URLClassLoaderIsLocalResourcePlugin.class);
    }
 
    public void testTranslatableClassLoaderImplementation()
    {
-      DelegatingClassPool pool = new DelegatingClassPool(DOMAIN, new TranslatableImplementation(), AOPClassPoolRepository.getInstance(), false);
+      DelegatingClassPool pool = new DelegatingClassPool(DOMAIN, new TranslatableImplementation(), ClassPool.getDefault(), AOPClassPoolRepository.getInstance(), false);
       assertFactoryAndPlugin(pool, TranslatableClassLoaderIsLocalResourcePluginFactory.class, TranslatableClassLoaderIsLocalResourcePlugin.class);
    }
    
    public void testTranslatableClassLoaderImplementationAndURLClassLoaderSubClass()
    {
-      DelegatingClassPool pool = new DelegatingClassPool(DOMAIN, new TranslatableImplementationAndURLClassLoaderSubClass(URLS), AOPClassPoolRepository.getInstance(), false);
+      DelegatingClassPool pool = new DelegatingClassPool(DOMAIN, new TranslatableImplementationAndURLClassLoaderSubClass(URLS), ClassPool.getDefault(), AOPClassPoolRepository.getInstance(), false);
       assertFactoryAndPlugin(pool, TranslatableClassLoaderIsLocalResourcePluginFactory.class, TranslatableClassLoaderIsLocalResourcePlugin.class);
    }
    
    public void testTranslatable2ClassLoaderImplementationAndURLClassLoaderSubClass()
    {
-      DelegatingClassPool pool = new DelegatingClassPool(DOMAIN, new Translatable2ImplementationAndURLClassLoaderSubClass(URLS), AOPClassPoolRepository.getInstance(), false);
+      DelegatingClassPool pool = new DelegatingClassPool(DOMAIN, new Translatable2ImplementationAndURLClassLoaderSubClass(URLS), ClassPool.getDefault(), AOPClassPoolRepository.getInstance(), false);
       assertFactoryAndPlugin(pool, TranslatableClassLoaderIsLocalResourcePluginFactory.class, TranslatableClassLoaderIsLocalResourcePlugin.class);
    }
    

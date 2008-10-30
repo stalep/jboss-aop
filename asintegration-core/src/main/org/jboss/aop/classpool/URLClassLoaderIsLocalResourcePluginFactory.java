@@ -29,7 +29,7 @@ package org.jboss.aop.classpool;
 public class URLClassLoaderIsLocalResourcePluginFactory implements IsLocalResourcePluginFactory
 {
 
-   public IsLocalResourcePlugin create(DelegatingClassPool pool)
+   public IsLocalResourcePlugin create(BaseClassPool pool)
    {
       return new URLClassLoaderIsLocalResourcePlugin(pool);
    }

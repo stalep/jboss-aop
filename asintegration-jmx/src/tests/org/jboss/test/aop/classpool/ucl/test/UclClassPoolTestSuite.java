@@ -19,18 +19,33 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.classpool;
+package org.jboss.test.aop.classpool.ucl.test;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class TranslatableClassLoaderIsLocalResourcePluginFactory implements IsLocalResourcePluginFactory
+public class UclClassPoolTestSuite extends TestSuite
 {
-   public IsLocalResourcePlugin create(BaseClassPool pool)
+   public static void main(String[] args)
    {
-      return new TranslatableClassLoaderIsLocalResourcePlugin(pool);
+      TestRunner.run(suite());
+   }
+
+   public static Test suite()
+   {
+      TestSuite suite = new TestSuite("UclClassPool All Tests");
+      
+      suite.addTest(UclClassLoaderSanityTestCase.suite());
+      suite.addTest(UclDelegatingClassPoolTestCase.suite());
+      
+
+      return suite;
    }
 
 }

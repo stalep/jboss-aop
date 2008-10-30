@@ -28,14 +28,9 @@ package org.jboss.aop.classpool;
  */
 public class DefaultClassLoaderIsLocalResourcePlugin extends AbstractIsLocalResourcePlugin implements IsLocalResourcePlugin
 {
-   public DefaultClassLoaderIsLocalResourcePlugin(DelegatingClassPool pool)
+   public DefaultClassLoaderIsLocalResourcePlugin(BaseClassPool pool)
    {
       super(pool);
-   }
-
-   @Override
-   protected void initialise()
-   {
    }
 
    public boolean isMyResource(String resourceName)

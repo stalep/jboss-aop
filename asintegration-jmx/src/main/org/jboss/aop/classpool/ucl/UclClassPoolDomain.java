@@ -19,18 +19,20 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.classpool;
+package org.jboss.aop.classpool.ucl;
+
+import org.jboss.aop.classpool.ClassPoolDomain;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class TranslatableClassLoaderIsLocalResourcePluginFactory implements IsLocalResourcePluginFactory
+public class UclClassPoolDomain extends ClassPoolDomain
 {
-   public IsLocalResourcePlugin create(BaseClassPool pool)
+   public UclClassPoolDomain(String domainName, ClassPoolDomain parent)
    {
-      return new TranslatableClassLoaderIsLocalResourcePlugin(pool);
+      // FIXME UclClassPoolDomain constructor
+      super(domainName, parent);
    }
-
 }
