@@ -51,6 +51,9 @@
         <configuration>
           <excludes>
             <exclude>org/jboss/aop/junit/**</exclude>
+            <exclude>org/jboss/test/aop/classpool/jbosscl/support/a/A.class</exclude>
+            <exclude>org/jboss/test/aop/classpool/jbosscl/support/b/B.class</exclude>
+            <exclude>org/jboss/test/aop/classpool/jbosscl/support/c/C.class</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -65,6 +68,9 @@
           <includes>
             <include>org/jboss/test/**/*UnitTestCase.class</include>
           </includes>
+          <excludes>
+            <exclude>org/jboss/test/aop/integration/complex/test/ComplexImportMultipleVersionsUnitTestCase.class</exclude>
+          </excludes>
           <systemProperties>
             <property>
               <name>build.testlog</name>
@@ -72,6 +78,91 @@
             </property>
           </systemProperties>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-2</version>
+        <executions>
+          <execution>
+            <id>test-classpool-a1</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/test-classpool-a1.xml</descriptor>
+              </descriptors>
+              <finalName>${artifactId}</finalName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-classpool-a2</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/test-classpool-a2.xml</descriptor>
+              </descriptors>
+              <finalName>${artifactId}</finalName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-classpool-b1</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/test-classpool-b1.xml</descriptor>
+              </descriptors>
+              <finalName>${artifactId}</finalName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-classpool-b2</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/test-classpool-b2.xml</descriptor>
+              </descriptors>
+              <finalName>${artifactId}</finalName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-classpool-c1</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/test-classpool-c1.xml</descriptor>
+              </descriptors>
+              <finalName>${artifactId}</finalName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-classpool-c2</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/test-classpool-c2.xml</descriptor>
+              </descriptors>
+              <finalName>${artifactId}</finalName>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
