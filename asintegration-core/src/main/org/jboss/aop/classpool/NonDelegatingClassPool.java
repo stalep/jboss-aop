@@ -21,8 +21,6 @@
 */ 
 package org.jboss.aop.classpool;
 
-import java.net.URL;
-
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.scopedpool.ScopedClassPoolRepository;
