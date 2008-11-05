@@ -68,7 +68,7 @@
         <executions>
           <execution>
             <id>test-classpool-a1</id>
-            <phase>package</phase>
+            <phase>process-test-classes</phase>
             <goals>
               <goal>attached</goal>
             </goals>
@@ -81,7 +81,7 @@
           </execution>
           <execution>
             <id>test-classpool-a2</id>
-            <phase>package</phase>
+            <phase>process-test-classes</phase>
             <goals>
               <goal>attached</goal>
             </goals>
@@ -94,7 +94,7 @@
           </execution>
           <execution>
             <id>test-classpool-b1</id>
-            <phase>package</phase>
+            <phase>process-test-classes</phase>
             <goals>
               <goal>attached</goal>
             </goals>
@@ -107,7 +107,7 @@
           </execution>
           <execution>
             <id>test-classpool-b2</id>
-            <phase>package</phase>
+            <phase>process-test-classes</phase>
             <goals>
               <goal>attached</goal>
             </goals>
@@ -120,7 +120,7 @@
           </execution>
           <execution>
             <id>test-classpool-c1</id>
-            <phase>package</phase>
+            <phase>process-test-classes</phase>
             <goals>
               <goal>attached</goal>
             </goals>
@@ -133,7 +133,7 @@
           </execution>
           <execution>
             <id>test-classpool-c2</id>
-            <phase>package</phase>
+            <phase>process-test-classes</phase>
             <goals>
               <goal>attached</goal>
             </goals>

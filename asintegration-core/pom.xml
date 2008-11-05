@@ -57,7 +57,7 @@
         <executions>
           <execution>
             <id>test-classpool-a</id>
-            <phase>package</phase>
+            <phase>process-test-classes</phase>
             <goals>
               <goal>attached</goal>
             </goals>
@@ -70,7 +70,7 @@
           </execution>
           <execution>
             <id>test-classpool-b</id>
-            <phase>package</phase>
+            <phase>process-test-classes</phase>
             <goals>
               <goal>attached</goal>
             </goals>
