@@ -51,9 +51,11 @@
         <configuration>
           <excludes>
             <exclude>org/jboss/aop/junit/**</exclude>
+            <!--             
             <exclude>org/jboss/test/aop/classpool/jbosscl/support/a/A.class</exclude>
             <exclude>org/jboss/test/aop/classpool/jbosscl/support/b/B.class</exclude>
             <exclude>org/jboss/test/aop/classpool/jbosscl/support/c/C.class</exclude>
+            -->
           </excludes>
         </configuration>
       </plugin>
@@ -79,6 +81,7 @@
           </systemProperties>
         </configuration>
       </plugin>
+<!--    
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -164,6 +167,7 @@
           </execution>
         </executions>
       </plugin>
+-->
     </plugins>
   </build>
   
