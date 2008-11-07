@@ -65,8 +65,8 @@ public class UclClassPoolTest extends AbstractTestCaseWithSetup
 
    private MBeanServer server; 
    private LoaderRepository globalRepository;
-   //Keep a strong reference to the classloaders so that they are not garbage collected
 
+   //Keep a strong reference to the classloaders so that they are not garbage collected
    final static Set<ClassLoader> registeredClassLoaders = new HashSet<ClassLoader>();
    
    final static ObjectName MAIN_LOADER_REPOSITORY_OBJECT_NAME;
