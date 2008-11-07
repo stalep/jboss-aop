@@ -115,4 +115,17 @@ public class JBossClClassPoolFactory extends AbstractJBossClassPoolFactory imple
       return module.getDynamicClassRoot();
    }
 
+   @Override
+   protected ClassPool getCreateParentClassPools(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
+   {
+      ClassPool parent = super.getCreateParentClassPools(cl, src, repository);
+      if (parent == ClassPool.getDefault())
+      {
+         //In AS BaseClassLoader seems to normally have a null parent
+         return null;
+      }
+      return parent;
+   }
+
+   
 }

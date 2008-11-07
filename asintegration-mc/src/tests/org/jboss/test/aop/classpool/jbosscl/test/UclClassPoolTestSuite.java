@@ -22,19 +22,30 @@
 package org.jboss.test.aop.classpool.jbosscl.test;
 
 import junit.framework.Test;
-
-import org.jboss.test.AbstractTestDelegate;
+import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBossClClassPoolTestDelegate extends AbstractTestDelegate
+public class UclClassPoolTestSuite extends TestSuite
 {
-
-   public JBossClClassPoolTestDelegate(Class<?> clazz)
+   public static void main(String[] args)
    {
-      super(clazz);
+      TestRunner.run(suite());
    }
+
+   public static Test suite()
+   {
+      TestSuite suite = new TestSuite("UclClassPool All Tests");
+      
+      suite.addTest(ClassLoaderWithRepositorySanityTestCase.suite());
+      suite.addTest(ClassPoolWithRepositoryTestCase.suite());
+      
+
+      return suite;
+   }
+
 }

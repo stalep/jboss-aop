@@ -190,6 +190,11 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
       return scopedChildDomainsByLoader.get(loader);
    }
    
+   protected ClassLoaderDomain getChildDomainForPool(ClassPool pool)
+   {
+      return getChildDomainForLoader(pool.getClassLoader());
+   }
+   
    public void unregisterDomain(ClassLoaderDomain domain)
    {
       if (domain != null)
@@ -300,7 +305,35 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
       assertEquals(domainForModule.getName(), module.getDomainName());
       assertEquals(domainForModule.getParentDomainName(), module.getParentDomainName());
    }
+
+   protected ClassPool createClassPool(String name, boolean importAll, String... packages) throws Exception
+   {
+      ClassLoader loader = createClassLoader(name, importAll, packages);
+      return AspectManager.instance().registerClassLoader(loader);
+   }
    
+   protected ClassPool createChildDomainParentFirstClassPool(String name, String domainName, boolean importAll, String... packages) throws Exception
+   {
+      ClassLoader loader = createChildDomainParentFirstClassLoader(name, domainName, importAll, packages);
+      return AspectManager.instance().registerClassLoader(loader);
+   }
+   
+   protected ClassPool createChildDomainParentLastClassPool(String name, String domainName, boolean importAll, String... packages) throws Exception
+   {
+      ClassLoader loader = createChildDomainParentLastClassLoader(name, domainName, importAll, packages);
+      return AspectManager.instance().registerClassLoader(loader);
+   }
+
+   protected void unregisterClassPool(ClassPool pool) throws Exception
+   {
+      ClassLoader loader = pool.getClassLoader();
+      AspectManager.instance().unregisterClassLoader(loader);
+      if (loader != null)
+      {
+         unregisterClassLoader(loader);
+      }
+   }
+
    ////////////////////////////////////////////////////////////////////////
    // These are lifted from AOPIntegrationTest, but have some modifications
    /**
