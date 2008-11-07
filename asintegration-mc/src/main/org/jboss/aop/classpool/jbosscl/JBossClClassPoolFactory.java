@@ -70,7 +70,7 @@ public class JBossClClassPoolFactory extends AbstractJBossClassPoolFactory imple
    private ClassPoolDomain getDomain(Module module, ClassLoader cl)
    {
       ClassLoaderDomain domain = null;
-      ClassLoaderSystem sys = ClassLoaderSystem.getInstance();
+      ClassLoaderSystem sys = registry.getSystem();
       if (module != null && module.getDeterminedParentDomainName() != null)
       {
          //It is scoped

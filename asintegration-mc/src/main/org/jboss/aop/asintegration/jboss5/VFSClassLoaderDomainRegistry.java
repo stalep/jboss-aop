@@ -39,6 +39,8 @@ public class VFSClassLoaderDomainRegistry implements DomainRegistry
 {
    final static ClassLoaderDomain domain = new ClassLoaderDomain("NOT_USED_PLACEHOLDER");
    
+   ClassLoaderSystem system;
+   
    /** classloader domains by their classloaders */
    private Map<ClassLoader, WeakReference<ClassLoaderDomain>> classLoaderDomainsByLoader = new WeakHashMap<ClassLoader, WeakReference<ClassLoaderDomain>>();
 
@@ -51,7 +53,25 @@ public class VFSClassLoaderDomainRegistry implements DomainRegistry
    /** Modules by classloader */
    private Map<ClassLoader, WeakReference<Module>> classLoaderModules = new WeakHashMap<ClassLoader, WeakReference<Module>>();
    
-   private Map<ClassLoaderDomain, Integer> classLoaderDomainReferenceCounts = new WeakHashMap<ClassLoaderDomain, Integer>(); 
+   private Map<ClassLoaderDomain, Integer> classLoaderDomainReferenceCounts = new WeakHashMap<ClassLoaderDomain, Integer>();
+   
+   /**
+    * Needed for the tests, not expected to be needed in production
+    */
+   @Deprecated
+   public void setSystem(ClassLoaderSystem system)
+   {
+      this.system = system;
+   }
+   
+   public synchronized ClassLoaderSystem getSystem()
+   {
+      if (system == null)
+      {
+         system = ClassLoaderSystem.getInstance();
+      }
+      return system;
+   }
 
    public synchronized boolean initMapsForLoader(ClassLoader loader, Module module, ScopedVFSClassLoaderDomain domain, ClassLoader parentUnitLoader)
    {
@@ -59,7 +79,7 @@ public class VFSClassLoaderDomainRegistry implements DomainRegistry
       {
          throw new IllegalArgumentException("initMapsForLoader() should only be called if parentUnitLoader is different from loader");
       }
-      ClassLoaderSystem system = ClassLoaderSystem.getInstance();
+      ClassLoaderSystem system = getSystem();
       
       String domainName = module.getDeterminedDomainName();
       ClassLoaderDomain clDomain = system.getDomain(domainName);

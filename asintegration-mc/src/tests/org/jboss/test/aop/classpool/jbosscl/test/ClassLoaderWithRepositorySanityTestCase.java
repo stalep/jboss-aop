@@ -51,7 +51,9 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       try
       {
          clA = createClassLoader("A", true, PACKAGE_A);
+         assertModule(clA);
          clB = createClassLoader("B", true, PACKAGE_B);
+         assertModule(clB);
          try
          {
             Class<?> aFromA = clA.loadClass(CLASS_A);
@@ -90,8 +92,11 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       try
       {
          clA = createClassLoader("A", true, PACKAGE_A);
+         assertModule(clA);
          clB = createClassLoader("B", true, PACKAGE_B);
+         assertModule(clB);
          clC = createChildDomainParentFirstClassLoader("C", "CHILD", true, PACKAGE_C);
+         assertModule(clC);
          
          childDomain = getChildDomainForLoader(clC);
          assertNotNull(childDomain);
@@ -135,8 +140,10 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       try
       {
          clA = createChildDomainParentFirstClassLoader("A", "ChildA", true, PACKAGE_A);
+         assertModule(clA);
          clB = createChildDomainParentLastClassLoader("B", "ChildB", true, PACKAGE_B);
-         
+         assertModule(clB);
+
          domainA = getChildDomainForLoader(clA);
          assertNotNull(domainA);
          assertSame(helper.getDomain(), domainA.getParent());
@@ -168,9 +175,13 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       try
       {
          clScoped = createChildDomainParentFirstClassLoader("SCOPED", "SCOPED", true, PACKAGE_B);
+         assertModule(clScoped);
          assertCannotLoadClass(clScoped, CLASS_A);
          
          clGlobal = createClassLoader("GLOBAL", true, PACKAGE_A);
+         assertModule(clScoped);
+         assertModule(clGlobal);
+
          Class<?> aFromChild = clScoped.loadClass(CLASS_A);
          assertNotNull(aFromChild);
          Class<?> aFromParent = clGlobal.loadClass(CLASS_A);

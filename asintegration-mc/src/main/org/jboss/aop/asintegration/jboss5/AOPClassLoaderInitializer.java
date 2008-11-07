@@ -105,7 +105,7 @@ public class AOPClassLoaderInitializer
    {
       if (!module.getDeterminedDomainName().equals(ClassLoaderSystem.DEFAULT_DOMAIN_NAME))
       {
-         ClassLoaderSystem system = ClassLoaderSystem.getInstance();
+         ClassLoaderSystem system = registry.getSystem();
          String domainName = module.getDeterminedDomainName();
          ClassLoaderDomain domain = system.getDomain(domainName);
    

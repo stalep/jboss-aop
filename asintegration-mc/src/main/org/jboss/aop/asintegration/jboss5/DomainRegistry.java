@@ -23,6 +23,7 @@ package org.jboss.aop.asintegration.jboss5;
 
 import org.jboss.aop.Domain;
 import org.jboss.classloader.spi.ClassLoaderDomain;
+import org.jboss.classloader.spi.ClassLoaderSystem;
 import org.jboss.classloading.spi.dependency.Module;
 
 /**
@@ -32,6 +33,8 @@ import org.jboss.classloading.spi.dependency.Module;
  */
 public interface DomainRegistry
 {
+   ClassLoaderSystem getSystem();
+   
    boolean initMapsForLoader(ClassLoader loader, Module module, ScopedVFSClassLoaderDomain domain, ClassLoader parentUnitLoader);
 
    void cleanupLoader(ClassLoader loader);

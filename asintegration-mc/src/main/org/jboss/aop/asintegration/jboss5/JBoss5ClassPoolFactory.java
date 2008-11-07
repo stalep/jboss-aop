@@ -64,7 +64,7 @@ public class JBoss5ClassPoolFactory extends AbstractJBossClassPoolFactory implem
          if (module != null && module.getDeterminedParentDomainName() != null)
          {
             //It is scoped
-            ClassLoaderSystem sys = ClassLoaderSystem.getInstance();
+            ClassLoaderSystem sys = registry.getSystem();
             ClassLoaderDomain domain = sys.getDomain(module.getDeterminedDomainName());
             boolean parentFirst = module.isJ2seClassLoadingCompliance();
             ClassPool parentDomainPool = getParentUnitClassPool(cl); 
