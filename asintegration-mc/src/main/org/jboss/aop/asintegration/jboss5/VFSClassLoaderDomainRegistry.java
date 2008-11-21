@@ -148,7 +148,7 @@ public class VFSClassLoaderDomainRegistry implements DomainRegistry
          return clDomainRef.get();
       }
       
-      ClassLoader parent = cl.getParent();
+      ClassLoader parent = SecurityActions.getParent(cl);
       if (parent != null)
       {
          ClassLoaderDomain domain = getClassLoaderDomainForLoader(parent);
