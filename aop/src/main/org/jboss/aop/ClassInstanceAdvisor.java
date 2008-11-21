@@ -366,7 +366,7 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
       {
          return;
       }
-      ClassLoader classLoader = advisedClass.getClassLoader();
+      ClassLoader classLoader = SecurityActions.getClassLoader(advisedClass);
       if (this.interceptorChainObserver == null ||
             !AspectManager.getRegisteredCLs().containsKey(classLoader))
       {

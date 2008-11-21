@@ -34,6 +34,7 @@ import javassist.bytecode.MethodInfo;
 
 import org.jboss.aop.AspectManager;
 import org.jboss.annotation.factory.javassist.AnnotationProxy;
+import org.jboss.aop.advice.SecurityActions;
 import org.jboss.aop.util.ReflectToJavassist;
 
 import java.lang.annotation.Annotation;
@@ -411,7 +412,7 @@ public class PortableAnnotationElement
 
    protected static ClassFile getClassFile(Class<?> clazz) throws NotFoundException
    {
-      ClassPool pool = AspectManager.instance().findClassPool(clazz.getClassLoader());
+      ClassPool pool = AspectManager.instance().findClassPool(SecurityActions.getClassLoader(clazz));
       CtClass ct = pool.get(clazz.getName());
       ClassFile cf = ct.getClassFile2();
       return cf;

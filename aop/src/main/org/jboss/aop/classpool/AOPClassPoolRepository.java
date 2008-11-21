@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
+import org.jboss.aop.advice.SecurityActions;
 import org.jboss.aop.instrument.Instrumentor;
 import org.jboss.aop.util.logging.AOPLogger;
 
@@ -163,11 +164,12 @@ public class AOPClassPoolRepository implements ScopedClassPoolRepository
    
    public void registerClass(Class<?> clazz)
    {
-      HashSet<Class<?>> classes = ucl2classes.get(clazz.getClassLoader());
+      ClassLoader classLoader = SecurityActions.getClassLoader(clazz);
+      HashSet<Class<?>> classes = ucl2classes.get(classLoader);
       if (classes == null)
       {
          classes = new HashSet<Class<?>>();
-         ucl2classes.put(clazz.getClassLoader(), classes);
+         ucl2classes.put(classLoader, classes);
       }
       classes.add(clazz);
    }

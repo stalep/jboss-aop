@@ -128,7 +128,7 @@ public class HotSwapStrategy implements DynamicAOPStrategy
     */
    public InterceptorChainObserver getInterceptorChainObserver(Class<?> clazz)
    {
-      ClassPool classPool = AspectManager.instance().findClassPool(clazz.getClassLoader());
+      ClassPool classPool = AspectManager.instance().findClassPool(clazz);
       CtClass ctClass = null;
       try
       {

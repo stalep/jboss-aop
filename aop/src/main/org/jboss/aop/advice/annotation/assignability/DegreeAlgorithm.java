@@ -27,6 +27,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 
+import org.jboss.aop.advice.SecurityActions;
 import org.jboss.aop.advice.annotation.AdviceMethodFactory;
 
 /**
@@ -84,7 +85,7 @@ public class DegreeAlgorithm
       Class<?> componentClass = getClassType(componentType);
       try
       {
-         return componentClass.getClassLoader().loadClass(
+         return SecurityActions.getClassLoader(componentClass).loadClass(
                componentClass.getName() + "[]");
       }
       catch (ClassNotFoundException e)

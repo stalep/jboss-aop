@@ -217,8 +217,8 @@ public abstract class JoinPointGenerator
          debugClass(sb, newInfo.getAdvisor().getClass());
          System.out.println("==================== Error");
          System.out.println("Field: " + joinpointField);
-         System.out.println("Field: " + joinpointField.getDeclaringClass() + " " + joinpointField.getDeclaringClass().getClassLoader());
-         System.out.println("Value: " + newInfo.getAdvisor().getClass() + " " + newInfo.getAdvisor().getClass().getClassLoader());
+         System.out.println("Field: " + joinpointField.getDeclaringClass() + " " + SecurityActions.getClassLoader(joinpointField.getDeclaringClass()));
+         System.out.println("Value: " + newInfo.getAdvisor().getClass() + " " + SecurityActions.getClassLoader(newInfo.getAdvisor().getClass()));
          System.out.println(sb.toString());
          
          throw new RuntimeException(e);
@@ -317,11 +317,11 @@ public abstract class JoinPointGenerator
    
    private StringBuffer debugClass(StringBuffer sb, Class<?> clazz)
    {
-      sb.append("\n\t\t" + Modifier.toString(clazz.getModifiers()) + " " + clazz.getName() + " " + clazz.getClassLoader()); 
+      sb.append("\n\t\t" + Modifier.toString(clazz.getModifiers()) + " " + clazz.getName() + " " + SecurityActions.getClassLoader(clazz)); 
       Field[] fields = clazz.getDeclaredFields();
       for (int i = 0 ; i < fields.length ; i++)
       {
-         sb.append("\n\t\t\t" + Modifier.toString(fields[i].getModifiers()) + " " + fields[i].getType().getName() + " " + fields[i].getName() + " " + fields[i].getType().getClassLoader());
+         sb.append("\n\t\t\t" + Modifier.toString(fields[i].getModifiers()) + " " + fields[i].getType().getName() + " " + fields[i].getName() + " " + SecurityActions.getClassLoader(fields[i].getType()));
       }
      
      Class<?> superClass = clazz.getSuperclass();

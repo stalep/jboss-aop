@@ -123,7 +123,7 @@ public class Domain extends AspectManager
             StringBuffer sb = new StringBuffer();
             sb.append(clazz.getName());
             sb.append("_");
-            sb.append(System.identityHashCode(clazz.getClassLoader()));
+            sb.append(System.identityHashCode(SecurityActions.getClassLoader(clazz)));
 
             if (forInstance)
             {

@@ -396,7 +396,7 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
     */
    protected void finalize()
    {
-      ClassLoader classLoader = delegate.getAdvisor().getClazz().getClassLoader();
+      ClassLoader classLoader = delegate.getAdvisor().getClassLoader();
       if (this.interceptorChainObserver == null || !AspectManager.getRegisteredCLs().containsKey(classLoader))
       {
          return;

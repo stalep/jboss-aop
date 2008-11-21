@@ -131,7 +131,7 @@ public class ContainerProxyFactory
       // Don't make a proxy of a proxy !
       if (Delegate.class.isAssignableFrom(clazz)) clazz = clazz.getSuperclass();
 
-      ClassPool pool = AspectManager.instance().findClassPool(clazz.getClassLoader());
+      ClassPool pool = AspectManager.instance().findClassPool(SecurityActions.getClassLoader(clazz));
       if (pool == null) throw new NullPointerException("Could not find ClassPool");
 
       Class<?> proxyClass = null;
@@ -229,7 +229,7 @@ public class ContainerProxyFactory
    
    private CtClass createProxyCtClass() throws Exception
    {
-      this.pool = AspectManager.instance().findClassPool(clazz.getClassLoader());
+      this.pool = AspectManager.instance().findClassPool(clazz);
       if (pool == null) throw new NullPointerException("Could not find ClassPool");
 
       createBasics();

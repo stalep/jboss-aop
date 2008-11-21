@@ -82,7 +82,7 @@ public class ClassProxyFactory
       // Don't make a proxy of a proxy !
       if (ClassProxy.class.isAssignableFrom(clazz)) clazz = clazz.getSuperclass();
 
-      ClassPool pool = AspectManager.instance().findClassPool(clazz.getClassLoader());
+      ClassPool pool = AspectManager.instance().findClassPool(clazz);
       if (pool == null) throw new NullPointerException("Could not find ClassPool");
 
       
@@ -269,12 +269,12 @@ public class ClassProxyFactory
          {
             HashSet<Long> mixinMethods = new HashSet<Long>();
             Class<?>[] mixinf = mixins[i].getInterfaces();
-            ClassPool mixPool = AspectManager.instance().findClassPool(mixins[i].getMixin().getClass().getClassLoader());
+            ClassPool mixPool = AspectManager.instance().findClassPool(mixins[i].getMixin().getClass());
             CtClass mixClass = mixPool.get(mixins[i].getMixin().getClass().getName());
             for (int j = 0; j < mixinf.length; j++)
             {
                if (addedInterfaces.contains(mixinf[j].getName())) throw new Exception("2 mixins are implementing the same interfaces");
-               ClassPool mixIntfPool = AspectManager.instance().findClassPool(mixinf[j].getClassLoader());
+               ClassPool mixIntfPool = AspectManager.instance().findClassPool(mixinf[j]);
                CtClass intfClass = mixIntfPool.get(mixinf[j].getName());
                CtMethod[] methods = intfClass.getMethods();
                for (int m = 0; m < methods.length; m++)

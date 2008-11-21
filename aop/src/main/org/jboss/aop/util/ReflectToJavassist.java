@@ -45,7 +45,7 @@ public class ReflectToJavassist
 {
    public static CtClass classToJavassist(Class<?> clazz) throws NotFoundException
    {
-      ClassPool pool = AspectManager.instance().findClassPool(clazz.getClassLoader());
+      ClassPool pool = AspectManager.instance().findClassPool(clazz);
       CtClass ct = pool.get(clazz.getName());
       return ct;
    }

@@ -63,7 +63,7 @@ public class PerVmAdvice
       {
          return null;
       }
-      ClassLoader cl = aspect.getClass().getClassLoader();
+      ClassLoader cl = SecurityActions.getClassLoader(aspect.getClass());
       String name = "org.jboss.aop.advice." + aspect.getClass().getName() + "_z_" + adviceName + "_" + System.identityHashCode(cl);
       Class<?> iclass = null;
 

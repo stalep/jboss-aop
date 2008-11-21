@@ -441,7 +441,7 @@ public class GeneratedAdvisorInstrumentor extends Instrumentor
       ctor.setBody(
             "{" +
             "   super(\"" + clazz.getName() + "\"); " +
-            "   initialise(org.jboss.aop.AspectManager.instance(this.getClass().getClassLoader()), false);" + //Use the CL of the class, since we may be in a scoped loader
+            "   initialise(org.jboss.aop.AspectManager.instance(org.jboss.aop.advice.SecurityActions.getClassLoader(this.getClass())), false);" + //Use the CL of the class, since we may be in a scoped loader
             "}");
       genadvisor.addConstructor(ctor);
 

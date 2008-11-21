@@ -28,6 +28,7 @@ import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.Method;
+
 import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.InstanceAdvisor;
@@ -120,7 +121,7 @@ public class GenericAspectFactory extends AspectFactoryWithClassLoaderSupport
          {
             //Get the correct classloader based on the class of the advisor
             Class<?> clazz = advisor.getClazz();
-            cl = (clazz != null) ? clazz.getClassLoader() : advisor.getClass().getClassLoader(); 
+            cl = SecurityActions.getClassLoader((clazz != null) ? clazz: advisor.getClass());
          }
          if (cl != null)
          {

@@ -171,12 +171,12 @@ public class ProxyFactory
          {
             HashSet<Long> mixinMethods = new HashSet<Long>();
             Class<?>[] mixinf = mixins[i].getInterfaces();
-            ClassPool mixPool = AspectManager.instance().findClassPool(mixins[i].getMixin().getClass().getClassLoader());
+            ClassPool mixPool = AspectManager.instance().findClassPool(mixins[i].getMixin().getClass());
             CtClass mixClass = mixPool.get(mixins[i].getMixin().getClass().getName());
             for (int j = 0; j < mixinf.length; j++)
             {
                if (addedInterfaces.contains(mixinf[j].getName())) throw new Exception("2 mixins are implementing the same interfaces");
-               ClassPool mixIntfPool = AspectManager.instance().findClassPool(mixinf[j].getClassLoader());
+               ClassPool mixIntfPool = AspectManager.instance().findClassPool(mixinf[j]);
                CtClass intfClass = mixIntfPool.get(mixinf[j].getName());
                CtMethod[] methods = intfClass.getMethods();
                for (int m = 0; m < methods.length; m++)
@@ -206,7 +206,7 @@ public class ProxyFactory
       for (int i = 0; i < interfaces.length; i++)
       {
          if (addedInterfaces.contains(interfaces[i].getName())) continue;
-         ClassPool mixPool = AspectManager.instance().findClassPool(interfaces[i].getClassLoader());
+         ClassPool mixPool = AspectManager.instance().findClassPool(interfaces[i]);
          CtClass intfClass = mixPool.get(interfaces[i].getName());
          CtMethod[] methods = intfClass.getMethods();
          for (int m = 0; m < methods.length; m++)

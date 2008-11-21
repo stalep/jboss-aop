@@ -771,23 +771,23 @@ public class AspectManager
          if (!advisors.containsKey(advisor.getClazz())) return false;
          if (classLoaderValidator != null)
          {
-            if (classLoaderValidator.isValidClassLoader(advisor.getClazz().getClassLoader()))
+            if (classLoaderValidator.isValidClassLoader(advisor.getClassLoader()))
             {
                return true;
             }
             else
             {
-               unregisterClassLoader(advisor.getClazz().getClassLoader());
+               unregisterClassLoader(advisor.getClassLoader());
                return false;
             }
          }
          else
          {
-            ScopedClassPool pool = (ScopedClassPool) getRegisteredClassPool(advisor.getClazz().getClassLoader());
+            ScopedClassPool pool = (ScopedClassPool) getRegisteredClassPool(advisor.getClassLoader());
             if (pool == null) return false;
             if (pool.isUnloadedClassLoader())
             {
-               unregisterClassLoader(advisor.getClazz().getClassLoader());
+               unregisterClassLoader(advisor.getClassLoader());
                return false;
             }
             else
@@ -808,6 +808,11 @@ public class AspectManager
          return registerClassLoader(SecurityActions.getContextClassLoader());
       }
       return registerClassLoader(cl);
+   }
+   
+   public ClassPool findClassPool(Class<?> clazz)
+   {
+      return findClassPool(SecurityActions.getClassLoader(clazz));
    }
 
    protected ClassPool getRegisteredClassPool(ClassLoader cl)
@@ -2133,7 +2138,7 @@ public class AspectManager
    private Advisor getAdvisorFromAdvisorsKeySetIterator(Iterator<Class<?>> it)
    {
       Class<?> clazz = it.next();
-      if (classLoaderValidator != null && !classLoaderValidator.isValidClassLoader(clazz.getClassLoader()))
+      if (classLoaderValidator != null && !classLoaderValidator.isValidClassLoader(SecurityActions.getClassLoader(clazz)))
       {
          it.remove();
          return null;

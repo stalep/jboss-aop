@@ -270,7 +270,7 @@ public class ClassAdvisor extends Advisor
 
          final AspectManager theManager = manager;
          //register class loader: necessary when clazz was precompiled through aopc
-         manager.registerClassLoader(clazz.getClassLoader());
+         manager.registerClassLoader(SecurityActions.getClassLoader(clazz));
          AccessController.doPrivileged(new PrivilegedExceptionAction<Object>()
          {
             public Object run() throws Exception
