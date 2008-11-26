@@ -105,8 +105,8 @@
          only matches methods from the exact interface(s) given, while <literal>$implementing{}</literal>
          matches methods from the interface(s) given AND their super interfaces.
       </para>
-      <programlisting>void $instanceof{org.acme.IfA}->$implements(org.acme.IfA)</programlisting>
-      <programlisting>void $instanceof{org.acme.IfB}->$implementing(org.acme.IfA, org.acme.IfB)</programlisting>
+      <programlisting>void $instanceof{org.acme.IfA}->$implements(org.acme.IfA)(..)</programlisting>
+      <programlisting>void $instanceof{org.acme.IfB}->$implementing(org.acme.IfA, org.acme.IfB)(..)</programlisting>
       <para>
          Annotations can be used in place of the class name.  The below example matches any methodName() of a tagged
          @javax.ejb.Entity class.
