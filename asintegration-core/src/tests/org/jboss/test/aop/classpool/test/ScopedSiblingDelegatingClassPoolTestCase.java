@@ -105,8 +105,8 @@ public class ScopedSiblingDelegatingClassPoolTestCase extends ClassPoolTest
       CtClass ab = poolA.get(CLASS_A);
       assertEquals(poolA, ab.getClassPool());
       
-      CtClass ba = poolA.get(CLASS_A);
-      assertEquals(poolA, ba.getClassPool());
+      CtClass ba = poolB.get(CLASS_A);
+      assertEquals(poolB, ba.getClassPool());
       CtClass bb = poolB.get(CLASS_B);
       assertEquals(poolB, bb.getClassPool());
    }   
