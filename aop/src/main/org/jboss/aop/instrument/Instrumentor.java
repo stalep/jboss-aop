@@ -651,7 +651,7 @@ public abstract class Instrumentor
                {
                   if (AspectManager.suppressReferenceErrors)
                   {
-                     System.err.println("[warn] Could not find class " + ref + " that " + clazz.getName() + " references.  It may not be in your classpath and you may not be getting field and constructor weaving for this class.");
+                     System.err.println("[warn] Could not find class " + ref + " (or one of its implemented interfaces) that " + clazz.getName() + " references.  It may not be in your classpath and you may not be getting field and constructor weaving for this class.");
                      if (AspectManager.verbose) e.printStackTrace();
                      continue;
                   }
@@ -705,7 +705,7 @@ public abstract class Instrumentor
       {
          if (ref != null)
          {
-            throw new TransformationException("Failed to aspectize class " + clazz.getName() + ".  Could not find class it references " + ref + "  It may not be in your classpath and you may not be getting field and constructor weaving for this class.");
+            throw new TransformationException("Failed to aspectize class " + clazz.getName() + ".  Could not find class it references " + ref + " (or one of its implemented interfaces). It may not be in your classpath and you may not be getting field and constructor weaving for this class.");
          }
          throw ex;
       }
