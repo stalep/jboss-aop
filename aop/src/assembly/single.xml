@@ -17,6 +17,7 @@
         <include>log4j:log4j</include>
         <include>trove:trove</include>
        </includes>
+       <unpack>true</unpack>
     </dependencySet>
   </dependencySets>
   <fileSets>
