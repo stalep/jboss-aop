@@ -64,6 +64,8 @@ public class AOPLogger
       {
          org.jboss.logging.Logger.setPluginClassName(SystemOutLoggerPlugin.class.getName());
          log = org.jboss.logging.Logger.getLogger(clazz);
+         // setting the logger back to NullLogger since we only want jboss classes to use AOPLogger
+         org.jboss.logging.Logger.setPluginClassName(org.jboss.logging.NullLoggerPlugin.class.getName());
       }
       
       logger = log;
@@ -146,5 +148,4 @@ public class AOPLogger
       logger.trace(message, t);
    }
    
-
 }
