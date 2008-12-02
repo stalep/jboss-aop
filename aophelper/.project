@@ -1,7 +1,9 @@
 <projectDescription>
   <name>aophelper</name>
-  <comment/>
-  <projects/>
+  <comment>JBoss AOP</comment>
+  <projects>
+    <project>jboss-aop</project>
+  </projects>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
