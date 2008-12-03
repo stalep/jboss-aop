@@ -23,8 +23,8 @@ package org.jboss.test.aop.classpool.jbosscl.test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -37,18 +37,16 @@ import org.jboss.aop.asintegration.jboss5.VFSClassLoaderDomainRegistry;
 import org.jboss.aop.classpool.jbosscl.JBossClClassPoolFactory;
 import org.jboss.classloader.plugins.filter.PatternClassFilter;
 import org.jboss.classloader.spi.ClassLoaderDomain;
-import org.jboss.classloader.spi.ClassLoaderPolicy;
 import org.jboss.classloader.spi.ClassLoaderSystem;
-import org.jboss.classloader.spi.DelegateLoader;
 import org.jboss.classloader.spi.filter.ClassFilter;
 import org.jboss.classloader.test.support.IsolatedClassLoaderTestHelper;
-import org.jboss.classloader.test.support.MockClassLoaderPolicy;
+import org.jboss.classloading.spi.dependency.ClassLoading;
 import org.jboss.classloading.spi.dependency.Module;
-import org.jboss.classloading.spi.dependency.policy.mock.MockClassLoaderPolicyModule;
-import org.jboss.classloading.spi.dependency.policy.mock.MockClassLoadingMetaData;
+import org.jboss.classloading.spi.dependency.policy.ClassLoaderPolicyModule;
 import org.jboss.test.AbstractTestCaseWithSetup;
 import org.jboss.test.AbstractTestDelegate;
-import org.jboss.test.aop.classpool.jbosscl.support.TestMockClassLoaderPolicyModule;
+import org.jboss.test.aop.classpool.jbosscl.support.MockModuleFactory;
+import org.jboss.virtual.VFS;
 
 /**
  * Base class for testing the new JBoss classloaders
@@ -59,12 +57,12 @@ import org.jboss.test.aop.classpool.jbosscl.support.TestMockClassLoaderPolicyMod
 public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
 {
    //These might not be needed with the new loaders
-//   public final static URL JAR_A_1 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-jmx-test-classpool-a1.jar");
-//   public final static URL JAR_A_2 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-jmx-test-classpool-a2.jar");
-//   public final static URL JAR_B_1 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-jmx-test-classpool-b1.jar");
-//   public final static URL JAR_B_2 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-jmx-test-classpool-b2.jar");
-//   public final static URL JAR_C_1 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-jmx-test-classpool-c1.jar");
-//   public final static URL JAR_C_2 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-jmx-test-classpool-c2.jar");
+   public final static URL JAR_A_1 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-mc-test-classpool-a1.jar");
+   public final static URL JAR_A_2 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-mc-test-classpool-a2.jar");
+   public final static URL JAR_B_1 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-mc-test-classpool-b1.jar");
+   public final static URL JAR_B_2 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-mc-test-classpool-b2.jar");
+   public final static URL JAR_C_1 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-mc-test-classpool-c1.jar");
+   public final static URL JAR_C_2 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-mc-test-classpool-c2.jar");
 
    public static final String PACKAGE_ROOT = "org.jboss.test.aop.classpool.jbosscl.support";
    public static final String PACKAGE_A = PACKAGE_ROOT + ".a";
@@ -78,16 +76,23 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
    //Keep strong references to the Modules since the domainRegistry only has weak references
    private Set<Module> modules = new HashSet<Module>();
    
+   //Keep a strong reference to the URL classloaders so that they are not garbage collected
+   final static Set<URLClassLoader> registeredURLClassLoaders = new HashSet<URLClassLoader>();
+
    private Map<ClassLoader, ClassLoaderDomain> scopedChildDomainsByLoader = new WeakHashMap<ClassLoader, ClassLoaderDomain>();
 
    /** The classloader helper */
-   protected static IsolatedClassLoaderTestHelper helper;
+   //protected static IsolatedClassLoaderTestHelper helper;
+   protected static final ClassLoaderSystem system = ClassLoaderSystem.getInstance();
    protected static VFSClassLoaderDomainRegistry domainRegistry;
    
+   ClassLoading classLoading = new ClassLoading();
+
    static
    {
       domainRegistry = new VFSClassLoaderDomainRegistry();
       AspectManager.setClassPoolFactory(new JBossClClassPoolFactory(domainRegistry));
+      VFS.init();
    }
 
    
@@ -103,9 +108,26 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
    
    public static Test suite(Class<?> clazz, boolean importAll, Class<?>... packages)
    {
-      helper = new IsolatedClassLoaderTestHelper();
-      ClassFilter aopFilter = new PatternClassFilter(new String[] { "org\\.jboss\\.aop\\..+", "org\\.jboss\\.metadata\\..+"}, new String[] { "org/jboss/aop/.+", "org/jboss/metadata/.+"}, null);
+      IsolatedClassLoaderTestHelper helper = new IsolatedClassLoaderTestHelper();
+
+      String[] classPatterns = new String[] {
+            "org\\.jboss\\.aop\\..+", 
+            "org\\.jboss\\.classloading\\..+", 
+            "org\\.jboss\\.classloader\\..+", 
+            "org\\.jboss\\.virtual\\..+", 
+            "org\\.jboss\\.test\\.aop\\.classpool\\.jbosscl\\..+\\..+", 
+            "org\\.jboss\\.metadata\\..+"};
+      String[] resourcePatterns = new String[] {
+            "org/jboss/aop/.+", 
+            "org/jboss/classloading/.+", 
+            "org/jboss/classloader/.+", 
+            "org/jboss/virtual/.+", 
+            "org/jboss/test/aop/classpool/jbosscl/.+\\..+", 
+            "org/jboss/metadata/.+"};
+      ClassFilter aopFilter = new PatternClassFilter(classPatterns, resourcePatterns, null);
       Class<?> newClass = helper.initializeClassLoader(clazz, aopFilter, importAll, packages);
+      System.out.println(clazz.getClassLoader());
+      System.out.println(newClass.getClassLoader());
       return AbstractTestCaseWithSetup.suite(newClass);
    }
 
@@ -138,48 +160,80 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
          throw new RuntimeException(e);
       }
    }
-
-
-   protected ClassLoader createChildDomainParentFirstClassLoader(String name, String domainName, boolean importAll, String... packages) throws Exception
+   
+   protected ClassLoaderSystem getSystem()
    {
-      return createChildDomainClassLoader(name, domainName, true, importAll, packages);
+      return system;
    }
    
-   protected ClassLoader createChildDomainParentLastClassLoader(String name, String domainName, boolean importAll, String... packages) throws Exception
+   protected ClassLoaderDomain getDefaultDomain()
    {
-      return createChildDomainClassLoader(name, domainName, false, importAll, packages);
+      return system.getDefaultDomain();
+   }
+
+   protected ClassLoader createClassLoader(String name, boolean importAll, URL... urls) throws Exception
+   {
+      ClassLoaderPolicyModule module = MockModuleFactory.createModule(name, importAll, urls);
+      return createClassLoader(module);
    }
    
-   protected ClassLoader createChildDomainClassLoader(String name, String domainName, boolean parentFirst, boolean importAll, String... packages) throws Exception
+   protected ClassLoader createClassLoader(String name, boolean importAll, ClassLoader parent, URL... urls) throws Exception
    {
-      ClassLoaderDomain domain = helper.getSystem().getDomain(domainName);
-      if (domain == null)
-      {
-         if (parentFirst)
-         {
-            domain = createScopedClassLoaderDomainParentFirst(domainName);
-         }
-         else
-         {
-            domain = createScopedClassLoaderDomainParentLast(domainName);
-         }
-      }
-      MockClassLoadingMetaData metaData = createClassLoadingMetaData(name);
-      metaData.setDomain(domainName);
-      metaData.setParentDomain(domain.getParentDomainName());
-      metaData.setJ2seClassLoadingCompliance(parentFirst);
-      metaData.setImportAll(importAll);
-      metaData.setPathsAndPackageNames(packages);
-      MockClassLoaderPolicyModule module = new MockClassLoaderPolicyModule(metaData, name);
+      ClassLoaderPolicyModule  module = MockModuleFactory.createModule(name, importAll, urls);
+      return createClassLoader(module, parent);
+   }
+   
+   protected ClassLoader createClassLoader(ClassLoaderPolicyModule module)
+   {
+      return createClassLoader(module, null);
+   }
+   
+   protected ClassLoader createClassLoader(ClassLoaderPolicyModule module, ClassLoader parent)
+   {
+      classLoading.addModule(module);
+      ClassLoader loader = parent == null ? 
+            module.registerClassLoaderPolicy(system) : module.registerClassLoaderPolicy(system, parent);
+      registerModule(loader, module);
+      return loader;
+   }
+   
+   protected ClassLoader createChildDomainParentFirstClassLoader(String name, String domainName, boolean importAll, URL... urls) throws Exception
+   {
+      return createChildDomainParentFirstClassLoader(name, domainName, importAll, null, urls);
+   }
+   
+   protected ClassLoader createChildDomainParentFirstClassLoader(String name, String domainName, boolean importAll, ClassLoader parent, URL... urls) throws Exception
+   {
+      return createChildDomainClassLoader(name, domainName, true, importAll, parent, urls);
+   }
+   
+   protected ClassLoader createChildDomainParentLastClassLoader(String name, String domainName, boolean importAll, URL... urls) throws Exception
+   {
+      return createChildDomainParentLastClassLoader(name, domainName, importAll, null, urls);
+   }
+   
+   protected ClassLoader createChildDomainParentLastClassLoader(String name, String domainName, boolean importAll, ClassLoader parent, URL... urls) throws Exception
+   {
+      return createChildDomainClassLoader(name, domainName, false, importAll, parent, urls);
+   }
+   
+   protected ClassLoader createChildDomainClassLoader(String name, String domainName, boolean parentFirst, boolean importAll, ClassLoader parent, URL... urls) throws Exception
+   {
+      ClassLoaderPolicyModule module = MockModuleFactory.createModule(name, importAll, domainName, parentFirst, urls);
       
-      MockClassLoaderPolicy policy = new MockClassLoaderPolicy(name);
-      policy.setImportAll(importAll);
-      policy.setPathsAndPackageNames(packages);
-      ClassLoader classLoader = createClassLoader(domain, policy);
-
+      ClassLoader classLoader = createClassLoader(module, parent);
+      
+      ClassLoaderDomain domain = system.getDomain(domainName);
       scopedChildDomainsByLoader.put(classLoader, domain);
       registerModule(classLoader, module);
       return classLoader;
+   }
+   
+   protected ClassLoader createChildURLClassLoader(ClassLoader parent, URL url)
+   {
+      URLClassLoader cl = new URLClassLoader(new URL[] {url}, parent);
+      registeredURLClassLoaders.add(cl);
+      return cl;
    }
    
    /**
@@ -199,7 +253,12 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
    {
       if (domain != null)
       {
-         helper.unregisterDomain(domain.getName());
+         ClassLoaderDomain registeredDomain = system.getDomain(domain.getName());
+         if (registeredDomain == null)
+            throw new IllegalStateException("Domain is not registered: " + domain.getName());
+         if (registeredDomain != domain)
+            throw new IllegalStateException(domain + " is not the same as " + registeredDomain);
+         system.unregisterDomain(domain);
       }
    }
 
@@ -241,33 +300,30 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
       {
       }
    }
-   
-   protected MockClassLoadingMetaData createClassLoadingMetaData(String name)
+
+   protected ClassPool createClassPool(String name, boolean importAll, URL... urls) throws Exception
    {
-      MockClassLoadingMetaData metaData = new MockClassLoadingMetaData(name);
-      //These should always be set
-      metaData.setBlackListable(true);
-      metaData.setCacheable(true);
-      //Default to the test domain
-      metaData.setDomain(helper.getDomain().getName());
-      metaData.setParentDomain(helper.getDomain().getParentDomainName());
-      return metaData;
+      ClassLoader loader = createClassLoader(name, importAll, urls);
+      return AspectManager.instance().registerClassLoader(loader);
    }
    
-   protected MockClassLoadingMetaData createClassLoadingMetaDataFromPolicy(MockClassLoaderPolicy policy)
+   protected ClassPool createChildDomainParentFirstClassPool(String name, String domainName, boolean importAll, URL... urls) throws Exception
    {
-      MockClassLoadingMetaData metaData = createClassLoadingMetaData(policy.getName());
-      metaData.setImportAll(policy.isImportAll());
-      metaData.setPathsAndPackageNames(policy.getPackageNames());
-      //TODO should set more OSGi stuff in metaData here
-      return metaData;
+      ClassLoader loader = createChildDomainParentFirstClassLoader(name, domainName, importAll, urls);
+      return AspectManager.instance().registerClassLoader(loader);
    }
    
-   protected void registerModule(ClassLoader loader, MockClassLoaderPolicyModule module)
+   protected ClassPool createChildDomainParentLastClassPool(String name, String domainName, boolean importAll, URL... urls) throws Exception
    {
-      if (helper.getSystem() != domainRegistry.getSystem())
+      ClassLoader loader = createChildDomainParentLastClassLoader(name, domainName, importAll, urls);
+      return AspectManager.instance().registerClassLoader(loader);
+   }
+
+   protected void registerModule(ClassLoader loader, ClassLoaderPolicyModule module)
+   {
+      if (system != domainRegistry.getSystem())
       {
-         domainRegistry.setSystem(helper.getSystem());
+         domainRegistry.setSystem(system);
       }
       //Add the hard reference to the Module since the registry's reference is weak
       //In the real workd this would be maintained by the deployers
@@ -288,11 +344,11 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
    
    protected void assertModule(ClassLoader loader)
    {
-      ClassLoaderSystem system = helper.getSystem();
       ClassLoaderDomain domainForLoader = scopedChildDomainsByLoader.get(loader);
       if (domainForLoader == null)
       {
-         domainForLoader = helper.getDomain();
+         //domainForLoader = helper.getDomain();
+         domainForLoader = system.getDefaultDomain();
       }
       assertNotNull(domainForLoader);
       
@@ -306,159 +362,30 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
       assertEquals(domainForModule.getParentDomainName(), module.getParentDomainName());
    }
 
-   protected ClassPool createClassPool(String name, boolean importAll, String... packages) throws Exception
-   {
-      ClassLoader loader = createClassLoader(name, importAll, packages);
-      return AspectManager.instance().registerClassLoader(loader);
-   }
-   
-   protected ClassPool createChildDomainParentFirstClassPool(String name, String domainName, boolean importAll, String... packages) throws Exception
-   {
-      ClassLoader loader = createChildDomainParentFirstClassLoader(name, domainName, importAll, packages);
-      return AspectManager.instance().registerClassLoader(loader);
-   }
-   
-   protected ClassPool createChildDomainParentLastClassPool(String name, String domainName, boolean importAll, String... packages) throws Exception
-   {
-      ClassLoader loader = createChildDomainParentLastClassLoader(name, domainName, importAll, packages);
-      return AspectManager.instance().registerClassLoader(loader);
-   }
-
    protected void unregisterClassPool(ClassPool pool) throws Exception
    {
-      ClassLoader loader = pool.getClassLoader();
-      AspectManager.instance().unregisterClassLoader(loader);
-      if (loader != null)
+      if (pool != null)
       {
-         unregisterClassLoader(loader);
+         ClassLoader loader = pool.getClassLoader();
+         AspectManager.instance().unregisterClassLoader(loader);
+         if (loader != null)
+         {
+            unregisterClassLoader(loader);
+         }
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////
-   // These are lifted from AOPIntegrationTest, but have some modifications
-   /**
-    * Create a classloader
-    * 
-    * It exports everything
-    *
-    * @param name the name
-    * @param importAll whether to import all
-    * @param packages the packages
-    * @return the classloader
-    * @throws Exception for any error
-    */
-   protected ClassLoader createClassLoader(String name, boolean importAll, String... packages) throws Exception
-   {
-      MockClassLoadingMetaData metaData = createClassLoadingMetaData(name);
-      metaData.setImportAll(importAll);
-      metaData.setPathsAndPackageNames(packages);
-      metaData.setDomain(helper.getDomain().getName());
-      TestMockClassLoaderPolicyModule module = new TestMockClassLoaderPolicyModule(metaData, name);
-      
-      ClassLoader loader = helper.createClassLoader(name, importAll, packages); 
-      registerModule(loader, module);
-      
-      return loader;
-   }
-   
-   /**
-    * Create a classloader
-    * 
-    * It exports everything
-    *
-    * @param name the name
-    * @param importAll whether to import all
-    * @param packages the packages
-    * @return the classloader
-    * @throws Exception for any error
-    */
-   protected ClassLoader createClassLoader(MockClassLoaderPolicy policy) throws Exception
-   {
-      MockClassLoadingMetaData metaData = createClassLoadingMetaDataFromPolicy(policy);
-      TestMockClassLoaderPolicyModule module = new TestMockClassLoaderPolicyModule(metaData, policy.getName());
-      
-      ClassLoader loader = helper.createClassLoader(policy);
-      registerModule(loader, module);
-      return loader;
-   }
-   
-   /**
-    * Create a scoped classloader domain using the test domain as parent
-    * using the parent first policy
-    * 
-    * @param name the name
-    * @return the domain
-    */
-   public ClassLoaderDomain createScopedClassLoaderDomainParentFirst(String name)
-   {
-      return helper.createScopedClassLoaderDomainParentFirst(name);
-   }
-
-   /**
-    * Create a scoped classloader domain using the test domain as parent
-    * using the parent last policy
-    * 
-    * @param name the name
-    * @return the domain
-    */
-   public ClassLoaderDomain createScopedClassLoaderDomainParentLast(String name)
-   {
-      return helper.createScopedClassLoaderDomainParentLast(name);
-   }
-
-   /**
-    * Create a classloader
-    *
-    * @param domain the domain
-    * @param policy the policy
-    * @return the classloader
-    * @throws Exception for any error
-    */
-   public ClassLoader createClassLoader(ClassLoaderDomain domain, MockClassLoaderPolicy policy) throws Exception
-   {
-      MockClassLoadingMetaData metaData = createClassLoadingMetaDataFromPolicy(policy);
-      metaData.setDomain(domain.getName());
-      metaData.setParentDomain(domain.getParentDomainName());
-      TestMockClassLoaderPolicyModule module = new TestMockClassLoaderPolicyModule(metaData, policy.getName());
-      
-      ClassLoader loader = helper.createClassLoader(domain, policy);
-      registerModule(loader, module);
-      return loader;
-   }
-
-   /**
-    * Unregister a classloader
-    * 
-    * @param classLoader the classloader
-    * @throws Exception for any error
-    */
    protected void unregisterClassLoader(ClassLoader classLoader) throws Exception
    {
-      unregisterModule(classLoader);
-      helper.unregisterClassLoader(classLoader);
+      if (classLoader != null)
+      {
+         if (registeredURLClassLoaders.remove(classLoader) == false)
+         {
+            unregisterModule(classLoader);
+            system.unregisterClassLoader(classLoader);
+         }
+      }
    }
-
-   /**
-    * Create the default delegate loader
-    * 
-    * @return the loaders
-    */
-   public List<? extends DelegateLoader> createDefaultDelegates()
-   {
-      return helper.createDefaultDelegates();
-   }
-
-   /**
-    * Create delegate loaders from policies
-    * 
-    * @param policies the policies
-    * @return the loaders
-    */
-   public List<? extends DelegateLoader> createDelegates(ClassLoaderPolicy... policies)
-   {
-      return helper.createDelegates(policies);
-   }
-
 
    /**
     * Unregister a domain
@@ -467,7 +394,11 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
     */
    public void unregisterDomain(String name)
    {
-      helper.unregisterDomain(name);
+      if (name != null)
+      {
+         ClassLoaderDomain registeredDomain = system.getDomain(name);
+         unregisterDomain(registeredDomain);
+      }
    }
    
 }

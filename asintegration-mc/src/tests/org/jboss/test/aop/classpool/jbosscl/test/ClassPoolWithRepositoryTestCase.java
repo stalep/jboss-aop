@@ -52,8 +52,8 @@ public class ClassPoolWithRepositoryTestCase extends JBossClClassPoolTest
       ClassPool poolB = null;
       try
       {
-         poolA = createClassPool("A", true, PACKAGE_A);
-         poolB = createClassPool("B", true, PACKAGE_B);
+         poolA = createClassPool("A", true, JAR_A_1);
+         poolB = createClassPool("B", true, JAR_B_1);
          try
          {
             CtClass aFromA = poolA.get(CLASS_A);
@@ -89,13 +89,13 @@ public class ClassPoolWithRepositoryTestCase extends JBossClClassPoolTest
       ClassPool poolC = null;
       try
       {
-         poolA = createClassPool("A", true, PACKAGE_A);
-         poolB = createClassPool("B", true, PACKAGE_B);
-         poolC = createChildDomainParentFirstClassPool("C", "CHILD", true, PACKAGE_C);
+         poolA = createClassPool("A", true, JAR_A_1);
+         poolB = createClassPool("B", true, JAR_B_1);
+         poolC = createChildDomainParentFirstClassPool("C", "CHILD", true, JAR_C_1);
          
          childDomain = getChildDomainForPool(poolC);
          assertNotNull(childDomain);
-         assertSame(helper.getDomain(), childDomain.getParent());
+         assertSame(getSystem().getDefaultDomain(), childDomain.getParent());
 
          CtClass aFromA = poolA.get(CLASS_A);
          assertNotNull(aFromA);

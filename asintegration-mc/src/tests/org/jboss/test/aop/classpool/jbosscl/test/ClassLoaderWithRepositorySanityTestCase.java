@@ -44,15 +44,24 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       return suite(ClassLoaderWithRepositorySanityTestCase.class);
    }
 
+//   public void testNewCreateClassLoader() throws Exception
+//   {
+//      System.out.println("-------> 2 " + helper);
+//      System.out.println("-------> 3 " + JBossClClassPoolTest.helper);
+//      ClassLoader cl = createClassLoader("A", true, JAR_A_1);
+//      Class<?> clazz = cl.loadClass(CLASS_A);
+//      assertSame(cl, clazz.getClassLoader());
+//   }
+   
    public void testGlobalScope() throws Exception
    {
       ClassLoader clA = null;
       ClassLoader clB = null;
       try
       {
-         clA = createClassLoader("A", true, PACKAGE_A);
+         clA = createClassLoader("A", true, JAR_A_1);
          assertModule(clA);
-         clB = createClassLoader("B", true, PACKAGE_B);
+         clB = createClassLoader("B", true, JAR_B_1);
          assertModule(clB);
          try
          {
@@ -80,7 +89,7 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       {
          unregisterClassLoader(clA);
       }
-      assertCannotLoadClass(helper.getDomain(), CLASS_A);
+      assertCannotLoadClass(getDefaultDomain(), CLASS_A);
    }
 
    public void testChildDomain() throws Exception
@@ -91,16 +100,16 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       ClassLoader clC = null;
       try
       {
-         clA = createClassLoader("A", true, PACKAGE_A);
+         clA = createClassLoader("A", true, JAR_A_1);
          assertModule(clA);
-         clB = createClassLoader("B", true, PACKAGE_B);
+         clB = createClassLoader("B", true, JAR_B_2);
          assertModule(clB);
-         clC = createChildDomainParentFirstClassLoader("C", "CHILD", true, PACKAGE_C);
+         clC = createChildDomainParentFirstClassLoader("C", "CHILD", true, JAR_C_1);
          assertModule(clC);
          
          childDomain = getChildDomainForLoader(clC);
          assertNotNull(childDomain);
-         assertSame(helper.getDomain(), childDomain.getParent());
+         assertSame(getSystem().getDefaultDomain(), childDomain.getParent());
 
          Class<?> aFromA = clA.loadClass(CLASS_A);
          assertNotNull(aFromA);
@@ -127,7 +136,7 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
          unregisterClassLoader(clA);
          unregisterClassLoader(clB);
          unregisterClassLoader(clC);
-         unregisterDomain(childDomain.getName());
+         unregisterDomain(childDomain);
       }
    }
    
@@ -139,17 +148,17 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       ClassLoaderDomain domainB = null;
       try
       {
-         clA = createChildDomainParentFirstClassLoader("A", "ChildA", true, PACKAGE_A);
+         clA = createChildDomainParentFirstClassLoader("A", "ChildA", true, JAR_A_1);
          assertModule(clA);
-         clB = createChildDomainParentLastClassLoader("B", "ChildB", true, PACKAGE_B);
+         clB = createChildDomainParentLastClassLoader("B", "ChildB", true, JAR_B_1);
          assertModule(clB);
 
          domainA = getChildDomainForLoader(clA);
          assertNotNull(domainA);
-         assertSame(helper.getDomain(), domainA.getParent());
+         assertSame(getSystem().getDefaultDomain(), domainA.getParent());
          domainB = getChildDomainForLoader(clB);
          assertNotNull(domainB);
-         assertSame(helper.getDomain(), domainB.getParent());
+         assertSame(getSystem().getDefaultDomain(), domainB.getParent());
          assertNotSame(domainA, domainB);
 
          Class<?> clazzA = clA.loadClass(CLASS_A);
@@ -163,8 +172,8 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       {
          unregisterClassLoader(clA);
          unregisterClassLoader(clB);
-         unregisterDomain(domainA);
-         unregisterDomain(domainB);
+         unregisterDomain(getChildDomainForLoader(clA));
+         unregisterDomain(getChildDomainForLoader(clB));
       }
    }
    
@@ -174,11 +183,11 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       ClassLoader clScoped = null;
       try
       {
-         clScoped = createChildDomainParentFirstClassLoader("SCOPED", "SCOPED", true, PACKAGE_B);
+         clScoped = createChildDomainParentFirstClassLoader("SCOPED", "SCOPED", true, JAR_B_1);
          assertModule(clScoped);
          assertCannotLoadClass(clScoped, CLASS_A);
          
-         clGlobal = createClassLoader("GLOBAL", true, PACKAGE_A);
+         clGlobal = createClassLoader("GLOBAL", true, JAR_A_1);
          assertModule(clScoped);
          assertModule(clGlobal);
 
@@ -203,8 +212,8 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       ClassLoader clScoped = null;
       try
       {
-         clGlobal = createClassLoader("GLOBAL", true, PACKAGE_A);
-         clScoped = createChildDomainParentFirstClassLoader("SCOPED", "SCOPED", true, PACKAGE_B);
+         clGlobal = createClassLoader("GLOBAL", true, JAR_A_1);
+         clScoped = createChildDomainParentFirstClassLoader("SCOPED", "SCOPED", true, JAR_B_1);
          Class<?> aFromParent = clGlobal.loadClass(CLASS_A);
          assertNotNull(aFromParent);
          Class<?> aFromChild = clScoped.loadClass(CLASS_A);
@@ -219,164 +228,171 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
          unregisterDomain(getChildDomainForLoader(clScoped));
       }
    }
-
-   public void testReminder() 
+   
+   public void testChildOverrideWithNoParentDelegation() throws Exception
    {
-      //This is a reminder that the commented tests further down need porting to jboss-cl
-      //The tests in this class are originally from UclClassLoaderSanityTestCase
-      fail("Remaining tests need to be ported to jboss cl. See comment in code :-)");
+      ClassLoader clGlobal = null;
+      ClassLoader clScoped = null;
+      try
+      {
+         clGlobal = createClassLoader("GLOBAL", true, JAR_A_1);
+         clScoped = createChildDomainParentLastClassLoader("CHILD", "CHILD", true, JAR_A_1);
+         Class<?> aFromParent = clGlobal.loadClass(CLASS_A);
+         assertNotNull(aFromParent);
+         Class<?> aFromChild = clScoped.loadClass(CLASS_A);
+         assertNotNull(aFromChild);
+         assertNotSame(aFromParent, aFromChild);
+         assertSame(clGlobal, aFromParent.getClassLoader());
+         assertSame(clScoped, aFromChild.getClassLoader());
+      }
+      finally
+      {
+         unregisterClassLoader(clGlobal);
+         unregisterClassLoader(clScoped);
+         unregisterDomain(getChildDomainForLoader(clScoped));
+      }
    }
    
-//   public void testChildOverrideWithNoParentDelegation() throws Exception
-//   {
-//      ClassLoader clGlobal = null;
-//      try
-//      {
-//         clGlobal = createGlobalClassLoader(JAR_A_1);
-//         ClassLoader clScoped = createChildClassLoader(JAR_A_2, false);
-//         Class<?> aFromParent = clGlobal.loadClass(CLASS_A);
-//         assertNotNull(aFromParent);
-//         Class<?> aFromChild = clScoped.loadClass(CLASS_A);
-//         assertNotNull(aFromChild);
-//         assertNotSame(aFromParent, aFromChild);
-//         assertSame(clGlobal, aFromParent.getClassLoader());
-//         assertSame(clScoped, aFromChild.getClassLoader());
-//      }
-//      finally
-//      {
-//         removeClassLoaderFromRepository(clGlobal);
-//      }
-//   }
-//   
-//   public void testURLChildOfGlobalUcl() throws Exception
-//   {
-//      ClassLoader clGlobal = null;
-//      try
-//      {
-//         clGlobal = createGlobalClassLoader(JAR_A_1);
-//         ClassLoader clChildA = createChildURLClassLoader(clGlobal, JAR_B_1);
-//         
-//         Class<?> aFromA = clChildA.loadClass(CLASS_A);
-//         assertSame(clGlobal, aFromA.getClassLoader());
-//         Class<?> bFromA = clChildA.loadClass(CLASS_B);
-//         assertSame(clChildA, bFromA.getClassLoader());
-//         
-//         ClassLoader clChildB = createChildURLClassLoader(clGlobal, JAR_A_2);
-//         Class<?> aFromB = clChildB.loadClass(CLASS_A);
-//         assertSame(clGlobal, aFromB.getClassLoader());
-//      }
-//      finally
-//      {
-//         removeClassLoaderFromRepository(clGlobal);
-//      }
-//   }
-//   
-//   public void testUndeploySibling() throws Exception
-//   {
-//      ClassLoader clA = null;
-//      ClassLoader clB = null;
-//      try
-//      {
-//         try
-//         {
-//            clA = createGlobalClassLoader(JAR_A_1);
-//            assertCannotLoadClass(clA, CLASS_B);
-//            
-//            clB = createGlobalClassLoader(JAR_B_1);
-//            Class<?> bFromA = clA.loadClass(CLASS_B);
-//            assertSame(clB, bFromA.getClassLoader());
-//         }
-//         finally
-//         {
-//            removeClassLoaderFromRepository(clB);
-//         }
-//         assertCannotLoadClass(clA, CLASS_B);
-//      }
-//      finally
-//      {
-//         removeClassLoaderFromRepository(clA);
-//      }
-//   }
-//
-//   
-////   public void testUndeployParentDomainClassLoader() throws Exception
-////   {
-////      ClassLoader globalA = null;
-////      ClassLoader globalB = null;
-////      ClassLoader child = null;
-////      try
-////      {
-////         try
-////         {
-////            globalA = createGlobalClassLoader(JAR_A_1);
-////            assertCannotLoadClass(globalA, CLASS_B);
-////            
-////            child = createChildClassLoader(JAR_C_1, true);
-////            assertCannotLoadClass(child, CLASS_B);
-////            
-////            globalB = createGlobalClassLoader(JAR_B_1);
-////            Class<?> bFromChild = child.loadClass(CLASS_B);
-////            Class<?> bFromA = globalA.loadClass(CLASS_B);
-////            assertSame(globalB, bFromA.getClassLoader());
-////            assertSame(bFromA, bFromChild);
-////         }
-////         finally
-////         {
-////            removeClassLoaderFromRepository(globalB);
-////         }
-////         assertCannotLoadClass(child, CLASS_B);
-////      }
-////      finally
-////      {
-////         removeClassLoaderFromRepository(globalA);
-////      }
-////   }
-//   
-//   public void testUclWithParentClassLoader() throws Exception
-//   {
-//      ClassLoader parent = createChildURLClassLoader(null, JAR_B_1);
-//      ClassLoader global = null;
-//      try
-//      {
-//         global = createGlobalClassLoaderWithParent(JAR_A_1, parent);
-//         Class<?> aFromGlobal = global.loadClass(CLASS_A);
-//         assertSame(global, aFromGlobal.getClassLoader());
-//         Class<?> bFromGlobal = global.loadClass(CLASS_B);
-//         assertSame(parent, bFromGlobal.getClassLoader());
-//         Class<?> bFromParent = parent.loadClass(CLASS_B);
-//         assertSame(bFromGlobal, bFromParent);
-//      }
-//      finally
-//      {
-//         removeClassLoaderFromRepository(global);
-//      }
-//   }
-//
-//   
-//   public void testUclWithParentClassLoaderAndSameClassInDomain() throws Exception
-//   {
-//      ClassLoader parent = createChildURLClassLoader(null, JAR_B_1);
-//      ClassLoader globalA = null;
-//      ClassLoader globalB = null;
-//      try
-//      {
-//         globalA = createGlobalClassLoaderWithParent(JAR_A_1, parent);
-//         Class<?> aFromGlobal = globalA.loadClass(CLASS_A);
-//         assertSame(globalA, aFromGlobal.getClassLoader());
-//
-//         globalB = createGlobalClassLoader(JAR_B_2);
-//         Class<?> bFromGlobalA = globalA.loadClass(CLASS_B);
-//         assertSame(globalB, bFromGlobalA.getClassLoader());
-//         Class<?> bFromParent = parent.loadClass(CLASS_B);
-//         assertSame(parent, bFromParent.getClassLoader());
-//         assertNotSame(bFromGlobalA, bFromParent);
-//      }
-//      finally
-//      {
-//         removeClassLoaderFromRepository(globalA);
-//         removeClassLoaderFromRepository(globalB);
-//      }
-//   }
-//
-//
+   public void testURLChildOfGlobalUcl() throws Exception
+   {
+      ClassLoader clGlobal = null;
+      ClassLoader clChildA = null;
+      ClassLoader clChildB = null;
+      try
+      {
+         clGlobal = createClassLoader("GLOBAL", true, JAR_A_1);
+         clChildA = createChildURLClassLoader(clGlobal, JAR_B_1);
+         
+         Class<?> aFromA = clChildA.loadClass(CLASS_A);
+         assertSame(clGlobal, aFromA.getClassLoader());
+         Class<?> bFromA = clChildA.loadClass(CLASS_B);
+         assertSame(clChildA, bFromA.getClassLoader());
+         
+         clChildB = createChildURLClassLoader(clGlobal, JAR_A_2);
+         Class<?> aFromB = clChildB.loadClass(CLASS_A);
+         assertSame(clGlobal, aFromB.getClassLoader());
+      }
+      finally
+      {
+         unregisterClassLoader(clGlobal);
+         unregisterClassLoader(clChildA);
+         unregisterClassLoader(clChildB);
+      }
+   }
+   
+   public void testUndeploySibling() throws Exception
+   {
+      ClassLoader clA = null;
+      ClassLoader clB = null;
+      try
+      {
+         try
+         {
+            clA = createClassLoader("A", true, JAR_A_1);
+            assertCannotLoadClass(clA, CLASS_B);
+            
+            clB = createClassLoader("B", true, JAR_B_1);
+            Class<?> bFromA = clA.loadClass(CLASS_B);
+            assertSame(clB, bFromA.getClassLoader());
+         }
+         finally
+         {
+            unregisterClassLoader(clB);
+         }
+         assertCannotLoadClass(clA, CLASS_B);
+      }
+      finally
+      {
+         unregisterClassLoader(clA);
+      }
+   }
+
+   
+   public void testUndeployParentDomainClassLoader() throws Exception
+   {
+      ClassLoader globalA = null;
+      ClassLoader globalB = null;
+      ClassLoader child = null;
+      try
+      {
+         try
+         {
+            globalA = createClassLoader("A", true, JAR_A_1);
+            assertCannotLoadClass(globalA, CLASS_B);
+            
+            child = createChildDomainParentLastClassLoader("C", "C", true, JAR_C_1);
+            assertCannotLoadClass(child, CLASS_B);
+            
+            globalB = createClassLoader("B", true, JAR_B_1);
+            Class<?> bFromChild = child.loadClass(CLASS_B);
+            Class<?> bFromA = globalA.loadClass(CLASS_B);
+            assertSame(globalB, bFromA.getClassLoader());
+            assertSame(bFromA, bFromChild);
+         }
+         finally
+         {
+            unregisterClassLoader(globalB);
+         }
+         assertCannotLoadClass(child, CLASS_B);
+      }
+      finally
+      {
+         unregisterClassLoader(globalA);
+         unregisterClassLoader(child);
+         unregisterDomain(getChildDomainForLoader(child));
+      }
+   }
+   
+   public void testClassLoaderlWithParentClassLoader() throws Exception
+   {
+      ClassLoader parent = createChildURLClassLoader(null, JAR_B_1);
+      ClassLoader global = null;
+      try
+      {
+         global = createChildDomainParentFirstClassLoader("A", "A", true, parent, JAR_A_1);
+         Class<?> aFromGlobal = global.loadClass(CLASS_A);
+         assertSame(global, aFromGlobal.getClassLoader());
+         Class<?> bFromGlobal = global.loadClass(CLASS_B);
+         assertSame(parent, bFromGlobal.getClassLoader());
+         Class<?> bFromParent = parent.loadClass(CLASS_B);
+         assertSame(bFromGlobal, bFromParent);
+      }
+      finally
+      {
+         unregisterClassLoader(global);
+         unregisterClassLoader(parent);
+         unregisterDomain(getChildDomainForLoader(global));
+      }
+   }
+
+   
+   public void testClassLoaderWithParentClassLoaderAndSameClassInDomain() throws Exception
+   {
+      ClassLoader parent = createChildURLClassLoader(null, JAR_B_1);
+      ClassLoader globalA = null;
+      ClassLoader globalB = null;
+      try
+      {
+         final String domain = "CHILD";
+         globalA = createChildDomainParentFirstClassLoader("A", domain, true, parent, JAR_A_1);
+         Class<?> aFromGlobal = globalA.loadClass(CLASS_A);
+         assertSame(globalA, aFromGlobal.getClassLoader());
+
+         globalB = createChildDomainParentFirstClassLoader("B", domain, true, parent, JAR_B_1);
+         Class<?> bFromGlobalA = globalA.loadClass(CLASS_B);
+         assertSame(globalB, bFromGlobalA.getClassLoader());
+         Class<?> bFromParent = parent.loadClass(CLASS_B);
+         assertSame(parent, bFromParent.getClassLoader());
+         assertNotSame(bFromGlobalA, bFromParent);
+      }
+      finally
+      {
+         unregisterClassLoader(globalA);
+         unregisterClassLoader(globalB);
+         unregisterClassLoader(parent);
+         unregisterDomain(getChildDomainForLoader(globalA));
+      }
+   }
+
+
 }
