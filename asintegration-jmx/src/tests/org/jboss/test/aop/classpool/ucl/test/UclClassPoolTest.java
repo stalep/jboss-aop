@@ -272,4 +272,13 @@ public class UclClassPoolTest extends AbstractTestCaseWithSetup
       return pool;
    }   
 
+   /**
+    * The test classes should not be on the launcher classpath
+    */
+   public void testClassesNotOnClasspath()
+   {
+      assertCannotLoadClass(this.getClass().getClassLoader(), CLASS_A);
+      assertCannotLoadClass(this.getClass().getClassLoader(), CLASS_B);
+      assertCannotLoadClass(this.getClass().getClassLoader(), CLASS_C);
+   }
 }
