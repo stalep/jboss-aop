@@ -21,7 +21,16 @@
 */ 
 package org.jboss.aop.classpool.jbosscl;
 
+import java.net.URL;
+
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.NotFoundException;
+
+import org.jboss.aop.AspectManager;
 import org.jboss.aop.classpool.ClassPoolDomain;
+import org.jboss.classloader.spi.base.BaseClassLoader;
+import org.jboss.classloader.spi.base.BaseClassLoaderDomain;
 
 /**
  * 
@@ -35,4 +44,15 @@ public class JBossClClassPoolDomain extends ClassPoolDomain
       // FIXME JBossClClassPool constructor
       super(domainName, parent);
    }
+   
+   protected class RootClassPoolDomainImpl extends ClassPoolDomain.RootClassPoolDomainImpl
+   {
+      @Override
+      public void initialiseParentClassLoader()
+      {
+         ClassPool pool = AspectManager.instance().registerClassLoader(BaseClassLoaderDomain.class.getClassLoader());
+         ClassPool parentPool = ClassPool.getDefault();
+      }
+   }
+
 }

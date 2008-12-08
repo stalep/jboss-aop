@@ -218,20 +218,33 @@ public class ClassPoolDomain
       CtClass getParentCached(String classname);
    }
    
-   private class RootClassPoolDomainImpl implements ClassPoolDomainStrategy
+   protected class RootClassPoolDomainImpl implements ClassPoolDomainStrategy
    {
-      ClassPool defaultPool = ClassPool.getDefault();
+      ClassPool parentPool = null;
+      
+      public RootClassPoolDomainImpl()
+      {
+         initialiseParentClassLoader();
+         if (parentPool == null)
+         {
+            throw new IllegalStateException("Null parent classpool");
+         }
+      }
+      public void initialiseParentClassLoader()
+      {
+         parentPool = ClassPool.getDefault();
+      }
       
       public URL findParentResource(String classname)
       {
-         return defaultPool.find(classname);
+         return parentPool.find(classname);
       }
       
       public CtClass createParentCtClass(String classname, boolean useCache)
       {
          try
          {
-            return defaultPool.get(classname);
+            return parentPool.get(classname);
          }
          catch(NotFoundException ignore)
          {
@@ -243,7 +256,7 @@ public class ClassPoolDomain
       {
          try
          {
-            return defaultPool.get(classname);
+            return parentPool.get(classname);
          }
          catch (NotFoundException ignore)
          {

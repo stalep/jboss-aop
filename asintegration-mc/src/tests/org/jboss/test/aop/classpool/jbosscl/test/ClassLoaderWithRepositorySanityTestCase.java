@@ -44,15 +44,6 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       return suite(ClassLoaderWithRepositorySanityTestCase.class);
    }
 
-//   public void testNewCreateClassLoader() throws Exception
-//   {
-//      System.out.println("-------> 2 " + helper);
-//      System.out.println("-------> 3 " + JBossClClassPoolTest.helper);
-//      ClassLoader cl = createClassLoader("A", true, JAR_A_1);
-//      Class<?> clazz = cl.loadClass(CLASS_A);
-//      assertSame(cl, clazz.getClassLoader());
-//   }
-   
    public void testGlobalScope() throws Exception
    {
       ClassLoader clA = null;
@@ -172,8 +163,8 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       {
          unregisterClassLoader(clA);
          unregisterClassLoader(clB);
-         unregisterDomain(getChildDomainForLoader(clA));
-         unregisterDomain(getChildDomainForLoader(clB));
+         unregisterDomain(clA);
+         unregisterDomain(clB);
       }
    }
    
@@ -202,7 +193,7 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       {
          unregisterClassLoader(clGlobal);
          unregisterClassLoader(clScoped);
-         unregisterDomain(getChildDomainForLoader(clScoped));
+         unregisterDomain(clScoped);
       }
    }
    
@@ -225,7 +216,7 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       {
          unregisterClassLoader(clGlobal);
          unregisterClassLoader(clScoped);
-         unregisterDomain(getChildDomainForLoader(clScoped));
+         unregisterDomain(clScoped);
       }
    }
    
@@ -249,7 +240,7 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       {
          unregisterClassLoader(clGlobal);
          unregisterClassLoader(clScoped);
-         unregisterDomain(getChildDomainForLoader(clScoped));
+         unregisterDomain(clScoped);
       }
    }
    
@@ -361,7 +352,7 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       {
          unregisterClassLoader(global);
          unregisterClassLoader(parent);
-         unregisterDomain(getChildDomainForLoader(global));
+         unregisterDomain(global);
       }
    }
 
@@ -390,7 +381,7 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
          unregisterClassLoader(globalA);
          unregisterClassLoader(globalB);
          unregisterClassLoader(parent);
-         unregisterDomain(getChildDomainForLoader(globalA));
+         unregisterDomain(globalA);
       }
    }
 

@@ -249,7 +249,7 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
       return getChildDomainForLoader(pool.getClassLoader());
    }
    
-   public void unregisterDomain(ClassLoaderDomain domain)
+   protected void unregisterDomain(ClassLoaderDomain domain)
    {
       if (domain != null)
       {
@@ -259,6 +259,24 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
          if (registeredDomain != domain)
             throw new IllegalStateException(domain + " is not the same as " + registeredDomain);
          system.unregisterDomain(domain);
+      }
+   }
+   
+   protected void unregisterDomain(ClassLoader loader)
+   {
+      if (loader != null)
+      {
+         ClassLoaderDomain domain = getChildDomainForLoader(loader);
+         unregisterDomain(domain);
+      }
+   }
+
+   protected void unregisterDomain(ClassPool pool)
+   {
+      if (pool != null)
+      {
+         ClassLoaderDomain domain = getChildDomainForPool(pool);
+         unregisterDomain(domain);
       }
    }
 
@@ -313,12 +331,29 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
       return AspectManager.instance().registerClassLoader(loader);
    }
    
+   protected ClassPool createChildDomainParentFirstClassPool(String name, String domainName, boolean importAll, ClassPool parent, URL... urls) throws Exception
+   {
+      ClassLoader loader = createChildDomainParentFirstClassLoader(name, domainName, importAll, parent.getClassLoader(), urls);
+      return AspectManager.instance().registerClassLoader(loader);
+   }
+   
    protected ClassPool createChildDomainParentLastClassPool(String name, String domainName, boolean importAll, URL... urls) throws Exception
    {
       ClassLoader loader = createChildDomainParentLastClassLoader(name, domainName, importAll, urls);
       return AspectManager.instance().registerClassLoader(loader);
    }
 
+   protected ClassPool createChildURLClassPool(ClassPool parent, URL url)
+   {
+      ClassLoader parentLoader = null;
+      if (parent != null)
+      {
+         parentLoader = parent.getClassLoader();
+      }
+      ClassLoader loader = createChildURLClassLoader(parentLoader, url);
+      return AspectManager.instance().registerClassLoader(loader);
+   }
+   
    protected void registerModule(ClassLoader loader, ClassLoaderPolicyModule module)
    {
       if (system != domainRegistry.getSystem())
@@ -392,7 +427,7 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
     * 
     * @param name the domain name
     */
-   public void unregisterDomain(String name)
+   protected void unregisterDomain(String name)
    {
       if (name != null)
       {
@@ -401,4 +436,13 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
       }
    }
    
+   /**
+    * The test classes should not be on the launcher classpath
+    */
+   public void testClassesNotOnClasspath()
+   {
+      assertCannotLoadClass(this.getClass().getClassLoader(), CLASS_A);
+      assertCannotLoadClass(this.getClass().getClassLoader(), CLASS_B);
+      assertCannotLoadClass(this.getClass().getClassLoader(), CLASS_C);
+   }
 }

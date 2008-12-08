@@ -63,6 +63,10 @@ public class URLClassLoaderIsLocalResourcePlugin extends AbstractIsLocalResource
             return true;
          }
       }
+      else
+      {
+         return myURL != null;
+      }
       
       return false;
    }
