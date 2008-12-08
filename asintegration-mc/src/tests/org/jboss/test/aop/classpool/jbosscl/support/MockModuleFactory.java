@@ -43,7 +43,7 @@ public class MockModuleFactory
    
    public static ClassLoaderPolicyModule createModule(String name, boolean importAll, String domainName, boolean parentFirst, URL... urls) throws Exception
    {
-      return createModule(name, importAll, domainName, null, false, urls);
+      return createModule(name, importAll, domainName, null, parentFirst, urls);
    }
 
    public static ClassLoaderPolicyModule createModule(String name, boolean importAll, String domainName, String parentDomainName, boolean parentFirst, URL... urls) throws Exception

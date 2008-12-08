@@ -204,7 +204,12 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
    
    protected ClassLoader createChildDomainParentFirstClassLoader(String name, String domainName, boolean importAll, ClassLoader parent, URL... urls) throws Exception
    {
-      return createChildDomainClassLoader(name, domainName, true, importAll, parent, urls);
+      return createChildDomainClassLoader(name, domainName, null, true, importAll, parent, urls);
+   }
+   
+   protected ClassLoader createChildDomainParentFirstClassLoader(String name, String domainName, String parentDomainName, boolean importAll, URL... urls) throws Exception
+   {
+      return createChildDomainClassLoader(name, domainName, parentDomainName, true, importAll, null, urls);
    }
    
    protected ClassLoader createChildDomainParentLastClassLoader(String name, String domainName, boolean importAll, URL... urls) throws Exception
@@ -214,12 +219,17 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
    
    protected ClassLoader createChildDomainParentLastClassLoader(String name, String domainName, boolean importAll, ClassLoader parent, URL... urls) throws Exception
    {
-      return createChildDomainClassLoader(name, domainName, false, importAll, parent, urls);
+      return createChildDomainClassLoader(name, domainName, null, false, importAll, parent, urls);
    }
    
-   protected ClassLoader createChildDomainClassLoader(String name, String domainName, boolean parentFirst, boolean importAll, ClassLoader parent, URL... urls) throws Exception
+   protected ClassLoader createChildDomainParentLastClassLoader(String name, String domainName, String parentDomainName, boolean importAll, URL... urls) throws Exception
    {
-      ClassLoaderPolicyModule module = MockModuleFactory.createModule(name, importAll, domainName, parentFirst, urls);
+      return createChildDomainClassLoader(name, domainName, parentDomainName, false, importAll, null, urls);
+   }
+   
+   protected ClassLoader createChildDomainClassLoader(String name, String domainName, String parentDomainName, boolean parentFirst, boolean importAll, ClassLoader parent, URL... urls) throws Exception
+   {
+      ClassLoaderPolicyModule module = MockModuleFactory.createModule(name, importAll, domainName, parentDomainName, parentFirst, urls);
       
       ClassLoader classLoader = createClassLoader(module, parent);
       
