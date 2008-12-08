@@ -401,12 +401,6 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
       ClassLoader cl12A = null;
       ClassLoader cl12B = null;
       ClassLoader cl12C = null;
-//      ClassLoader cl21A = null;
-//      ClassLoader cl21B = null;
-//      ClassLoader cl21C = null;
-//      ClassLoader cl22A = null;
-//      ClassLoader cl22B = null;
-//      ClassLoader cl22C = null;
       
       try
       {
