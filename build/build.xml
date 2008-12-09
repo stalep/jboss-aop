@@ -24,7 +24,7 @@
      | .
    -->
 
-  <target name="init" depends="verify-environment, init-maven-environment">
+  <target name="init" depends="verify-environment, init-maven-parent">
 
     <!-- Defines repository.home -->
     <property file="local.properties"/>
@@ -225,7 +225,7 @@
 
   <target name="release-no-reference-docs"
 	       description="Builds the default release structure, minus the reference documentation"
-        depends="init">
+        depends="init, init-maven-dist-dependencies">
     <delete dir="output/temp"/>
     <mkdir dir="output/temp"/>
 

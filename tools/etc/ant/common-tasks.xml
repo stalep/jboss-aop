@@ -4,7 +4,7 @@
 <!-- ================================================================== -->
 <project name="common-tasks">
 
-  <target name="init-maven-environment" xmlns:maven="urn:maven-artifact-ant"
+  <target name="init-maven-parent" xmlns:maven="urn:maven-artifact-ant"
       unless="maven.init.complete"
       description="Initialize properties for accessing maven configuration">
 
@@ -28,9 +28,16 @@
     
     <maven:pom id="maven.project" file="pom.xml" />
 
-    <!-- This tasks resolves maven dependencies and creates a property of the
-      -  form groupId:artifactId:type that points to the dependency jar file.
-      -->
+    <property name="maven.init.complete" value="true"/>
+
+  </target>
+  
+  
+  <!-- This target resolves maven dependencies for the dist and creates a property of the
+    -  form groupId:artifactId:type that points to the dependency jar file.
+    -->
+  <target name="init-maven-dist-dependencies" xmlns:maven="urn:maven-artifact-ant">
+    
     <maven:dependencies pathId="maven.dependencies.compile.classpath" useScope="compile">
       <pom refid="maven.project" />
     </maven:dependencies>
@@ -39,8 +46,6 @@
       <pom refid="maven.project" />
     </maven:dependencies>
     
-    <property name="maven.init.complete" value="true"/>
-
   </target>
 
   <target name="verify-environment" description="Check that the build environment is set up correctly">
