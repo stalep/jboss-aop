@@ -31,7 +31,7 @@
     <dependency>
       <groupId>org.jboss.maven.plugins</groupId>
       <artifactId>maven-jbossaop-plugin</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.GA</version>
     </dependency>
     <!--
     <dependency>
@@ -97,7 +97,7 @@
             <plugin>
                 <groupId>org.jboss.maven.plugins</groupId>
                 <artifactId>maven-jbossaop-plugin</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.0.GA</version>
                 <executions>
                   <execution>
                     <id>compile</id>
