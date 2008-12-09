@@ -29,7 +29,7 @@
    <!-- Initialization                                                     -->
    <!-- ================================================================== -->
 
-   <target name="init" depends="init-maven-environment">
+   <target name="init" depends="init-maven-parent, init-maven-dist-dependencies">
 
      <!-- Defines property overrides -->
      <property file="local.properties"/>
