@@ -29,7 +29,7 @@ import javassist.CtClass;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class ClassPoolToClassPoolDomainAdapter extends ClassPoolDomain
+public class ClassPoolToClassPoolDomainAdapter extends AbstractClassPoolDomain implements ClassPoolDomainInternal
 {
    protected ClassPool pool;
    
@@ -47,15 +47,13 @@ public class ClassPoolToClassPoolDomainAdapter extends ClassPoolDomain
       return ClassPool.getDefault();
    }
    
-   @Override
-   synchronized void addClassPool(DelegatingClassPool pool)
+   public void addClassPool(DelegatingClassPool pool)
    {
       throw new IllegalStateException("Cannot add pools to the domain adaptor");
    }
 
    
-   @Override
-   protected synchronized CtClass getCachedOrCreateInternal(String classname, boolean create)
+   public synchronized CtClass getCachedOrCreateInternal(String classname, boolean create)
    {
       if (pool instanceof BaseClassPool)
       {
@@ -67,34 +65,34 @@ public class ClassPoolToClassPoolDomainAdapter extends ClassPoolDomain
       }
    }
 
-   @Override
    public String getDomainName()
    {
       return null;
    }
 
-   @Override
    public boolean isParentFirst()
    {
       return !pool.childFirstLookup;
    }
 
-   @Override
-   synchronized void removeClassPool(DelegatingClassPool pool)
+   public void removeClassPool(DelegatingClassPool pool)
    {
       throw new IllegalStateException("Cannot remove pools from the domain adaptor");
    }
 
-   @Override
    public void setParentFirst(boolean parentFirst)
    {
       throw new IllegalStateException("Cannot change the parent first setting in the domain adaptor");
    }
 
-   @Override
    public String toString()
    {
       return "ClassPoolToDomainAdapter[" + System.identityHashCode(this) + " " + pool.toString() + "]";
+   }
+
+   public CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, boolean create)
+   {
+      throw new IllegalStateException("Should never be called");
    }
 
 }

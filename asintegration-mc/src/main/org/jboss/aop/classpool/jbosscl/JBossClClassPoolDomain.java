@@ -21,6 +21,7 @@
 */ 
 package org.jboss.aop.classpool.jbosscl;
 
+import org.jboss.aop.classpool.BasicClassPoolDomain;
 import org.jboss.aop.classpool.ClassPoolDomain;
 import org.jboss.aop.classpool.ClassPoolToClassPoolDomainAdapter;
 
@@ -29,7 +30,7 @@ import org.jboss.aop.classpool.ClassPoolToClassPoolDomainAdapter;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBossClClassPoolDomain extends ClassPoolDomain
+public class JBossClClassPoolDomain extends BasicClassPoolDomain
 {
    public JBossClClassPoolDomain(String domainName, ClassPoolDomain parent)
    {

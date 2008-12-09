@@ -19,20 +19,17 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.classpool.ucl;
+package org.jboss.aop.classpool;
 
-import org.jboss.aop.classpool.ClassPoolDomain;
+import javassist.CtClass;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class UclClassPoolDomain extends ClassPoolDomain
+interface ClassPoolDomainInternal extends ClassPoolDomain
 {
-   public UclClassPoolDomain(String domainName, ClassPoolDomain parent)
-   {
-      // FIXME UclClassPoolDomain constructor
-      super(domainName, parent);
-   }
+   CtClass getCachedOrCreateInternal(String classname, boolean create);
+   CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, boolean create);
 }

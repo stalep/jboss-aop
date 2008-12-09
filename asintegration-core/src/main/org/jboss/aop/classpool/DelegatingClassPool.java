@@ -37,21 +37,23 @@ import org.jboss.logging.Logger;
 public class DelegatingClassPool extends BaseClassPool
 {
    private final static Logger logger = Logger.getLogger(DelegatingClassPool.class);
-   private final ClassPoolDomain domain;
+   private final ClassPoolDomainInternal domain;
    
    private boolean closed;
    
    public DelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ClassPool parent, ScopedClassPoolRepository repository, boolean isTemp)
    {
-      super(cl, parent, repository);
-      this.domain = domain;
-      domain.addClassPool(this);
+      this(domain, cl, parent, repository);
    }
 
    protected DelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ClassPool parent, ScopedClassPoolRepository repository)
    {
       super(cl, parent, repository);
-      this.domain = domain;
+      if (domain instanceof ClassPoolDomainInternal == false)
+      {
+         throw new IllegalArgumentException("domain must implement ClassPoolDomainInternal");
+      }
+      this.domain = (ClassPoolDomainInternal)domain;
       domain.addClassPool(this);
    }
 

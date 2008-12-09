@@ -21,189 +21,21 @@
 */ 
 package org.jboss.aop.classpool;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.NotFoundException;
-
-import org.jboss.aop.util.ClassLoaderUtils;
-
-
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class ClassPoolDomain
+public interface ClassPoolDomain
 {
-   private String domainName;
-   
-   private ClassPoolDomain parent;
-   
-   private List<DelegatingClassPool> delegatingPools = new ArrayList<DelegatingClassPool>();
-   
-   private boolean parentFirst;
-
-   public ClassPoolDomain(String domainName, ClassPoolDomain parent)
-   {
-      this.parent = parent;
-      this.domainName = domainName;
-
-      if (parent == null)
-      {
-         this.parent = createParentClassPoolToClassPoolDomainAdaptor();
-         if (this.parent == null)
-         {
-            throw new IllegalStateException("No ClassPoolToClassPool");
-         }
-      }
-   }
-   
-   protected ClassPoolDomain()
-   {
-   }
-   
-   protected ClassPoolToClassPoolDomainAdapter createParentClassPoolToClassPoolDomainAdaptor()
-   {
-      return new ClassPoolToClassPoolDomainAdapter();
-   }
-   
-   public String getDomainName()
-   {
-      return domainName;
-   }
+   String getDomainName();
  
-   public boolean isParentFirst()
-   {
-      return parentFirst;
-   }
+   boolean isParentFirst();
 
-   public void setParentFirst(boolean parentFirst)
-   {
-      this.parentFirst = parentFirst;
-   }
+   void setParentFirst(boolean parentFirst);
 
-   synchronized void addClassPool(DelegatingClassPool pool)
-   {
-      if (!delegatingPools.contains(pool))
-      {
-         delegatingPools.add(pool);
-      }
-   }
+   void addClassPool(DelegatingClassPool pool);
    
-   synchronized void removeClassPool(DelegatingClassPool pool)
-   {
-      delegatingPools.remove(pool);
-   }
-   
-   synchronized CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, boolean create)
-   {
-      CtClass clazz = getCachedOrCreateInternal(classname, create);
-      
-      if (clazz == null)
-      {
-         clazz = getCachedOrCreateFromPoolParent(initiatingPool, classname, create);
-      }
-      return clazz;
-   }
-   
-   
-   private CtClass getCachedOrCreateFromPoolParent(BaseClassPool initiatingPool, String classname, boolean create)
-   {
-      if (initiatingPool == null)
-      {
-         return null;
-      }
-      ClassPool parentPool = initiatingPool.getParent();
-      if (parentPool == null)
-      {
-         return null;
-      }
-       
-      if (parentPool instanceof BaseClassPool)
-      {
-         return getCachedOrCreate((BaseClassPool)parentPool, classname, create);
-      }
-      else
-      {
-         return getCachedOrCreate(parentPool, classname, create);
-      }
-   }
-   
-   
-   protected CtClass getCachedOrCreateInternal(String classname, boolean create)
-   {
-      CtClass clazz = null;
-      if (parentFirst && parent!= null)
-      {
-         clazz = parent.getCachedOrCreateInternal(classname, create);
-      }
-      if (clazz == null)
-      {
-         String resourceName = delegatingPools.size() > 0 ? ClassLoaderUtils.getResourceName(classname) : null;
-         for (DelegatingClassPool pool : delegatingPools)
-         {
-            if (pool.isLocalResource(resourceName))
-            {
-               clazz = pool.getCachedLocally(classname);
-               if (clazz == null && create)
-               {
-                  clazz = pool.createCtClass(classname, true);
-               }
-            }
-         }
-      }
-      if (clazz == null && parent != null && !parentFirst)
-      {
-         clazz = parent.getCachedOrCreateInternal(classname, create);
-      }
-      return clazz;
-   }
+   void removeClassPool(DelegatingClassPool pool);
 
-   protected CtClass getCachedOrCreate(BaseClassPool parentPool, String classname, boolean create)
-   {
-      if (parentPool == null)
-      {
-         return null;
-      }
-      
-      CtClass clazz = null;
-      if (!parentPool.childFirstLookup)
-      {
-         clazz = getCachedOrCreateFromPoolParent(parentPool, classname, create); 
-      }
-      
-      //We can use the exposed methods directly to avoid the overhead of NotFoundException
-      clazz = parentPool.getCached(classname);
-      if (clazz == null && create)
-      {
-         clazz = parentPool.createCtClass(classname, true);
-      }
-
-      if (clazz == null && !parentPool.childFirstLookup)
-      {
-         clazz = getCachedOrCreateFromPoolParent(parentPool, classname, create); 
-      }
-      return clazz;
-   }
-   
-   protected CtClass getCachedOrCreate(ClassPool parentPool, String classname, boolean create)
-   {
-      try
-      {
-         //This will check the parents
-         return parentPool.get(classname);
-      }
-      catch(NotFoundException e)
-      {
-         return null;
-      }
-   }
-      
-   public String toString()
-   {
-      return super.toString() + "[" + domainName + "]";
-   }
 }

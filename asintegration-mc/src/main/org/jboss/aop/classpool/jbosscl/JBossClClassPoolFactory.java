@@ -30,6 +30,7 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 
 import org.jboss.aop.asintegration.jboss5.DomainRegistry;
 import org.jboss.aop.classpool.AbstractJBossClassPoolFactory;
+import org.jboss.aop.classpool.BasicClassPoolDomain;
 import org.jboss.aop.classpool.ClassPoolDomain;
 import org.jboss.aop.classpool.ClassPoolDomainRegistry;
 import org.jboss.aop.classpool.NonDelegatingClassPool;
@@ -96,7 +97,7 @@ public class JBossClClassPoolFactory extends AbstractJBossClassPoolFactory imple
             }
             parentPoolDomain = ClassPoolDomainRegistry.getInstance().getDomain(parentDomain);
          }
-         poolDomain = new ClassPoolDomain(domain.getName(), parentPoolDomain);
+         poolDomain = new BasicClassPoolDomain(domain.getName(), parentPoolDomain);
          
          //The determination of parentFirst/-Last might need revisiting
          poolDomain.setParentFirst(domain.getParentPolicy() == ParentPolicy.BEFORE);
