@@ -11,6 +11,7 @@
       <!-- The rest are automatic -->
       <property name="jboss.config.dir" value="${jboss.home}/server/${jboss.config}"/>
       <property name="jboss.bin.dir" value="${jboss.home}/bin"/>
+      <property name="jboss.client.dir" value="${jboss.home}/client"/>
       
       <available file="${jboss.home}" property="jboss.exists" type="dir"/>
       <fail unless="jboss.exists" message="${jboss.home} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
@@ -21,6 +22,9 @@
       <available file="${jboss.config.dir}" property="config.exists" type="dir"/>
       <fail unless="config.exists" message="${jboss.config.dir} does not exist. Modify 'jboss.config' in build.xml to be a valid server configuration"/>
 
+      <available file="${jboss.client.dir}" property="client.exists" type="dir"/>
+      <fail unless="client.exists" message="${jboss.client.dir} does not exist. Modify 'jboss.config' in build.xml to be a valid server configuration"/>
+      
       <property name="deploy.dir" value="${jboss.config.dir}/deploy"/>
 
       <property name="aspect.deployer" value="${deploy.dir}/jboss-aop-jdk50.deployer"/>
@@ -47,6 +51,38 @@
              </not>
          </and>
       </condition>
+      
+      <property name="lib.jbossall-client" value="${jboss.client.dir}/jbossall-client.jar"/>
+      <available file="${lib.jbossall-client}" property="lib.jbossall-client.exists"/>
+      <fail unless="lib.jbossall-client.exists" message="${lib.jbossall-client} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+      
+      <property name="bak.jbossall-client" value="${jboss.client.dir}/jbossall-client.bak"/>
+      <available file="${bak.jbossall-client}" property="jbossall-client.bak.exists"/>
+      <condition property="backup.jbossall-client" value="true">
+         <not>
+            <isset property="jbossall-client.bak.exists"/>
+         </not>
+      </condition>
+      
+      <property name="jboss.aop.lib" value="../../lib"/>
+      <available file="${jboss.aop.lib}" property="lib.jboss.aop.exists"/>
+      <fail unless="lib.jboss.aop.exists" message="${jboss.aop.lib} does not exist. Modify build.xml, setting the value of the property 'jboss.aop.lib' to be the path of the JBoss AOP lib installation directory."/>
+      
+      <property name="lib.jbossaop-client" value="${jboss.aop.lib}/jboss-aop-client.jar"/>
+      <available file="${lib.jbossaop-client}" property="lib.jbossaop-client.exists"/>
+      <fail unless="lib.jbossaop-client.exists" message="${lib.jbossaop-client} does not exist. Modify build.xml, setting the value of the property 'jboss.aop.lib' to be the path of the JBoss AOP lib installation directory."/>
+      
+      <property name="lib.jbossaop-client.injboss" value="${jboss.client.dir}/jboss-aop-jdk50-client.jar"/>
+      <available file="${lib.jbossaop-client.injboss}" property="lib.jbossaop-client.injboss.exists"/>
+      <fail unless="lib.jbossaop-client.injboss.exists" message="${lib.jbossaop-client.injboss} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+      
+      <property name="bak.jbossaop-client" value="${jboss.client.dir}/jboss-aop-jdk50-client.bak"/>
+      <available file="${bak.jbossaop-client}" property="jbossaop-client.bak.exists"/>
+      <condition property="backup.jbossaop-client" value="true">
+         <not>
+            <isset property="jbossaop-client.bak.exists"/>
+         </not>
+      </condition>
    </target>
 
    <target name="prepare-aspect-library" depends="init">
@@ -71,7 +107,35 @@
 
       <delete dir="aspect-library-temp"/>
    </target>
+   
+   <target name="update-jbossall-library" depends="init,backup-jbossall-library">
+      	<!-- Unjar aspect library into a temp folder -->
+         
+         <mkdir dir="jbossall-client-library-temp"/>
+         <unjar src="${lib.jbossall-client}" dest="jbossall-client-library-temp"/>
+         <delete file="${lib.jbossall-client}"/>
+         <!-- Get rid of the files that exist in jboss-aop-jdk50.jar -->
+         <delete dir="jbossall-client-library-temp/org/jboss/aop"/>
+         <unjar src="jboss-aop-jdk50.jar" dest="jbossall-client-library-temp"/>
+         <jar destfile="${lib.jbossall-client}" basedir="jbossall-client-library-temp" manifest="jbossall-client-library-temp/META-INF/MANIFEST.MF"/>
 
+         <delete dir="jbossall-client-library-temp"/>
+   </target>
+
+   <target name="backup-jbossall-library" if="backup.jbossall-client">
+      <echo>Backing up existing jbossall-client.jar to ${bak.jbossall-client}</echo>
+      <copy file="${lib.jbossall-client}" tofile="${bak.jbossall-client}"/>
+   </target>
+
+   <target name="update-jbossaop-library" depends="init,backup-jbossaop-library">
+      <copy file="${lib.jbossaop-client}" tofile="${bak.jbossaop-client.injboss}"/>         
+   </target>   
+   
+   <target name="backup-jbossaop-library" if="backup.jbossaop-client">
+      <echo>Backing up existing ${lib.jbossaop-client.injboss} to ${bak.jbossaop-client}</echo>
+   	<copy file="${lib.jbossaop-client.injboss}" tofile="${bak.jbossaop-client}"/>
+   </target>
+   
    <target name="backup" depends="prepare-aspect-library" unless="old.deployer.exists">
       <echo>Backing up existing aop deployer to ${old.deployer}</echo>
       <copy todir="${old.deployer}">
@@ -98,7 +162,7 @@
       <move file="${lib.javassist}" tofile="${bak.javassist}"/>
    </target>
    
-   <target name="install.bin" depends="init">
+   <target name="install.bin" depends="init, update-jbossall-library, update-jbossaop-library">
       <copy todir="${jboss.bin.dir}">
          <fileset dir="../../lib">
             <include name="pluggable-instrumentor.jar"/>
