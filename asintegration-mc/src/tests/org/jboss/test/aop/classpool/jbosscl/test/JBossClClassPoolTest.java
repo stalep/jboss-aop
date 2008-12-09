@@ -347,9 +347,21 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
       return AspectManager.instance().registerClassLoader(loader);
    }
    
+   protected ClassPool createChildDomainParentFirstClassPool(String name, String domainName, String parentDomainName, boolean importAll, URL... urls) throws Exception
+   {
+      ClassLoader loader = createChildDomainParentFirstClassLoader(name, domainName, parentDomainName, importAll, urls);
+      return AspectManager.instance().registerClassLoader(loader);
+   }
+   
    protected ClassPool createChildDomainParentLastClassPool(String name, String domainName, boolean importAll, URL... urls) throws Exception
    {
       ClassLoader loader = createChildDomainParentLastClassLoader(name, domainName, importAll, urls);
+      return AspectManager.instance().registerClassLoader(loader);
+   }
+
+   protected ClassPool createChildDomainParentLastClassPool(String name, String domainName, String parentDomainName, boolean importAll, URL... urls) throws Exception
+   {
+      ClassLoader loader = createChildDomainParentLastClassLoader(name, domainName, parentDomainName, importAll, urls);
       return AspectManager.instance().registerClassLoader(loader);
    }
 

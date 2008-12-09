@@ -21,8 +21,6 @@
 */ 
 package org.jboss.test.aop.classpool.jbosscl.test;
 
-import junit.framework.Test;
-
 import org.jboss.test.AbstractTestDelegate;
 
 /**

@@ -39,8 +39,6 @@ public class DelegatingClassPool extends BaseClassPool
    private final static Logger logger = Logger.getLogger(DelegatingClassPool.class);
    private final ClassPoolDomain domain;
    
-   private boolean isTemp;
-   
    private boolean closed;
    
    public DelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ClassPool parent, ScopedClassPoolRepository repository, boolean isTemp)
@@ -57,6 +55,11 @@ public class DelegatingClassPool extends BaseClassPool
       domain.addClassPool(this);
    }
 
+   ClassPoolDomain getDomain()
+   {
+      return domain;
+   }
+   
    public CtClass get(String classname) throws NotFoundException 
    {
       System.out.println("==> Initiating lookup of " + classname + " in " + this);
@@ -76,20 +79,8 @@ public class DelegatingClassPool extends BaseClassPool
    @Override
    protected synchronized CtClass get0(String classname, boolean useCache) throws NotFoundException
    {
-      CtClass clazz = null;
-      if (useCache) 
-      {
-         clazz = getCached(classname);
-         if (clazz != null)
-         {
-            return clazz;
-         }
-      }
-   
-      return createCtClass(classname, useCache);
+      return domain.getCachedOrCreate(this, classname, true);
    }
-
-
    
    @Override
    public boolean isUnloadedClassLoader()
@@ -108,128 +99,14 @@ public class DelegatingClassPool extends BaseClassPool
    @Override
    public CtClass getCached(String classname)
    {
-      return getCached(true, classname);
+      return domain.getCachedOrCreate(this, classname, false);
+      //return getCached(true, classname);
    }
    
-   
-   CtClass getCached(boolean isInitiatingPool, String classname)
-   {
-      if (isInitiatingPool && domain.isParentFirst())
-      {
-         CtClass clazz = domain.getCached(this, classname);
-         if (clazz != null)
-         {
-            return clazz;
-         }
-      }
-      CtClass clazz = getCachedLocally(classname);
-      if (clazz != null)
-      {
-         System.out.println("==> Found cached class " + classname + " in " + this);
-         if (logger.isTraceEnabled())
-         {
-            logger.trace("Found cached class " + classname + " in " + this);
-         }
-         return clazz;
-      }
-      if (clazz == null)
-      {
-         boolean isLocal = false;
-
-         ClassLoader cl = getClassLoader0();
-
-         if (cl != null)
-         {
-            isLocal = isLocalResource(classname);
-         }
-
-         if (!isLocal)
-         {
-            Object o = generatedClasses.get(classname);
-            if (o == null && isInitiatingPool)
-            {
-               clazz = domain.getCached(this, classname);
-               if (clazz != null)
-               {
-                  return clazz;
-               }
-            }
-         }
-      }
-      
-      return getCachedFromParent(classname);
-   }
-
-   private CtClass getCachedFromParent(String classname)
-   {
-      if (parent != null)
-      {
-         if (parent instanceof AOPClassPool)
-         {
-            return ((AOPClassPool)parent).getCached(classname);
-         }
-         else
-         {
-            try
-            {
-               return parent.get(classname);
-            }
-            catch (NotFoundException e)
-            {
-            }
-         }
-      }
-      
-      return null;
-   }
-
    @Override
-   public CtClass createCtClass(String classname, boolean useCache)
+   public CtClass getCachedLocally(String classname)
    {
-      return createCtClass(true, classname, useCache);
-   }
-   
-   CtClass createCtClass(boolean isInitiatingPool, String classname, boolean useCache)
-   {
-      CtClass clazz = null;
-      if (isLocalResource(classname))
-      {
-         boolean create = true;
-         if (domain.isParentFirst())
-         {
-            if (domain.findParentResource(classname) != null)
-            {
-               create = false;
-            }
-         }
-         
-         if (create)
-         {
-            clazz = super.createCtClass(classname, useCache);
-            if (clazz != null && useCache)
-            {
-               if (useCache)
-               {
-                  System.out.println("==> Caching class " + classname + " in " + this);
-                  if (logger.isTraceEnabled())
-                  {
-                     logger.trace("Caching class " + classname + " in " + this);
-                  }
-                  cacheCtClass(clazz.getName(), clazz, false);
-               }
-            }
-         }
-      }
-      if (clazz == null && isInitiatingPool)
-      {
-         clazz = domain.createCtClass(this, classname, useCache);
-      }
-      
-      if (clazz == null)
-      {
-         clazz = createParentCtClass(classname, useCache);
-      }
-      return clazz;
+      return super.getCachedLocally(classname);
    }
 
    //Lifted from AOPClassPool, also exists in JBossClassPool

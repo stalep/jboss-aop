@@ -21,7 +21,6 @@
 */ 
 package org.jboss.aop.classpool;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +28,7 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 
-import org.jboss.aop.AspectManager;
+import org.jboss.aop.util.ClassLoaderUtils;
 
 
 /**
@@ -45,8 +44,6 @@ public class ClassPoolDomain
    
    private List<DelegatingClassPool> delegatingPools = new ArrayList<DelegatingClassPool>();
    
-   private ClassPoolDomainStrategy classPoolDomainStrategy;
-   
    private boolean parentFirst;
 
    public ClassPoolDomain(String domainName, ClassPoolDomain parent)
@@ -56,12 +53,21 @@ public class ClassPoolDomain
 
       if (parent == null)
       {
-         classPoolDomainStrategy = new RootClassPoolDomainImpl();
+         this.parent = createParentClassPoolToClassPoolDomainAdaptor();
+         if (this.parent == null)
+         {
+            throw new IllegalStateException("No ClassPoolToClassPool");
+         }
       }
-      else 
-      {
-         classPoolDomainStrategy = new ChildClassPoolDomainImpl();
-      }
+   }
+   
+   protected ClassPoolDomain()
+   {
+   }
+   
+   protected ClassPoolToClassPoolDomainAdapter createParentClassPoolToClassPoolDomainAdaptor()
+   {
+      return new ClassPoolToClassPoolDomainAdapter();
    }
    
    public String getDomainName()
@@ -92,194 +98,112 @@ public class ClassPoolDomain
       delegatingPools.remove(pool);
    }
    
-   synchronized CtClass getCached(DelegatingClassPool initiating, String classname)
+   synchronized CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, boolean create)
    {
-      if (parentFirst)
+      CtClass clazz = getCachedOrCreateInternal(classname, create);
+      
+      if (clazz == null)
       {
-         CtClass clazz = classPoolDomainStrategy.getParentCached(classname);
-         if (clazz != null)
-         {
-            return clazz;
-         }
+         clazz = getCachedOrCreateFromPoolParent(initiatingPool, classname, create);
       }
-      for(DelegatingClassPool pool : delegatingPools)
-      {
-         if (pool == initiating)
-         {
-            continue;
-         }
-         if (pool.isUnloadedClassLoader())
-         {
-            AspectManager.instance().unregisterClassLoader(pool.getClassLoader());
-            continue;
-         }
-         CtClass clazz = pool.getCached(false, classname);
-         if (clazz != null)
-         {
-            return clazz;
-         }
-      }
-
-      if (!parentFirst)
-      {
-         return classPoolDomainStrategy.getParentCached(classname); 
-      }
-
-      return null;
+      return clazz;
    }
    
-   synchronized CtClass createCtClass(DelegatingClassPool initiating, String classname, boolean useCache)
+   
+   private CtClass getCachedOrCreateFromPoolParent(BaseClassPool initiatingPool, String classname, boolean create)
    {
-      if (parentFirst)
+      if (initiatingPool == null)
       {
-         CtClass clazz = createParentCtClass(classname, useCache);
-         if (clazz != null)
-         {
-            return clazz;
-         }
+         return null;
       }
-      for(DelegatingClassPool pool : delegatingPools)
+      ClassPool parentPool = initiatingPool.getParent();
+      if (parentPool == null)
       {
-         if (pool == initiating)
-         {
-            continue;
-         }
-         if (pool.isUnloadedClassLoader())
-         {
-            AspectManager.instance().unregisterClassLoader(pool.getClassLoader());
-            continue;
-         }
-         CtClass clazz = pool.createCtClass(false, classname, useCache);
-         if (clazz != null)
-         {
-            return clazz;
-         }
+         return null;
       }
-
-      if (!parentFirst)
+       
+      if (parentPool instanceof BaseClassPool)
       {
-         return createParentCtClass(classname, useCache); 
+         return getCachedOrCreate((BaseClassPool)parentPool, classname, create);
       }
-      return null;
+      else
+      {
+         return getCachedOrCreate(parentPool, classname, create);
+      }
    }
    
-   synchronized CtClass createParentCtClass(String classname, boolean useCache)
-   {
-      return classPoolDomainStrategy.createParentCtClass(classname, useCache);
-   }
    
-   synchronized URL findParentResource(String classname)
+   protected CtClass getCachedOrCreateInternal(String classname, boolean create)
    {
-      return classPoolDomainStrategy.findParentResource(classname);
-   }
-   
-   synchronized URL findResource(String classname)
-   {
-      if (parentFirst)
+      CtClass clazz = null;
+      if (parentFirst && parent!= null)
       {
-         URL url = classPoolDomainStrategy.findParentResource(classname);
-         if (url != null)
-         {
-            return url;
-         }
+         clazz = parent.getCachedOrCreateInternal(classname, create);
       }
-      for (DelegatingClassPool pool : delegatingPools)
+      if (clazz == null)
       {
-         if (pool.isUnloadedClassLoader())
+         String resourceName = delegatingPools.size() > 0 ? ClassLoaderUtils.getResourceName(classname) : null;
+         for (DelegatingClassPool pool : delegatingPools)
          {
-            AspectManager.instance().unregisterClassLoader(pool.getClassLoader());
-            continue;
-         }
-         if (pool.isLocalClassLoaderClass(classname))
-         {
-            URL url = pool.find(classname);
-            if (url != null)
+            if (pool.isLocalResource(resourceName))
             {
-               return url;
+               clazz = pool.getCachedLocally(classname);
+               if (clazz == null && create)
+               {
+                  clazz = pool.createCtClass(classname, true);
+               }
             }
          }
       }
-      if (!parentFirst)
+      if (clazz == null && parent != null && !parentFirst)
       {
-         return classPoolDomainStrategy.findParentResource(classname);
+         clazz = parent.getCachedOrCreateInternal(classname, create);
       }
-      return null;
+      return clazz;
+   }
+
+   protected CtClass getCachedOrCreate(BaseClassPool parentPool, String classname, boolean create)
+   {
+      if (parentPool == null)
+      {
+         return null;
+      }
+      
+      CtClass clazz = null;
+      if (!parentPool.childFirstLookup)
+      {
+         clazz = getCachedOrCreateFromPoolParent(parentPool, classname, create); 
+      }
+      
+      //We can use the exposed methods directly to avoid the overhead of NotFoundException
+      clazz = parentPool.getCached(classname);
+      if (clazz == null && create)
+      {
+         clazz = parentPool.createCtClass(classname, true);
+      }
+
+      if (clazz == null && !parentPool.childFirstLookup)
+      {
+         clazz = getCachedOrCreateFromPoolParent(parentPool, classname, create); 
+      }
+      return clazz;
    }
    
+   protected CtClass getCachedOrCreate(ClassPool parentPool, String classname, boolean create)
+   {
+      try
+      {
+         //This will check the parents
+         return parentPool.get(classname);
+      }
+      catch(NotFoundException e)
+      {
+         return null;
+      }
+   }
+      
    public String toString()
    {
       return super.toString() + "[" + domainName + "]";
-   }
-   
-   private interface ClassPoolDomainStrategy
-   {
-      URL findParentResource(String classname);
-      CtClass createParentCtClass(String classname, boolean useCache);
-      CtClass getParentCached(String classname);
-   }
-   
-   protected class RootClassPoolDomainImpl implements ClassPoolDomainStrategy
-   {
-      ClassPool parentPool = null;
-      
-      public RootClassPoolDomainImpl()
-      {
-         initialiseParentClassLoader();
-         if (parentPool == null)
-         {
-            throw new IllegalStateException("Null parent classpool");
-         }
-      }
-      public void initialiseParentClassLoader()
-      {
-         parentPool = ClassPool.getDefault();
-      }
-      
-      public URL findParentResource(String classname)
-      {
-         return parentPool.find(classname);
-      }
-      
-      public CtClass createParentCtClass(String classname, boolean useCache)
-      {
-         try
-         {
-            return parentPool.get(classname);
-         }
-         catch(NotFoundException ignore)
-         {
-         }
-         return null;
-      }
-      
-      public CtClass getParentCached(String classname)
-      {
-         try
-         {
-            return parentPool.get(classname);
-         }
-         catch (NotFoundException ignore)
-         {
-         }
-         return null;
-      }
-   }
-   
-   private class ChildClassPoolDomainImpl implements ClassPoolDomainStrategy
-   {
-      public URL findParentResource(String classname)
-      {
-         return parent.findResource(classname);
-      }
-      
-      public CtClass createParentCtClass(String classname, boolean useCache)
-      {
-         return parent.createCtClass(null, classname, useCache);
-      }
-      
-      public CtClass getParentCached(String classname)
-      {
-         return parent.getCached(null, classname);
-      }
    }
 }

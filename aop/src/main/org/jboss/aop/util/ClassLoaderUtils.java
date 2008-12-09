@@ -19,46 +19,26 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.classpool;
-
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.scopedpool.ScopedClassPoolRepository;
+package org.jboss.aop.util;
 
 /**
- * ClassPool for class loaders not backed by a repository/classloading domain
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class NonDelegatingClassPool extends BaseClassPool
+public class ClassLoaderUtils
 {
-   public NonDelegatingClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, boolean parentFirst)
+   public static String getResourceName(String classname)
    {
-      super(cl, src, repository, AOPClassPool.SEARCH_LOCAL_ONLY_STRATEGY);
-      super.childFirstLookup = !parentFirst;
+      final int lastIndex = classname.lastIndexOf('$');
+      if (lastIndex < 0)
+      {
+         return classname.replaceAll("[\\.]", "/") + ".class";
+      }
+      else
+      {
+         return classname.substring(0, lastIndex).replaceAll("[\\.]", "/") + classname.substring(lastIndex) + ".class";
+      }
    }
 
-   @Override
-   public CtClass createCtClass(String classname, boolean useCache)
-   {
-      CtClass clazz = null;
-      if (!childFirstLookup)
-      {
-         clazz = createParentCtClass(classname, useCache);
-      }
-      if (clazz == null)
-      {
-         if (isLocalResource(getResourceName(classname)))
-         {
-            clazz = super.createCtClass(classname, useCache);
-         }
-      }
-      if (childFirstLookup && clazz == null)
-      {
-         clazz = createParentCtClass(classname, useCache);
-      }
-      
-      return clazz;
-   }
 }

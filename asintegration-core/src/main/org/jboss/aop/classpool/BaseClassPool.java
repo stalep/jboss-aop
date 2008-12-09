@@ -56,13 +56,12 @@ public class BaseClassPool extends AOPClassPool
    @Override
    public CtClass createCtClass(String classname, boolean useCache)
    {
-      return super.createCtClass(classname, useCache);
-   }
-
-   @Override
-   public void cacheCtClass(String classname, CtClass c, boolean dynamic)
-   {
-      super.cacheCtClass(classname, c, dynamic);
+      CtClass clazz = super.createCtClass(classname, useCache);
+      if (clazz != null)
+      {
+         cacheCtClass(classname, clazz, false);
+      }
+      return clazz;
    }
 
    protected CtClass createParentCtClass(String classname, boolean useCache)
@@ -105,15 +104,8 @@ public class BaseClassPool extends AOPClassPool
    }
    
    @Override
-   public boolean isLocalClassLoaderResource(String classResourceName)
+   protected boolean isLocalClassLoaderResource(String classResourceName)
    {
       return isLocalResourcePlugin.isMyResource(classResourceName);
    }
-
-   public boolean isLocalClassLoaderClass(String classname)
-   {
-      return isLocalResourcePlugin.isMyResource(getResourceName(classname));
-   }
-
-
 }

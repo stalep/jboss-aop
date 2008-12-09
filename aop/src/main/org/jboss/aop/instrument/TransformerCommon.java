@@ -33,15 +33,14 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.security.ProtectionDomain;
 
-import org.jboss.aop.AspectManager;
-import org.jboss.aop.classpool.AOPClassPool;
-import org.jboss.aop.standalone.Compiler;
-
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.NotFoundException;
+
+import org.jboss.aop.AspectManager;
+import org.jboss.aop.standalone.Compiler;
 
 /**
  *  A few handy methods and common things used by the other Transformers
@@ -75,7 +74,6 @@ public class TransformerCommon {
    {
       try
       {
-         registerGeneratedClass(newClass);
          // If compile time
          if (compile)
          {
@@ -122,8 +120,6 @@ public class TransformerCommon {
 
    public static Class<?> toClass(CtClass newClass, ProtectionDomain pd) throws CannotCompileException
    {
-      registerGeneratedClass(newClass);
-
       if (System.getSecurityManager() == null)
       {
          return ToClassAction.NON_PRIVILEGED.toClass(newClass, null, pd);
@@ -137,8 +133,6 @@ public class TransformerCommon {
    public static Class<?> toClass(CtClass newClass, ClassLoader loader, ProtectionDomain pd)
       throws CannotCompileException
    {
-      registerGeneratedClass(newClass);
-
       if (System.getSecurityManager() == null)
       {
          return ToClassAction.NON_PRIVILEGED.toClass(newClass, loader, pd);
@@ -171,16 +165,6 @@ public class TransformerCommon {
       else
       {
          addStrongReferenceInfoField(instrumentor, infoClassName, infoName, modifiers, addTo, init, synthetic);
-      }
-   }
-
-   private static void registerGeneratedClass(CtClass newClass)
-   {
-      //TODO Maybe we should force a ScopedClassPool created by JBoss Retro to be an AOP classpool once AOP kicks in?
-      ClassPool pool = newClass.getClassPool();
-      if (pool instanceof AOPClassPool)
-      {
-         ((AOPClassPool)pool).registerGeneratedClass(newClass.getName());
       }
    }
 
@@ -231,7 +215,6 @@ public class TransformerCommon {
     */
    public static CtClass makeNestedClass(CtClass outer, String name, boolean isStatic) throws CannotCompileException
    {
-      registerGeneratedClass(outer.getClassPool(), outer.getName() + "$" + name);
       CtClass inner = outer.makeNestedClass(name, true);
       return inner;
    }
@@ -241,7 +224,6 @@ public class TransformerCommon {
     */
    public static CtClass makeClass(ClassPool pool, String name)
    {
-      registerGeneratedClass(pool, name);
       return pool.makeClass(name);
    }
 
@@ -250,20 +232,7 @@ public class TransformerCommon {
     */
    public static CtClass makeClass(ClassPool pool, String name, CtClass superClass)
    {
-      registerGeneratedClass(pool, name);
       return pool.makeClass(name, superClass);
-   }
-
-   private static void registerGeneratedClass(ClassPool pool, String name)
-   {
-      try
-      {
-         ((AOPClassPool)pool).registerGeneratedClass(name);
-      }
-      catch(ClassCastException e)
-      {
-
-      }
    }
 
    private interface ToClassAction

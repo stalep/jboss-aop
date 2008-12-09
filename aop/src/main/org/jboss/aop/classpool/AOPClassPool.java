@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.aop.AspectManager;
+import org.jboss.aop.util.ClassLoaderUtils;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -115,10 +116,12 @@ public class AOPClassPool extends ScopedClassPool
       classLoader = new WeakReference<ClassLoader>(cl);
    }
 
-   public void registerGeneratedClass(String className)
-   {
-      generatedClasses.put(className, className);
-   }
+//   public void registerGeneratedClass(String classname)
+//   {
+//      generatedClasses.put(classname, classname);
+//      String resourcename = getResourceName(classname);
+//      localResources.put(resourcename, Boolean.TRUE);
+//   }
 
    public void close()
    {
@@ -140,6 +143,19 @@ public class AOPClassPool extends ScopedClassPool
       return super.createCtClass(classname, useCache);
    }
 
+   @Override
+   public void cacheCtClass(String classname, CtClass c, boolean dynamic)
+   {
+      super.cacheCtClass(classname, c, dynamic);
+      if (dynamic)
+      {
+//         registerGeneratedClass(classname);
+         generatedClasses.put(classname, classname);
+         String resourcename = getResourceName(classname);
+         localResources.put(resourcename, Boolean.TRUE);
+      }
+   }
+
    protected boolean includeInGlobalSearch()
    {
       return true;
@@ -147,20 +163,12 @@ public class AOPClassPool extends ScopedClassPool
 
    protected String getResourceName(String classname)
    {
-      final int lastIndex = classname.lastIndexOf('$');
-      if (lastIndex < 0)
-      {
-         return classname.replaceAll("[\\.]", "/") + ".class";
-      }
-      else
-      {
-         return classname.substring(0, lastIndex).replaceAll("[\\.]", "/") + classname.substring(lastIndex) + ".class";
-      }
+      return ClassLoaderUtils.getResourceName(classname);
    }
 
    protected boolean isLocalResource(String resourceName)
    {
-      String classResourceName = getResourceName(resourceName);
+      String classResourceName = resourceName;
       Boolean isLocal = localResources.get(classResourceName);
       if (isLocal != null)
       {
@@ -171,7 +179,7 @@ public class AOPClassPool extends ScopedClassPool
       return localResource;
    }
 
-   public boolean isLocalClassLoaderResource(String classResourceName)
+   protected boolean isLocalClassLoaderResource(String classResourceName)
    {
       return getClassLoader().getResource(classResourceName) != null;
    }
@@ -246,7 +254,7 @@ public class AOPClassPool extends ScopedClassPool
 
             if (cl != null)
             {
-               isLocal = isLocalResource(classname);
+               isLocal = isLocalResource(getResourceName(classname));
             }
 
             if (!isLocal)

@@ -19,46 +19,24 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.classpool;
+package org.jboss.aop.classpool.jbosscl;
 
 import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.scopedpool.ScopedClassPoolRepository;
+
+import org.jboss.aop.AspectManager;
+import org.jboss.aop.classpool.ClassPoolToClassPoolDomainAdapter;
+import org.jboss.classloader.spi.base.BaseClassLoaderDomain;
 
 /**
- * ClassPool for class loaders not backed by a repository/classloading domain
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class NonDelegatingClassPool extends BaseClassPool
+public class JBossClClassPoolToClassPoolDomainAdapter extends ClassPoolToClassPoolDomainAdapter
 {
-   public NonDelegatingClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, boolean parentFirst)
-   {
-      super(cl, src, repository, AOPClassPool.SEARCH_LOCAL_ONLY_STRATEGY);
-      super.childFirstLookup = !parentFirst;
-   }
-
    @Override
-   public CtClass createCtClass(String classname, boolean useCache)
+   public ClassPool initialiseParentClassLoader()
    {
-      CtClass clazz = null;
-      if (!childFirstLookup)
-      {
-         clazz = createParentCtClass(classname, useCache);
-      }
-      if (clazz == null)
-      {
-         if (isLocalResource(getResourceName(classname)))
-         {
-            clazz = super.createCtClass(classname, useCache);
-         }
-      }
-      if (childFirstLookup && clazz == null)
-      {
-         clazz = createParentCtClass(classname, useCache);
-      }
-      
-      return clazz;
+      return AspectManager.instance().registerClassLoader(BaseClassLoaderDomain.class.getClassLoader());
    }
 }

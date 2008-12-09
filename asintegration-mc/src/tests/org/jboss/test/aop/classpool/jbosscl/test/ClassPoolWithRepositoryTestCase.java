@@ -219,30 +219,6 @@ public class ClassPoolWithRepositoryTestCase extends JBossClClassPoolTest
       }
    }
    
-   public void testChildOverrideWithNoParentDelegation() throws Exception
-   {
-      ClassPool globalPool = null;
-      ClassPool scopedPool = null;
-      try
-      {
-         globalPool = createClassPool("GLOBAL", true, JAR_A_1);
-         scopedPool = createChildDomainParentLastClassPool("CHILD", "CHILD", true, JAR_A_1);
-         CtClass aFromParent = globalPool.get(CLASS_A);
-         assertNotNull(aFromParent);
-         CtClass aFromChild = scopedPool.get(CLASS_A);
-         assertNotNull(aFromChild);
-         assertNotSame(aFromParent, aFromChild);
-         assertSame(globalPool, aFromParent.getClassPool());
-         assertSame(scopedPool, aFromChild.getClassPool());
-      }
-      finally
-      {
-         unregisterClassPool(globalPool);
-         unregisterClassPool(scopedPool);
-         unregisterDomain(scopedPool);
-      }
-   }
-   
    public void testURLChildOfGlobalUcl() throws Exception
    {
       ClassPool global = null;
@@ -270,6 +246,31 @@ public class ClassPoolWithRepositoryTestCase extends JBossClClassPoolTest
       }
    }
    
+   public void testChildOverrideWithNoParentDelegation() throws Exception
+   {
+      ClassPool globalPool = null;
+      ClassPool scopedPool = null;
+      try
+      {
+         globalPool = createClassPool("GLOBAL", true, JAR_A_1);
+         scopedPool = createChildDomainParentLastClassPool("CHILD", "CHILD", true, JAR_A_1);
+         CtClass aFromParent = globalPool.get(CLASS_A);
+         assertNotNull(aFromParent);
+         CtClass aFromChild = scopedPool.get(CLASS_A);
+         assertNotNull(aFromChild);
+         assertNotSame(aFromParent, aFromChild);
+         assertSame(globalPool, aFromParent.getClassPool());
+         assertSame(scopedPool, aFromChild.getClassPool());
+      }
+      finally
+      {
+         unregisterClassPool(globalPool);
+         unregisterClassPool(scopedPool);
+         unregisterDomain(scopedPool);
+      }
+   }
+
+
    public void testUndeploySibling() throws Exception
    {
       ClassPool poolA = null;
@@ -333,6 +334,134 @@ public class ClassPoolWithRepositoryTestCase extends JBossClClassPoolTest
       }
    }
    
+   
+   public void testSeveralLevelsOfDomain() throws Exception
+   {
+      ClassPool parent = null;
+      ClassPool cl1B = null;
+      ClassPool cl1C = null;
+      ClassPool cl2B = null;
+      ClassPool cl2C = null;
+      ClassPool cl11A = null;
+      ClassPool cl11B = null;
+      ClassPool cl11C = null;
+      ClassPool cl12A = null;
+      ClassPool cl12B = null;
+      ClassPool cl12C = null;
+      
+      try
+      {
+         parent = createClassPool("A", true, JAR_A_1);
+         CtClass aFromParent = parent.get(CLASS_A);
+         assertSame(parent, aFromParent.getClassPool());
+         
+         final String domain1 = "1";
+         cl1B = createChildDomainParentFirstClassPool("1B", domain1, true, JAR_B_1);
+         cl1C =  createChildDomainParentFirstClassPool("1C", domain1, true, JAR_C_1);
+         CtClass aFrom1B = cl1B.get(CLASS_A);
+         CtClass bFrom1B = cl1B.get(CLASS_B);
+         CtClass cFrom1B = cl1B.get(CLASS_C);
+         CtClass aFrom1C = cl1C.get(CLASS_A);
+         CtClass bFrom1C = cl1C.get(CLASS_B);
+         CtClass cFrom1C = cl1C.get(CLASS_C);
+         assertSame(aFromParent, aFrom1B);
+         assertSame(aFromParent, aFrom1C);
+         assertSame(bFrom1B, bFrom1C);
+         assertSame(cFrom1B, cFrom1C);
+         assertSame(cl1B, bFrom1B.getClassPool());
+         assertSame(cl1C, cFrom1B.getClassPool());
+         
+         
+         final String domain2 = "2";
+         cl2B = createChildDomainParentFirstClassPool("2B", domain2, true, JAR_B_1);
+         cl2C = createChildDomainParentFirstClassPool("2C", domain2, true, JAR_C_1);
+         CtClass aFrom2B = cl2B.get(CLASS_A);
+         CtClass bFrom2B = cl2B.get(CLASS_B);
+         CtClass cFrom2B = cl2B.get(CLASS_C);
+         CtClass aFrom2C = cl2C.get(CLASS_A);
+         CtClass bFrom2C = cl2C.get(CLASS_B);
+         CtClass cFrom2C = cl2C.get(CLASS_C);
+         assertSame(aFromParent, aFrom2B);
+         assertSame(aFromParent, aFrom2C);
+         assertSame(bFrom2B, bFrom2C);
+         assertSame(cFrom2B, cFrom2C);
+         assertSame(cl2B, bFrom2B.getClassPool());
+         assertSame(cl2C, cFrom2B.getClassPool());
+         assertNotSame(bFrom1B, bFrom2B);
+         assertNotSame(bFrom2C, bFrom1C);
+         assertNotSame(cFrom2C, cFrom1C);
+         
+         final String domain11 = "11";
+         cl11A = createChildDomainParentFirstClassPool("11A", domain11, domain1, true, JAR_A_2);
+         cl11B = createChildDomainParentFirstClassPool("11B", domain11, domain1, true, JAR_B_2);
+         cl11C = createChildDomainParentFirstClassPool("11C", domain11, domain1, true, JAR_C_2);
+         final String domain12 = "12";
+         cl12A = createChildDomainParentLastClassPool("12A", domain12, domain1, true, JAR_A_2);
+         cl12B = createChildDomainParentLastClassPool("12B", domain12, domain1, true, JAR_B_2);
+         cl12C = createChildDomainParentLastClassPool("12C", domain12, domain1, true, JAR_C_2);
+         CtClass aFrom11A = cl11A.get(CLASS_A);
+         CtClass aFrom11B = cl11B.get(CLASS_A);
+         CtClass aFrom11C = cl11C.get(CLASS_A);
+         assertSame(aFromParent, aFrom11A);
+         assertSame(aFromParent, aFrom11B);
+         assertSame(aFromParent, aFrom11C);
+         CtClass aFrom12A = cl12A.get(CLASS_A);
+         CtClass aFrom12B = cl12B.get(CLASS_A);
+         CtClass aFrom12C = cl12C.get(CLASS_A);
+         assertNotSame(aFromParent, aFrom12A);
+         assertSame(aFrom12A, aFrom12B);
+         assertSame(aFrom12A, aFrom12C);
+         assertSame(cl12A, aFrom12A.getClassPool());
+         
+         CtClass bFrom11A = cl11A.get(CLASS_B);
+         CtClass bFrom11B = cl11B.get(CLASS_B);
+         CtClass bFrom11C = cl11C.get(CLASS_B);
+         CtClass cFrom11A = cl11A.get(CLASS_C);
+         CtClass cFrom11B = cl11B.get(CLASS_C);
+         CtClass cFrom11C = cl11C.get(CLASS_C);
+         assertSame(bFrom11A, bFrom11B);
+         assertSame(bFrom11A, bFrom11C);
+         assertSame(cl1B, bFrom11B.getClassPool());
+         assertSame(cFrom11A, cFrom11B);
+         assertSame(cFrom11A, cFrom11C);
+         assertSame(cl1C, cFrom11C.getClassPool());
+         
+         CtClass bFrom12A = cl12A.get(CLASS_B);
+         CtClass bFrom12B = cl12B.get(CLASS_B);
+         CtClass bFrom12C = cl12C.get(CLASS_B);
+         CtClass cFrom12A = cl12A.get(CLASS_C);
+         CtClass cFrom12B = cl12B.get(CLASS_C);
+         CtClass cFrom12C = cl12C.get(CLASS_C);
+         assertSame(bFrom12A, bFrom12B);
+         assertSame(bFrom12A, bFrom12C);
+         assertSame(cl12B, bFrom12B.getClassPool());
+         assertSame(cFrom12A, cFrom12B);
+         assertSame(cFrom12A, cFrom12C);
+         assertSame(cl12C, cFrom12C.getClassPool());
+         assertNotSame(bFrom11B, bFrom12B);
+         assertNotSame(cFrom11C, cFrom12C);
+      }
+      finally
+      {
+         unregisterClassPool(parent);
+         unregisterClassPool(cl1B);
+         unregisterClassPool(cl1C);
+         unregisterClassPool(cl2B);
+         unregisterClassPool(cl2C);
+         unregisterClassPool(cl11A);
+         unregisterClassPool(cl11B);
+         unregisterClassPool(cl11C);
+         unregisterClassPool(cl12A);
+         unregisterClassPool(cl12B);
+         unregisterClassPool(cl12C);
+         
+         unregisterDomain(cl12A);
+         unregisterDomain(cl11A);
+         unregisterDomain(cl2B);
+         unregisterDomain(cl1B);
+      }
+   }
+
 /* 
    The folllowing two tests are probably not very realistic http://www.jboss.com/index.html?module=bb&op=viewtopic&p=4195022#4195022
    public void testClassLoaderlWithParentClassLoader() throws Exception
@@ -357,7 +486,7 @@ public class ClassPoolWithRepositoryTestCase extends JBossClClassPoolTest
       }
    }
 
-   
+   If we ever need to implement this, this test needs to have the latest additions to ClassLoaderWithRepositorySanityTestCase
    public void testClassLoaderWithParentClassLoaderAndSameClassInDomain() throws Exception
    {
       ClassPool parent = createChildURLClassPool(null, JAR_B_1);
