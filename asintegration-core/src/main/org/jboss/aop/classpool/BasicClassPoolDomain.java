@@ -125,6 +125,10 @@ public class BasicClassPoolDomain extends AbstractClassPoolDomain implements Cla
                {
                   clazz = pool.createCtClass(classname, true);
                }
+               if (clazz != null)
+               {
+                  break;
+               }
             }
          }
       }

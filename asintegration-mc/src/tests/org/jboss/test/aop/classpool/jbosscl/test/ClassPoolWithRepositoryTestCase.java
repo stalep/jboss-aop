@@ -462,6 +462,160 @@ public class ClassPoolWithRepositoryTestCase extends JBossClClassPoolTest
       }
    }
 
+   
+   public void testUclLoaderOrdering() throws Exception
+   {
+      ClassPool globalA = null;
+      ClassPool globalB = null;
+      ClassPool globalC = null;
+      try
+      {
+         globalA = createClassPool("A", true, JAR_A_1);
+         globalB = createClassPool("B", true, JAR_A_1);
+         globalC = createClassPool("C", true, JAR_A_1);
+         
+         CtClass aFromA = globalA.get(CLASS_A);
+         CtClass aFromB = globalB.get(CLASS_A);
+         CtClass aFromC = globalC.get(CLASS_A);
+         assertSame(aFromA, aFromB);
+         assertSame(aFromA, aFromC);
+         assertSame(globalA, aFromA.getClassPool());
+      }
+      finally
+      {
+         unregisterClassPool(globalA);
+         unregisterClassPool(globalB);
+         unregisterClassPool(globalC);
+      }
+   }
+
+//   public void testGeneratingClassInNonDelegatingPool() throws Exception
+//   {
+//      ClassPool global = null;
+//      ClassPool child = null;
+//      try
+//      {
+//         final String PARENT = "parent.Parent";
+//         final String CHILD = "child.Child";
+//         global = createGlobalClassPoolWithParent(JAR_A_1, parent);
+//         child = createChildURLClassPool(global, JAR_C_1);
+//         
+//         assertCannotLoadCtClass(global, PARENT);
+//         assertCannotLoadCtClass(child, PARENT);
+//         assertCannotLoadCtClass(child, CHILD);
+//         
+//         
+//         CtClass childClass = child.makeClass(CHILD);
+//         childClass.setSuperclass(parentClass);
+//         
+//         CtClass parentFromParent = parent.get(PARENT);
+//         assertSame(parent, parentFromParent.getClassPool());
+//         assertSame(parentClass, parentFromParent);
+//         
+//         CtClass childFromChild = child.get(CHILD);
+//         assertSame(child, childFromChild.getClassPool());
+//         assertSame(childClass, childFromChild);
+//         
+//         assertCannotLoadCtClass(global, CHILD);
+//         
+//         CtClass parentFromChildA = childClass.getSuperclass();
+//         assertSame(parentClass, parentFromChildA);
+//       
+//         CtClass parentFromChildB = child.get(PARENT);
+//         assertSame(parentClass, parentFromChildB);
+//         
+//         Class<?> parentClazz = parentClass.toClass();
+//         assertSame(parent.getClassLoader(), parentClazz.getClassLoader());
+//         
+//         Class<?> childClazz = childClass.toClass();
+//         assertSame(child.getClassLoader(), childClazz.getClassLoader());
+//         
+//         Class<?> parentClazzFromParent = parent.getClassLoader().loadClass(PARENT);
+//         assertSame(parentClazz, parentClazzFromParent);
+//         
+//         Class<?> parentClazzFromChild = parent.getClassLoader().loadClass(PARENT);
+//         assertSame(parentClazz, parentClazzFromChild);
+//         
+//         Class<?> childClazzFromChild = child.getClassLoader().loadClass(CHILD);
+//         assertSame(childClazz, childClazzFromChild);
+//      }
+//      finally
+//      {
+//         removeClassPool(parent);
+//         removeClassPool(global);
+//         removeClassPool(child);
+//      }
+//   }
+//   
+//   
+//   public void testGeneratingClassInDelegatingPool() throws Exception
+//   {
+//      ClassPool globalA = null;
+//      ClassPool globalB = null;
+//      ClassPool child = null;
+//      try
+//      {
+//         globalA = createGlobalClassPool(JAR_A_1);
+//         globalB = createGlobalClassPool(JAR_B_1);
+//         child = createChildURLClassPool(globalA, JAR_C_1);
+//         
+//         final String A_CLASS = "a.Clazz";
+//         final String B_CLASS = "b.Clazz";
+//         
+//         assertCannotLoadCtClass(globalA, A_CLASS);
+//         assertCannotLoadCtClass(globalB, A_CLASS);
+//         assertCannotLoadCtClass(child, A_CLASS);
+//         assertCannotLoadCtClass(globalA, B_CLASS);
+//         assertCannotLoadCtClass(globalB, B_CLASS);
+//         assertCannotLoadCtClass(child, B_CLASS);
+//         
+//         CtClass a = globalA.makeClass(A_CLASS);
+//         CtClass b = globalB.makeClass(B_CLASS);
+//         
+//         CtClass aFromA = globalA.get(A_CLASS);
+//         assertSame(a, aFromA);
+//         assertSame(globalA, aFromA.getClassPool());
+//         CtClass aFromB = globalB.get(A_CLASS);
+//         assertSame(a, aFromB);
+//         CtClass bFromA = globalA.get(B_CLASS);
+//         assertSame(b, bFromA);
+//         assertSame(globalB, bFromA.getClassPool());
+//         CtClass bFromB = globalB.get(B_CLASS);
+//         assertSame(b, bFromB);
+//         CtClass aFromChild = child.get(A_CLASS);
+//         assertSame(a, aFromChild);
+//         CtClass bFromChild = child.get(B_CLASS);
+//         assertSame(b, bFromChild);
+//         
+//         Class<?> clazzA = a.toClass();
+//         assertSame(globalA.getClassLoader(), clazzA.getClassLoader());
+//         
+//         Class<?> clazzB = b.toClass();
+//         assertSame(globalB.getClassLoader(), clazzB.getClassLoader());
+//         
+//         Class<?> clazzAFromA = globalA.getClassLoader().loadClass(A_CLASS);
+//         assertSame(clazzA, clazzAFromA);
+//         Class<?> clazzAFromB = globalB.getClassLoader().loadClass(A_CLASS);
+//         assertSame(clazzA, clazzAFromB);
+//         Class<?> clazzAFromChild = child.getClassLoader().loadClass(A_CLASS);
+//         assertSame(clazzA, clazzAFromChild);
+//         
+//         Class<?> clazzBFromA = globalA.getClassLoader().loadClass(B_CLASS);
+//         assertSame(clazzB, clazzBFromA);
+//         Class<?> clazzBFromB = globalB.getClassLoader().loadClass(B_CLASS);
+//         assertSame(clazzB, clazzBFromB);
+//         Class<?> clazzBFromChild = child.getClassLoader().loadClass(B_CLASS);
+//         assertSame(clazzB, clazzBFromChild);
+//      }
+//      finally
+//      {
+//         removeClassPool(globalA);
+//         removeClassPool(globalB);
+//         removeClassPool(child);
+//      }
+//   }
+   
+
 /* 
    The folllowing two tests are probably not very realistic http://www.jboss.com/index.html?module=bb&op=viewtopic&p=4195022#4195022
    public void testClassLoaderlWithParentClassLoader() throws Exception

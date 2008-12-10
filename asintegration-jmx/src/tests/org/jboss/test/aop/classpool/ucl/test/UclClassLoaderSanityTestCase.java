@@ -325,4 +325,30 @@ public class UclClassLoaderSanityTestCase extends UclClassPoolTest
          removeClassLoaderFromRepository(globalB);
       }
    }
+   
+   public void testUclLoaderOrdering() throws Exception
+   {
+      ClassLoader globalA = null;
+      ClassLoader globalB = null;
+      ClassLoader globalC = null;
+      try
+      {
+         globalA = createGlobalClassLoader(JAR_A_1);
+         globalB = createGlobalClassLoader(JAR_A_1);
+         globalC = createGlobalClassLoader(JAR_A_1);
+         
+         Class<?> aFromA = globalA.loadClass(CLASS_A);
+         Class<?> aFromB = globalB.loadClass(CLASS_A);
+         Class<?> aFromC = globalC.loadClass(CLASS_A);
+         assertSame(aFromA, aFromB);
+         assertSame(aFromA, aFromC);
+         assertSame(globalA, aFromA.getClassLoader());
+      }
+      finally
+      {
+         removeClassLoaderFromRepository(globalA);
+         removeClassLoaderFromRepository(globalB);
+         removeClassLoaderFromRepository(globalC);
+      }
+   }
 }

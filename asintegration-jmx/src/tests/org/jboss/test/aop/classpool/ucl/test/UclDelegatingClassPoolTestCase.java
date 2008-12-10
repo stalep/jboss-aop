@@ -602,4 +602,29 @@ public class UclDelegatingClassPoolTestCase extends UclClassPoolTest
       }
    }
    
+   public void testUclLoaderOrdering() throws Exception
+   {
+      ClassPool globalA = null;
+      ClassPool globalB = null;
+      ClassPool globalC = null;
+      try
+      {
+         globalA = createGlobalClassPool(JAR_A_1);
+         globalB = createGlobalClassPool(JAR_A_1);
+         globalC = createGlobalClassPool(JAR_A_1);
+         
+         CtClass aFromA = globalA.get(CLASS_A);
+         CtClass aFromB = globalB.get(CLASS_A);
+         CtClass aFromC = globalC.get(CLASS_A);
+         assertSame(aFromA, aFromB);
+         assertSame(aFromA, aFromC);
+         assertSame(globalA, aFromA.getClassPool());
+      }
+      finally
+      {
+         removeClassPool(globalA);
+         removeClassPool(globalB);
+         removeClassPool(globalC);
+      }
+   }
 }
