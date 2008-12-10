@@ -21,7 +21,6 @@
 */ 
 package org.jboss.test.aop.classpool.jbosscl.support;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
