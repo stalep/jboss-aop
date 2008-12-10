@@ -21,6 +21,7 @@
 */ 
 package org.jboss.test.aop.classpool.jbosscl.support;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,11 +45,14 @@ import org.jboss.deployers.structure.spi.ClassLoaderFactory;
 import org.jboss.deployers.structure.spi.DeploymentResourceLoader;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.structure.spi.DeploymentUnitVisitor;
+import org.jboss.deployers.vfs.plugins.classloader.InMemoryClassesDeployer;
 import org.jboss.deployers.vfs.plugins.classloader.VFSClassLoaderClassPathDeployer;
 import org.jboss.metadata.spi.MetaData;
 import org.jboss.metadata.spi.MutableMetaData;
 import org.jboss.metadata.spi.scope.ScopeKey;
 import org.jboss.util.JBossObject;
+import org.jboss.util.id.GUID;
+import org.jboss.virtual.MemoryFileFactory;
 import org.jboss.virtual.VFS;
 import org.jboss.virtual.VirtualFile;
 
@@ -63,8 +67,11 @@ class MockDeploymentUnit implements DeploymentUnit
    public MockDeploymentUnit(String name, ClassLoadingMetaData clmd, URL... urls) throws Exception
    {
       this.name = name;
-      
+
       List<VirtualFile> roots = new ArrayList<VirtualFile>();
+      //Prepend the dynamic URL to the classpath
+      VirtualFile dynamicClasses = getInMemoryClassesURL();
+      roots.add(dynamicClasses);
       for (URL url : urls)
       {
          VirtualFile file = VFS.getRoot(url);
@@ -74,6 +81,15 @@ class MockDeploymentUnit implements DeploymentUnit
       
       addAttachment(ControllerContext.class, new MockControllerContext());
       addAttachment(ClassLoadingMetaData.class, clmd);
+   }
+   
+   private VirtualFile getInMemoryClassesURL() throws Exception
+   {
+      URL dynamicClassRoot = new URL("vfsmemory", GUID.asString(), "");
+      VirtualFile classes = MemoryFileFactory.createRoot(dynamicClassRoot).getRoot();
+      addAttachment(InMemoryClassesDeployer.DYNAMIC_CLASS_URL_KEY, dynamicClassRoot);
+      addAttachment(InMemoryClassesDeployer.DYNAMIC_CLASS_KEY, classes);
+      return classes;
    }
    
    public DeploymentUnit addComponent(String name)
