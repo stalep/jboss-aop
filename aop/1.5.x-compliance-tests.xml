@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--  JBoss, the OpenSource J2EE webOS                                      -->
+<!--                                                                        -->
+<!--  Distributable under LGPL license.                                     -->
+<!--  See terms of license at http://www.gnu.org.                           -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+
+<!-- $Id: build-tests-jdk50.xml 79661 2008-10-17 16:33:15Z pgier $ -->
+
+<project default="main_1.5.x" name="JBoss/AOP 1.5.x Compliance Tests">
+
+   <!-- ================================================================== -->
+   <!-- Setup                                                              -->
+   <!-- ================================================================== -->
+
+   <!--
+      | Include some common ant tasks and macro definitions.
+    -->
+
+  <import file="../tools/etc/ant/common-tasks.xml"/>
+  
+  <import file="base-tests.xml"/>
+
+   <!-- ================================================================== -->
+   <!-- Initialization                                                     -->
+   <!-- ================================================================== -->
+
+   <target name="init_1.5.x" depends="init-maven-parent, init-maven-dist-dependencies">
+
+     <!-- Defines property overrides -->
+     <property file="local.properties"/>
+
+     <echo message="Testing JBoss AOP 2.0.x compilance"/>
+
+     <!-- Setup the project environment. -->
+     <dirname property="project.parent.root" file="${basedir}"/>
+     <property name="project.root" value="${basedir}"/>
+     <property name="project.build" value="${project.parent.root}/build"/>
+     <property name="project.tools" value="${project.parent.root}/tools"/>
+     <property name="project.source" value="${project.root}/src"/>
+     <property name="project.output" value="${maven.project.build.directory}"/>
+
+     <!-- Include user and project property overrides. -->
+     <property file="${project.build}/local.properties"/>
+     <property file="${user.home}/.ant.properties"/>
+
+     <!-- Setup the build.log -->
+     <!--
+     <property name="buildlog.level" value="info"/>
+     <record name="${project.output}/build_1.5.x.log" append="no" loglevel="${buildlog.level}"/>
+     <property name="init-buildlog.disable" value="true"/>
+     -->
+
+     <path id="jboss.test.classpath.1.5.x">
+       <pathelement location="${jboss:jboss-test:jar}"/>
+     </path>
+     <path id="junit.junit.classpath.1.5.x">
+       <pathelement location="${junit:junit:jar}"/>
+     </path>
+     <property name="build.artifact.name" value="${maven.project.build.finalName}.jar"/>
+     <property name="build.artifact" value="2.0.x.lib/jboss-aop.jar"/>
+
+     <path id="jboss.aop.classpath.1.5.x">
+     <!--
+       <pathelement location="${build.artifact}"/>
+       -->
+       <pathelement path="2.0.x.lib/jboss-aop.jar"/>
+     </path>
+     
+
+     <!--
+     <condition property="jboss.aop.debug.classes" value="true">
+        <isset property="debug"/>
+     </condition>
+     <condition property="jboss.aop.debug.classes" value="false">
+        <not>
+           <isset property="debug"/>
+        </not>
+     </condition>
+     -->
+
+     <!-- Where source files live -->
+     <property name="source.tests.java" value="${project.source}/test"/>
+     <property name="source.etc" value="${project.source}/etc"/>
+     <property name="source.res" value="${project.source}/resources"/>
+     <property name="source.stylesheets" value="src/stylesheets"/>
+     <echo message="${source.tests.java}"/>
+    
+     <!-- Where build generated files will go -->
+     <property name="build.reports" value="${project.output}/reports"/>
+     <property name="build.stylesheets" value="${project.output}/stylesheets"/>
+     <property name="build.tests.classes" value="${project.output}/test-classes"/>
+     <property name="build.lib" value="${project.output}/lib"/>
+
+     <!-- classpath and local.classpath must have a value using with a path -->
+     <property name="classpath.1.5.x" value=""/>
+     <property name="local.classpath.1.5.x" value=""/>
+
+     <path id="compatibility15.test.classpath">
+        <pathelement path="1.5.x.lib/concurrent.jar"/>
+        <pathelement path="1.5.x.lib/javassist.jar"/>
+        <pathelement path="1.5.x.lib/jboss-aop-jdk50.jar"/>
+        <pathelement path="1.5.x.lib/jboss-common.jar"/>
+        <pathelement path="1.5.x.lib/qdox.jar"/>
+        <pathelement path="1.5.x.lib/trove.jar"/>
+
+        <path refid="jboss.test.classpath.1.5.x"/>
+        <path refid="junit.junit.classpath.1.5.x"/>
+     </path>
+
+     <!-- use the compatibility jars from 2.0 as the base classpath -->
+     <path id="test.classpath">
+        <path refid="maven.dependencies.test.classpath"/>
+        <pathelement path="${build.artifact}"/>
+     </path>
+
+     <!-- The classpath required to build classes. -->
+     <path id="javac.classpath.1.5.x">
+        <path refid="test.classpath"/>
+     </path>
+
+     <path id="aopc.task.classpath.1.5.x">
+        <path refid="maven.dependencies.test.classpath"/>
+        <path refid="jboss.aop.classpath.1.5.x"/>
+     </path>
+
+     <!-- The temp folder for aopc -->
+     <property name="aopc.tmpdir" value="${maven.project.build.directory}/aopctmp"/>
+     <delete dir="${aopc.tmpdir}" failonerror="true" deleteonexit="true"/>
+  	<mkdir dir="${aopc.tmpdir}"/>
+
+     <!-- Override JUnit defaults -->
+     <property name="junit.timeout" value="240000"/> <!-- 4 minutes -->
+     <property name="junit.batchtest.todir" value="${build.reports}"/>
+     <property name="junit.jvm.options" value="-Ddummy"/>
+
+     <!-- Load common task properties -->
+     <property file="${project.tools}/etc/ant/task.properties"/>
+
+     <!-- Set the default maven.home directory -->
+     <property name="maven.home" value="${basedir}/../tools/maven"/>
+   </target>   
+
+   <!-- ================================================================== -->
+   <!-- Compile                                                            -->
+   <!-- ================================================================== -->
+
+   <!--
+      | Compile everything.
+      |
+      | This target should depend on other compile-* targets for each
+      | different type of compile that needs to be performed, short of
+      | documentation compiles.
+    -->
+
+   <target name="compile_1.5.x"
+      description="Compile all source files."
+      depends="compile-test-classes_1.5.x"/>
+
+   <!-- Compile all class files -->
+   <target name="compile-test-classes_1.5.x" depends="init_1.5.x">
+      <mkdir dir="${build.tests.classes}"/>
+      <javac destdir="${build.tests.classes}"
+         optimize="${javac.optimize}"
+         target="1.5"
+         source="1.5"
+         debug="${javac.debug}"
+         depend="${javac.depend}"
+         verbose="${javac.verbose}"
+         deprecation="${javac.deprecation}"
+         includeAntRuntime="${javac.include.ant.runtime}"
+         includeJavaRuntime="${javac.include.java.runtime}"
+         failonerror="${javac.fail.onerror}">
+         <src path="${source.tests.java}"/>
+         <classpath refid="test.classpath"/>
+         <include name="**/*.java"/>
+      </javac>
+      <jar destfile="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
+        basedir="${build.tests.classes}" includes="org/jboss/test/aop/jdk15/dynamic/common/scenario/**"/>
+      <delete dir="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
+   </target>
+
+   <!-- ================================================================== -->
+   <!-- Cleaning                                                           -->
+   <!-- ================================================================== -->
+
+   <!-- Clean up all build output -->
+   <target name="clean_1.5.x"
+      description="Cleans up most generated files."
+      depends="init_1.5.x">
+      <delete dir="${build.tests.classes}"/>
+   </target>
+
+   <target name="clean-tests_1.5.x" depends="init_1.5.x">
+      <delete dir="${build.tests.classes}"/>
+   </target>
+
+   <!-- ===============================================================p=== -->
+   <!-- Misc.                                                              -->
+   <!-- ================================================================== -->
+
+   <target name="main_1.5.x" depends="most_1.5.x"
+      description="Executes the default target (most)."/>
+
+   <target name="all_1.5.x" depends="init_1.5.x"
+      description="Builds everything."/>
+
+   <target name="most_1.5.x" depends="init_1.5.x"
+      description="Builds almost everything."/>
+
+   <!-- ==================================================================================== -->
+   <!-- JDK 5.0 TESTS                                                                        -->
+   <!-- ==================================================================================== -->
+
+   <target name="tests_1.5.x" depends="main_1.5.x">
+      <delete dir="${build.tests.classes}"/>
+      <antcall target="precompiled-compatibility-tests_1.5.x" inheritRefs="true"/>
+   </target>
+
+   <!-- ==================================================================================== -->
+   <!-- TEST COMPATIBILITY WITH CODE WOVEN W AOP 1.5                                         -->
+   <!-- ==================================================================================== -->
+   <target name="precompiled-compatibility-tests_1.5.x" depends="compile-test-classes_1.5.x">
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="postweavingmixins"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="callerargs"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="dotinpointcutname"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="precedence"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="reflection"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="callerscope"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="marshalling"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="constructortarget"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="basic"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="instanceofintroduced"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="construction"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="constructortarget"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="field"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="scope"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="beanstyleconfig"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="perjoinpoint"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <antcall target="_run-precompiled-test_1.5.x" inheritRefs="true">
+         <param name="test" value="extender"/>
+         <param name="caller" value="precompiled-compatibility-tests_1.5.x"/>
+      </antcall>
+      <!-- More functionality exists in this branch than in 1.5.x, so this test will fail.
+           The basic test checks main introduction cases anyway
+      <antcall target="_run-precompiled-test" inheritRefs="true">
+         <param name="test" value="introduction"/>
+         <param name="caller" value="precompiled-compatibility-tests"/>
+      </antcall>
+      -->
+   </target>
+
+   <target name="_run-precompiled-test_1.5.x">
+      <!-- Check for jboss-aop.xml override for compiler -->
+      <condition property="aoppath" value="${aop.xml}">
+         <isset property="aop.xml"/>
+      </condition>
+      <condition property="aoppath" value="">
+         <isset property="no.xml"/>
+      </condition>
+      <condition property="aoppath" value="${source.res}/test/${test}/jboss-aop.xml">
+         <not>
+            <isset property="aop.xml"/>
+         </not>
+      </condition>
+
+      <!-- Set the weaving mode and instrumentor to use-->
+      <condition property="optimized" value="true">
+         <or>
+            <equals arg1="${caller}" arg2="precompiled-tests_1.5.x"/>
+            <equals arg1="${caller}" arg2="precompiled-genadvisor-tests_1.5.x"/>
+         </or>
+      </condition>
+      <condition property="optimized" value="false">
+         <equals arg1="${caller}" arg2="non-optimized-precompiled-tests_1.5.x"/>
+      </condition>
+      <condition property="instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor">
+         <not>
+            <equals arg1="${caller}" arg2="precompiled-genadvisor-tests_1.5.x"/>
+         </not>
+      </condition>
+      <condition property="instrumentor" value="org.jboss.aop.instrument.GeneratedAdvisorInstrumentor">
+         <equals arg1="${caller}" arg2="precompiled-genadvisor-tests_1.5.x"/>
+      </condition>
+
+      <echo>Compiling ${test} with optimized=${optimized} and instrumentor ${instrumentor}</echo>
+
+<!--
+      <condition property="aopc.tests.classpath.1.5.x" value="compatibility15.test.classpath" else="test.classpath">
+         <equals arg1="${caller}" arg2="precompiled-compatibility-tests"/>
+      </condition>
+      <condition property="aopc.task.classpath.1.5.x" value="compatibility15.test.classpath" else="aopc.task.classpath.1.5.x">
+         <equals arg1="${caller}" arg2="precompiled-compatibility-tests"/>
+      </condition>
+      -->
+
+
+      <!-- aopc -->
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="aopc.task.classpath.1.5.x"/>
+      <aopc optimized="${optimized}" compilerclasspathref="aopc.task.classpath.1.5.x">
+         <classpath refid="aopc.task.classpath.1.5.x"/>
+         <classpath path="${build.tests.classes}"/>
+         <aoppath path="${aoppath}"/>
+         <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
+         <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
+         <src path="${build.tests.classes}"/>
+         <include name="org/jboss/test/aop/${test}/**"/>
+         <exclude name="${exclude}"/>
+         <aopclasspath path="${build.tests.classes}/org/jboss/test/aop/${test}"/>
+      </aopc>
+
+      <!-- Get -Djboss.aop.path from passed in parameters -->
+      <condition property="jboss.aop.path" value="${aop.xml}">
+         <isset property="aop.xml"/>
+      </condition>
+      <condition property="jboss.aop.path" value="">
+         <isset property="no.xml"/>
+      </condition>
+      <condition property="jboss.aop.path" value="${source.res}/test/${test}/jboss-aop.xml">
+         <not>
+            <isset property="aop.xml"/>
+         </not>
+      </condition>
+
+      <!-- Get -Djboss.aop.class.path from passed in parameters -->
+      <condition property="jboss.aop.class.path" value="${build.tests.classes}">
+         <isset property="use.annotations"/>
+      </condition>
+      <condition property="jboss.aop.class.path" value="">
+         <not>
+            <isset property="use.annotations"/>
+         </not>
+      </condition>
+
+      <!-- determine output directory from weaving mode -->
+      <mkdir dir="${build.reports}"/>
+
+      <junit printsummary="yes" fork="yes" haltonfailure="no">
+         <sysproperty key="jboss.aop.path" value="${jboss.aop.path}"/>
+         <sysproperty key="jboss.aop.class.path" value="${jboss.aop.class.path}"/>
+         <sysproperty key="jboss.aop.optimized" value="${optimized}"/>
+         <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
+         <sysproperty key="jboss-junit-configuration" value="${caller}"/>
+         <sysproperty key="jboss.aop.debug.classes" value="${jboss.aop.debug.classes}"/>
+         <formatter type="plain" extension="-${caller}-jdk50.txt"/>
+         <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-${caller}-jdk50.xml"/>
+         <classpath>
+            <path refid="test.classpath"/>
+            <pathelement location="${build.tests.classes}"/>
+            <pathelement location="docs"/>
+         </classpath>
+         <batchtest todir="${build.reports}"
+            haltonerror="false"
+            haltonfailure="false"
+            fork="true">
+            <fileset dir="${build.tests.classes}">
+               <include name="org/jboss/test/aop/${test}/**/*TestCase.class"/>
+               <include name="org/jboss/test/aop/${test}/**/*Tester.class"/>
+               <exclude name="${exclude}"/>
+
+               <!-- These are not test cases, and so they will fail when junit tries to run them. Should really rename all tests to *TestCase -->
+               <exclude name="org/jboss/test/aop/reflection/ReflectionAspectTester.class"/>
+               <exclude name="org/jboss/test/aop/basic/POJOAspectTester.class"/>
+            </fileset>
+         </batchtest>
+      </junit>
+   </target>
+
+   <target name="compile-stylesheets_1.5.x" depends="init_1.5.x">
+      <mkdir dir="${build.stylesheets}"/>
+      <copy todir="${build.stylesheets}" filtering="yes">
+         <fileset dir="${source.stylesheets}">
+            <include name="**/*"/>
+         </fileset>
+      </copy>
+   </target>
+
+   <target name="tests-report-html_1.5.x" depends="compile-stylesheets_1.5.x">
+      <mkdir dir="${build.reports}/html"/>
+
+      <junitreport todir="${build.reports}">
+         <fileset dir="${build.reports}">
+            <include name="TEST-*.xml"/>
+         </fileset>
+         <report format="frames"
+            todir="${build.reports}/html"
+            styledir="${build.stylesheets}"
+            />
+      </junitreport>
+   </target>
+
+</project>

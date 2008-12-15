@@ -11,7 +11,7 @@
 
 <!-- $Id: build-tests-jdk50.xml 79661 2008-10-17 16:33:15Z pgier $ -->
 
-<project default="main" name="JBoss/AOP">
+<project default="main_2.0.x" name="JBoss/AOP 2.0.x Compliance Tests">
 
    <!-- ================================================================== -->
    <!-- Setup                                                              -->
@@ -29,18 +29,12 @@
    <!-- Initialization                                                     -->
    <!-- ================================================================== -->
 
-   <target name="init" depends="init-maven-environment">
+   <target name="init_2.0.x" depends="init-maven-parent, init-maven-dist-dependencies">
 
      <!-- Defines property overrides -->
      <property file="local.properties"/>
 
-     <!-- Set the name and version of the project here -->
-     <property name="project.name" value="${maven.project.artifactId}"/>
-     <property name="project.version" value="${maven.project.version}"/>
-     <property name="project.build.name" value="${project.name}-${project.version}"/>
-     <property name="project.title" value="${maven.project.name}"/>
-     <echo message="Project: ${project.build.name}"/>
-     <echo message="Title: ${project.title}"/>
+     <echo message="Testing JBoss AOP 2.0.x compilance"/>
 
      <!-- Setup the project environment. -->
      <dirname property="project.parent.root" file="${basedir}"/>
@@ -55,20 +49,22 @@
      <property file="${user.home}/.ant.properties"/>
 
      <!-- Setup the build.log -->
+     <!--
      <property name="buildlog.level" value="info"/>
-     <record name="${project.output}/build.log" append="no" loglevel="${buildlog.level}"/>
+     <record name="${project.output}/build_2.0.x.log" append="no" loglevel="${buildlog.level}"/>
      <property name="init-buildlog.disable" value="true"/>
+     -->
 
-     <path id="jboss.test.classpath">
+     <path id="jboss.test.classpath.2.0.x">
        <pathelement location="${jboss:jboss-test:jar}"/>
      </path>
-     <path id="junit.junit.classpath">
+     <path id="junit.junit.classpath.2.0.x">
        <pathelement location="${junit:junit:jar}"/>
      </path>
      <property name="build.artifact.name" value="${maven.project.build.finalName}.jar"/>
      <property name="build.artifact" value="2.0.x.lib/jboss-aop.jar"/>
 
-     <path id="jboss.aop.classpath">
+     <path id="jboss.aop.classpath.2.0.x">
      <!--
        <pathelement location="${build.artifact}"/>
        -->
@@ -87,6 +83,7 @@
 
      <available file="${jrockit.home}/jre/lib/managementapi.jar" property="JROCKIT_API_AVAILABLE" value="managementapi.jar"/>
      <available file="${jrockit.home}/jre/lib/management-agent.jar" property="JROCKIT_API_AVAILABLE" value="rt.jar"/>
+     <!--
      <condition property="jboss.aop.debug.classes" value="true">
         <isset property="debug"/>
      </condition>
@@ -95,6 +92,7 @@
            <isset property="debug"/>
         </not>
      </condition>
+     -->
 
      <!-- Where source files live -->
      <property name="source.tests.java" value="${project.source}/test"/>
@@ -110,11 +108,11 @@
      <property name="build.lib" value="${project.output}/lib"/>
 
      <!-- classpath and local.classpath must have a value using with a path -->
-     <property name="classpath" value=""/>
-     <property name="local.classpath" value=""/>
+     <property name="classpath.2.0.x" value=""/>
+     <property name="local.classpath.2.0.x" value=""/>
 
      <!-- use the compatibility jars from 2.0 as the base classpath -->
-     <path id="test.classpath">
+     <path id="test.classpath.2.0.x">
         <pathelement path="2.0.x.lib/javassist.jar"/>
         <pathelement path="2.0.x.lib/jboss-aop.jar"/>
         <pathelement path="2.0.x.lib/jboss-common-core.jar"/>
@@ -122,8 +120,8 @@
         <pathelement path="2.0.x.lib/jboss-mdr.jar"/>
         <pathelement path="2.0.x.lib/jboss-reflect.jar"/>
 
-        <path refid="jboss.test.classpath"/>
-        <path refid="junit.junit.classpath"/>
+        <path refid="jboss.test.classpath.2.0.x"/>
+        <path refid="junit.junit.classpath.2.0.x"/>
         
         <path refid="maven.dependencies.test.classpath"/>
         <!--
@@ -131,21 +129,27 @@
         -->
      </path>
 
+     <!-- use the compatibility jars from 2.0 as the base classpath -->
+     <path id="test.classpath">
+        <path refid="maven.dependencies.test.classpath"/>
+        <pathelement path="${build.artifact}"/>
+     </path>
+
      <!-- The classpath required to build classes. -->
-     <path id="javac.classpath">
+     <path id="javac.classpath.2.0.x">
         <path refid="test.classpath"/>
      </path>
 
-     <path id="javac.jrockit.classpath">
-        <path refid="javac.classpath"/>
+     <path id="javac.jrockit.classpath.2.0.x">
+        <path refid="javac.classpath.2.0.x"/>
         <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
      </path>
-     <path id="aopc.task.classpath">
+     <path id="aopc.task.classpath.2.0.x">
         <path refid="maven.dependencies.test.classpath"/>
-        <path refid="jboss.aop.classpath"/>
+        <path refid="jboss.aop.classpath.2.0.x"/>
      </path>
 
-     <path id="test.jrockit.classpath">
+     <path id="test.jrockit.classpath.2.0.x">
         <path refid="test.classpath"/>
         <path path="${jrockit.home}/jre/lib/${JROCKIT_API_AVAILABLE}"/>
      </path>
@@ -179,12 +183,12 @@
       | documentation compiles.
     -->
 
-   <target name="compile"
+   <target name="compile_2.0.x"
       description="Compile all source files."
-      depends="compile-test-classes"/>
+      depends="compile-test-classes_2.0.x"/>
 
    <!-- Compile all class files -->
-   <target name="compile-test-classes" depends="init">
+   <target name="compile-test-classes_2.0.x" depends="init_2.0.x">
       <mkdir dir="${build.tests.classes}"/>
       <javac destdir="${build.tests.classes}"
          optimize="${javac.optimize}"
@@ -211,13 +215,13 @@
    <!-- ================================================================== -->
 
    <!-- Clean up all build output -->
-   <target name="clean"
+   <target name="clean_2.0.x"
       description="Cleans up most generated files."
-      depends="init">
+      depends="init_2.0.x">
       <delete dir="${build.tests.classes}"/>
    </target>
 
-   <target name="clean-tests" depends="init">
+   <target name="clean-tests_2.0.x" depends="init_2.0.x">
       <delete dir="${build.tests.classes}"/>
    </target>
 
@@ -225,59 +229,59 @@
    <!-- Misc.                                                              -->
    <!-- ================================================================== -->
 
-   <target name="main" depends="most"
+   <target name="main_2.0.x" depends="most_2.0.x"
       description="Executes the default target (most)."/>
 
-   <target name="all" depends="compile"
+   <target name="all_2.0.x" depends="init_2.0.x"
       description="Builds everything."/>
 
-   <target name="most" depends="compile"
+   <target name="most_2.0.x" depends="init_2.0.x"
       description="Builds almost everything."/>
 
    <!-- ==================================================================================== -->
    <!-- JDK 5.0 TESTS                                                                        -->
    <!-- ==================================================================================== -->
 
-   <target name="tests" depends="main">
+   <target name="tests_2.0.x" depends="main_2.0.x">
 
       <!--<delete dir="${build.tests.classes}"/>-->
-      <antcall target="javaagent-genadvisor-tests" inheritRefs="true"/>
-      <antcall target="javaagent-tests" inheritRefs="true"/>
+      <antcall target="javaagent-genadvisor-tests_2.0.x" inheritRefs="true"/>
+      <antcall target="javaagent-tests_2.0.x" inheritRefs="true"/>
 
-      <antcall target="system-classloader-test" inheritRefs="true"/>
-      <antcall target="not-woven-tests" inheritRefs="true"/>
+      <antcall target="system-classloader-test_2.0.x" inheritRefs="true"/>
+      <antcall target="not-woven-tests_2.0.x" inheritRefs="true"/>
 
-      <antcall target="precompiled-tests" inheritRefs="true"/>
-
-      <delete dir="${build.tests.classes}"/>
-      <antcall target="precompiled-genadvisor-tests" inheritRefs="true"/>
+      <antcall target="precompiled-tests_2.0.x" inheritRefs="true"/>
 
       <delete dir="${build.tests.classes}"/>
-      <antcall target="non-optimized-precompiled-tests" inheritRefs="true"/>
+      <antcall target="precompiled-genadvisor-tests_2.0.x" inheritRefs="true"/>
+
+      <delete dir="${build.tests.classes}"/>
+      <antcall target="non-optimized-precompiled-tests_2.0.x" inheritRefs="true"/>
 
       <delete dir="${build.tests.classes}"/>
 
       <delete dir="${build.tests.classes}"/>
-      <antcall target="hotswap-tests" inheritRefs="true"/>
+      <antcall target="hotswap-tests_2.0.x" inheritRefs="true"/>
 
       <!--      
-      <antcall target="jrockit-tests" inheritRefs="true"/>
-      <antcall target="jrockit-genadvisor-tests" inheritRefs="true"/>
+      <antcall target="jrockit-tests_2.0.x" inheritRefs="true"/>
+      <antcall target="jrockit-genadvisor-tests_2.0.x" inheritRefs="true"/>
       -->
    </target>
 
-   <target name="all-tests" depends="tests">
+   <target name="all-tests_2.0.x" depends="tests_2.0.x">
       <!-- Should move the remaining tests into something similar to _base-tests.xml and run them from the main targets once JBAOP-268 has been done -->
       <delete dir="${build.tests.classes}/org/jboss/test"/>
-      <antcall target="jdk15-loadtime-tests" inheritRefs="true"/>
+      <antcall target="jdk15-loadtime-tests_2.0.x" inheritRefs="true"/>
 
       <delete dir="${build.tests.classes}/org/jboss/test"/>
-      <antcall target="jdk15-precompiled-tests" inheritRefs="true"/>
+      <antcall target="jdk15-precompiled-tests_2.0.x" inheritRefs="true"/>
 
       <delete dir="${build.tests.classes}"/>
    </target>
 
-   <target name="_base-jdk50-tests">
+   <target name="_base-jdk50-tests_2.0.x">
       <antcall target="${test-target}" inheritRefs="true">
          <param name="test" value="bridgemethod"/>
          <param name="caller" value="${caller}"/>
@@ -293,37 +297,37 @@
    <!-- ==================================================================================== -->
    <!-- JAVAAGENT TESTS (JDK 5.0)                                                        -->
    <!-- ==================================================================================== -->
-   <target name="javaagent-tests" depends="compile-test-classes">
+   <target name="javaagent-tests_2.0.x" depends="compile-test-classes_2.0.x">
       <!-- Tests only applicable for this weaving mode -->
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="override"/>
-         <param name="caller" value="javaagent-tests"/>
+         <param name="caller" value="javaagent-tests_2.0.x"/>
          <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
       </antcall>
 
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="duplicatemethod"/>
-         <param name="caller" value="javaagent-tests"/>
+         <param name="caller" value="javaagent-tests_2.0.x"/>
       </antcall>
 
       <!-- Only run this with loadtime weaving -->
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="annotationproperty"/>
          <param name="no.xml" value="true"/>
-         <param name="caller" value="javaagent-tests"/>
+         <param name="caller" value="javaagent-tests_2.0.x"/>
       </antcall>
 
       <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-jdk50-tests" inheritRefs="true">
-         <param name="caller" value="javaagent-tests"/>
+      <antcall target="_base-jdk50-tests_2.0.x" inheritRefs="true">
+         <param name="caller" value="javaagent-tests_2.0.x"/>
          <param name="test-target" value="_run-javaagent-test"/>
       </antcall>
    </target>
 
-   <target name="javaagent-test" depends="init">
-      <antcall  target="_run-javaagent-test" inheritRefs="true">
+   <target name="javaagent-test_2.0.x" depends="init_2.0.x">
+      <antcall  target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="${test}"/>
-         <param name="caller" value="javaagent-tests"/>
+         <param name="caller" value="javaagent-tests_2.0.x"/>
       </antcall>
    </target>
 
@@ -331,70 +335,70 @@
    <!-- ==================================================================================== -->
    <!-- GENERATED ADVISOR JAVAGENT TESTS (JDK 5.0)                                           -->
    <!-- ==================================================================================== -->
-   <target name="javaagent-genadvisor-tests" depends="compile-test-classes">
+   <target name="javaagent-genadvisor-tests_2.0.x" depends="compile-test-classes_2.0.x">
       <!-- Tests only applicable for this weaving mode -->
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="override"/>
-         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="caller" value="javaagent-genadvisor-tests_2.0.x"/>
          <param name="exclude" value="**/OverrideTestCase.class"/>
       </antcall>
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="duplicatemethod"/>
-         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="caller" value="javaagent-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="dynamicgenadvisor"/>
-         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="caller" value="javaagent-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="nameddomain"/>
-         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="caller" value="javaagent-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="inforesolve"/>
-         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="caller" value="javaagent-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="typedAdvices"/>
-         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="caller" value="javaagent-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="annotatedAdviceParams"/>
-         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="caller" value="javaagent-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="beforeafterthrowingstack"/>
-         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="caller" value="javaagent-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="beforeafterthrowingscoped"/>
-         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="caller" value="javaagent-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="beforeafterthrowingannotated"/>
-         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="caller" value="javaagent-genadvisor-tests_2.0.x"/>
          <param name="no.xml" value="true"/>
          <param name="use.annotations" value="true"/>
       </antcall>
       <!-- Only run this with loadtime weaving -->
-      <antcall target="_run-javaagent-test" inheritRefs="true">
+      <antcall target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="annotationproperty"/>
          <param name="no.xml" value="true"/>
-         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="caller" value="javaagent-genadvisor-tests_2.0.x"/>
       </antcall>
 
 
       <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-jdk50-tests" inheritRefs="true">
-         <param name="caller" value="javaagent-genadvisor-tests"/>
-         <param name="test-target" value="_run-javaagent-test"/>
+      <antcall target="_base-jdk50-tests_2.0.x" inheritRefs="true">
+         <param name="caller" value="javaagent-genadvisor-tests_2.0.x"/>
+         <param name="test-target" value="_run-javaagent-test_2.0.x"/>
       </antcall>
    </target>
 
-   <target name="javaagent-ga-test" depends="init">
-      <antcall  target="_run-javaagent-test" inheritRefs="true">
+   <target name="javaagent-ga-test_2.0.x" depends="init_2.0.x">
+      <antcall  target="_run-javaagent-test_2.0.x" inheritRefs="true">
          <param name="test" value="${test}"/>
-         <param name="caller" value="javaagent-genadvisor-tests"/>
+         <param name="caller" value="javaagent-genadvisor-tests_2.0.x"/>
       </antcall>
    </target>
 
@@ -404,7 +408,7 @@
    <!-- bootclasspath-genadvisor-tests                                                       -->
    <!-- ==================================================================================== -->
 
-   <target name="_run-javaagent-test">
+   <target name="_run-javaagent-test_2.0.x">
 
       <!-- Check for jboss-aop.xml override -->
       <condition property="jboss.aop.path" value="${aop.xml}">
@@ -431,10 +435,10 @@
 
       <!-- Set the weaving mode and instrumentor to use-->
       <condition property="instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor">
-         <equals arg1="${caller}" arg2="javaagent-tests"/>
+         <equals arg1="${caller}" arg2="javaagent-tests_2.0.x"/>
       </condition>
       <condition property="instrumentor" value="org.jboss.aop.instrument.GeneratedAdvisorInstrumentor">
-         <equals arg1="${caller}" arg2="javaagent-genadvisor-tests"/>
+         <equals arg1="${caller}" arg2="javaagent-genadvisor-tests_2.0.x"/>
       </condition>
 
       <echo>Running ${test} with instrumentor ${instrumentor}</echo>
@@ -474,23 +478,23 @@
    <!-- OPTIMIZED PRECOMPILED TESTS (JDK 5.0)                                                -->
    <!-- ==================================================================================== -->
 
-   <target name="precompiled-tests" depends="compile-test-classes">
+   <target name="precompiled-tests_2.0.x" depends="compile-test-classes_2.0.x">
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-jdk50-tests" inheritRefs="true">
-         <param name="caller" value="precompiled-tests"/>
-         <param name="test-target" value="_run-precompiled-test"/>
+      <antcall target="_base-jdk50-tests_2.0.x" inheritRefs="true">
+         <param name="caller" value="precompiled-tests_2.0.x"/>
+         <param name="test-target" value="_run-precompiled-test_2.0.x"/>
       </antcall>
 
       <!-- Tests only applicable for this weaving mode -->
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="override"/>
-         <param name="caller" value="precompiled-tests"/>
+         <param name="caller" value="precompiled-tests_2.0.x"/>
          <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
       </antcall>
 
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="postweavingmixins"/>
-         <param name="caller" value="precompiled-tests"/>
+         <param name="caller" value="precompiled-tests_2.0.x"/>
       </antcall>
    </target>
 
@@ -498,31 +502,31 @@
    <!-- NON OPTIMIZED PRECOMPILED TESTS (JDK 5.0)                                            -->
    <!-- ==================================================================================== -->
 
-   <target name="non-optimized-precompiled-tests" depends="compile-test-classes">
+   <target name="non-optimized-precompiled-tests_2.0.x" depends="compile-test-classes_2.0.x">
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-jdk50-tests" inheritRefs="true">
-         <param name="caller" value="non-optimized-precompiled-tests"/>
-         <param name="test-target" value="_run-precompiled-test"/>
+      <antcall target="_base-jdk50-tests_2.0.x" inheritRefs="true">
+         <param name="caller" value="non-optimized-precompiled-tests_2.0.x"/>
+         <param name="test-target" value="_run-precompiled-test_2.0.x"/>
       </antcall>
 
       <!-- Tests only applicable for this weaving mode -->
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="override"/>
-         <param name="caller" value="non-optimized-precompiled-tests"/>
+         <param name="caller" value="non-optimized-precompiled-tests_2.0.x"/>
          <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
       </antcall>
 
        <!-- This should only be run using compile-time weaving -->
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="postweavingmixins"/>
-         <param name="caller" value="non-optimized-precompiled-tests"/>
+         <param name="caller" value="non-optimized-precompiled-tests_2.0.x"/>
       </antcall>
    </target>
 
-   <target name="non-optimized-precompiled-test" depends="init">
+   <target name="non-optimized-precompiled-test_2.0.x" depends="init_2.0.x">
       <antcall target="_run-precompiled-test" inheritRefs="true">
          <param name="test" value="${test}"/>
-         <param name="caller" value="non-optimized-precompiled-tests"/>
+         <param name="caller" value="non-optimized-precompiled-tests_2.0.x"/>
       </antcall>
    </target>
 
@@ -530,79 +534,79 @@
    <!-- JDK 5.0 GENERATED ADVISOR PRECOMPILED TESTS                                          -->
    <!-- ==================================================================================== -->
 
-   <target name="precompiled-genadvisor-tests" depends="compile-test-classes">
+   <target name="precompiled-genadvisor-tests_2.0.x" depends="compile-test-classes_2.0.x">
 
       <!-- Tests only applicable for this weaving mode -->
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="inforesolve"/>
-         <param name="caller" value="precompiled-genadvisor-tests"/>
+         <param name="caller" value="precompiled-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="typedAdvices"/>
-         <param name="caller" value="precompiled-genadvisor-tests"/>
+         <param name="caller" value="precompiled-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="annotatedAdviceParams"/>
-         <param name="caller" value="precompiled-genadvisor-tests"/>
+         <param name="caller" value="precompiled-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="dynamicgenadvisor"/>
-         <param name="caller" value="precompiled-genadvisor-tests"/>
+         <param name="caller" value="precompiled-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="override"/>
-         <param name="caller" value="precompiled-genadvisor-tests"/>
+         <param name="caller" value="precompiled-genadvisor-tests_2.0.x"/>
          <param name="exclude" value="**/OverrideTestCase.class"/>
       </antcall>
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="nameddomain"/>
-         <param name="caller" value="precompiled-genadvisor-tests"/>
+         <param name="caller" value="precompiled-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="beforeafterthrowingstack"/>
-         <param name="caller" value="precompiled-genadvisor-tests"/>
+         <param name="caller" value="precompiled-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="beforeafterthrowingscoped"/>
-         <param name="caller" value="precompiled-genadvisor-tests"/>
+         <param name="caller" value="precompiled-genadvisor-tests_2.0.x"/>
       </antcall>
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="beforeafterthrowingannotated"/>
-         <param name="caller" value="precompiled-genadvisor-tests"/>
+         <param name="caller" value="precompiled-genadvisor-tests_2.0.x"/>
          <param name="no.xml" value="true"/>
          <param name="use.annotations" value="true"/>
       </antcall>
 
        <!-- This should only be run using compile-time weaving -->
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="postweavingmixins"/>
-         <param name="caller" value="precompiled-genadvisor-tests"/>
+         <param name="caller" value="precompiled-genadvisor-tests_2.0.x"/>
       </antcall>
 
 
       <!-- Add tests in _base-precompiled-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-jdk50-tests" inheritRefs="true">
-         <param name="caller" value="precompiled-genadvisor-tests"/>
-         <param name="test-target" value="_run-precompiled-test"/>
+      <antcall target="_base-jdk50-tests_2.0.x" inheritRefs="true">
+         <param name="caller" value="precompiled-genadvisor-tests_2.0.x"/>
+         <param name="test-target" value="_run-precompiled-test_2.0.x"/>
       </antcall>
 
    </target>
 
-   <target name="precompiled-test" depends="init">
-      <antcall  target="_run-precompiled-test" inheritRefs="true">
+   <target name="precompiled-test_2.0.x" depends="init_2.0.x">
+      <antcall  target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="${test}"/>
-         <param name="caller" value="precompiled-tests"/>
+         <param name="caller" value="precompiled-tests_2.0.x"/>
       </antcall>
    </target>
 
-   <target name="precompiled-genadvisor-test" depends="init">
-      <antcall target="_run-precompiled-test" inheritRefs="true">
+   <target name="precompiled-genadvisor-test_2.0.x" depends="init_2.0.x">
+      <antcall target="_run-precompiled-test_2.0.x" inheritRefs="true">
          <param name="test" value="${test}"/>
-         <param name="caller" value="precompiled-genadvisor-tests"/>
+         <param name="caller" value="precompiled-genadvisor-tests_2.0.x"/>
       </antcall>
    </target>
 
-   <target name="_run-precompiled-test">
+   <target name="_run-precompiled-test_2.0.x">
       <!-- Check for jboss-aop.xml override for compiler -->
       <condition property="aoppath" value="${aop.xml}">
          <isset property="aop.xml"/>
@@ -619,29 +623,28 @@
       <!-- Set the weaving mode and instrumentor to use-->
       <condition property="optimized" value="true">
          <or>
-            <equals arg1="${caller}" arg2="precompiled-tests"/>
-            <equals arg1="${caller}" arg2="precompiled-genadvisor-tests"/>
+            <equals arg1="${caller}" arg2="precompiled-tests_2.0.x"/>
+            <equals arg1="${caller}" arg2="precompiled-genadvisor-tests_2.0.x"/>
          </or>
       </condition>
       <condition property="optimized" value="false">
-         <equals arg1="${caller}" arg2="non-optimized-precompiled-tests"/>
+         <equals arg1="${caller}" arg2="non-optimized-precompiled-tests_2.0.x"/>
       </condition>
       <condition property="instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor">
          <not>
-            <equals arg1="${caller}" arg2="precompiled-genadvisor-tests"/>
+            <equals arg1="${caller}" arg2="precompiled-genadvisor-tests_2.0.x"/>
          </not>
       </condition>
       <condition property="instrumentor" value="org.jboss.aop.instrument.GeneratedAdvisorInstrumentor">
-         <equals arg1="${caller}" arg2="precompiled-genadvisor-tests"/>
+         <equals arg1="${caller}" arg2="precompiled-genadvisor-tests_2.0.x"/>
       </condition>
 
       <echo>Compiling ${test} with optimized=${optimized} and instrumentor ${instrumentor}</echo>
 
       <!-- aopc -->
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="${aopc.task.classpath}"/>
-      <aopc optimized="${optimized}" compilerclasspathref="${aopc.task.classpath}">
-         <classpath refid="${aopc.task.classpath}"/>
-         <classpath refid="${aopc.tests.classpath}"/>
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="aopc.task.classpath.2.0.x"/>
+      <aopc optimized="${optimized}" compilerclasspathref="aopc.task.classpath.2.0.x">
+         <classpath refid="aopc.task.classpath.2.0.x"/>
          <classpath path="${build.tests.classes}"/>
          <aoppath path="${aoppath}"/>
          <sysproperty key="jboss.aop.instrumentor" value="${instrumentor}"/>
@@ -714,12 +717,12 @@
    <!-- NON-WOVEN TESTS                                                                      -->
    <!-- ==================================================================================== -->
 
-   <target name="not-woven-tests" depends="compile-test-classes">
+   <target name="not-woven-tests_2.0.x" depends="compile-test-classes_2.0.x">
       <mkdir dir="${build.reports}"/>
 
-      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
-      <annotationc compilerclasspathref="aopc.task.classpath" bytecode="true">
-         <classpath refid="aopc.task.classpath"/>
+      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath.2.0.x"/>
+      <annotationc compilerclasspathref="aopc.task.classpath.2.0.x" bytecode="true">
+         <classpath refid="aopc.task.classpath.2.0.x"/>
          <classpath path="${build.tests.classes}"/>
          <src path="${source.tests.java}/org/jboss/test/aop/annotationc"/>
       </annotationc>
@@ -727,7 +730,7 @@
       <junit printsummary="yes" fork="no" haltonfailure="no" >
          <sysproperty key="jboss.aop.debug.classes" value="${jboss.aop.debug.classes}"/>
          <classpath>
-            <path refid="javac.classpath"/>
+            <path refid="javac.classpath.2.0.x"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -756,7 +759,7 @@
       <junit printsummary="yes" fork="yes" haltonfailure="no">
          <sysproperty key="jboss.aop.path" value="${source.res}/test/container/jboss-aop.xml"/>
          <classpath>
-            <path refid="javac.classpath"/>
+            <path refid="javac.classpath.2.0.x"/>
             <pathelement location="${build.tests.classes}"/>
             <pathelement location="docs"/>
          </classpath>
@@ -771,7 +774,7 @@
    <!-- JDK 5 TESTS                                                                          -->
    <!-- ==================================================================================== -->
 
-   <target name="jdk15-loadtime-tests" depends="compile">
+   <target name="jdk15-loadtime-tests_2.0.x" depends="compile_2.0.x">
 
       <property name="report.dir" value="${build.reports}"/>
       <mkdir dir="${report.dir}"/>
@@ -895,14 +898,14 @@
 
    </target>
 
-   <target name="jdk15-precompiled-tests" depends="compile">
+   <target name="jdk15-precompiled-tests_2.0.x" depends="compile_2.0.x">
       <property name="report.dir" value="${build.reports}"/>
       <mkdir dir="${report.dir}"/>
 
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath.2.0.x"/>
 
-      <aopc compilerclasspathref="aopc.task.classpath">
-         <classpath refid="aopc.task.classpath"/>
+      <aopc compilerclasspathref="aopc.task.classpath.2.0.x">
+         <classpath refid="aopc.task.classpath.2.0.x"/>
          <classpath path="${build.tests.classes}"/>
          <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
          <src path="${build.tests.classes}"/>
@@ -913,8 +916,8 @@
          <aopclasspath path="${build.tests.classes}"/>
       </aopc>
 
-      <aopc compilerclasspathref="aopc.task.classpath">
-         <classpath refid="aopc.task.classpath"/>
+      <aopc compilerclasspathref="aopc.task.classpath.2.0.x">
+         <classpath refid="aopc.task.classpath.2.0.x"/>
          <classpath path="${build.tests.classes}"/>
          <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
          <src path="${build.tests.classes}"/>
@@ -925,7 +928,7 @@
         <!-- process jdk15/dynamic/common/scenario with prepareAll jboss-aop.xml file -->
       <unjar src="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
              dest="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
-        <aopc verbose="false" compilerclasspathref="aopc.task.classpath">
+        <aopc verbose="false" compilerclasspathref="aopc.task.classpath.2.0.x">
         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
         <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
         <classpath path="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario/"/>
@@ -940,7 +943,7 @@
      <!-- process jdk15/dynamic/common/scenario with prepareConstructor jboss-aop.xml file -->
       <unjar src="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
              dest="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
-     <aopc verbose="false" compilerclasspathref="aopc.task.classpath">
+     <aopc verbose="false" compilerclasspathref="aopc.task.classpath.2.0.x">
         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
         <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
         <classpath path="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario/"/>
@@ -955,7 +958,7 @@
      <!-- process jdk15/dynamic/common/scenario with prepareField jboss-aop.xml file -->
       <unjar src="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
              dest="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
-     <aopc verbose="false" compilerclasspathref="aopc.task.classpath">
+     <aopc verbose="false" compilerclasspathref="aopc.task.classpath.2.0.x">
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
          <classpath path="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario/"/>
@@ -970,7 +973,7 @@
      <!-- process jdk15/dynamic/common/scenario with prepareFieldGet jboss-aop.xml file -->
       <unjar src="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
              dest="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
-       <aopc verbose="false" compilerclasspathref="aopc.task.classpath">
+       <aopc verbose="false" compilerclasspathref="aopc.task.classpath.2.0.x">
         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
         <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
         <classpath path="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario/"/>
@@ -985,7 +988,7 @@
      <!-- process jdk15/dynamic/common/scenario with prepareFieldSet jboss-aop.xml file -->
       <unjar src="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
              dest="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
-     <aopc verbose="false" compilerclasspathref="aopc.task.classpath">
+     <aopc verbose="false" compilerclasspathref="aopc.task.classpath.2.0.x">
         <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
         <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
         <classpath path="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario/"/>
@@ -1000,7 +1003,7 @@
      <!-- process jdk15/dynamic/common/scenario with prepareMethod jboss-aop.xml file -->
       <unjar src="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario.jar"
              dest="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario"/>
-      <aopc verbose="false" compilerclasspathref="aopc.task.classpath">
+      <aopc verbose="false" compilerclasspathref="aopc.task.classpath.2.0.x">
          <sysproperty key="jboss.aop.instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor"/>
          <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
          <classpath path="${build.tests.classes}/org/jboss/test/aop/jdk15/dynamic/common/scenario/"/>
@@ -1115,7 +1118,7 @@
          <test todir="${report.dir}" name="org.jboss.test.aop.jdk15.dynamic.prepareMethod.HotSwapDisabledTester" />
       </junit>
    </target>
-   <target name="hotswap-tests" depends="compile">
+   <target name="hotswap-tests_2.0.x" depends="compile_2.0.x">
 
       <property name="report.dir" value="${build.reports}"/>
       <mkdir dir="${report.dir}"/>
@@ -1217,32 +1220,32 @@
    <!-- ==================================================================================== -->
    <!-- JROCKIT TESTS (JDK 5.0)                                                        -->
    <!-- ==================================================================================== -->
-   <target name="jrockit-tests" depends="compile-test-classes" if="JROCKIT_API_AVAILABLE">
+   <target name="jrockit-tests_2.0.x" depends="compile-test-classes_2.0.x" if="JROCKIT_API_AVAILABLE">
 
       <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-jdk50-tests" inheritRefs="true">
-         <param name="caller" value="jrockit-tests"/>
-         <param name="test-target" value="_run-jrockit-test"/>
+      <antcall target="_base-jdk50-tests_2.0.x" inheritRefs="true">
+         <param name="caller" value="jrockit-tests_2.0.x"/>
+         <param name="test-target" value="_run-jrockit-test_2.0.x"/>
       </antcall>
 
 
       <!-- Tests only applicable for this weaving mode -->
-      <antcall target="_run-jrockit-test" inheritRefs="true">
+      <antcall target="_run-jrockit-test_2.0.x" inheritRefs="true">
          <param name="test" value="override"/>
-         <param name="caller" value="jrockit-tests"/>
+         <param name="caller" value="jrockit-tests_2.0.x"/>
          <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
       </antcall>
-      <antcall target="_run-jrockit-test" inheritRefs="true">
+      <antcall target="_run-jrockit-test_2.0.x" inheritRefs="true">
          <param name="test" value="duplicatemethod"/>
-         <param name="caller" value="jrockit-tests"/>
+         <param name="caller" value="jrockit-tests_2.0.x"/>
       </antcall>
 
    </target>
 
-   <target name="jrockit-test" depends="compile-test-classes" if="JROCKIT_API_AVAILABLE">
+   <target name="jrockit-test_2.0.x" depends="compile-test-classes_2.0.x" if="JROCKIT_API_AVAILABLE">
          <antcall target="_run-jrockit-test" inheritRefs="true">
             <param name="test" value="${test}"/>
-            <param name="caller" value="jrockit-tests"/>
+            <param name="caller" value="jrockit-tests_2.0.x"/>
             <param name="exclude" value="**/GenAdvisorOverrideTestCase.class"/>
          </antcall>
    </target>
@@ -1250,28 +1253,28 @@
    <!-- ==================================================================================== -->
    <!-- GENERATED ADVISOR JROCKIT TESTS (JDK 5.0)                                           -->
    <!-- ==================================================================================== -->
-   <target name="jrockit-genadvisor-tests" depends="compile-test-classes" if="JROCKIT_API_AVAILABLE">
+   <target name="jrockit-genadvisor-tests_2.0.x" depends="compile-test-classes_2.0.x" if="JROCKIT_API_AVAILABLE">
 
       <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
-      <antcall target="_base-jdk50-tests" inheritRefs="true">
-         <param name="caller" value="jrockit-genadvisor-tests"/>
+      <antcall target="_base-jdk50-tests_2.0.x" inheritRefs="true">
+         <param name="caller" value="jrockit-genadvisor-tests_2.0.x"/>
          <param name="test-target" value="_run-jrockit-test"/>
       </antcall>
 
       <!-- Tests only applicable for this weaving mode -->
-      <antcall target="_run-jrockit-test" inheritRefs="true">
+      <antcall target="_run-jrockit-test_2.0.x" inheritRefs="true">
          <param name="test" value="override"/>
-         <param name="caller" value="jrockit-genadvisor-tests"/>
+         <param name="caller" value="jrockit-genadvisor-tests_2.0.x"/>
          <param name="exclude" value="**/OverrideTestCase.class"/>
       </antcall>
-      <antcall target="_run-jrockit-test" inheritRefs="true">
+      <antcall target="_run-jrockit-test_2.0.x" inheritRefs="true">
          <param name="test" value="duplicatemethod"/>
-         <param name="caller" value="jrockit-genadvisor-tests"/>
+         <param name="caller" value="jrockit-genadvisor-tests_2.0.x"/>
       </antcall>
    </target>
 
 
-   <target name="_run-jrockit-test">
+   <target name="_run-jrockit-test_2.0.x">
 
       <!-- Check for jboss-aop.xml override -->
       <condition property="jboss.aop.path" value="${aop.xml}">
@@ -1298,10 +1301,10 @@
 
       <!-- Set the weaving mode and instrumentor to use-->
       <condition property="instrumentor" value="org.jboss.aop.instrument.ClassicInstrumentor">
-         <equals arg1="${caller}" arg2="jrockit-tests"/>
+         <equals arg1="${caller}" arg2="jrockit-tests_2.0.x"/>
       </condition>
       <condition property="instrumentor" value="org.jboss.aop.instrument.GeneratedAdvisorInstrumentor">
-         <equals arg1="${caller}" arg2="jrockit-genadvisor-tests"/>
+         <equals arg1="${caller}" arg2="jrockit-genadvisor-tests_2.0.x"/>
       </condition>
 
       <echo>Running ${test} with instrumentor ${instrumentor}</echo>
@@ -1318,7 +1321,7 @@
          <classpath refid="test.classpath"/>
          <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" extension="-${caller}.xml"/>
          <classpath>
-            <path refid="test.jrockit.classpath"/>
+            <path refid="test.jrockit.classpath.2.0.x"/>
             <pathelement location="${build.tests.classes}"/>
          </classpath>
          <batchtest todir="${build.reports}"
@@ -1345,152 +1348,152 @@
    <!-- MEMORY TESTS (JDK 5.0)                                                               -->
    <!-- ==================================================================================== -->
 
-   <target name="memory-tests" depends="compile-test-classes">
-      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
-      <antcall  target="memory-test" inheritRefs="true">
+   <target name="memory-tests_2.0.x" depends="compile-test-classes_2.0.x">
+      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath.2.0.x"/>
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="annotatedcflow"/>
          <param name="case" value="AnnotatedCFlowTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="annotatedparams"/>
          <param name="case" value="AnnotatedParamsTester"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="arguments"/>
          <param name="case" value="ArgumentsTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="basic"/>
          <param name="case" value="AOPTester"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="beanstyleconfig"/>
          <param name="case" value="ConfigTester"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="typedAdvices"/>
          <param name="case" value="BeforeAfterThrowingTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="annotatedAdviceParams"/>
          <param name="case" value="ArgsTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="annotatedAdviceParams"/>
          <param name="case" value="ArgTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="annotatedAdviceParams"/>
          <param name="case" value="CallerTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="annotatedAdviceParams"/>
          <param name="case" value="JoinPointTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="annotatedAdviceParams"/>
          <param name="case" value="OverloadedAdviceTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="annotatedAdviceParams"/>
          <param name="case" value="ReturnTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="annotatedAdviceParams"/>
          <param name="case" value="TargetTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="annotatedAdviceParams"/>
          <param name="case" value="ThrownTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="beforeafterthrowingscoped"/>
          <param name="case" value="BeforeAfterThrowingScopedTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="beforeafterthrowingstack"/>
          <param name="case" value="BeforeAfterThrowingStackTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="bridgemethod"/>
          <param name="case" value="BridgeMethodWeavingTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="callerargs"/>
          <param name="case" value="CallerArgsTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="callerscope"/>
          <param name="case" value="CallerScopeTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="construction"/>
          <param name="case" value="ConstructionTester"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="constructortarget"/>
          <param name="case" value="ConstructorTargetTester"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="dotinpointcutname"/>
          <param name="case" value="DotInPointcutNameTestCase"/>
       </antcall>
-            <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="dynamicgenadvisor"/>
          <param name="case" value="DynamicTester"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="extender"/>
          <param name="case" value="ExtenderTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="field"/>
          <param name="case" value="FieldTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="implementz"/>
          <param name="case" value="ImplementsTester"/>
       </antcall>
-            <antcall  target="memory-test" inheritRefs="true">
+            <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="inforesolve"/>
          <param name="case" value="InfoResolveAnnotationTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="instanceofannotated"/>
          <param name="case" value="InstanceOfAnnotatedTester"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="instanceofintroduced"/>
          <param name="case" value="InstanceofIntroducedTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="introduction"/>
          <param name="case" value="IntroductionTester"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="invoketarget"/>
          <param name="case" value="InvokeTargetTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="marshalling"/>
          <param name="case" value="MarshallingTester"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="override"/>
          <param name="case" value="OverrideTestCase"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="perjoinpoint"/>
          <param name="case" value="PerJoinpointTester"/>
       </antcall>
-      <antcall  target="memory-test" inheritRefs="true">
+      <antcall  target="memory-test_2.0.x" inheritRefs="true">
          <param name="test" value="scope"/>
          <param name="case" value="ScopeTestCase"/>
       </antcall>
    </target>
 
-   <target name="memory-test" depends="init">
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
+   <target name="memory-test_2.0.x" depends="init_2.0.x">
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath.2.0.x"/>
       <property name="aoppath" value="${source.res}/test/${test}/jboss-aop.xml"/>
       <property name="testcase" value="org.jboss.test.aop.${test}.${case}"/>
 
@@ -1498,8 +1501,8 @@
          <isset property="extraClasses"/>
       </condition>
 
-      <aopc compilerclasspathref="aopc.task.classpath">
-         <classpath refid="aopc.task.classpath"/>
+      <aopc compilerclasspathref="aopc.task.classpath.2.0.x">
+         <classpath refid="aopc.task.classpath.2.0.x"/>
          <classpath path="${build.tests.classes}"/>
          <aoppath path="${aoppath}"/>
          <src path="${build.tests.classes}"/>
@@ -1508,7 +1511,7 @@
       </aopc>
 
       <property name="report.dir" value="${build.reports}"/>
-      <mkdir dir="${report.dir}/memory-tests"/>
+      <mkdir dir="${report.dir}/memory-tests_2.0.x"/>
 
       <echo>${testcase}</echo>
       <junit printsummary="yes" fork="yes" haltonfailure="no">
@@ -1527,12 +1530,12 @@
    </target>
 
 
-   <target name="compiletime-declare" depends="compile-test-classes">
-      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
-      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aopc.classpath"/>
+   <target name="compiletime-declare_2.0.x" depends="compile-test-classes_2.0.x">
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath.2.0.x"/>
+      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aopc.classpath.2.0.x"/>
 
-      <annotationc compilerclasspathref="aopc.task.classpath" bytecode="true">
-         <classpath refid="aopc.task.classpath"/>
+      <annotationc compilerclasspathref="aopc.task.classpath.2.0.x" bytecode="true">
+         <classpath refid="aopc.task.classpath.2.0.x"/>
          <classpath path="${build.tests.classes}"/>
          <src path="${source.tests.java}"/>
         <include name="org/jboss/test/aop/annotated/declare/*.java"/>
@@ -1554,8 +1557,8 @@
          RUNNING AOPC TASK
       </echo>
 
-      <aopc compilerclasspathref="aopc.task.classpath">
-         <classpath refid="aopc.task.classpath"/>
+      <aopc compilerclasspathref="aopc.task.classpath.2.0.x">
+         <classpath refid="aopc.task.classpath.2.0.x"/>
          <classpath path="${build.tests.classes}"/>
          <sysproperty key="java.io.tmpdir" value="${aopc.tmpdir}"/>
          <src path="${build.tests.classes}"/>
@@ -1567,7 +1570,7 @@
    </target>
 
 
-   <target name="system-classloader-test" depends="compile-test-classes">
+   <target name="system-classloader-test_2.0.x" depends="compile-test-classes_2.0.x">
       <!-- Even though this is deprecated we should still make sure it works from time to time -->
       <junit printsummary="yes" fork="no" haltonfailure="false">
          <sysproperty key="java.system.class.loader" value="org.jboss.aop.standalone.SystemClassLoader"/>
@@ -1585,7 +1588,7 @@
       </junit>
    </target>
 
-   <target name="compile-stylesheets" depends="init">
+   <target name="compile-stylesheets_2.0.x" depends="init_2.0.x">
       <mkdir dir="${build.stylesheets}"/>
       <copy todir="${build.stylesheets}" filtering="yes">
          <fileset dir="${source.stylesheets}">
@@ -1594,7 +1597,7 @@
       </copy>
    </target>
 
-   <target name="tests-report-html" depends="compile-stylesheets">
+   <target name="tests-report-html_2.0.x" depends="compile-stylesheets_2.0.x">
       <mkdir dir="${build.reports}/html"/>
 
       <junitreport todir="${build.reports}">
