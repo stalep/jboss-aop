@@ -40,7 +40,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.jboss.aophelper.core.AopBaseSettings;
-import org.jboss.aophelper.core.AopCompile;
 import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopRun;
 import org.w3c.dom.Document;

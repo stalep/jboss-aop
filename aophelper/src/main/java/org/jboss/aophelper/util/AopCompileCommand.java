@@ -24,7 +24,6 @@ package org.jboss.aophelper.util;
 import java.io.File;
 import java.io.IOException;
 
-import org.jboss.aophelper.core.AopCompile;
 import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopRun;
 
