@@ -248,7 +248,6 @@
    <target name="tests" depends="main">
 
       <!--<delete dir="${build.tests.classes}"/>-->
-      <!--
       <antcall target="javaagent-genadvisor-tests" inheritRefs="true"/>
       <antcall target="javaagent-tests" inheritRefs="true"/>
 
@@ -265,7 +264,6 @@
 
       <delete dir="${build.tests.classes}"/>
       <antcall target="hotswap-tests" inheritRefs="true"/>
-      -->
 
       <!-- test JBoss AOP 1.5 compatibility -->
       <antcall target="tests_1.5.x" />
