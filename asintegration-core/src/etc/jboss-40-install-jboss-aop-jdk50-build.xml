@@ -63,26 +63,7 @@
             <isset property="jbossall-client.bak.exists"/>
          </not>
       </condition>
-      
-      <property name="jboss.aop.lib" value="../../lib"/>
-      <available file="${jboss.aop.lib}" property="lib.jboss.aop.exists"/>
-      <fail unless="lib.jboss.aop.exists" message="${jboss.aop.lib} does not exist. Modify build.xml, setting the value of the property 'jboss.aop.lib' to be the path of the JBoss AOP lib installation directory."/>
-      
-      <property name="lib.jbossaop-client" value="${jboss.aop.lib}/jboss-aop-client.jar"/>
-      <available file="${lib.jbossaop-client}" property="lib.jbossaop-client.exists"/>
-      <fail unless="lib.jbossaop-client.exists" message="${lib.jbossaop-client} does not exist. Modify build.xml, setting the value of the property 'jboss.aop.lib' to be the path of the JBoss AOP lib installation directory."/>
-      
-      <property name="lib.jbossaop-client.injboss" value="${jboss.client.dir}/jboss-aop-jdk50-client.jar"/>
-      <available file="${lib.jbossaop-client.injboss}" property="lib.jbossaop-client.injboss.exists"/>
-      <fail unless="lib.jbossaop-client.injboss.exists" message="${lib.jbossaop-client.injboss} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
-      
-      <property name="bak.jbossaop-client" value="${jboss.client.dir}/jboss-aop-jdk50-client.bak"/>
-      <available file="${bak.jbossaop-client}" property="jbossaop-client.bak.exists"/>
-      <condition property="backup.jbossaop-client" value="true">
-         <not>
-            <isset property="jbossaop-client.bak.exists"/>
-         </not>
-      </condition>
+  
    </target>
 
    <target name="prepare-aspect-library" depends="init">
@@ -127,15 +108,6 @@
       <copy file="${lib.jbossall-client}" tofile="${bak.jbossall-client}"/>
    </target>
 
-   <target name="update-jbossaop-library" depends="init,backup-jbossaop-library">
-      <copy file="${lib.jbossaop-client}" tofile="${bak.jbossaop-client.injboss}"/>         
-   </target>   
-   
-   <target name="backup-jbossaop-library" if="backup.jbossaop-client">
-      <echo>Backing up existing ${lib.jbossaop-client.injboss} to ${bak.jbossaop-client}</echo>
-   	<copy file="${lib.jbossaop-client.injboss}" tofile="${bak.jbossaop-client}"/>
-   </target>
-   
    <target name="backup" depends="prepare-aspect-library" unless="old.deployer.exists">
       <echo>Backing up existing aop deployer to ${old.deployer}</echo>
       <copy todir="${old.deployer}">
@@ -162,7 +134,7 @@
       <move file="${lib.javassist}" tofile="${bak.javassist}"/>
    </target>
    
-   <target name="install.bin" depends="init, update-jbossall-library, update-jbossaop-library">
+   <target name="install.bin" depends="init, update-jbossall-library">
       <copy todir="${jboss.bin.dir}">
          <fileset dir="../../lib">
             <include name="pluggable-instrumentor.jar"/>
