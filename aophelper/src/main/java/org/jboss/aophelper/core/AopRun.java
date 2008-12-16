@@ -38,6 +38,7 @@ public class AopRun extends AopBaseSettings implements Serializable
    private boolean loadtime;
    
    private String executionClass;
+   private String srcPath;
 
    public AopRun()
    {
@@ -66,6 +67,25 @@ public class AopRun extends AopBaseSettings implements Serializable
    {
       this.executionClass = executionClass;
    }
+   
+   public final String calculateCorrectExecutionClass()
+   {      
+      if(getExecutionClass().startsWith(getWorkingdir()))
+      {
+        String rest = getExecutionClass().split(getWorkingdir())[1];
+        if(rest.startsWith("/"))
+          rest = rest.substring(1);
+        rest = rest.replaceAll("/",".");
+        int index = rest.lastIndexOf(".class");
+        rest = rest.substring(0,index);
+        System.out.println("rest="+rest);
+
+        return rest;
+      }
+      else
+         return null;
+      
+   }
 
    /**
     * Get the runtime.
@@ -85,6 +105,26 @@ public class AopRun extends AopBaseSettings implements Serializable
    public final void setLoadtime(boolean runtime)
    {
       this.loadtime = runtime;
+   }
+
+   /**
+    * Get the srcPath.
+    * 
+    * @return the srcPath.
+    */
+   public String getSrcPath()
+   {
+      return srcPath;
+   }
+
+   /**
+    * Set the srcPath.
+    * 
+    * @param srcPath The srcPath to set.
+    */
+   public void setSrcPath(String srcPath)
+   {
+      this.srcPath = srcPath;
    }
    
    

@@ -167,6 +167,17 @@ public class AopHelperMenuBar extends JMenuBar
       });
       editMenu.add(load);
       
+      JMenuItem saveAnt = new JMenuItem("Save settings as ant build file", 'A');
+//      saveAnt.setAccelerator(KeyStroke.getKeyStroke('S',
+//            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+      saveAnt.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent event)
+         {
+            AopHelperMediator.instance().saveAntSettings();
+         }
+      });
+      editMenu.add(saveAnt);
+      
       return editMenu;
    }
    

@@ -27,7 +27,7 @@ import org.jboss.aophelper.core.Action;
 import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopOption;
 import org.jboss.aophelper.ui.AopHelperMediator;
-import org.jboss.aophelper.ui.compile.CompileMediator;
+import org.jboss.aophelper.ui.AopHelperUiMediator;
 import org.jboss.aophelper.util.AopCompileCommand;
 
 /**
@@ -38,11 +38,11 @@ import org.jboss.aophelper.util.AopCompileCommand;
  */
 public class CompileManager
 {
-   private CompileMediator mediator;
+   private AopHelperUiMediator mediator;
    
    public CompileManager()
    {
-      mediator = CompileMediator.instance();
+      mediator = AopHelperUiMediator.instance();
    }
 
    public void performAction(Action a, AopOption to)
@@ -90,9 +90,9 @@ public class CompileManager
       File[] files = AopHelperMediator.instance().getMainPane().createFileCooser();   
       for(File f : files)
       {
-         AopHandler.instance().getCompile().addClasspath(f.getAbsolutePath());
-         mediator.getClasspathModel().addRow(f.getAbsolutePath());
+         AopHandler.instance().getRun().addClasspath(f.getAbsolutePath());
       }
+      mediator.refresh();
    }
    
    private void removeClasspath()
@@ -100,10 +100,10 @@ public class CompileManager
       String selected = mediator.getClasspathTable().getSelectedItem();
       if(selected != null)
       {
-         AopHandler.instance().getCompile().removeClasspath(selected);
-         mediator.getClasspathModel().removeRow(selected);
-         mediator.getClasspathTable().clearSelectedItem();
+         AopHandler.instance().getRun().removeClasspath(selected);
+         mediator.clearSelected();
       }
+      mediator.refresh();
    }
 
    private void addXml()
@@ -111,9 +111,9 @@ public class CompileManager
       File[] files = AopHelperMediator.instance().getMainPane().createFileCooser();
       for(File f : files)
       {
-         AopHandler.instance().getCompile().addXml(f.getAbsolutePath());
-         mediator.getXmlModel().addRow(f.getAbsolutePath());
+         AopHandler.instance().getRun().addXml(f.getAbsolutePath());
       }
+      mediator.refresh();
    }
    
    private void removeXml()
@@ -121,25 +121,26 @@ public class CompileManager
       String selected = mediator.getXmlTable().getSelectedItem();
       if(selected != null)
       {
-         AopHandler.instance().getCompile().removeClasspath(selected);
-         mediator.getXmlModel().removeRow(selected);
-         mediator.getXmlTable().clearSelectedItem();
+         System.out.println("removing Xml");
+         AopHandler.instance().getRun().removeXml(selected);
+         mediator.clearSelected();
       }
+      mediator.refresh();
    }
    
    private void setVerbose(boolean verbose)
    {
-      AopHandler.instance().getCompile().setVerbose(verbose);
+      AopHandler.instance().getRun().setVerbose(verbose);
    }
    
    private void setSuppress(boolean suppress)
    {
-      AopHandler.instance().getCompile().setSuppress(suppress);
+      AopHandler.instance().getRun().setSuppress(suppress);
    }
    
    private void setNoopt(boolean noopt)
    {
-      AopHandler.instance().getCompile().setNoopt(noopt);
+      AopHandler.instance().getRun().setNoopt(noopt);
    }
    
    private void setWorkingdir()
@@ -147,14 +148,14 @@ public class CompileManager
       File[] files = AopHelperMediator.instance().getMainPane().createFileCooser();
       for(File f : files)
       {
-         AopHandler.instance().getCompile().setWorkingdir(f.getAbsolutePath());
-         mediator.getCompileOptionsPane().setWorkingDir(f.getAbsolutePath());
+         AopHandler.instance().getRun().setWorkingdir(f.getAbsolutePath());
       }
+      mediator.refresh();
    }
 
    private void compile()
    {
-      if(AopHandler.instance().getCompile().getWorkingdir() == null)
+      if(AopHandler.instance().getRun().getWorkingdir() == null)
          AopHelperMediator.instance().getMainPane().displayMessageDialog("Must set working directory");
       else
       {

@@ -21,6 +21,7 @@
   */
 package org.jboss.aophelper.core;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -86,6 +87,26 @@ public class AopBaseSettings
    public List<String> getAopXml()
    {
       return aopXml;
+   }
+   
+   public String getAopXmlAsString()
+   {
+      StringBuffer sb = new StringBuffer();
+      if(aopXml != null)
+      {
+         for(String aoppath : aopXml)
+         {
+            if(aoppath != null)
+            {
+               if(sb.length() > 0)
+                  sb.append(File.pathSeparator);
+               sb.append(aoppath);
+            }
+         }
+         return sb.toString();
+      }
+      else
+         return null;
    }
 
    /**

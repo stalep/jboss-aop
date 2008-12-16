@@ -30,6 +30,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
+import org.jboss.aophelper.ui.AopHelperUiMediator;
+
 /**
  * A OutputPane.
  * 
@@ -51,7 +53,7 @@ public class OutputPane extends JPanel
    
    private void init()
    {
-      CompileMediator.instance().setOutputPane(this);
+      AopHelperUiMediator.instance().setOutputPane(this);
       
 //      setBackground(Color.white);
       setLayout(new FlowLayout());

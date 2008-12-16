@@ -38,5 +38,6 @@ public enum AopOption
    LOADTIME,
    REPORT,
    EXECLASS,
+   SRCPATH,
    UNSPECIFIED;
 }

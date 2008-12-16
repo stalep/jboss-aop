@@ -109,7 +109,7 @@ public class BaseConfigParser
             Node compile = findElementNode("compile", aophelper);
             Node run = findElementNode("run", aophelper);
             
-            AopHandler.instance().setCompile( parseCompile(compile));
+            AopHandler.instance().setRun( parseCompile(compile));
             AopHandler.instance().setRun(parseRun(run));
 
          }
@@ -128,12 +128,12 @@ public class BaseConfigParser
    }
    
    
-   private static AopCompile parseCompile(Node compile)
+   private static AopRun parseCompile(Node compile)
    {
-      AopCompile aopCompile = new AopCompile();
-      parseBaseSettings(compile, aopCompile);
+      AopRun compileSettings = new AopRun();
+      parseBaseSettings(compile, compileSettings);
       
-      return aopCompile;
+      return compileSettings;
    }
    
    private static void parseBaseSettings(Node root, AopBaseSettings base)
@@ -240,8 +240,10 @@ public class BaseConfigParser
 //      System.out.println("OUT: \n"+BaseConfigParser.getDOMAsString(createDOM()));
 //   }
    
-   public static String getDOMAsString() {
-      try {
+   public static String getSettingsAsString() 
+   {
+      try 
+      {
          Document doc = createDOM();
         Source source = new DOMSource(doc);
 
@@ -254,17 +256,21 @@ public class BaseConfigParser
 
         return writer.toString();
       } 
-      catch (TransformerConfigurationException e) {
+      catch (TransformerConfigurationException e) 
+      {
         e.printStackTrace();
       } 
-      catch (TransformerException e) {
+      catch (TransformerException e) 
+      {
         e.printStackTrace();
       }
       return null;
     }
    
-   private static Document createDOM() {
-      try {
+   private static Document createDOM() 
+   {
+      try 
+      {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = builder.newDocument();
         Element root = doc.createElement("aophelper");
@@ -278,7 +284,8 @@ public class BaseConfigParser
         
        return doc;
       } 
-      catch (ParserConfigurationException e) {
+      catch (ParserConfigurationException e) 
+      {
         System.out.println("ERROR in CreateDOM \n"+e.toString());
         e.printStackTrace();
       }
@@ -287,7 +294,7 @@ public class BaseConfigParser
    
    private static void populateCompile(Element compile, Document doc)
    {
-      populateBase(compile, doc, AopHandler.instance().getCompile());
+      populateBase(compile, doc, AopHandler.instance().getRun());
    }
    
    private static void populateRun(Element run, Document doc)

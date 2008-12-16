@@ -26,10 +26,10 @@ import org.jboss.aophelper.core.Action;
 import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopOption;
 import org.jboss.aophelper.core.AopState;
+import org.jboss.aophelper.ui.AopHelperUiMediator;
 import org.jboss.aophelper.ui.GenericEditTableModel;
 import org.jboss.aophelper.ui.GenericEditTablePane;
 import org.jboss.aophelper.ui.compile.xml.XmlTableModel;
-import org.jboss.aophelper.ui.compile.CompileMediator;
 
 /**
  * A XmlTablePane.
@@ -56,14 +56,13 @@ public class XmlTablePane extends GenericEditTablePane
    {
       if(tableModel == null)
          tableModel = new XmlTableModel();
-//      System.out.println("setting tablemodel to the mediator: "+tableModel.getClass().getName());
-      CompileMediator.instance().setXmlModel(tableModel);
+      AopHelperUiMediator.instance().setXmlModel(tableModel);
    }
    
    @Override
    public void setMediatorJPanel()
    {
-      CompileMediator.instance().setXmlTable(this);
+      AopHelperUiMediator.instance().setXmlTable(this);
    }
    
    @Override
@@ -82,7 +81,7 @@ public class XmlTablePane extends GenericEditTablePane
    public void refresh()
    {
       tableModel.clearRows();
-      tableModel.addRows(AopHandler.instance().getCompile().getAopXml());
+      tableModel.addRows(AopHandler.instance().getRun().getAopXml());
    }
 
 }

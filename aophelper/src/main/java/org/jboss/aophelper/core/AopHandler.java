@@ -31,40 +31,16 @@ public class AopHandler
 {
    private static final AopHandler handler = new AopHandler();
    
-   private AopCompile compile;
    private AopRun run;
-//   private Map<AopHelperAction, String> aopHelperMap;
    
    private AopHandler()
    {
-      compile = new AopCompile();
       run = new AopRun();
-//      aopHelperMap = new Hashtable<AopHelperAction, String>(20);
    }
    
    public static AopHandler instance()
    {
       return handler;
-   }
-
-   /**
-    * Get the compile.
-    * 
-    * @return the compile.
-    */
-   public AopCompile getCompile()
-   {
-      return compile;
-   }
-
-   /**
-    * Set the compile.
-    * 
-    * @param compile The compile to set.
-    */
-   public void setCompile(AopCompile compile)
-   {
-      this.compile = compile;
    }
 
    /**
@@ -86,22 +62,5 @@ public class AopHandler
    {
       this.run = run;
    }
-
-//   /**
-//    * Get the aopHelperMap.
-//    * 
-//    * @return the aopHelperMap.
-//    */
-//   public String getActionValue(AopHelperAction action)
-//   {
-//      return aopHelperMap.get(action);
-//   }
-//   
-//   public void addToActionMap(AopHelperAction action, String target)
-//   {
-//      aopHelperMap.put(action, target);
-//   }
-   
-   
 
 }

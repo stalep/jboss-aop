@@ -26,9 +26,9 @@ import org.jboss.aophelper.core.Action;
 import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopOption;
 import org.jboss.aophelper.core.AopState;
+import org.jboss.aophelper.ui.AopHelperUiMediator;
 import org.jboss.aophelper.ui.GenericEditTableModel;
 import org.jboss.aophelper.ui.GenericEditTablePane;
-import org.jboss.aophelper.ui.run.RunMediator;
 
 /**
  * A RunXmlTablePane.
@@ -57,13 +57,13 @@ public class RunXmlTablePane extends GenericEditTablePane
          tableModel = new RunXmlTableModel();
       
 //      System.out.println("setting tablemodel to the mediator: "+tableModel.getClass().getName());
-      RunMediator.instance().setRunXmlModel(tableModel);
+      AopHelperUiMediator.instance().setRunXmlModel(tableModel);
    }
    
    @Override
    public void setMediatorJPanel()
    {
-      RunMediator.instance().setRunXmlTable(this);
+      AopHelperUiMediator.instance().setRunXmlTable(this);
    }
    
    @Override

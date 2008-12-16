@@ -91,7 +91,7 @@ public class AopRunCommand
          execute.append(xmlPaths.toString()).append(" ");
       }
       
-      execute.append(calculateCorrectExecutionClass(runOptions));
+      execute.append(runOptions.calculateCorrectExecutionClass());
       
 //      execute.append("\"");
       System.out.println("EXECUTING: "+execute.toString());
@@ -100,29 +100,7 @@ public class AopRunCommand
       return execute.toString();
       
    }
-   
-   private String calculateCorrectExecutionClass(AopRun runOptions)
-   {
-      String workingdir = runOptions.getWorkingdir();
-      String exeClass = runOptions.getExecutionClass();
-      
-      if(exeClass.startsWith(workingdir))
-      {
-        String rest = exeClass.split(workingdir)[1];
-        if(rest.startsWith("/"))
-          rest = rest.substring(1);
-        rest = rest.replaceAll("/",".");
-        int index = rest.lastIndexOf(".class");
-        rest = rest.substring(0,index);
-        System.out.println("rest="+rest);
-
-        return rest;
-      }
-      else
-         return null;
-      
-   }
-   
+     
    private String getLoadtimePath()
    {
       String pathSeparator = System.getProperty("path.separator");

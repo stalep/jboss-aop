@@ -26,9 +26,9 @@ import org.jboss.aophelper.core.Action;
 import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopOption;
 import org.jboss.aophelper.core.AopState;
+import org.jboss.aophelper.ui.AopHelperUiMediator;
 import org.jboss.aophelper.ui.GenericEditTableModel;
 import org.jboss.aophelper.ui.GenericEditTablePane;
-import org.jboss.aophelper.ui.run.RunMediator;
 
 /**
  * A RunClasspathTablePane.
@@ -57,13 +57,13 @@ public class RunClasspathTablePane extends GenericEditTablePane
       if(tableModel == null)
          tableModel = new RunClasspathTableModel();
       System.out.println("setting tablemodel to the mediator: "+tableModel.getClass().getName());
-      RunMediator.instance().setRunClasspathModel(tableModel);
+      AopHelperUiMediator.instance().setRunClasspathModel(tableModel);
    }
    
    @Override
    public void setMediatorJPanel()
    {
-      RunMediator.instance().setRunClasspathTable(this);
+      AopHelperUiMediator.instance().setRunClasspathTable(this);
    }
    
    @Override

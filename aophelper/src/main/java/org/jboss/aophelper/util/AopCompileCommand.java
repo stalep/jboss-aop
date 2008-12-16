@@ -26,6 +26,7 @@ import java.io.IOException;
 
 import org.jboss.aophelper.core.AopCompile;
 import org.jboss.aophelper.core.AopHandler;
+import org.jboss.aophelper.core.AopRun;
 
 /**
  * A AopCompileCommand.
@@ -43,7 +44,7 @@ public class AopCompileCommand
       {
 
          String[] emptyArray = new String[0];
-         Process process = Runtime.getRuntime().exec( execute, emptyArray,  new File(AopHandler.instance().getCompile().getWorkingdir()));
+         Process process = Runtime.getRuntime().exec( execute, emptyArray,  new File(AopHandler.instance().getRun().getWorkingdir()));
 
          return CommandUtil.analyzeProcess(process);
       }
@@ -59,24 +60,24 @@ public class AopCompileCommand
    
    private String setup()
    {
-      AopCompile compileOptions = AopHandler.instance().getCompile();
+      AopRun options = AopHandler.instance().getRun();
       
       StringBuilder execute = new StringBuilder();
       execute.append("java -cp ").append(getClasspath());
       execute.append(" org.jboss.aop.standalone.Compiler ");
-      if(compileOptions.isVerbose())
+      if(options.isVerbose())
          execute.append("-verbose ");
-      if(compileOptions.isNoopt())
+      if(options.isNoopt())
          execute.append("-noopt ");
-      if(compileOptions.isSuppress())
+      if(options.isSuppress())
          execute.append("-suppress ");
       
-      if(compileOptions.getAopXml().size() > 0)
+      if(options.getAopXml().size() > 0)
       {
          execute.append("-aoppath ");
          String pathSep = System.getProperty("path.separator");
          StringBuffer xmlPaths = new StringBuffer();
-         for(String xml : compileOptions.getAopXml())
+         for(String xml : options.getAopXml())
          {
             if(xmlPaths.length() > 0)
                xmlPaths.append(pathSep);
@@ -86,7 +87,7 @@ public class AopCompileCommand
          execute.append(xmlPaths.toString()).append(" ");
       }
       
-      execute.append(compileOptions.getWorkingdir());
+      execute.append(options.getWorkingdir());
       
 //      execute.append("\"");
       System.out.println("EXECUTING: "+execute.toString());
@@ -100,7 +101,7 @@ public class AopCompileCommand
    {
       StringBuilder sb = new StringBuilder();
       String pathSeparator = System.getProperty("path.separator");
-      for(String path : AopHandler.instance().getCompile().getClasspath())
+      for(String path : AopHandler.instance().getRun().getClasspath())
       {
          if(sb.length() > 0)
             sb.append(pathSeparator);
@@ -108,7 +109,7 @@ public class AopCompileCommand
       }
       if(sb.length() > 0)
          sb.append(pathSeparator);
-      sb.append(AopHandler.instance().getCompile().getWorkingdir());
+      sb.append(AopHandler.instance().getRun().getWorkingdir());
       
       return sb.toString();
    }

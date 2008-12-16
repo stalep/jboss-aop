@@ -19,8 +19,15 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.aophelper.ui.run;
+package org.jboss.aophelper.ui;
 
+import org.jboss.aophelper.ui.compile.OutputPane;
+import org.jboss.aophelper.ui.compile.classpath.ClasspathTableModel;
+import org.jboss.aophelper.ui.compile.classpath.ClasspathTablePane;
+import org.jboss.aophelper.ui.compile.options.CompileOptionsPane;
+import org.jboss.aophelper.ui.compile.xml.XmlTableModel;
+import org.jboss.aophelper.ui.compile.xml.XmlTablePane;
+import org.jboss.aophelper.ui.run.RunOutputPane;
 import org.jboss.aophelper.ui.run.classpath.RunClasspathTableModel;
 import org.jboss.aophelper.ui.run.classpath.RunClasspathTablePane;
 import org.jboss.aophelper.ui.run.options.RunOptionsPane;
@@ -28,14 +35,14 @@ import org.jboss.aophelper.ui.run.xml.RunXmlTableModel;
 import org.jboss.aophelper.ui.run.xml.RunXmlTablePane;
 
 /**
- * A RunMediator.
+ * A AopHelperUiMediator.
  * 
- * @author <a href="stalep@gmail.com">Stale W. Pedersen</a>
+ * @author <a href="stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-public class RunMediator
+public class AopHelperUiMediator
 {
-   private static final RunMediator mediator = new RunMediator();
+   private static final AopHelperUiMediator mediator = new AopHelperUiMediator();
 
    private RunClasspathTablePane runClasspathTable;
    private RunClasspathTableModel runClasspathModel;
@@ -46,16 +53,120 @@ public class RunMediator
    private RunOptionsPane runOptionsPane;
    private RunOutputPane runOutputPane;
    
-   private RunMediator()
+   private ClasspathTablePane classpathTable;
+   private ClasspathTableModel classpathModel;
+  
+   private XmlTablePane xmlTable;
+   private XmlTableModel xmlModel;
+   
+   private CompileOptionsPane compileOptionsPane;
+   private OutputPane outputPane;
+   
+   
+   private AopHelperUiMediator()
    {
-      
    }
    
-   public static RunMediator instance()
+   public static AopHelperUiMediator instance()
    {
       return mediator;
    }
+
+   public void setClasspathTable(ClasspathTablePane table)
+   {
+      this.classpathTable = table;
+   }
    
+   public ClasspathTablePane getClasspathTable()
+   {
+      return classpathTable;
+   }
+
+   /**
+    * Get the classpathModel.
+    * 
+    * @return the classpathModel.
+    */
+   public ClasspathTableModel getClasspathModel()
+   {
+      return classpathModel;
+   }
+
+   /**
+    * Set the classpathModel.
+    * 
+    * @param classpathModel The classpathModel to set.
+    */
+   public void setClasspathModel(ClasspathTableModel classpathModel)
+   {
+      this.classpathModel = classpathModel;
+   }
+
+   /**
+    * 
+    * @param tableModel
+    */
+   public void setXmlModel(XmlTableModel tableModel)
+   {
+      xmlModel = tableModel;
+   }
+   
+   public XmlTableModel getXmlModel()
+   {
+      return xmlModel;
+   }
+   
+   public void setXmlTable(XmlTablePane tableP)
+   {
+      xmlTable = tableP;
+   }
+   
+   public XmlTablePane getXmlTable()
+   {
+      return xmlTable;
+   }
+
+   /**
+    * Get the compileOptionsPane.
+    * 
+    * @return the compileOptionsPane.
+    */
+   public CompileOptionsPane getCompileOptionsPane()
+   {
+      return compileOptionsPane;
+   }
+
+   /**
+    * Set the compileOptionsPane.
+    * 
+    * @param compileOptionsPane The compileOptionsPane to set.
+    */
+   public void setCompileOptionsPane(CompileOptionsPane compileOptionsPane)
+   {
+      this.compileOptionsPane = compileOptionsPane;
+   }
+
+   /**
+    * Get the outputPane.
+    * 
+    * @return the outputPane.
+    */
+   public OutputPane getOutputPane()
+   {
+      return outputPane;
+   }
+
+   /**
+    * Set the outputPane.
+    * 
+    * @param outputPane The outputPane to set.
+    */
+   public void setOutputPane(OutputPane outputPane)
+   {
+      this.outputPane = outputPane;
+   }
+   
+
    /**
     * FIXME Comment this
     * 
@@ -168,8 +279,23 @@ public class RunMediator
    
    public void refresh()
    {
+      classpathTable.refresh();
+      xmlTable.refresh();
+      compileOptionsPane.refresh();
       runClasspathTable.refresh();
       runXmlTable.refresh();
       runOptionsPane.refresh();
    }
+   
+   public void clearSelected()
+   {
+      xmlTable.clearSelectedItem();
+      classpathTable.clearSelectedItem();
+      runXmlTable.clearSelectedItem();
+      runClasspathTable.clearSelectedItem();
+   }
+
+   
+
+
 }

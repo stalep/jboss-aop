@@ -30,7 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
-import org.jboss.aophelper.ui.run.RunMediator;
+import org.jboss.aophelper.ui.AopHelperUiMediator;
 
 /**
  * A RunOutputPane.
@@ -54,7 +54,7 @@ public class RunOutputPane extends JPanel
    
    private void init()
    {
-      RunMediator.instance().setRunOutputPane(this);
+      AopHelperUiMediator.instance().setRunOutputPane(this);
       
       setLayout(new FlowLayout());
       

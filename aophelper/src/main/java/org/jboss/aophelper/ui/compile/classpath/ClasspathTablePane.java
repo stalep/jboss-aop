@@ -26,10 +26,10 @@ import org.jboss.aophelper.core.Action;
 import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopOption;
 import org.jboss.aophelper.core.AopState;
+import org.jboss.aophelper.ui.AopHelperUiMediator;
 import org.jboss.aophelper.ui.GenericEditTableModel;
 import org.jboss.aophelper.ui.GenericEditTablePane;
 import org.jboss.aophelper.ui.compile.classpath.ClasspathTableModel;
-import org.jboss.aophelper.ui.compile.CompileMediator;
 
 /**
  * A ClasspathTablePane.
@@ -57,13 +57,13 @@ public class ClasspathTablePane extends GenericEditTablePane
    {
       if(tableModel == null)
          tableModel = new ClasspathTableModel();
-      CompileMediator.instance().setClasspathModel(tableModel);
+      AopHelperUiMediator.instance().setClasspathModel(tableModel);
    }
    
    @Override
    public void setMediatorJPanel()
    {
-      CompileMediator.instance().setClasspathTable(this);
+      AopHelperUiMediator.instance().setClasspathTable(this);
    }
    
    @Override
@@ -85,13 +85,13 @@ public class ClasspathTablePane extends GenericEditTablePane
       for(String path : cp)
       {
          tableModel.addRow(path);
-         AopHandler.instance().getCompile().addClasspath(path);
+         AopHandler.instance().getRun().addClasspath(path);
       }
    }
    
    public void refresh()
    {
       tableModel.clearRows();
-      tableModel.addRows(AopHandler.instance().getCompile().getClasspath());
+      tableModel.addRows(AopHandler.instance().getRun().getClasspath());
    }
 }

@@ -27,7 +27,7 @@ import org.jboss.aophelper.core.Action;
 import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopOption;
 import org.jboss.aophelper.ui.AopHelperMediator;
-import org.jboss.aophelper.ui.run.RunMediator;
+import org.jboss.aophelper.ui.AopHelperUiMediator;
 import org.jboss.aophelper.util.AopRunCommand;
 
 /**
@@ -39,11 +39,11 @@ import org.jboss.aophelper.util.AopRunCommand;
 public class RunManager
 {
 
-   private RunMediator runMediator;
+   private AopHelperUiMediator mediator;
    
    public RunManager()
    {
-      runMediator = RunMediator.instance();
+      mediator = AopHelperUiMediator.instance();
    }
    
    public void performAction(Action a, AopOption to)
@@ -84,6 +84,8 @@ public class RunManager
             setWorkingdir();
          else if(to.equals(AopOption.EXECLASS))
             setExecutionClass();
+         else if(to.equals(AopOption.SRCPATH))
+            setSrcPath();
       }
       else if(a.equals(Action.RUN))
       {
@@ -98,19 +100,19 @@ public class RunManager
       for(File f : files)
       {
          AopHandler.instance().getRun().addClasspath(f.getAbsolutePath());
-         runMediator.getRunClasspathModel().addRow(f.getAbsolutePath());
       }
+      mediator.refresh();
    }
    
    private void removeClasspath()
    {
-      String selected = runMediator.getRunClasspathTable().getSelectedItem();
+      String selected = mediator.getRunClasspathTable().getSelectedItem();
       if(selected != null)
       {
          AopHandler.instance().getRun().removeClasspath(selected);
-         runMediator.getRunClasspathModel().removeRow(selected);
-         runMediator.getRunClasspathTable().clearSelectedItem();
+         mediator.clearSelected();
       }
+      mediator.refresh();
    }
 
    private void addXml()
@@ -119,19 +121,19 @@ public class RunManager
       for(File f : files)
       {
          AopHandler.instance().getRun().addXml(f.getAbsolutePath());
-         runMediator.getRunXmlModel().addRow(f.getAbsolutePath());
       }
+      mediator.refresh();
    }
    
    private void removeXml()
    {
-      String selected = runMediator.getRunXmlTable().getSelectedItem();
+      String selected = mediator.getRunXmlTable().getSelectedItem();
       if(selected != null)
       {
-         AopHandler.instance().getRun().removeClasspath(selected);
-         runMediator.getRunXmlModel().removeRow(selected);
-         runMediator.getRunXmlTable().clearSelectedItem();
+         AopHandler.instance().getRun().removeXml(selected);
+         mediator.clearSelected();
       }
+      mediator.refresh();
    }
    
    private void setVerbose(boolean verbose)
@@ -161,8 +163,8 @@ public class RunManager
       for(File f : files)
       {
          AopHandler.instance().getRun().setWorkingdir(f.getAbsolutePath());
-         runMediator.getRunOptionsPane().setWorkingDir(f.getAbsolutePath());
       }
+      mediator.refresh();
    }
    
    private void setExecutionClass()
@@ -171,8 +173,18 @@ public class RunManager
       for(File f : files)
       {
          AopHandler.instance().getRun().setExecutionClass(f.getAbsolutePath());
-         runMediator.getRunOptionsPane().setExecutionClass(f.getAbsolutePath());
       }
+      mediator.refresh();
+   }
+   
+   private void setSrcPath()
+   {
+      File[] files = AopHelperMediator.instance().getMainPane().createFileCooser();
+      for(File f : files)
+      {
+         AopHandler.instance().getRun().setSrcPath(f.getAbsolutePath());
+      }
+      mediator.refresh();
    }
    
    private void run()
@@ -185,8 +197,8 @@ public class RunManager
       {
       AopRunCommand run = new AopRunCommand();
       String[] out = run.execute();
-      runMediator.getRunOutputPane().setText(out[0]);
-      runMediator.getRunOutputPane().setError(out[1]);
+      mediator.getRunOutputPane().setText(out[0]);
+      mediator.getRunOutputPane().setError(out[1]);
       }
    }
    

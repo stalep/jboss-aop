@@ -28,6 +28,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -132,6 +133,19 @@ public class AopHelperFrame extends JFrame
           System.out.println("Save command cancelled by user.");
           return new File[0];
        }
+    }
+    
+    public boolean createConfirmWindow(String text)
+    {
+//       JOptionPane optionPane = new JOptionPane(this, text, "Click Ok", JOptionPane.OK_CANCEL_OPTION);
+      int retval = JOptionPane.showConfirmDialog(this, text, "Click Ok", JOptionPane.OK_CANCEL_OPTION);
+       
+      if(retval == JOptionPane.YES_OPTION)
+      {
+         System.out.println("User said yes!");
+         return true;
+      }
+      return false;
     }
 
     public void setRunMode()

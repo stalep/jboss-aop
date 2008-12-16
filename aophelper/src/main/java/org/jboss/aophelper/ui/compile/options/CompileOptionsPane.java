@@ -42,7 +42,7 @@ import org.jboss.aophelper.core.Action;
 import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopOption;
 import org.jboss.aophelper.core.AopState;
-import org.jboss.aophelper.ui.compile.CompileMediator;
+import org.jboss.aophelper.ui.AopHelperUiMediator;
 
 /**
  * A CompileOptionsPane.
@@ -65,7 +65,7 @@ public class CompileOptionsPane extends JPanel
    
    private void init()
    {
-      CompileMediator.instance().setCompileOptionsPane(this);
+      AopHelperUiMediator.instance().setCompileOptionsPane(this);
       setLayout(new BorderLayout());
       
 //      JLabel heading = new JLabel("Settings");
@@ -221,10 +221,10 @@ public class CompileOptionsPane extends JPanel
    
    public void refresh()
    {
-      setWorkingDir(AopHandler.instance().getCompile().getWorkingdir());
-      verbose.setSelected(AopHandler.instance().getCompile().isVerbose());
-      noopt.setSelected(AopHandler.instance().getCompile().isNoopt());
-      suppress.setSelected(AopHandler.instance().getCompile().isSuppress());
+      setWorkingDir(AopHandler.instance().getRun().getWorkingdir());
+      verbose.setSelected(AopHandler.instance().getRun().isVerbose());
+      noopt.setSelected(AopHandler.instance().getRun().isNoopt());
+      suppress.setSelected(AopHandler.instance().getRun().isSuppress());
    }
 
 

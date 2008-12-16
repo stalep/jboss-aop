@@ -42,7 +42,7 @@ import org.jboss.aophelper.core.Action;
 import org.jboss.aophelper.core.AopHandler;
 import org.jboss.aophelper.core.AopOption;
 import org.jboss.aophelper.core.AopState;
-import org.jboss.aophelper.ui.run.RunMediator;
+import org.jboss.aophelper.ui.AopHelperUiMediator;
 
 /**
  * A RunOptionsPane.
@@ -57,7 +57,7 @@ public class RunOptionsPane extends JPanel
    private static final long serialVersionUID = 1L;
 
    private JCheckBox verbose, suppress, noopt, loadtime;
-   private JTextField workingdir, executionClass;
+   private JTextField workingdir, executionClass, srcPath;
    public RunOptionsPane()
    {
       init();
@@ -65,7 +65,7 @@ public class RunOptionsPane extends JPanel
    
    private void init()
    {
-      RunMediator.instance().setRunOptionsPane(this);
+      AopHelperUiMediator.instance().setRunOptionsPane(this);
       setLayout(new BorderLayout());
       
 //      JLabel heading = new JLabel("Settings");
@@ -140,7 +140,7 @@ public class RunOptionsPane extends JPanel
      });
      
      JPanel workingdirPanel = new JPanel(new FlowLayout());
-     workingdir = new JTextField("must set the working directory", 20);
+     workingdir = new JTextField("must set the working directory", 25);
      workingdir.setEditable(false);
      JLabel workingLabel = new JLabel("Set the working directory ");
      workingLabel.setLabelFor(workingdir);
@@ -156,7 +156,7 @@ public class RunOptionsPane extends JPanel
      workingdirPanel.add(workingdirButton);
      
      JPanel exeClassPanel = new JPanel(new FlowLayout());
-     executionClass = new JTextField("must set the execution class", 20);
+     executionClass = new JTextField("must set the execution class", 25);
      executionClass.setEditable(false);
      JLabel executionLabel = new JLabel("Set the execution class");
      executionLabel.setLabelFor(executionClass);
@@ -171,9 +171,28 @@ public class RunOptionsPane extends JPanel
      });
      exeClassPanel.add(executionButton);
      
+     
+     JPanel srcPanel = new JPanel(new FlowLayout());
+     srcPath = new JTextField("only needed if you want to create an ant buildfile", 25);
+     srcPath.setEditable(false);
+     JLabel srcLabel = new JLabel("Set source path: ");
+     executionLabel.setLabelFor(srcPath);
+     srcPanel.add(srcLabel);
+     srcPanel.add(srcPath);
+     JButton srcButton = new JButton("Set source path");
+     srcButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent event)
+        {
+           setSrcPath();
+        }
+     });
+     srcPanel.add(srcButton);
+     
+     
      JPanel settingPanel = new JPanel(new FlowLayout());
      settingPanel.add(workingdirPanel);
      settingPanel.add(exeClassPanel);
+     settingPanel.add(srcPanel);
      
      add(settingPanel, BorderLayout.CENTER);
      
@@ -270,6 +289,14 @@ public class RunOptionsPane extends JPanel
    {
    }
    
+   @AopHelperAction(
+         action=Action.SET, 
+         state=AopState.RUN, 
+         option=AopOption.SRCPATH)
+   private void setSrcPath()
+   {
+   }
+   
    public void setWorkingDir(String dir)
    {
       workingdir.setText(dir);
@@ -280,10 +307,16 @@ public class RunOptionsPane extends JPanel
       executionClass.setText(exeClass);
    }
    
+   public void setSrcPath(String srcPath)
+   {
+      this.srcPath.setText(srcPath);
+   }
+   
    public void refresh()
    {
       setWorkingDir(AopHandler.instance().getRun().getWorkingdir());
       setExecutionClass(AopHandler.instance().getRun().getExecutionClass());
+      setSrcPath(AopHandler.instance().getRun().getSrcPath());
       verbose.setSelected(AopHandler.instance().getRun().isVerbose());
       noopt.setSelected(AopHandler.instance().getRun().isNoopt());
       suppress.setSelected(AopHandler.instance().getRun().isSuppress());
