@@ -114,4 +114,24 @@ public class ClassPoolTest extends AbstractTestCaseWithSetup
       super.setUp();
       enableTrace("org.jboss.aop.classpool.DelegatingClassPool");
    }
-}
+
+   protected void assertCannotLoadClass(ClassLoader loader, String classname)
+   {
+      try
+      {
+         loader.loadClass(classname);
+         fail("Should not have been able to load " + classname);
+      }
+      catch(ClassNotFoundException expected)
+      {
+      }
+   }
+   
+   /**
+    * The test classes should not be on the launcher classpath
+    */
+   public void testClassesNotOnClasspath()
+   {
+      assertCannotLoadClass(this.getClass().getClassLoader(), CLASS_A);
+      assertCannotLoadClass(this.getClass().getClassLoader(), CLASS_B);
+   }}
