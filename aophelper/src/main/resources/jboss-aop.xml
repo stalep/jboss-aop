@@ -5,4 +5,7 @@
        <interceptor class="org.jboss.aophelper.core.SettingInterceptor"/>
    </bind>
 
+   <bind pointcut="execution(* *->@org.jboss.aophelper.annotation.Undoable(..))">
+       <interceptor class="org.jboss.aophelper.core.UndoableInterceptor"/>
+   </bind>
 </aop>

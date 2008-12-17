@@ -23,17 +23,16 @@ package org.jboss.aophelper.core;
 
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.Invocation;
-import org.jboss.aophelper.annotation.AopHelperAction;
-import org.jboss.aophelper.manager.CompileManager;
-import org.jboss.aophelper.manager.RunManager;
+import org.jboss.aop.joinpoint.MethodInvocation;
+import org.jboss.aophelper.annotation.Undoable;
 
 /**
- * A ClasspathInterceptor.
+ * A UndoableInterceptor.
  * 
  * @author <a href="stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-public class SettingInterceptor implements Interceptor
+public class UndoableInterceptor implements Interceptor
 {
 
    public String getName()
@@ -43,22 +42,26 @@ public class SettingInterceptor implements Interceptor
 
    public Object invoke(Invocation invocation) throws Throwable
    {
-      AopHelperAction helperAction = (AopHelperAction) invocation.resolveAnnotation(org.jboss.aophelper.annotation.AopHelperAction.class);
-      System.out.println("state: "+helperAction.state().name());
+      MethodInvocation mi = (MethodInvocation) invocation;
+      Undoable undoable = (Undoable) invocation.resolveAnnotation(org.jboss.aophelper.annotation.Undoable.class);
+      System.out.println("callback: "+undoable.callback());
       
-      System.out.println("option: "+helperAction.option().name());
-      System.out.println("action: "+helperAction.action().name());
+      System.out.println("Class: "+mi.getTargetObject().getClass().getName());
+      System.out.println("Method: "+mi.getMethod().getName());
       
-      if(helperAction.state().equals(AopState.COMPILE))
+      Object[] args = mi.getArguments();
+      if(args != null && args.length > 0)
       {
-         new CompileManager().performAction(helperAction.action(), helperAction.option());
+         UndoableManager.instance().addUndoable(mi.getTargetObject(), mi.getMethod(), args[0]);
+         for(Object o : args)
+         System.out.println("args: "+o.toString());
       }
-      if(helperAction.state().equals(AopState.RUN))
-      {
-         new RunManager().performAction(helperAction.action(), helperAction.option());
-      }
+
       
       return invocation.invokeNext();
+      
    }
+   
+   
 
 }

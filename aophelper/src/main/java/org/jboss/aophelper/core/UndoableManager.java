@@ -21,44 +21,46 @@
   */
 package org.jboss.aophelper.core;
 
-import org.jboss.aop.advice.Interceptor;
-import org.jboss.aop.joinpoint.Invocation;
-import org.jboss.aophelper.annotation.AopHelperAction;
-import org.jboss.aophelper.manager.CompileManager;
-import org.jboss.aophelper.manager.RunManager;
+import java.lang.reflect.Method;
+import java.util.LinkedList;
 
 /**
- * A ClasspathInterceptor.
+ * A UndoableManager.
  * 
  * @author <a href="stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
-public class SettingInterceptor implements Interceptor
+public class UndoableManager
 {
-
-   public String getName()
+   private LinkedList<UndoableValue> undoables;
+   
+   private static UndoableManager instance = new UndoableManager();
+   
+   private UndoableManager()
    {
-      return "SettingInterceptor";
+      undoables = new LinkedList<UndoableValue>();
+   }
+   
+   public static UndoableManager instance()
+   {
+      return instance;
    }
 
-   public Object invoke(Invocation invocation) throws Throwable
+   public UndoableValue findUndoable(Object o, Method m)
    {
-      AopHelperAction helperAction = (AopHelperAction) invocation.resolveAnnotation(org.jboss.aophelper.annotation.AopHelperAction.class);
-      System.out.println("state: "+helperAction.state().name());
+      UndoableValue uv = new UndoableValue(o,m);
+      int index = undoables.lastIndexOf(uv);
+      if(index < 0)
+         System.out.println("NO UNDOHISTORY ON: "+uv.toString());
       
-      System.out.println("option: "+helperAction.option().name());
-      System.out.println("action: "+helperAction.action().name());
       
-      if(helperAction.state().equals(AopState.COMPILE))
-      {
-         new CompileManager().performAction(helperAction.action(), helperAction.option());
-      }
-      if(helperAction.state().equals(AopState.RUN))
-      {
-         new RunManager().performAction(helperAction.action(), helperAction.option());
-      }
-      
-      return invocation.invokeNext();
+      return null;
    }
-
+   
+   public void addUndoable(Object o, Method m, Object value)
+   {
+      UndoableValue uv = new UndoableValue(o,m,value);
+      undoables.add(uv);
+      System.out.println("Adding to undoablelist: "+uv);
+   }
 }

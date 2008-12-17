@@ -24,6 +24,8 @@ package org.jboss.aophelper.core;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.jboss.aophelper.annotation.Undoable;
+
 /**
  * A AopRun.
  * 
@@ -63,6 +65,7 @@ public class AopRun extends AopBaseSettings implements Serializable
     * 
     * @param executionClass The executionClass to set.
     */
+   @Undoable(callback="this_is_callback_method")
    public final void setExecutionClass(String executionClass)
    {
       this.executionClass = executionClass;
