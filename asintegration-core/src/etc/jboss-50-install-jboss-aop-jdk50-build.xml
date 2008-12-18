@@ -14,17 +14,17 @@
       <property name="jboss.client.dir" value="${jboss.home}/client"/>
       
       <available file="${jboss.home}" property="jboss.exists" type="dir"/>
-      <fail unless="jboss.exists" message="${jboss.home} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+      <fail unless="jboss.exists" message="${jboss.home} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
       
       <available file="${jboss.bin.dir}" property="bin.exists" type="dir"/>
-      <fail unless="bin.exists" message="${jboss.bin.dir} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+      <fail unless="bin.exists" message="${jboss.bin.dir} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
 
       <available file="${jboss.client.dir}" property="client.exists" type="dir"/>
-      <fail unless="client.exists" message="${jboss.client.dir} does not exist. Modify 'jboss.config' in build.xml to be a valid server configuration"/>
+      <fail unless="client.exists" message="${jboss.client.dir} does not exist. Modify 'jboss.config' in jboss.properties to be a valid server configuration"/>
       
       
       <available file="${jboss.config.dir}" property="config.exists" type="dir"/>
-      <fail unless="config.exists" message="${jboss.config.dir} does not exist. Modify 'jboss.config' in build.xml to be a valid server configuration"/>
+      <fail unless="config.exists" message="${jboss.config.dir} does not exist. Modify 'jboss.config' in jboss.properties to be a valid server configuration"/>
 
       <property name="deployers.dir" value="${jboss.config.dir}/deployers"/>
 
@@ -34,7 +34,7 @@
 
       <property name="jboss.lib" value="${jboss.home}/lib"/>
       <available file="${jboss.lib}" property="lib.exists" type="dir"/>
-      <fail unless="lib.exists" message="${jboss.lib} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+      <fail unless="lib.exists" message="${jboss.lib} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
 
       <property name="jboss.aop.lib" value="../lib"/>
       <available file="${jboss.aop.lib}" property="lib.jboss.aop.exists"/>
@@ -46,7 +46,7 @@
             
       <property name="lib.jbossaop-client.injboss" value="${jboss.client.dir}/jboss-aop-client.jar"/>
       <available file="${lib.jbossaop-client.injboss}" property="lib.jbossaop-client.injboss.exists"/>
-      <fail unless="lib.jbossaop-client.injboss.exists" message="${lib.jbossaop-client.injboss} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+      <fail unless="lib.jbossaop-client.injboss.exists" message="${lib.jbossaop-client.injboss} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
             
       <property name="bak.jbossaop-client" value="${jboss.client.dir}/jboss-aop-client.bak"/>
       <available file="${bak.jbossaop-client}" property="jbossaop-client.bak.exists"/>

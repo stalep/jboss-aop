@@ -14,16 +14,16 @@
       <property name="jboss.client.dir" value="${jboss.home}/client"/>
       
       <available file="${jboss.home}" property="jboss.exists" type="dir"/>
-      <fail unless="jboss.exists" message="${jboss.home} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+      <fail unless="jboss.exists" message="${jboss.home} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
       
       <available file="${jboss.bin.dir}" property="bin.exists" type="dir"/>
-      <fail unless="bin.exists" message="${jboss.bin.dir} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+      <fail unless="bin.exists" message="${jboss.bin.dir} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
 
       <available file="${jboss.config.dir}" property="config.exists" type="dir"/>
-      <fail unless="config.exists" message="${jboss.config.dir} does not exist. Modify 'jboss.config' in build.xml to be a valid server configuration"/>
+      <fail unless="config.exists" message="${jboss.config.dir} does not exist. Modify 'jboss.config' in jboss.properties to be a valid server configuration"/>
 
       <available file="${jboss.client.dir}" property="client.exists" type="dir"/>
-      <fail unless="client.exists" message="${jboss.client.dir} does not exist. Modify 'jboss.config' in build.xml to be a valid server configuration"/>
+      <fail unless="client.exists" message="${jboss.client.dir} does not exist. Modify 'jboss.config' in jboss.properties to be a valid server configuration"/>
       
       <property name="deploy.dir" value="${jboss.config.dir}/deploy"/>
 
@@ -54,7 +54,7 @@
       
       <property name="lib.jbossall-client" value="${jboss.client.dir}/jbossall-client.jar"/>
       <available file="${lib.jbossall-client}" property="lib.jbossall-client.exists"/>
-      <fail unless="lib.jbossall-client.exists" message="${lib.jbossall-client} does not exist. Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+      <fail unless="lib.jbossall-client.exists" message="${lib.jbossall-client} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
       
       <property name="bak.jbossall-client" value="${jboss.client.dir}/jbossall-client.bak"/>
       <available file="${bak.jbossall-client}" property="jbossall-client.bak.exists"/>
