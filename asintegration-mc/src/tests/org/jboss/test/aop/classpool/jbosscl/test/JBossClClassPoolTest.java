@@ -45,6 +45,7 @@ import org.jboss.classloading.spi.dependency.Module;
 import org.jboss.classloading.spi.dependency.policy.ClassLoaderPolicyModule;
 import org.jboss.test.AbstractTestCaseWithSetup;
 import org.jboss.test.AbstractTestDelegate;
+import org.jboss.test.aop.classpool.jbosscl.support.BundleInfoBuilder;
 import org.jboss.test.aop.classpool.jbosscl.support.MockModuleFactory;
 import org.jboss.virtual.VFS;
 
@@ -172,6 +173,18 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
    }
 
    protected ClassLoader createClassLoader(String name, boolean importAll, URL... urls) throws Exception
+   {
+      ClassLoaderPolicyModule module = MockModuleFactory.createModule(name, importAll, urls);
+      return createClassLoader(module);
+   }
+   
+   protected ClassLoader createClassLoader(String name, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      ClassLoaderPolicyModule module = MockModuleFactory.createModule(name, builder, urls);
+      return createClassLoader(module);
+   }
+   
+   protected ClassLoader createClassLoader(String name, boolean importAll, String moduleName, URL... urls) throws Exception
    {
       ClassLoaderPolicyModule module = MockModuleFactory.createModule(name, importAll, urls);
       return createClassLoader(module);

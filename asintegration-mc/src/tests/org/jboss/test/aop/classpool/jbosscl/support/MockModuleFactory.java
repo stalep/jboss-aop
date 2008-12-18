@@ -41,12 +41,27 @@ public class MockModuleFactory
       return createModule(name, importAll, null, false, urls);
    }
    
+   public static ClassLoaderPolicyModule createModule(String name, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      return createModule(name, false, null, null, builder, false, urls);
+   }
+   
+   public static ClassLoaderPolicyModule createModule(String name, boolean importAll, String moduleName, URL... urls) throws Exception
+   {
+      return createModule(name, importAll, null, false, urls);
+   }
+   
    public static ClassLoaderPolicyModule createModule(String name, boolean importAll, String domainName, boolean parentFirst, URL... urls) throws Exception
    {
       return createModule(name, importAll, domainName, null, parentFirst, urls);
    }
 
    public static ClassLoaderPolicyModule createModule(String name, boolean importAll, String domainName, String parentDomainName, boolean parentFirst, URL... urls) throws Exception
+   {
+      return createModule(name, importAll, domainName, parentDomainName, null, parentFirst, urls);
+   }
+   
+   public static ClassLoaderPolicyModule createModule(String name, boolean importAll, String domainName, String parentDomainName, BundleInfoBuilder builder, boolean parentFirst, URL... urls) throws Exception
    {
       ClassLoadingMetaData md = new ClassLoadingMetaData();
       md.setName(name);
@@ -55,7 +70,25 @@ public class MockModuleFactory
       {
          md.setExportAll(ExportAll.NON_EMPTY);
       }
-      
+   
+      addCapabilitiesAndRequirements(md, builder);
+      setupDomain(md, domainName, parentDomainName, parentFirst);
+
+      MockDeploymentUnit du = new MockDeploymentUnit(name, md, urls);
+      return new VFSDeploymentClassLoaderPolicyModule(du);
+   }
+
+   private static void addCapabilitiesAndRequirements(ClassLoadingMetaData md, BundleInfoBuilder builder)
+   {
+      if (builder != null)
+      {
+         md.getCapabilities().setCapabilities(builder.getCapabilities());
+         md.getRequirements().setRequirements(builder.getRequirements());
+      }
+   }
+
+   private static void setupDomain(ClassLoadingMetaData md, String domainName, String parentDomainName, boolean parentFirst)
+   {
       if (domainName != null)
       {
          md.setDomain(domainName);
@@ -73,8 +106,5 @@ public class MockModuleFactory
       {
          md.setDomain(ClassLoaderSystem.DEFAULT_DOMAIN_NAME);
       }
-
-      MockDeploymentUnit du = new MockDeploymentUnit(name, md, urls);
-      return new VFSDeploymentClassLoaderPolicyModule(du);
    }
 }

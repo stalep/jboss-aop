@@ -23,12 +23,16 @@ package org.jboss.test.aop.classpool.jbosscl.support;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.jboss.classloading.spi.metadata.ClassLoadingMetaData;
+import org.jboss.dependency.spi.CallbackItem;
 import org.jboss.dependency.spi.Controller;
 import org.jboss.dependency.spi.ControllerContext;
 import org.jboss.dependency.spi.ControllerMode;
@@ -36,6 +40,7 @@ import org.jboss.dependency.spi.ControllerState;
 import org.jboss.dependency.spi.DependencyInfo;
 import org.jboss.dependency.spi.DependencyItem;
 import org.jboss.dependency.spi.ErrorHandlingMode;
+import org.jboss.dependency.spi.LifecycleCallbackItem;
 import org.jboss.dependency.spi.ScopeInfo;
 import org.jboss.deployers.client.spi.main.MainDeployer;
 import org.jboss.deployers.spi.DeploymentException;
@@ -338,6 +343,7 @@ class MockDeploymentUnit implements DeploymentUnit
    
    private class MockControllerContext extends JBossObject implements ControllerContext
    {
+      DependencyInfo dependencies = new MockDependencyInfo();
       public Set<Object> getAliases()
       {
          return null;
@@ -350,7 +356,7 @@ class MockDeploymentUnit implements DeploymentUnit
 
       public DependencyInfo getDependencyInfo()
       {
-         return null;
+         return dependencies;
       }
 
       public Throwable getError()
@@ -420,5 +426,121 @@ class MockDeploymentUnit implements DeploymentUnit
       public void uninstall(ControllerState fromState, ControllerState toState)
       {
       }
-  }
+   }
+   
+   private class MockDependencyInfo extends JBossObject implements DependencyInfo
+   {
+      private Set<DependencyItem> dependsOnMe = new HashSet<DependencyItem>();
+      private Set<DependencyItem> iDependOn = new HashSet<DependencyItem>();
+      private Set<DependencyItem> unresolved = new CopyOnWriteArraySet<DependencyItem>();
+
+      public void addDependsOnMe(DependencyItem dependency)
+      {
+         dependsOnMe.add(dependency);
+      }
+
+      public void addIDependOn(DependencyItem dependency)
+      {
+         iDependOn.add(dependency);
+      }
+
+      public <T> void addInstallItem(CallbackItem<T> callbackItem)
+      {
+         throw new RuntimeException("NYI");
+      }
+
+      public void addLifecycleCallback(LifecycleCallbackItem lifecycleCallbackItem)
+      {
+         throw new RuntimeException("NYI");
+      }
+
+      public <T> void addUninstallItem(CallbackItem<T> callbackItem)
+      {
+         throw new RuntimeException("NYI");
+      }
+
+      public Set<DependencyItem> getDependsOnMe(Class<?> type)
+      {
+         return dependsOnMe;
+      }
+
+      public Set<DependencyItem> getIDependOn(Class<?> type)
+      {
+         return iDependOn;
+      }
+
+      public Set<CallbackItem<?>> getInstallItems()
+      {
+         throw new RuntimeException("NYI");
+      }
+
+      public List<LifecycleCallbackItem> getLifecycleCallbacks()
+      {
+         throw new RuntimeException("NYI");
+      }
+
+      public Set<CallbackItem<?>> getUninstallItems()
+      {
+         throw new RuntimeException("NYI");
+      }
+
+      public boolean isAutowireCandidate()
+      {
+         return false;
+      }
+
+      public void removeDependsOnMe(DependencyItem dependency)
+      {
+         dependsOnMe.remove(dependency);
+      }
+
+      public void removeIDependOn(DependencyItem dependency)
+      {
+         iDependOn.remove(dependency);
+      }
+
+      public <T> void removeInstallItem(CallbackItem<T> callbackItem)
+      {
+         throw new RuntimeException("NYI");
+      }
+
+      public <T> void removeUninstallItem(CallbackItem<T> callbackItem)
+      {
+         throw new RuntimeException("NYI");
+      }
+ 
+      public void setAutowireCandidate(boolean candidate)
+      {
+         throw new RuntimeException("NYI");
+      }
+      
+      public boolean resolveDependencies(Controller controller, ControllerState state)
+      {
+         boolean resolved = true;
+         Set<DependencyItem> items = getUnresolvedDependencies(state);
+         if (items.isEmpty() == false)
+         {
+            for (DependencyItem item : items)
+            {
+               if (item.resolve(controller) == false)
+                  resolved = false;
+            }
+         }
+         return resolved;
+      }
+
+      public Set<DependencyItem> getUnresolvedDependencies(ControllerState state)
+      {
+         if (unresolved.isEmpty())
+            return Collections.emptySet();
+
+         Set<DependencyItem> result = new HashSet<DependencyItem>();
+         for (DependencyItem item : unresolved)
+         {
+            if (state == null || state.equals(item.getWhenRequired()))
+               result.add(item);
+         }
+         return result;
+      }
+   }
 }
