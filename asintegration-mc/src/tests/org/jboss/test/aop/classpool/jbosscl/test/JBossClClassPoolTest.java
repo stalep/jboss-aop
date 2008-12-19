@@ -85,7 +85,7 @@ public class JBossClClassPoolTest extends MicrocontainerTest
 
    private Map<ClassLoader, ClassLoaderDomain> scopedChildDomainsByLoader = new WeakHashMap<ClassLoader, ClassLoaderDomain>();
    
-   private Map<ClassLoader, KernelDeployment> deploymentsByLoader = new HashMap<ClassLoader, KernelDeployment>();
+   private LoaderNameDeploymentRegistry loaderNameDeploymentRegistry = new LoaderNameDeploymentRegistry();
    
    /** The classloader helper */
    //protected static IsolatedClassLoaderTestHelper helper;
@@ -254,10 +254,11 @@ public class JBossClClassPoolTest extends MicrocontainerTest
       }
       
       KernelDeployment deployment = install(factory);
-      Module module = assertModule(getContextName(factory));
+      loaderNameDeploymentRegistry.registerDeployment(factory.getName(), deployment);
       ClassLoader loader = assertClassLoader(factory);
+      Module module = assertModule(getContextName(factory));
       registerModule(loader, module);
-      deploymentsByLoader.put(loader, deployment);
+      loaderNameDeploymentRegistry.registerLoaderName(factory.getName(), loader);
 
       return loader;
    }
@@ -449,12 +450,23 @@ public class JBossClClassPoolTest extends MicrocontainerTest
          if (registeredURLClassLoaders.remove(classLoader) == false)
          {
             domainRegistry.cleanupLoader(classLoader);
-            KernelDeployment deployment = deploymentsByLoader.remove(classLoader);
-            if (deployment != null)
-            {
-               undeploy(deployment);
-            }
+            KernelDeployment deployment = loaderNameDeploymentRegistry.unregisterDeployment(classLoader);
+            unregisterDeployment(deployment);
          }
+      }
+   }
+   
+   protected void unregisterClassLoader(String name) throws Exception
+   {
+      KernelDeployment deployment = loaderNameDeploymentRegistry.unregisterDeployment(name);
+      unregisterDeployment(deployment);
+   }
+   
+   private void unregisterDeployment(KernelDeployment deployment)
+   {
+      if (deployment != null)
+      {
+         undeploy(deployment);
       }
    }
 
@@ -496,8 +508,30 @@ public class JBossClClassPoolTest extends MicrocontainerTest
    
    protected ClassLoader assertClassLoader(String name) throws Exception
    {
-      Object obj = getBean(name);
-      return assertInstanceOf(obj, ClassLoader.class);
+      try
+      {
+         Object obj = getBean(name);
+         return assertInstanceOf(obj, ClassLoader.class);
+      }
+      catch (IllegalStateException e)
+      {
+         throw new NoSuchClassLoaderException(e);
+      }
+   }
+   
+   protected Class<?> assertLoadClass(String name, ClassLoader initiating) throws Exception
+   {
+      return assertLoadClass(name, initiating, initiating);
+   }
+   
+   protected Class<?> assertLoadClass(String name, ClassLoader initiating, ClassLoader expected) throws Exception
+   {
+      Class<?> clazz = initiating.loadClass(name);
+      if (expected != null)
+      {
+         assertSame(expected, clazz.getClassLoader());
+      }
+      return clazz;
    }
 
    protected Module assertModule(String contextName)
@@ -514,4 +548,49 @@ public class JBossClClassPoolTest extends MicrocontainerTest
       assertCannotLoadClass(this.getClass().getClassLoader(), CLASS_B);
       assertCannotLoadClass(this.getClass().getClassLoader(), CLASS_C);
    }
+   
+   static class NoSuchClassLoaderException extends Exception
+   {
+      private static final long serialVersionUID = 1L;
+
+      public NoSuchClassLoaderException(Exception e)
+      {
+         super(e);
+      }
+   }
+   
+   private static class LoaderNameDeploymentRegistry
+   {
+      private Map<String, KernelDeployment> deploymentsByName = new HashMap<String, KernelDeployment>();
+      
+      private Map<ClassLoader, String> namesByLoader = new HashMap<ClassLoader, String>();
+
+      private void registerDeployment(String name, KernelDeployment deployment)
+      {
+         if (!deploymentsByName.containsKey(name))
+         {
+            deploymentsByName.put(name, deployment);
+         }
+      }
+      
+      private void registerLoaderName(String name, ClassLoader loader)
+      {
+         if (loader != null)
+         {
+            namesByLoader.put(loader, name);
+         }
+      }
+      
+      private KernelDeployment unregisterDeployment(String name)
+      {
+         return deploymentsByName.remove(name);
+      }
+      
+      private KernelDeployment unregisterDeployment(ClassLoader loader)
+      {
+         String name = namesByLoader.remove(loader);
+         return unregisterDeployment(name);
+      }
+   }
+
 }
