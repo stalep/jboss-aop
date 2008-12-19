@@ -24,6 +24,8 @@ package org.jboss.test.aop.classpool.jbosscl.test;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -35,18 +37,23 @@ import junit.framework.Test;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.asintegration.jboss5.VFSClassLoaderDomainRegistry;
 import org.jboss.aop.classpool.jbosscl.JBossClClassPoolFactory;
+import org.jboss.beans.metadata.spi.BeanMetaDataFactory;
 import org.jboss.classloader.plugins.filter.PatternClassFilter;
 import org.jboss.classloader.spi.ClassLoaderDomain;
 import org.jboss.classloader.spi.ClassLoaderSystem;
+import org.jboss.classloader.spi.ParentPolicy;
 import org.jboss.classloader.spi.filter.ClassFilter;
 import org.jboss.classloader.test.support.IsolatedClassLoaderTestHelper;
 import org.jboss.classloading.spi.dependency.ClassLoading;
 import org.jboss.classloading.spi.dependency.Module;
-import org.jboss.classloading.spi.dependency.policy.ClassLoaderPolicyModule;
+import org.jboss.kernel.plugins.deployment.AbstractKernelDeployment;
+import org.jboss.kernel.spi.deployment.KernelDeployment;
 import org.jboss.test.AbstractTestCaseWithSetup;
 import org.jboss.test.AbstractTestDelegate;
 import org.jboss.test.aop.classpool.jbosscl.support.BundleInfoBuilder;
-import org.jboss.test.aop.classpool.jbosscl.support.MockModuleFactory;
+import org.jboss.test.aop.classpool.jbosscl.support.TestVFSClassLoaderFactory;
+import org.jboss.test.aop.classpool.jbosscl.support.TestVFSClassLoaderFactoryFactory;
+import org.jboss.test.kernel.junit.MicrocontainerTest;
 import org.jboss.virtual.VFS;
 
 /**
@@ -55,9 +62,8 @@ import org.jboss.virtual.VFS;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
+public class JBossClClassPoolTest extends MicrocontainerTest
 {
-   //These might not be needed with the new loaders
    public final static URL JAR_A_1 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-mc-test-classpool-a1.jar");
    public final static URL JAR_A_2 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-mc-test-classpool-a2.jar");
    public final static URL JAR_B_1 = getURLRelativeToProjectRoot("target/jboss-aop-asintegration-mc-test-classpool-b1.jar");
@@ -74,14 +80,13 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
    public final static String CLASS_B = PACKAGE_B + ".B";
    public final static String CLASS_C = PACKAGE_C + ".C";
    
-   //Keep strong references to the Modules since the domainRegistry only has weak references
-   private Set<Module> modules = new HashSet<Module>();
-   
    //Keep a strong reference to the URL classloaders so that they are not garbage collected
    final static Set<URLClassLoader> registeredURLClassLoaders = new HashSet<URLClassLoader>();
 
    private Map<ClassLoader, ClassLoaderDomain> scopedChildDomainsByLoader = new WeakHashMap<ClassLoader, ClassLoaderDomain>();
-
+   
+   private Map<ClassLoader, KernelDeployment> deploymentsByLoader = new HashMap<ClassLoader, KernelDeployment>();
+   
    /** The classloader helper */
    //protected static IsolatedClassLoaderTestHelper helper;
    protected static final ClassLoaderSystem system = ClassLoaderSystem.getInstance();
@@ -92,11 +97,20 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
    static
    {
       domainRegistry = new VFSClassLoaderDomainRegistry();
+      
       AspectManager.setClassPoolFactory(new JBossClClassPoolFactory(domainRegistry));
       VFS.init();
    }
 
+
+   public static ClassLoaderSystem getSystem()
+   {
+      ClassLoaderDomain defaultDomain = system.getDefaultDomain();
+      defaultDomain.setParentPolicy(ParentPolicy.BEFORE_BUT_JAVA_ONLY);
+      return system;
+   }
    
+
    public static Test suite(Class<?> clazz)
    {
       return suite(clazz, new Class[0]);
@@ -162,54 +176,23 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
       }
    }
    
-   protected ClassLoaderSystem getSystem()
-   {
-      return system;
-   }
-   
    protected ClassLoaderDomain getDefaultDomain()
    {
-      return system.getDefaultDomain();
+      return getSystem().getDefaultDomain();
    }
 
    protected ClassLoader createClassLoader(String name, boolean importAll, URL... urls) throws Exception
    {
-      ClassLoaderPolicyModule module = MockModuleFactory.createModule(name, importAll, urls);
-      return createClassLoader(module);
+      TestVFSClassLoaderFactory factory = TestVFSClassLoaderFactoryFactory.createClassLoaderFactory(name, importAll, urls);
+      return createClassLoader(factory);
    }
    
    protected ClassLoader createClassLoader(String name, BundleInfoBuilder builder, URL... urls) throws Exception
    {
-      ClassLoaderPolicyModule module = MockModuleFactory.createModule(name, builder, urls);
-      return createClassLoader(module);
+      TestVFSClassLoaderFactory factory = TestVFSClassLoaderFactoryFactory.createClassLoaderFactory(name, builder, urls);
+      return createClassLoader(factory);
    }
-   
-   protected ClassLoader createClassLoader(String name, boolean importAll, String moduleName, URL... urls) throws Exception
-   {
-      ClassLoaderPolicyModule module = MockModuleFactory.createModule(name, importAll, urls);
-      return createClassLoader(module);
-   }
-   
-   protected ClassLoader createClassLoader(String name, boolean importAll, ClassLoader parent, URL... urls) throws Exception
-   {
-      ClassLoaderPolicyModule  module = MockModuleFactory.createModule(name, importAll, urls);
-      return createClassLoader(module, parent);
-   }
-   
-   protected ClassLoader createClassLoader(ClassLoaderPolicyModule module)
-   {
-      return createClassLoader(module, null);
-   }
-   
-   protected ClassLoader createClassLoader(ClassLoaderPolicyModule module, ClassLoader parent)
-   {
-      classLoading.addModule(module);
-      ClassLoader loader = parent == null ? 
-            module.registerClassLoaderPolicy(system) : module.registerClassLoaderPolicy(system, parent);
-      registerModule(loader, module);
-      return loader;
-   }
-   
+      
    protected ClassLoader createChildDomainParentFirstClassLoader(String name, String domainName, boolean importAll, URL... urls) throws Exception
    {
       return createChildDomainParentFirstClassLoader(name, domainName, importAll, null, urls);
@@ -242,13 +225,12 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
    
    protected ClassLoader createChildDomainClassLoader(String name, String domainName, String parentDomainName, boolean parentFirst, boolean importAll, ClassLoader parent, URL... urls) throws Exception
    {
-      ClassLoaderPolicyModule module = MockModuleFactory.createModule(name, importAll, domainName, parentDomainName, parentFirst, urls);
+      TestVFSClassLoaderFactory factory = TestVFSClassLoaderFactoryFactory.createClassLoaderFactory(name, importAll, domainName, parentDomainName, parentFirst, urls);
       
-      ClassLoader classLoader = createClassLoader(module, parent);
+      ClassLoader classLoader = createClassLoader(factory, parent);
       
-      ClassLoaderDomain domain = system.getDomain(domainName);
+      ClassLoaderDomain domain = getSystem().getDomain(domainName);
       scopedChildDomainsByLoader.put(classLoader, domain);
-      registerModule(classLoader, module);
       return classLoader;
    }
    
@@ -259,6 +241,27 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
       return cl;
    }
    
+   private ClassLoader createClassLoader(TestVFSClassLoaderFactory factory) throws Exception
+   {
+      return createClassLoader(factory, null);
+   }
+   
+   private ClassLoader createClassLoader(TestVFSClassLoaderFactory factory, ClassLoader parent) throws Exception
+   {
+      if (parent != null)
+      {
+         factory.setParent(parent);
+      }
+      
+      KernelDeployment deployment = install(factory);
+      Module module = assertModule(getContextName(factory));
+      ClassLoader loader = assertClassLoader(factory);
+      registerModule(loader, module);
+      deploymentsByLoader.put(loader, deployment);
+
+      return loader;
+   }
+
    /**
     * Here since we cannot access this via the classloading api
     */
@@ -276,12 +279,12 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
    {
       if (domain != null)
       {
-         ClassLoaderDomain registeredDomain = system.getDomain(domain.getName());
+         ClassLoaderDomain registeredDomain = getSystem().getDomain(domain.getName());
          if (registeredDomain == null)
             throw new IllegalStateException("Domain is not registered: " + domain.getName());
          if (registeredDomain != domain)
             throw new IllegalStateException(domain + " is not the same as " + registeredDomain);
-         system.unregisterDomain(domain);
+         getSystem().unregisterDomain(domain);
       }
    }
    
@@ -389,15 +392,12 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
       return AspectManager.instance().registerClassLoader(loader);
    }
    
-   protected void registerModule(ClassLoader loader, ClassLoaderPolicyModule module)
+   protected void registerModule(ClassLoader loader, Module module)
    {
-      if (system != domainRegistry.getSystem())
+      if (getSystem() != domainRegistry.getSystem())
       {
-         domainRegistry.setSystem(system);
+         domainRegistry.setSystem(getSystem());
       }
-      //Add the hard reference to the Module since the registry's reference is weak
-      //In the real workd this would be maintained by the deployers
-      modules.add(module);
       //TODO I have just hacked the domain and the parentUnitLoader here so this might cause problems
       //with the tests if we try to do weaving. However, it should be fine while just testing pools
       //and loaders
@@ -406,9 +406,6 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
    
    protected void unregisterModule(ClassLoader loader)
    {
-      //Remove the hard reference to the Module
-      modules.remove(domainRegistry.getModule(loader));
-      
       domainRegistry.cleanupLoader(loader);
    }
    
@@ -418,7 +415,7 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
       if (domainForLoader == null)
       {
          //domainForLoader = helper.getDomain();
-         domainForLoader = system.getDefaultDomain();
+         domainForLoader = getSystem().getDefaultDomain();
       }
       assertNotNull(domainForLoader);
       
@@ -451,8 +448,12 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
       {
          if (registeredURLClassLoaders.remove(classLoader) == false)
          {
-            unregisterModule(classLoader);
-            system.unregisterClassLoader(classLoader);
+            domainRegistry.cleanupLoader(classLoader);
+            KernelDeployment deployment = deploymentsByLoader.remove(classLoader);
+            if (deployment != null)
+            {
+               undeploy(deployment);
+            }
          }
       }
    }
@@ -466,11 +467,44 @@ public class JBossClClassPoolTest extends AbstractTestCaseWithSetup
    {
       if (name != null)
       {
-         ClassLoaderDomain registeredDomain = system.getDomain(name);
+         ClassLoaderDomain registeredDomain = getSystem().getDomain(name);
          unregisterDomain(registeredDomain);
       }
    }
    
+   protected KernelDeployment install(TestVFSClassLoaderFactory metaData) throws Exception
+   {
+      AbstractKernelDeployment deployment = new AbstractKernelDeployment();
+      deployment.setName(metaData.getName() + ":" + metaData.getVersion());
+      deployment.setBeanFactories(Collections.singletonList((BeanMetaDataFactory) metaData));
+      deploy(deployment);
+      return deployment;
+   }
+
+   protected String getContextName(TestVFSClassLoaderFactory factory)
+   {
+      String contextName = factory.getContextName();
+      if (contextName == null)
+         contextName = factory.getName() + ":" + factory.getVersion();
+      return contextName;
+   }
+
+   protected ClassLoader assertClassLoader(TestVFSClassLoaderFactory factory) throws Exception
+   {
+      return assertClassLoader(getContextName(factory));
+   }
+   
+   protected ClassLoader assertClassLoader(String name) throws Exception
+   {
+      Object obj = getBean(name);
+      return assertInstanceOf(obj, ClassLoader.class);
+   }
+
+   protected Module assertModule(String contextName)
+   {
+      return assertBean(contextName + "$MODULE", Module.class);
+   }
+
    /**
     * The test classes should not be on the launcher classpath
     */

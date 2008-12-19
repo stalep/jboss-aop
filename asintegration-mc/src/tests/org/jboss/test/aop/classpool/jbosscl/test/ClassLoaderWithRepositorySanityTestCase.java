@@ -449,9 +449,9 @@ public class ClassLoaderWithRepositorySanityTestCase extends JBossClClassPoolTes
          cl11B = createChildDomainParentFirstClassLoader("11B", domain11, domain1, true, JAR_B_2);
          cl11C = createChildDomainParentFirstClassLoader("11C", domain11, domain1, true, JAR_C_2);
          final String domain12 = "12";
-         cl12A = createChildDomainParentLastClassLoader("11A", domain12, domain1, true, JAR_A_2);
-         cl12B = createChildDomainParentLastClassLoader("11B", domain12, domain1, true, JAR_B_2);
-         cl12C = createChildDomainParentLastClassLoader("11C", domain12, domain1, true, JAR_C_2);
+         cl12A = createChildDomainParentLastClassLoader("12A", domain12, domain1, true, JAR_A_2);
+         cl12B = createChildDomainParentLastClassLoader("12B", domain12, domain1, true, JAR_B_2);
+         cl12C = createChildDomainParentLastClassLoader("12C", domain12, domain1, true, JAR_C_2);
          Class<?> aFrom11A = cl11A.loadClass(CLASS_A);
          Class<?> aFrom11B = cl11B.loadClass(CLASS_A);
          Class<?> aFrom11C = cl11C.loadClass(CLASS_A);

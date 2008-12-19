@@ -22,60 +22,58 @@
 package org.jboss.test.aop.classpool.jbosscl.support;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jboss.classloader.spi.ClassLoaderSystem;
-import org.jboss.classloading.spi.dependency.policy.ClassLoaderPolicyModule;
 import org.jboss.classloading.spi.metadata.ClassLoadingMetaData;
 import org.jboss.classloading.spi.metadata.ExportAll;
-import org.jboss.deployers.vfs.plugins.classloader.VFSDeploymentClassLoaderPolicyModule;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class MockModuleFactory
+public class TestVFSClassLoaderFactoryFactory
 {
-   public static ClassLoaderPolicyModule createModule(String name, boolean importAll, URL... urls) throws Exception
+   public static TestVFSClassLoaderFactory createClassLoaderFactory(String name, boolean importAll, URL... urls) throws Exception
    {
-      return createModule(name, importAll, null, false, urls);
+      return createClassLoaderFactory(name, importAll, null, false, urls);
    }
    
-   public static ClassLoaderPolicyModule createModule(String name, BundleInfoBuilder builder, URL... urls) throws Exception
+   public static TestVFSClassLoaderFactory createClassLoaderFactory(String name, BundleInfoBuilder builder, URL... urls) throws Exception
    {
-      return createModule(name, false, null, null, builder, false, urls);
+      return createClassLoaderFactory(name, false, null, null, builder, false, urls);
    }
    
-   public static ClassLoaderPolicyModule createModule(String name, boolean importAll, String moduleName, URL... urls) throws Exception
+   public static TestVFSClassLoaderFactory createClassLoaderFactory(String name, boolean importAll, String moduleName, URL... urls) throws Exception
    {
-      return createModule(name, importAll, null, false, urls);
+      return createClassLoaderFactory(name, importAll, null, false, urls);
    }
    
-   public static ClassLoaderPolicyModule createModule(String name, boolean importAll, String domainName, boolean parentFirst, URL... urls) throws Exception
+   public static TestVFSClassLoaderFactory createClassLoaderFactory(String name, boolean importAll, String domainName, boolean parentFirst, URL... urls) throws Exception
    {
-      return createModule(name, importAll, domainName, null, parentFirst, urls);
+      return createClassLoaderFactory(name, importAll, domainName, null, parentFirst, urls);
    }
 
-   public static ClassLoaderPolicyModule createModule(String name, boolean importAll, String domainName, String parentDomainName, boolean parentFirst, URL... urls) throws Exception
+   public static TestVFSClassLoaderFactory createClassLoaderFactory(String name, boolean importAll, String domainName, String parentDomainName, boolean parentFirst, URL... urls) throws Exception
    {
-      return createModule(name, importAll, domainName, parentDomainName, null, parentFirst, urls);
+      return createClassLoaderFactory(name, importAll, domainName, parentDomainName, null, parentFirst, urls);
    }
    
-   public static ClassLoaderPolicyModule createModule(String name, boolean importAll, String domainName, String parentDomainName, BundleInfoBuilder builder, boolean parentFirst, URL... urls) throws Exception
+   public static TestVFSClassLoaderFactory createClassLoaderFactory(String name, boolean importAll, String domainName, String parentDomainName, BundleInfoBuilder builder, boolean parentFirst, URL... urls) throws Exception
    {
-      ClassLoadingMetaData md = new ClassLoadingMetaData();
-      md.setName(name);
-      md.setImportAll(importAll);
+      TestVFSClassLoaderFactory factory = new TestVFSClassLoaderFactory();
+      factory.setName(name);
+      factory.setImportAll(importAll);
       if (importAll)
       {
-         md.setExportAll(ExportAll.NON_EMPTY);
+         factory.setExportAll(ExportAll.NON_EMPTY);
       }
-   
-      addCapabilitiesAndRequirements(md, builder);
-      setupDomain(md, domainName, parentDomainName, parentFirst);
-
-      MockDeploymentUnit du = new MockDeploymentUnit(name, md, urls);
-      return new VFSDeploymentClassLoaderPolicyModule(du);
+      factory.setRoots(urlsToStringList(urls));
+      addCapabilitiesAndRequirements(factory, builder);
+      setupDomain(factory, domainName, parentDomainName, parentFirst);
+      return factory;
    }
 
    private static void addCapabilitiesAndRequirements(ClassLoadingMetaData md, BundleInfoBuilder builder)
@@ -107,4 +105,15 @@ public class MockModuleFactory
          md.setDomain(ClassLoaderSystem.DEFAULT_DOMAIN_NAME);
       }
    }
+   
+   private static List<String> urlsToStringList(URL... urls)
+   {
+      List<String> urlList = new ArrayList<String>(urls.length);
+      for (URL url : urls)
+      {
+         urlList.add(url.toString());
+      }
+      return urlList;
+   }
+
 }

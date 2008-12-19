@@ -21,18 +21,31 @@
 */ 
 package org.jboss.test.aop.classpool.jbosscl.test;
 
-import org.jboss.test.AbstractTestDelegate;
+import java.net.URL;
+
+import org.jboss.test.kernel.junit.MicrocontainerTestDelegate;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBossClClassPoolTestDelegate extends AbstractTestDelegate
+public class JBossClClassPoolTestDelegate extends MicrocontainerTestDelegate
 {
 
-   public JBossClClassPoolTestDelegate(Class<?> clazz)
+   public JBossClClassPoolTestDelegate(Class<?> clazz) throws Exception
    {
       super(clazz);
+   }
+   
+   protected void deploy() throws Exception
+   {
+      String common = "/org/jboss/test/aop/classpool/jbosscl/Common.xml";
+      URL url = getClass().getResource(common);
+      if (url == null)
+         throw new IllegalStateException(common + " not found");
+      deploy(url);
+
+      super.deploy();
    }
 }
