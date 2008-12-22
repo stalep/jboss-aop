@@ -45,6 +45,9 @@ public class JBossClClassPoolTestSuite extends TestSuite
       suite.addTest(ClassPoolWithRepositoryTestCase.suite());
       suite.addTest(ClassLoaderWithModuleDependencySanityTestCase.suite());
       suite.addTest(ClassLoaderWithPackageDependencySanityTestCase.suite());
+      suite.addTest(ClassLoaderWithReExportModuleSanityTestCase.suite());
+      suite.addTest(ClassLoaderWithReExportPackageSanityTestCase.suite());
+      suite.addTest(ClassLoaderWithUsesPackageSanityTestCase.suite());
 
       return suite;
    }

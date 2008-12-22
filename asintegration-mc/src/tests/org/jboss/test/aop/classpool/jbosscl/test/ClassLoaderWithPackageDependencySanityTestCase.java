@@ -180,8 +180,8 @@ public class ClassLoaderWithPackageDependencySanityTestCase extends JBossClClass
       try
       {
          BundleInfoBuilder builderA1 = BundleInfoBuilder.getBuilder().
-         createModule("PackageA").
-         createPackage(PACKAGE_A, "1.0.0");
+            createModule("PackageA").
+            createPackage(PACKAGE_A, "1.0.0");
          clA1 = createClassLoader("A1", builderA1, JAR_A_1);
          
          BundleInfoBuilder builderA2 = BundleInfoBuilder.getBuilder().

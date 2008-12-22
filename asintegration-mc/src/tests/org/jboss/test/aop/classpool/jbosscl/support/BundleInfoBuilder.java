@@ -111,6 +111,62 @@ public class BundleInfoBuilder
       return this;
    }
 
+   public BundleInfoBuilder createReExportModule(String name)
+   {
+      requirements.add(clmdf.createReExportModule(name));
+      return this;
+   }
+
+   public BundleInfoBuilder createReExportModule(String name, VersionRange versionRange)
+   {
+      requirements.add(clmdf.createReExportModule(name, versionRange));
+      return this;
+   }
+
+   public BundleInfoBuilder createReExportModule(String name, VersionRange versionRange, boolean optional)
+   {
+      requirements.add(clmdf.createReExportModule(name, versionRange, optional));
+      return this;
+   }
+
+   public BundleInfoBuilder createReExportPackage(String name)
+   {
+      requirements.add(clmdf.createReExportPackage(name));
+      return this;
+   }
+
+   public BundleInfoBuilder createReExportPackage(String name, VersionRange versionRange)
+   {
+      requirements.add(clmdf.createReExportPackage(name, versionRange));
+      return this;
+   }
+
+   public BundleInfoBuilder createReExportPackage(String name, VersionRange versionRange, boolean optional)
+   {
+      requirements.add(clmdf.createReExportPackage(name, versionRange, optional));
+      return this;
+   }
+   
+   public BundleInfoBuilder createUsesPackage(String name)
+   {
+      requirements.add(clmdf.createUsesPackage(name));
+      return this;
+   }
+
+   public BundleInfoBuilder createUsesPackage(String name, VersionRange versionRange)
+   {
+      requirements.add(clmdf.createUsesPackage(name, versionRange));
+      return this;
+   }
+
+   public BundleInfoBuilder createUsesPackage(String name, VersionRange versionRange, boolean reExport)
+   {
+      requirements.add(clmdf.createUsesPackage(name, versionRange, reExport));
+      return this;
+   }
+
+   
+   
    public List<Capability> getCapabilities()
    {
       return capabilities;
