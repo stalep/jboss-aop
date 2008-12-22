@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import javassist.ClassPool;
+import javassist.CtClass;
 import junit.framework.Test;
 
 import org.jboss.aop.AspectManager;
@@ -352,6 +353,12 @@ public class JBossClClassPoolTest extends MicrocontainerTest
       return AspectManager.instance().registerClassLoader(loader);
    }
    
+   protected ClassPool createClassPool(String name, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      ClassLoader loader = createClassLoader(name, builder, urls);
+      return AspectManager.instance().registerClassLoader(loader);
+   }
+   
    protected ClassPool createChildDomainParentFirstClassPool(String name, String domainName, boolean importAll, URL... urls) throws Exception
    {
       ClassLoader loader = createChildDomainParentFirstClassLoader(name, domainName, importAll, urls);
@@ -530,6 +537,21 @@ public class JBossClClassPoolTest extends MicrocontainerTest
       if (expected != null)
       {
          assertSame(expected, clazz.getClassLoader());
+      }
+      return clazz;
+   }
+
+   protected CtClass assertLoadCtClass(String name, ClassPool initiating) throws Exception
+   {
+      return assertLoadCtClass(name, initiating, initiating);
+   }
+   
+   protected CtClass assertLoadCtClass(String name, ClassPool initiating, ClassPool expected) throws Exception
+   {
+      CtClass clazz = initiating.get(name);
+      if (expected != null)
+      {
+         assertSame(expected, clazz.getClassPool());
       }
       return clazz;
    }

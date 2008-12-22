@@ -56,7 +56,7 @@ public class ClassLoaderWithUsesPackageSanityTestCase extends JBossClClassPoolTe
             createModule("a1").
             createPackage(PACKAGE_A);
          clA1 = createClassLoader("A1", builderA1, JAR_A_1);
-         assertLoadClass(CLASS_A, clA1);
+         Class<?> classA = assertLoadClass(CLASS_A, clA1);
 
          ClassLoader clA2 = null;
          try
@@ -66,8 +66,10 @@ public class ClassLoaderWithUsesPackageSanityTestCase extends JBossClClassPoolTe
             createUsesPackage(PACKAGE_A);
 
             clA2 = createClassLoader("A2", builderA2, JAR_A_1);
-            assertLoadClass(CLASS_A, clA1);
-            assertLoadClass(CLASS_A, clA2, clA1);
+            Class<?> classA1 = assertLoadClass(CLASS_A, clA1);
+            assertSame(classA, classA1);
+            classA1 = assertLoadClass(CLASS_A, clA2, clA1);
+            assertSame(classA, classA1);
          }
          finally
          {

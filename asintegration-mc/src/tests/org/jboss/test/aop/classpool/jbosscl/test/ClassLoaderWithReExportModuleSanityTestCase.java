@@ -55,7 +55,7 @@ public class ClassLoaderWithReExportModuleSanityTestCase extends JBossClClassPoo
             createModule("a").
             createPackage(PACKAGE_A);
          clA = createClassLoader("A", builderA, JAR_A_1);
-         assertLoadClass(CLASS_A, clA);
+         Class<?> classA = assertLoadClass(CLASS_A, clA);
          assertCannotLoadClass(clA, CLASS_B);
          assertCannotLoadClass(clA, CLASS_C);
          
@@ -67,11 +67,12 @@ public class ClassLoaderWithReExportModuleSanityTestCase extends JBossClClassPoo
                createPackage(PACKAGE_B).
                createReExportModule("a");
             clB = createClassLoader("B", builderB, JAR_B_1);
-            assertLoadClass(CLASS_A, clA);
+            Class<?> classA1 = assertLoadClass(CLASS_A, clA);
+            assertSame(classA, classA1);
             assertCannotLoadClass(clA, CLASS_B);
             assertCannotLoadClass(clA, CLASS_C);
             assertLoadClass(CLASS_A, clB, clA);
-            assertLoadClass(CLASS_B, clB);
+            Class<?> classB = assertLoadClass(CLASS_B, clB);
             assertCannotLoadClass(clB, CLASS_C);
             
             ClassLoader clC = null;
@@ -81,32 +82,41 @@ public class ClassLoaderWithReExportModuleSanityTestCase extends JBossClClassPoo
                   createRequireModule("b");
                clC = createClassLoader("C", builderC, JAR_C_1);
                
-               assertLoadClass(CLASS_A, clA);
+               classA1 = assertLoadClass(CLASS_A, clA);
+               assertSame(classA, classA1);
                assertCannotLoadClass(clA, CLASS_B);
                assertCannotLoadClass(clA, CLASS_C);
-               assertLoadClass(CLASS_A, clB, clA);
-               assertLoadClass(CLASS_B, clB);
+               classA1 = assertLoadClass(CLASS_A, clB, clA);
+               assertSame(classA, classA1);
+               Class<?> classB1 = assertLoadClass(CLASS_B, clB);
+               assertSame(classB, classB1);
                assertCannotLoadClass(clB, CLASS_C);
-               assertLoadClass(CLASS_A, clC, clA);
-               assertLoadClass(CLASS_B, clC, clB);
+               classA1 = assertLoadClass(CLASS_A, clC, clA);
+               assertSame(classA, classA1);
+               classB1 = assertLoadClass(CLASS_B, clC, clB);
+               assertSame(classB, classB1);
                assertLoadClass(CLASS_C, clC);
             }
             finally
             {
                unregisterClassLoader(clC);
             }
-            assertLoadClass(CLASS_A, clA);
+            classA1 = assertLoadClass(CLASS_A, clA);
+            assertSame(classA, classA1);
             assertCannotLoadClass(clA, CLASS_B);
             assertCannotLoadClass(clA, CLASS_C);
-            assertLoadClass(CLASS_A, clB, clA);
-            assertLoadClass(CLASS_B, clB);
+            classA1 = assertLoadClass(CLASS_A, clB, clA);
+            assertSame(classA, classA1);
+            Class<?> classB1 = assertLoadClass(CLASS_B, clB);
+            assertSame(classB, classB1);
             assertCannotLoadClass(clB, CLASS_C);
          }
          finally
          {
             unregisterClassLoader(clB);
          }
-         assertLoadClass(CLASS_A, clA);
+         Class<?> classA1 = assertLoadClass(CLASS_A, clA);
+         assertSame(classA, classA1);
          assertCannotLoadClass(clA, CLASS_B);
          assertCannotLoadClass(clA, CLASS_C);
       }
@@ -125,7 +135,7 @@ public class ClassLoaderWithReExportModuleSanityTestCase extends JBossClClassPoo
             createModule("a").
             createPackage(PACKAGE_A);
          clA = createClassLoader("A", builderA, JAR_A_1);
-         assertLoadClass(CLASS_A, clA);
+         Class<?> classA = assertLoadClass(CLASS_A, clA);
          assertCannotLoadClass(clA, CLASS_B);
          assertCannotLoadClass(clA, CLASS_C);
          
@@ -137,11 +147,13 @@ public class ClassLoaderWithReExportModuleSanityTestCase extends JBossClClassPoo
                createPackage(PACKAGE_B).
                createReExportModule("a");
             clB = createClassLoader("B", builderB, JAR_B_1);
-            assertLoadClass(CLASS_A, clA);
+            Class<?> classA1 = assertLoadClass(CLASS_A, clA);
+            assertSame(classA, classA1);
             assertCannotLoadClass(clA, CLASS_B);
             assertCannotLoadClass(clA, CLASS_C);
-            assertLoadClass(CLASS_A, clB, clA);
-            assertLoadClass(CLASS_B, clB);
+            classA1 = assertLoadClass(CLASS_A, clB, clA);
+            assertSame(classA, classA1);
+            Class<?> classB = assertLoadClass(CLASS_B, clB);
             assertCannotLoadClass(clB, CLASS_C);
             
             ClassLoader clC = null;
@@ -151,32 +163,40 @@ public class ClassLoaderWithReExportModuleSanityTestCase extends JBossClClassPoo
                   createRequirePackage(PACKAGE_B);
                clC = createClassLoader("C", builderC, JAR_C_1);
                
-               assertLoadClass(CLASS_A, clA);
+               classA1 = assertLoadClass(CLASS_A, clA);
+               assertSame(classA, classA1);
                assertCannotLoadClass(clA, CLASS_B);
                assertCannotLoadClass(clA, CLASS_C);
-               assertLoadClass(CLASS_A, clB, clA);
-               assertLoadClass(CLASS_B, clB);
+               classA1 = assertLoadClass(CLASS_A, clB, clA);
+               assertSame(classA, classA1);
+               Class<?> classB1 = assertLoadClass(CLASS_B, clB);
+               assertSame(classB, classB1);
                assertCannotLoadClass(clB, CLASS_C);
                assertCannotLoadClass(clC, CLASS_A);
-               assertLoadClass(CLASS_B, clC, clB);
+               classB1 = assertLoadClass(CLASS_B, clC, clB);
+               assertSame(classB, classB1);
                assertLoadClass(CLASS_C, clC);
             }
             finally
             {
                unregisterClassLoader(clC);
             }
-            assertLoadClass(CLASS_A, clA);
+            classA1 = assertLoadClass(CLASS_A, clA);
+            assertSame(classA, classA1);
             assertCannotLoadClass(clA, CLASS_B);
             assertCannotLoadClass(clA, CLASS_C);
-            assertLoadClass(CLASS_A, clB, clA);
-            assertLoadClass(CLASS_B, clB);
+            classA1 = assertLoadClass(CLASS_A, clB, clA);
+            assertSame(classA, classA1);
+            Class<?> classB1 = assertLoadClass(CLASS_B, clB);
+            assertSame(classB, classB1);
             assertCannotLoadClass(clB, CLASS_C);
          }
          finally
          {
             unregisterClassLoader(clB);
          }
-         assertLoadClass(CLASS_A, clA);
+         Class<?> classA1 = assertLoadClass(CLASS_A, clA);
+         assertSame(classA, classA1);
          assertCannotLoadClass(clA, CLASS_B);
          assertCannotLoadClass(clA, CLASS_C);
       }
