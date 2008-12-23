@@ -41,18 +41,8 @@ public class JBossClClassPoolTestSuite extends TestSuite
    {
       TestSuite suite = new TestSuite("UclClassPool All Tests");
       
-      suite.addTest(ClassLoaderWithRepositorySanityTestCase.suite());
-      suite.addTest(ClassLoaderWithModuleDependencySanityTestCase.suite());
-      suite.addTest(ClassLoaderWithPackageDependencySanityTestCase.suite());
-      suite.addTest(ClassLoaderWithReExportModuleSanityTestCase.suite());
-      suite.addTest(ClassLoaderWithReExportPackageSanityTestCase.suite());
-      suite.addTest(ClassLoaderWithUsesPackageSanityTestCase.suite());
-      suite.addTest(ClassPoolWithRepositoryTestCase.suite());
-      suite.addTest(ClassPoolWithModuleDependencyTestCase.suite());
-      suite.addTest(ClassPoolWithPackageDependencyTestCase.suite());
-      suite.addTest(ClassPoolWithReExportModuleTestCase.suite());
-      suite.addTest(ClassPoolWithReExportPackageTestCase.suite());
-      suite.addTest(ClassPoolWithUsesPackageTestCase.suite());
+      suite.addTest(JBossClClassPoolSanityTestSuite.suite());
+      suite.addTest(JBossClClassPoolDelegatingTestSuite.suite());
 
       return suite;
    }

@@ -731,6 +731,10 @@ public class ClassPoolWithRepositoryTestCase extends JBossClClassPoolTest
       CtClass strA = poolA.getCtClass(STRING);
       CtClass strB = poolB.getCtClass(STRING);
       assertSame(strA, strB);
-      assertSame(ClassPool.getDefault(), strA.getClassPool());
+      assertSame(strB.getClassPool(), strA.getClassPool());
+      assertNotSame(poolA, strA.getClassPool());
+      assertNotSame(poolB, strB.getClassPool());
+      ClassPool def = ClassPool.getDefault();
+      int i = 4;
    }
 }

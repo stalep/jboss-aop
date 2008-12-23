@@ -34,6 +34,7 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 import org.jboss.aop.classpool.ClassPoolDomain;
 import org.jboss.aop.classpool.DelegatingClassPool;
 import org.jboss.classloader.spi.base.BaseClassLoader;
+import org.jboss.classloading.spi.dependency.Module;
 import org.jboss.virtual.plugins.context.memory.MemoryContextFactory;
 
 /**
@@ -43,15 +44,19 @@ import org.jboss.virtual.plugins.context.memory.MemoryContextFactory;
  */
 public class JBossClDelegatingClassPool extends DelegatingClassPool
 {
-   URL tempURL;
+   Module module;
    // For loadClass tmpdir creation for UCL
    protected final Object tmplock = new Object();
 
    protected JBossClDelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ClassPool parent,
-         ScopedClassPoolRepository repository, URL tmpURL)
+         ScopedClassPoolRepository repository, Module module)
    {
       super(domain, cl, parent, repository);
-      this.tempURL = tmpURL;
+      if (module == null)
+      {
+         throw new IllegalStateException("Null Module");
+      }
+      this.module = module;
    }
 
    //Copied from JBoss5ClassPool
@@ -59,7 +64,7 @@ public class JBossClDelegatingClassPool extends DelegatingClassPool
    {
       lockInCache(cc);
       final ClassLoader myloader = getClassLoader();
-      if (myloader == null || tempURL == null)
+      if (myloader == null || module.getDynamicClassRoot() == null)
       {
          return super.toClass(cc, loader, domain);
       }
@@ -67,7 +72,7 @@ public class JBossClDelegatingClassPool extends DelegatingClassPool
       try
       {
          String classFileName = getResourceName(cc.getName());
-         URL outputURL = new URL(tempURL.toString() + "/" + classFileName);
+         URL outputURL = new URL(module.getDynamicClassRoot().toString() + "/" + classFileName);
          //Write the classfile to the temporary url
          synchronized (tmplock)
          {

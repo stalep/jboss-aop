@@ -30,7 +30,6 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 
 import org.jboss.aop.asintegration.jboss5.DomainRegistry;
 import org.jboss.aop.classpool.AbstractJBossClassPoolFactory;
-import org.jboss.aop.classpool.BasicClassPoolDomain;
 import org.jboss.aop.classpool.ClassPoolDomain;
 import org.jboss.aop.classpool.ClassPoolDomainRegistry;
 import org.jboss.aop.classpool.NonDelegatingClassPool;
@@ -62,7 +61,7 @@ public class JBossClClassPoolFactory extends AbstractJBossClassPoolFactory imple
       {
          Module module = registry.getModule(cl);
          ClassPoolDomain domain = getDomain(module, cl);  
-         return new JBossClDelegatingClassPool(domain, cl, parent, repository, getTempURL(module));
+         return new JBossClDelegatingClassPool(domain, cl, parent, repository, module);
       }
       
       return new NonDelegatingClassPool(cl, parent, repository, true);
@@ -97,7 +96,7 @@ public class JBossClClassPoolFactory extends AbstractJBossClassPoolFactory imple
             }
             parentPoolDomain = ClassPoolDomainRegistry.getInstance().getDomain(parentDomain);
          }
-         poolDomain = new BasicClassPoolDomain(domain.getName(), parentPoolDomain);
+         poolDomain = new JBossClClassPoolDomain(domain.getName(), parentPoolDomain);
          
          //The determination of parentFirst/-Last might need revisiting
          poolDomain.setParentFirst(domain.getParentPolicy() == ParentPolicy.BEFORE);

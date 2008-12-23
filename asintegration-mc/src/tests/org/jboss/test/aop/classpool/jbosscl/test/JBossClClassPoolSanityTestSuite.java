@@ -19,53 +19,36 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.classpool;
+package org.jboss.test.aop.classpool.jbosscl.test;
 
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.NotFoundException;
-
-
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public abstract class AbstractClassPoolDomain implements ClassPoolDomainInternal
+public class JBossClClassPoolSanityTestSuite extends TestSuite
 {
-   protected CtClass getCachedOrCreateFromPoolParent(BaseClassPool initiatingPool, String classname, boolean create)
+   public static void main(String[] args)
    {
-      if (initiatingPool == null)
-      {
-         return null;
-      }
-      ClassPool parentPool = initiatingPool.getParent();
-      if (parentPool == null)
-      {
-         return null;
-      }
-       
-      if (parentPool instanceof BaseClassPool)
-      {
-         return getCachedOrCreate((BaseClassPool)parentPool, classname, create);
-      }
-      else
-      {
-         return getCachedOrCreate(parentPool, classname, create);
-      }
+      TestRunner.run(suite());
    }
-   
-   protected CtClass getCachedOrCreate(ClassPool parentPool, String classname, boolean create)
+
+   public static Test suite()
    {
-      try
-      {
-         //This will check the parents
-         return parentPool.get(classname);
-      }
-      catch(NotFoundException e)
-      {
-         return null;
-      }
+      TestSuite suite = new TestSuite("UclClassPool All Tests");
+      
+      suite.addTest(ClassLoaderWithRepositorySanityTestCase.suite());
+      suite.addTest(ClassLoaderWithModuleDependencySanityTestCase.suite());
+      suite.addTest(ClassLoaderWithPackageDependencySanityTestCase.suite());
+      suite.addTest(ClassLoaderWithReExportModuleSanityTestCase.suite());
+      suite.addTest(ClassLoaderWithReExportPackageSanityTestCase.suite());
+      suite.addTest(ClassLoaderWithUsesPackageSanityTestCase.suite());
+
+      return suite;
    }
+
 }
