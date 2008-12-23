@@ -21,8 +21,6 @@
 */ 
 package org.jboss.aop.classpool.jbosscl;
 
-import java.net.URL;
-
 import javassist.ClassPool;
 import javassist.scopedpool.ScopedClassPool;
 import javassist.scopedpool.ScopedClassPoolFactory;
@@ -106,15 +104,6 @@ public class JBossClClassPoolFactory extends AbstractJBossClassPoolFactory imple
       return poolDomain;
    }
    
-
-   private URL getTempURL(Module module)
-   {
-      if (module == null)
-         return null;
-      
-      return module.getDynamicClassRoot();
-   }
-
    @Override
    protected ClassPool getCreateParentClassPools(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
    {
