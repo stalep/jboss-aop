@@ -64,6 +64,24 @@
          </not>
       </condition>
 
+      <loadproperties>
+         <zipentry zipfile="${lib.jbossall-client}" name="META-INF/MANIFEST.MF"/>
+         <!-- Add the prefix -->
+         <filterchain>
+            <linecontains>
+               <contains value="Version"/>
+            </linecontains>
+            <prefixlines prefix="AS-"/>
+         </filterchain>
+      </loadproperties>
+
+      <echo>Version is '${AS-Specification-Version}'</echo>
+
+      <condition property="AS-40">
+          <matches pattern="4.0.*" string="${AS-Specification-Version}"/>
+      </condition>
+
+      <echo>AS is 40: ${AS-40}</echo>
    </target>
 
    <target name="prepare-aspect-library" depends="init">
