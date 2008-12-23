@@ -69,13 +69,16 @@ public abstract class AbstractClassPoolDomain implements ClassPoolDomainInternal
          clazz = getCachedOrCreateFromPoolParent(parentPool, classname, create); 
       }
       
-      //We can use the exposed methods directly to avoid the overhead of NotFoundException
-      clazz = parentPool.getCached(classname);
-      if (clazz == null && create)
+      if (clazz == null)
       {
-         clazz = parentPool.createCtClass(classname, true);
+         //We can use the exposed methods directly to avoid the overhead of NotFoundException
+         clazz = parentPool.getCached(classname);
+         if (clazz == null && create)
+         {
+            clazz = parentPool.createCtClass(classname, true);
+         }
       }
-
+      
       if (clazz == null && !parentPool.childFirstLookup)
       {
          clazz = getCachedOrCreateFromPoolParent(parentPool, classname, create); 
