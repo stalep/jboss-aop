@@ -44,7 +44,7 @@ import org.jboss.virtual.plugins.context.memory.MemoryContextFactory;
  */
 public class JBossClDelegatingClassPool extends DelegatingClassPool
 {
-   Module module;
+   private Module module;
    // For loadClass tmpdir creation for UCL
    protected final Object tmplock = new Object();
 
@@ -56,9 +56,19 @@ public class JBossClDelegatingClassPool extends DelegatingClassPool
       {
          throw new IllegalStateException("Null Module");
       }
+      if (domain instanceof JBossClClassPoolDomain == false)
+      {
+         throw new IllegalArgumentException("Domain was not instance of JBossClClassPoolDomain: " + domain.getClass().getName());
+      }
       this.module = module;
+      ((JBossClClassPoolDomain)domain).setupPoolsByPackage(this);
    }
 
+   Module getModule()
+   {
+      return module;
+   }
+   
    //Copied from JBoss5ClassPool
    public Class<?> toClass(CtClass cc, ClassLoader loader, ProtectionDomain domain) throws CannotCompileException
    {

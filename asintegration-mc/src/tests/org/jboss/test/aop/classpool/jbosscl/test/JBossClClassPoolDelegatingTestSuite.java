@@ -39,7 +39,7 @@ public class JBossClClassPoolDelegatingTestSuite extends TestSuite
 
    public static Test suite()
    {
-      TestSuite suite = new TestSuite("UclClassPool All Tests");
+      TestSuite suite = new TestSuite("JBoss-cl Pool Tests");
       
       suite.addTest(ClassPoolWithRepositoryTestCase.suite());
       suite.addTest(ClassPoolWithModuleDependencyTestCase.suite());

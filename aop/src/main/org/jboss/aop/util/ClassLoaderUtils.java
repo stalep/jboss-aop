@@ -41,4 +41,16 @@ public class ClassLoaderUtils
       }
    }
 
+   public static String getPackageName(String classname)
+   {
+      int last = classname.lastIndexOf('.');
+      if (last < 0)
+      {
+         return "";
+      }
+      else
+      {
+         return classname.substring(0, last);
+      }
+   }
 }

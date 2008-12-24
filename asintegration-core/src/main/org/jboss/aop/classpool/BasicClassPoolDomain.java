@@ -97,7 +97,9 @@ public class BasicClassPoolDomain extends AbstractClassPoolDomain implements Cla
    
    public synchronized CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, boolean create)
    {
-      CtClass clazz = getCachedOrCreateInternal(classname, create);
+      String resourceName = ClassLoaderUtils.getResourceName(classname);
+      
+      CtClass clazz = getCachedOrCreateInternal(initiatingPool, classname, resourceName, create);
       
       if (clazz == null)
       {
@@ -106,42 +108,78 @@ public class BasicClassPoolDomain extends AbstractClassPoolDomain implements Cla
       return clazz;
    }
    
-   public CtClass getCachedOrCreateInternal(String classname, boolean create)
+   public CtClass getCachedOrCreateInternal(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
    {
       CtClass clazz = null;
-      if (parentFirst && parent!= null)
+      if (isParentBefore())
       {
-         clazz = parent.getCachedOrCreateInternal(classname, create);
+         clazz = getCachedOrCreateInternalFromParent(initiatingPool, classname, resourceName, create);
       }
       if (clazz == null)
       {
-         String resourceName = delegatingPools.size() > 0 ? ClassLoaderUtils.getResourceName(classname) : null;
-         for (DelegatingClassPool pool : delegatingPools)
+         String packageName = ClassLoaderUtils.getPackageName(classname);
+         for (DelegatingClassPool pool : getPoolsForPackage(packageName))
          {
-            if (pool.isLocalResource(resourceName))
+            clazz = attemptLoadFromPool(pool, classname, resourceName, create);
+            if (clazz != null)
             {
-               clazz = pool.getCachedLocally(classname);
-               if (clazz == null && create)
-               {
-                  clazz = pool.createCtClass(classname, true);
-               }
-               if (clazz != null)
-               {
-                  break;
-               }
+               break;
             }
          }
       }
-      if (clazz == null && parent != null && !parentFirst)
+      if (clazz == null && isParentAfter())
       {
-         clazz = parent.getCachedOrCreateInternal(classname, create);
+         clazz = getCachedOrCreateInternalFromParent(initiatingPool, classname, resourceName, create);
       }
       return clazz;
    }
 
+   protected CtClass attemptLoadFromPool(DelegatingClassPool pool, String classname, String resourceName, boolean create)
+   {
+      CtClass clazz = null;
+      if (pool.isLocalResource(resourceName))
+      {
+         clazz = pool.getCachedLocally(classname);
+         if (clazz == null && create)
+         {
+            return pool.createCtClass(classname, true);
+         }
+      }
+      return clazz;
+   }
+   
+   public CtClass getCachedOrCreateInternalFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
+   {
+      return parent.getCachedOrCreateInternal(initiatingPool, classname, resourceName, create);
+   }
+   
    public String toString()
    {
       return super.toString() + "[" + domainName + "]";
    }
 
+   public List<DelegatingClassPool> getClassPools()
+   {
+      return delegatingPools; 
+   }
+   
+   protected boolean isParentBefore()
+   {
+      return parentFirst && parent!= null;
+   }
+   
+   protected boolean isParentAfter()
+   {
+      return parent != null && !parentFirst;
+   }
+   
+   protected ClassPoolDomainInternal getParentDomain()
+   {
+      return parent;
+   }
+   
+   protected List<DelegatingClassPool> getPoolsForPackage(String packageName)
+   {
+      return delegatingPools;
+   }
 }

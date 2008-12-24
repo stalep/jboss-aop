@@ -49,9 +49,13 @@ public class DelegatingClassPool extends BaseClassPool
    protected DelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ClassPool parent, ScopedClassPoolRepository repository)
    {
       super(cl, parent, repository);
+      if (domain == null)
+      {
+         throw new IllegalArgumentException("Domain was null");
+      }
       if (domain instanceof ClassPoolDomainInternal == false)
       {
-         throw new IllegalArgumentException("domain must implement ClassPoolDomainInternal");
+         throw new IllegalArgumentException("Domain must implement ClassPoolDomainInternal");
       }
       this.domain = (ClassPoolDomainInternal)domain;
       domain.addClassPool(this);
