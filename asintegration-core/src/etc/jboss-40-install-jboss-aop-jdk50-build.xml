@@ -64,8 +64,16 @@
          </not>
       </condition>
 
+      <property name="jboss.lib.dir" value="${jboss.home}/lib"/>
+      <available file="${jboss.lib.dir}" property="lib.exists" type="dir"/>
+      <fail unless="lib.exists" message="${jboss.lib.dir} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
+      
+      <property name="lib.jboss-system" value="${jboss.lib.dir}/jboss-system.jar"/>
+      <available file="${lib.jboss-system}" property="lib.jboss-system.exists"/>
+      <fail unless="lib.jboss-system.exists" message="${lib.jboss-system} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
+      
       <loadproperties>
-         <zipentry zipfile="${lib.jbossall-client}" name="META-INF/MANIFEST.MF"/>
+         <zipentry zipfile="${lib.jboss-system}" name="META-INF/MANIFEST.MF"/>
          <!-- Add the prefix -->
          <filterchain>
             <linecontains>
