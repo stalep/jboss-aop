@@ -116,7 +116,11 @@
       <delete file="${lib.jbossall-client}"/>
       <!-- Get rid of the files that exist in jboss-aop-jdk50.jar -->
       <delete dir="jbossall-client-library-temp/org/jboss/aop"/>
-      <unjar src="jboss-aop-jdk50.jar" dest="jbossall-client-library-temp"/>
+      <unjar src="jboss-aop-jdk50.jar" dest="jbossall-client-library-temp">
+         <patternset>
+            <exclude name="META-INF/MANIFEST.MF"/>
+         </patternset>
+      </unjar>
       <jar destfile="${lib.jbossall-client}" basedir="jbossall-client-library-temp" manifest="jbossall-client-library-temp/META-INF/MANIFEST.MF"/>
 
       <delete dir="jbossall-client-library-temp"/>
