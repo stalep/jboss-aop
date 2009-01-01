@@ -61,8 +61,26 @@
       <property name="example.jar.name" value="aopexample.jar"/>
       <property name="example.jar" value="${lib.dir}/${example.jar.name}"/>
 
+      <property name="jboss.lib.dir" value="${jboss.dir}/lib"/>
+      <property name="lib.jboss-system" value="${jboss.lib.dir}/jboss-system.jar"/>
+      <available file="${lib.jboss-system}" property="lib.jboss-system.exists"/>
+      <fail unless="lib.jboss-system.exists" message="Modify 'jboss.home' in build.xml to be a valid root of a jboss installation"/>
+      <loadproperties>
+         <zipentry zipfile="${lib.jboss-system}" name="META-INF/MANIFEST.MF"/>
+         <!-- Add the prefix -->
+         <filterchain>
+            <linecontains>
+               <contains value="Version"/>
+            </linecontains>
+            <prefixlines prefix="AS-"/>
+         </filterchain>
+      </loadproperties>
+      <condition property="servlet-api" value="javax.servlet.jar" else="servlet-api.jar">
+            <matches pattern="4.0.*" string="${AS-Specification-Version}"/>
+      </condition>
+
       <path id="jboss.classpath">
-         <pathelement path="${jboss.dir}/server/default/lib/servlet-api.jar"/>
+         <pathelement path="${jboss.dir}/server/default/lib/${servlet-api}"/>
          <pathelement path="${jboss.dir}/server/default/lib/jboss-j2ee.jar"/>
       </path>
 
