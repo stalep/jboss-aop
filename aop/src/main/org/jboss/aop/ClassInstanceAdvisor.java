@@ -21,16 +21,17 @@
   */
 package org.jboss.aop;
 
-import org.jboss.aop.advice.AdviceStack;
-import org.jboss.aop.advice.AspectDefinition;
-import org.jboss.aop.advice.Interceptor;
-import org.jboss.aop.advice.InterceptorFactory;
-import org.jboss.aop.joinpoint.Joinpoint;
-import org.jboss.aop.metadata.SimpleMetaData;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jboss.aop.advice.AdviceStack;
+import org.jboss.aop.advice.AspectDefinition;
+import org.jboss.aop.advice.Interceptor;
+import org.jboss.aop.joinpoint.Joinpoint;
+import org.jboss.aop.metadata.SimpleMetaData;
 
 /**
  * Holds an object instance's metadata and attached interceptors
@@ -47,6 +48,9 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
    protected WeakReference<Object> instanceRef;
    protected transient WeakReference<Advisor> classAdvisorRef;
    public boolean hasInstanceAspects = false;
+   protected Map<String,Interceptor[]> stacks = null;
+   
+   
    /**
     * aspects is a weak hash map of AspectDefinitions so that perinstance advices can be undeployed/redeployed
     */
@@ -268,21 +272,20 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
          Advised advised = (Advised) getInstance();
          classAdvisor = ((ClassAdvisor) advised._getAdvisor());
       }
-      int interceptorsAdded = 0;
-      for (InterceptorFactory factory : stack.getInterceptorFactories())
+      
+      Interceptor[] interceptors = stack.createInterceptors(classAdvisor, null);
+      for (Interceptor interceptor: interceptors)
       {
-         if (!factory.isDeployed()) continue;
-         Interceptor interceptor = factory.create(classAdvisor, null);
-         if (interceptor == null)
-         {
-            continue;
-         }
          insertInterceptor(interceptor);
-         interceptorsAdded ++;
       }
+      if (this.stacks == null)
+      {
+         this.stacks = new HashMap<String, Interceptor[]>();
+      }
+      this.stacks.put(stackName, interceptors);
       if (interceptorChainObserver != null)
       {
-         this.interceptorChainObserver.instanceInterceptorsAdded(this, interceptorsAdded);
+         this.interceptorChainObserver.instanceInterceptorsAdded(this, interceptors.length);
       }
    }
 
@@ -297,44 +300,38 @@ public class ClassInstanceAdvisor implements InstanceAdvisor, java.io.Serializab
          Advised advised = (Advised) getInstance();
          classAdvisor = ((ClassAdvisor) advised._getAdvisor());
       }
-      int interceptorsAdded = 0;
-      for (InterceptorFactory factory : stack.getInterceptorFactories())
+      
+      Interceptor[] interceptors = stack.createInterceptors(classAdvisor, null);
+      for (Interceptor interceptor: interceptors)
       {
-         if (!factory.isDeployed()) continue;
-         Interceptor interceptor = factory.create(classAdvisor, null);
-         if (interceptor == null)
-         {
-            continue;
-         }
          appendInterceptor(interceptor);
-         interceptorsAdded ++;
       }
+      if (this.stacks == null)
+      {
+         this.stacks = new HashMap<String, Interceptor[]>();
+      }
+      this.stacks.put(stackName, interceptors);
       if (interceptorChainObserver != null)
       {
-         this.interceptorChainObserver.instanceInterceptorsAdded(this, interceptorsAdded);
+         this.interceptorChainObserver.instanceInterceptorsAdded(this, interceptors.length);
       }
    }
 
    public void removeInterceptorStack(String stackName)
    {
-      AdviceStack stack = AspectManager.instance().getAdviceStack(stackName);
-      if (stack == null) throw new RuntimeException("Stack " + stackName + " not found.");
-
-      ClassAdvisor classAdvisor = null;
-      if (getInstance() instanceof Advised)
+      Interceptor[] interceptors = stacks.remove(stackName);
+      
+      if (interceptors == null)
       {
-         Advised advised = (Advised) getInstance();
-         classAdvisor = ((ClassAdvisor) advised._getAdvisor());
+         AdviceStack stack = AspectManager.instance().getAdviceStack(stackName);
+         if (stack == null) throw new RuntimeException("Stack " + stackName + " not found.");
+         return;
       }
+      
       int interceptorsRemoved = 0;
-      for (InterceptorFactory factory : stack.getInterceptorFactories())
+      for (Interceptor interceptor: interceptors)
       {
-         if (!factory.isDeployed()) continue;
-         Interceptor interceptor = factory.create(classAdvisor, null);
-         if (interceptor != null)
-         {
-            interceptorsRemoved += internalRemoveInterceptor(interceptor.getName());
-         }
+         interceptorsRemoved += internalRemoveInterceptor(interceptor.getName());
       }
       if (interceptorChainObserver != null)
       {

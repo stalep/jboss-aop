@@ -33,6 +33,8 @@ import org.jboss.aop.metadata.SimpleMetaData;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Adapts the old instance advisor api to the new generated advisor stuff. 
@@ -51,6 +53,7 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
    public boolean hasInstanceAspects = false;
    private InterceptorChainObserver interceptorChainObserver;
    InstanceAdvisorDelegate delegate;
+   protected Map<String,Interceptor[]> stacks = null;
    
    public GeneratedInstanceAdvisorMixin()
    {
@@ -310,21 +313,20 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
          Advised advised = (Advised) inst;
          classAdvisor = ((ClassAdvisor) advised._getAdvisor());
       }
-      int interceptorsAdded = 0;
-      for (InterceptorFactory factory : stack.getInterceptorFactories())
+      
+      Interceptor[] interceptors = stack.createInterceptors(classAdvisor, null);
+      for (Interceptor interceptor: interceptors)
       {
-         if (!factory.isDeployed()) continue;
-         Interceptor interceptor = factory.create(classAdvisor, null);
-         if (interceptor == null)
-         {
-            continue;
-         }
          insertInterceptor(interceptor);
-         interceptorsAdded ++;
       }
+      if (this.stacks == null)
+      {
+         this.stacks = new HashMap<String, Interceptor[]>();
+      }
+      this.stacks.put(stackName, interceptors);
       if (interceptorChainObserver != null)
       {
-         this.interceptorChainObserver.instanceInterceptorsAdded(this, interceptorsAdded);
+         this.interceptorChainObserver.instanceInterceptorsAdded(this, interceptors.length);
       }
    }
 
@@ -340,45 +342,38 @@ public class GeneratedInstanceAdvisorMixin implements InstanceAdvisor, java.io.S
          Advised advised = (Advised) inst;
          classAdvisor = ((ClassAdvisor) advised._getAdvisor());
       }
-      int interceptorsAdded = 0;
-      for (InterceptorFactory factory : stack.getInterceptorFactories())
+      
+      Interceptor[] interceptors = stack.createInterceptors(classAdvisor, null);
+      for (Interceptor interceptor: interceptors)
       {
-         if (!factory.isDeployed()) continue;
-         Interceptor interceptor = factory.create(classAdvisor, null);
-         if (interceptor == null)
-         {
-            continue;
-         }
          appendInterceptor(interceptor);
-         interceptorsAdded ++;
       }
+      if (this.stacks == null)
+      {
+         this.stacks = new HashMap<String, Interceptor[]>();
+      }
+      this.stacks.put(stackName, interceptors);
       if (interceptorChainObserver != null)
       {
-         this.interceptorChainObserver.instanceInterceptorsAdded(this, interceptorsAdded);
+         this.interceptorChainObserver.instanceInterceptorsAdded(this, interceptors.length);
       }
    }
 
    public void removeInterceptorStack(String stackName)
    {
-      AdviceStack stack = AspectManager.instance().getAdviceStack(stackName);
-      if (stack == null) throw new RuntimeException("Stack " + stackName + " not found.");
-
-      ClassAdvisor classAdvisor = null;
-      Object inst = getInstance();
-      if (inst instanceof Advised)
+      Interceptor[] interceptors = stacks.remove(stackName);
+      
+      if (interceptors == null)
       {
-         Advised advised = (Advised) inst;
-         classAdvisor = ((ClassAdvisor) advised._getAdvisor());
+         AdviceStack stack = AspectManager.instance().getAdviceStack(stackName);
+         if (stack == null) throw new RuntimeException("Stack " + stackName + " not found.");
+         return;
       }
+      
       int interceptorsRemoved = 0;
-      for (InterceptorFactory factory : stack.getInterceptorFactories())
+      for (Interceptor interceptor: interceptors)
       {
-         if (!factory.isDeployed()) continue;
-         Interceptor interceptor = factory.create(classAdvisor, null);
-         if (interceptor != null)
-         {
-            interceptorsRemoved += internalRemoveInterceptor(interceptor.getName());
-         }
+         interceptorsRemoved += internalRemoveInterceptor(interceptor.getName());
       }
       if (interceptorChainObserver != null)
       {
