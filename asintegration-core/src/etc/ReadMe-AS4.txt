@@ -1,9 +1,7 @@
-NOTE: 
-If you want to install JBoss AOP on JBoss 4.2.* or newer, use build.xml
-If you Want to install JBoss AOP on JBoss 4.0.* use build_jboss4.0.xml (ant -f build_jboss4.0.xml)
-
-- from the 2.0 release of JBoss AOP only JDK1.5 is supported. This means that that both JBoss AS and AOP
+NOTE: from the 2.0 release of JBoss AOP only JDK1.5 is supported. This means that that both JBoss AS and AOP
 need to be compiled with JDK1.5 before you upgrade JBoss AOP.
+
+To upgrade your jboss instance:
 
 * If installing in a version before JBoss 4.0.4, you should leave javassist.jar in place in this folder.
 
@@ -23,10 +21,12 @@ contained therein from your jboss-aspect-library(-jdk50).jar:
 *Also, in the existing jboss-aspect-library(-jdk50).jar you should delete the classes that exist in 
 jboss-standalone-aspect-library-jdkxx.jar
 
-* The ant build.xml contained in this folder automates these tasks for you. Set the root of the jboss installation
-and the server configuration you wish to patch in the jboss.properties file.
-
 * If you are deploying the jdk 1.4 deployer and upgrading from JDK 1.5, we need to modify the interfaces 
 specifying the simulated annotations in jboss-aspect-library.jar. The build.xml file does this 
 as part of the install step.
 
+Alternatively, you can use the ant script, which will automate all these tasks for you:
+1) Edit jboss.properties file, setting the root of the jboss installation
+and the server configuration you wish to patch.
+2) Run the command:
+$ ant 

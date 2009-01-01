@@ -12,30 +12,61 @@
       <property name="jboss.config.dir" value="${jboss.home}/server/${jboss.config}"/>
       <property name="jboss.bin.dir" value="${jboss.home}/bin"/>
       <property name="jboss.client.dir" value="${jboss.home}/client"/>
-
+      <property name="jboss.lib.dir" value="${jboss.home}/lib"/>
+      <property name="jboss.deploy.dir" value="${jboss.config.dir}/deploy"/>
+      
       <available file="${jboss.home}" property="jboss.exists" type="dir"/>
       <fail unless="jboss.exists" message="${jboss.home} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
-
-      <available file="${jboss.bin.dir}" property="bin.exists" type="dir"/>
-      <fail unless="bin.exists" message="${jboss.bin.dir} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
 
       <available file="${jboss.config.dir}" property="config.exists" type="dir"/>
       <fail unless="config.exists" message="${jboss.config.dir} does not exist. Modify 'jboss.config' in jboss.properties to be a valid server configuration"/>
 
+      <available file="${jboss.bin.dir}" property="bin.exists" type="dir"/>
+      <fail unless="bin.exists" message="${jboss.bin.dir} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
+
       <available file="${jboss.client.dir}" property="client.exists" type="dir"/>
-      <fail unless="client.exists" message="${jboss.client.dir} does not exist. Modify 'jboss.config' in jboss.properties to be a valid server configuration"/>
+      <fail unless="client.exists" message="${jboss.client.dir} does not exist. Modify 'jboss.home' in jboss.properties to be a valid server configuration"/>
 
-      <property name="deploy.dir" value="${jboss.config.dir}/deploy"/>
+      <available file="${jboss.lib.dir}" property="lib.exists" type="dir"/>
+      <fail unless="lib.exists" message="${jboss.lib.dir} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
 
-      <property name="aspect.deployer" value="${deploy.dir}/jboss-aop.deployer"/>
+      <available file="${jboss.deploy.dir}" property="deploy.exists" type="dir"/>
+      <fail unless="deploy.exists" message="${jboss.deploy.dir} does not exist. Modify 'jboss.config' in jboss.properties to be a valid server configuration"/>
+
+      <property name="lib.jboss-system" value="${jboss.lib.dir}/jboss-system.jar"/>
+      <available file="${lib.jboss-system}" property="lib.jboss-system.exists"/>
+      <fail unless="lib.jboss-system.exists" message="${lib.jboss-system} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
+
+      <loadproperties>
+         <zipentry zipfile="${lib.jboss-system}" name="META-INF/MANIFEST.MF"/>
+         <!-- Add the prefix -->
+         <filterchain>
+            <linecontains>
+               <contains value="Version"/>
+            </linecontains>
+            <prefixlines prefix="AS-"/>
+         </filterchain>
+      </loadproperties>
+
+      <echo>JBoss AS Version is '${AS-Specification-Version}'</echo>
+
+      <condition property="AS-40">
+         <matches pattern="4.0.*" string="${AS-Specification-Version}"/>
+      </condition>
+
+      <condition property="dot" value="." else="-jdk50.">
+         <istrue value="${AS-40}"/>
+      </condition>
+
+      <property name="aspect.deployer" value="${jboss.deploy.dir}/jboss-aop${dot}deployer"/>
       <available file="${aspect.deployer}" property="deployer.exists" type="dir"/>
       <fail unless="deployer.exists" message="${aspect.deployer} does not exist."/>
 
-      <property name="aspect.library" value="${aspect.deployer}/jboss-aspect-library.jar"/>
+      <property name="aspect.library" value="${aspect.deployer}/jboss-aspect-library${dot}jar"/>
       <available file="${aspect.library}" property="library.exists"/>
       <fail unless="library.exists" message="${aspect.library} does not exist."/>
 
-      <property name="old.deployer" value="${jboss.config.dir}/deploy/jboss-aop.deployer.bak"/>
+      <property name="old.deployer" value="${jboss.config.dir}/deploy/jboss-aop${dot}deployer.bak"/>
       <available file="${old.deployer}" property="old.deployer.exists"/>
 
       <property name="lib.javassist" value="${jboss.config.dir}/lib/javassist.jar"/>
@@ -64,32 +95,30 @@
          </not>
       </condition>
 
-      <property name="jboss.lib.dir" value="${jboss.home}/lib"/>
-      <available file="${jboss.lib.dir}" property="lib.exists" type="dir"/>
-      <fail unless="lib.exists" message="${jboss.lib.dir} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
+   </target>
       
-      <property name="lib.jboss-system" value="${jboss.lib.dir}/jboss-system.jar"/>
-      <available file="${lib.jboss-system}" property="lib.jboss-system.exists"/>
-      <fail unless="lib.jboss-system.exists" message="${lib.jboss-system} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
+   <target name="init-lib" depends="init" unless="AS-40">
       
-      <loadproperties>
-         <zipentry zipfile="${lib.jboss-system}" name="META-INF/MANIFEST.MF"/>
-         <!-- Add the prefix -->
-         <filterchain>
-            <linecontains>
-               <contains value="Version"/>
-            </linecontains>
-            <prefixlines prefix="AS-"/>
-         </filterchain>
-      </loadproperties>
+      <property name="jboss.aop.lib" value="../../lib"/>
+      <available file="${jboss.aop.lib}" property="lib.jboss.aop.exists"/>
+      <fail unless="lib.jboss.aop.exists" message="${jboss.aop.lib} does not exist. Modify build.xml, setting the value of the property 'jboss.aop.lib' to be the path of the JBoss AOP lib installation directory."/>
 
-      <echo>Version is '${AS-Specification-Version}'</echo>
+      <property name="lib.jbossaop-client" value="${jboss.aop.lib}/jboss-aop-client.jar"/>
+      <available file="${lib.jbossaop-client}" property="lib.jbossaop-client.exists"/>
+      <fail unless="lib.jbossaop-client.exists" message="${lib.jbossaop-client} does not exist. Modify build.xml, setting the value of the property 'jboss.aop.lib' to be the path of the JBoss AOP lib installation directory."/>
 
-      <condition property="AS-40">
-          <matches pattern="4.0.*" string="${AS-Specification-Version}"/>
+      <property name="lib.jbossaop-client.injboss" value="${jboss.client.dir}/jboss-aop-jdk50-client.jar"/>
+      <available file="${lib.jbossaop-client.injboss}" property="lib.jbossaop-client.injboss.exists"/>
+      <fail unless="lib.jbossaop-client.injboss.exists" message="${lib.jbossaop-client.injboss} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
+
+      <property name="bak.jbossaop-client" value="${jboss.client.dir}/jboss-aop-jdk50-client.bak"/>
+      <available file="${bak.jbossaop-client}" property="jbossaop-client.bak.exists"/>
+      <condition property="backup.jbossaop-client" value="true">
+         <not>
+            <isset property="jbossaop-client.bak.exists"/>
+         </not>
       </condition>
 
-      <echo>AS is 40: ${AS-40}</echo>
    </target>
 
    <target name="prepare-aspect-library" depends="init">
@@ -110,7 +139,7 @@
       <delete dir="aspect-library-temp/org/jboss/aspects/patterns"/>
       <delete file="aspect-library-temp/org/jboss/aspects/*.class"/>
 
-      <jar destfile="jboss-aspect-library.jar" basedir="aspect-library-temp" manifest="aspect-library-temp/META-INF/MANIFEST.MF"/>
+      <jar destfile="jboss-aspect-library${dot}jar" basedir="aspect-library-temp" manifest="aspect-library-temp/META-INF/MANIFEST.MF"/>
 
       <delete dir="aspect-library-temp"/>
    </target>
@@ -138,6 +167,15 @@
       <copy file="${lib.jbossall-client}" tofile="${bak.jbossall-client}"/>
    </target>
 
+   <target name="update-jbossaop-library" depends="init-lib, backup-jbossaop-library" unless="AS-40">
+      <copy file="${lib.jbossaop-client}" tofile="${bak.jbossaop-client.injboss}"/>
+   </target>   
+
+   <target name="backup-jbossaop-library" if="backup.jbossaop-client">
+      <echo>Backing up existing ${lib.jbossaop-client.injboss} to ${bak.jbossaop-client}</echo>
+      <copy file="${lib.jbossaop-client.injboss}" tofile="${bak.jbossaop-client}"/>
+   </target>
+
    <target name="backup" depends="prepare-aspect-library" unless="old.deployer.exists">
       <echo>Backing up existing aop deployer to ${old.deployer}</echo>
       <copy todir="${old.deployer}">
@@ -147,24 +185,25 @@
    </target>
 
    <target name="install.deployer" depends="backup">
-      <copy todir="${deploy.dir}">
+      <copy todir="${jboss.deploy.dir}">
          <fileset dir="..">
             <include name="jboss-aop-jdk50.deployer/**"/>
             <exclude name="jboss-aop-jdk50.deployer/build.xml"/>
             <exclude name="jboss-aop-jdk50.deployer/jboss.properties"/>
             <exclude name="jboss-aop-jdk50.deployer/build_jboss4.0.xml"/>
             <exclude name="jboss-aop-jdk50.deployer/ReadMe-AS4.txt"/>
+            <exclude name="jboss-aop${dot}deployer/jboss-reflect.jar"/>
          </fileset>
       </copy>
-      <move file="${deploy.dir}/jboss-aop-jdk50.deployer" tofile="${deploy.dir}/jboss-aop.deployer"/>
-      <copy todir="${deploy.dir}/jboss-aop.deployer" file="${old.deployer}/base-aop.xml"/>
+      <move file="${jboss.deploy.dir}/jboss-aop-jdk50.deployer" tofile="${jboss.deploy.dir}/jboss-aop${dot}deployer"/>
+      <copy todir="${jboss.deploy.dir}/jboss-aop${dot}deployer" file="${old.deployer}/base-aop.xml"/>
    </target>
 
    <target name="backup.javassist.post.4.0.4" depends="init" if="backup.javassist">
       <move file="${lib.javassist}" tofile="${bak.javassist}"/>
    </target>
-   
-   <target name="install.bin" depends="init, update-jbossall-library">
+
+   <target name="install.bin" depends="init, update-jbossall-library, update-jbossaop-library">
       <copy todir="${jboss.bin.dir}">
          <fileset dir="../../lib">
             <include name="pluggable-instrumentor.jar"/>

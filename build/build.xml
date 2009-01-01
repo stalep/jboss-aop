@@ -413,8 +413,7 @@
         <filter token="SERVICE_NAME" value="org.jboss.aop.deployment.AspectManagerServiceJDK5"/>
       </filterset>
     </copy>
-    <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/build_jboss4.0.xml" file="../asintegration-core/src/etc/jboss-40-install-jboss-aop-jdk50-build.xml"/>
-    <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/build.xml" file="../asintegration-core/src/etc/jboss-42-install-jboss-aop-jdk50-build.xml"/>
+    <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/build.xml" file="../asintegration-core/src/etc/jboss-40-install-jboss-aop-jdk50-build.xml"/>
     <copy todir="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer" file="../asintegration-core/src/etc/jboss.properties"/>
     <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/jboss-aop-jdk50.jar" file="${aop.50.location}"/>
     <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/jboss-standalone-aspect-library-jdk50.jar" file="${aop.aspect-library50.location}"/>
