@@ -26,6 +26,7 @@ import javassist.CtClass;
 import junit.framework.Test;
 
 import org.jboss.test.aop.classpool.jbosscl.support.BundleInfoBuilder;
+import org.jboss.test.aop.classpool.jbosscl.support.Result;
 
 /**
  * Reproduces ClassLoaderWithUsesPackageSanityTestCase 
@@ -49,23 +50,24 @@ public class ClassPoolWithUsesPackageTestCase extends JBossClClassPoolTest
    public void testUsesImport() throws Exception
    {
       ClassPool clA1 = null;
-      
+      Result rA1 = new Result();
       try
       {
          BundleInfoBuilder builderA1 = BundleInfoBuilder.getBuilder().
             createModule("a1").
             createPackage(PACKAGE_A);
-         clA1 = createClassPool("A1", builderA1, JAR_A_1);
+         clA1 = createClassPool(rA1, "A1", builderA1, JAR_A_1);
          CtClass classA = assertLoadCtClass(CLASS_A, clA1);
 
          ClassPool clA2 = null;
+         Result rA2 = new Result();
          try
          {
             BundleInfoBuilder builderA2 = BundleInfoBuilder.getBuilder().
             createModule("a2").
             createUsesPackage(PACKAGE_A);
 
-            clA2 = createClassPool("A2", builderA2, JAR_A_1);
+            clA2 = createClassPool(rA2, "A2", builderA2, JAR_A_1);
             CtClass classA1 = assertLoadCtClass(CLASS_A, clA1);
             assertSame(classA, classA1);
             classA1 = assertLoadCtClass(CLASS_A, clA2, clA1);
@@ -75,6 +77,7 @@ public class ClassPoolWithUsesPackageTestCase extends JBossClClassPoolTest
          {
             unregisterClassPool(clA2);
          }
+         assertNoClassLoader(rA2);
          CtClass classA1 = assertLoadCtClass(CLASS_A, clA1);
          assertSame(classA, classA1);
       }
@@ -82,24 +85,26 @@ public class ClassPoolWithUsesPackageTestCase extends JBossClClassPoolTest
       {
          unregisterClassPool(clA1);
       }
+      assertNoClassLoader(rA1);
    }
    
    public void testUsesNoImport() throws Exception
    {
       ClassPool clA1 = null;
-      
+      Result rA1 = new Result();
       try
       {
          BundleInfoBuilder builderA1 = BundleInfoBuilder.getBuilder().
             createModule("a1").
             createUsesPackage(PACKAGE_A);
-         clA1 = createClassPool("A1", builderA1, JAR_A_1);
+         clA1 = createClassPool(rA1, "A1", builderA1, JAR_A_1);
          assertLoadCtClass(CLASS_A, clA1);
       }
       finally
       {
          unregisterClassPool(clA1);
       }
+      assertNoClassLoader(rA1);
    }
 
 }

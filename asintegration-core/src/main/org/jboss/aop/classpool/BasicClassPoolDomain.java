@@ -120,7 +120,7 @@ public class BasicClassPoolDomain extends AbstractClassPoolDomain implements Cla
          String packageName = ClassLoaderUtils.getPackageName(classname);
          for (DelegatingClassPool pool : getPoolsForPackage(packageName))
          {
-            clazz = attemptLoadFromPool(pool, classname, resourceName, create);
+            clazz = pool.loadLocally(classname, resourceName, create);
             if (clazz != null)
             {
                break;
@@ -134,20 +134,6 @@ public class BasicClassPoolDomain extends AbstractClassPoolDomain implements Cla
       return clazz;
    }
 
-   protected CtClass attemptLoadFromPool(DelegatingClassPool pool, String classname, String resourceName, boolean create)
-   {
-      CtClass clazz = null;
-      if (pool.isLocalResource(resourceName))
-      {
-         clazz = pool.getCachedLocally(classname);
-         if (clazz == null && create)
-         {
-            return pool.createCtClass(classname, true);
-         }
-      }
-      return clazz;
-   }
-   
    public CtClass getCachedOrCreateInternalFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
    {
       return parent.getCachedOrCreateInternal(initiatingPool, classname, resourceName, create);

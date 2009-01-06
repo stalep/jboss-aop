@@ -26,6 +26,7 @@ import javassist.CtClass;
 import junit.framework.Test;
 
 import org.jboss.test.aop.classpool.jbosscl.support.BundleInfoBuilder;
+import org.jboss.test.aop.classpool.jbosscl.support.Result;
 
 /**
  * Reproduces the behaviour of ClassLoaderWithReExportModuleSanityTestCase
@@ -49,24 +50,26 @@ public class ClassPoolWithReExportModuleTestCase extends JBossClClassPoolTest
    public void testReExport() throws Exception
    {
       ClassPool clA = null;
+      Result rA = new Result();
       try
       {
          BundleInfoBuilder builderA = BundleInfoBuilder.getBuilder().
             createModule("a").
             createPackage(PACKAGE_A);
-         clA = createClassPool("A", builderA, JAR_A_1);
+         clA = createClassPool(rA, "A", builderA, JAR_A_1);
          CtClass classA = assertLoadCtClass(CLASS_A, clA);
          assertCannotLoadCtClass(clA, CLASS_B);
          assertCannotLoadCtClass(clA, CLASS_C);
          
          ClassPool clB = null;
+         Result rB = new Result();
          try
          {
             BundleInfoBuilder builderB = BundleInfoBuilder.getBuilder().
                createModule("b").
                createPackage(PACKAGE_B).
                createReExportModule("a");
-            clB = createClassPool("B", builderB, JAR_B_1);
+            clB = createClassPool(rB, "B", builderB, JAR_B_1);
             CtClass classA1 = assertLoadCtClass(CLASS_A, clA);
             assertSame(classA, classA1);
             assertCannotLoadCtClass(clA, CLASS_B);
@@ -77,11 +80,12 @@ public class ClassPoolWithReExportModuleTestCase extends JBossClClassPoolTest
             assertCannotLoadCtClass(clB, CLASS_C);
             
             ClassPool clC = null;
+            Result rC = new Result();
             try
             {
                BundleInfoBuilder builderC = BundleInfoBuilder.getBuilder().
                   createRequireModule("b");
-               clC = createClassPool("C", builderC, JAR_C_1);
+               clC = createClassPool(rC, "C", builderC, JAR_C_1);
                
                classA1 = assertLoadCtClass(CLASS_A, clA);
                assertSame(classA, classA1);
@@ -102,6 +106,7 @@ public class ClassPoolWithReExportModuleTestCase extends JBossClClassPoolTest
             {
                unregisterClassPool(clC);
             }
+            assertNoClassLoader(rC);
             classA1 = assertLoadCtClass(CLASS_A, clA);
             assertSame(classA, classA1);
             assertCannotLoadCtClass(clA, CLASS_B);
@@ -116,6 +121,7 @@ public class ClassPoolWithReExportModuleTestCase extends JBossClClassPoolTest
          {
             unregisterClassPool(clB);
          }
+         assertNoClassLoader(rB);
          CtClass classA1 = assertLoadCtClass(CLASS_A, clA);
          assertSame(classA, classA1);
          assertCannotLoadCtClass(clA, CLASS_B);
@@ -125,29 +131,32 @@ public class ClassPoolWithReExportModuleTestCase extends JBossClClassPoolTest
       {
          unregisterClassPool(clA);
       }
+      assertNoClassLoader(rA);
    }
    
    public void testNoReExport() throws Exception
    {
       ClassPool clA = null;
+      Result rA = new Result();
       try
       {
          BundleInfoBuilder builderA = BundleInfoBuilder.getBuilder().
             createModule("a").
             createPackage(PACKAGE_A);
-         clA = createClassPool("A", builderA, JAR_A_1);
+         clA = createClassPool(rA, "A", builderA, JAR_A_1);
          CtClass classA = assertLoadCtClass(CLASS_A, clA);
          assertCannotLoadCtClass(clA, CLASS_B);
          assertCannotLoadCtClass(clA, CLASS_C);
          
          ClassPool clB = null;
+         Result rB = new Result();
          try
          {
             BundleInfoBuilder builderB = BundleInfoBuilder.getBuilder().
                createModule("b").
                createPackage(PACKAGE_B).
                createReExportModule("a");
-            clB = createClassPool("B", builderB, JAR_B_1);
+            clB = createClassPool(rB, "B", builderB, JAR_B_1);
             CtClass classA1 = assertLoadCtClass(CLASS_A, clA);
             assertSame(classA, classA1);
             assertCannotLoadCtClass(clA, CLASS_B);
@@ -158,11 +167,12 @@ public class ClassPoolWithReExportModuleTestCase extends JBossClClassPoolTest
             assertCannotLoadCtClass(clB, CLASS_C);
             
             ClassPool clC = null;
+            Result rC = new Result();
             try
             {
                BundleInfoBuilder builderC = BundleInfoBuilder.getBuilder().
                   createRequirePackage(PACKAGE_B);
-               clC = createClassPool("C", builderC, JAR_C_1);
+               clC = createClassPool(rC, "C", builderC, JAR_C_1);
                
                classA1 = assertLoadCtClass(CLASS_A, clA);
                assertSame(classA, classA1);
@@ -182,6 +192,7 @@ public class ClassPoolWithReExportModuleTestCase extends JBossClClassPoolTest
             {
                unregisterClassPool(clC);
             }
+            assertNoClassLoader(rC);
             classA1 = assertLoadCtClass(CLASS_A, clA);
             assertSame(classA, classA1);
             assertCannotLoadCtClass(clA, CLASS_B);
@@ -196,6 +207,7 @@ public class ClassPoolWithReExportModuleTestCase extends JBossClClassPoolTest
          {
             unregisterClassPool(clB);
          }
+         assertNoClassLoader(rB);
          CtClass classA1 = assertLoadCtClass(CLASS_A, clA);
          assertSame(classA, classA1);
          assertCannotLoadCtClass(clA, CLASS_B);
@@ -205,5 +217,6 @@ public class ClassPoolWithReExportModuleTestCase extends JBossClClassPoolTest
       {
          unregisterClassPool(clA);
       }
+      assertNoClassLoader(rA);
    }
 }

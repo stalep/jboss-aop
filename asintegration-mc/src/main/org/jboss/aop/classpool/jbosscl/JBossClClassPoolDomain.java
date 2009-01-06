@@ -126,7 +126,7 @@ public class JBossClClassPoolDomain extends BasicClassPoolDomain
          for (DelegateLoader delegate : delegates)
          {
             //TODO This is a hack, need a proper API in jboss-cl
-            System.out.println("Commented out loader from delegate in JBossClClassPoolDomain");
+            System.err.println("Commented out loader from delegate in JBossClClassPoolDomain");
             ClassLoader loader = null;//delegate.getBaseClassLoader("a BaseClassLoader", "");
             
             //TODO Should be a nicer way to do this
@@ -144,7 +144,7 @@ public class JBossClClassPoolDomain extends BasicClassPoolDomain
       //Try to check the initiating pool itself
       if (clazz == null && initiatingPool != null)
       {
-         clazz = attemptLoadFromPool(initiatingPool, classname, resourceName, create);
+         clazz = initiatingPool.loadLocally(classname, resourceName, create);
       }
       
       if (clazz == null && isParentAfter())

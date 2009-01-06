@@ -27,6 +27,7 @@ import junit.framework.Test;
 
 import org.jboss.classloading.spi.version.VersionRange;
 import org.jboss.test.aop.classpool.jbosscl.support.BundleInfoBuilder;
+import org.jboss.test.aop.classpool.jbosscl.support.Result;
 
 /**
  * Reproduces the behaviour found in ClassLoaderWithPackageDependencySanityTestCase 
@@ -50,22 +51,24 @@ public class ClassPoolWithPackageDependencyTestCase extends JBossClClassPoolTest
    public void testImportNoVersionCheck() throws Exception
    {
       ClassPool clA = null;
+      Result rA = new Result();
       try
       {
          BundleInfoBuilder builderA = BundleInfoBuilder.getBuilder().
             createModule("ModuleA").
             createPackage(PACKAGE_A);
-         clA = createClassPool("A", builderA, JAR_A_1);
+         clA = createClassPool(rA, "A", builderA, JAR_A_1);
          CtClass classA = assertLoadCtClass(CLASS_A, clA);
          assertCannotLoadCtClass(clA, CLASS_B);
          
          ClassPool clB = null;
+         Result rB = new Result();
          try
          {
             BundleInfoBuilder builderB = BundleInfoBuilder.getBuilder().
                createPackage(PACKAGE_B).
                createRequirePackage(PACKAGE_A);
-            clB = createClassPool("B", builderB, JAR_B_1);
+            clB = createClassPool(rB, "B", builderB, JAR_B_1);
             CtClass classA1 = assertLoadCtClass(CLASS_A, clA);
             assertSame(classA, classA1);
             assertCannotLoadCtClass(clA, CLASS_B);
@@ -77,6 +80,8 @@ public class ClassPoolWithPackageDependencyTestCase extends JBossClClassPoolTest
          {
             unregisterClassPool(clB);
          }
+         assertNoClassLoader(rB);
+         
          CtClass classA1 = assertLoadCtClass(CLASS_A, clA);
          assertSame(classA, classA1);
          assertCannotLoadCtClass(clA, CLASS_B);
@@ -85,27 +90,30 @@ public class ClassPoolWithPackageDependencyTestCase extends JBossClClassPoolTest
       {
          unregisterClassPool(clA);
       }
+      assertNoClassLoader(rA);
    }
    
    public void testImportVersionCheck() throws Exception
    {
       ClassPool clA = null;
+      Result rA = new Result();
       try
       {
          BundleInfoBuilder builderA = BundleInfoBuilder.getBuilder().
             createModule("ModuleA").
             createPackage(PACKAGE_A, "1.0.0");
-         clA = createClassPool("A", builderA, JAR_A_1);
+         clA = createClassPool(rA, "A", builderA, JAR_A_1);
          CtClass classA = assertLoadCtClass(CLASS_A, clA);
          assertCannotLoadCtClass(clA, CLASS_B);
          
          ClassPool clB = null;
+         Result rB = new Result();
          try
          {
             BundleInfoBuilder builderB = BundleInfoBuilder.getBuilder().
                createPackage(PACKAGE_B).
                createRequirePackage(PACKAGE_A, new VersionRange("1.0.0", "2.0.0"));
-            clB = createClassPool("B", builderB, JAR_B_1);
+            clB = createClassPool(rB, "B", builderB, JAR_B_1);
             CtClass classA1 = assertLoadCtClass(CLASS_A, clA);
             assertSame(classA, classA1);
             assertCannotLoadCtClass(clA, CLASS_B);
@@ -117,6 +125,8 @@ public class ClassPoolWithPackageDependencyTestCase extends JBossClClassPoolTest
          {
             unregisterClassPool(clB);
          }
+         assertNoClassLoader(rB);
+
          assertLoadCtClass(CLASS_A, clA);
          assertCannotLoadCtClass(clA, CLASS_B);
       }
@@ -124,20 +134,23 @@ public class ClassPoolWithPackageDependencyTestCase extends JBossClClassPoolTest
       {
          unregisterClassPool(clA);
       }
+      assertNoClassLoader(rA);
    }
    
    public void testImportVersionCheckFailed() throws Exception
    {
       ClassPool clA = null;
+      Result rA = new Result();
       try
       {
          BundleInfoBuilder builderA = BundleInfoBuilder.getBuilder().
             createModule("ModuleA").
             createPackage(PACKAGE_A, "3.0.0");
-         clA = createClassPool("A", builderA, JAR_A_1);
+         clA = createClassPool(rA, "A", builderA, JAR_A_1);
          CtClass classA = assertLoadCtClass(CLASS_A, clA);
          assertCannotLoadCtClass(clA, CLASS_B);
          
+         Result rB = new Result();
          try
          {
             BundleInfoBuilder builderB = BundleInfoBuilder.getBuilder().
@@ -145,7 +158,7 @@ public class ClassPoolWithPackageDependencyTestCase extends JBossClClassPoolTest
                createRequirePackage(PACKAGE_A, new VersionRange("1.0.0", "2.0.0"));
             try
             {
-               createClassPool("B", builderB, JAR_B_1);
+               createClassPool(rB, "B", builderB, JAR_B_1);
                fail("Should not have been able to create loader");
             }
             catch(NoSuchClassLoaderException expected)
@@ -176,22 +189,25 @@ public class ClassPoolWithPackageDependencyTestCase extends JBossClClassPoolTest
       ClassPool clA1 = null;
       ClassPool clA2 = null;
       ClassPool clA3 = null;
+      Result rA1 = new Result();
+      Result rA2 = new Result();
+      Result rA3 = new Result();
       try
       {
          BundleInfoBuilder builderA1 = BundleInfoBuilder.getBuilder().
             createModule("PackageA").
             createPackage(PACKAGE_A, "1.0.0");
-         clA1 = createClassPool("A1", builderA1, JAR_A_1);
+         clA1 = createClassPool(rA1, "A1", builderA1, JAR_A_1);
          
          BundleInfoBuilder builderA2 = BundleInfoBuilder.getBuilder().
             createModule("PackageA").
             createPackage(PACKAGE_A, "2.0.0");
-         clA2 = createClassPool("A2", builderA2, JAR_A_1);
+         clA2 = createClassPool(rA2, "A2", builderA2, JAR_A_1);
          
          BundleInfoBuilder builderA3 = BundleInfoBuilder.getBuilder().
          createModule("PackageA").
          createPackage(PACKAGE_A, "3.0.0");
-         clA3 = createClassPool("A3", builderA3, JAR_A_1);
+         clA3 = createClassPool(rA3, "A3", builderA3, JAR_A_1);
                   
          CtClass classA1 = assertLoadCtClass(CLASS_A, clA1);
          CtClass classA2 = assertLoadCtClass(CLASS_A, clA2);
@@ -201,12 +217,13 @@ public class ClassPoolWithPackageDependencyTestCase extends JBossClClassPoolTest
          assertCannotLoadCtClass(clA3, CLASS_B);
          
          ClassPool clB = null;
+         Result rB = new Result();
          try
          {
             BundleInfoBuilder builderB = BundleInfoBuilder.getBuilder().
                createPackage(PACKAGE_B).
                createRequirePackage(PACKAGE_A, new VersionRange("1.0.0", false, "2.0.0", true));
-            clB = createClassPool("B", builderB, JAR_B_1);
+            clB = createClassPool(rB, "B", builderB, JAR_B_1);
             CtClass classA11 = assertLoadCtClass(CLASS_A, clA1);
             assertSame(classA1, classA11);
             CtClass classA21 = assertLoadCtClass(CLASS_A, clA2);
@@ -225,6 +242,7 @@ public class ClassPoolWithPackageDependencyTestCase extends JBossClClassPoolTest
          {
             unregisterClassPool(clB);
          }
+         assertNoClassLoader(rB);
          CtClass classA11 = assertLoadCtClass(CLASS_A, clA1);
          assertSame(classA1, classA11);
          CtClass classA21 = assertLoadCtClass(CLASS_A, clA2);
@@ -241,6 +259,8 @@ public class ClassPoolWithPackageDependencyTestCase extends JBossClClassPoolTest
          unregisterClassPool(clA2);
          unregisterClassPool(clA1);
       }
-      
+      assertNoClassLoader(rA1);
+      assertNoClassLoader(rA2);
+      assertNoClassLoader(rA3);
    }
 }

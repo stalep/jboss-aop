@@ -24,6 +24,7 @@ package org.jboss.test.aop.classpool.jbosscl.test;
 import junit.framework.Test;
 
 import org.jboss.test.aop.classpool.jbosscl.support.BundleInfoBuilder;
+import org.jboss.test.aop.classpool.jbosscl.support.Result;
 
 /**
  * Tests the behaviour of the new classloaders so that we can get the same in the new classpools
@@ -49,23 +50,24 @@ public class ClassLoaderWithUsesPackageSanityTestCase extends JBossClClassPoolTe
    public void testUsesImport() throws Exception
    {
       ClassLoader clA1 = null;
-      
+      Result rA1 = new Result();
       try
       {
          BundleInfoBuilder builderA1 = BundleInfoBuilder.getBuilder().
             createModule("a1").
             createPackage(PACKAGE_A);
-         clA1 = createClassLoader("A1", builderA1, JAR_A_1);
+         clA1 = createClassLoader(rA1, "A1", builderA1, JAR_A_1);
          Class<?> classA = assertLoadClass(CLASS_A, clA1);
 
          ClassLoader clA2 = null;
+         Result rA2 = new Result();
          try
          {
             BundleInfoBuilder builderA2 = BundleInfoBuilder.getBuilder().
             createModule("a2").
             createUsesPackage(PACKAGE_A);
 
-            clA2 = createClassLoader("A2", builderA2, JAR_A_1);
+            clA2 = createClassLoader(rA2, "A2", builderA2, JAR_A_1);
             Class<?> classA1 = assertLoadClass(CLASS_A, clA1);
             assertSame(classA, classA1);
             classA1 = assertLoadClass(CLASS_A, clA2, clA1);
@@ -75,30 +77,33 @@ public class ClassLoaderWithUsesPackageSanityTestCase extends JBossClClassPoolTe
          {
             unregisterClassLoader(clA2);
          }
+         assertNoClassLoader(rA2);
          assertLoadClass(CLASS_A, clA1);
       }
       finally
       {
          unregisterClassLoader(clA1);
       }
+      assertNoClassLoader(rA1);
    }
    
    public void testUsesNoImport() throws Exception
    {
       ClassLoader clA1 = null;
-      
+      Result rA1 = new Result();
       try
       {
          BundleInfoBuilder builderA1 = BundleInfoBuilder.getBuilder().
             createModule("a1").
             createUsesPackage(PACKAGE_A);
-         clA1 = createClassLoader("A1", builderA1, JAR_A_1);
+         clA1 = createClassLoader(rA1, "A1", builderA1, JAR_A_1);
          assertLoadClass(CLASS_A, clA1);
       }
       finally
       {
          unregisterClassLoader(clA1);
       }
+      assertNoClassLoader(rA1);
    }
 
 }

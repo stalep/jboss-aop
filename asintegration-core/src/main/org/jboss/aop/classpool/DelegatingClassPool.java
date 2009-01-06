@@ -76,6 +76,19 @@ public class DelegatingClassPool extends BaseClassPool
       return super.get(classname);
    }
 
+   public CtClass loadLocally(String classname, String resourceName, boolean create)
+   {
+      CtClass clazz = null;
+      if (isLocalResource(resourceName))
+      {
+         clazz = getCachedLocally(classname);
+         if (clazz == null && create)
+         {
+            return createCtClass(classname, true);
+         }
+      }
+      return clazz;
+   }
    
    /**
     * Overrides ClassPool.get0() so that we can look up classes without caching them in the initiating pool.

@@ -24,6 +24,7 @@ package org.jboss.test.aop.classpool.jbosscl.test;
 import junit.framework.Test;
 
 import org.jboss.test.aop.classpool.jbosscl.support.BundleInfoBuilder;
+import org.jboss.test.aop.classpool.jbosscl.support.Result;
 
 /**
  * Tests the behaviour of the new classloaders so that we can get the same in the new classpools
@@ -49,17 +50,19 @@ public class ClassLoaderWithReExportPackageSanityTestCase extends JBossClClassPo
    public void testReExport() throws Exception
    {
       ClassLoader clA = null;
+      Result rA = new Result();
       try
       {
          BundleInfoBuilder builderA = BundleInfoBuilder.getBuilder().
             createModule("a").
             createPackage(PACKAGE_A);
-         clA = createClassLoader("A", builderA, JAR_A_1);
+         clA = createClassLoader(rA, "A", builderA, JAR_A_1);
          Class<?> classA = assertLoadClass(CLASS_A, clA);
          assertCannotLoadClass(clA, CLASS_B);
          assertCannotLoadClass(clA, CLASS_C);
          
          ClassLoader clB = null;
+         Result rB = new Result();
          try
          {
             BundleInfoBuilder builderB = BundleInfoBuilder.getBuilder().
@@ -67,7 +70,7 @@ public class ClassLoaderWithReExportPackageSanityTestCase extends JBossClClassPo
                createPackage(PACKAGE_B).
                createReExportPackage(PACKAGE_A);
             
-            clB = createClassLoader("B", builderB, JAR_B_1);
+            clB = createClassLoader(rB, "B", builderB, JAR_B_1);
             Class<?> classA1 = assertLoadClass(CLASS_A, clA);
             assertSame(classA, classA1);
             assertCannotLoadClass(clA, CLASS_B);
@@ -78,11 +81,12 @@ public class ClassLoaderWithReExportPackageSanityTestCase extends JBossClClassPo
             assertCannotLoadClass(clB, CLASS_C);
             
             ClassLoader clC = null;
+            Result rC = new Result();
             try
             {
                BundleInfoBuilder builderC = BundleInfoBuilder.getBuilder().
                   createRequireModule("b");
-               clC = createClassLoader("C", builderC, JAR_C_1);
+               clC = createClassLoader(rC, "C", builderC, JAR_C_1);
                
                classA1 = assertLoadClass(CLASS_A, clA);
                assertSame(classA, classA1);
@@ -103,6 +107,7 @@ public class ClassLoaderWithReExportPackageSanityTestCase extends JBossClClassPo
             {
                unregisterClassLoader(clC);
             }
+            assertNoClassLoader(rC);
             classA1 = assertLoadClass(CLASS_A, clA);
             assertSame(classA, classA1);
             assertCannotLoadClass(clA, CLASS_B);
@@ -117,6 +122,7 @@ public class ClassLoaderWithReExportPackageSanityTestCase extends JBossClClassPo
          {
             unregisterClassLoader(clB);
          }
+         assertNoClassLoader(rB);
          Class<?> classA1 = assertLoadClass(CLASS_A, clA);
          assertSame(classA, classA1);
          assertCannotLoadClass(clA, CLASS_B);
@@ -126,29 +132,32 @@ public class ClassLoaderWithReExportPackageSanityTestCase extends JBossClClassPo
       {
          unregisterClassLoader(clA);
       }
+      assertNoClassLoader(rA);
    }
    
    public void testNoReExport() throws Exception
    {
       ClassLoader clA = null;
+      Result rA = new Result();
       try
       {
          BundleInfoBuilder builderA = BundleInfoBuilder.getBuilder().
             createModule("a").
             createPackage(PACKAGE_A);
-         clA = createClassLoader("A", builderA, JAR_A_1);
+         clA = createClassLoader(rA, "A", builderA, JAR_A_1);
          Class<?> classA = assertLoadClass(CLASS_A, clA);
          assertCannotLoadClass(clA, CLASS_B);
          assertCannotLoadClass(clA, CLASS_C);
          
          ClassLoader clB = null;
+         Result rB = new Result();
          try
          {
             BundleInfoBuilder builderB = BundleInfoBuilder.getBuilder().
                createModule("b").
                createPackage(PACKAGE_B).
                createReExportModule("a");
-            clB = createClassLoader("B", builderB, JAR_B_1);
+            clB = createClassLoader(rB, "B", builderB, JAR_B_1);
             Class<?> classA1 = assertLoadClass(CLASS_A, clA);
             assertSame(classA, classA1);
             assertCannotLoadClass(clA, CLASS_B);
@@ -159,11 +168,12 @@ public class ClassLoaderWithReExportPackageSanityTestCase extends JBossClClassPo
             assertCannotLoadClass(clB, CLASS_C);
             
             ClassLoader clC = null;
+            Result rC = new Result();
             try
             {
                BundleInfoBuilder builderC = BundleInfoBuilder.getBuilder().
                   createRequirePackage(PACKAGE_B);
-               clC = createClassLoader("C", builderC, JAR_C_1);
+               clC = createClassLoader(rC, "C", builderC, JAR_C_1);
                
                assertLoadClass(CLASS_A, clA);
                assertSame(classA, classA1);
@@ -183,6 +193,7 @@ public class ClassLoaderWithReExportPackageSanityTestCase extends JBossClClassPo
             {
                unregisterClassLoader(clC);
             }
+            assertNoClassLoader(rC);
             assertLoadClass(CLASS_A, clA);
             assertSame(classA, classA1);
             assertCannotLoadClass(clA, CLASS_B);
@@ -197,6 +208,7 @@ public class ClassLoaderWithReExportPackageSanityTestCase extends JBossClClassPo
          {
             unregisterClassLoader(clB);
          }
+         assertNoClassLoader(rB);
          Class<?> classA1 = assertLoadClass(CLASS_A, clA);
          assertSame(classA, classA1);
          assertCannotLoadClass(clA, CLASS_B);
@@ -206,5 +218,7 @@ public class ClassLoaderWithReExportPackageSanityTestCase extends JBossClClassPo
       {
          unregisterClassLoader(clA);
       }
+      assertNoClassLoader(rA);
+
    }
 }

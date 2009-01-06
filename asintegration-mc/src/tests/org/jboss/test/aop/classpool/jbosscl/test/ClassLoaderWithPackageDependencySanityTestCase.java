@@ -25,6 +25,7 @@ import junit.framework.Test;
 
 import org.jboss.classloading.spi.version.VersionRange;
 import org.jboss.test.aop.classpool.jbosscl.support.BundleInfoBuilder;
+import org.jboss.test.aop.classpool.jbosscl.support.Result;
 
 /**
  * Tests the behaviour of the new classloaders so that we can get the same in the new classpools
@@ -51,22 +52,24 @@ public class ClassLoaderWithPackageDependencySanityTestCase extends JBossClClass
    public void testImportNoVersionCheck() throws Exception
    {
       ClassLoader clA = null;
+      Result rA = new Result();
       try
       {
          BundleInfoBuilder builderA = BundleInfoBuilder.getBuilder().
             createModule("ModuleA").
             createPackage(PACKAGE_A);
-         clA = createClassLoader("A", builderA, JAR_A_1);
+         clA = createClassLoader(rA, "A", builderA, JAR_A_1);
          Class<?> classA = assertLoadClass(CLASS_A, clA);
          assertCannotLoadClass(clA, CLASS_B);
          
          ClassLoader clB = null;
+         Result rB = new Result();
          try
          {
             BundleInfoBuilder builderB = BundleInfoBuilder.getBuilder().
                createPackage(PACKAGE_B).
                createRequirePackage(PACKAGE_A);
-            clB = createClassLoader("B", builderB, JAR_B_1);
+            clB = createClassLoader(rB, "B", builderB, JAR_B_1);
             Class<?> classA1 = assertLoadClass(CLASS_A, clA);
             assertSame(classA, classA1);
             assertCannotLoadClass(clA, CLASS_B);
@@ -78,6 +81,8 @@ public class ClassLoaderWithPackageDependencySanityTestCase extends JBossClClass
          {
             unregisterClassLoader(clB);
          }
+         assertNoClassLoader(rB);
+         
          Class<?> classA1 = assertLoadClass(CLASS_A, clA);
          assertSame(classA, classA1);
          assertCannotLoadClass(clA, CLASS_B);
@@ -86,27 +91,30 @@ public class ClassLoaderWithPackageDependencySanityTestCase extends JBossClClass
       {
          unregisterClassLoader(clA);
       }
+      assertNoClassLoader(rA);
    }
    
    public void testImportVersionCheck() throws Exception
    {
       ClassLoader clA = null;
+      Result rA = new Result();
       try
       {
          BundleInfoBuilder builderA = BundleInfoBuilder.getBuilder().
             createModule("ModuleA").
             createPackage(PACKAGE_A, "1.0.0");
-         clA = createClassLoader("A", builderA, JAR_A_1);
+         clA = createClassLoader(rA, "A", builderA, JAR_A_1);
          Class<?> classA = assertLoadClass(CLASS_A, clA);
          assertCannotLoadClass(clA, CLASS_B);
          
          ClassLoader clB = null;
+         Result rB = new Result();
          try
          {
             BundleInfoBuilder builderB = BundleInfoBuilder.getBuilder().
                createPackage(PACKAGE_B).
                createRequirePackage(PACKAGE_A, new VersionRange("1.0.0", "2.0.0"));
-            clB = createClassLoader("B", builderB, JAR_B_1);
+            clB = createClassLoader(rB, "B", builderB, JAR_B_1);
             Class<?> classA1 = assertLoadClass(CLASS_A, clA);
             assertSame(classA, classA1);
             assertCannotLoadClass(clA, CLASS_B);
@@ -118,6 +126,8 @@ public class ClassLoaderWithPackageDependencySanityTestCase extends JBossClClass
          {
             unregisterClassLoader(clB);
          }
+         assertNoClassLoader(rB);
+         
          assertLoadClass(CLASS_A, clA);
          assertCannotLoadClass(clA, CLASS_B);
       }
@@ -125,20 +135,23 @@ public class ClassLoaderWithPackageDependencySanityTestCase extends JBossClClass
       {
          unregisterClassLoader(clA);
       }
+      assertNoClassLoader(rA);
    }
    
    public void testImportVersionCheckFailed() throws Exception
    {
       ClassLoader clA = null;
+      Result rA = new Result();
       try
       {
          BundleInfoBuilder builderA = BundleInfoBuilder.getBuilder().
             createModule("ModuleA").
             createPackage(PACKAGE_A, "3.0.0");
-         clA = createClassLoader("A", builderA, JAR_A_1);
+         clA = createClassLoader(rA, "A", builderA, JAR_A_1);
          Class<?> classA = assertLoadClass(CLASS_A, clA);
          assertCannotLoadClass(clA, CLASS_B);
          
+         Result rB = new Result();
          try
          {
             BundleInfoBuilder builderB = BundleInfoBuilder.getBuilder().
@@ -146,7 +159,7 @@ public class ClassLoaderWithPackageDependencySanityTestCase extends JBossClClass
                createRequirePackage(PACKAGE_A, new VersionRange("1.0.0", "2.0.0"));
             try
             {
-               createClassLoader("B", builderB, JAR_B_1);
+               createClassLoader(rB, "B", builderB, JAR_B_1);
                fail("Should not have been able to create loader");
             }
             catch(NoSuchClassLoaderException expected)
@@ -177,22 +190,25 @@ public class ClassLoaderWithPackageDependencySanityTestCase extends JBossClClass
       ClassLoader clA1 = null;
       ClassLoader clA2 = null;
       ClassLoader clA3 = null;
+      Result rA1 = new Result();
+      Result rA2 = new Result();
+      Result rA3 = new Result();
       try
       {
          BundleInfoBuilder builderA1 = BundleInfoBuilder.getBuilder().
             createModule("PackageA").
             createPackage(PACKAGE_A, "1.0.0");
-         clA1 = createClassLoader("A1", builderA1, JAR_A_1);
+         clA1 = createClassLoader(rA1, "A1", builderA1, JAR_A_1);
          
          BundleInfoBuilder builderA2 = BundleInfoBuilder.getBuilder().
             createModule("PackageA").
             createPackage(PACKAGE_A, "2.0.0");
-         clA2 = createClassLoader("A2", builderA2, JAR_A_1);
+         clA2 = createClassLoader(rA2, "A2", builderA2, JAR_A_1);
          
          BundleInfoBuilder builderA3 = BundleInfoBuilder.getBuilder().
          createModule("PackageA").
          createPackage(PACKAGE_A, "3.0.0");
-         clA3 = createClassLoader("A3", builderA3, JAR_A_1);
+         clA3 = createClassLoader(rA3, "A3", builderA3, JAR_A_1);
                   
          Class<?> classA1 = assertLoadClass(CLASS_A, clA1);
          Class<?> classA2 = assertLoadClass(CLASS_A, clA2);
@@ -202,12 +218,13 @@ public class ClassLoaderWithPackageDependencySanityTestCase extends JBossClClass
          assertCannotLoadClass(clA3, CLASS_B);
          
          ClassLoader clB = null;
+         Result rB = new Result();
          try
          {
             BundleInfoBuilder builderB = BundleInfoBuilder.getBuilder().
                createPackage(PACKAGE_B).
                createRequirePackage(PACKAGE_A, new VersionRange("1.0.0", false, "2.0.0", true));
-            clB = createClassLoader("B", builderB, JAR_B_1);
+            clB = createClassLoader(rB, "B", builderB, JAR_B_1);
             Class<?> classA11 = assertLoadClass(CLASS_A, clA1);
             assertSame(classA1, classA11);
             Class<?> classA21 = assertLoadClass(CLASS_A, clA2);
@@ -226,6 +243,7 @@ public class ClassLoaderWithPackageDependencySanityTestCase extends JBossClClass
          {
             unregisterClassLoader(clB);
          }
+         assertNoClassLoader(rB);
          Class<?> classA11 = assertLoadClass(CLASS_A, clA1);
          assertSame(classA1, classA11);
          Class<?> classA21 = assertLoadClass(CLASS_A, clA2);
@@ -242,6 +260,9 @@ public class ClassLoaderWithPackageDependencySanityTestCase extends JBossClClass
          unregisterClassLoader(clA2);
          unregisterClassLoader(clA1);
       }
+      assertNoClassLoader(rA1);
+      assertNoClassLoader(rA2);
+      assertNoClassLoader(rA3);
       
    }
 }
