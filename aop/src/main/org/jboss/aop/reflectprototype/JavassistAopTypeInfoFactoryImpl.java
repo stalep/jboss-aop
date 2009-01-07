@@ -35,6 +35,7 @@ import org.jboss.reflect.plugins.javassist.JavassistTypeInfoFactoryImpl;
  * @author <a href="stale.pedersen@jboss.org">Stale W. Pedersen</a>
  * @version $Revision: 1.1 $
  */
+@SuppressWarnings("unchecked")
 public class JavassistAopTypeInfoFactoryImpl extends JavassistTypeInfoFactoryImpl
 {
    
