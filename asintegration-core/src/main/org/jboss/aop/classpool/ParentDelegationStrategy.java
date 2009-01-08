@@ -19,20 +19,18 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.test.aop.classpool.jbosscl.test;
-
-import org.jboss.test.kernel.junit.MicrocontainerTestDelegate;
+package org.jboss.aop.classpool;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBossClClassPoolTestDelegate extends MicrocontainerTestDelegate
+public interface ParentDelegationStrategy
 {
+   ClassPoolDomainInternal getParent();
+   
+   boolean isParentBefore(String classname);
 
-   public JBossClClassPoolTestDelegate(Class<?> clazz) throws Exception
-   {
-      super(clazz);
-   }
+   boolean isParentAfter(String classname);
 }

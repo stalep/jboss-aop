@@ -150,7 +150,7 @@ public class ClassPoolWithModuleDependencyTestCase extends JBossClClassPoolTest
          BundleInfoBuilder builderA = BundleInfoBuilder.getBuilder().
             createModule("ModuleA", "3.0.0").
             createPackage(PACKAGE_A);
-         clA = createClassPool("A", builderA, JAR_A_1);
+         clA = createClassPool(resultA, "A", builderA, JAR_A_1);
          CtClass classA = assertLoadCtClass(CLASS_A, clA);
          assertCannotLoadCtClass(clA, CLASS_B);
          Result resultB = new Result();
@@ -186,6 +186,7 @@ public class ClassPoolWithModuleDependencyTestCase extends JBossClClassPoolTest
       {
          unregisterClassPool(clA);
       }
+      assertNoClassLoader(resultA);
    }
    
    //These are my extra tests

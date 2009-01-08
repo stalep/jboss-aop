@@ -19,20 +19,49 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.test.aop.classpool.jbosscl.test;
-
-import org.jboss.test.kernel.junit.MicrocontainerTestDelegate;
+package org.jboss.aop.classpool;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBossClClassPoolTestDelegate extends MicrocontainerTestDelegate
+public abstract class AbstractParentDelegationStrategy implements ParentDelegationStrategy
 {
-
-   public JBossClClassPoolTestDelegate(Class<?> clazz) throws Exception
+   private ClassPoolDomainInternal parent;
+   
+   protected AbstractParentDelegationStrategy(ClassPoolDomain parent, ClassPoolToClassPoolDomainAdaptorFactory adaptorFactory)
    {
-      super(clazz);
+      if (parent == null)
+      {
+         if (adaptorFactory == null)
+         {
+            throw new IllegalStateException("Null parent and null adaptorFactory");
+         }
+         this.parent = adaptorFactory.createAdaptor();
+      }
+      else 
+      {
+         if (parent instanceof ClassPoolDomainInternal == false)
+         {
+            throw new IllegalArgumentException("Parent must implement ClassPoolDomainInternal");         
+         }
+         this.parent = (ClassPoolDomainInternal)parent;
+      }
+      
+      if (this.parent == null)
+      {
+         throw new IllegalStateException("Parent was not set");
+      }
+   }
+   
+   protected boolean hasParent()
+   {
+      return parent != null;
+   }
+   
+   public ClassPoolDomainInternal getParent()
+   {
+      return parent;
    }
 }

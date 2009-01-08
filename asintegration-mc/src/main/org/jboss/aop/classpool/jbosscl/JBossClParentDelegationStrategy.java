@@ -19,20 +19,42 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.test.aop.classpool.jbosscl.test;
+package org.jboss.aop.classpool.jbosscl;
 
-import org.jboss.test.kernel.junit.MicrocontainerTestDelegate;
+import org.jboss.aop.classpool.AbstractParentDelegationStrategy;
+import org.jboss.aop.classpool.ClassPoolDomain;
+import org.jboss.aop.classpool.ClassPoolToClassPoolDomainAdaptorFactory;
+import org.jboss.classloader.spi.ParentPolicy;
+import org.jboss.classloader.spi.filter.ClassFilter;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBossClClassPoolTestDelegate extends MicrocontainerTestDelegate
+class JBossClParentDelegationStrategy extends AbstractParentDelegationStrategy
 {
-
-   public JBossClClassPoolTestDelegate(Class<?> clazz) throws Exception
+   ParentPolicy parentPolicy;
+   
+   JBossClParentDelegationStrategy(ClassPoolDomain parent, ParentPolicy parentPolicy, ClassPoolToClassPoolDomainAdaptorFactory adaptorFactory)
    {
-      super(clazz);
+      super(parent, adaptorFactory);
+      if (parentPolicy == null)
+      {
+         throw new IllegalStateException("Null parent policy");
+      }
+      this.parentPolicy = parentPolicy;
+   }
+
+   public boolean isParentAfter(String classname)
+   {
+      ClassFilter filter = parentPolicy.getAfterFilter();
+      return filter.matchesClassName(classname);
+   }
+
+   public boolean isParentBefore(String classname)
+   {
+      ClassFilter filter = parentPolicy.getBeforeFilter();
+      return filter.matchesClassName(classname);
    }
 }

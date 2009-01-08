@@ -11,15 +11,4 @@
       <uncallback method="removeModule" state="Configured"/>
    </bean>
 
-   <!-- bean name="SchemaResolverConfig" class="org.jboss.xb.binding.sunday.unmarshalling.SchemaResolverConfig">
-      <property name="bindingClasses">
-         <map keyClass="java.lang.String" valueClass="java.lang.String">
-            <entry>
-               <key>urn:jboss:classloader:1.0</key>
-               <value>org.jboss.classloading.spi.vfs.metadata.VFSClassLoaderFactory10</value>
-            </entry>
-         </map>
-      </property>
-   </bean -->
-
 </deployment>

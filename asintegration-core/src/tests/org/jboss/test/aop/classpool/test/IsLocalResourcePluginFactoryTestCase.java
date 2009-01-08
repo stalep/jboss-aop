@@ -31,7 +31,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.jboss.aop.classpool.AOPClassPoolRepository;
-import org.jboss.aop.classpool.BasicClassPoolDomain;
+import org.jboss.aop.classpool.BaseClassPoolDomain;
 import org.jboss.aop.classpool.ClassPoolDomain;
 import org.jboss.aop.classpool.DefaultClassLoaderIsLocalResourcePlugin;
 import org.jboss.aop.classpool.DefaultClassLoaderIsLocalResourcePluginFactory;
@@ -52,7 +52,7 @@ import org.jboss.util.loading.Translatable;
  */
 public class IsLocalResourcePluginFactoryTestCase extends TestCase
 {
-   final static ClassPoolDomain DOMAIN = new BasicClassPoolDomain("Test", null);
+   final static ClassPoolDomain DOMAIN = new BaseClassPoolDomain("Test", null, true);
    final static URL[] URLS;
    static 
    {

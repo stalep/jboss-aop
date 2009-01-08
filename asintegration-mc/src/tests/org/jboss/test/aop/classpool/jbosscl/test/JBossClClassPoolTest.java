@@ -183,6 +183,22 @@ public class JBossClClassPoolTest extends MicrocontainerTest
       return getSystem().getDefaultDomain();
    }
 
+   @Override
+   protected void setUp() throws Exception
+   {
+      super.setUp();
+      deploy("/org/jboss/test/aop/classpool/jbosscl/Common.xml");
+   }
+
+
+   @Override
+   protected void tearDown() throws Exception
+   {
+      undeploy("/org/jboss/test/aop/classpool/jbosscl/Common.xml");
+      super.tearDown();
+   }
+
+
    protected ClassLoader createClassLoader(String name, boolean importAll, URL... urls) throws Exception
    {
       return createClassLoader(null, name, importAll, urls);
@@ -275,10 +291,70 @@ public class JBossClClassPoolTest extends MicrocontainerTest
       TestVFSClassLoaderFactory factory = TestVFSClassLoaderFactoryFactory.createClassLoaderFactory(name, importAll, domainName, parentDomainName, parentFirst, urls);
       
       ClassLoader classLoader = createClassLoader(result, factory, parent);
+
+      registerDomainAndLoader(classLoader, domainName);
+      return classLoader;
+   }
+
+   protected ClassLoader createChildDomainParentFirstClassLoader(String name, String domainName, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      return createChildDomainParentFirstClassLoader((Result)null, name, domainName, builder, urls);
+   }
+   
+   protected ClassLoader createChildDomainParentFirstClassLoader(Result result, String name, String domainName, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      return createChildDomainParentFirstClassLoader(result, name, domainName, null, builder, urls);
+   }
+   
+   protected ClassLoader createChildDomainParentFirstClassLoader(String name, String domainName, String parentDomainName, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      return createChildDomainParentFirstClassLoader(null, name, domainName, parentDomainName, builder, urls);
+   }
+   
+   protected ClassLoader createChildDomainParentFirstClassLoader(Result result, String name, String domainName, String parentDomainName, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      return createChildDomainClassLoader(result, name, domainName, parentDomainName, builder, true, urls);
+   }
       
+   protected ClassLoader createChildDomainParentLastClassLoader(String name, String domainName, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      return createChildDomainParentLastClassLoader((Result)null, name, domainName, builder, urls);
+   }
+   
+   protected ClassLoader createChildDomainParentLastClassLoader(Result result, String name, String domainName, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      return createChildDomainParentLastClassLoader(result, name, domainName, null, builder, urls);
+   }
+   
+   protected ClassLoader createChildDomainParentLastClassLoader(String name, String domainName, String parentDomainName, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      return createChildDomainParentLastClassLoader(null, name, domainName, parentDomainName, builder, urls);
+   }
+   
+   protected ClassLoader createChildDomainParentLastClassLoader(Result result, String name, String domainName, String parentDomainName, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      return createChildDomainClassLoader(result, name, domainName, parentDomainName, builder, false, urls);
+   }
+   
+   protected ClassLoader createChildDomainClassLoader(String name, String domainName, String parentDomainName, BundleInfoBuilder builder, boolean parentFirst, URL... urls) throws Exception
+   {
+      return createChildDomainClassLoader(null, name, domainName, parentDomainName, builder, parentFirst, urls);
+   }
+   
+   protected ClassLoader createChildDomainClassLoader(Result result, String name, String domainName, String parentDomainName, BundleInfoBuilder builder, boolean parentFirst, URL... urls) throws Exception
+   {
+      TestVFSClassLoaderFactory factory = TestVFSClassLoaderFactoryFactory.createClassLoaderFactory(name, domainName, parentDomainName, builder, parentFirst, urls);
+
+      ClassLoader classLoader = createClassLoader(result, factory);
+
+      registerDomainAndLoader(classLoader, domainName);
+      return classLoader;
+   }
+   
+   private void registerDomainAndLoader(ClassLoader classLoader, String domainName)
+   {
       ClassLoaderDomain domain = getSystem().getDomain(domainName);
       scopedChildDomainsByLoader.put(classLoader, domain);
-      return classLoader;
    }
    
    protected ClassLoader createChildURLClassLoader(ClassLoader parent, URL url)
@@ -307,9 +383,6 @@ public class JBossClClassPoolTest extends MicrocontainerTest
          result.setFactory(factory);
       }
       ClassLoader loader = assertClassLoader(factory);
-      Module module = assertModule(getContextName(factory));
-      registerModule(loader, module);
-      loaderNameDeploymentRegistry.registerLoaderName(factory.getName(), loader);
 
       return loader;
    }
@@ -370,6 +443,11 @@ public class JBossClClassPoolTest extends MicrocontainerTest
       }
    }
    
+   protected void assertCannotLoadClass(String className, ClassLoader cl)
+   {
+      assertCannotLoadClass(cl, className);
+   }
+   
    protected void assertCannotLoadCtClass(ClassPool pool, String className)
    {
       try
@@ -380,7 +458,12 @@ public class JBossClClassPoolTest extends MicrocontainerTest
       {
       }
    }
-   
+
+   protected void assertCannotLoadCtClass(String className, ClassPool pool)
+   {
+      assertCannotLoadCtClass(pool, className);
+   }
+
    protected void assertCannotLoadClass(ClassLoaderDomain domain, String className)
    {
       try
@@ -473,6 +556,39 @@ public class JBossClClassPoolTest extends MicrocontainerTest
       ClassLoader loader = createChildDomainParentLastClassLoader(result, name, domainName, parentDomainName, importAll, urls);
       return AspectManager.instance().registerClassLoader(loader);
    }
+   
+   protected ClassPool createChildDomainParentFirstClassPool(String name, String domainName, String parentDomainName, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      return createChildDomainParentFirstClassPool(null, name, domainName, parentDomainName, builder, urls);
+   }
+   
+   protected ClassPool createChildDomainParentFirstClassPool(Result result, String name, String domainName, String parentDomainName, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      ClassLoader loader = createChildDomainParentFirstClassLoader(result, name, domainName, parentDomainName, builder, urls);
+      return AspectManager.instance().registerClassLoader(loader);
+   }
+
+   protected ClassPool createChildDomainParentFirstClassPool(String name, String domainName, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      return createChildDomainParentFirstClassPool((Result)null, name, domainName, builder, urls);
+   }
+   
+   protected ClassPool createChildDomainParentFirstClassPool(Result result, String name, String domainName, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      ClassLoader loader = createChildDomainParentFirstClassLoader(result, name, domainName, builder, urls);
+      return AspectManager.instance().registerClassLoader(loader);
+   }
+
+   protected ClassPool createChildDomainParentLastClassPool(String name, String domainName, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      return createChildDomainParentLastClassPool(null, name, domainName, builder, urls);
+   }
+
+   protected ClassPool createChildDomainParentLastClassPool(Result result, String name, String domainName, BundleInfoBuilder builder, URL... urls) throws Exception
+   {
+      ClassLoader loader = createChildDomainParentLastClassLoader(result, name, domainName, builder, urls);
+      return AspectManager.instance().registerClassLoader(loader);
+   }
 
    protected ClassPool createChildURLClassPool(ClassPool parent, URL url)
    {
@@ -521,8 +637,18 @@ public class JBossClClassPoolTest extends MicrocontainerTest
       assertEquals(domainForModule.getName(), module.getDomainName());
       assertEquals(domainForModule.getParentDomainName(), module.getParentDomainName());
    }
+  
    
    protected void assertNoClassLoader(Result result) throws Exception
+   {
+      if (result == null)
+      {
+         throw new IllegalStateException("Null result");
+      }
+      assertNoClassLoader(getContextName(result.getFactory()));
+   }
+  
+   protected void assertNoClassPool(Result result) throws Exception
    {
       if (result == null)
       {
@@ -618,20 +744,27 @@ public class JBossClClassPoolTest extends MicrocontainerTest
 
    protected ClassLoader assertClassLoader(TestVFSClassLoaderFactory factory) throws Exception
    {
-      return assertClassLoader(getContextName(factory));
-   }
-   
-   protected ClassLoader assertClassLoader(String name) throws Exception
-   {
       try
       {
-         Object obj = getBean(name);
-         return assertInstanceOf(obj, ClassLoader.class);
+         Object obj = getBean(getContextName(factory));
+         ClassLoader loader = assertInstanceOf(obj, ClassLoader.class);
+         
+         Module module = assertModule(getContextName(factory));
+         registerModule(loader, module);
+         loaderNameDeploymentRegistry.registerLoaderName(factory.getName(), loader);
+         
+         return loader;
       }
       catch (IllegalStateException e)
       {
          throw new NoSuchClassLoaderException(e);
       }
+   }
+   
+   protected ClassPool assertClassPool(TestVFSClassLoaderFactory factory) throws Exception
+   {
+      ClassLoader loader = assertClassLoader(factory);
+      return AspectManager.instance().registerClassLoader(loader);
    }
    
    protected Class<?> assertLoadClass(String name, ClassLoader initiating) throws Exception

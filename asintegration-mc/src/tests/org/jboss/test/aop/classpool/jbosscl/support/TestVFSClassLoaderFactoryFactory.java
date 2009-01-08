@@ -46,6 +46,16 @@ public class TestVFSClassLoaderFactoryFactory
       return createClassLoaderFactory(name, false, null, null, builder, false, urls);
    }
    
+   public static TestVFSClassLoaderFactory createClassLoaderFactory(String name, String domainName, BundleInfoBuilder builder, boolean parentFirst, URL... urls) throws Exception
+   {
+      return createClassLoaderFactory(name, domainName, null, builder, parentFirst, urls);
+   }
+   
+   public static TestVFSClassLoaderFactory createClassLoaderFactory(String name, String domainName, String parentDomainName, BundleInfoBuilder builder, boolean parentFirst, URL... urls) throws Exception
+   {
+      return createClassLoaderFactory(name, false, domainName, parentDomainName, builder, false, urls);
+   }
+
    public static TestVFSClassLoaderFactory createClassLoaderFactory(String name, boolean importAll, String moduleName, URL... urls) throws Exception
    {
       return createClassLoaderFactory(name, importAll, null, false, urls);
@@ -109,9 +119,15 @@ public class TestVFSClassLoaderFactoryFactory
    private static List<String> urlsToStringList(URL... urls)
    {
       List<String> urlList = new ArrayList<String>(urls.length);
-      for (URL url : urls)
+      if (urls.length > 0)
       {
-         urlList.add(url.toString());
+         for (URL url : urls)
+         {
+            if (url != null)
+            {
+               urlList.add(url.toString());
+            }
+         }
       }
       return urlList;
    }

@@ -30,10 +30,6 @@ public interface ClassPoolDomain
 {
    String getDomainName();
  
-   boolean isParentFirst();
-
-   void setParentFirst(boolean parentFirst);
-
    void addClassPool(DelegatingClassPool pool);
    
    void removeClassPool(DelegatingClassPool pool);

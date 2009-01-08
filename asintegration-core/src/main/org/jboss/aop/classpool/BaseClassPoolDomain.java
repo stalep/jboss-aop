@@ -33,38 +33,28 @@ import org.jboss.aop.util.ClassLoaderUtils;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class BasicClassPoolDomain extends AbstractClassPoolDomain implements ClassPoolDomainInternal
+public class BaseClassPoolDomain extends AbstractClassPoolDomain implements ClassPoolDomainInternal
 {
    private String domainName;
    
-   private ClassPoolDomainInternal parent;
-   
    private List<DelegatingClassPool> delegatingPools = new ArrayList<DelegatingClassPool>();
    
-   private boolean parentFirst;
+   private ParentDelegationStrategy parentDelegationStrategy;
 
-   public BasicClassPoolDomain(String domainName, ClassPoolDomain parent)
+   public BaseClassPoolDomain(String domainName, ClassPoolDomain parent, boolean parentFirst)
    {
-      if (parent != null && parent instanceof ClassPoolDomainInternal == false)
-      {
-         throw new IllegalArgumentException("Parent must implement ClassPoolDomainInternal");
-      }
-      this.parent = (ClassPoolDomainInternal)parent;
-      this.domainName = domainName;
-
-      if (parent == null)
-      {
-         this.parent = createParentClassPoolToClassPoolDomainAdaptor();
-         if (this.parent == null)
-         {
-            throw new IllegalStateException("No ClassPoolToClassPool");
-         }
-      }
+      this(domainName, 
+            new DefaultParentDelegationStrategy(
+                  parent, 
+                  parentFirst, 
+                  DefaultClassPoolToClassPoolDomainAdaptorFactory.getInstance())
+      );
    }
-
-   protected ClassPoolToClassPoolDomainAdapter createParentClassPoolToClassPoolDomainAdaptor()
+   
+   protected BaseClassPoolDomain(String domainName, ParentDelegationStrategy parentDelegationStrategy)
    {
-      return new ClassPoolToClassPoolDomainAdapter();
+      this.domainName = domainName;
+      this.parentDelegationStrategy = parentDelegationStrategy;
    }
    
    public String getDomainName()
@@ -72,16 +62,6 @@ public class BasicClassPoolDomain extends AbstractClassPoolDomain implements Cla
       return domainName;
    }
  
-   public boolean isParentFirst()
-   {
-      return parentFirst;
-   }
-
-   public void setParentFirst(boolean parentFirst)
-   {
-      this.parentFirst = parentFirst;
-   }
-
    public synchronized void addClassPool(DelegatingClassPool pool)
    {
       if (!delegatingPools.contains(pool))
@@ -111,7 +91,7 @@ public class BasicClassPoolDomain extends AbstractClassPoolDomain implements Cla
    public CtClass getCachedOrCreateInternal(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
    {
       CtClass clazz = null;
-      if (isParentBefore())
+      if (isParentBefore(classname))
       {
          clazz = getCachedOrCreateInternalFromParent(initiatingPool, classname, resourceName, create);
       }
@@ -127,7 +107,7 @@ public class BasicClassPoolDomain extends AbstractClassPoolDomain implements Cla
             }
          }
       }
-      if (clazz == null && isParentAfter())
+      if (clazz == null && isParentAfter(classname))
       {
          clazz = getCachedOrCreateInternalFromParent(initiatingPool, classname, resourceName, create);
       }
@@ -136,7 +116,7 @@ public class BasicClassPoolDomain extends AbstractClassPoolDomain implements Cla
 
    public CtClass getCachedOrCreateInternalFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
    {
-      return parent.getCachedOrCreateInternal(initiatingPool, classname, resourceName, create);
+      return parentDelegationStrategy.getParent().getCachedOrCreateInternal(initiatingPool, classname, resourceName, create);
    }
    
    public String toString()
@@ -149,19 +129,14 @@ public class BasicClassPoolDomain extends AbstractClassPoolDomain implements Cla
       return delegatingPools; 
    }
    
-   protected boolean isParentBefore()
+   protected boolean isParentBefore(String classname)
    {
-      return parentFirst && parent!= null;
+      return parentDelegationStrategy.isParentBefore(classname);
    }
    
-   protected boolean isParentAfter()
+   protected boolean isParentAfter(String classname)
    {
-      return parent != null && !parentFirst;
-   }
-   
-   protected ClassPoolDomainInternal getParentDomain()
-   {
-      return parent;
+      return parentDelegationStrategy.isParentAfter(classname);
    }
    
    protected List<DelegatingClassPool> getPoolsForPackage(String packageName)

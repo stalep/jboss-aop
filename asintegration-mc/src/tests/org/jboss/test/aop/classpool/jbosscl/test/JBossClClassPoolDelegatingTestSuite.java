@@ -47,7 +47,8 @@ public class JBossClClassPoolDelegatingTestSuite extends TestSuite
       suite.addTest(ClassPoolWithReExportModuleTestCase.suite());
       suite.addTest(ClassPoolWithReExportPackageTestCase.suite());
       suite.addTest(ClassPoolWithUsesPackageTestCase.suite());
-
+      suite.addTest(ClassPoolWithHierarchicalDomainTestCase.suite());
+      suite.addTest(ClassPoolWithHierarchicalParentLoaderTestCase.suite());
       return suite;
    }
 

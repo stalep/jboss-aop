@@ -33,7 +33,6 @@ import org.jboss.aop.classpool.ClassPoolDomainRegistry;
 import org.jboss.aop.classpool.NonDelegatingClassPool;
 import org.jboss.classloader.spi.ClassLoaderDomain;
 import org.jboss.classloader.spi.ClassLoaderSystem;
-import org.jboss.classloader.spi.ParentPolicy;
 import org.jboss.classloading.spi.RealClassLoader;
 import org.jboss.classloading.spi.dependency.Module;
 
@@ -94,10 +93,7 @@ public class JBossClClassPoolFactory extends AbstractJBossClassPoolFactory imple
             }
             parentPoolDomain = ClassPoolDomainRegistry.getInstance().getDomain(parentDomain);
          }
-         poolDomain = new JBossClClassPoolDomain(domain.getName(), parentPoolDomain);
-         
-         //The determination of parentFirst/-Last might need revisiting
-         poolDomain.setParentFirst(domain.getParentPolicy() == ParentPolicy.BEFORE);
+         poolDomain = new JBossClClassPoolDomain(domain.getName(), parentPoolDomain, domain.getParentPolicy());
          
          ClassPoolDomainRegistry.getInstance().addClassPoolDomain(domain, poolDomain);
       }

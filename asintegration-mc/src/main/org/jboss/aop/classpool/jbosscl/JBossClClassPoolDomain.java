@@ -34,11 +34,11 @@ import javassist.CtClass;
 import javassist.NotFoundException;
 
 import org.jboss.aop.AspectManager;
-import org.jboss.aop.classpool.BasicClassPoolDomain;
+import org.jboss.aop.classpool.BaseClassPoolDomain;
 import org.jboss.aop.classpool.ClassPoolDomain;
-import org.jboss.aop.classpool.ClassPoolToClassPoolDomainAdapter;
 import org.jboss.aop.classpool.DelegatingClassPool;
 import org.jboss.classloader.spi.DelegateLoader;
+import org.jboss.classloader.spi.ParentPolicy;
 import org.jboss.classloading.spi.dependency.Module;
 
 /**
@@ -46,24 +46,23 @@ import org.jboss.classloading.spi.dependency.Module;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBossClClassPoolDomain extends BasicClassPoolDomain
+public class JBossClClassPoolDomain extends BaseClassPoolDomain
 {
    Map<String, Set<DelegatingClassPool>> poolsByPackage = new HashMap<String, Set<DelegatingClassPool>>();
    final static List<DelegatingClassPool> EMPTY_LIST = Collections.unmodifiableList(Collections.EMPTY_LIST);
    
    AspectManager manager = AspectManager.instance();
    
-   public JBossClClassPoolDomain(String domainName, ClassPoolDomain parent)
+   public JBossClClassPoolDomain(String domainName, ClassPoolDomain parent, ParentPolicy parentPolicy)
    {
-      // FIXME JBossClClassPool constructor
-      super(domainName, parent);
+      super(domainName, 
+            new JBossClParentDelegationStrategy(
+                  parent, 
+                  parentPolicy, 
+                  JBossClClassPoolToClassPoolDomainAdaptorFactory.getInstance())
+      );
    }
 
-   protected ClassPoolToClassPoolDomainAdapter createParentClassPoolToClassPoolDomainAdaptor()
-   {
-      return new JBossClClassPoolToClassPoolDomainAdapter();
-   }
-   
    synchronized void setupPoolsByPackage(DelegatingClassPool pool)
    {
       if (pool instanceof JBossClDelegatingClassPool == false)
@@ -106,7 +105,7 @@ public class JBossClClassPoolDomain extends BasicClassPoolDomain
    public CtClass getCachedOrCreateInternal(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
    {
       Module module = getModuleForPool(initiatingPool);
-      if (module.isImportAll())
+      if (module != null && module.isImportAll())
       {
          //Use the old "big ball of mud" model
          return super.getCachedOrCreateInternal(initiatingPool, classname, resourceName, create);
@@ -114,29 +113,32 @@ public class JBossClClassPoolDomain extends BasicClassPoolDomain
       
       //Attempt OSGi style loading
       CtClass clazz = null;
-      if (isParentBefore())
+      if (isParentBefore(classname))
       {
          clazz = getCachedOrCreateInternalFromParent(null, classname, resourceName, create);
       }
       
       //Check imports first
-      List<? extends DelegateLoader> delegates = module.getDelegates();
-      if (delegates != null)
+      if (module != null)
       {
-         for (DelegateLoader delegate : delegates)
+         List<? extends DelegateLoader> delegates = module.getDelegates();
+         if (delegates != null)
          {
-            //TODO This is a hack, need a proper API in jboss-cl
-            System.err.println("Commented out loader from delegate in JBossClClassPoolDomain");
-            ClassLoader loader = null;//delegate.getBaseClassLoader("a BaseClassLoader", "");
-            
-            //TODO Should be a nicer way to do this
-            ClassPool pool = manager.findClassPool(loader);
-            try
+            for (DelegateLoader delegate : delegates)
             {
-               clazz = pool.get(classname);
-            }
-            catch(NotFoundException e)
-            {
+               //TODO This is a hack, need a proper API in jboss-cl
+               System.err.println("Commented out loader from delegate in JBossClClassPoolDomain");
+               ClassLoader loader = delegate.getBaseClassLoader("a BaseClassLoader", "");
+               
+               //TODO Should be a nicer way to do this
+               ClassPool pool = manager.findClassPool(loader);
+               try
+               {
+                  clazz = pool.get(classname);
+               }
+               catch(NotFoundException e)
+               {
+               }
             }
          }
       }
@@ -147,7 +149,7 @@ public class JBossClClassPoolDomain extends BasicClassPoolDomain
          clazz = initiatingPool.loadLocally(classname, resourceName, create);
       }
       
-      if (clazz == null && isParentAfter())
+      if (clazz == null && isParentAfter(classname))
       {
          clazz = getCachedOrCreateInternalFromParent(null, classname, resourceName, create);
       }
@@ -156,6 +158,10 @@ public class JBossClClassPoolDomain extends BasicClassPoolDomain
    
    private Module getModuleForPool(DelegatingClassPool pool)
    {
+      if (pool == null)
+      {
+         return null;
+      }
       return ((JBossClDelegatingClassPool)pool).getModule();
    }
    

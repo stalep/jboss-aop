@@ -31,7 +31,7 @@ import javassist.scopedpool.ScopedClassPoolFactory;
 import javassist.scopedpool.ScopedClassPoolRepository;
 
 import org.jboss.aop.classpool.AbstractJBossClassPoolFactory;
-import org.jboss.aop.classpool.BasicClassPoolDomain;
+import org.jboss.aop.classpool.BaseClassPoolDomain;
 import org.jboss.aop.classpool.ClassPoolDomain;
 import org.jboss.aop.classpool.ClassPoolDomainRegistry;
 import org.jboss.aop.classpool.NonDelegatingClassPool;
@@ -82,15 +82,14 @@ public class JBossUclClassPoolFactory extends AbstractJBossClassPoolFactory impl
          if (loaderRepository instanceof HeirarchicalLoaderRepository3)
          {
             
-            domain = new BasicClassPoolDomain("Scoped" + System.identityHashCode(loaderRepository), mainDomain);
             boolean parentFirst = ((HeirarchicalLoaderRepository3)loaderRepository).getUseParentFirst();
-            domain.setParentFirst(parentFirst);
+            domain = new BaseClassPoolDomain("Scoped" + System.identityHashCode(loaderRepository), mainDomain, parentFirst);
          }
          else
          {
             if (mainDomain == null)
             {
-               domain = new BasicClassPoolDomain(ServerConstants.DEFAULT_LOADER_NAME, null);
+               domain = new BaseClassPoolDomain(ServerConstants.DEFAULT_LOADER_NAME, null, true);
                mainDomain = domain;
             }
             else

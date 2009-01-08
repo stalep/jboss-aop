@@ -30,7 +30,7 @@ import java.util.List;
 import javassist.ClassPool;
 
 import org.jboss.aop.classpool.AOPClassPoolRepository;
-import org.jboss.aop.classpool.BasicClassPoolDomain;
+import org.jboss.aop.classpool.BaseClassPoolDomain;
 import org.jboss.aop.classpool.ClassPoolDomain;
 import org.jboss.aop.classpool.DelegatingClassPool;
 import org.jboss.test.AbstractTestCaseWithSetup;
@@ -82,8 +82,7 @@ public class ClassPoolTest extends AbstractTestCaseWithSetup
 
    protected static ClassPoolDomain createClassPoolDomain(String name, ClassPoolDomain parent, boolean parentFirst)
    {
-      ClassPoolDomain domain = new BasicClassPoolDomain(name, parent);
-      domain.setParentFirst(parentFirst);
+      ClassPoolDomain domain = new BaseClassPoolDomain(name, parent, parentFirst);
       return domain;
    }
    

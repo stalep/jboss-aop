@@ -19,20 +19,30 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.test.aop.classpool.jbosscl.test;
-
-import org.jboss.test.kernel.junit.MicrocontainerTestDelegate;
+package org.jboss.aop.classpool;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBossClClassPoolTestDelegate extends MicrocontainerTestDelegate
+public class DefaultClassPoolToClassPoolDomainAdaptorFactory implements ClassPoolToClassPoolDomainAdaptorFactory
 {
-
-   public JBossClClassPoolTestDelegate(Class<?> clazz) throws Exception
+   private static final DefaultClassPoolToClassPoolDomainAdaptorFactory INSTANCE = new DefaultClassPoolToClassPoolDomainAdaptorFactory();
+   
+   private DefaultClassPoolToClassPoolDomainAdaptorFactory()
    {
-      super(clazz);
+      
    }
+   
+   public static ClassPoolToClassPoolDomainAdaptorFactory getInstance()
+   {
+      return INSTANCE;
+   }
+   
+   public ClassPoolToClassPoolDomainAdapter createAdaptor()
+   {
+      return new ClassPoolToClassPoolDomainAdapter();
+   }
+
 }
