@@ -22,12 +22,26 @@
 package org.jboss.aop.reflectprototype;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import javassist.CtClass;
+import javassist.CtField;
+import javassist.CtMethod;
 import javassist.NotFoundException;
 
+import org.jboss.reflect.plugins.AnnotationAttributeImpl;
+import org.jboss.reflect.plugins.EnumConstantInfoImpl;
+import org.jboss.reflect.plugins.javassist.JavassistAnnotationInfo;
+import org.jboss.reflect.plugins.javassist.JavassistArrayInfoImpl;
+import org.jboss.reflect.plugins.javassist.JavassistEnumInfo;
+import org.jboss.reflect.plugins.javassist.JavassistTypeInfo;
 import org.jboss.reflect.plugins.javassist.JavassistTypeInfoFactoryImpl;
+import org.jboss.reflect.spi.AnnotationValue;
+import org.jboss.reflect.spi.NumberInfo;
+import org.jboss.reflect.spi.PrimitiveInfo;
+import org.jboss.reflect.spi.TypeInfo;
 
 /**
  * A JavassistAopTypeInfoFactoryImpl.
@@ -90,7 +104,7 @@ public class JavassistAopTypeInfoFactoryImpl extends JavassistTypeInfoFactoryImp
       }
 
 //      how do we call instantiate?
-      Object result = null; //instantiate(clazz);
+      Object result = instantiate(clazz);
       
 
       weak = new WeakReference(result);
@@ -100,6 +114,182 @@ public class JavassistAopTypeInfoFactoryImpl extends JavassistTypeInfoFactoryImp
 //      generate(clazz, result);
       
       return result;
+   }
+   
+   /**
+    * Get the information for a class
+    * 
+    * @param clazz the class
+    * @return the info
+    */
+   @Override
+   public Object get(Class clazz)
+   {
+      throw new RuntimeException("This method is void!!!");
+   }
+   
+   @SuppressWarnings("unchecked")
+   protected Object instantiate(CtClass ctClass)
+   {
+      try
+      {
+         if (ctClass.isArray())
+         {
+            TypeInfo componentType = getTypeInfo(ctClass.getComponentType());
+            
+            Class[] types = new Class[] { JavassistTypeInfoFactoryImpl.class, CtClass.class, Class.class, TypeInfo.class };
+            Constructor con = JavassistArrayInfoImpl.class.getDeclaredConstructor(types);
+            
+            Object[] args = new Object[] {this, ctClass, null, componentType};
+            con.setAccessible(true);
+            return con.newInstance(args);
+         }
+
+         if (ctClass.isAnnotation())
+         {
+            JavassistAnnotationInfo result = new JavassistAnnotationInfo(this, ctClass, null);
+            CtMethod[] methods = ctClass.getDeclaredMethods();
+            AnnotationAttributeImpl[] atttributes = new AnnotationAttributeImpl[methods.length];
+            for (int i = 0 ; i < methods.length ; i++)
+            {
+               atttributes[i] = new AnnotationAttributeImpl(methods[i].getName(), getTypeInfo(methods[i].getReturnType()), null);
+            }
+            result.setAttributes(atttributes);
+            return result;
+
+         }
+         else if (ctClass.isEnum())
+         {
+            JavassistEnumInfo enumInfo = new JavassistEnumInfo(this, ctClass, null);
+            CtField[] fields = ctClass.getFields();
+            EnumConstantInfoImpl[] constants = new EnumConstantInfoImpl[fields.length];
+            int i = 0;
+            for (CtField field : fields)
+            {
+               AnnotationValue[] annotations = getAnnotations(field);
+               constants[i++] = new EnumConstantInfoImpl(field.getName(), enumInfo, annotations);
+            }
+            enumInfo.setEnumConstants(constants);
+            return enumInfo;
+         }
+
+         Class[] types = new Class[] { JavassistTypeInfoFactoryImpl.class, CtClass.class, Class.class};
+         Constructor con = JavassistTypeInfo.class.getDeclaredConstructor(types);
+         Object[] args = new Object[] {this, ctClass, null};
+         con.setAccessible(true);
+         return  con.newInstance(args);
+
+      }
+      catch (NotFoundException e)
+      {
+         throw new RuntimeException(e);
+      }
+      catch (IllegalArgumentException e)
+      {
+         e.printStackTrace();
+      }
+      catch (InstantiationException e)
+      {
+         e.printStackTrace();
+      }
+      catch (IllegalAccessException e)
+      {
+         e.printStackTrace();
+      }
+      catch (InvocationTargetException e)
+      {
+         e.printStackTrace();
+      }
+      catch (SecurityException e)
+      {
+         e.printStackTrace();
+      }
+      catch (NoSuchMethodException e)
+      {
+         e.printStackTrace();
+      }
+      
+      return null;
+   }
+
+   @Override
+   public TypeInfo getTypeInfo(String name, ClassLoader cl) throws ClassNotFoundException
+   {
+      if (name == null)
+         throw new IllegalArgumentException("Null class name");
+      if (cl == null)
+         cl = Thread.currentThread().getContextClassLoader();
+
+      TypeInfo primitive = PrimitiveInfo.valueOf(name);
+      if (primitive != null)
+         return primitive;
+
+      NumberInfo number = NumberInfo.valueOf(name);
+      if (number != null)
+      {
+         synchronized (number)
+         {
+            if (number.getPhase() != NumberInfo.Phase.INITIALIZING)
+            {
+               if (number.getPhase() != NumberInfo.Phase.COMPLETE)
+               {
+                  number.initializing();
+                  try
+                  {
+                     number.setDelegate((TypeInfo)get(poolFactory.getPoolForLoader(cl).get(name)));
+                  }
+                  catch (NotFoundException e)
+                  {
+                     throw new ClassNotFoundException(e.getMessage());
+                  }
+//                  number.setDelegate((TypeInfo)get(Class.forName(name, false, cl)));
+               }
+               return number;
+            }
+         }
+      }
+
+//      Class<?> clazz = Class.forName(name, false, cl);
+      CtClass clazz = null;
+      try
+      {
+         clazz = poolFactory.getPoolForLoader(cl).get(name);
+      }
+      catch (NotFoundException e)
+      {
+         throw new ClassNotFoundException(e.getMessage());
+      }
+      return getTypeInfo(clazz);
+   }
+   
+   @Override
+   public TypeInfo getTypeInfo(CtClass clazz)
+   {
+      if (clazz == null)
+         throw new IllegalArgumentException("Null class");
+
+      TypeInfo primitive = PrimitiveInfo.valueOf(clazz.getName());
+      if (primitive != null)
+         return primitive;
+
+      NumberInfo number = NumberInfo.valueOf(clazz.getName());
+      if (number != null)
+      {
+         synchronized (number)
+         {
+            if (number.getPhase() != NumberInfo.Phase.INITIALIZING)
+            {
+               if (number.getPhase() != NumberInfo.Phase.COMPLETE)
+               {
+                  number.initializing();
+                  number.setDelegate((TypeInfo)get(clazz));
+               }
+               return number;
+            }
+         }
+      }
+
+      return (TypeInfo) get(clazz);
    }
 
 }
