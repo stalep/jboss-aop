@@ -21,8 +21,6 @@
 */ 
 package org.jboss.test.aop.classpool.jbosscl.test;
 
-import java.net.URL;
-
 import javassist.ClassPool;
 import junit.framework.Test;
 
