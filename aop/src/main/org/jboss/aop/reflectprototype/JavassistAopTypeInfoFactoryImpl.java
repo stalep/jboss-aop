@@ -39,6 +39,7 @@ import org.jboss.reflect.plugins.javassist.JavassistEnumInfo;
 import org.jboss.reflect.plugins.javassist.JavassistTypeInfo;
 import org.jboss.reflect.plugins.javassist.JavassistTypeInfoFactoryImpl;
 import org.jboss.reflect.spi.AnnotationValue;
+import org.jboss.reflect.spi.ClassInfo;
 import org.jboss.reflect.spi.NumberInfo;
 import org.jboss.reflect.spi.PrimitiveInfo;
 import org.jboss.reflect.spi.TypeInfo;
@@ -100,13 +101,18 @@ public class JavassistAopTypeInfoFactoryImpl extends JavassistTypeInfoFactoryImp
       {
          Object result = weak.get();
          if (result != null)
-            return result;
+         {
+            if(compare(clazz, (ClassInfo) result))
+               return result;
+            else
+            {
+               classLoaderCache.remove(clazz.getName());
+            }
+         }
       }
 
-//      how do we call instantiate?
       Object result = instantiate(clazz);
       
-
       weak = new WeakReference(result);
       classLoaderCache.put(clazz.getName(), weak);
       
@@ -290,6 +296,16 @@ public class JavassistAopTypeInfoFactoryImpl extends JavassistTypeInfoFactoryImp
       }
 
       return (TypeInfo) get(clazz);
+   }
+   
+   private boolean compare(CtClass clazz, ClassInfo info)
+   {
+      if(clazz.getDeclaredMethods().length == info.getDeclaredMethods().length &&
+            clazz.getDeclaredConstructors().length == info.getDeclaredConstructors().length &&
+            clazz.getDeclaredFields().length == info.getDeclaredFields().length)
+         return true;
+      else
+         return false;
    }
 
 }
