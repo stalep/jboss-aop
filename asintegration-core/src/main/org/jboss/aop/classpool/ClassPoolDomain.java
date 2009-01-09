@@ -28,10 +28,4 @@ package org.jboss.aop.classpool;
  */
 public interface ClassPoolDomain
 {
-   String getDomainName();
- 
-   void addClassPool(DelegatingClassPool pool);
-   
-   void removeClassPool(DelegatingClassPool pool);
-
 }

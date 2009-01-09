@@ -23,8 +23,6 @@ package org.jboss.aop.classpool;
 
 import java.net.URL;
 
-import javassist.ClassPool;
-
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
@@ -47,26 +45,10 @@ public class URLClassLoaderIsLocalResourcePlugin extends AbstractIsLocalResource
       {
          return false;
       }
-      
-      ClassPool parent = getPool().getParent();
-      if (parent != null)
+      if (isSameInParent(classResourceName, myURL))
       {
-         ClassLoader parentLoader = parent.getClassLoader();
-         URL parentURL = parentLoader.getResource(classResourceName);
-         if (parentURL == null)
-         {
-            return true;
-         }
-         if (!parentURL.equals(myURL))
-         {
-            return true;
-         }
+         return false;
       }
-      else
-      {
-         return myURL != null;
-      }
-      
-      return false;
+      return true;
    }
 }

@@ -41,12 +41,7 @@ public class DelegatingClassPool extends BaseClassPool
    
    private boolean closed;
    
-   public DelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ClassPool parent, ScopedClassPoolRepository repository, boolean isTemp)
-   {
-      this(domain, cl, parent, repository);
-   }
-
-   protected DelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ClassPool parent, ScopedClassPoolRepository repository)
+   public DelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ClassPool parent, ScopedClassPoolRepository repository)
    {
       super(cl, parent, repository);
       if (domain == null)
@@ -58,17 +53,11 @@ public class DelegatingClassPool extends BaseClassPool
          throw new IllegalArgumentException("Domain must implement ClassPoolDomainInternal");
       }
       this.domain = (ClassPoolDomainInternal)domain;
-      domain.addClassPool(this);
+      this.domain.addClassPool(this);
    }
 
-   ClassPoolDomain getDomain()
+   public final CtClass get(String classname) throws NotFoundException 
    {
-      return domain;
-   }
-   
-   public CtClass get(String classname) throws NotFoundException 
-   {
-      System.out.println("==> Initiating lookup of " + classname + " in " + this);
       if (logger.isTraceEnabled())
       {
          logger.trace("Initiating lookup of " + classname + " in " + this);
@@ -119,20 +108,12 @@ public class DelegatingClassPool extends BaseClassPool
    public CtClass getCached(String classname)
    {
       return domain.getCachedOrCreate(this, classname, false);
-      //return getCached(true, classname);
    }
    
    @Override
    public CtClass getCachedLocally(String classname)
    {
       return super.getCachedLocally(classname);
-   }
-
-   //Lifted from AOPClassPool, also exists in JBossClassPool
-   @Override
-   protected boolean isLocalResource(String resourceName)
-   {
-      return super.isLocalResource(resourceName);
    }
 
    @Override

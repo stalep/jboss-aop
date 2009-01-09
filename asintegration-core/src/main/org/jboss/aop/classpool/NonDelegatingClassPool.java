@@ -47,12 +47,9 @@ public class NonDelegatingClassPool extends BaseClassPool
       {
          clazz = createParentCtClass(classname, useCache);
       }
-      if (clazz == null)
+      if (clazz == null && isLocalResource(getResourceName(classname)))
       {
-         if (isLocalResource(getResourceName(classname)))
-         {
-            clazz = super.createCtClass(classname, useCache);
-         }
+         clazz = super.createCtClass(classname, useCache);
       }
       if (childFirstLookup && clazz == null)
       {

@@ -53,24 +53,12 @@ public class ClassPoolToClassPoolDomainAdapter extends AbstractClassPoolDomain i
    }
 
    
-   public synchronized CtClass getCachedOrCreateInternal(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
+   public synchronized CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
    {
-      if (pool instanceof BaseClassPool)
-      {
-         return getCachedOrCreateFromPool((BaseClassPool)pool, classname, create);
-      }
-      else
-      {
-         return getCachedOrCreateFromPool(pool, classname, create);
-      }
+      return getCachedOrCreateFromPool(pool, classname, create);
    }
 
-   public CtClass getCachedOrCreateInternalFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
-   {
-      return null;
-   }
-
-   public String getDomainName()
+   public CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
    {
       return null;
    }

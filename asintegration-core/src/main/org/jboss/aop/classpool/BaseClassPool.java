@@ -66,36 +66,32 @@ public class BaseClassPool extends AOPClassPool
 
    protected CtClass createParentCtClass(String classname, boolean useCache)
    {
-      
-      CtClass clazz = null;
-      if (parent != null)
+      if (parent == null)
       {
-         //Make parent create class
-         if (parent instanceof BaseClassPool)
-         {
-            clazz = ((BaseClassPool)parent).createCtClass(classname, useCache);
-         }
-         else
-         {
-            try
-            {
-               clazz = parent.get(classname);
-            }
-            catch (NotFoundException e)
-            {
-            }
-         }
+         return null;
       }
-      
-      if (clazz != null)
+
+      //Make parent create class
+      if (parent instanceof BaseClassPool)
       {
-         ClassPool pool = clazz.getClassPool();
-         if (pool instanceof BaseClassPool)
-         {
-            ((BaseClassPool)pool).cacheCtClass(classname, clazz, false);
-         }
+         return ((BaseClassPool)parent).createCtClass(classname, useCache);
       }
-      return clazz;
+      else
+      {
+         return plainParentGet(classname);
+      }
+   }
+   
+   private CtClass plainParentGet(String classname)
+   {
+      try
+      {
+         return parent.get(classname);
+      }
+      catch (NotFoundException e)
+      {
+      }
+      return null;
    }
 
    public ClassPool getParent()

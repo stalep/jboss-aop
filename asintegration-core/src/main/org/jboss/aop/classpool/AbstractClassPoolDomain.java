@@ -46,13 +46,24 @@ public abstract class AbstractClassPoolDomain implements ClassPoolDomainInternal
          return null;
       }
        
+      return getCachedOrCreateFromPool(parentPool, classname, create);
+   }
+
+   
+   protected CtClass getCachedOrCreateFromPool(ClassPool parentPool, String classname, boolean create)
+   {
       if (parentPool instanceof BaseClassPool)
       {
          return getCachedOrCreateFromPool((BaseClassPool)parentPool, classname, create);
       }
-      else
+      try
       {
-         return getCachedOrCreateFromPool(parentPool, classname, create);
+         //This will check the parents
+         return parentPool.get(classname);
+      }
+      catch(NotFoundException e)
+      {
+         return null;
       }
    }
 
@@ -85,18 +96,4 @@ public abstract class AbstractClassPoolDomain implements ClassPoolDomainInternal
       }
       return clazz;
    }
-   
-   protected CtClass getCachedOrCreateFromPool(ClassPool parentPool, String classname, boolean create)
-   {
-      try
-      {
-         //This will check the parents
-         return parentPool.get(classname);
-      }
-      catch(NotFoundException e)
-      {
-         return null;
-      }
-   }
-      
 }

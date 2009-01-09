@@ -23,6 +23,7 @@ package org.jboss.aop.classpool;
 
 /**
  * 
+ * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */

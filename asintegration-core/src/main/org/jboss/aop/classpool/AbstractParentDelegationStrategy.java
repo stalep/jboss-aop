@@ -21,6 +21,8 @@
 */ 
 package org.jboss.aop.classpool;
 
+import javassist.CtClass;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
@@ -60,8 +62,8 @@ public abstract class AbstractParentDelegationStrategy implements ParentDelegati
       return parent != null;
    }
    
-   public ClassPoolDomainInternal getParent()
+   public CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
    {
-      return parent;
+      return parent.getCachedOrCreate(initiatingPool, classname, resourceName, create);
    }
 }

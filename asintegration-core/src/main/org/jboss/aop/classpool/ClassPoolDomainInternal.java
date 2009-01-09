@@ -30,7 +30,15 @@ import javassist.CtClass;
  */
 interface ClassPoolDomainInternal extends ClassPoolDomain
 {
-   CtClass getCachedOrCreateInternal(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create);
-   CtClass getCachedOrCreateInternalFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create);
    CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, boolean create);
+   
+   CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create);
+   
+   CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create);
+   
+   void addClassPool(DelegatingClassPool pool);
+   
+   void removeClassPool(DelegatingClassPool pool);
+
+   
 }

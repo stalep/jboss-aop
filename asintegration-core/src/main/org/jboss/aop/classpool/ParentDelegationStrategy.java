@@ -21,6 +21,8 @@
 */ 
 package org.jboss.aop.classpool;
 
+import javassist.CtClass;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
@@ -28,7 +30,7 @@ package org.jboss.aop.classpool;
  */
 public interface ParentDelegationStrategy
 {
-   ClassPoolDomainInternal getParent();
+   CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create);
    
    boolean isParentBefore(String classname);
 

@@ -111,6 +111,4 @@ public class JBossClClassPoolFactory extends AbstractJBossClassPoolFactory imple
       }
       return parent;
    }
-
-   
 }

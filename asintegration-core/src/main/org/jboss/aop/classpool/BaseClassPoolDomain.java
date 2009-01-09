@@ -57,11 +57,6 @@ public class BaseClassPoolDomain extends AbstractClassPoolDomain implements Clas
       this.parentDelegationStrategy = parentDelegationStrategy;
    }
    
-   public String getDomainName()
-   {
-      return domainName;
-   }
- 
    public synchronized void addClassPool(DelegatingClassPool pool)
    {
       if (!delegatingPools.contains(pool))
@@ -79,7 +74,7 @@ public class BaseClassPoolDomain extends AbstractClassPoolDomain implements Clas
    {
       String resourceName = ClassLoaderUtils.getResourceName(classname);
       
-      CtClass clazz = getCachedOrCreateInternal(initiatingPool, classname, resourceName, create);
+      CtClass clazz = getCachedOrCreate(initiatingPool, classname, resourceName, create);
       
       if (clazz == null)
       {
@@ -88,12 +83,12 @@ public class BaseClassPoolDomain extends AbstractClassPoolDomain implements Clas
       return clazz;
    }
    
-   public CtClass getCachedOrCreateInternal(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
+   public CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
    {
       CtClass clazz = null;
       if (isParentBefore(classname))
       {
-         clazz = getCachedOrCreateInternalFromParent(initiatingPool, classname, resourceName, create);
+         clazz = getCachedOrCreateFromParent(initiatingPool, classname, resourceName, create);
       }
       if (clazz == null)
       {
@@ -109,14 +104,14 @@ public class BaseClassPoolDomain extends AbstractClassPoolDomain implements Clas
       }
       if (clazz == null && isParentAfter(classname))
       {
-         clazz = getCachedOrCreateInternalFromParent(initiatingPool, classname, resourceName, create);
+         clazz = getCachedOrCreateFromParent(initiatingPool, classname, resourceName, create);
       }
       return clazz;
    }
 
-   public CtClass getCachedOrCreateInternalFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
+   public CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
    {
-      return parentDelegationStrategy.getParent().getCachedOrCreateInternal(initiatingPool, classname, resourceName, create);
+      return parentDelegationStrategy.getCachedOrCreateFromParent(initiatingPool, classname, resourceName, create);
    }
    
    public String toString()

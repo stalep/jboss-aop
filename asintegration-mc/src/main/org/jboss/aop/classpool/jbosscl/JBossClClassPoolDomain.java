@@ -21,6 +21,7 @@
 */ 
 package org.jboss.aop.classpool.jbosscl;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -97,29 +98,33 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
          if (pools != null)
          {
             pools.remove(pool);
+            if (pools.size() == 0)
+            {
+               poolsByPackage.remove(pkg);
+            }
          }
       }
    }
  
    @Override
-   public CtClass getCachedOrCreateInternal(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
+   public CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
    {
       Module module = getModuleForPool(initiatingPool);
       if (module != null && module.isImportAll())
       {
          //Use the old "big ball of mud" model
-         return super.getCachedOrCreateInternal(initiatingPool, classname, resourceName, create);
+         return super.getCachedOrCreate(initiatingPool, classname, resourceName, create);
       }
       
       //Attempt OSGi style loading
       CtClass clazz = null;
       if (isParentBefore(classname))
       {
-         clazz = getCachedOrCreateInternalFromParent(null, classname, resourceName, create);
+         clazz = getCachedOrCreateFromParent(null, classname, resourceName, create);
       }
       
       //Check imports first
-      if (module != null)
+      if (clazz == null && module != null)
       {
          List<? extends DelegateLoader> delegates = module.getDelegates();
          if (delegates != null)
@@ -127,8 +132,8 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
             for (DelegateLoader delegate : delegates)
             {
                //TODO This is a hack, need a proper API in jboss-cl
-               System.err.println("Commented out loader from delegate in JBossClClassPoolDomain");
-               ClassLoader loader = delegate.getBaseClassLoader("a BaseClassLoader", "");
+               System.err.println("HACK in JBossClClassPoolDomain");
+               ClassLoader loader = getBaseClassLoaderFromDelegateHack(delegate);
                
                //TODO Should be a nicer way to do this
                ClassPool pool = manager.findClassPool(loader);
@@ -151,7 +156,7 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
       
       if (clazz == null && isParentAfter(classname))
       {
-         clazz = getCachedOrCreateInternalFromParent(null, classname, resourceName, create);
+         clazz = getCachedOrCreateFromParent(null, classname, resourceName, create);
       }
       return clazz;
    }
@@ -176,4 +181,36 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
       return new ArrayList<DelegatingClassPool>(poolSet);
    }
 
+   
+   //TODO This should be replaced with a proper call once jboss-cl allows us to get this
+   private static ClassLoader getBaseClassLoaderFromDelegateHack(DelegateLoader loader)
+   {
+      Class<?> clazz = loader.getClass();
+      Method m = null;
+      while (clazz != Object.class)
+      {
+         try
+         {
+            m = clazz.getDeclaredMethod("getBaseClassLoader", String.class, String.class);
+            m.setAccessible(true);
+            break;
+         }
+         catch(Exception e)
+         {
+            clazz = clazz.getSuperclass();
+         }
+      }
+      if (m == null)
+      {
+         return null;
+      }
+      try
+      {
+         return (ClassLoader)m.invoke(loader, "a BaseClassLoader", "");
+      }
+      catch(Exception e)
+      {
+         return null;
+      }
+   }
 }
