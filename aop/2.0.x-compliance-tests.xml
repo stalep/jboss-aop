@@ -320,7 +320,7 @@
       <!-- Add tests in _base-tests unless they should only be run in this weaving mode -->
       <antcall target="_base-jdk50-tests_2.0.x" inheritRefs="true">
          <param name="caller" value="javaagent-tests_2.0.x"/>
-         <param name="test-target" value="_run-javaagent-test"/>
+         <param name="test-target" value="_run-javaagent-test_2.0.x"/>
       </antcall>
    </target>
 
