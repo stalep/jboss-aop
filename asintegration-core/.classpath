@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry excluding="**/*.java" including="jbossorg-eula.txt" kind="src" path="src/etc"/>
 	<classpathentry kind="src" path="src/main"/>
+	<classpathentry excluding="**/*.java" kind="src" output="target/test-classes" path="src/test/resources"/>
 	<classpathentry excluding="org/jboss/test/aop/classpool/support/a/|org/jboss/test/aop/classpool/support/b/" kind="src" output="target/test-classes" path="src/tests"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.0.2/activation-1.0.2.jar"/>
@@ -16,7 +17,7 @@
 	<classpathentry kind="var" path="M2_REPO/urbanophile/java-getopt/1.0.9/java-getopt-1.0.9.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javassist/javassist/3.9.0.GA/javassist-3.9.0.GA.jar" sourcepath="M2_REPO/javassist/javassist/3.9.0.GA/javassist-3.9.0.GA-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/sun-jaxb/jaxb-api/2.1.4/jaxb-api-2.1.4.jar" sourcepath="M2_REPO/sun-jaxb/jaxb-api/2.1.4/jaxb-api-2.1.4-sources.jar"/>
-	<classpathentry kind="src" path="/jboss-aop"/>
+	<classpathentry kind="var" path="M2_REPO/org/jboss/aop/jboss-aop/2.0.0-SNAPSHOT/jboss-aop-2.0.0-SNAPSHOT.jar" sourcepath="M2_REPO/org/jboss/aop/jboss-aop/2.0.0-SNAPSHOT/jboss-aop-2.0.0-SNAPSHOT-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/microcontainer/jboss-aop-mc-int/2.0.0.CR1/jboss-aop-mc-int-2.0.0.CR1.jar" sourcepath="M2_REPO/org/jboss/microcontainer/jboss-aop-mc-int/2.0.0.CR1/jboss-aop-mc-int-2.0.0.CR1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/jbossas/jboss-as-bootstrap/5.0.0.CR2/jboss-as-bootstrap-5.0.0.CR2.jar" sourcepath="M2_REPO/org/jboss/jbossas/jboss-as-bootstrap/5.0.0.CR2/jboss-as-bootstrap-5.0.0.CR2-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/jbossas/jboss-as-j2se/5.0.0.CR2/jboss-as-j2se-5.0.0.CR2.jar" sourcepath="M2_REPO/org/jboss/jbossas/jboss-as-j2se/5.0.0.CR2/jboss-as-j2se-5.0.0.CR2-sources.jar"/>
@@ -57,7 +58,7 @@
 	<classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar" sourcepath="M2_REPO/junit/junit/3.8.1/junit-3.8.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/apache-log4j/log4j/1.2.14/log4j-1.2.14.jar" sourcepath="M2_REPO/apache-log4j/log4j/1.2.14/log4j-1.2.14-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar" sourcepath="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14-sources.jar"/>
-	<classpathentry kind="src" path="/pluggable-instrumentor"/>
+	<classpathentry kind="var" path="M2_REPO/org/jboss/aop/pluggable-instrumentor/2.0.0-SNAPSHOT/pluggable-instrumentor-2.0.0-SNAPSHOT.jar" sourcepath="M2_REPO/org/jboss/aop/pluggable-instrumentor/2.0.0-SNAPSHOT/pluggable-instrumentor-2.0.0-SNAPSHOT-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/qdox/qdox/1.6.1/qdox-1.6.1.jar" sourcepath="M2_REPO/qdox/qdox/1.6.1/qdox-1.6.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/stax/stax-api/1.0/stax-api-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/trove/trove/2.1.1/trove-2.1.1.jar"/>
