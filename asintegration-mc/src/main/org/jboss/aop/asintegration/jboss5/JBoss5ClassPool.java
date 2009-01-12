@@ -21,8 +21,6 @@
 */ 
 package org.jboss.aop.asintegration.jboss5;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.security.ProtectionDomain;
 
@@ -32,28 +30,25 @@ import javassist.CtClass;
 import javassist.scopedpool.ScopedClassPoolRepository;
 
 import org.jboss.aop.classpool.AOPClassPool;
-import org.jboss.classloader.spi.base.BaseClassLoader;
 import org.jboss.logging.Logger;
-import org.jboss.virtual.plugins.context.memory.MemoryContextFactory;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBoss5ClassPool extends AOPClassPool
+public class JBoss5ClassPool extends AOPClassPool implements ToClassInvokerPoolReference
 {
    Logger log = Logger.getLogger(JBoss5ClassPool.class);
 
-   protected URL tempURL = null;
-   // For loadClass tmpdir creation for UCL
-   protected final Object tmplock = new Object();
+   protected ToClassInvoker toClassInvoker = null;
+
    boolean closed;
    
    protected JBoss5ClassPool(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository, URL tmpURL)
    {
       super(cl, src, repository);
-      tempURL = tmpURL;
+      toClassInvoker = new ToClassInvoker(tmpURL);
    }
 
    protected JBoss5ClassPool(ClassPool src, ScopedClassPoolRepository repository)
@@ -74,47 +69,11 @@ public class JBoss5ClassPool extends AOPClassPool
 
    public Class<?> toClass(CtClass cc, ClassLoader loader, ProtectionDomain domain) throws CannotCompileException
    {
-      lockInCache(cc);
-      final ClassLoader myloader = getClassLoader();
-      if (myloader == null || tempURL == null)
-      {
-         return super.toClass(cc, loader, domain);
-      }
-      
-      try
-      {
-         String classFileName = getResourceName(cc.getName());
-         URL outputURL = new URL(tempURL.toString() + "/" + classFileName);
-         //Write the classfile to the temporary url
-         synchronized (tmplock)
-         {
-            ByteArrayOutputStream byteout = new ByteArrayOutputStream();
-            BufferedOutputStream out = new BufferedOutputStream(byteout);
-            out.write(cc.toBytecode());
-            out.flush();
-            out.close();
-            
-            byte[] classBytes = byteout.toByteArray();
-            MemoryContextFactory factory = MemoryContextFactory.getInstance();
-            factory.putFile(outputURL, classBytes);
+      return toClassInvoker.toClass(this, cc, getResourceName(cc.getName()), loader, domain);
+   }
 
-            if (myloader instanceof BaseClassLoader)
-            {
-               //Update check to RealClassLoader once integration project catches up
-               ((BaseClassLoader)myloader).clearBlackList(classFileName);
-               
-            }
-            
-            Class<?> clazz = myloader.loadClass(cc.getName());
-
-            return clazz;
-         }
-      }
-      catch(Exception e)
-      {
-       ClassFormatError cfe = new ClassFormatError("Failed to load dyn class: " + cc.getName() + " on " + this + " loader:" + myloader);
-       cfe.initCause(e);
-       throw cfe;
-      }
+   public Class<?> superPoolToClass(CtClass cc, ClassLoader loader, ProtectionDomain domain) throws CannotCompileException
+   {
+      return super.toClass(cc, loader, domain);
    }
 }

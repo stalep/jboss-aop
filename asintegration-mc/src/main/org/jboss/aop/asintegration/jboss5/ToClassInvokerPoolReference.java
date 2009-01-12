@@ -19,23 +19,22 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */ 
-package org.jboss.aop.classpool.ucl;
+package org.jboss.aop.asintegration.jboss5;
 
-import java.io.File;
-import java.net.URL;
+import java.security.ProtectionDomain;
+
+import javassist.CannotCompileException;
+import javassist.CtClass;
 
 /**
+ * Exposes methods on ClassPool needed by JBoss5ClassPool
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBossClassPathHelper
+public interface ToClassInvokerPoolReference
 {
-   File tmpDir;
-   URL tmpURL;
-   public JBossClassPathHelper(File tmpDir, URL tmpURL)
-   {
-      this.tmpDir = tmpDir;
-      this.tmpURL = tmpURL;
-   }
+   Class<?> superPoolToClass(CtClass cc, ClassLoader loader, ProtectionDomain domain) throws CannotCompileException;
+   ClassLoader getClassLoader();
+   void lockInCache(CtClass clazz);
 }

@@ -116,13 +116,6 @@ public class AOPClassPool extends ScopedClassPool
       classLoader = new WeakReference<ClassLoader>(cl);
    }
 
-//   public void registerGeneratedClass(String classname)
-//   {
-//      generatedClasses.put(classname, classname);
-//      String resourcename = getResourceName(classname);
-//      localResources.put(resourcename, Boolean.TRUE);
-//   }
-
    public void close()
    {
       super.close();

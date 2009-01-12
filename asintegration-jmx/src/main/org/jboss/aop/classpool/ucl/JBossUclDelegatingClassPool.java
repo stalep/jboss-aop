@@ -22,7 +22,6 @@
 package org.jboss.aop.classpool.ucl;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.net.URL;
 import java.security.ProtectionDomain;
 
@@ -31,74 +30,41 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.scopedpool.ScopedClassPoolRepository;
 
+import org.jboss.aop.asintegration.jboss4.ToClassInvoker;
+import org.jboss.aop.asintegration.jboss4.ToClassInvokerPoolReference;
 import org.jboss.aop.classpool.ClassPoolDomain;
 import org.jboss.aop.classpool.DelegatingClassPool;
-import org.jboss.mx.loading.RepositoryClassLoader;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBossUclDelegatingClassPool extends DelegatingClassPool
+public class JBossUclDelegatingClassPool extends DelegatingClassPool implements ToClassInvokerPoolReference
 {
-   File tmpDir;
-   URL tmpURL;
-   // For loadClass tmpdir creation for UCL
-   protected final Object tmplock = new Object();
+   ToClassInvoker toClassInvoker = null;
 
    public JBossUclDelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ClassPool parent, 
          ScopedClassPoolRepository repository, File tmpDir, URL tmpURL)
    {
       super(domain, cl, parent, repository);
-      this.tmpDir = tmpDir;
-      this.tmpURL = tmpURL;
+      toClassInvoker = new ToClassInvoker(tmpDir);
    }
 
-   public Class<?> toClass(CtClass cc, ClassLoader loader, ProtectionDomain domain)
-   throws CannotCompileException
+   public Class<?> toClass(CtClass cc, ClassLoader loader, ProtectionDomain domain) throws CannotCompileException
    {
-      lockInCache(cc);
-      if (getClassLoader() == null || tmpDir == null)
-      {
-         return super.toClass(cc, loader, domain);
-      }
-      Class<?> dynClass = null;
-      try
-      {
-         File classFile = null;
-         String classFileName = getResourceName(cc.getName());
-         // Write the clas file to the tmpdir
-         synchronized (tmplock)
-         {
-            classFile = new File(tmpDir, classFileName);
-            File pkgDirs = classFile.getParentFile();
-            pkgDirs.mkdirs();
-            FileOutputStream stream = new FileOutputStream(classFile);
-            stream.write(cc.toBytecode());
-            stream.flush();
-            stream.close();
-            classFile.deleteOnExit();
-         }
-         // We have to clear Blacklist caches or the class will never
-         // be found
-         //((UnifiedClassLoader)dcl).clearBlacklists();
-         // To be backward compatible
-         RepositoryClassLoader rcl = (RepositoryClassLoader) getClassLoader();
-         rcl.clearClassBlackList();
-         rcl.clearResourceBlackList();
-
-         // Now load the class through the cl
-         dynClass = getClassLoader().loadClass(cc.getName());
-      }
-      catch (Exception ex)
-      {
-         ClassFormatError cfe = new ClassFormatError("Failed to load dyn class: " + cc.getName());
-         cfe.initCause(ex);
-         throw cfe;
-      }
-
-      return dynClass;
+      return toClassInvoker.toClass(this, cc, getResourceName(cc.getName()), loader, domain);
    }
 
+   public Class<?> superPoolToClass(CtClass cc, ClassLoader loader, ProtectionDomain domain) throws CannotCompileException
+   {
+      return super.toClass(cc, loader, domain);
+   }
+
+   @Override
+   public void lockInCache(CtClass clazz)
+   {
+      super.lockInCache(clazz);
+      localResources.put(getResourceName(clazz.getName()), Boolean.TRUE);
+   }
 }

@@ -21,9 +21,6 @@
 */ 
 package org.jboss.aop.classpool.jbosscl;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.net.URL;
 import java.security.ProtectionDomain;
 
 import javassist.CannotCompileException;
@@ -31,23 +28,23 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.scopedpool.ScopedClassPoolRepository;
 
+import org.jboss.aop.asintegration.jboss5.ToClassInvoker;
+import org.jboss.aop.asintegration.jboss5.ToClassInvokerPoolReference;
 import org.jboss.aop.classpool.ClassPoolDomain;
 import org.jboss.aop.classpool.DelegatingClassPool;
-import org.jboss.classloader.spi.base.BaseClassLoader;
 import org.jboss.classloading.spi.dependency.Module;
-import org.jboss.virtual.plugins.context.memory.MemoryContextFactory;
 
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class JBossClDelegatingClassPool extends DelegatingClassPool
+public class JBossClDelegatingClassPool extends DelegatingClassPool implements ToClassInvokerPoolReference
 {
    private Module module;
-   // For loadClass tmpdir creation for UCL
-   protected final Object tmplock = new Object();
 
+   ToClassInvoker toClassInvoker;
+   
    protected JBossClDelegatingClassPool(ClassPoolDomain domain, ClassLoader cl, ClassPool parent,
          ScopedClassPoolRepository repository, Module module)
    {
@@ -61,6 +58,8 @@ public class JBossClDelegatingClassPool extends DelegatingClassPool
          throw new IllegalArgumentException("Domain was not instance of JBossClClassPoolDomain: " + domain.getClass().getName());
       }
       this.module = module;
+      toClassInvoker = new ToClassInvoker(module == null ? null : module.getDynamicClassRoot());
+         
       ((JBossClClassPoolDomain)domain).setupPoolsByPackage(this);
    }
 
@@ -69,51 +68,14 @@ public class JBossClDelegatingClassPool extends DelegatingClassPool
       return module;
    }
    
-   //Copied from JBoss5ClassPool
    public Class<?> toClass(CtClass cc, ClassLoader loader, ProtectionDomain domain) throws CannotCompileException
    {
-      lockInCache(cc);
-      final ClassLoader myloader = getClassLoader();
-      if (myloader == null || module.getDynamicClassRoot() == null)
-      {
-         return super.toClass(cc, loader, domain);
-      }
-      
-      try
-      {
-         String classFileName = getResourceName(cc.getName());
-         URL outputURL = new URL(module.getDynamicClassRoot().toString() + "/" + classFileName);
-         //Write the classfile to the temporary url
-         synchronized (tmplock)
-         {
-            ByteArrayOutputStream byteout = new ByteArrayOutputStream();
-            BufferedOutputStream out = new BufferedOutputStream(byteout);
-            out.write(cc.toBytecode());
-            out.flush();
-            out.close();
-            
-            byte[] classBytes = byteout.toByteArray();
-            MemoryContextFactory factory = MemoryContextFactory.getInstance();
-            factory.putFile(outputURL, classBytes);
+      return toClassInvoker.toClass(this, cc, getResourceName(cc.getName()), loader, domain);
+   }
 
-            if (myloader instanceof BaseClassLoader)
-            {
-               //Update check to RealClassLoader once integration project catches up
-               ((BaseClassLoader)myloader).clearBlackList(classFileName);
-               
-            }
-            
-            Class<?> clazz = myloader.loadClass(cc.getName());
-
-            return clazz;
-         }
-      }
-      catch(Exception e)
-      {
-       ClassFormatError cfe = new ClassFormatError("Failed to load dyn class: " + cc.getName() + " on " + this + " loader:" + myloader);
-       cfe.initCause(e);
-       throw cfe;
-      }
+   public Class<?> superPoolToClass(CtClass cc, ClassLoader loader, ProtectionDomain domain) throws CannotCompileException
+   {
+      return super.toClass(cc, loader, domain);
    }
 
 }
