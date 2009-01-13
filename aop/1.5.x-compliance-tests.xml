@@ -84,7 +84,7 @@
      -->
 
      <!-- Where source files live -->
-     <property name="source.tests.java" value="${project.source}/test"/>
+     <property name="source.tests.java" value="${project.source}/test/java"/>
      <property name="source.etc" value="${project.source}/etc"/>
      <property name="source.res" value="${project.source}/resources"/>
      <property name="source.stylesheets" value="src/stylesheets"/>
