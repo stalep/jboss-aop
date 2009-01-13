@@ -12,21 +12,6 @@
   
   <build>
     <finalName>${artifactId}</finalName>
-    <sourceDirectory>src/main/</sourceDirectory>
-    <testSourceDirectory>src/tests/</testSourceDirectory>
-    <resources>
-      <resource>
-        <directory>src/etc</directory>
-        <includes>
-          <include>jbossorg-eula.txt</include>
-        </includes>
-      </resource>
-    </resources>
-    <testResources>
-      <testResource>
-        <directory>src/resources/tests</directory>
-      </testResource>
-    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -134,7 +119,8 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>    </plugins>
+      </plugin>    
+    </plugins>
   </build>
   
   <dependencies>
