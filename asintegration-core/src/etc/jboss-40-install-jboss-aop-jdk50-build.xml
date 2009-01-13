@@ -55,7 +55,10 @@
       </condition>
 
       <condition property="dot" value="." else="-jdk50.">
-         <istrue value="${AS-40}"/>
+         <and>
+            <istrue value="${AS-40}"/>
+            <available file="${jboss.deploy.dir}/jboss-aop.deployer" type="dir"/>
+         </and>
       </condition>
 
       <property name="aspect.deployer" value="${jboss.deploy.dir}/jboss-aop${dot}deployer"/>
