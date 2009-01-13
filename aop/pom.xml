@@ -13,23 +13,6 @@
   <url>http://www.jboss.org/jbossaop</url>
   <build>
     <finalName>${artifactId}</finalName>
-    <sourceDirectory>src/main/</sourceDirectory>
-    <testSourceDirectory>src/test/</testSourceDirectory>
-    <resources>
-      <resource>
-        <directory>docs</directory>
-        <includes>
-          <include>jboss-aop_1_0.dtd</include>
-          <include>jboss-aop_2_0.xsd</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/etc</directory>
-        <includes>
-          <include>jbossorg-eula.txt</include>
-        </includes>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
