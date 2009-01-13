@@ -93,7 +93,7 @@ public class JBossClClassPoolFactory extends AbstractJBossClassPoolFactory imple
             }
             parentPoolDomain = ClassPoolDomainRegistry.getInstance().getDomain(parentDomain);
          }
-         poolDomain = new JBossClClassPoolDomain(domain.getName(), parentPoolDomain, domain.getParentPolicy());
+         poolDomain = new JBossClClassPoolDomain(domain.getName(), parentPoolDomain, domain.getParentPolicy(), registry);
          
          ClassPoolDomainRegistry.getInstance().addClassPoolDomain(domain, poolDomain);
       }

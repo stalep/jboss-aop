@@ -35,6 +35,8 @@ import javassist.CtClass;
 import javassist.NotFoundException;
 
 import org.jboss.aop.AspectManager;
+import org.jboss.aop.asintegration.jboss5.DomainRegistry;
+import org.jboss.aop.classpool.BaseClassPool;
 import org.jboss.aop.classpool.BaseClassPoolDomain;
 import org.jboss.aop.classpool.ClassPoolDomain;
 import org.jboss.aop.classpool.DelegatingClassPool;
@@ -53,8 +55,9 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
    final static List<DelegatingClassPool> EMPTY_LIST = Collections.unmodifiableList(Collections.EMPTY_LIST);
    
    AspectManager manager = AspectManager.instance();
+   DomainRegistry registry;
    
-   public JBossClClassPoolDomain(String domainName, ClassPoolDomain parent, ParentPolicy parentPolicy)
+   public JBossClClassPoolDomain(String domainName, ClassPoolDomain parent, ParentPolicy parentPolicy, DomainRegistry registry)
    {
       super(domainName, 
             new JBossClParentDelegationStrategy(
@@ -62,6 +65,7 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
                   parentPolicy, 
                   JBossClClassPoolToClassPoolDomainAdaptorFactory.getInstance())
       );
+      this.registry = registry;
    }
 
    synchronized void setupPoolsByPackage(DelegatingClassPool pool)
@@ -126,26 +130,7 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
       //Check imports first
       if (clazz == null && module != null)
       {
-         List<? extends DelegateLoader> delegates = module.getDelegates();
-         if (delegates != null)
-         {
-            for (DelegateLoader delegate : delegates)
-            {
-               //TODO This is a hack, need a proper API in jboss-cl
-               System.err.println("HACK in JBossClClassPoolDomain");
-               ClassLoader loader = getBaseClassLoaderFromDelegateHack(delegate);
-               
-               //TODO Should be a nicer way to do this
-               ClassPool pool = manager.findClassPool(loader);
-               try
-               {
-                  clazz = pool.get(classname);
-               }
-               catch(NotFoundException e)
-               {
-               }
-            }
-         }
+         clazz = getCtClassFromModule(module, classname);
       }
       
       //Try to check the initiating pool itself
@@ -181,8 +166,70 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
       return new ArrayList<DelegatingClassPool>(poolSet);
    }
 
+   private CtClass getCtClassFromModule(Module module, String classname)
+   {
+//      return getCtClassFromModuleHack(module, classname);
+      return getCtClassFromDelegates(module, classname);
+   }
+
+//   //TODO This should not use reflection once JBCL-78 has been released
+//   private CtClass getCtClassFromModuleHack(Module module, String classname)
+//   {
+//      Module found = null;
+//      try
+//      {
+//         found = module.getModuleForClass(classname);
+//      }
+//      catch (ClassNotFoundException e1)
+//      {
+//      }
+//      if (found == module)
+//      {
+//         return null;
+//      }
+//      ClassLoader foundLoader = registry.getClassLoader(found);
+//      ClassPool pool = manager.findClassPool(foundLoader);
+//      try
+//      {
+//         if (pool instanceof DelegatingClassPool)
+//         {
+//            return getCachedOrCreate((DelegatingClassPool)pool, classname, true);
+//         }
+//         return pool.get(classname);
+//      }
+//      catch(NotFoundException e)
+//      {
+//      }
+//      return null;
+//   }
    
-   //TODO This should be replaced with a proper call once jboss-cl allows us to get this
+   //TODO Delete this once JBCL-78 has been released
+   private CtClass getCtClassFromDelegates(Module module, String classname)
+   {
+      List<? extends DelegateLoader> delegates = module.getDelegates();
+      if (delegates != null)
+      {
+         for (DelegateLoader delegate : delegates)
+         {
+            //TODO This is a hack, need a proper API in jboss-cl
+            System.err.println("HACK in JBossClClassPoolDomain");
+            ClassLoader loader = getBaseClassLoaderFromDelegateHack(delegate);
+            
+            //TODO Should be a nicer way to do this
+            ClassPool pool = manager.findClassPool(loader);
+            try
+            {
+               return pool.get(classname);
+            }
+            catch(NotFoundException e)
+            {
+            }
+         }
+      }
+      return null;
+   }
+   
+   //TODO Delete this once JBCL-78 has been released
    private static ClassLoader getBaseClassLoaderFromDelegateHack(DelegateLoader loader)
    {
       Class<?> clazz = loader.getClass();

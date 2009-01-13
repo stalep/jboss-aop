@@ -47,4 +47,5 @@ public interface DomainRegistry
 
    Module getModule(ClassLoader loader);
 
+   ClassLoader getClassLoader(Module module);
 }

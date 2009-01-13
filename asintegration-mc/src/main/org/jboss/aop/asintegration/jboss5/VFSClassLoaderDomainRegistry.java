@@ -53,6 +53,9 @@ public class VFSClassLoaderDomainRegistry implements DomainRegistry
    /** Modules by classloader */
    private Map<ClassLoader, WeakReference<Module>> classLoaderModules = new WeakHashMap<ClassLoader, WeakReference<Module>>();
    
+   /** classloaders by module */
+   private Map<Module, WeakReference<ClassLoader>> moduleClassLoaders = new WeakHashMap<Module, WeakReference<ClassLoader>>();
+
    private Map<ClassLoaderDomain, Integer> classLoaderDomainReferenceCounts = new WeakHashMap<ClassLoaderDomain, Integer>();
    
    /**
@@ -93,6 +96,7 @@ public class VFSClassLoaderDomainRegistry implements DomainRegistry
          classLoaderDomainsByLoader.put(loader, new WeakReference<ClassLoaderDomain>(clDomain));
          classLoaderUnitParents.put(loader, new WeakReference<ClassLoader>(parentUnitLoader));
          classLoaderModules.put(loader, new WeakReference<Module>(module));
+         moduleClassLoaders.put(module, new WeakReference<ClassLoader>(loader));
          ret = true;
       }
       
@@ -126,7 +130,15 @@ public class VFSClassLoaderDomainRegistry implements DomainRegistry
             classLoaderDomainReferenceCounts.put(clDomain, ++cnt);
          }
          classLoaderUnitParents.remove(loader);
-         classLoaderModules.remove(loader);
+         WeakReference<Module> moduleRef = classLoaderModules.remove(loader);
+         if (moduleRef != null)
+         {
+            Module module = moduleRef.get();
+            if (module != null)
+            {
+               moduleClassLoaders.remove(module);
+            }
+         }
       }
    }
 
@@ -177,6 +189,16 @@ public class VFSClassLoaderDomainRegistry implements DomainRegistry
       if (moduleRef != null)
       {
          return moduleRef.get();
+      }
+      return null;
+   }
+   
+   public synchronized ClassLoader getClassLoader(Module module)
+   {
+      WeakReference<ClassLoader> loaderRef = moduleClassLoaders.get(module);
+      if (loaderRef != null)
+      {
+         return loaderRef.get();
       }
       return null;
    }
