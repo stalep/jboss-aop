@@ -279,19 +279,6 @@
       </fileset>
     </copy>
 
-
-    <copy todir="${project.release}/src/aspect-framework" filtering="no">
-      <fileset dir="${project.root}/aop/src">
-        <include name="main/**/*.java"/>
-        <include name="main/**/*.jjt"/>
-        <include name="test/**/*.java"/>
-        <include name="resources/test/**/*.xml"/>
-        <include name="resources/bin/**/*"/>
-        <exclude name="**/.svn/**"/>
-        <exclude name="**/CVS/**"/>
-      </fileset>
-    </copy>
-
     <!-- ==================================================  -->
     <!-- Add the files from 'asintegration'                  -->
     <!-- ==================================================  -->
@@ -312,34 +299,6 @@
       </fileset>
     </copy>
 
-    <copy todir="${project.release}/src/asintegration-core" filtering="no">
-      <fileset dir="${project.root}/asintegration-core/src">
-        <include name="main/**/*.java"/>
-        <include name="etc/**"/>
-        <include name="resources/**"/>
-        <exclude name="**/.svn/**"/>
-        <exclude name="**/CVS/**"/>
-      </fileset>
-    </copy>
-    <copy todir="${project.release}/src/asintegration-jmx" filtering="no">
-      <fileset dir="${project.root}/asintegration-jmx/src">
-        <include name="main/**/*.java"/>
-        <include name="etc/**"/>
-        <include name="resources/**"/>
-        <exclude name="**/.svn/**"/>
-        <exclude name="**/CVS/**"/>
-      </fileset>
-    </copy>
-    <copy todir="${project.release}/src/asintegration-mc" filtering="no">
-      <fileset dir="${project.root}/asintegration-mc/src">
-        <include name="main/**/*.java"/>
-        <include name="etc/**"/>
-        <include name="resources/**"/>
-        <exclude name="**/.svn/**"/>
-        <exclude name="**/CVS/**"/>
-      </fileset>
-    </copy>
-
     <!-- ==================================================  -->
     <!-- Add the files from 'aspects'                        -->
     <!-- ==================================================  -->
@@ -350,16 +309,24 @@
       </fileset>
     </copy>
 
-    <copy todir="${project.release}/src/aspects" filtering="no">
-      <fileset dir="${project.root}/aspects/src">
-        <include name="main/**/*.java"/>
-        <include name="test/**/*.java"/>
-        <include name="resources/**"/>
-        <exclude name="**/.svn/**"/>
-        <exclude name="**/CVS/**"/>
+    <!-- ==================================================  -->
+    <!-- Add source files from all modules.                  -->
+    <!-- ==================================================  -->
+    
+    <copy todir="${project.release}/src" filtering="no">
+      <fileset dir="${project.root}">
+        <include name="aop/src/"/>
+        <include name="aophelper/src/"/>
+        <include name="asintegration-core/src/"/>
+        <include name="asintegration-jmx/src/"/>
+        <include name="asintegration-mc/src/"/>
+        <include name="aspects/src/"/>
+        <include name="jrockit-pluggable-instrumentor/src/"/>
+        <include name="pluggable-instrumentor/src"/>
+        <exclude name="**/target/**"/>
+        <exclude name="**/output/**"/>
       </fileset>
     </copy>
-
 
     <!-- ==================================================  -->
     <!-- Now pull everything together                        -->
