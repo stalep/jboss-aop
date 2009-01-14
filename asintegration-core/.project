@@ -1,7 +1,10 @@
 <projectDescription>
   <name>jboss-aop-asintegration-core</name>
   <comment>JBoss AOP AS Integrationi Core</comment>
-  <projects/>
+  <projects>
+    <project>jboss-aop</project>
+    <project>pluggable-instrumentor</project>
+  </projects>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>

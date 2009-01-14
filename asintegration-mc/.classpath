@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="**/*.java" including="jbossorg-eula.txt" kind="src" path="src/etc"/>
-	<classpathentry kind="src" path="src/main"/>
-	<classpathentry excluding="**/*.java" kind="src" output="target/test-classes" path="src/resources/tests"/>
-	<classpathentry excluding="org/jboss/test/aop/classpool/jbosscl/support/a/|org/jboss/test/aop/classpool/jbosscl/support/b/|org/jboss/test/aop/classpool/jbosscl/support/c/" kind="src" output="target/test-classes" path="src/tests"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
+	<classpathentry excluding="org/jboss/test/aop/classpool/jbosscl/support/a/|org/jboss/test/aop/classpool/jbosscl/support/b/|org/jboss/test/aop/classpool/jbosscl/support/c/" kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry excluding="**/*.java" kind="src" output="target/test-classes" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.0.2/activation-1.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant/1.7.0/ant-1.7.0.jar"/>
