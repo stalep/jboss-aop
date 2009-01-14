@@ -24,7 +24,7 @@
     <version.jboss.jbossas.core-libs>4.0.4.GA</version.jboss.jbossas.core-libs>
     <version.org.jboss.jbossas>5.0.0.CR2</version.org.jboss.jbossas>
     <version.org.jboss.jboss-common-core>2.2.10.GA</version.org.jboss.jboss-common-core>
-    <version.org.jboss.cl>2.0.1.GA</version.org.jboss.cl>
+    <version.org.jboss.cl>2.2.0-SNAPSHOT</version.org.jboss.cl>
     <version.org.jboss.deployers>2.0.3.GA</version.org.jboss.deployers>
     <version.org.jboss.integration>5.0.3.GA</version.org.jboss.integration>
     <version.org.jboss.jboss-reflect>2.0.2.GA</version.org.jboss.jboss-reflect>

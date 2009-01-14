@@ -168,40 +168,47 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
 
    private CtClass getCtClassFromModule(Module module, String classname)
    {
-//      return getCtClassFromModuleHack(module, classname);
+      //FIXME Hack to work with both snapshot fix for JBCL-78 and what currently exists in the API
+      //Remove once JBCL-78 is released
+      CtClass clazz = getCtClassFromModuleHack(module, classname);
+      if (clazz != null)
+      {
+         return clazz;
+      }
       return getCtClassFromDelegates(module, classname);
    }
 
-//   //TODO This should not use reflection once JBCL-78 has been released
-//   private CtClass getCtClassFromModuleHack(Module module, String classname)
-//   {
-//      Module found = null;
-//      try
-//      {
-//         found = module.getModuleForClass(classname);
-//      }
-//      catch (ClassNotFoundException e1)
-//      {
-//      }
-//      if (found == module)
-//      {
-//         return null;
-//      }
-//      ClassLoader foundLoader = registry.getClassLoader(found);
-//      ClassPool pool = manager.findClassPool(foundLoader);
-//      try
-//      {
-//         if (pool instanceof DelegatingClassPool)
-//         {
-//            return getCachedOrCreate((DelegatingClassPool)pool, classname, true);
-//         }
-//         return pool.get(classname);
-//      }
-//      catch(NotFoundException e)
-//      {
-//      }
-//      return null;
-//   }
+   //TODO This should not use reflection once JBCL-78 has been released
+   private CtClass getCtClassFromModuleHack(Module module, String classname)
+   {
+      Module found = null;
+      try
+      {
+         Method m = Module.class.getMethod("getModuleForClass", String.class);
+         found = (Module)m.invoke(module, classname);
+      }
+      catch (Exception e1)
+      {
+      }
+      if (found == null || found == module)
+      {
+         return null;
+      }
+      ClassLoader foundLoader = registry.getClassLoader(found);
+      ClassPool pool = manager.findClassPool(foundLoader);
+      try
+      {
+         if (pool instanceof BaseClassPool)
+         {
+            return getCachedOrCreateFromPool((BaseClassPool)pool, classname, true);
+         }
+         return pool.get(classname);
+      }
+      catch(NotFoundException e)
+      {
+      }
+      return null;
+   }
    
    //TODO Delete this once JBCL-78 has been released
    private CtClass getCtClassFromDelegates(Module module, String classname)
