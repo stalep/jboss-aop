@@ -21,6 +21,12 @@
           <include>jboss-aop_2_0.xsd</include>
         </includes>
       </resource>
+      <resource>
+        <directory>src/etc</directory>
+        <includes>
+          <include>jbossorg-eula.txt</include>
+        </includes>
+      </resource>
     </resources>
     <plugins>
       <plugin>
