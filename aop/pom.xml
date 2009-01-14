@@ -13,6 +13,15 @@
   <url>http://www.jboss.org/jbossaop</url>
   <build>
     <finalName>${artifactId}</finalName>
+    <resources>
+      <resource>
+        <directory>docs</directory>
+        <includes>
+          <include>jboss-aop_1_0.dtd</include>
+          <include>jboss-aop_2_0.xsd</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
