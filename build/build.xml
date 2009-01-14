@@ -25,16 +25,6 @@
    -->
 
   <target name="init" depends="verify-environment, init-maven-parent">
-
-    <!-- Defines repository.home -->
-    <property file="local.properties"/>
-
-    <!-- Bits for building source archives -->
-    <patternset id="source.ignore">
-      <exclude name="**/output/**"/>
-      <exclude name="**/target/**"/>
-      <exclude name="**/.svn/**" />
-    </patternset>
     
     <!-- Set the version of the release here -->
     <property name="project.name" value="jboss-aop"/>
@@ -46,7 +36,6 @@
     <dirname property="project.root" file="${basedir}"/>
     <property name="project.build" value="${project.root}/build"/>
     <property name="project.tools" value="${project.root}/tools"/>
-    <property name="project.thirdparty" value="${project.root}/thirdparty"/>
     <property name="project.output" value="${project.build}/output"/>
     <property name="project.release" value="${project.output}/${project.build.name}"/>
 
@@ -71,7 +60,8 @@
     <property file="${project.tools}/etc/ant/task.properties"/>
 
     <!-- Set the default maven.home directory -->
-    <property name="maven.home" value="${basedir}/../tools/maven"/>
+    <property name="maven.home" value="${project.tools}/maven"/>
+    <echo message="Using maven version located at ${maven.home}"/>
 
   </target>
 
@@ -87,7 +77,7 @@
 
   <target name="release"
       description="Builds the default release structure."
-      depends="init, clean, most, maven-site, aop.reference.docs, release-no-reference-docs, release-reference-docs"
+      depends="init, clean, most, maven-javadoc, aop.reference.docs, release-no-reference-docs, release-reference-docs"
       >
 
     <zip destfile="${project.release}.zip">
@@ -151,17 +141,18 @@
     </fail>
   </target>
 
-  <target name="maven-site" depends="init, set-jrockit" description="Generate the maven site">
+  <target name="maven-javadoc" depends="init, set-jrockit" description="Generate the maven site">
 
     <property name="build.maven.opts" value=""/>
     <property name="jrockit.build.param" value=""/>
     <echo message="jrockit: ${jrockit.build.param}"/>
-    <maven basedir="${basedir}/../" options="${jrockit.build.param} ${build.maven.opts}" goal="site"/>
+    <maven basedir="${basedir}/../" options="${jrockit.build.param} ${build.maven.opts}" 
+        goal="javadoc:javadoc" resultproperty="maven.javadoc.result"/>
 
     <fail message="Unable to complete maven build.  See maven output for details.">
       <condition>
         <not>
-          <equals arg1="${maven.result}" arg2="0"/>
+          <equals arg1="${maven.javadoc.result}" arg2="0"/>
         </not>
       </condition>
     </fail>
