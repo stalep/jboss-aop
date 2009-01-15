@@ -103,7 +103,9 @@ public class ClassPoolTest extends AbstractTestCaseWithSetup
       }
       //Once all the classes in the loader have been loaded, it seems to clear the URLs. Work around this 
       //by recreating the loader since we need the urls in the URLClassLoaderIsLocalResourcePlugin
-      loaders.add(new URLClassLoader(urls));
+      loader = new URLClassLoader(urls);
+      //Add hard reference to loader
+      loaders.add(loader);
       return new DelegatingClassPool(domain, loader, ClassPool.getDefault(), AOPClassPoolRepository.getInstance());
    }
 
