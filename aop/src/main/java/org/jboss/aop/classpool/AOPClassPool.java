@@ -21,12 +21,8 @@
   */
 package org.jboss.aop.classpool;
 
-import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.jboss.aop.AspectManager;
-import org.jboss.aop.util.ClassLoaderUtils;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -34,12 +30,18 @@ import javassist.NotFoundException;
 import javassist.scopedpool.ScopedClassPool;
 import javassist.scopedpool.ScopedClassPoolRepository;
 
+import org.apache.log4j.Logger;
+import org.jboss.aop.AspectManager;
+import org.jboss.aop.util.ClassLoaderUtils;
+
 /**
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
 public class AOPClassPool extends ScopedClassPool
 {
+   protected final Logger logger = Logger.getLogger(this.getClass());
+   
    /** Classnames of classes that will be created - we do not want to look for these in other pools */
    protected ConcurrentHashMap<String, String> generatedClasses = new ConcurrentHashMap<String, String>();
 
@@ -109,13 +111,9 @@ public class AOPClassPool extends ScopedClassPool
             throw new RuntimeException("Error instantiating search strategy class " + searchStrategy, e);
          }
       }
+      if (logger.isTraceEnabled()) logger.trace(this + " creating pool for loader " + cl + " searchStrategy:" + this.searchStrategy + " isTemp:" + isTemp);
    }
    
-   public void setClassLoader(ClassLoader cl)
-   {
-      classLoader = new WeakReference<ClassLoader>(cl);
-   }
-
    public void close()
    {
       super.close();
@@ -133,16 +131,24 @@ public class AOPClassPool extends ScopedClassPool
    @Override
    protected CtClass createCtClass(String classname, boolean useCache)
    {
-      return super.createCtClass(classname, useCache);
+      boolean trace = logger.isTraceEnabled();
+      
+      if (trace) logger.trace(this + " attempting to create CtClass " + classname);
+      CtClass clazz = super.createCtClass(classname, useCache);
+      if (trace) logger.trace(this + " created CtClass " + getClassPoolLogStringForClass(clazz));
+      
+      return clazz;
    }
 
    @Override
    public void cacheCtClass(String classname, CtClass c, boolean dynamic)
    {
+      boolean trace = logger.isTraceEnabled();
+      if (trace) logger.trace(this + " caching " + classname);
       super.cacheCtClass(classname, c, dynamic);
       if (dynamic)
       {
-//         registerGeneratedClass(classname);
+         if (trace) logger.trace(this + " registering dynamic class " + classname);
          generatedClasses.put(classname, classname);
          String resourcename = getResourceName(classname);
          localResources.put(resourcename, Boolean.TRUE);
@@ -159,16 +165,21 @@ public class AOPClassPool extends ScopedClassPool
       return ClassLoaderUtils.getResourceName(classname);
    }
 
-   protected boolean isLocalResource(String resourceName)
+   protected final boolean isLocalResource(String resourceName, boolean trace)
    {
       String classResourceName = resourceName;
       Boolean isLocal = localResources.get(classResourceName);
       if (isLocal != null)
       {
+         if (trace) logger.trace(this + " " + resourceName + " is local " + isLocal);
+      
          return isLocal.booleanValue();
       }
       boolean localResource = isLocalClassLoaderResource(classResourceName);
       localResources.put(classResourceName, localResource ? Boolean.TRUE : Boolean.FALSE);
+      
+      if (trace) logger.trace(this + " " + resourceName + " is local " + localResource);
+      
       return localResource;
    }
 
@@ -177,11 +188,18 @@ public class AOPClassPool extends ScopedClassPool
       return getClassLoader().getResource(classResourceName) != null;
    }
    
+   @Override
    public synchronized CtClass getLocally(String classname)
            throws NotFoundException
    {
+      boolean trace = logger.isTraceEnabled();
+      if (trace) logger.trace(this + " attempting local get for " + classname);
       softcache.remove(classname);
       CtClass clazz = (CtClass) classes.get(classname);
+      if (trace && clazz != null)
+      {
+         logger.trace(this + " found " + classname + " in cache");
+      }
       if (clazz == null)
       {
          clazz = createCtClass(classname, true);
@@ -190,6 +208,20 @@ public class AOPClassPool extends ScopedClassPool
       }
 
       return clazz;
+   }
+
+   @Override
+   protected CtClass getCachedLocally(String classname)
+   {
+      if (logger.isTraceEnabled()) logger.trace(this + " checking local cache for " + classname);
+      return super.getCachedLocally(classname);
+   }
+
+   @Override
+   public void lockInCache(CtClass c)
+   {
+      if (logger.isTraceEnabled()) logger.trace(this + " locking in cache " + c.getName());
+      super.lockInCache(c);
    }
 
    public void setClassLoadedButNotWoven(String classname)
@@ -230,24 +262,39 @@ public class AOPClassPool extends ScopedClassPool
       return super.get0(classname, useCache);
    }
    
+   protected String getClassPoolLogStringForClass(CtClass clazz)
+   {
+      if (clazz == null)
+      {
+         return null;
+      }
+      return clazz.getClassPool().toString();
+   }
+
    /**
     * Contains the original AOPClassPool.getCached()
     * 
     */
    private class SearchAllRegisteredLoadersSearchStrategy implements AOPCLassPoolSearchStrategy
    {
+      Logger logger = Logger.getLogger(this.getClass());
       public CtClass getCached(String classname)
       {
+         boolean trace = logger.isTraceEnabled();
+         
+         if (trace) logger.trace(this + " " + AOPClassPool.this + " searching all pools for " + classname);
+         
          CtClass clazz = getCachedLocally(classname);
          if (clazz == null)
          {
+            //TODO is this check really necessary 
             boolean isLocal = false;
 
             ClassLoader cl = getClassLoader0();
 
             if (cl != null)
             {
-               isLocal = isLocalResource(getResourceName(classname));
+               isLocal = isLocalResource(getResourceName(classname), trace);
             }
 
             if (!isLocal)
@@ -263,6 +310,7 @@ public class AOPClassPool extends ScopedClassPool
                         AOPClassPool pool = (AOPClassPool) pl;
                         if (pool.isUnloadedClassLoader())
                         {
+                           if (trace) logger.trace(this + " pool is unloaded " + pool);
                            AspectManager.instance().unregisterClassLoader(pool.getClassLoader());
                            continue;
                         }
@@ -270,20 +318,22 @@ public class AOPClassPool extends ScopedClassPool
                         //Do not check classpools for scoped classloaders
                         if (!pool.includeInGlobalSearch())
                         {
+                           if (trace) logger.trace(this + " pool is scoped " + pool);
                            continue;
                         }
 
+                        if (trace) logger.trace(this + " " + AOPClassPool.this + " searching for " + classname + " in " + pool);
                         clazz = pool.getCachedLocally(classname);
                         if (clazz != null)
                         {
-                           return clazz;
+                           break;
                         }
                      }
                   }
                }
             }
          }
-         // *NOTE* NEED TO TEST WHEN SUPERCLASS IS IN ANOTHER UCL!!!!!!
+         if (trace) logger.trace(this + " " + AOPClassPool.this + " found " + classname + " in pool" + getClassPoolLogStringForClass(clazz));
          return clazz;
       }
    }
@@ -293,9 +343,16 @@ public class AOPClassPool extends ScopedClassPool
     */
    private class SearchLocalLoaderLoaderSearchStrategy implements AOPCLassPoolSearchStrategy
    {
+      Logger logger = Logger.getLogger(this.getClass());
+
       public CtClass getCached(String classname)
       {
-         return getCachedLocally(classname);
+         boolean trace = logger.isTraceEnabled();
+         
+         if (trace) logger.trace(this + " " + AOPClassPool.this + " searching just this pool for " + classname);
+         CtClass clazz = getCachedLocally(classname);
+         if (trace) logger.trace(this + " " + AOPClassPool.this + " found " + classname + " in pool" + getClassPoolLogStringForClass(clazz));
+         return clazz;
       }
    }
 }

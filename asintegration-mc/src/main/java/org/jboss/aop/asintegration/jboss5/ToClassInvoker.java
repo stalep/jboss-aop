@@ -30,6 +30,7 @@ import javassist.CannotCompileException;
 import javassist.CtClass;
 
 import org.jboss.classloading.spi.RealClassLoader;
+import org.jboss.logging.Logger;
 import org.jboss.virtual.plugins.context.memory.MemoryContextFactory;
 
 /**
@@ -38,6 +39,8 @@ import org.jboss.virtual.plugins.context.memory.MemoryContextFactory;
  */
 public class ToClassInvoker
 {
+   Logger logger = Logger.getLogger(this.getClass());
+   
    public URL tempURL;
 
    public Object tmplock = new Object();
@@ -49,11 +52,15 @@ public class ToClassInvoker
 
    public Class<?> toClass(ToClassInvokerPoolReference pool, CtClass cc, String classFileName, ClassLoader loader, ProtectionDomain domain) throws CannotCompileException
    {
+      boolean trace = logger.isTraceEnabled();
       pool.lockInCache(cc);
       final ClassLoader myloader = pool.getClassLoader();
       if (myloader == null || tempURL == null)
       {
-         return pool.superPoolToClass(cc, loader, domain);
+         if (trace) logger.trace(this + " " + pool + ".toClass() myloader:" + myloader + " tempURL:" + tempURL + " default to superPool.toClass for " + cc.getName());
+         Class<?> clazz = pool.superPoolToClass(cc, loader, domain);
+         if (trace) logger.trace(this + " " + pool + " myloader:" + myloader + " created class:" + clazz);
+         return clazz;
       }
       
       try
@@ -62,6 +69,7 @@ public class ToClassInvoker
          //Write the classfile to the temporary url
          synchronized (tmplock)
          {
+            if (trace) logger.trace(this + " " + pool + ".toClass() myloader:" + myloader + " writing bytes to " + tempURL);
             ByteArrayOutputStream byteout = new ByteArrayOutputStream();
             BufferedOutputStream out = new BufferedOutputStream(byteout);
             out.write(cc.toBytecode());
@@ -78,15 +86,15 @@ public class ToClassInvoker
             }
             
             Class<?> clazz = myloader.loadClass(cc.getName());
-            
+            if (trace) logger.trace(this + " " + pool + " myloader:" + myloader + " created class:" + clazz);
             return clazz;
          }
       }
       catch(Exception e)
       {
-       ClassFormatError cfe = new ClassFormatError("Failed to load dyn class: " + cc.getName() + " on " + this + " loader:" + myloader);
-       cfe.initCause(e);
-       throw cfe;
+         ClassFormatError cfe = new ClassFormatError("Failed to load dyn class: " + cc.getName() + " on " + this + " loader:" + myloader);
+         cfe.initCause(e);
+         throw cfe;
       }
    }
 }

@@ -21,6 +21,8 @@
 */ 
 package org.jboss.aop.classpool;
 
+import org.jboss.logging.Logger;
+
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
@@ -34,32 +36,39 @@ import javassist.NotFoundException;
  */
 public abstract class AbstractClassPoolDomain implements ClassPoolDomainInternal
 {
-   protected CtClass getCachedOrCreateFromPoolParent(BaseClassPool initiatingPool, String classname, boolean create)
+   protected final Logger logger = Logger.getLogger(this.getClass());
+   
+   protected CtClass getCachedOrCreateFromPoolParent(BaseClassPool initiatingPool, String classname, boolean create, boolean trace)
    {
       if (initiatingPool == null)
       {
+         if (trace) logger.trace(this + " get cached or create " + classname + " from pool parent - no initiating pool");
          return null;
       }
       ClassPool parentPool = initiatingPool.getParent();
       if (parentPool == null)
       {
+         if (trace) logger.trace(this + " get cached or create " + classname + " from pool parent - no parent pool");
          return null;
       }
        
-      return getCachedOrCreateFromPool(parentPool, classname, create);
+      return getCachedOrCreateFromPool(parentPool, classname, create, trace);
    }
 
    
-   protected CtClass getCachedOrCreateFromPool(ClassPool parentPool, String classname, boolean create)
+   protected CtClass getCachedOrCreateFromPool(ClassPool pool, String classname, boolean create, boolean trace)
    {
-      if (parentPool instanceof BaseClassPool)
+      if (pool instanceof BaseClassPool)
       {
-         return getCachedOrCreateFromPool((BaseClassPool)parentPool, classname, create);
+         return getCachedOrCreateFromPool((BaseClassPool)pool, classname, create, trace);
       }
       try
       {
          //This will check the parents
-         return parentPool.get(classname);
+         if (trace) logger.trace(this + " get cached or create " + classname + " from non-BaseClassPool pool " + pool);
+         CtClass clazz = pool.get(classname);
+         if (trace) logger.trace(this + " got cached or create " + classname + " from non-BaseClassPool pool " + clazz.getClassPool());
+         return clazz;
       }
       catch(NotFoundException e)
       {
@@ -67,32 +76,37 @@ public abstract class AbstractClassPoolDomain implements ClassPoolDomainInternal
       }
    }
 
-   protected CtClass getCachedOrCreateFromPool(BaseClassPool parentPool, String classname, boolean create)
+   protected CtClass getCachedOrCreateFromPool(BaseClassPool pool, String classname, boolean create, boolean trace)
    {
-      if (parentPool == null)
+      if (pool == null)
       {
+         if (trace) logger.trace(this + " get cached or create " + classname + " from BaseClassPool - no pool");
          return null;
       }
       
       CtClass clazz = null;
-      if (!parentPool.childFirstLookup)
+      if (!pool.childFirstLookup)
       {
-         clazz = getCachedOrCreateFromPoolParent(parentPool, classname, create); 
+         if (trace) logger.trace(this + " get cached or create " + classname + " from BaseClassPool - checking parent (parentFirst)");
+         clazz = getCachedOrCreateFromPoolParent(pool, classname, create, trace); 
       }
       
       if (clazz == null)
       {
          //We can use the exposed methods directly to avoid the overhead of NotFoundException
-         clazz = parentPool.getCached(classname);
+         if (trace) logger.trace(this + " get cached or create " + classname + " from BaseClassPool - checking cache");
+         clazz = pool.getCached(classname);
          if (clazz == null && create)
          {
-            clazz = parentPool.createCtClass(classname, true);
+            if (trace) logger.trace(this + " get cached or create " + classname + " from BaseClassPool - creating");
+            clazz = pool.createCtClass(classname, true);
          }
       }
       
-      if (clazz == null && !parentPool.childFirstLookup)
+      if (clazz == null && !pool.childFirstLookup)
       {
-         clazz = getCachedOrCreateFromPoolParent(parentPool, classname, create); 
+         if (trace) logger.trace(this + " get cached or create " + classname + " from BaseClassPool - checking parent (parentLast)");
+         clazz = getCachedOrCreateFromPoolParent(pool, classname, create, trace); 
       }
       return clazz;
    }

@@ -26,8 +26,6 @@ import javassist.CtClass;
 import javassist.NotFoundException;
 import javassist.scopedpool.ScopedClassPoolRepository;
 
-import org.jboss.logging.Logger;
-
 /**
  * Base class for classpools backed by a domain
  * 
@@ -36,7 +34,6 @@ import org.jboss.logging.Logger;
  */
 public class DelegatingClassPool extends BaseClassPool
 {
-   private final static Logger logger = Logger.getLogger(DelegatingClassPool.class);
    private final ClassPoolDomainInternal domain;
    
    private boolean closed;
@@ -53,29 +50,25 @@ public class DelegatingClassPool extends BaseClassPool
          throw new IllegalArgumentException("Domain must implement ClassPoolDomainInternal");
       }
       this.domain = (ClassPoolDomainInternal)domain;
+      if (logger.isTraceEnabled()) logger.trace(this + " domain:" + this);
       this.domain.addClassPool(this);
-   }
-
-   public final CtClass get(String classname) throws NotFoundException 
-   {
-      if (logger.isTraceEnabled())
-      {
-         logger.trace("Initiating lookup of " + classname + " in " + this);
-      }
-      return super.get(classname);
    }
 
    public CtClass loadLocally(String classname, String resourceName, boolean create)
    {
+      boolean trace = logger.isTraceEnabled();
+      if (trace) logger.trace(this + " attempt to load locally " + classname);
+         
       CtClass clazz = null;
-      if (isLocalResource(resourceName))
+      if (isLocalResource(resourceName, trace))
       {
          clazz = getCachedLocally(classname);
          if (clazz == null && create)
          {
-            return createCtClass(classname, true);
+            clazz = createCtClass(classname, true);
          }
       }
+      if (trace) logger.trace(this + " loaded locally " + classname + " " + getClassPoolLogStringForClass(clazz));
       return clazz;
    }
    
@@ -99,6 +92,7 @@ public class DelegatingClassPool extends BaseClassPool
    @Override
    public void close()
    {
+      if (logger.isTraceEnabled()) logger.trace(this + " closing");
       closed = true;
       super.close();
       domain.removeClassPool(this);
@@ -111,14 +105,8 @@ public class DelegatingClassPool extends BaseClassPool
    }
    
    @Override
-   public CtClass getCachedLocally(String classname)
-   {
-      return super.getCachedLocally(classname);
-   }
-
-   @Override
    public String toString()
    {
-      return super.toString() + " domain: " + domain;
+      return "[" + super.toString() + " domain: " + domain + "]";
    }
 }

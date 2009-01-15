@@ -37,11 +37,15 @@ class DefaultParentDelegationStrategy extends AbstractParentDelegationStrategy
    
    public boolean isParentBefore(String classname)
    {
-      return hasParent() && parentFirst == true;
+      boolean isParentBefore = hasParent() && parentFirst == true;
+      if (logger.isTraceEnabled()) logger.trace(this + " " + getDomain() + " isParentBefore " + isParentBefore);
+      return isParentBefore;
    }
    
    public boolean isParentAfter(String classname)
    {
-      return hasParent() && parentFirst == false;
+      boolean isParentAfter = hasParent() && parentFirst == false;
+      if (logger.isTraceEnabled()) logger.trace(this + " " + getDomain() + " isParentAfter " + isParentAfter);
+      return isParentAfter;
    }
 }

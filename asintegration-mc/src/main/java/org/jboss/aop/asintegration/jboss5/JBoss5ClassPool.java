@@ -39,8 +39,6 @@ import org.jboss.logging.Logger;
  */
 public class JBoss5ClassPool extends AOPClassPool implements ToClassInvokerPoolReference
 {
-   Logger log = Logger.getLogger(JBoss5ClassPool.class);
-
    protected ToClassInvoker toClassInvoker = null;
 
    boolean closed;

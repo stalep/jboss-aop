@@ -40,22 +40,26 @@ public class NonDelegatingClassPool extends BaseClassPool
    }
 
    @Override
-   public CtClass createCtClass(String classname, boolean useCache)
+   protected CtClass createCtClass(String classname, boolean useCache)
    {
+      boolean trace = logger.isTraceEnabled();
       CtClass clazz = null;
       if (!childFirstLookup)
       {
-         clazz = createParentCtClass(classname, useCache);
+         if (trace)logger.trace(this + " attempting to create " + classname + " in parent pool (parentFirst)");
+         clazz = createParentCtClass(classname, useCache, trace);
       }
-      if (clazz == null && isLocalResource(getResourceName(classname)))
+      if (clazz == null && isLocalResource(getResourceName(classname), trace))
       {
          clazz = super.createCtClass(classname, useCache);
       }
       if (childFirstLookup && clazz == null)
       {
-         clazz = createParentCtClass(classname, useCache);
+         if (trace)logger.trace(this + " attempting to create " + classname + " in parent pool (parentLast)");
+         clazz = createParentCtClass(classname, useCache, trace);
       }
       
+      if (trace)logger.trace(this + " created " + classname + " " + getClassPoolLogStringForClass(clazz));
       return clazz;
    }
 }

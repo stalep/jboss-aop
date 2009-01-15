@@ -187,6 +187,8 @@ public class JBossClClassPoolTest extends MicrocontainerTest
    protected void setUp() throws Exception
    {
       super.setUp();
+      enableTrace("org.jboss.aop.classpool");
+      enableTrace("org.jboss.aop.classpool.jbosscl");
       deploy("/org/jboss/test/aop/classpool/jbosscl/Common.xml");
    }
 

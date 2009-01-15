@@ -46,8 +46,6 @@ import org.jboss.logging.Logger;
  */
 public class ScopedJBoss5ClassPool extends JBoss5ClassPool
 {
-   Logger log = Logger.getLogger(ScopedJBoss5ClassPool.class);
-   
    ThreadLocal<ClassPool> lastPool = new ThreadLocal<ClassPool>();
    WeakReference<ClassLoaderDomain> domainRef;
    /** The classpool representing the parent domain of this one */
@@ -61,7 +59,7 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
       this.parentDomainPool = parentDomainPool;
       this.domainRef = new WeakReference<ClassLoaderDomain>(domain);
       
-      log.debug("Created new ScopedJBoss5ClasPool for " + cl + ", with parent: " + src + ", parentDomain: " + parentDomainPool + ", parentFirst: " + parentFirst);
+      logger.debug("Created new ScopedJBoss5ClasPool for " + cl + ", with parent: " + src + ", parentDomain: " + parentDomainPool + ", parentFirst: " + parentFirst);
    }
 
    private URL getResourceUrlForClass(String resourcename)
@@ -183,18 +181,18 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
    
    public CtClass getCached(String classname)
    {
-      boolean trace = log.isTraceEnabled();
+      boolean trace = logger.isTraceEnabled();
       
       if (trace)
       {
-         log.trace("getCached() " + classname);
+         logger.trace("getCached() " + classname);
       }
       
       if (classname == null)
       {
          if (trace)
          {
-            log.trace("getCached() returning null (classname == null)");
+            logger.trace("getCached() returning null (classname == null)");
          }
          return null;
       }
@@ -202,7 +200,7 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
       {
          if (trace)
          {
-            log.trace("getCached() returning null (unloaded)");
+            logger.trace("getCached() returning null (unloaded)");
          }
          return null;
       }
@@ -212,7 +210,7 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
          //It is a new class, and this callback is probably coming from the frozen check when creating a new nested class
          if (trace)
          {
-            log.trace("getCached() In generated classes - check super");
+            logger.trace("getCached() In generated classes - check super");
          }
          return super.getCached(classname);
       }
@@ -231,7 +229,7 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
             {
                if (trace)
                {
-                  log.trace("getCached() Creating my class " + classname);
+                  logger.trace("getCached() Creating my class " + classname);
                }
                clazz = createCtClass(classname, false);
                if (clazz != null)
@@ -243,14 +241,14 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
             {
                if (trace)
                {
-                  log.trace("getCached() Returning my class " + classname);
+                  logger.trace("getCached() Returning my class " + classname);
                }
                return clazz;
             }
          }
          if (trace)
          {
-            log.trace("getCached() Checking super for my class " + classname);
+            logger.trace("getCached() Checking super for my class " + classname);
          }
          return super.getCached(classname);
       }
@@ -258,7 +256,7 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
       {
          if (trace)
          {
-            log.trace("getCached() Checking super for my class " + classname + " (no url)");
+            logger.trace("getCached() Checking super for my class " + classname + " (no url)");
          }
          return super.getCached(classname);
       }
@@ -269,7 +267,7 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
          ClassPool pool = getCorrectPoolForResource(classname, resourcename, url, trace);
          if (trace)
          {
-            log.trace("getCached() Found pool for class " + classname + " " + pool);
+            logger.trace("getCached() Found pool for class " + classname + " " + pool);
          }
          if (pool != lastPool.get())
          {
@@ -277,7 +275,7 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
             CtClass found = pool.get(classname);
             if (trace)
             {
-               log.trace("getCached() Found clazz " + classname + " in " + pool + " : " + found);
+               logger.trace("getCached() Found clazz " + classname + " in " + pool + " : " + found);
             }
             return found;
          }
@@ -331,7 +329,7 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
                   {
                      if (trace)
                      {
-                        log.trace("getCorrectPoolForResource() Candidate classloader " + bcl + " has local resource " + foundUrl);
+                        logger.trace("getCorrectPoolForResource() Candidate classloader " + bcl + " has local resource " + foundUrl);
                      }
                      return candidate;
                   }
@@ -358,7 +356,7 @@ public class ScopedJBoss5ClassPool extends JBoss5ClassPool
                   pool.get(classname);
                   if (trace)
                   {
-                     log.trace("getCorrectPoolForResource(() Found  " + classname + " (no url)");
+                     logger.trace("getCorrectPoolForResource(() Found  " + classname + " (no url)");
                   }
                   return pool;
                }

@@ -49,12 +49,16 @@ class JBossClParentDelegationStrategy extends AbstractParentDelegationStrategy
    public boolean isParentAfter(String classname)
    {
       ClassFilter filter = parentPolicy.getAfterFilter();
-      return filter.matchesClassName(classname);
+      boolean isParentAfter = filter.matchesClassName(classname);
+      if (logger.isTraceEnabled()) logger.trace(this + " " + getDomain() + " isParentAfter " + isParentAfter);      
+      return isParentAfter;
    }
 
    public boolean isParentBefore(String classname)
    {
       ClassFilter filter = parentPolicy.getBeforeFilter();
-      return filter.matchesClassName(classname);
+      boolean isParentBefore = filter.matchesClassName(classname);
+      if (logger.isTraceEnabled()) logger.trace(this + " " + getDomain() + " isParentBefore " + isParentBefore);
+      return isParentBefore;
    }
 }

@@ -28,6 +28,7 @@ import java.security.ProtectionDomain;
 import javassist.CannotCompileException;
 import javassist.CtClass;
 
+import org.jboss.logging.Logger;
 import org.jboss.mx.loading.RepositoryClassLoader;
 
 /**
@@ -37,6 +38,8 @@ import org.jboss.mx.loading.RepositoryClassLoader;
  */
 public class ToClassInvoker
 {
+   Logger logger = Logger.getLogger(this.getClass());
+
    public File tmpDir;
 
    public Object tmplock = new Object();
@@ -46,25 +49,18 @@ public class ToClassInvoker
       this.tmpDir = tmpDir;
    }
 
-   public boolean isDynamicResource(String resourceName)
-   {
-      File file = new File(tmpDir, resourceName);
-      if (file.exists())
-      {
-         return true;
-      }
-      
-      return false;
-   }
-   
    public Class<?> toClass(ToClassInvokerPoolReference pool, CtClass cc, String classFileName, ClassLoader loader, ProtectionDomain domain)
    throws CannotCompileException
    {
+      boolean trace = logger.isTraceEnabled();
       pool.lockInCache(cc);
       final ClassLoader myloader = pool.getClassLoader();
       if (myloader == null || tmpDir == null)
       {
-         return pool.superPoolToClass(cc, loader, domain);
+         if (trace) logger.trace(this + " " + pool + ".toClass() myloader:" + myloader + " tmpDir:" + tmpDir + " default to superPool.toClass for " + cc.getName());
+         Class<?> clazz = pool.superPoolToClass(cc, loader, domain);
+         if (trace) logger.trace(this + " " + pool + " myloader:" + myloader + " created class:" + clazz);
+         return clazz;
       }
       Class<?> dynClass = null;
       try
@@ -74,6 +70,7 @@ public class ToClassInvoker
          synchronized (tmplock)
          {
             classFile = new File(tmpDir, classFileName);
+            if (trace) logger.trace(this + " " + pool + ".toClass() myloader:" + myloader + " writing bytes to " + classFile);
             File pkgDirs = classFile.getParentFile();
             pkgDirs.mkdirs();
             FileOutputStream stream = new FileOutputStream(classFile);
@@ -92,6 +89,8 @@ public class ToClassInvoker
 
          // Now load the class through the cl
          dynClass = myloader.loadClass(cc.getName());
+         if (trace) logger.trace(this + " " + pool + " myloader:" + myloader + " created class:" + dynClass);
+         return dynClass;
       }
       catch (Exception ex)
       {
@@ -99,8 +98,6 @@ public class ToClassInvoker
          cfe.initCause(ex);
          throw cfe;
       }
-
-      return dynClass;
    }
 
 }

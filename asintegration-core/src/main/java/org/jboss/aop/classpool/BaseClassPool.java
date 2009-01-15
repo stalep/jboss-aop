@@ -41,20 +41,18 @@ public class BaseClassPool extends AOPClassPool
    {
       super(cl, parent, repository);
       isLocalResourcePlugin = IsLocalResourcePluginFactoryRegistry.getPluginFactory(cl).create(this);
-
+      if (logger.isTraceEnabled()) logger.trace(this + " isLocalResourcePlugin:" + isLocalResourcePlugin);
    }
 
    public BaseClassPool(ClassLoader cl, ClassPool parent, ScopedClassPoolRepository repository, Class<? extends AOPCLassPoolSearchStrategy> searchStrategy)
    {
       super(cl, parent, repository, searchStrategy);
       isLocalResourcePlugin = IsLocalResourcePluginFactoryRegistry.getPluginFactory(cl).create(this);
+      if (logger.isTraceEnabled()) logger.trace(this + " isLocalResourcePlugin:" + isLocalResourcePlugin);
    }
    
-   /**
-    * Make createCtClass public so that we can override it 
-    */
    @Override
-   public CtClass createCtClass(String classname, boolean useCache)
+   protected CtClass createCtClass(String classname, boolean useCache)
    {
       CtClass clazz = super.createCtClass(classname, useCache);
       if (clazz != null)
@@ -64,7 +62,7 @@ public class BaseClassPool extends AOPClassPool
       return clazz;
    }
 
-   protected CtClass createParentCtClass(String classname, boolean useCache)
+   protected CtClass createParentCtClass(String classname, boolean useCache, boolean trace)
    {
       if (parent == null)
       {
@@ -74,7 +72,7 @@ public class BaseClassPool extends AOPClassPool
       //Make parent create class
       if (parent instanceof BaseClassPool)
       {
-         return ((BaseClassPool)parent).createCtClass(classname, useCache);
+         return ((AOPClassPool)parent).createCtClass(classname, useCache);
       }
       else
       {
@@ -103,5 +101,21 @@ public class BaseClassPool extends AOPClassPool
    protected boolean isLocalClassLoaderResource(String classResourceName)
    {
       return isLocalResourcePlugin.isMyResource(classResourceName);
+   }
+
+   @Override
+   public final CtClass get(String classname) throws NotFoundException 
+   {
+      boolean trace = logger.isTraceEnabled();
+      if (trace)
+      {
+         logger.trace(this + " initiating get of " + classname);
+      }
+      CtClass clazz = super.get(classname);
+      if (trace)
+      {
+         logger.trace(this + " completed get of " + classname + " " + getClassPoolLogStringForClass(clazz));
+      }
+      return clazz;
    }
 }

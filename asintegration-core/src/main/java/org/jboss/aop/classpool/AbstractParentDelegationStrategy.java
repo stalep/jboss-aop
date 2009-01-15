@@ -23,6 +23,8 @@ package org.jboss.aop.classpool;
 
 import javassist.CtClass;
 
+import org.jboss.logging.Logger;
+
 /**
  * 
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
@@ -30,6 +32,8 @@ import javassist.CtClass;
  */
 public abstract class AbstractParentDelegationStrategy implements ParentDelegationStrategy
 {
+   protected final Logger logger = Logger.getLogger(this.getClass().getName());
+   private ClassPoolDomainInternal domain;
    private ClassPoolDomainInternal parent;
    
    protected AbstractParentDelegationStrategy(ClassPoolDomain parent, ClassPoolToClassPoolDomainAdaptorFactory adaptorFactory)
@@ -59,11 +63,30 @@ public abstract class AbstractParentDelegationStrategy implements ParentDelegati
    
    protected boolean hasParent()
    {
+      if (logger.isTraceEnabled()) logger.trace(this + " " + getDomain() + " hasParent " + parent != null);
       return parent != null;
    }
    
-   public CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
+   protected ClassPoolDomainInternal getDomain()
    {
-      return parent.getCachedOrCreate(initiatingPool, classname, resourceName, create);
+      return domain;
+   }
+   
+   public CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
+   {
+      return parent.getCachedOrCreate(initiatingPool, classname, resourceName, create, trace);
+   }
+   
+   public void setDomain(ClassPoolDomainInternal domain)
+   {
+      if (domain == null)
+      {
+         throw new IllegalArgumentException("Null domain");
+      }
+      if (this.domain != null)
+      {
+         throw new IllegalArgumentException("Cannot change domain");
+      }
+      this.domain = domain;
    }
 }

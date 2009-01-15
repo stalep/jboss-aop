@@ -59,7 +59,7 @@ public class JBossClDelegatingClassPool extends DelegatingClassPool implements T
       }
       this.module = module;
       toClassInvoker = new ToClassInvoker(module == null ? null : module.getDynamicClassRoot());
-         
+      if (logger.isTraceEnabled()) logger.trace(this + " module");
       ((JBossClClassPoolDomain)domain).setupPoolsByPackage(this);
    }
 

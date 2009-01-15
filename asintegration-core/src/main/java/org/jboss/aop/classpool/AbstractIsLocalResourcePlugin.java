@@ -45,7 +45,7 @@ public abstract class AbstractIsLocalResourcePlugin implements IsLocalResourcePl
       
    }
    
-   protected BaseClassPool getPool()
+   protected AOPClassPool getPool()
    {
       return pool;
    }

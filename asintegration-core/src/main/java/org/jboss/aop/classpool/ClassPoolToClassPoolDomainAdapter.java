@@ -40,6 +40,7 @@ public class ClassPoolToClassPoolDomainAdapter extends AbstractClassPoolDomain i
       {
          throw new IllegalStateException("Null parent classpool");
       }
+      if (logger.isTraceEnabled()) logger.trace("Created " + this);
    }
    
    public ClassPool initialiseParentClassLoader()
@@ -53,12 +54,12 @@ public class ClassPoolToClassPoolDomainAdapter extends AbstractClassPoolDomain i
    }
 
    
-   public synchronized CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
+   public synchronized CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
    {
-      return getCachedOrCreateFromPool(pool, classname, create);
+      return getCachedOrCreateFromPool(pool, classname, create, trace);
    }
 
-   public CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
+   public CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
    {
       return null;
    }

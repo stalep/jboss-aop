@@ -55,68 +55,81 @@ public class BaseClassPoolDomain extends AbstractClassPoolDomain implements Clas
    {
       this.domainName = domainName;
       this.parentDelegationStrategy = parentDelegationStrategy;
+      parentDelegationStrategy.setDomain(this);
+      if (logger.isTraceEnabled()) logger.trace("Created " + this + " parentDelegationStrategy:" + parentDelegationStrategy);
    }
    
    public synchronized void addClassPool(DelegatingClassPool pool)
    {
       if (!delegatingPools.contains(pool))
       {
+         if (logger.isTraceEnabled()) logger.trace(this + " adding pool " + pool);
          delegatingPools.add(pool);
       }
    }
    
    public synchronized void removeClassPool(DelegatingClassPool pool)
    {
+      if (logger.isTraceEnabled()) logger.trace(this + " removing pool " + pool);
       delegatingPools.remove(pool);
    }
    
    public synchronized CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, boolean create)
    {
+      boolean trace = logger.isTraceEnabled();
       String resourceName = ClassLoaderUtils.getResourceName(classname);
       
-      CtClass clazz = getCachedOrCreate(initiatingPool, classname, resourceName, create);
+      CtClass clazz = getCachedOrCreate(initiatingPool, classname, resourceName, create, trace);
       
       if (clazz == null)
       {
-         clazz = getCachedOrCreateFromPoolParent(initiatingPool, classname, create);
+         clazz = getCachedOrCreateFromPoolParent(initiatingPool, classname, create, trace);
       }
       return clazz;
    }
    
-   public CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
+   public CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
    {
+      if (trace) logger.trace(this + " looking for " + classname);
+         
       CtClass clazz = null;
       if (isParentBefore(classname))
       {
-         clazz = getCachedOrCreateFromParent(initiatingPool, classname, resourceName, create);
+         if (trace) logger.trace(this + " checking parent first for " + classname);
+         clazz = getCachedOrCreateFromParent(initiatingPool, classname, resourceName, create, trace);
       }
       if (clazz == null)
       {
-         String packageName = ClassLoaderUtils.getPackageName(classname);
-         for (DelegatingClassPool pool : getPoolsForPackage(packageName))
+         List<DelegatingClassPool> pools = getPoolsForClassName(classname);
+         if (pools.size() > 0)
          {
-            clazz = pool.loadLocally(classname, resourceName, create);
-            if (clazz != null)
+            for (DelegatingClassPool pool : pools)
             {
-               break;
+               clazz = pool.loadLocally(classname, resourceName, create);
+               if (clazz != null)
+               {
+                  break;
+               }
             }
          }
       }
       if (clazz == null && isParentAfter(classname))
       {
-         clazz = getCachedOrCreateFromParent(initiatingPool, classname, resourceName, create);
+         if (trace) logger.trace(this + " checking parent last for " + classname);
+         clazz = getCachedOrCreateFromParent(initiatingPool, classname, resourceName, create, trace);
       }
+      if (trace) logger.trace(this + " found " + classname + " in " + (clazz == null ? "null" : clazz.getClassPool()));
       return clazz;
    }
 
-   public CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
+   public CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
    {
-      return parentDelegationStrategy.getCachedOrCreateFromParent(initiatingPool, classname, resourceName, create);
+      return parentDelegationStrategy.getCachedOrCreateFromParent(initiatingPool, classname, resourceName, create, trace);
    }
    
    public String toString()
    {
-      return super.toString() + "[" + domainName + "]";
+      return "[" + super.toString() + " name:" + domainName + "]";
    }
 
    public List<DelegatingClassPool> getClassPools()
@@ -134,7 +147,7 @@ public class BaseClassPoolDomain extends AbstractClassPoolDomain implements Clas
       return parentDelegationStrategy.isParentAfter(classname);
    }
    
-   protected List<DelegatingClassPool> getPoolsForPackage(String packageName)
+   protected List<DelegatingClassPool> getPoolsForClassName(String classname)
    {
       return delegatingPools;
    }

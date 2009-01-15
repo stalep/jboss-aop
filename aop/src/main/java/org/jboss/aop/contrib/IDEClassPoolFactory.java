@@ -104,7 +104,7 @@ public class IDEClassPoolFactory implements ScopedClassPoolFactory
             {
                URL urlPaths[] = classPaths.toArray(new URL[classPaths.size()]);
                loader = new Loader(urlPaths, Thread.currentThread().getContextClassLoader());
-               setClassLoader(loader);
+               //setClassLoader(loader); this is set by the constructor?
 
                Thread.currentThread().setContextClassLoader(loader);
                return null;

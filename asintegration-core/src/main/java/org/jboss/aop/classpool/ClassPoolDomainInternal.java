@@ -32,9 +32,9 @@ interface ClassPoolDomainInternal extends ClassPoolDomain
 {
    CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, boolean create);
    
-   CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create);
+   CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace);
    
-   CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create);
+   CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace);
    
    void addClassPool(DelegatingClassPool pool);
    

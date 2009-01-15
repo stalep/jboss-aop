@@ -124,6 +124,13 @@ public class UclClassPoolTest extends AbstractTestCaseWithSetup
       }
    }
 
+   @Override
+   protected void setUp() throws Exception
+   {
+      super.setUp();
+      enableTrace("org.jboss.aop.classpool");
+      enableTrace("org.jboss.aop.classpool.ucl");
+   }
 
    public MBeanServer getServer()
    {

@@ -40,6 +40,7 @@ import org.jboss.aop.classpool.BaseClassPool;
 import org.jboss.aop.classpool.BaseClassPoolDomain;
 import org.jboss.aop.classpool.ClassPoolDomain;
 import org.jboss.aop.classpool.DelegatingClassPool;
+import org.jboss.aop.util.ClassLoaderUtils;
 import org.jboss.classloader.spi.DelegateLoader;
 import org.jboss.classloader.spi.ParentPolicy;
 import org.jboss.classloading.spi.dependency.Module;
@@ -76,6 +77,7 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
       }
       
       Module module = getModuleForPool(pool);
+      boolean trace = logger.isTraceEnabled();
       
       for (String pkg : module.getPackageNames())
       {
@@ -86,6 +88,7 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
             poolsByPackage.put(pkg, pools);
          }
          pools.add(pool);
+         if (trace) logger.trace(this + " adding package " + pkg + " for pool " + pool);
       }
    }
    
@@ -95,7 +98,8 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
       super.removeClassPool(pool);
    
       Module module = getModuleForPool(pool);
-      
+      boolean trace = logger.isTraceEnabled();
+
       for (String pkg : module.getPackageNames())
       {
          Set<DelegatingClassPool> pools = poolsByPackage.get(pkg);
@@ -105,44 +109,52 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
             if (pools.size() == 0)
             {
                poolsByPackage.remove(pkg);
+               if (trace) logger.trace(this + " removing package " + pkg + " for pool " + pool);
             }
          }
       }
    }
  
    @Override
-   public CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create)
+   public CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
    {
+      if (trace) logger.trace(this + " looking for " + classname);
       Module module = getModuleForPool(initiatingPool);
       if (module != null && module.isImportAll())
       {
          //Use the old "big ball of mud" model
-         return super.getCachedOrCreate(initiatingPool, classname, resourceName, create);
+         if (trace) logger.trace(this + " isImportAll");
+         return super.getCachedOrCreate(initiatingPool, classname, resourceName, create, trace);
       }
       
       //Attempt OSGi style loading
       CtClass clazz = null;
       if (isParentBefore(classname))
       {
-         clazz = getCachedOrCreateFromParent(null, classname, resourceName, create);
+         if (trace) logger.trace(this + " checking parent first for " + classname);
+         clazz = getCachedOrCreateFromParent(null, classname, resourceName, create, trace);
       }
       
       //Check imports first
       if (clazz == null && module != null)
       {
-         clazz = getCtClassFromModule(module, classname);
+         if (trace) logger.trace(this + " checking imports for " + classname);
+         clazz = getCtClassFromModule(module, classname, trace);
       }
       
       //Try to check the initiating pool itself
       if (clazz == null && initiatingPool != null)
       {
+         if (trace) logger.trace(this + " checking pool " + initiatingPool + " locally for " + classname);
          clazz = initiatingPool.loadLocally(classname, resourceName, create);
       }
       
       if (clazz == null && isParentAfter(classname))
       {
-         clazz = getCachedOrCreateFromParent(null, classname, resourceName, create);
+         if (trace) logger.trace(this + " checking parent last for " + classname);
+         clazz = getCachedOrCreateFromParent(null, classname, resourceName, create, trace);
       }
+      if (trace) logger.trace(this + " found " + classname + " in " + (clazz == null ? "null" : clazz.getClassPool()));
       return clazz;
    }
    
@@ -152,12 +164,15 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
       {
          return null;
       }
-      return ((JBossClDelegatingClassPool)pool).getModule();
+      Module module = ((JBossClDelegatingClassPool)pool).getModule();
+      if (logger.isTraceEnabled()) logger.trace(this + " got module " + module + " for " + pool);
+      return module;
    }
    
    @Override
-   protected List<DelegatingClassPool> getPoolsForPackage(String packageName)
+   protected List<DelegatingClassPool> getPoolsForClassName(String classname)
    {
+      String packageName = ClassLoaderUtils.getPackageName(classname);
       Set<DelegatingClassPool> poolSet = poolsByPackage.get(packageName);
       if (poolSet == null)
       {
@@ -166,26 +181,27 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
       return new ArrayList<DelegatingClassPool>(poolSet);
    }
 
-   private CtClass getCtClassFromModule(Module module, String classname)
+   private CtClass getCtClassFromModule(Module module, String classname, boolean trace)
    {
       //FIXME Hack to work with both snapshot fix for JBCL-78 and what currently exists in the API
       //Remove once JBCL-78 is released
-      CtClass clazz = getCtClassFromModuleHack(module, classname);
+      CtClass clazz = getCtClassFromModuleHack(module, classname, trace);
       if (clazz != null)
       {
          return clazz;
       }
-      return getCtClassFromDelegates(module, classname);
+      return getCtClassFromDelegates(module, classname, trace);
    }
 
    //TODO This should not use reflection once JBCL-78 has been released
-   private CtClass getCtClassFromModuleHack(Module module, String classname)
+   private CtClass getCtClassFromModuleHack(Module module, String classname, boolean trace)
    {
       Module found = null;
       try
       {
          Method m = Module.class.getMethod("getModuleForClass", String.class);
          found = (Module)m.invoke(module, classname);
+         if (trace) logger.trace(this + " module for " + classname + " " + found);
       }
       catch (Exception e1)
       {
@@ -200,7 +216,7 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
       {
          if (pool instanceof BaseClassPool)
          {
-            return getCachedOrCreateFromPool((BaseClassPool)pool, classname, true);
+            return getCachedOrCreateFromPool((BaseClassPool)pool, classname, true, trace);
          }
          return pool.get(classname);
       }
@@ -211,7 +227,7 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
    }
    
    //TODO Delete this once JBCL-78 has been released
-   private CtClass getCtClassFromDelegates(Module module, String classname)
+   private CtClass getCtClassFromDelegates(Module module, String classname, boolean trace)
    {
       List<? extends DelegateLoader> delegates = module.getDelegates();
       if (delegates != null)
