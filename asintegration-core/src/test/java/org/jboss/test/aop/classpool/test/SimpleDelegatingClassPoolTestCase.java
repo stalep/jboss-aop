@@ -110,4 +110,5 @@ public class SimpleDelegatingClassPoolTestCase extends ClassPoolTest
       assertEquals(poolA, a.getClassPool());
       assertEquals(poolB, b.getClassPool());
    }
+   
 }

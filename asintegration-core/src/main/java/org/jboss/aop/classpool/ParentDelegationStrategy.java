@@ -30,7 +30,7 @@ import javassist.CtClass;
  */
 public interface ParentDelegationStrategy
 {
-   void setDomain(ClassPoolDomainInternal domain);
+   void setDomain(AbstractClassPoolDomain domain);
    
    CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace);
    

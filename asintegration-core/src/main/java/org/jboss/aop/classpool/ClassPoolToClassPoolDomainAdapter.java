@@ -29,7 +29,7 @@ import javassist.CtClass;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class ClassPoolToClassPoolDomainAdapter extends AbstractClassPoolDomain implements ClassPoolDomainInternal
+public class ClassPoolToClassPoolDomainAdapter extends AbstractClassPoolDomain
 {
    protected ClassPool pool;
    
@@ -54,29 +54,20 @@ public class ClassPoolToClassPoolDomainAdapter extends AbstractClassPoolDomain i
    }
 
    
-   public synchronized CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
+   synchronized CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
    {
       return getCachedOrCreateFromPool(pool, classname, create, trace);
    }
 
-   public CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
+   @Override
+   CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
    {
       return null;
    }
 
-   public boolean isParentFirst()
-   {
-      return !pool.childFirstLookup;
-   }
-
-   public void removeClassPool(DelegatingClassPool pool)
+   void removeClassPool(DelegatingClassPool pool)
    {
       throw new IllegalStateException("Cannot remove pools from the domain adaptor");
-   }
-
-   public void setParentFirst(boolean parentFirst)
-   {
-      throw new IllegalStateException("Cannot change the parent first setting in the domain adaptor");
    }
 
    public String toString()
@@ -84,7 +75,8 @@ public class ClassPoolToClassPoolDomainAdapter extends AbstractClassPoolDomain i
       return "ClassPoolToDomainAdapter[" + System.identityHashCode(this) + " " + pool.toString() + "]";
    }
 
-   public CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, boolean create)
+   @Override
+   CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, boolean create)
    {
       throw new IllegalStateException("Should never be called");
    }

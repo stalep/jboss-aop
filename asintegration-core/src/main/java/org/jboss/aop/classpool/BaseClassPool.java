@@ -21,6 +21,8 @@
 */ 
 package org.jboss.aop.classpool;
 
+import org.jboss.aop.AspectManager;
+
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
@@ -36,7 +38,7 @@ import javassist.scopedpool.ScopedClassPoolRepository;
 public class BaseClassPool extends AOPClassPool
 {
    private IsLocalResourcePlugin isLocalResourcePlugin;
-
+   
    public BaseClassPool(ClassLoader cl, ClassPool parent, ScopedClassPoolRepository repository)
    {
       super(cl, parent, repository);
@@ -107,10 +109,8 @@ public class BaseClassPool extends AOPClassPool
    public final CtClass get(String classname) throws NotFoundException 
    {
       boolean trace = logger.isTraceEnabled();
-      if (trace)
-      {
-         logger.trace(this + " initiating get of " + classname);
-      }
+      if (trace) logger.trace(this + " initiating get of " + classname);
+
       CtClass clazz = super.get(classname);
       if (trace)
       {
@@ -118,4 +118,11 @@ public class BaseClassPool extends AOPClassPool
       }
       return clazz;
    }
+   
+   @Override
+   public void close()
+   {
+      if (logger.isTraceEnabled()) logger.trace(this + " closing");
+   }
+
 }

@@ -33,8 +33,8 @@ import org.jboss.logging.Logger;
 public abstract class AbstractParentDelegationStrategy implements ParentDelegationStrategy
 {
    protected final Logger logger = Logger.getLogger(this.getClass().getName());
-   private ClassPoolDomainInternal domain;
-   private ClassPoolDomainInternal parent;
+   private AbstractClassPoolDomain domain;
+   private AbstractClassPoolDomain parent;
    
    protected AbstractParentDelegationStrategy(ClassPoolDomain parent, ClassPoolToClassPoolDomainAdaptorFactory adaptorFactory)
    {
@@ -48,11 +48,11 @@ public abstract class AbstractParentDelegationStrategy implements ParentDelegati
       }
       else 
       {
-         if (parent instanceof ClassPoolDomainInternal == false)
+         if (parent instanceof AbstractClassPoolDomain == false)
          {
-            throw new IllegalArgumentException("Parent must implement ClassPoolDomainInternal");         
+            throw new IllegalArgumentException("Parent must implement AbstractClassPoolDomain");         
          }
-         this.parent = (ClassPoolDomainInternal)parent;
+         this.parent = (AbstractClassPoolDomain)parent;
       }
       
       if (this.parent == null)
@@ -67,7 +67,7 @@ public abstract class AbstractParentDelegationStrategy implements ParentDelegati
       return parent != null;
    }
    
-   protected ClassPoolDomainInternal getDomain()
+   protected AbstractClassPoolDomain getDomain()
    {
       return domain;
    }
@@ -77,7 +77,7 @@ public abstract class AbstractParentDelegationStrategy implements ParentDelegati
       return parent.getCachedOrCreate(initiatingPool, classname, resourceName, create, trace);
    }
    
-   public void setDomain(ClassPoolDomainInternal domain)
+   public void setDomain(AbstractClassPoolDomain domain)
    {
       if (domain == null)
       {

@@ -176,7 +176,6 @@ public class IsLocalResourcePluginFactoryTestCase extends TestCase
       {
          return null;
       }
-      
    }
    
    

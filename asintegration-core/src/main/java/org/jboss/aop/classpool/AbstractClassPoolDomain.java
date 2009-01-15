@@ -34,9 +34,20 @@ import javassist.NotFoundException;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public abstract class AbstractClassPoolDomain implements ClassPoolDomainInternal
+public abstract class AbstractClassPoolDomain implements ClassPoolDomain
 {
    protected final Logger logger = Logger.getLogger(this.getClass());
+   
+   abstract CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, boolean create);
+   
+   abstract CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace);
+   
+   abstract CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace);
+   
+   abstract void addClassPool(DelegatingClassPool pool);
+   
+   abstract void removeClassPool(DelegatingClassPool pool);
+
    
    protected CtClass getCachedOrCreateFromPoolParent(BaseClassPool initiatingPool, String classname, boolean create, boolean trace)
    {

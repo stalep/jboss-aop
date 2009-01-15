@@ -113,7 +113,7 @@ public class ClassPoolTest extends AbstractTestCaseWithSetup
    protected void setUp() throws Exception
    {
       super.setUp();
-      enableTrace("org.jboss.aop.classpool");
+//      enableTrace("org.jboss.aop.classpool");
    }
 
    protected void assertCannotLoadClass(ClassLoader loader, String classname)

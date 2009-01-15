@@ -30,9 +30,9 @@ import javassist.NotFoundException;
 import javassist.scopedpool.ScopedClassPool;
 import javassist.scopedpool.ScopedClassPoolRepository;
 
-import org.apache.log4j.Logger;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.util.ClassLoaderUtils;
+import org.jboss.logging.Logger;
 
 /**
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>

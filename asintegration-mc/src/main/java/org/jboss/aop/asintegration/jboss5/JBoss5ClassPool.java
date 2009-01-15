@@ -30,7 +30,6 @@ import javassist.CtClass;
 import javassist.scopedpool.ScopedClassPoolRepository;
 
 import org.jboss.aop.classpool.AOPClassPool;
-import org.jboss.logging.Logger;
 
 /**
  * 

@@ -33,7 +33,7 @@ import org.jboss.aop.util.ClassLoaderUtils;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class BaseClassPoolDomain extends AbstractClassPoolDomain implements ClassPoolDomainInternal
+public class BaseClassPoolDomain extends AbstractClassPoolDomain
 {
    private String domainName;
    
@@ -59,7 +59,8 @@ public class BaseClassPoolDomain extends AbstractClassPoolDomain implements Clas
       if (logger.isTraceEnabled()) logger.trace("Created " + this + " parentDelegationStrategy:" + parentDelegationStrategy);
    }
    
-   public synchronized void addClassPool(DelegatingClassPool pool)
+   @Override
+   synchronized void addClassPool(DelegatingClassPool pool)
    {
       if (!delegatingPools.contains(pool))
       {
@@ -68,13 +69,15 @@ public class BaseClassPoolDomain extends AbstractClassPoolDomain implements Clas
       }
    }
    
-   public synchronized void removeClassPool(DelegatingClassPool pool)
+   @Override
+   protected synchronized void removeClassPool(DelegatingClassPool pool)
    {
       if (logger.isTraceEnabled()) logger.trace(this + " removing pool " + pool);
       delegatingPools.remove(pool);
    }
    
-   public synchronized CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, boolean create)
+   @Override
+   synchronized CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, boolean create)
    {
       boolean trace = logger.isTraceEnabled();
       String resourceName = ClassLoaderUtils.getResourceName(classname);
@@ -88,7 +91,8 @@ public class BaseClassPoolDomain extends AbstractClassPoolDomain implements Clas
       return clazz;
    }
    
-   public CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
+   @Override
+   protected CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
    {
       if (trace) logger.trace(this + " looking for " + classname);
          
@@ -122,7 +126,8 @@ public class BaseClassPoolDomain extends AbstractClassPoolDomain implements Clas
       return clazz;
    }
 
-   public CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
+   @Override
+   protected CtClass getCachedOrCreateFromParent(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
    {
       return parentDelegationStrategy.getCachedOrCreateFromParent(initiatingPool, classname, resourceName, create, trace);
    }
@@ -132,11 +137,6 @@ public class BaseClassPoolDomain extends AbstractClassPoolDomain implements Clas
       return "[" + super.toString() + " name:" + domainName + "]";
    }
 
-   public List<DelegatingClassPool> getClassPools()
-   {
-      return delegatingPools; 
-   }
-   
    protected boolean isParentBefore(String classname)
    {
       return parentDelegationStrategy.isParentBefore(classname);

@@ -93,7 +93,7 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
    }
    
    @Override
-   public synchronized void removeClassPool(DelegatingClassPool pool)
+   protected synchronized void removeClassPool(DelegatingClassPool pool)
    {
       super.removeClassPool(pool);
    
@@ -116,7 +116,7 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
    }
  
    @Override
-   public CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
+   protected CtClass getCachedOrCreate(DelegatingClassPool initiatingPool, String classname, String resourceName, boolean create, boolean trace)
    {
       if (trace) logger.trace(this + " looking for " + classname);
       Module module = getModuleForPool(initiatingPool);

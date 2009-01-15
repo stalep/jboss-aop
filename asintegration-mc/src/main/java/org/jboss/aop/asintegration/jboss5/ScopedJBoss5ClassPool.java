@@ -37,7 +37,6 @@ import org.jboss.aop.classpool.AOPClassPoolRepository;
 import org.jboss.classloader.spi.ClassLoaderDomain;
 import org.jboss.classloader.spi.Loader;
 import org.jboss.classloading.spi.RealClassLoader;
-import org.jboss.logging.Logger;
 
 /**
  * 

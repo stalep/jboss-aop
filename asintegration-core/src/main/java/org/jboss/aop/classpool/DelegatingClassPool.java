@@ -34,7 +34,7 @@ import javassist.scopedpool.ScopedClassPoolRepository;
  */
 public class DelegatingClassPool extends BaseClassPool
 {
-   private final ClassPoolDomainInternal domain;
+   private final AbstractClassPoolDomain domain;
    
    private boolean closed;
    
@@ -45,11 +45,11 @@ public class DelegatingClassPool extends BaseClassPool
       {
          throw new IllegalArgumentException("Domain was null");
       }
-      if (domain instanceof ClassPoolDomainInternal == false)
+      if (domain instanceof AbstractClassPoolDomain == false)
       {
-         throw new IllegalArgumentException("Domain must implement ClassPoolDomainInternal");
+         throw new IllegalArgumentException("Domain must implement AbstractClassPoolDomain");
       }
-      this.domain = (ClassPoolDomainInternal)domain;
+      this.domain = (AbstractClassPoolDomain)domain;
       if (logger.isTraceEnabled()) logger.trace(this + " domain:" + this);
       this.domain.addClassPool(this);
    }
@@ -92,7 +92,6 @@ public class DelegatingClassPool extends BaseClassPool
    @Override
    public void close()
    {
-      if (logger.isTraceEnabled()) logger.trace(this + " closing");
       closed = true;
       super.close();
       domain.removeClassPool(this);
