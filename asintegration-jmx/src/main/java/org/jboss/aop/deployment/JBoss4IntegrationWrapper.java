@@ -37,5 +37,15 @@ public class JBoss4IntegrationWrapper implements JBoss4IntegrationWrapperMBean
    {
       return integration;
    }
+   
+   public void setClassPoolFactoryClassName(String classname)
+   {
+      integration.setClassPoolFactoryName(classname);
+   }
+   
+   public String getClassPoolFactoryClassName()
+   {
+      return integration.getClassPoolFactoryClassName();
+   }
 
 }

@@ -89,7 +89,7 @@ public class JBossUclClassPoolFactory extends AbstractJBossClassPoolFactory impl
          {
             if (mainDomain == null)
             {
-               domain = new BaseClassPoolDomain(ServerConstants.DEFAULT_LOADER_NAME, null, true);
+               domain = new BaseClassPoolDomain(ServerConstants.DEFAULT_LOADER_NAME, null, false);
                mainDomain = domain;
             }
             else

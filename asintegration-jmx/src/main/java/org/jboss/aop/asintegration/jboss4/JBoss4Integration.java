@@ -22,6 +22,7 @@
 package org.jboss.aop.asintegration.jboss4;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 
 import javassist.ClassPool;
 import javassist.scopedpool.ScopedClassPool;
@@ -40,7 +41,9 @@ import javax.management.ReflectionException;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.asintegration.JBossIntegration;
 import org.jboss.aop.classpool.AOPClassLoaderScopingPolicy;
+import org.jboss.aop.classpool.ucl.JBossUclClassPoolFactory;
 import org.jboss.aop.domain.ScopedRepositoryClassLoaderDomain;
+import org.jboss.logging.Logger;
 import org.jboss.mx.loading.HeirarchicalLoaderRepository3;
 import org.jboss.mx.loading.RepositoryClassLoader;
 import org.jboss.mx.server.ServerConstants;
@@ -69,6 +72,8 @@ import org.jboss.mx.util.ObjectNameFactory;
  */
 public class JBoss4Integration implements JBossIntegration, ScopedClassPoolFactory
 {
+   Logger logger = Logger.getLogger(JBoss4Integration.class);
+   
    static {
       //pre-load necessary classes so that we avoid NoClassDefFoundErrors on JRockit when using the RepositoryClassloader hook
       //When AspectManager.translate() is called the first time, these classes have not been loaded yet, and this is what causes
@@ -82,6 +87,8 @@ public class JBoss4Integration implements JBossIntegration, ScopedClassPoolFacto
    /** The delegate classpool factory */
    private ScopedClassPoolFactory delegateClassPoolFactory;
    
+   private String classPoolFactoryClassName; 
+   
    public boolean isValidClassLoader(ClassLoader loader)
    {
       if (!(loader instanceof RepositoryClassLoader)) return false;
@@ -93,9 +100,55 @@ public class JBoss4Integration implements JBossIntegration, ScopedClassPoolFacto
       return new RepositoryClassLoaderScopingPolicy();
    }
 
+   public String getClassPoolFactoryClassName()
+   {
+      if (classPoolFactoryClassName == null)
+      {
+         classPoolFactoryClassName = JBossClassPoolFactory.class.getName();
+      }
+      return classPoolFactoryClassName;
+   }
+   
+   public void setClassPoolFactoryName(String classname)
+   {
+      if (delegateClassPoolFactory != null && classname != null)
+      {
+         logger.warn("Setting classpool factory name to " + classname + " will be ignored since the classpool factory has already been initialised");
+      }
+      else
+      {
+         this.classPoolFactoryClassName = classname;
+      }
+   }
+   
    public ScopedClassPoolFactory createScopedClassPoolFactory(File tmpDir) throws Exception
    {
-      delegateClassPoolFactory = new JBossClassPoolFactory(tmpDir);
+      String classname = getClassPoolFactoryClassName();
+      if (classname.equals(JBossClassPoolFactory.class.getName()))
+      {
+         delegateClassPoolFactory = new JBossClassPoolFactory(tmpDir);
+      }
+      else if (classname.equals(JBossUclClassPoolFactory.class.getName()))
+      {
+         delegateClassPoolFactory = new JBossUclClassPoolFactory(tmpDir);
+      }
+      else
+      {
+         logger.info("Unsupported class pool factory " + classname + " attempting to invoke via taking a (File)");
+         try
+         {
+            Class<?> clazz = Class.forName(classname);
+            Constructor<?> ctor = clazz.getConstructor(File.class);
+            delegateClassPoolFactory = (ScopedClassPoolFactory)ctor.newInstance(tmpDir);
+         }
+         catch(Exception e)
+         {
+            logger.warn("Error instantiating " + classname + " defaulting to " + JBossClassPoolFactory.class.getName());
+            classPoolFactoryClassName = classname;
+            createScopedClassPoolFactory(tmpDir);
+         }
+      }
+         
       return this;
    }
    

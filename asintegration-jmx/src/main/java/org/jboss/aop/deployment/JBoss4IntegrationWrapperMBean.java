@@ -28,5 +28,6 @@ package org.jboss.aop.deployment;
  */
 public interface JBoss4IntegrationWrapperMBean extends JBossIntegrationWrapperMBean
 {
-   
+   void setClassPoolFactoryClassName(String classname);
+   String getClassPoolFactoryClassName();
 }
