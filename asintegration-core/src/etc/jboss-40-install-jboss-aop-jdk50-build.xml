@@ -195,7 +195,6 @@
             <exclude name="jboss-aop-jdk50.deployer/jboss.properties"/>
             <exclude name="jboss-aop-jdk50.deployer/build_jboss4.0.xml"/>
             <exclude name="jboss-aop-jdk50.deployer/ReadMe-AS4.txt"/>
-            <exclude name="jboss-aop${dot}deployer/jboss-reflect.jar"/>
          </fileset>
       </copy>
       <move file="${jboss.deploy.dir}/jboss-aop-jdk50.deployer" tofile="${jboss.deploy.dir}/jboss-aop${dot}deployer"/>
