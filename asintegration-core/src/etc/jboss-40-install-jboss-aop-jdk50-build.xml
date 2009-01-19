@@ -124,6 +124,63 @@
 
    </target>
 
+   <target name="jarjar" depends="init" unless="AS-40" >
+      <path id="classpath">
+         <pathelement location="jarjar.jar"/>
+      </path>
+      <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpathref="classpath"/>
+      <jarjar destfile="jboss-reflect-aop.jar">
+         <zipfileset src="jboss-reflect.jar"/>
+         <rule pattern="org.jboss.beans.**" result="org.jboss.jbossaop4deployermc2.beans.@1"/>
+         <rule pattern="org.jboss.classadapter.**" result="org.jboss.jbossaop4deployermc2.classadapter.@1"/>
+         <rule pattern="org.jboss.config.**" result="org.jboss.org.jboss.jbossaop4deployermc2.config.@1"/>
+         <rule pattern="org.jboss.joinpoint.**" result="org.jboss.org.jboss.jbossaop4deployermc2.joinpoint.@1"/>
+         <rule pattern="org.jboss.reflect.**" result="org.jboss.org.jboss.jbossaop4deployermc2.reflect.@1"/> 
+         <rule pattern="org.jboss.annotation.**" result="org.jboss.org.jboss.jbossaop4deployermc2.annotation.@1"/>
+         <rule pattern="org.jboss.metadata.**" result="org.jboss.org.jboss.jbossaop4deployermc2.metadata.@1"/>
+      </jarjar>
+      <jarjar destfile="jboss-mdr-aop.jar">
+         <zipfileset src="jboss-mdr.jar"/>
+         <rule pattern="org.jboss.beans.**" result="org.jboss.jbossaop4deployermc2.beans.@1"/>
+         <rule pattern="org.jboss.classadapter.**" result="org.jboss.jbossaop4deployermc2.classadapter.@1"/>
+         <rule pattern="org.jboss.config.**" result="org.jboss.org.jboss.jbossaop4deployermc2.config.@1"/>
+         <rule pattern="org.jboss.joinpoint.**" result="org.jboss.org.jboss.jbossaop4deployermc2.joinpoint.@1"/>
+         <rule pattern="org.jboss.reflect.**" result="org.jboss.org.jboss.jbossaop4deployermc2.reflect.@1"/>
+         <rule pattern="org.jboss.annotation.**" result="org.jboss.org.jboss.jbossaop4deployermc2.annotation.@1"/>
+         <rule pattern="org.jboss.metadata.**" result="org.jboss.org.jboss.jbossaop4deployermc2.metadata.@1"/> 
+      </jarjar>
+      <jarjar destfile="jboss-aop-jarjar.jar">
+         <zipfileset src="jboss-aop-jdk50.jar"/>
+         <rule pattern="org.jboss.beans.**" result="org.jboss.jbossaop4deployermc2.beans.@1"/>
+         <rule pattern="org.jboss.classadapter.**" result="org.jboss.jbossaop4deployermc2.classadapter.@1"/>
+         <rule pattern="org.jboss.config.**" result="org.jboss.org.jboss.jbossaop4deployermc2.config.@1"/>
+         <rule pattern="org.jboss.joinpoint.**" result="org.jboss.org.jboss.jbossaop4deployermc2.joinpoint.@1"/>
+         <rule pattern="org.jboss.reflect.**" result="org.jboss.org.jboss.jbossaop4deployermc2.reflect.@1"/>
+         <rule pattern="org.jboss.annotation.**" result="org.jboss.org.jboss.jbossaop4deployermc2.annotation.@1"/>
+         <rule pattern="org.jboss.metadata.**" result="org.jboss.org.jboss.jbossaop4deployermc2.metadata.@1"/>
+      </jarjar>
+      <jarjar destfile="jboss-aop-asintegration-core-jarjar.jar">
+         <zipfileset src="jboss-aop-asintegration-core.jar"/>
+         <rule pattern="org.jboss.beans.**" result="org.jboss.jbossaop4deployermc2.beans.@1"/>
+         <rule pattern="org.jboss.classadapter.**" result="org.jboss.jbossaop4deployermc2.classadapter.@1"/>
+         <rule pattern="org.jboss.config.**" result="org.jboss.org.jboss.jbossaop4deployermc2.config.@1"/>
+         <rule pattern="org.jboss.joinpoint.**" result="org.jboss.org.jboss.jbossaop4deployermc2.joinpoint.@1"/>
+         <rule pattern="org.jboss.reflect.**" result="org.jboss.org.jboss.jbossaop4deployermc2.reflect.@1"/>
+         <rule pattern="org.jboss.annotation.**" result="org.jboss.org.jboss.jbossaop4deployermc2.annotation.@1"/>
+         <rule pattern="org.jboss.metadata.**" result="org.jboss.org.jboss.jbossaop4deployermc2.metadata.@1"/>
+      </jarjar>
+      <jarjar destfile="jboss-aop-asintegration-jmx-jarjar.jar">
+         <zipfileset src="jboss-aop-asintegration-jmx.jar"/>
+         <rule pattern="org.jboss.beans.**" result="org.jboss.jbossaop4deployermc2.beans.@1"/>
+         <rule pattern="org.jboss.classadapter.**" result="org.jboss.jbossaop4deployermc2.classadapter.@1"/>
+         <rule pattern="org.jboss.config.**" result="org.jboss.org.jboss.jbossaop4deployermc2.config.@1"/>
+         <rule pattern="org.jboss.joinpoint.**" result="org.jboss.org.jboss.jbossaop4deployermc2.joinpoint.@1"/>
+         <rule pattern="org.jboss.reflect.**" result="org.jboss.org.jboss.jbossaop4deployermc2.reflect.@1"/>
+         <rule pattern="org.jboss.annotation.**" result="org.jboss.org.jboss.jbossaop4deployermc2.annotation.@1"/>
+         <rule pattern="org.jboss.metadata.**" result="org.jboss.org.jboss.jbossaop4deployermc2.metadata.@1"/>
+      </jarjar>
+   </target>  
+
    <target name="prepare-aspect-library" depends="init">
       <!-- Unjar aspect library into a temp folder -->
       <delete file="jboss-aspect-library-jdk50.jar"/>
@@ -171,7 +228,7 @@
    </target>
 
    <target name="update-jbossaop-library" depends="init-lib, backup-jbossaop-library" unless="AS-40">
-      <copy file="${lib.jbossaop-client}" tofile="${bak.jbossaop-client.injboss}"/>
+      <copy file="${lib.jbossaop-client}" tofile="${lib.jbossaop-client.injboss}" overwrite="true"/>
    </target>   
 
    <target name="backup-jbossaop-library" if="backup.jbossaop-client">
@@ -187,16 +244,26 @@
       <delete dir="${aspect.deployer}"/>
    </target>
 
-   <target name="install.deployer" depends="backup">
-      <copy todir="${jboss.deploy.dir}">
+   <target name="install.deployer" depends="backup,jarjar">
+      <copy todir="${jboss.deploy.dir}" overwrite="true">
          <fileset dir="..">
             <include name="jboss-aop-jdk50.deployer/**"/>
             <exclude name="jboss-aop-jdk50.deployer/build.xml"/>
             <exclude name="jboss-aop-jdk50.deployer/jboss.properties"/>
             <exclude name="jboss-aop-jdk50.deployer/build_jboss4.0.xml"/>
             <exclude name="jboss-aop-jdk50.deployer/ReadMe-AS4.txt"/>
+            <exclude name="jboss-aop${dot}deployer/jboss-reflect.jar"/>
+            <exclude name="jboss-aop${dot}deployer/jboss-mdr.jar"/>
+            <exclude name="jboss-aop${dot}deployer/jboss-aop-jdk50.jar"/>
+            <exclude name="jboss-aop${dot}deployer/jboss-asintegration-core.jar"/>
+            <exclude name="jboss-aop${dot}deployer/jboss-asintegration-jmx.jar"/>
          </fileset>
       </copy>
+      <delete file="jboss-reflect-aop.jar"/>
+      <delete file="jboss-mdr-aop.jar"/>
+      <delete file="jboss-aop-jarjar.jar"/>
+      <delete file="jboss-aop-asintegration-core-jarjar.jar"/>
+      <delete file="jboss-aop-asintegration-jmx-jarjar.jar"/>
       <move file="${jboss.deploy.dir}/jboss-aop-jdk50.deployer" tofile="${jboss.deploy.dir}/jboss-aop${dot}deployer"/>
       <copy todir="${jboss.deploy.dir}/jboss-aop${dot}deployer" file="${old.deployer}/base-aop.xml"/>
    </target>
