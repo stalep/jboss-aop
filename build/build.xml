@@ -383,6 +383,7 @@
     <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/jboss-common-core.jar" file="${org.jboss:jboss-common-core:jar}"/>
     <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/javassist.jar" file="${javassist:javassist:jar}"/>
     <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/trove.jar" file="${trove:trove:jar}"/>
+    <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/jarjar.jar" file="${com.google.code:jarjar:jar}"/>
     <copy tofile="${project.release}/jboss-40-install/jboss-aop-jdk50.deployer/META-INF/jboss-service.xml" file="output/temp/jboss-service-jdk50.xml"/>
 
     <!-- The JBoss 5 libs for JDK 5 (JBoss 5 needs JDK 5) -->

@@ -20,6 +20,10 @@
       <artifactId>jrockit-pluggable-instrumentor</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.google.code</groupId>
+      <artifactId>jarjar</artifactId>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>

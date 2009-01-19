@@ -33,6 +33,7 @@
     <version.org.jboss.man>2.0.0.GA</version.org.jboss.man>
     <version.org.jboss.mdr>2.0.1.GA</version.org.jboss.mdr>
     <version.xdoclet>1.2.3</version.xdoclet>
+    <version.jarjar>1.0</version.jarjar>
   </properties>
   
   <build>
@@ -571,6 +572,11 @@
         <groupId>xdoclet</groupId>
         <artifactId>xjavadoc</artifactId>
         <version>${version.xdoclet}</version>
+      </dependency>
+      <dependency>
+         <groupId>com.google.code</groupId>
+         <artifactId>jarjar</artifactId>
+         <version>${version.jarjar}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
