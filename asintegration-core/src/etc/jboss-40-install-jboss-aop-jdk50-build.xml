@@ -245,6 +245,12 @@
    </target>
 
    <target name="install.deployer" depends="backup,jarjar">
+      
+      <!-- Indicates whether the jar files have been jarjarred -->
+      <condition property="jarjarred" value="NOT_JARJARRED" else="">
+         <istrue value="${AS-40}"/>
+      </condition>
+      
       <copy todir="${jboss.deploy.dir}" overwrite="true">
          <fileset dir="..">
             <include name="jboss-aop-jdk50.deployer/**"/>
@@ -252,11 +258,15 @@
             <exclude name="jboss-aop-jdk50.deployer/jboss.properties"/>
             <exclude name="jboss-aop-jdk50.deployer/build_jboss4.0.xml"/>
             <exclude name="jboss-aop-jdk50.deployer/ReadMe-AS4.txt"/>
-            <exclude name="jboss-aop${dot}deployer/jboss-reflect.jar"/>
-            <exclude name="jboss-aop${dot}deployer/jboss-mdr.jar"/>
-            <exclude name="jboss-aop${dot}deployer/jboss-aop-jdk50.jar"/>
-            <exclude name="jboss-aop${dot}deployer/jboss-asintegration-core.jar"/>
-            <exclude name="jboss-aop${dot}deployer/jboss-asintegration-jmx.jar"/>
+            <exclude name="jboss-aop-jdk50.deployer/jarjar.jar"/>
+            <!-- if the jar files have been jarjarred, we must not deploy the
+                 original jar files. If they haven't been jarjarred, we must deploy
+                 the original jar files. -->
+            <exclude name="${jarjarred}jboss-aop-jdk50.deployer/jboss-reflect.jar"/>
+            <exclude name="${jarjarred}jboss-aop-jdk50.deployer/jboss-mdr.jar"/>
+            <exclude name="${jarjarred}jboss-aop-jdk50.deployer/jboss-aop-jdk50.jar"/>
+            <exclude name="${jarjarred}jboss-aop-jdk50.deployer/jboss-asintegration-core.jar"/>
+            <exclude name="${jarjarred}jboss-aop-jdk50.deployer/jboss-asintegration-jmx.jar"/>
          </fileset>
       </copy>
       <delete file="jboss-reflect-aop.jar"/>
