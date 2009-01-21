@@ -24,6 +24,7 @@ package org.jboss.aop.classpool.jbosscl;
 import org.jboss.aop.classpool.AbstractParentDelegationStrategy;
 import org.jboss.aop.classpool.ClassPoolDomain;
 import org.jboss.aop.classpool.ClassPoolToClassPoolDomainAdaptorFactory;
+import org.jboss.aop.util.ClassLoaderUtils;
 import org.jboss.classloader.spi.ParentPolicy;
 import org.jboss.classloader.spi.filter.ClassFilter;
 
@@ -49,7 +50,7 @@ class JBossClParentDelegationStrategy extends AbstractParentDelegationStrategy
    public boolean isParentAfter(String classname)
    {
       ClassFilter filter = parentPolicy.getAfterFilter();
-      boolean isParentAfter = filter.matchesClassName(classname);
+      boolean isParentAfter = filter.matchesClassName(ClassLoaderUtils.stripArrayFromClassName(classname));
       if (logger.isTraceEnabled()) logger.trace(this + " " + getDomain() + " isParentAfter " + isParentAfter);      
       return isParentAfter;
    }
@@ -57,7 +58,7 @@ class JBossClParentDelegationStrategy extends AbstractParentDelegationStrategy
    public boolean isParentBefore(String classname)
    {
       ClassFilter filter = parentPolicy.getBeforeFilter();
-      boolean isParentBefore = filter.matchesClassName(classname);
+      boolean isParentBefore = filter.matchesClassName(ClassLoaderUtils.stripArrayFromClassName(classname));
       if (logger.isTraceEnabled()) logger.trace(this + " " + getDomain() + " isParentBefore " + isParentBefore);
       return isParentBefore;
    }

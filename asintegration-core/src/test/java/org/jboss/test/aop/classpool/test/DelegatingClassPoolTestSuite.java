@@ -21,6 +21,8 @@
 */ 
 package org.jboss.test.aop.classpool.test;
 
+import org.jboss.test.aop.unit.classpool.util.ClassLoaderUtilsTestCase;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
@@ -41,6 +43,7 @@ public class DelegatingClassPoolTestSuite extends TestSuite
    {
       TestSuite suite = new TestSuite("DelegatingClassPool All Tests");
       
+      suite.addTest(ClassLoaderUtilsTestCase.suite());
       suite.addTest(IsLocalResourcePluginFactoryTestCase.suite());
       suite.addTest(SimpleDelegatingClassPoolTestCase.suite());
       suite.addTest(ScopedSiblingDelegatingClassPoolTestCase.suite());

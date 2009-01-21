@@ -200,7 +200,7 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
       try
       {
          Method m = Module.class.getMethod("getModuleForClass", String.class);
-         found = (Module)m.invoke(module, classname);
+         found = (Module)m.invoke(module, ClassLoaderUtils.stripArrayFromClassName(classname));
          if (trace) logger.trace(this + " module for " + classname + " " + found);
       }
       catch (Exception e1)
@@ -230,7 +230,7 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
    private CtClass getCtClassFromDelegates(Module module, String classname, boolean trace)
    {
       List<? extends DelegateLoader> delegates = module.getDelegates();
-      if (delegates != null)
+      if (delegates != null && delegates.size() > 0)
       {
          for (DelegateLoader delegate : delegates)
          {
@@ -283,4 +283,5 @@ public class JBossClClassPoolDomain extends BaseClassPoolDomain
          return null;
       }
    }
+   
 }

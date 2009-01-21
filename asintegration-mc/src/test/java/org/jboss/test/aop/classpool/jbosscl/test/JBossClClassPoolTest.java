@@ -200,6 +200,10 @@ public class JBossClClassPoolTest extends MicrocontainerTest
       super.tearDown();
    }
 
+   protected String array(String name)
+   {
+      return name + "[]";
+   }
 
    protected ClassLoader createClassLoader(String name, boolean importAll, URL... urls) throws Exception
    {
@@ -796,7 +800,47 @@ public class JBossClClassPoolTest extends MicrocontainerTest
       {
          assertSame(expected, clazz.getClassPool());
       }
+      
+      //Load twice to test both create and cache
+      clazz = initiating.get(name);
+      if (expected != null)
+      {
+         assertSame(expected, clazz.getClassPool());
+      }
+      
+      assertLoadCtClassArray(name, clazz, initiating, expected);
+      
       return clazz;
+   }
+   
+   private void assertLoadCtClassArray(String name, CtClass clazz, ClassPool initiating, ClassPool expected) throws Exception
+   {
+      assertLoadCtClassArray(name, clazz, 1, initiating, expected);
+      assertLoadCtClassArray(name, clazz, 2, initiating, expected);
+   }
+   
+   private void assertLoadCtClassArray(String name, CtClass clazz, int dimensions, ClassPool initiating, ClassPool expected) throws Exception
+   {
+      String arrayName = name;
+      for (int i = 0 ; i < dimensions ; i++)
+      {
+         arrayName = array(arrayName);
+      }
+      CtClass array = initiating.get(arrayName);
+      
+      if (expected != null)
+      {
+         assertSame(expected, array.getClassPool());
+      }
+      
+      assertSame(clazz.getClassPool(), array.getClassPool());
+      
+      CtClass type = array;
+      for (int i = 0 ; i < dimensions ; i++)
+      {
+         type = type.getComponentType();
+      }
+      assertSame(type, clazz);
    }
 
    protected Module assertModule(String contextName)

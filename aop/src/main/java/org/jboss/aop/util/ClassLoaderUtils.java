@@ -30,11 +30,7 @@ public class ClassLoaderUtils
 {
    public static String getResourceName(String classname)
    {
-      String name = classname;
-      if (name.endsWith("[]"))
-      {
-         name = classname.substring(0, name.indexOf("[]"));
-      }
+      final String name = stripArrayFromClassName(classname);
       final int lastIndex = name.lastIndexOf('$');
       if (lastIndex < 0)
       {
@@ -48,7 +44,7 @@ public class ClassLoaderUtils
 
    public static String getPackageName(String classname)
    {
-      int last = classname.lastIndexOf('.');
+      final int last = classname.lastIndexOf('.');
       if (last < 0)
       {
          return "";
@@ -57,5 +53,14 @@ public class ClassLoaderUtils
       {
          return classname.substring(0, last);
       }
+   }
+   
+   public static String stripArrayFromClassName(String classname)
+   {
+      if (classname.endsWith("[]"))
+      {
+         return classname.substring(0, classname.indexOf("[]"));
+      }
+      return classname;
    }
 }

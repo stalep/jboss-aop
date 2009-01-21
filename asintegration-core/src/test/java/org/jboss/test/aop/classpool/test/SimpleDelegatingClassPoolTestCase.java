@@ -111,4 +111,32 @@ public class SimpleDelegatingClassPoolTestCase extends ClassPoolTest
       assertEquals(poolB, b.getClassPool());
    }
    
+   public void testCanLoadArrrayCtClass() throws Exception
+   {
+      ClassPoolDomain domain = createClassPoolDomain("SIMPLE", null, false);
+      ClassPool poolA = createDelegatingClassPool(domain, JAR_A);
+      ClassPool poolB = createDelegatingClassPool(domain, JAR_B);
+      accessCanLoadCtArray(poolA, poolB);
+      accessCanLoadCtArray(poolA, poolB);
+   }
+   
+   private void accessCanLoadCtArray(ClassPool poolA, ClassPool poolB) throws Exception
+   {
+      CtClass x = poolA.get(String.class.getName() + "[][]");
+      CtClass a = poolA.get(CLASS_A);
+      CtClass aArray = poolA.get(CLASS_A + "[]");
+      CtClass bArray = poolA.get(CLASS_B + "[][]");
+      CtClass b = poolA.get(CLASS_B);
+      
+      assertTrue(aArray.isArray());
+      assertSame(a, aArray.getComponentType());
+      assertTrue(bArray.isArray());
+      assertTrue(bArray.getComponentType().isArray());
+      assertSame(b, bArray.getComponentType().getComponentType());
+      assertNotSame(aArray.getClassPool(), bArray.getClassPool());
+      assertSame(poolA, aArray.getClassPool());
+      assertSame(poolB, bArray.getClassPool());
+      assertSame(a.getClassPool(), aArray.getClassPool());
+      assertSame(b.getClassPool(), bArray.getClassPool());
+   }
 }
