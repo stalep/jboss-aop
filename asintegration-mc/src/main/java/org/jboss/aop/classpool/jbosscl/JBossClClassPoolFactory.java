@@ -48,7 +48,6 @@ public class JBossClClassPoolFactory extends AbstractJBossClassPoolFactory imple
    public JBossClClassPoolFactory(DomainRegistry registry)
    {
       this.registry = registry;
-      System.out.println("XXXXXXXX Creating " + this + " registry:" + registry);
    }
    
    public ScopedClassPool create(ClassLoader cl, ClassPool src, ScopedClassPoolRepository repository)
