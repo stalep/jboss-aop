@@ -12,7 +12,7 @@
       <property name="jboss.config.dir" value="${jboss.home}/server/${jboss.config}"/>
       <property name="jboss.bin.dir" value="${jboss.home}/bin"/>
       <property name="jboss.client.dir" value="${jboss.home}/client"/>
-      <property name="jboss.backup.dir" value="${jboss.config.dir}/backup"/>
+      <property name="jboss.backup.dir" value="${jboss.config.dir}/deployers.bak"/>
 
       <available file="${jboss.home}" property="jboss.exists" type="dir"/>
       <fail unless="jboss.exists" message="${jboss.home} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
