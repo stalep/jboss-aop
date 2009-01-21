@@ -43,7 +43,6 @@ public class DelegatingClassPoolTestSuite extends TestSuite
    {
       TestSuite suite = new TestSuite("DelegatingClassPool All Tests");
       
-      suite.addTest(ClassLoaderUtilsTestCase.suite());
       suite.addTest(IsLocalResourcePluginFactoryTestCase.suite());
       suite.addTest(SimpleDelegatingClassPoolTestCase.suite());
       suite.addTest(ScopedSiblingDelegatingClassPoolTestCase.suite());
