@@ -12,6 +12,7 @@
       <property name="jboss.config.dir" value="${jboss.home}/server/${jboss.config}"/>
       <property name="jboss.bin.dir" value="${jboss.home}/bin"/>
       <property name="jboss.client.dir" value="${jboss.home}/client"/>
+      <property name="jboss.backup.dir" value="${jboss.config.dir}/backup"/>
 
       <available file="${jboss.home}" property="jboss.exists" type="dir"/>
       <fail unless="jboss.exists" message="${jboss.home} does not exist. Modify 'jboss.home' in jboss.properties to be a valid root of a jboss installation"/>
@@ -70,13 +71,11 @@
    </target>
 
    <target name="backup.deployer" depends="init" unless="old.deployer.exists">
-      <property name="old.deployer" value="${aspect.deployer}-${tstamp}.bak"/>
+      <mkdir dir="${jboss.backup.dir}"/>
       <echo>Backing up existing aop deployer to ${old.deployer}</echo>
-      <copy todir="${old.deployer}">
+      <copy todir="${jboss.backup.dir}/jboss-aop-jboss5.deployer-${tstamp}.bak">
          <fileset dir="${aspect.deployer}"/>
       </copy>
-      <move file="${old.deployer}/META-INF/jboss-aspect-library-jboss-beans.xml" 
-         tofile="${old.deployer}/META-INF/jboss-aspect-library-jboss-beans.xml.bak"/>
    </target>
 
    <target name="backup.client.lib" if="backup.jbossaop-client">
