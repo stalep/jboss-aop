@@ -21,8 +21,6 @@
 */ 
 package org.jboss.test.aop.classpool.test;
 
-import org.jboss.test.aop.unit.classpool.util.ClassLoaderUtilsTestCase;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
