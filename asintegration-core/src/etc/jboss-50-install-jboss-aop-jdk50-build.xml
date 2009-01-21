@@ -62,7 +62,7 @@
    </target>
 
 
-   <target name="backup.lib" depends="init" unless="old.lib.exists">
+   <target name="backup.lib" depends="init">
       <property name="old.lib" value="${jboss.lib}-${tstamp}.bak"/>
       <echo>Backing up existing lib directory to ${old.lib}</echo>
       <copy todir="${old.lib}">
@@ -70,7 +70,7 @@
       </copy>
    </target>
 
-   <target name="backup.deployer" depends="init" unless="old.deployer.exists">
+   <target name="backup.deployer" depends="init">
       <mkdir dir="${jboss.backup.dir}"/>
       <echo>Backing up existing aop deployer to ${old.deployer}</echo>
       <copy todir="${jboss.backup.dir}/jboss-aop-jboss5.deployer-${tstamp}.bak">
