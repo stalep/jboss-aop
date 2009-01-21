@@ -8,6 +8,11 @@
 <server>
 
    <mbean code="org.jboss.aop.deployment.JBoss4IntegrationWrapper" name="jboss.aop:service=JBoss4IntegrationWrapper"/>
+   <!--
+   <mbean code="org.jboss.aop.deployment.JBoss4IntegrationWrapper" name="jboss.aop:service=JBoss4IntegrationWrapper">
+      <attribute name="ClassPoolFactoryClassName">org.jboss.aop.classpool.ucl.JBossUclClassPoolFactory</attribute>
+   </mbean>
+   -->
 
    <!-- The code for the service is different for the different run scenarios
       *** JBoss 4.0 

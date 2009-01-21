@@ -114,7 +114,7 @@ public abstract class AbstractClassPoolDomain implements ClassPoolDomain
          }
       }
       
-      if (clazz == null && !pool.childFirstLookup)
+      if (clazz == null && pool.childFirstLookup)
       {
          if (trace) logger.trace(this + " get cached or create " + classname + " from BaseClassPool - checking parent (parentLast)");
          clazz = getCachedOrCreateFromPoolParent(pool, classname, create, trace); 

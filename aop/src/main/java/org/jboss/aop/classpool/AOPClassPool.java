@@ -129,7 +129,7 @@ public class AOPClassPool extends ScopedClassPool
     * Make createCtClass public so that we can override it 
     */
    @Override
-   protected CtClass createCtClass(String classname, boolean useCache)
+   public CtClass createCtClass(String classname, boolean useCache)
    {
       boolean trace = logger.isTraceEnabled();
       

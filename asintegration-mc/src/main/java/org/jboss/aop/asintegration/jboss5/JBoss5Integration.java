@@ -48,7 +48,8 @@ public class JBoss5Integration implements JBossIntegration, ScopedClassPoolFacto
 {
    /** The delegate classpool factory */
    private ScopedClassPoolFactory delegateClassPoolFactory;
-   private AOPClassLoaderScopingPolicy policy = new VFSClassLoaderScopingPolicy();
+   
+   private AOPClassLoaderScopingPolicyWithRegistry policy;
  
    
    private static final Set<ClassLoader> bootstrapLoaders;
@@ -104,9 +105,25 @@ public class JBoss5Integration implements JBossIntegration, ScopedClassPoolFacto
       return false;
    }
 
-   public AOPClassLoaderScopingPolicy createAOPClassLoaderScopingPolicy()
+   public void setAopClassLoaderScopingPolicy(AOPClassLoaderScopingPolicyWithRegistry policy)
    {
+      this.policy = policy;
+   }
+   
+   public synchronized AOPClassLoaderScopingPolicyWithRegistry createAOPClassLoaderScopingPolicy()
+   {
+      if (policy == null)
+      {
+         //AS versions after 5.0.0 will want to configure the AOPClassLoaderScopingPolicy themselves
+         //Create a default one for AS 5.0.0
+         policy = new VFSClassLoaderScopingPolicy();
+      }
       return policy;
+   }
+   
+   public DomainRegistry getDomainRegistry()
+   {
+      return policy.getRegistry();
    }
    
    public void setClassPoolFactory(ScopedClassPoolFactory factory)
@@ -118,8 +135,7 @@ public class JBoss5Integration implements JBossIntegration, ScopedClassPoolFacto
    {
       if (delegateClassPoolFactory == null)
       {
-         DomainRegistry registry = ((VFSClassLoaderScopingPolicy)policy).getRegistry();
-         delegateClassPoolFactory = new JBoss5ClassPoolFactory(registry);
+         delegateClassPoolFactory = new JBoss5ClassPoolFactory(getDomainRegistry());
       }
       return this;
    }

@@ -40,7 +40,7 @@ public class NonDelegatingClassPool extends BaseClassPool
    }
 
    @Override
-   protected CtClass createCtClass(String classname, boolean useCache)
+   public CtClass createCtClass(String classname, boolean useCache)
    {
       boolean trace = logger.isTraceEnabled();
       CtClass clazz = null;

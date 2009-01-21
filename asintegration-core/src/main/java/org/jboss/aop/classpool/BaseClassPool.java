@@ -54,12 +54,12 @@ public class BaseClassPool extends AOPClassPool
    }
    
    @Override
-   protected CtClass createCtClass(String classname, boolean useCache)
+   public CtClass createCtClass(String classname, boolean useCache)
    {
       CtClass clazz = super.createCtClass(classname, useCache);
       if (clazz != null)
       {
-         cacheCtClass(classname, clazz, false);
+         lockInCache(clazz);
       }
       return clazz;
    }
