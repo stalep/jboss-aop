@@ -268,6 +268,10 @@ public class AOPClassPool extends ScopedClassPool
       {
          return null;
       }
+      if (clazz.getClassPool() == null)
+      {
+         return null;
+      }
       return clazz.getClassPool().toString();
    }
 
