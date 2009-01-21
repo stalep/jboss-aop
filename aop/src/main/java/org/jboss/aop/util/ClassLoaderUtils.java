@@ -30,14 +30,19 @@ public class ClassLoaderUtils
 {
    public static String getResourceName(String classname)
    {
-      final int lastIndex = classname.lastIndexOf('$');
+      String name = classname;
+      if (name.endsWith("[]"))
+      {
+         name = classname.substring(0, name.indexOf("[]"));
+      }
+      final int lastIndex = name.lastIndexOf('$');
       if (lastIndex < 0)
       {
-         return classname.replaceAll("[\\.]", "/") + ".class";
+         return name.replaceAll("[\\.]", "/") + ".class";
       }
       else
       {
-         return classname.substring(0, lastIndex).replaceAll("[\\.]", "/") + classname.substring(lastIndex) + ".class";
+         return name.substring(0, lastIndex).replaceAll("[\\.]", "/") + name.substring(lastIndex) + ".class";
       }
    }
 
