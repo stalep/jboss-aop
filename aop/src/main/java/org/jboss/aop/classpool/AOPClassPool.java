@@ -114,6 +114,11 @@ public class AOPClassPool extends ScopedClassPool
       if (logger.isTraceEnabled()) logger.trace(this + " creating pool for loader " + cl + " searchStrategy:" + this.searchStrategy + " isTemp:" + isTemp);
    }
    
+   public void registerGeneratedClass(String className)
+   {
+      generatedClasses.put(className, className);
+   }
+
    public void close()
    {
       super.close();
@@ -149,7 +154,7 @@ public class AOPClassPool extends ScopedClassPool
       if (dynamic)
       {
          if (trace) logger.trace(this + " registering dynamic class " + classname);
-         generatedClasses.put(classname, classname);
+         registerGeneratedClass(classname);
          String resourcename = getResourceName(classname);
          localResources.put(resourcename, Boolean.TRUE);
       }

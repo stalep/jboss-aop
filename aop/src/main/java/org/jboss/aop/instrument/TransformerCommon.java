@@ -40,6 +40,7 @@ import javassist.CtField;
 import javassist.NotFoundException;
 
 import org.jboss.aop.AspectManager;
+import org.jboss.aop.classpool.AOPClassPool;
 import org.jboss.aop.standalone.Compiler;
 
 /**
@@ -215,8 +216,16 @@ public class TransformerCommon {
     */
    public static CtClass makeNestedClass(CtClass outer, String name, boolean isStatic) throws CannotCompileException
    {
-      CtClass inner = outer.makeNestedClass(name, true);
-      return inner;
+      try
+      {
+         registerGeneratedClass(outer.getClassPool(), outer.getName() + "$" + name);
+         CtClass inner = outer.makeNestedClass(name, true);
+         return inner;
+      }
+      catch (Exception e)
+      {
+         throw new CannotCompileException("Error creating " + name + " in " + outer.getName(),e);
+      }
    }
 
    /**
@@ -224,6 +233,7 @@ public class TransformerCommon {
     */
    public static CtClass makeClass(ClassPool pool, String name)
    {
+      registerGeneratedClass(pool, name);
       return pool.makeClass(name);
    }
 
@@ -232,7 +242,20 @@ public class TransformerCommon {
     */
    public static CtClass makeClass(ClassPool pool, String name, CtClass superClass)
    {
+      registerGeneratedClass(pool, name);
       return pool.makeClass(name, superClass);
+   }
+
+   private static void registerGeneratedClass(ClassPool pool, String name)
+   {
+      try
+      {
+         ((AOPClassPool)pool).registerGeneratedClass(name);
+      }
+      catch(ClassCastException e)
+      {
+
+      }
    }
 
    private interface ToClassAction
