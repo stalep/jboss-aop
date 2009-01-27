@@ -4,6 +4,7 @@ import javassist.ClassPool;
 import javassist.CtClass;
 
 import org.jboss.aop.classpool.ClassPoolDomain;
+import org.jboss.aop.instrument.TransformerCommon;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -218,5 +219,47 @@ public class ParentLastDelegatingClassPoolTestCase extends ClassPoolTest
       
       CtClass a3 = childPool.get(CLASS_A);
       assertEquals(grandParentPool, a3.getClassPool());
+   }
+   
+   public void testGenerateSameClassInChildAndParent() throws Exception
+   {
+      ClassPoolDomain parent = createClassPoolDomain("PARENT", null, false);
+      ClassPool parentPool = createDelegatingClassPool(parent, JAR_A);
+      ClassPoolDomain child = createClassPoolDomain("CHILD", parent, false);
+      ClassPool childPool = createDelegatingClassPool(child, JAR_A);
+      CtClass parentClazz = TransformerCommon.makeClass(parentPool, "test.Test");
+      assertSame(parentClazz, parentPool.get("test.Test"));
+      assertSame(parentPool, parentClazz.getClassPool());
+      Class<?> parentClass = parentClazz.toClass();
+      assertSame(parentPool.getClassLoader(), parentClass.getClassLoader());
+      
+      CtClass childClazz = TransformerCommon.makeClass(childPool, "test.Test"); 
+      assertSame(childClazz, childPool.get("test.Test"));
+      assertSame(childPool, childClazz.getClassPool());
+      Class<?> childClass = childClazz.toClass();
+      assertSame(childPool.getClassLoader(), childClass.getClassLoader());
+   }
+
+   public void testGenerateSameNestedClassInChildAndParent() throws Exception
+   {
+      ClassPoolDomain parent = createClassPoolDomain("PARENT", null, false);
+      ClassPool parentPool = createDelegatingClassPool(parent, JAR_A);
+      ClassPoolDomain child = createClassPoolDomain("CHILD", parent, false);
+      ClassPool childPool = createDelegatingClassPool(child, JAR_A);
+      CtClass parentA = parentPool.get(CLASS_A);
+      CtClass parentClazz = TransformerCommon.makeNestedClass(parentA, "Test", true);
+      assertSame(parentPool, parentClazz.getClassPool());
+      Class<?> parentClass = parentClazz.toClass();
+      assertSame(parentPool.getClassLoader(), parentClass.getClassLoader());
+      Class<?> parentAClass = parentA.toClass();
+      assertSame(parentPool.getClassLoader(), parentAClass.getClassLoader());
+      
+      CtClass childA = childPool.get(CLASS_A);
+      CtClass childClazz = TransformerCommon.makeNestedClass(childA, "Test", true); 
+      assertSame(childPool, childClazz.getClassPool());
+      Class<?> childClass = childClazz.toClass();
+      assertSame(childPool.getClassLoader(), childClass.getClassLoader());
+      Class<?> childAClass = childA.toClass();
+      assertSame(childPool.getClassLoader(), childAClass.getClassLoader());
    }
 }

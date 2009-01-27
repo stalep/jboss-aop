@@ -21,9 +21,11 @@
   */
 package org.jboss.aop.classpool;
 
+import java.security.ProtectionDomain;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
@@ -42,13 +44,18 @@ public class AOPClassPool extends ScopedClassPool
 {
    protected final Logger logger = Logger.getLogger(this.getClass());
    
-   /** Classnames of classes that will be created - we do not want to look for these in other pools */
-   protected ConcurrentHashMap<String, String> generatedClasses = new ConcurrentHashMap<String, String>();
+   /** Classnames of classes that will be created - we do not want to look for these in other pools.
+    * The main use for this is when a class is created in a parent pool, and we then want to 
+    * create a class with the same name in a parent-last child pool. As part of the create process
+    * javassist.ClassPool will check if that class is frozen (which in turn will call getCached()
+    * and get0()). If the classname exists in this map, get0() and getCached() should return null;   
+    */
+   protected final ConcurrentHashMap<String, String> generatedClasses = new ConcurrentHashMap<String, String>();
 
-   protected ConcurrentHashMap<String, Boolean> localResources = new ConcurrentHashMap<String, Boolean>();
+   protected final ConcurrentHashMap<String, Boolean> localResources = new ConcurrentHashMap<String, Boolean>();
 
    /** Classnames of classes that have been loaded, but were not woven */
-   protected ConcurrentHashMap<String, Boolean> loadedButNotWovenClasses = new ConcurrentHashMap<String, Boolean>();
+   protected final ConcurrentHashMap<String, Boolean> loadedButNotWovenClasses = new ConcurrentHashMap<String, Boolean>();
 
    /** Causes the AOPClassPool.getCached() method to search all ClassPools registered in the repository */
    public static final Class<SearchAllRegisteredLoadersSearchStrategy> SEARCH_ALL_STRATEGY = SearchAllRegisteredLoadersSearchStrategy.class;
@@ -119,6 +126,16 @@ public class AOPClassPool extends ScopedClassPool
       generatedClasses.put(className, className);
    }
 
+   public boolean isGeneratedClass(String className)
+   {
+      return generatedClasses.containsKey(className);
+   }
+   
+   public void doneGeneratingClass(String className)
+   {
+      generatedClasses.remove(className);
+   }
+
    public void close()
    {
       super.close();
@@ -154,7 +171,7 @@ public class AOPClassPool extends ScopedClassPool
       if (dynamic)
       {
          if (trace) logger.trace(this + " registering dynamic class " + classname);
-         registerGeneratedClass(classname);
+         doneGeneratingClass(classname);
          String resourcename = getResourceName(classname);
          localResources.put(resourcename, Boolean.TRUE);
       }

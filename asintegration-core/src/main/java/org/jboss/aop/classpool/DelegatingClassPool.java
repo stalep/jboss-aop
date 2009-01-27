@@ -80,6 +80,10 @@ public class DelegatingClassPool extends BaseClassPool
    @Override
    protected synchronized CtClass get0(String classname, boolean useCache) throws NotFoundException
    {
+      if (isGeneratedClass(classname))
+      {
+         return null;
+      }
       return domain.getCachedOrCreate(this, classname, true);
    }
    
@@ -100,6 +104,10 @@ public class DelegatingClassPool extends BaseClassPool
    @Override
    public CtClass getCached(String classname)
    {
+      if (isGeneratedClass(classname))
+      {
+         return null;
+      }
       return domain.getCachedOrCreate(this, classname, false);
    }
    

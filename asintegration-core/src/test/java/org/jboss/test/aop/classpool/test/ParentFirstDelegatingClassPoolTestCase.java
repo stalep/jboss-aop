@@ -7,6 +7,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.jboss.aop.classpool.ClassPoolDomain;
+import org.jboss.aop.instrument.TransformerCommon;
 
 
 /*
@@ -262,5 +263,32 @@ public class ParentFirstDelegatingClassPoolTestCase extends ClassPoolTest
       CtClass a3 = grandParentPool.get(CLASS_A);
       assertEquals(grandParentPool, a3.getClassPool());
       assertSame(a2, a3);
+   }
+   
+   public void testGenerateSameNestedClassInChildAndParent() throws Exception
+   {
+      ClassPoolDomain parent = createClassPoolDomain("PARENT", null, false);
+      ClassPool parentPool = createDelegatingClassPool(parent, JAR_A);
+      ClassPoolDomain child = createClassPoolDomain("CHILD", parent, true);
+      ClassPool childPool = createDelegatingClassPool(child, JAR_A);
+      CtClass parentA = parentPool.get(CLASS_A);
+      CtClass parentClazz = TransformerCommon.makeNestedClass(parentA, "Test", true);
+      assertSame(parentPool, parentClazz.getClassPool());
+      Class<?> parentClass = parentClazz.toClass();
+      assertSame(parentPool.getClassLoader(), parentClass.getClassLoader());
+      Class<?> parentAClass = parentA.toClass();
+      assertSame(parentPool.getClassLoader(), parentAClass.getClassLoader());
+      
+      CtClass childA = childPool.get(CLASS_A);
+      try
+      {
+         TransformerCommon.makeNestedClass(childA, "Test", true);
+      }
+      catch(Exception e)
+      {
+         
+      }
+      assertSame(parentA, childA);
+      assertSame(parentClazz, childPool.get(CLASS_A + "$Test"));
    }
 }

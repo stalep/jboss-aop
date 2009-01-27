@@ -216,15 +216,17 @@ public class TransformerCommon {
     */
    public static CtClass makeNestedClass(CtClass outer, String name, boolean isStatic) throws CannotCompileException
    {
+      final String classname = outer.getName() + "$" + name;
       try
       {
-         registerGeneratedClass(outer.getClassPool(), outer.getName() + "$" + name);
+         registerGeneratedClass(outer.getClassPool(), classname);
          CtClass inner = outer.makeNestedClass(name, true);
          return inner;
       }
-      catch (Exception e)
+      catch (RuntimeException e)
       {
-         throw new CannotCompileException("Error creating " + name + " in " + outer.getName(),e);
+         unregisterGeneratedClass(outer.getClassPool(), classname);
+         throw e;
       }
    }
 
@@ -243,19 +245,42 @@ public class TransformerCommon {
    public static CtClass makeClass(ClassPool pool, String name, CtClass superClass)
    {
       registerGeneratedClass(pool, name);
-      return pool.makeClass(name, superClass);
+      try
+      {
+         return pool.makeClass(name, superClass);
+      }
+      catch(RuntimeException e)
+      {
+         unregisterGeneratedClass(pool, name);
+         throw e;
+      }
    }
 
    private static void registerGeneratedClass(ClassPool pool, String name)
    {
-      try
+      AOPClassPool aopPool = getAOPClassPool(pool);
+      if (aopPool != null)
       {
-         ((AOPClassPool)pool).registerGeneratedClass(name);
+         aopPool.registerGeneratedClass(name);
       }
-      catch(ClassCastException e)
+   }
+   
+   private static void unregisterGeneratedClass(ClassPool pool, String name)
+   {
+      AOPClassPool aopPool = getAOPClassPool(pool);
+      if (aopPool != null)
       {
-
+         aopPool.doneGeneratingClass(name);
       }
+   }
+   
+   private static AOPClassPool getAOPClassPool(ClassPool pool)
+   {
+      if (pool instanceof AOPClassPool)
+      {
+         return (AOPClassPool)pool;
+      }
+      return null;
    }
 
    private interface ToClassAction
