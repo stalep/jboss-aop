@@ -21,8 +21,6 @@
 */ 
 package org.jboss.aop.classpool;
 
-import org.jboss.aop.AspectManager;
-
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
